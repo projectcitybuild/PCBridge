@@ -42,8 +42,6 @@ public final class PCBridge extends JavaPlugin
 	@Override
 	public void onDisable()
 	{
-		_controllerManager = null;
-		_connectionManager = null;
 	}
 	
 	/**

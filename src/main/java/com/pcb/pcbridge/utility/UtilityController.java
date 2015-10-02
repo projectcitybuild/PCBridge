@@ -7,7 +7,7 @@ import com.pcb.pcbridge.library.controllers.commands.ICommandController;
 
 public class UtilityController extends AbstractController implements ICommandController
 {
-	// this controller does nothing much yet...
+	// this controller doesn't do much yet...
 	
 	public CommandRoute[] GetCommands() 
 	{		

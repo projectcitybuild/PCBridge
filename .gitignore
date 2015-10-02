@@ -8,6 +8,7 @@ target/
 .metadata
 .launch
 .buildpath
+dependency-reduced-pom.xml
 
 # OS Files #
 .DS_Store

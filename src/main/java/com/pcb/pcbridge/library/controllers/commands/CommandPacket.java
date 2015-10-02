@@ -5,6 +5,10 @@ import org.bukkit.entity.Player;
 
 import com.pcb.pcbridge.PCBridge;
 
+/**
+ * A container for grouping a command's parameters when handling a command
+ */
+
 public class CommandPacket 
 {
 	public CommandSender Sender;

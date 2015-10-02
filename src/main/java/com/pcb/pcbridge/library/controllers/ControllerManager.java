@@ -17,6 +17,10 @@ import com.pcb.pcbridge.library.controllers.listeners.AbstractListener;
 import com.pcb.pcbridge.library.controllers.listeners.IListenerController;
 import com.pcb.pcbridge.utility.UtilityController;
 
+/**
+ * Instantiates controllers and registers each of their commands & listeners with Bukkit
+ */
+
 public final class ControllerManager implements CommandExecutor
 {
 	public HashMap<String, ICommand> Commands = new HashMap<String, ICommand>();
@@ -34,11 +38,6 @@ public final class ControllerManager implements CommandExecutor
 	}
 	
 
-	/**
-	 * Checks if the provided controllers contain listeners or commands
-	 * 
-	 * @param controllers
-	 */
 	private void CreateControllers(AbstractController[] controllers)
 	{
 		for(AbstractController controller : controllers)
