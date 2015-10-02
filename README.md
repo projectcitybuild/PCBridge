@@ -22,3 +22,11 @@ CREATE TABLE IF NOT EXISTS `pcban_active_bans` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=20 ;
 ```
+
+Don't forget to also run the plugin once to generate the config file (plugin.yml). Add in your MySQL connection details as necessary.
+
+### Todo List:
+* Refactor MySQL Adapter to run asynchronous
+* Temp banning
+* Ban stats
+* UUID lookup via Mojang web service (asynchronous)
