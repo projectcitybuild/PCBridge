@@ -25,7 +25,7 @@ public final class ListenerOnPlayerLogin extends AbstractListener implements Lis
 								 
 						 "Åòb" + "Appeal @ www.projectcitybuild.com";
 				
-		message = message.replaceAll("&","Åò");
+		//message = message.replaceAll("&","Åò");
 		//e.disallow(PlayerLoginEvent.Result.KICK_BANNED, message);	
 	}
 }

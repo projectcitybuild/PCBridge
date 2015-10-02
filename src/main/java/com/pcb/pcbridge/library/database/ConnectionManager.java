@@ -2,6 +2,11 @@ package com.pcb.pcbridge.library.database;
 
 import com.pcb.pcbridge.PCBridge;
 
+/**
+ * Factory for different Storage implementations
+ * (currently only supports MySQL)
+ */
+
 public final class ConnectionManager 
 {			
 	private AbstractAdapter _adapter;

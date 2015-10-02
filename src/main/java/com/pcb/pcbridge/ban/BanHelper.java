@@ -19,8 +19,10 @@ public final class BanHelper
 {
 	
 	/**
-	 * Get the ban record of the specified username and/or UUID.
+	 * Gets the ban record of the specified username and/or UUID.
 	 * Returns null if user is not currently banned.
+	 * 
+	 * TODO: this should be refactored to be asynchronous!
 	 * 
 	 * @param adapter
 	 * @param name
@@ -30,7 +32,7 @@ public final class BanHelper
 	 */
 	public static List<HashMap<String, Object>> LookupPlayer(AbstractAdapter adapter, String name, String uuid) throws SQLException
 	{
-		String SQL = "SELECT * FROM pcban_active_bans WHERE is_active=1";
+		String SQL = "SELECT * FROM pcban_active_bans WHERE is_active=1 ";
 		List<HashMap<String, Object>> results;
 		
 		if(name != null && uuid != null)
@@ -56,7 +58,7 @@ public final class BanHelper
 	}
 	
 	/**
-	 * Check if the specified username and/or UUID is currently banned
+	 * Checks if the specified username and/or UUID is currently banned
 	 * 
 	 * @param adapter
 	 * @param name
@@ -71,15 +73,15 @@ public final class BanHelper
 	}
 	
 	/**
-	 * Retrieve a player's UUID regardless of online state or join history
+	 * Retrieves a player's UUID regardless of online state or join history
 	 * 
 	 * @param plugin
 	 * @param username
 	 * @return
 	 */
-	public static PlayerUUID GetPlayerDetails(PCBridge plugin, String username)
+	public static PlayerUUID GetUUID(PCBridge plugin, String username)
 	{
-		UUID uuid;
+		UUID uuid = null;
 		String ip = "";
 		
 		// check if player is currently online
@@ -94,7 +96,7 @@ public final class BanHelper
 			return new PlayerUUID(username, ip, uuid, true, true);
 		}
 		
-		// check if player has played before
+		// otherwise check if player has played before
 		@SuppressWarnings("deprecation")
 		OfflinePlayer offlinePlayer	= plugin.getServer().getOfflinePlayer(username);
 		
@@ -107,7 +109,8 @@ public final class BanHelper
 		{
 			uuid = null;
 			
-			// TODO: retrieve the player's UUID from Mojang's server since they've never joined the server before
+			// TODO: retrieve the player's UUID from Mojang since they've never joined the server before
+			// (UUID cannot be accurately determined if they've never joined the server)
 		}
 		
 		return new PlayerUUID(username, ip, uuid, false, hasPlayedBefore);
