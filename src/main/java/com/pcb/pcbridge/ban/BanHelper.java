@@ -53,6 +53,8 @@ public final class BanHelper
 				uuid
 			);
 		}
+		
+		// TODO: check if its a temp ban and has now expired
 			
 		return results;		
 	}
