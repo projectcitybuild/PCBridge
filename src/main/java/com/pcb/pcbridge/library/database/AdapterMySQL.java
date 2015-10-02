@@ -13,6 +13,9 @@ import java.util.List;
 
 import org.apache.commons.dbcp2.BasicDataSource;
 
+/**
+ * Adapter implementation for MySQL interactivity
+ */
 
 public class AdapterMySQL extends AbstractAdapter
 {	
@@ -45,7 +48,7 @@ public class AdapterMySQL extends AbstractAdapter
 	
 	/**
 	 * Maps the given arguments to an appropriate field-type, 
-	 * then injects them into the prepared statement
+	 * then injects them into the provided prepared statement
 	 * 
 	 * @param statement
 	 * @param args
@@ -145,6 +148,14 @@ public class AdapterMySQL extends AbstractAdapter
 	}
 	
 	
+	/**
+	 * Converts a ResultSet into a List<HashMap<String, Object>>
+	 * (this allows continued use of data even after connection has been closed)
+	 * 
+	 * @param resultSet
+	 * @return
+	 * @throws SQLException
+	 */
 	private List<HashMap<String, Object>> MapResultSet(ResultSet resultSet) throws SQLException
 	{
 		ResultSetMetaData resultData = resultSet.getMetaData();

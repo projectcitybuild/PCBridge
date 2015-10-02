@@ -7,12 +7,15 @@ import com.pcb.pcbridge.library.database.AbstractAdapter;
 import com.pcb.pcbridge.library.database.Adapter;
 import com.pcb.pcbridge.library.database.ConnectionManager;
 
-/*
+/**
  * 
- * A plugin to bridge www.projectcitybuild.com and its server
+ * A plugin to bridge www.projectcitybuild.com and its servers
  * 
  * @author		Andy Saw <andy-saw@hotmail.com>
- * @created		19th of September 2015
+ * @created		19th September, 2015
+ * 
+ * @developers	Andy Saw <andy-saw@hotmail.com>
+ * 				Feel free to add yourself here if you've contributed
  * 
  */
 
@@ -43,6 +46,10 @@ public final class PCBridge extends JavaPlugin
 		_connectionManager = null;
 	}
 	
+	/**
+	 * Adds any missing config entries to the config
+	 * (this should probably be moved into its own class if it gets any more complex)
+	 */
 	private void LoadConfig()
 	{
 		getConfig().addDefault("database.address", "localhost");

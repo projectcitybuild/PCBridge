@@ -4,42 +4,26 @@ import java.sql.SQLException;
 import java.util.Date;
 
 import org.bukkit.ChatColor;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
 
 import com.pcb.pcbridge.ban.BanHelper;
+import com.pcb.pcbridge.ban.PlayerUUID;
 import com.pcb.pcbridge.library.controllers.commands.CommandPacket;
 import com.pcb.pcbridge.library.controllers.commands.ICommand;
 import com.pcb.pcbridge.library.database.AbstractAdapter;
 
+/**
+ * Command: Ban the specified user (via username) from the server
+ */
+
 public final class CommandBan implements ICommand 
 {	
-	/**
-	 * Ban the specified user (via username) from the server
-	 */
 	public boolean Execute(CommandPacket e) 
 	{
 		if(e.Args.length == 0)
 			return false;
 		
-		String playerName = e.Args[0];
-		Player player = e.Plugin.getServer().getPlayer(playerName);
-		
-		String playerUUID = "";
-		String playerIP = "";
-		OfflinePlayer offlinePlayer;
-		if(player == null)
-		{
-			offlinePlayer 	= e.Plugin.getServer().getOfflinePlayer(playerName);
-			playerUUID 		= offlinePlayer.hasPlayedBefore() ? offlinePlayer.getUniqueId().toString() : "";
-			
-			// TODO: perhaps async lookup the actual UUID via Mojang's server?
-		}
-		else
-		{
-			playerUUID 	= player.getUniqueId().toString();
-			playerIP 	= player.getAddress().getHostString();
-		}
+		String username = e.Args[0];
+		PlayerUUID player = BanHelper.GetUUID(e.Plugin, username);
 		
 		// if given, stitch together the 'ban reason' which spans multiple args
 		String banReason = "Griefing";
@@ -57,6 +41,7 @@ public final class CommandBan implements ICommand
 		}
 		
 		String staffName = e.Sender.getName();
+		@SuppressWarnings("deprecation")
 		String staffUUID = e.IsPlayer ? e.Plugin.getServer().getPlayer(staffName).getUniqueId().toString() : "";
 		
 		
@@ -66,7 +51,7 @@ public final class CommandBan implements ICommand
 		boolean isBanned = false;
 		try
 		{
-			isBanned = BanHelper.IsPlayerBanned(adapter, playerName, playerUUID);
+			isBanned = BanHelper.IsPlayerBanned(adapter, username, player.GetUUID());
 		}
 		catch(SQLException err)
 		{
@@ -77,7 +62,7 @@ public final class CommandBan implements ICommand
 		
 		if(isBanned)
 		{
-			e.Sender.sendMessage(ChatColor.GRAY + playerName + " is already banned.");
+			e.Sender.sendMessage(ChatColor.GRAY + username + " is already banned.");
 			return true;
 		}
 		
@@ -88,13 +73,13 @@ public final class CommandBan implements ICommand
 		try 
 		{
 			adapter.Execute("INSERT INTO pcban_active_bans(banned_name, banned_uuid, date_ban, staff_uuid, staff_name, reason, ip) VALUES (?, ?, ?, ?, ?, ?, ?)",
-					playerName, 
-					playerUUID, 
+					username, 
+					player.GetUUID(), 
 					now,
 					staffUUID,
 					staffName,
 					banReason, 
-					playerIP
+					player.IP
 			);
 		} 
 		catch (SQLException err) 
@@ -105,7 +90,7 @@ public final class CommandBan implements ICommand
 		
 		// TODO: kick player if they're currently online !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		
-		e.Sender.sendMessage(ChatColor.GRAY + playerName + " has been banned.");
+		e.Sender.sendMessage(ChatColor.GRAY + username + " has been banned.");
 		
 		return true;
 	}

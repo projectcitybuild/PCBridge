@@ -1,14 +1,18 @@
 package com.pcb.pcbridge.ban.commands;
 
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.List;
 
 import org.bukkit.ChatColor;
 
+import com.pcb.pcbridge.ban.BanHelper;
+import com.pcb.pcbridge.ban.PlayerUUID;
 import com.pcb.pcbridge.library.controllers.commands.CommandPacket;
 import com.pcb.pcbridge.library.controllers.commands.ICommand;
 import com.pcb.pcbridge.library.database.AbstractAdapter;
+
+/**
+ * Command: Unbans the specified player
+ */
 
 public final class CommandUnban implements ICommand 
 {	
@@ -17,26 +21,24 @@ public final class CommandUnban implements ICommand
 		if(e.Args.length == 0 || e.Args.length > 1)
 			return false;
 		
-		// grab UUID if player has played before/is online
-		
+		String username = e.Args[0];
+		PlayerUUID player = BanHelper.GetUUID(e.Plugin, username);
 		
 		// retrieve ban from storage
 		AbstractAdapter adapter = e.Plugin.GetAdapter();
-		List<HashMap<String, Object>> results;
+		boolean isBanned;
 		try 
 		{
-			results = adapter.Query("SELECT * FROM pcban_active_bans WHERE is_active=1 and banned_name=?",
-					e.Args[0]
-			);
+			isBanned = BanHelper.IsPlayerBanned(adapter, username, player.GetUUID());
 		} 
 		catch (SQLException err) 
 		{
-			e.Sender.sendMessage(ChatColor.RED + "ERROR: Could not retrieve ban data.");
-			e.Plugin.getLogger().severe("Could not retrieve ban data: " + err.getMessage());
+			e.Sender.sendMessage(ChatColor.RED + "ERROR: Could not lookup player in ban records.");
+			e.Plugin.getLogger().severe("Could not lookup player in ban records: " + err.getMessage());
 			return true;
 		}
 				
-		if(results == null || results.size() == 0)
+		if(!isBanned)
 		{
 			e.Sender.sendMessage(ChatColor.AQUA + e.Args[0] + ChatColor.WHITE + " is not currently banned.");
 			return true;
@@ -50,9 +52,12 @@ public final class CommandUnban implements ICommand
 		} 
 		catch (SQLException err) 
 		{
-			err.printStackTrace();
+			e.Sender.sendMessage(ChatColor.RED + "ERROR: Could not unban player.");
+			e.Plugin.getLogger().severe("Could not unban player: " + err.getMessage());
+			return true;
 		}
 		
-		return false;
+		e.Sender.sendMessage(ChatColor.AQUA + e.Args[0] + ChatColor.WHITE + " has been unbanned.");
+		return true;
 	}	
 }

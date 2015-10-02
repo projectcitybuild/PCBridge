@@ -4,6 +4,10 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * Abstract interface for different storage implementations
+ */
+
 public abstract class AbstractAdapter
 {	
 	/**

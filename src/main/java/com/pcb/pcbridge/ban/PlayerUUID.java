@@ -10,7 +10,15 @@ public final class PlayerUUID
 	public boolean IsOnline;
 	public boolean HasJoinedBefore;
 	
-	public PlayerUUID(String username, String IP, UUID uuid, boolean isOnline, boolean hasJoinedBefore)
+	public String GetUUID()
+	{
+		if(UUID == null)
+			return "";
+		
+		return UUID.toString();
+	}
+	
+	public PlayerUUID(String username, String ip, UUID uuid, boolean isOnline, boolean hasJoinedBefore)
 	{
 		this.Username 			= username;
 		this.IP					= ip;

@@ -7,9 +7,14 @@ import java.util.List;
 
 import org.bukkit.ChatColor;
 
+import com.pcb.pcbridge.ban.BanHelper;
 import com.pcb.pcbridge.library.controllers.commands.CommandPacket;
 import com.pcb.pcbridge.library.controllers.commands.ICommand;
 import com.pcb.pcbridge.library.database.AbstractAdapter;
+
+/**
+ * Command: Retrieves data about the specified player (eg. whether currently banned, ban reason, etc)
+ */
 
 public final class CommandCheckBan implements ICommand 
 {	
@@ -19,24 +24,23 @@ public final class CommandCheckBan implements ICommand
 			return false;
 		
 		// retrieve ban from storage
+		String username = e.Args[0];
 		AbstractAdapter adapter = e.Plugin.GetAdapter();
 		List<HashMap<String, Object>> results;
 		try 
 		{
-			results = adapter.Query("SELECT * FROM pcban_active_bans WHERE is_active=1 and banned_name=?",
-					e.Args[0]
-			);
+			results = BanHelper.LookupPlayer(adapter, username, null);
 		} 
 		catch (SQLException err) 
 		{
-			e.Sender.sendMessage(ChatColor.RED + "ERROR: Could not retrieve ban data.");
-			e.Plugin.getLogger().severe("Could not retrieve ban data: " + err.getMessage());
+			e.Sender.sendMessage(ChatColor.RED + "ERROR: Could not lookup player in ban records.");
+			e.Plugin.getLogger().severe("Could not lookup player in ban records: " + err.getMessage());
 			return true;
 		}
 		
 		if(results == null || results.size() == 0)
 		{
-			e.Sender.sendMessage(ChatColor.AQUA + e.Args[0] + ChatColor.WHITE + " is not currently banned.");
+			e.Sender.sendMessage(ChatColor.AQUA + username + ChatColor.WHITE + " is not currently banned.");
 			return true;
 		}
 		
@@ -64,7 +68,7 @@ public final class CommandCheckBan implements ICommand
 			banExpiry = expiryDate.toString();
 		}
 		
-		String msg = ChatColor.DARK_RED + e.Args[0] + " is currently banned.\n\n" +
+		String msg = ChatColor.DARK_RED + username + " is currently banned.\n\n" +
 				"---\n" +
 				"Reason: " + banReason + "\n" +
 				"---\n" +
