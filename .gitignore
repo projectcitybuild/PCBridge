@@ -1,0 +1,23 @@
+target/
+/bin/
+/build/
+.classpath
+.settings/
+.loadpath
+.project
+.metadata
+.launch
+.buildpath
+
+# OS Files #
+.DS_Store
+
+# Package Files #
+*.jar
+*.war
+*.ear
+*.db
+
+# Windows
+Thumbs.db
+Desktop.ini

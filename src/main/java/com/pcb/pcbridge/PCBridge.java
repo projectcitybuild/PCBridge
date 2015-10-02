@@ -1,0 +1,56 @@
+package com.pcb.pcbridge;
+
+import org.bukkit.plugin.java.JavaPlugin;
+
+import com.pcb.pcbridge.library.controllers.ControllerManager;
+import com.pcb.pcbridge.library.database.AbstractAdapter;
+import com.pcb.pcbridge.library.database.Adapter;
+import com.pcb.pcbridge.library.database.ConnectionManager;
+
+/*
+ * 
+ * A plugin to bridge www.projectcitybuild.com and its server
+ * 
+ * @author		Andy Saw <andy-saw@hotmail.com>
+ * @created		19th of September 2015
+ * 
+ */
+
+public final class PCBridge extends JavaPlugin 
+{
+	@SuppressWarnings("unused")
+	private ControllerManager _controllerManager;
+	private ConnectionManager _connectionManager;
+	
+	public AbstractAdapter GetAdapter()
+	{
+		return _connectionManager.GetAdapter();
+	}
+	
+	@Override
+	public void onEnable()
+	{
+		LoadConfig();
+		
+		_controllerManager = new ControllerManager(this);
+		_connectionManager = new ConnectionManager(this, Adapter.MYSQL);
+	}
+	
+	@Override
+	public void onDisable()
+	{
+		_controllerManager = null;
+		_connectionManager = null;
+	}
+	
+	private void LoadConfig()
+	{
+		getConfig().addDefault("database.address", "localhost");
+		getConfig().addDefault("database.port", 3306);
+		getConfig().addDefault("database.username", "root");
+		getConfig().addDefault("database.password", "");
+		getConfig().options().copyDefaults(true);
+		saveConfig();
+	}
+	
+}
