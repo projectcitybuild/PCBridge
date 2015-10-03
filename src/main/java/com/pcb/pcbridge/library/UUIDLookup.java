@@ -15,10 +15,51 @@ import org.json.simple.parser.ParseException;
 
 public final class UUIDLookup 
 {
-	//private final double RATE_LIMIT = 60;
 	private final String API_URL = "https://api.mojang.com/profiles/minecraft";
+	private final int RATE = 60; 	// requests available
+	private final int PER = 60; 	// per X seconds
 	
 	private JSONParser _jsonParser = new JSONParser();
+	private double allowance = RATE;
+	private long lastCheck;
+	
+	/**
+	 * Throttles lookups at the specified rate
+	 * 
+	 * @param username
+	 * @return
+	 * @throws IOException
+	 * @throws ParseException 
+	 */
+	public UUID Query(String username) throws IOException, ParseException
+	{
+		long now = System.currentTimeMillis();
+		long timePassed = now - lastCheck;
+		lastCheck = now;
+		
+		// refill available requests (capped at RATE limit)
+		allowance += timePassed * (RATE / PER);
+		if(allowance > RATE)
+		{
+			allowance = RATE;
+		}
+		// sleep thread if no requests available
+		if(allowance < 1.0)
+		{
+			try 
+			{
+				Thread.sleep(1);
+			} 
+			catch (InterruptedException e) 
+			{
+				e.printStackTrace();
+			}
+		}
+		
+		allowance -= 1.0;
+		
+		return GetUUID(username);
+	}
 	
 	/**
 	 * Retrieve the specified username's UUID from Mojang
@@ -28,7 +69,7 @@ public final class UUIDLookup
 	 * @throws IOException
 	 * @throws ParseException 
 	 */
-	public UUID Query(String username) throws IOException, ParseException
+	private UUID GetUUID(String username) throws IOException, ParseException
 	{
 		HttpURLConnection connection = NewConnection();
 		
