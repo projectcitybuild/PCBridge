@@ -20,11 +20,16 @@ commands:
     permission-message: You don't have <permission>
   tempban:
     description: Temporarily bans the specified player from the server.
-    usage: /<command> [player] [time]
+    usage: /<command> [player] [time][m|h|d|w|mo|y] [reason]
     permission: <plugin name>.basic
     permission-message: You don't have <permission>
   banstats:
     description: Prints out server and player specific ban stats.
     usage: /<command>
+    permission: <plugin name>.basic
+    permission-message: You don't have <permission>
+  lookup:
+    description: Retrieves the specified player's UUID from Mojang
+    usage: /<command> [player]
     permission: <plugin name>.basic
     permission-message: You don't have <permission>

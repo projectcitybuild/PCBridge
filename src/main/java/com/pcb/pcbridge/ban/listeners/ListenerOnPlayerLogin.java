@@ -1,6 +1,7 @@
 package com.pcb.pcbridge.ban.listeners;
 
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -40,15 +41,22 @@ public final class ListenerOnPlayerLogin extends AbstractListener implements Lis
 		if(results == null || results.size() == 0)
 			return;
 		
+		String expiry = "Never";
+		Object expiryTS = results.get(0).get("date_expire");
+		boolean isTempBan = expiryTS != null;
+		if(isTempBan)
+		{
+			int timestamp = (int)results.get(0).get("date_expire");
+			expiry = new Date(timestamp * 1000L).toString();
+		}
+		
 		HashMap<String, Object> ban = results.get(0);
 		String message = "Åòc" + "You are currently banned.\n\n" +
 			
 						 "Åò8" + "Reason: Åòf" + ban.get("reason") + "\n" +
-						 "Åò8" + "Expires: Åòf" + "Never" + "\n\n" + 
+						 "Åò8" + "Expires: Åòf" + expiry + "\n\n" + 
 								 
 						 "Åòb" + "Appeal @ www.projectcitybuild.com";
-			
-		// TODO: display expiry time if temp ban
 		
 		e.disallow(PlayerLoginEvent.Result.KICK_BANNED, message);	
 	}

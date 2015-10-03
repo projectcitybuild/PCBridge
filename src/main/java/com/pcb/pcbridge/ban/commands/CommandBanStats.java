@@ -8,7 +8,7 @@ import com.pcb.pcbridge.library.controllers.commands.ICommand;
 
 public final class CommandBanStats implements ICommand 
 {	
-	public boolean Execute(CommandPacket e) 
+	public boolean Execute(CommandPacket e, Object... args) 
 	{
 		if(e.Args.length > 0)
 			return false;

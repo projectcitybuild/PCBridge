@@ -18,7 +18,7 @@ import com.pcb.pcbridge.library.database.AbstractAdapter;
 
 public final class CommandCheckBan implements ICommand 
 {	
-	public boolean Execute(CommandPacket e) 
+	public boolean Execute(CommandPacket e, Object... args) 
 	{
 		if(e.Args.length == 0 || e.Args.length > 1)
 			return false;

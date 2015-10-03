@@ -30,6 +30,11 @@ public final class PCBridge extends JavaPlugin
 		return _connectionManager.GetAdapter();
 	}
 	
+	public ControllerManager GetControllerManager()
+	{
+		return _controllerManager;
+	}
+	
 	@Override
 	public void onEnable()
 	{

@@ -1,14 +1,18 @@
 package com.pcb.pcbridge.ban;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
+import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import org.json.simple.parser.ParseException;
 
 import com.pcb.pcbridge.PCBridge;
+import com.pcb.pcbridge.library.UUIDLookup;
 import com.pcb.pcbridge.library.database.AbstractAdapter;
 
 /**
@@ -111,8 +115,16 @@ public final class BanHelper
 		{
 			uuid = null;
 			
-			// TODO: retrieve the player's UUID from Mojang since they've never joined the server before
-			// (UUID cannot be accurately determined if they've never joined the server)
+			// retrieve the player's UUID from Mojang because they've never joined the server before
+			UUIDLookup fetcher = new UUIDLookup();
+			try 
+			{
+				uuid = fetcher.Query(username);				
+			} 
+			catch (IOException | ParseException err) 
+			{
+				plugin.getLogger().severe("Could not retrieve UUID [" + username + "] from Mojang web service: " + err.getMessage());
+			}
 		}
 		
 		return new PlayerUUID(username, ip, uuid, false, hasPlayedBefore, null);

@@ -82,7 +82,7 @@ public class AdapterMySQL extends AbstractAdapter
 			else if (arg instanceof Float) 
 			{
 				statement.setFloat(i++, (Float)arg);
-		    } 
+		    }
 			else 
 			{
 				statement.setString(i++, (String)arg);
