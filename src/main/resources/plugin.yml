@@ -4,17 +4,27 @@ version: 0.0.1
 
 commands:
   ban:
-    description: This is a demo command.
+    description: Permanently bans the specified player from the server.
     usage: /<command> [player] [reason]
     permission: <plugin name>.basic
     permission-message: You don't have <permission>
   unban:
-    description: This is a demo command.
+    description: Unbans the specified player.
     usage: /<command> [player]
     permission: <plugin name>.basic
     permission-message: You don't have <permission>
   checkban:
-    description: This is a demo command.
+    description: Checks if the specified player is currently banned.
     usage: /<command> [player]
+    permission: <plugin name>.basic
+    permission-message: You don't have <permission>
+  tempban:
+    description: Temporarily bans the specified player from the server.
+    usage: /<command> [player] [time]
+    permission: <plugin name>.basic
+    permission-message: You don't have <permission>
+  banstats:
+    description: Prints out server and player specific ban stats.
+    usage: /<command>
     permission: <plugin name>.basic
     permission-message: You don't have <permission>
