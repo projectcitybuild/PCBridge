@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -41,6 +42,7 @@ public final class ListenerOnPlayerLogin extends AbstractListener implements Lis
 		if(results == null || results.size() == 0)
 			return;
 		
+		// has the ban expired?
 		String expiry = "Never";
 		Object expiryTS = results.get(0).get("date_expire");
 		boolean isTempBan = expiryTS != null;
@@ -48,6 +50,25 @@ public final class ListenerOnPlayerLogin extends AbstractListener implements Lis
 		{
 			int timestamp = (int)results.get(0).get("date_expire");
 			expiry = new Date(timestamp * 1000L).toString();
+			
+			long now = (long) (new Date().getTime() / 1000L);
+			if(now >= timestamp)
+			{
+				// ban has expired
+				try 
+				{
+					adapter.Execute("UPDATE pcban_active_bans SET is_active=0 WHERE banned_name=? or banned_uuid=?",
+						username,
+						uuid
+					);
+				} 
+				catch (SQLException err) 
+				{
+					_plugin.getLogger().severe("Could not remove expired ban on entry (but still let player in): " + err.getMessage());
+				}
+				
+				return;
+			}
 		}
 		
 		HashMap<String, Object> ban = results.get(0);
