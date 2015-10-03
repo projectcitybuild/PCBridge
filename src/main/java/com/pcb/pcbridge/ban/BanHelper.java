@@ -95,7 +95,7 @@ public final class BanHelper
 			uuid 	= player.getUniqueId();
 			ip 		= player.getAddress().getHostString();
 			
-			return new PlayerUUID(username, ip, uuid, true, true);
+			return new PlayerUUID(username, ip, uuid, true, true, player);
 		}
 		
 		// otherwise check if player has played before
@@ -115,7 +115,7 @@ public final class BanHelper
 			// (UUID cannot be accurately determined if they've never joined the server)
 		}
 		
-		return new PlayerUUID(username, ip, uuid, false, hasPlayedBefore);
+		return new PlayerUUID(username, ip, uuid, false, hasPlayedBefore, null);
 			
 	}
 }

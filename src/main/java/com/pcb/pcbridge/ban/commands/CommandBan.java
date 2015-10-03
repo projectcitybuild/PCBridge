@@ -88,7 +88,20 @@ public final class CommandBan implements ICommand
 			e.Plugin.getLogger().severe("Could not add user to ban list: " + err.getMessage());
 		}
 		
-		// TODO: kick player if they're currently online !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		// kick the player if they're online
+		if(player.IsOnline && player.Player != null)
+		{
+			String message = "˜c" + "You have been banned.\n\n" +
+					
+						 "˜8" + "Reason: ˜f" + banReason + "\n" +
+						 "˜8" + "Expires: ˜f" + "Never" + "\n\n" + 
+								 
+						 "˜b" + "Appeal @ www.projectcitybuild.com";
+			
+			// TODO: add expiry time if temp ban
+			
+			player.Player.kickPlayer(message);
+		}
 		
 		e.Sender.sendMessage(ChatColor.GRAY + username + " has been banned.");
 		
