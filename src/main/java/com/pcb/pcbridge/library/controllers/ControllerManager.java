@@ -15,7 +15,6 @@ import com.pcb.pcbridge.library.controllers.commands.ICommand;
 import com.pcb.pcbridge.library.controllers.commands.ICommandController;
 import com.pcb.pcbridge.library.controllers.listeners.AbstractListener;
 import com.pcb.pcbridge.library.controllers.listeners.IListenerController;
-import com.pcb.pcbridge.utility.UtilityController;
 
 /**
  * Instantiates controllers and registers each of their commands & listeners with Bukkit
@@ -32,8 +31,7 @@ public final class ControllerManager implements CommandExecutor
 		
 		CreateControllers(new AbstractController[] 
 		{
-			new BanController(),
-			new UtilityController()
+			new BanController()
 		});		
 	}
 	
@@ -97,9 +95,28 @@ public final class ControllerManager implements CommandExecutor
 		if(handler != null)
 		{
 			CommandPacket packet = new CommandPacket(_plugin, sender, label, args);
-			return handler.Execute(packet);
+			return handler.Execute(packet, null);
 		}
 		
+		return false;
+	}
+	
+	
+	/**
+	 * Manually invokes a command route via code
+	 * 
+	 * @param e			Command data
+	 * @param routeName	The route to invoke
+	 * @param args		Any extra args to supply to the route
+	 * @return
+	 */
+	public boolean InvokeRoute(CommandPacket e, String routeName, Object... args)
+	{
+		ICommand handler = Commands.get( routeName );
+		
+		if(handler != null)
+			return handler.Execute(e, args);
+				
 		return false;
 	}
 	

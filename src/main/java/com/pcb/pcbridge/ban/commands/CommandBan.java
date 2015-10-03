@@ -1,7 +1,10 @@
 package com.pcb.pcbridge.ban.commands;
 
 import java.sql.SQLException;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.bukkit.ChatColor;
 
@@ -17,22 +20,102 @@ import com.pcb.pcbridge.library.database.AbstractAdapter;
 
 public final class CommandBan implements ICommand 
 {	
-	public boolean Execute(CommandPacket e) 
+	/**
+	 * Determines if it's a permanent or temporary ban
+	 */
+	public boolean Execute(CommandPacket e, Object... args) 
 	{
 		if(e.Args.length == 0)
 			return false;
+		
+		// if invoked via text input, it's a permanent ban
+		if(args == null)
+			return BanPlayer(e, false);
+		
+		// if invoked via code, it's a temporary ban
+		return BanPlayer(e, (boolean) args[0]);
+	}
+	
+	/**
+	 * The actual ban logic lives here
+	 * 
+	 * @param e
+	 * @param isTempBan
+	 * @return
+	 */
+	private boolean BanPlayer(CommandPacket e, boolean isTempBan)
+	{
+		// get the current time as a unix timestamp
+		Date currentDate = new Date();
+		long now = currentDate.getTime() / 1000L;
+		
+		long expireDate = 0;
+		if(isTempBan)
+		{
+			if(e.Args.length < 2)
+				return false;
+			
+			String duration = e.Args[1];
+			
+			// ensure a numeric AND a time indicator is given
+			String pattern = "^[0-9]+[a-z]+$";
+			Pattern r = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE);
+			Matcher m = r.matcher(duration);
+			if(!m.find())
+			{
+				e.Sender.sendMessage(ChatColor.RED + "ERROR: Invalid ban duration given. Numeric AND a time indicator required (eg. 10h)");
+				return false;
+			}
+			
+			// determine ban length numeric
+			int i = 0;
+			while(Character.isDigit(duration.charAt(i))) i++;
+			int length = Integer.parseInt( duration.substring(0, i) );
+						
+			// determine what time indicator was used
+			String indicator = duration.substring(i, duration.length()).toLowerCase();
+			Calendar c = Calendar.getInstance();
+			switch(indicator)
+			{
+			case "m":
+				c.add(Calendar.MINUTE, length);
+				break;
+			case "h":
+				c.add(Calendar.HOUR, length);
+				break;
+			case "d":
+				c.add(Calendar.HOUR, length * 24);
+				break;
+			case "w":
+				c.add(Calendar.HOUR, length * 168);
+				break;
+			case "mo":
+				c.add(Calendar.MONTH, length);				
+				break;
+			case "y":
+				c.add(Calendar.YEAR, length);
+				break;
+			default:
+				e.Sender.sendMessage(ChatColor.RED + "ERROR: Invalid time indicator.");
+				return false;	
+			}
+			
+			expireDate = c.getTime().getTime() / 1000L;
+		}
+		
 		
 		String username = e.Args[0];
 		PlayerUUID player = BanHelper.GetUUID(e.Plugin, username);
 		
 		// if given, stitch together the 'ban reason' which spans multiple args
 		String banReason = "Griefing";
-		if(e.Args.length > 1)
+		int startIndex = isTempBan ? 2 : 1;
+		if(e.Args.length > startIndex)
 		{
 			StringBuilder builder = new StringBuilder();
-			for(int x=1; x<e.Args.length; x++)
+			for(int x=startIndex; x<e.Args.length; x++)
 			{
-				if(x > 1)
+				if(x > startIndex)
 					builder.append(" ");
 				
 				builder.append(e.Args[x]);
@@ -67,15 +150,13 @@ public final class CommandBan implements ICommand
 		}
 		
 		// create the ban in storage
-		Date currentDate = new Date();
-		long now = currentDate.getTime() / 1000;		
-		
 		try 
 		{
-			adapter.Execute("INSERT INTO pcban_active_bans(banned_name, banned_uuid, date_ban, staff_uuid, staff_name, reason, ip) VALUES (?, ?, ?, ?, ?, ?, ?)",
+			adapter.Execute("INSERT INTO pcban_active_bans(banned_name, banned_uuid, date_ban, date_expire, staff_uuid, staff_name, reason, ip) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
 					username, 
 					player.GetUUID(), 
 					now,
+					isTempBan ? expireDate : null,
 					staffUUID,
 					staffName,
 					banReason, 
@@ -91,14 +172,13 @@ public final class CommandBan implements ICommand
 		// kick the player if they're online
 		if(player.IsOnline && player.Player != null)
 		{
+			String expiry = isTempBan ? new Date(expireDate * 1000L).toString() : "Never";
 			String message = "Åòc" + "You have been banned.\n\n" +
 					
 						 "Åò8" + "Reason: Åòf" + banReason + "\n" +
-						 "Åò8" + "Expires: Åòf" + "Never" + "\n\n" + 
+						 "Åò8" + "Expires: Åòf" + expiry + "\n\n" + 
 								 
 						 "Åòb" + "Appeal @ www.projectcitybuild.com";
-			
-			// TODO: add expiry time if temp ban
 			
 			player.Player.kickPlayer(message);
 		}
@@ -107,5 +187,4 @@ public final class CommandBan implements ICommand
 		
 		return true;
 	}
-	
 }

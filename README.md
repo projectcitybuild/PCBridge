@@ -1,5 +1,5 @@
 # PCBridge
-A Bukkit plugin to bridge (www.projectcitybuild.com) and its game servers
+A Bukkit (and Spigot) plugin to bridge [Project City Build](www.projectcitybuild.com) and its game servers
 
 ### Current features:
 * Ban system
@@ -23,10 +23,11 @@ CREATE TABLE IF NOT EXISTS `pcban_active_bans` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=20 ;
 ```
 
-Don't forget to also run the plugin once to generate the config file (plugin.yml). Add in your MySQL connection details as necessary.
+Don't forget to also run the plugin once to generate the config file (plugin.yml). Add in your MySQL connection details there as necessary.
+
+PCBridge also supports remote MySQL database connections (+pooling) but you'll need to contact Andy to get access to PCB's web server if you wish to connect this way.
 
 ### Todo List:
 * Refactor MySQL Adapter to run asynchronous
 * Temp banning
 * Ban stats
-* UUID lookup via Mojang web service (asynchronous)
