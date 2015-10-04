@@ -31,4 +31,15 @@ public abstract class AbstractAdapter
 	 */
 	public abstract List<HashMap<String, Object>> Query(String sql, Object... args) throws SQLException;
 	public abstract List<HashMap<String, Object>> Query(String sql) throws SQLException;
+	
+	/**
+	 * Queries the current connection for a row count
+	 * 
+	 * @param sql	SQL query
+	 * @param args	Query parameters to be injected
+	 * @return
+	 * @throws SQLException
+	 */
+	public abstract int Count(String sql, Object... args) throws SQLException;
+	public abstract int Count(String sql) throws SQLException;
 }

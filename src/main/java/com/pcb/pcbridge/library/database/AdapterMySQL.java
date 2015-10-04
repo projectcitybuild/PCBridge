@@ -147,6 +147,45 @@ public class AdapterMySQL extends AbstractAdapter
 		return Query(sql, (Object)null);
 	}
 	
+	/**
+	 * Queries the current connection for a row count
+	 * 
+	 * @param sql	SQL query
+	 * @param args	Query parameters to be injected
+	 * @return
+	 * @throws SQLException
+	 */
+	@Override
+	public int Count(String sql, Object... args) throws SQLException 
+	{	
+		int rowCount = 0;
+		try (
+				Connection connection = getConnection();
+				PreparedStatement statement = connection.prepareStatement(sql);
+		) {
+			MapParams(statement, args);
+			
+			try(ResultSet resultSet = statement.executeQuery())
+			{
+				if(resultSet.next())
+				{
+					rowCount = resultSet.getInt(1);
+				}
+				else
+				{
+					rowCount = -1;
+				}
+			}
+		}
+		return rowCount;
+	}
+
+	@Override
+	public int Count(String sql) throws SQLException 
+	{
+		return Count(sql, (Object)null);
+	}
+	
 	
 	/**
 	 * Converts a ResultSet into a List<HashMap<String, Object>>
