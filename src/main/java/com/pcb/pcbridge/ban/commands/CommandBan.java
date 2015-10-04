@@ -97,7 +97,7 @@ public final class CommandBan implements ICommand
 				break;
 			default:
 				e.Sender.sendMessage(ChatColor.RED + "ERROR: Invalid time indicator.");
-				return false;	
+				return false;
 			}
 			
 			expireDate = c.getTime().getTime() / 1000L;

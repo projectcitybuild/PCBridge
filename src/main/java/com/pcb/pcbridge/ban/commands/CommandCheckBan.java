@@ -50,6 +50,7 @@ public final class CommandCheckBan implements ICommand
 		Object banExpiryTS 	= ban.get("date_expire");
 		String banStaff		= (String) ban.get("staff_name");
 		String banReason 	= (String) ban.get("reason");
+		String banUUID		= (String) ban.get("banned_uuid");
 		
 		Date banDate = new Date((long)banDateTS * 1000);
 		
@@ -60,12 +61,41 @@ public final class CommandCheckBan implements ICommand
 		}
 		else
 		{
-			Date currentDate = new Date();
-			long now = currentDate.getTime() / 1000;		
-			long diff = now - (long)banExpiryTS;
+			long now = new Date().getTime() / 1000L;		
+			int diff = (int) (now - (int)banExpiryTS);
 			
-			Date expiryDate = new Date(diff * 1000);
+			Date expiryDate = new Date(diff * 1000L);
 			banExpiry = expiryDate.toString();
+			
+			if(now >= (int)banExpiryTS)
+			{
+				// ban has expired
+				try
+				{
+					if(banUUID == null)
+					{
+						adapter.Execute("UPDATE pcban_active_bans SET is_active=0 WHERE banned_name=?",
+							username
+						);
+					}
+					else
+					{
+						adapter.Execute("UPDATE pcban_active_bans SET is_active=0 WHERE banned_name=? or banned_uuid=?",
+							username,
+							banUUID
+						);
+					}
+				}
+				catch(SQLException err)
+				{
+					e.Sender.sendMessage(ChatColor.RED + "ERROR: Ban has expired but an error prevented its removal.");
+					e.Plugin.getLogger().severe("Could not remove expired ban on lookup: " + err.getMessage());
+					return true;
+				}
+				
+				e.Sender.sendMessage(ChatColor.AQUA + username + ChatColor.WHITE + " is not currently banned.");
+				return true;
+			}
 		}
 		
 		String msg = ChatColor.DARK_RED + username + " is currently banned.\n\n" +
