@@ -1,5 +1,9 @@
 package com.pcb.pcbridge.library.database;
 
+import java.sql.SQLException;
+
+import org.bukkit.ChatColor;
+
 import com.pcb.pcbridge.PCBridge;
 
 /**
@@ -26,6 +30,18 @@ public final class ConnectionManager
 				break;
 		}
 		
+		// test connection on boot
+		if(plugin.getConfig().getBoolean("database.boot_test_connection"))
+		{
+			try
+			{
+				_adapter.Query("SELECT * FROM pcban_active_bans LIMIT 0,?", 1);
+			}
+			catch(SQLException err)
+			{
+				plugin.getLogger().severe("Could not connect to database: " + err.getMessage());
+			}
+		}
 	}
 
 	public AbstractAdapter GetAdapter()

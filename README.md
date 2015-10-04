@@ -25,9 +25,18 @@ CREATE TABLE IF NOT EXISTS `pcban_active_bans` (
 
 Don't forget to also run the plugin once to generate the config file (plugin.yml). Add in your MySQL connection details there as necessary.
 
-PCBridge also supports remote MySQL database connections (+pooling) but you'll need to contact Andy to get access to PCB's web server if you wish to connect this way.
+Alternatively, PCBridge also supports remote MySQL database connections but you'll need to contact Andy to get access to PCB's web server.
+
+
+PCBridge depends on Apache's DBCP2 library. Once the dependencies are downloaded (eg. via Maven), ensure they are in the <b>libs/</b> folder inside your <b>plugins/</b> folder.
+
+######Required inside lib/
+*commons-dbcp2-2.0.1.jar
+*commons-pool2-2.2.jar
+*commons-logging-1.1.3.jar
+
+If you're using different versions to the ones listed above, ensure you update the project's CLASSPATH.
 
 ### Todo List:
-* Refactor MySQL Adapter to run asynchronous
-* Temp banning
-* Ban stats
+
+*Refactor MySQL Adapter to run asynchronous
