@@ -23,20 +23,17 @@ CREATE TABLE IF NOT EXISTS `pcban_active_bans` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=20 ;
 ```
 
-Don't forget to also run the plugin once to generate the config file (plugin.yml). Add in your MySQL connection details there as necessary.
+Run the plugin once to generate the config file (plugin.yml). Add in your MySQL connection details there as necessary.
 
-Alternatively, PCBridge also supports remote MySQL database connections but you'll need to contact Andy to get access to PCB's web server.
+PCBridge depends on Apache's [DBCP2 library](https://commons.apache.org/proper/commons-dbcp/). Once the dependencies are downloaded (eg. via Maven), ensure they are in the <b>lib/</b> folder inside your <b>plugins/</b> folder.
 
-
-PCBridge depends on Apache's DBCP2 library. Once the dependencies are downloaded (eg. via Maven), ensure they are in the <b>libs/</b> folder inside your <b>plugins/</b> folder.
-
-######Required inside lib/
-*commons-dbcp2-2.0.1.jar
-*commons-pool2-2.2.jar
-*commons-logging-1.1.3.jar
+######Required inside 'lib' folder
+* commons-dbcp2-2.0.1.jar
+* commons-pool2-2.2.jar
+* commons-logging-1.1.3.jar
 
 If you're using different versions to the ones listed above, ensure you update the project's CLASSPATH.
 
 ### Todo List:
 
-*Refactor MySQL Adapter to run asynchronous
+* Refactor MySQL Adapter to run asynchronous
