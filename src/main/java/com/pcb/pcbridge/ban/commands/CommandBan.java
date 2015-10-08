@@ -10,6 +10,8 @@ import org.bukkit.ChatColor;
 
 import com.pcb.pcbridge.ban.BanHelper;
 import com.pcb.pcbridge.ban.PlayerUUID;
+import com.pcb.pcbridge.library.AsyncAdapterParams;
+import com.pcb.pcbridge.library.AsyncCallback;
 import com.pcb.pcbridge.library.controllers.commands.CommandPacket;
 import com.pcb.pcbridge.library.controllers.commands.ICommand;
 import com.pcb.pcbridge.library.database.AbstractAdapter;
@@ -43,7 +45,7 @@ public final class CommandBan implements ICommand
 	 * @param isTempBan
 	 * @return
 	 */
-	private boolean BanPlayer(CommandPacket e, boolean isTempBan)
+	private boolean BanPlayer(final CommandPacket e, boolean isTempBan)
 	{
 		// get the current time as a unix timestamp
 		Date currentDate = new Date();
@@ -104,7 +106,7 @@ public final class CommandBan implements ICommand
 		}
 		
 		
-		String username = e.Args[0];
+		final String username = e.Args[0];
 		PlayerUUID player = BanHelper.GetUUID(e.Plugin, username);
 		
 		// if given, stitch together the 'ban reason' which spans multiple args
@@ -124,7 +126,7 @@ public final class CommandBan implements ICommand
 		}
 		
 		String staffName = e.Sender.getName();
-		@SuppressWarnings("deprecation")
+		@SuppressWarnings("deprecation")	// deprecated, but no alternative to get players by name exists...
 		String staffUUID = e.IsPlayer ? e.Plugin.getServer().getPlayer(staffName).getUniqueId().toString() : "";
 		
 		
@@ -150,24 +152,34 @@ public final class CommandBan implements ICommand
 		}
 		
 		// create the ban in storage
-		try 
-		{
-			adapter.Execute("INSERT INTO pcban_active_bans(banned_name, banned_uuid, date_ban, date_expire, staff_uuid, staff_name, reason, ip) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-					username, 
-					player.GetUUID(), 
-					now,
-					isTempBan ? expireDate : null,
-					staffUUID,
-					staffName,
-					banReason, 
-					player.IP
-			);
-		} 
-		catch (SQLException err) 
-		{
-			e.Sender.sendMessage(ChatColor.RED + "ERROR: Could not ban user. Please notify an administrator if this persists");
-			e.Plugin.getLogger().severe("Could not add user to ban list: " + err.getMessage());
-		}
+		adapter.ExecuteAsync(new AsyncAdapterParams(
+				"INSERT INTO pcban_active_bans(banned_name, banned_uuid, date_ban, date_expire, staff_uuid, staff_name, reason, ip) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+				username, 
+				player.GetUUID(), 
+				now,
+				isTempBan ? expireDate : null,
+				staffUUID,
+				staffName,
+				banReason, 
+				player.IP
+			),
+			
+			new AsyncCallback() 
+			{			
+				@Override
+				public void OnSuccess(Object results) 
+				{
+					e.Sender.sendMessage(ChatColor.GRAY + username + " has been banned.");
+				}
+				
+				@Override
+				public void OnError(Exception err) 
+				{
+					e.Sender.sendMessage(ChatColor.RED + "ERROR: Could not ban user. Please notify an administrator if this persists");
+					e.Plugin.getLogger().severe("Could not add user to ban list: " + err.getMessage());
+				}
+			}
+		);
 		
 		// kick the player if they're online
 		if(player.IsOnline && player.Player != null)
@@ -182,8 +194,6 @@ public final class CommandBan implements ICommand
 			
 			player.Player.kickPlayer(message);
 		}
-		
-		e.Sender.sendMessage(ChatColor.GRAY + username + " has been banned.");
 		
 		return true;
 	}

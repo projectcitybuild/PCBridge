@@ -2,8 +2,6 @@ package com.pcb.pcbridge.library.database;
 
 import java.sql.SQLException;
 
-import org.bukkit.ChatColor;
-
 import com.pcb.pcbridge.PCBridge;
 
 /**
@@ -13,10 +11,13 @@ import com.pcb.pcbridge.PCBridge;
 
 public final class ConnectionManager 
 {			
-	private AbstractAdapter _adapter;
+	private final AbstractAdapter _adapter;
+	private final PCBridge _plugin;
 	
 	public ConnectionManager(PCBridge plugin, Adapter adapter)
 	{
+		this._plugin = plugin;
+		
 		String address 	= plugin.getConfig().getString("database.address");
 		String port 	= plugin.getConfig().getString("database.port");
 		String username = plugin.getConfig().getString("database.username");
@@ -26,26 +27,36 @@ public final class ConnectionManager
 		{
 			default:
 			case MYSQL:
-				_adapter = new AdapterMySQL(address, port, "pcbridge", username, password);
+				_adapter = new AdapterMySQL(plugin, address, port, "pcbridge", username, password);
 				break;
 		}
 		
 		// test connection on boot
-		if(plugin.getConfig().getBoolean("database.boot_test_connection"))
-		{
-			try
-			{
-				_adapter.Query("SELECT * FROM pcban_active_bans LIMIT 0,?", 1);
-			}
-			catch(SQLException err)
-			{
-				plugin.getLogger().severe("Could not connect to database: " + err.getMessage());
-			}
-		}
+		TestConnection();		
 	}
 
 	public AbstractAdapter GetAdapter()
 	{
 		return _adapter;
+	}
+	
+	/**
+	 * Attempt a basic (synchronous) query to test the database connection.
+	 * Recommended ON if using a remote connection as the connection gets pooled during boot.
+	 */
+	private void TestConnection()
+	{
+		if(_plugin.getConfig().getBoolean("database.boot_test_connection"))
+		{
+			try
+			{
+				_adapter.Query("SELECT * FROM pcban_active_bans LIMIT 0,?", 1);
+				_plugin.getLogger().info("DB connection test succeeded");
+			}
+			catch(SQLException err)
+			{
+				_plugin.getLogger().severe("Could not connect to database: " + err.getMessage());
+			}
+		}
 	}
 }

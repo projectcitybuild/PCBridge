@@ -14,14 +14,10 @@ import com.pcb.pcbridge.library.database.ConnectionManager;
  * @author		Andy Saw <andy-saw@hotmail.com>
  * @created		19th September, 2015
  * 
- * @developers	Andy Saw <andy-saw@hotmail.com>
- * 				Feel free to add yourself here if you've contributed
- * 
  */
 
 public final class PCBridge extends JavaPlugin 
 {
-	@SuppressWarnings("unused")
 	private ControllerManager _controllerManager;
 	private ConnectionManager _connectionManager;
 	

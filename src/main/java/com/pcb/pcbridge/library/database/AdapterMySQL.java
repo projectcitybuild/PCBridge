@@ -12,6 +12,11 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.dbcp2.BasicDataSource;
+import org.bukkit.Bukkit;
+
+import com.pcb.pcbridge.PCBridge;
+import com.pcb.pcbridge.library.AsyncAdapterParams;
+import com.pcb.pcbridge.library.AsyncCallback;
 
 /**
  * Adapter implementation for MySQL interactivity
@@ -21,13 +26,15 @@ public class AdapterMySQL extends AbstractAdapter
 {	
 	private String _username;
 	private String _password;
+	private PCBridge _plugin;
 	
 	private BasicDataSource dataSource = new BasicDataSource();
 		
-	public AdapterMySQL(String host, String port, String database, String username, String password)
+	public AdapterMySQL(PCBridge plugin, String host, String port, String database, String username, String password)
 	{
 		this._username	= username;
 		this._password 	= password;
+		this._plugin 	= plugin;
 		
 		dataSource.setDriverClassName("com.mysql.jdbc.Driver");
 		dataSource.setUrl("jdbc:mysql://" + host + ":" + port + "/" + database);
@@ -213,5 +220,79 @@ public class AdapterMySQL extends AbstractAdapter
 		}
 		
 		return rows;
+	}
+	
+	
+	/**
+	 * Same as adapter Execute(), but asynchronous
+	 * 
+	 * @param callback
+	 * @param sql
+	 * @param args
+	 */
+	public void ExecuteAsync(final AsyncAdapterParams params, final AsyncCallback callback) 
+	{
+		Bukkit.getScheduler().runTaskAsynchronously(_plugin, new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				try
+				{
+					int result = Execute(params.SQL, params.Args);
+					callback.OnSuccess(result);
+				}
+				catch(SQLException e)
+				{
+					callback.OnError(e);
+				}
+			}
+		});
+	}
+	
+	/**
+	 * Same as adapter Query(), but asynchronous
+	 */
+	public void QueryAsync(final AsyncAdapterParams params, final AsyncCallback callback) 
+	{
+		Bukkit.getScheduler().runTaskAsynchronously(_plugin, new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				try
+				{
+					List<HashMap<String, Object>> results = Query(params.SQL, params.Args);
+					callback.OnSuccess(results);
+				}
+				catch(SQLException e)
+				{
+					callback.OnError(e);
+				}
+			}
+		});
+	}
+	
+	/**
+	 * Same as adapter Count(), but asynchronous
+	 */
+	public void CountAsync(final AsyncAdapterParams params, final AsyncCallback callback) 
+	{
+		Bukkit.getScheduler().runTaskAsynchronously(_plugin, new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				try
+				{
+					int result = Count(params.SQL, params.Args);
+					callback.OnSuccess(result);
+				}
+				catch(SQLException e)
+				{
+					callback.OnError(e);
+				}
+			}
+		});
 	}
 }

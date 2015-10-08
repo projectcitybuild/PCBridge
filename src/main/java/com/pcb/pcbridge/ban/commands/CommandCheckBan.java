@@ -8,6 +8,7 @@ import java.util.List;
 import org.bukkit.ChatColor;
 
 import com.pcb.pcbridge.ban.BanHelper;
+import com.pcb.pcbridge.library.TimestampHelper;
 import com.pcb.pcbridge.library.controllers.commands.CommandPacket;
 import com.pcb.pcbridge.library.controllers.commands.ICommand;
 import com.pcb.pcbridge.library.database.AbstractAdapter;
@@ -44,6 +45,7 @@ public final class CommandCheckBan implements ICommand
 			return true;
 		}
 		
+		// player is banned; compile their ban record into a nice message
 		HashMap<String, Object> ban = results.get(0);		
 		
 		int banDateTS 		= (int) ban.get("date_ban");
@@ -51,21 +53,23 @@ public final class CommandCheckBan implements ICommand
 		String banStaff		= (String) ban.get("staff_name");
 		String banReason 	= (String) ban.get("reason");
 		String banUUID		= (String) ban.get("banned_uuid");
-		
-		Date banDate = new Date((long)banDateTS * 1000);
+		Date banDate 		= TimestampHelper.GetDateFromTimestamp((long)banDateTS);
 		
 		String banExpiry;
+		String banExpiresIn = null;
 		if(banExpiryTS == null)
 		{
+			// perma banned
 			banExpiry = "Never";
 		}
 		else
 		{
-			long now = new Date().getTime() / 1000L;		
-			int diff = (int) (now - (int)banExpiryTS);
+			// temp banned
+			long now = TimestampHelper.GetNowTimestamp();
 			
-			Date expiryDate = new Date(diff * 1000L);
+			Date expiryDate = TimestampHelper.GetDateFromTimestamp((int)banExpiryTS);
 			banExpiry = expiryDate.toString();
+			banExpiresIn = TimestampHelper.GetTimeDifference(now, (int)banExpiryTS);
 			
 			if(now >= (int)banExpiryTS)
 			{
@@ -104,7 +108,12 @@ public final class CommandCheckBan implements ICommand
 				"---\n" +
 				"Banned by: " + banStaff + "\n" +
 				"Date: " + banDate + "\n" +
-				"Expires: " + banExpiry;
+				"Expiry Date: " + banExpiry;
+		
+		if(banExpiry != "Never")
+		{
+			msg += "\nExpires in: " + banExpiresIn;
+		}
 			
 		e.Sender.sendMessage(msg);
 		
