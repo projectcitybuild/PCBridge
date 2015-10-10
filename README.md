@@ -28,9 +28,9 @@ PCBridge depends on Apache's [DBCP2 library](https://commons.apache.org/proper/c
 If you're using different versions to the ones listed above, ensure you update the project's CLASSPATH.
 
 ### Commands:
-<b>/ban</b> [name] [reason]
-<b>/tempban</b> [name] [time] [reason]
-<b>/unban</b> [name]
-<b>/checkban</b> [name]
-<b>/lookup uuid</b> [name]
-<b>/lookup history</b> [name]
+* <b>/ban</b> [name] [reason]
+* <b>/tempban</b> [name] [time] [reason]
+* <b>/unban</b> [name]
+* <b>/checkban</b> [name]
+* <b>/lookup uuid</b> [name]
+* <b>/lookup history</b> [name]
