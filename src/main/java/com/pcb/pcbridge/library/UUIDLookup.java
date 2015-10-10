@@ -1,10 +1,12 @@
 package com.pcb.pcbridge.library;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -15,23 +17,23 @@ import org.json.simple.parser.ParseException;
 
 public final class UUIDLookup 
 {
-	private final String API_URL = "https://api.mojang.com/profiles/minecraft";
-	private final int RATE = 60; 	// requests available
-	private final int PER = 60; 	// per X seconds
+	private final String API_UUID_URL = "https://api.mojang.com/profiles/";
+	private final String API_USER_URL = "https://api.mojang.com/user/profiles/";
+	private final int RATE = 60; 	// ___ requests available per
+	private final int PER = 60; 	// per ___ seconds
 	
 	private JSONParser _jsonParser = new JSONParser();
 	private double allowance = RATE;
 	private long lastCheck;
 	
 	/**
-	 * Throttles lookups at the specified rate
+	 * Throttles lookup requests at the specified rate
 	 * 
 	 * @param username
-	 * @return
 	 * @throws IOException
 	 * @throws ParseException 
 	 */
-	public UUID Query(String username) throws IOException, ParseException
+	private void Throttle()
 	{
 		long now = System.currentTimeMillis();
 		long timePassed = now - lastCheck;
@@ -57,32 +59,24 @@ public final class UUIDLookup
 		}
 		
 		allowance -= 1.0;
-		
-		return GetUUID(username);
 	}
 	
 	/**
-	 * Retrieve the specified username's UUID from Mojang
+	 * Retrieve the specified username's current UUID from Mojang
 	 * 
 	 * @param username
 	 * @return
 	 * @throws IOException
 	 * @throws ParseException 
 	 */
-	private UUID GetUUID(String username) throws IOException, ParseException
+	public UUID GetCurrentUUID(String username) throws IOException, ParseException
 	{
-		HttpURLConnection connection = NewConnection();
+		Throttle();
+		
+		HttpURLConnection connection = NewConnection(API_UUID_URL + "minecraft", "POST");
 		
 		// send the username
-		JSONObject input = new JSONObject();
-		JSONArray inputArray = new JSONArray();
-		inputArray.add(username);
-		String body = inputArray.toJSONString();
-		
-		OutputStream stream = connection.getOutputStream();
-		stream.write(body.getBytes());
-		stream.flush();
-		stream.close();
+		SendInput(connection, username);
 		
 		// parse the response
 		InputStreamReader reader = new InputStreamReader( connection.getInputStream() );
@@ -97,24 +91,77 @@ public final class UUIDLookup
         return ParseUUID(uuid);
 	}
 	
+	public HashMap<String, Long> GetNameHistory(String uuid) throws IOException, ParseException 
+	{
+		Throttle();
+		
+		// strip hyphens out of the uuid
+		uuid = uuid.replace("-", "");
+
+		HttpURLConnection connection = NewConnection(API_USER_URL + uuid + "/names", "GET");
+		connection.connect();		
+			
+		// parse the response
+		HashMap<String, Long> results = new HashMap<String, Long>();
+		InputStreamReader reader = new InputStreamReader( connection.getInputStream() );
+		JSONArray array = (JSONArray) _jsonParser.parse(reader);
+        for (Object profile : array) 
+        {		
+        	JSONObject player = (JSONObject) profile;
+        	
+        	String name = (String) player.get("name");	
+        	Long date = (Long) player.get("changedToAt");
+        	
+        	results.put(name, date);
+        }   
+		
+        return results;
+	}
+	
 	/**
 	 * Create a new connection to the Mojang API via HTTP
 	 * 
 	 * @return
 	 * @throws IOException
 	 */
-	private HttpURLConnection NewConnection() throws IOException
+	private HttpURLConnection NewConnection(String apiUrl, String requestMethod) throws IOException
 	{
-		URL url = new URL(API_URL);
+		URL url = new URL(apiUrl);
 		
 		HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-		connection.setRequestMethod("POST");
+		connection.setRequestMethod(requestMethod);		
 		connection.setRequestProperty("Content-Type", "application/json");
 		connection.setUseCaches(false);
-		connection.setDoInput(true);;
-		connection.setDoOutput(true);
+		connection.setDoInput(true);
+		connection.setReadTimeout(8000);
+		
+		connection.setDoOutput(requestMethod == "POST");
 		
 		return connection;
+	}
+	
+	private HttpURLConnection NewConnection(String apiUrl) throws IOException
+	{
+		return NewConnection(apiUrl, "GET");
+	}
+	
+	/**
+	 * Post data to the connection as a JSON array
+	 * 
+	 * @param connection
+	 * @param data
+	 * @throws IOException
+	 */
+	private void SendInput(HttpURLConnection connection, String data) throws IOException
+	{
+		JSONArray inputArray = new JSONArray();
+		inputArray.add(data);
+		String body = inputArray.toJSONString();
+		
+		OutputStream stream = connection.getOutputStream();
+		stream.write(body.getBytes());
+		stream.flush();
+		stream.close();
 	}
 	
 	private UUID ParseUUID(String uuid)

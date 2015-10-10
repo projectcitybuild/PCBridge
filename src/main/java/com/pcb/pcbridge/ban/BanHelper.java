@@ -121,7 +121,7 @@ public final class BanHelper
 			UUIDLookup fetcher = new UUIDLookup();
 			try 
 			{
-				uuid = fetcher.Query(username);				
+				uuid = fetcher.GetCurrentUUID(username);				
 			} 
 			catch (IOException | ParseException err) 
 			{
