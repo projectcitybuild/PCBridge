@@ -1,7 +1,7 @@
 package com.pcb.pcbridge.library.database.querybuilder;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -14,7 +14,7 @@ import com.pcb.pcbridge.library.database.querybuilder.operations.*;
 public class QueryBuilder
 {
 	private LinkedHashMap<String, Object> _parameters = new LinkedHashMap<String, Object>();
-	private List<QueryCriteria> _criteria = new ArrayList<QueryCriteria>();
+	private LinkedList<QueryCriteria> _criteria = new LinkedList<QueryCriteria>();
 	private String _table;
 	private QueryType _operation;
 	
@@ -124,6 +124,7 @@ public class QueryBuilder
 		switch(_operation)
 		{
 			case SELECT:
+				builder = new SelectSQLBuilder();
 				break;
 			case INSERT:
 				builder = new InsertSQLBuilder();				
@@ -138,5 +139,5 @@ public class QueryBuilder
 		
 		return new QueryBuilderSQL(sql, builder.GetStoredParameters());
 	}
-	
+		
 }

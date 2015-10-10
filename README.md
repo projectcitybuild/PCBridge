@@ -7,6 +7,8 @@ A Bukkit (and Spigot) plugin to bridge [Project City Build](www.projectcitybuild
   * Temp bans
   * UUID lookup on offline players
 * Mojang UUID lookup
+  * Username -> UUID
+  * Username -> Name history
   
 * JDBC MySQL wrapper
 * SQL query builder (sql via method chaining)

@@ -25,7 +25,7 @@ public final class CommandLookup implements ICommand
 	
 	public boolean Execute(final CommandArgs e, Object... args) 
 	{
-		if(e.Args.length > 2 || e.Args.length == 0)
+		if(e.Args.length > 2 || e.Args.length < 1)
 			return false;
 		
 		String operation = e.Args[0];
@@ -81,6 +81,12 @@ public final class CommandLookup implements ICommand
 	{
 		final String username = e.Args[1];
 		final PlayerUUID uuid = BanHelper.GetUUID(e.Plugin, username);
+		
+		if(uuid.GetUUID() == "")
+		{
+			e.Sender.sendMessage("ERROR: Could not determine the player's UUID");
+			return;
+		}
 		
 		Bukkit.getScheduler().runTaskAsynchronously(e.Plugin, new Runnable()
 		{
