@@ -13,7 +13,7 @@ import com.pcb.pcbridge.ban.PlayerUUID;
 import com.pcb.pcbridge.library.AsyncAdapterParams;
 import com.pcb.pcbridge.library.AsyncCallback;
 import com.pcb.pcbridge.library.TimestampHelper;
-import com.pcb.pcbridge.library.controllers.commands.CommandPacket;
+import com.pcb.pcbridge.library.controllers.commands.CommandArgs;
 import com.pcb.pcbridge.library.controllers.commands.ICommand;
 import com.pcb.pcbridge.library.database.adapters.AbstractAdapter;
 
@@ -30,7 +30,7 @@ public final class CommandBan implements ICommand
 	/**
 	 * Determines if it's a permanent or temporary ban
 	 */
-	public boolean Execute(CommandPacket e, Object... args) 
+	public boolean Execute(CommandArgs e, Object... args) 
 	{
 		if(e.Args.length == 0)
 			return false;
@@ -50,7 +50,7 @@ public final class CommandBan implements ICommand
 	 * @param isTempBan
 	 * @return
 	 */
-	private boolean BanPlayer(final CommandPacket e, boolean isTempBan)
+	private boolean BanPlayer(final CommandArgs e, boolean isTempBan)
 	{
 		final String username = e.Args[0];
 		PlayerUUID player = BanHelper.GetUUID(e.Plugin, username);

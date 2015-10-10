@@ -3,6 +3,13 @@ A Bukkit (and Spigot) plugin to bridge [Project City Build](www.projectcitybuild
 
 ### Current features:
 * Ban system
+  * Supports UUID bans
+  * Temp bans
+  * UUID lookup on offline players
+* Mojang UUID lookup
+  
+* JDBC MySQL wrapper
+* SQL query builder (sql via method chaining)
 
 ### Want to contribute?
 Great! But you'll first need to set up a local MySQL database named "PCBridge". You'll also need to create a table with the following SQL:

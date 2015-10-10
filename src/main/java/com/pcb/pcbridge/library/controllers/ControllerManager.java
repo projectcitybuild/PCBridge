@@ -9,7 +9,7 @@ import org.bukkit.event.Listener;
 
 import com.pcb.pcbridge.PCBridge;
 import com.pcb.pcbridge.ban.BanController;
-import com.pcb.pcbridge.library.controllers.commands.CommandPacket;
+import com.pcb.pcbridge.library.controllers.commands.CommandArgs;
 import com.pcb.pcbridge.library.controllers.commands.CommandRoute;
 import com.pcb.pcbridge.library.controllers.commands.ICommand;
 import com.pcb.pcbridge.library.controllers.commands.ICommandController;
@@ -94,7 +94,7 @@ public final class ControllerManager implements CommandExecutor
 		
 		if(handler != null)
 		{
-			CommandPacket packet = new CommandPacket(_plugin, sender, label, args);
+			CommandArgs packet = new CommandArgs(_plugin, sender, label, args);
 			return handler.Execute(packet, null);
 		}
 		
@@ -110,7 +110,7 @@ public final class ControllerManager implements CommandExecutor
 	 * @param args		Any extra args to supply to the route
 	 * @return
 	 */
-	public boolean InvokeRoute(CommandPacket e, String routeName, Object... args)
+	public boolean InvokeRoute(CommandArgs e, String routeName, Object... args)
 	{
 		ICommand handler = Commands.get( routeName );
 		

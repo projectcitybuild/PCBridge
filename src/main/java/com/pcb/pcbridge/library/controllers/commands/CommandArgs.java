@@ -9,7 +9,7 @@ import com.pcb.pcbridge.PCBridge;
  * A container for grouping a command's parameters when handling a command
  */
 
-public class CommandPacket 
+public class CommandArgs 
 {
 	public CommandSender Sender;
 	public String Alias;
@@ -17,7 +17,7 @@ public class CommandPacket
 	public boolean IsPlayer;
 	public PCBridge Plugin;
 	
-	public CommandPacket(PCBridge plugin, CommandSender sender, String alias, String[] args)
+	public CommandArgs(PCBridge plugin, CommandSender sender, String alias, String[] args)
 	{
 		this.Plugin		= plugin;
 		this.Sender		= sender;

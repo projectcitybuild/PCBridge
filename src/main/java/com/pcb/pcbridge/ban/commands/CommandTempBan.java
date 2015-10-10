@@ -7,7 +7,7 @@ import org.bukkit.ChatColor;
 
 import com.pcb.pcbridge.ban.BanHelper;
 import com.pcb.pcbridge.ban.PlayerUUID;
-import com.pcb.pcbridge.library.controllers.commands.CommandPacket;
+import com.pcb.pcbridge.library.controllers.commands.CommandArgs;
 import com.pcb.pcbridge.library.controllers.commands.ICommand;
 import com.pcb.pcbridge.library.database.adapters.AbstractAdapter;
 /**
@@ -16,7 +16,7 @@ import com.pcb.pcbridge.library.database.adapters.AbstractAdapter;
 
 public final class CommandTempBan implements ICommand 
 {	
-	public boolean Execute(CommandPacket e, Object... args) 
+	public boolean Execute(CommandArgs e, Object... args) 
 	{
 		if(e.Args.length == 0)
 			return false;
