@@ -56,6 +56,7 @@ public final class PCBridge extends JavaPlugin
 		getConfig().addDefault("database.username", "root");
 		getConfig().addDefault("database.password", "");
 		getConfig().addDefault("database.boot_test_connection", true);
+		getConfig().addDefault("database.first_run", true);
 		getConfig().options().copyDefaults(true);
 		saveConfig();
 	}

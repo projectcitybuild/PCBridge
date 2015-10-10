@@ -34,15 +34,30 @@ public final class ConnectionManager
 				break;
 		}
 		
-		// test connection on boot
-		TestConnection();		
+		// first run? generate tables
+		if(plugin.getConfig().getBoolean("database.first_run"))
+		{
+			if(GenerateTables())
+			{
+				plugin.getConfig().set("database.first_run", false);
+				plugin.saveConfig();
+			}		
+			
+			// test connection on boot
+			TestConnection();	
+		}
+		else
+		{
+			// test connection on boot
+			TestConnection();	
+		}
 	}
 
 	public AbstractAdapter GetAdapter()
 	{
 		return _adapter;
 	}
-	
+		
 	/**
 	 * Attempt a basic (synchronous) query to test the database connection.
 	 * Recommended ON if using a remote connection as the connection gets pooled during boot.
@@ -61,5 +76,39 @@ public final class ConnectionManager
 				_plugin.getLogger().severe("Could not connect to database: " + err.getMessage());
 			}
 		}
+	}
+	
+	/**
+	 * Generate the database tables
+	 * 
+	 * @return	True if generation success; False if failed
+	 */
+	private boolean GenerateTables()
+	{
+		String sql = "CREATE TABLE IF NOT EXISTS pcban_active_bans ("
+				  + "id int(11) unsigned NOT NULL AUTO_INCREMENT,"
+				  + "banned_uuid varchar(60) CHARACTER SET latin1 COLLATE latin1_bin DEFAULT NULL,"
+				  + "banned_name varchar(?) NOT NULL,"
+				  + "date_ban int(8) NOT NULL,"
+				  + "date_expire int(8) DEFAULT NULL,"
+				  + "staff_uuid varchar(60) CHARACTER SET latin1 COLLATE latin1_bin NOT NULL,"
+				  + "staff_name varchar(50) NOT NULL,"
+				  + "reason text NOT NULL,"
+				  + "ip varchar(15) NOT NULL,"
+				  + "is_active tinyint(1) NOT NULL DEFAULT '1',"
+				  + "PRIMARY KEY (id)"
+				  + ") ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=20 ;";
+		
+		try 
+		{
+			_adapter.Execute(sql, 50);
+		} 
+		catch (SQLException err) 
+		{
+			_plugin.getLogger().severe("Could not generate tables: " + err.getMessage());
+			return false;
+		}
+		
+		return true;
 	}
 }
