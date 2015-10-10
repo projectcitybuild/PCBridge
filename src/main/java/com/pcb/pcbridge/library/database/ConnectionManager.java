@@ -3,6 +3,9 @@ package com.pcb.pcbridge.library.database;
 import java.sql.SQLException;
 
 import com.pcb.pcbridge.PCBridge;
+import com.pcb.pcbridge.library.database.adapters.AbstractAdapter;
+import com.pcb.pcbridge.library.database.adapters.Adapter;
+import com.pcb.pcbridge.library.database.adapters.AdapterMySQL;
 
 /**
  * Factory for different Storage implementations

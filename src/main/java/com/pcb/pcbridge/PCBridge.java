@@ -3,9 +3,9 @@ package com.pcb.pcbridge;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.pcb.pcbridge.library.controllers.ControllerManager;
-import com.pcb.pcbridge.library.database.AbstractAdapter;
-import com.pcb.pcbridge.library.database.Adapter;
 import com.pcb.pcbridge.library.database.ConnectionManager;
+import com.pcb.pcbridge.library.database.adapters.AbstractAdapter;
+import com.pcb.pcbridge.library.database.adapters.Adapter;
 
 /**
  * 

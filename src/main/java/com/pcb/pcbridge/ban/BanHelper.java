@@ -12,8 +12,10 @@ import org.bukkit.entity.Player;
 import org.json.simple.parser.ParseException;
 
 import com.pcb.pcbridge.PCBridge;
+import com.pcb.pcbridge.library.AsyncAdapterParams;
+import com.pcb.pcbridge.library.AsyncCallback;
 import com.pcb.pcbridge.library.UUIDLookup;
-import com.pcb.pcbridge.library.database.AbstractAdapter;
+import com.pcb.pcbridge.library.database.adapters.AbstractAdapter;
 
 /**
  * Collection of Ban related helper methods
@@ -26,7 +28,7 @@ public final class BanHelper
 	 * Gets the ban record of the specified username and/or UUID.
 	 * Returns null if user is not currently banned.
 	 * 
-	 * TODO: this should be refactored to be asynchronous!
+	 *  TODO: this should be refactored to be asynchronous!
 	 * 
 	 * @param adapter
 	 * @param name
@@ -60,7 +62,7 @@ public final class BanHelper
 		
 		// TODO: check if its a temp ban and has now expired
 			
-		return results;		
+		return results;
 	}
 	
 	/**

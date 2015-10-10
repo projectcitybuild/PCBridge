@@ -1,4 +1,4 @@
-package com.pcb.pcbridge.library.database;
+package com.pcb.pcbridge.library.database.adapters;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -17,6 +17,7 @@ import org.bukkit.Bukkit;
 import com.pcb.pcbridge.PCBridge;
 import com.pcb.pcbridge.library.AsyncAdapterParams;
 import com.pcb.pcbridge.library.AsyncCallback;
+import com.pcb.pcbridge.library.database.querybuilder.QueryBuilderSQL;
 
 /**
  * Adapter implementation for MySQL interactivity
@@ -90,6 +91,10 @@ public class AdapterMySQL extends AbstractAdapter
 			{
 				statement.setFloat(i++, (Float)arg);
 		    }
+			else if(arg instanceof Boolean)
+			{
+				statement.setBoolean(i++, (Boolean)arg);
+			}
 			else 
 			{
 				statement.setString(i++, (String)arg);
@@ -122,6 +127,19 @@ public class AdapterMySQL extends AbstractAdapter
 	public int Execute(String sql) throws SQLException
 	{
 		return Execute(sql, (Object)null);
+	}
+	
+	@Override
+	public int Execute(QueryBuilderSQL queryBuilder) throws SQLException
+	{
+		try (
+				Connection connection = getConnection();
+				PreparedStatement statement = connection.prepareStatement(queryBuilder.GetSQL())
+		) {
+			MapParams(statement, queryBuilder.GetParameters().toArray());
+			
+			return statement.executeUpdate();
+		}
 	}
 	
 	/**

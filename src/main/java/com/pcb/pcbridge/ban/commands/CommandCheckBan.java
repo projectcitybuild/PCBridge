@@ -11,7 +11,7 @@ import com.pcb.pcbridge.ban.BanHelper;
 import com.pcb.pcbridge.library.TimestampHelper;
 import com.pcb.pcbridge.library.controllers.commands.CommandPacket;
 import com.pcb.pcbridge.library.controllers.commands.ICommand;
-import com.pcb.pcbridge.library.database.AbstractAdapter;
+import com.pcb.pcbridge.library.database.adapters.AbstractAdapter;
 
 /**
  * Command: Retrieves data about the specified player (eg. whether currently banned, ban reason, etc)

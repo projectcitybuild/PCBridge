@@ -12,12 +12,17 @@ import com.pcb.pcbridge.ban.BanHelper;
 import com.pcb.pcbridge.ban.PlayerUUID;
 import com.pcb.pcbridge.library.AsyncAdapterParams;
 import com.pcb.pcbridge.library.AsyncCallback;
+import com.pcb.pcbridge.library.TimestampHelper;
 import com.pcb.pcbridge.library.controllers.commands.CommandPacket;
 import com.pcb.pcbridge.library.controllers.commands.ICommand;
-import com.pcb.pcbridge.library.database.AbstractAdapter;
+import com.pcb.pcbridge.library.database.adapters.AbstractAdapter;
 
 /**
  * Command: Ban the specified user (via username) from the server
+ * 
+ * - Checks if the user is already banned
+ * - Kicks the player
+ * - Adds their username and UUID to the ban list in storage
  */
 
 public final class CommandBan implements ICommand 
@@ -47,10 +52,30 @@ public final class CommandBan implements ICommand
 	 */
 	private boolean BanPlayer(final CommandPacket e, boolean isTempBan)
 	{
-		// get the current time as a unix timestamp
-		Date currentDate = new Date();
-		long now = currentDate.getTime() / 1000L;
+		final String username = e.Args[0];
+		PlayerUUID player = BanHelper.GetUUID(e.Plugin, username);
+		AbstractAdapter adapter = e.Plugin.GetAdapter();
+
+		// check if the user is already banned
+		boolean isBanned = false;
+		try
+		{
+			isBanned = BanHelper.IsPlayerBanned(adapter, username, player.GetUUID());
+		}
+		catch(SQLException err)
+		{
+			e.Sender.sendMessage(ChatColor.RED + "ERROR: Could not look up player in ban records. Aborting");
+			e.Plugin.getLogger().severe("Could not look up player in ban records: " + err.getMessage());
+			return true;
+		}
 		
+		if(isBanned)
+		{
+			e.Sender.sendMessage(ChatColor.GRAY + username + " is already banned.");
+			return true;
+		}
+		
+		long now = TimestampHelper.GetNowTimestamp();
 		long expireDate = 0;
 		if(isTempBan)
 		{
@@ -104,11 +129,7 @@ public final class CommandBan implements ICommand
 			
 			expireDate = c.getTime().getTime() / 1000L;
 		}
-		
-		
-		final String username = e.Args[0];
-		PlayerUUID player = BanHelper.GetUUID(e.Plugin, username);
-		
+				
 		// if given, stitch together the 'ban reason' which spans multiple args
 		String banReason = "Griefing";
 		int startIndex = isTempBan ? 2 : 1;
@@ -129,57 +150,33 @@ public final class CommandBan implements ICommand
 		@SuppressWarnings("deprecation")	// deprecated, but no alternative to get players by name exists...
 		String staffUUID = e.IsPlayer ? e.Plugin.getServer().getPlayer(staffName).getUniqueId().toString() : "";
 		
-		
-		AbstractAdapter adapter = e.Plugin.GetAdapter();
-
-		// check if the user is already banned
-		boolean isBanned = false;
-		try
-		{
-			isBanned = BanHelper.IsPlayerBanned(adapter, username, player.GetUUID());
-		}
-		catch(SQLException err)
-		{
-			e.Sender.sendMessage(ChatColor.RED + "ERROR: Could not look up player in ban records. Aborting");
-			e.Plugin.getLogger().severe("Could not look up player in ban records: " + err.getMessage());
-			return true;
-		}
-		
-		if(isBanned)
-		{
-			e.Sender.sendMessage(ChatColor.GRAY + username + " is already banned.");
-			return true;
-		}
-		
 		// create the ban in storage
-		adapter.ExecuteAsync(new AsyncAdapterParams(
-				"INSERT INTO pcban_active_bans(banned_name, banned_uuid, date_ban, date_expire, staff_uuid, staff_name, reason, ip) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-				username, 
-				player.GetUUID(), 
-				now,
-				isTempBan ? expireDate : null,
-				staffUUID,
-				staffName,
-				banReason, 
-				player.IP
-			),
-			
-			new AsyncCallback() 
-			{			
-				@Override
-				public void OnSuccess(Object results) 
-				{
-					e.Sender.sendMessage(ChatColor.GRAY + username + " has been banned.");
-				}
-				
-				@Override
-				public void OnError(Exception err) 
-				{
-					e.Sender.sendMessage(ChatColor.RED + "ERROR: Could not ban user. Please notify an administrator if this persists");
-					e.Plugin.getLogger().severe("Could not add user to ban list: " + err.getMessage());
-				}
-			}
+		AsyncAdapterParams query = new AsyncAdapterParams("INSERT INTO pcban_active_bans(banned_name, banned_uuid, date_ban, date_expire, staff_uuid, staff_name, reason, ip) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+			username, 
+			player.GetUUID(), 
+			now, 
+			isTempBan ? expireDate : null,
+			staffUUID,
+			staffName,
+			banReason, 
+			player.IP
 		);
+		
+		adapter.ExecuteAsync(query,	new AsyncCallback<Object>() 
+		{			
+			@Override
+			public void OnSuccess(Object results) 
+			{
+				e.Sender.sendMessage(ChatColor.GRAY + username + " has been banned.");
+			}
+				
+			@Override
+			public void OnError(Exception err) 
+			{
+				e.Sender.sendMessage(ChatColor.RED + "ERROR: Could not ban user. Please notify an administrator if this persists");
+				e.Plugin.getLogger().severe("Could not add user to ban list: " + err.getMessage());
+			}
+		});
 		
 		// kick the player if they're online
 		if(player.IsOnline && player.Player != null)

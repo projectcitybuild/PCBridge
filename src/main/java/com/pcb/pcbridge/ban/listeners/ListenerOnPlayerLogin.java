@@ -13,7 +13,7 @@ import org.bukkit.event.player.PlayerLoginEvent;
 
 import com.pcb.pcbridge.ban.BanHelper;
 import com.pcb.pcbridge.library.controllers.listeners.AbstractListener;
-import com.pcb.pcbridge.library.database.AbstractAdapter;
+import com.pcb.pcbridge.library.database.adapters.AbstractAdapter;
 
 /**
  * Check if a player is banned upon entry to the server

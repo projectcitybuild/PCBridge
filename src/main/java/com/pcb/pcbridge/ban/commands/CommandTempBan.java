@@ -9,7 +9,7 @@ import com.pcb.pcbridge.ban.BanHelper;
 import com.pcb.pcbridge.ban.PlayerUUID;
 import com.pcb.pcbridge.library.controllers.commands.CommandPacket;
 import com.pcb.pcbridge.library.controllers.commands.ICommand;
-import com.pcb.pcbridge.library.database.AbstractAdapter;
+import com.pcb.pcbridge.library.database.adapters.AbstractAdapter;
 /**
  * Command: Ban the specified user (via username) for a temporary period of time
  */
