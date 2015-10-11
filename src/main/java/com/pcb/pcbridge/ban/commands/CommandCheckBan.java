@@ -8,10 +8,12 @@ import java.util.List;
 import org.bukkit.ChatColor;
 
 import com.pcb.pcbridge.ban.BanHelper;
+import com.pcb.pcbridge.ban.PlayerUUID;
 import com.pcb.pcbridge.library.TimestampHelper;
 import com.pcb.pcbridge.library.controllers.commands.CommandArgs;
 import com.pcb.pcbridge.library.controllers.commands.ICommand;
 import com.pcb.pcbridge.library.database.adapters.AbstractAdapter;
+import com.pcb.pcbridge.library.database.querybuilder.QueryBuilder;
 
 /**
  * Command: Retrieves data about the specified player (eg. whether currently banned, ban reason, etc)
@@ -48,6 +50,7 @@ public final class CommandCheckBan implements ICommand
 		// player is banned; compile their ban record into a nice message
 		HashMap<String, Object> ban = results.get(0);		
 		
+		long banId			= (long) ban.get("id");
 		int banDateTS 		= (int) ban.get("date_ban");
 		Object banExpiryTS 	= ban.get("date_expire");
 		String banStaff		= (String) ban.get("staff_name");
@@ -71,24 +74,27 @@ public final class CommandCheckBan implements ICommand
 			banExpiry = expiryDate.toString();
 			banExpiresIn = TimestampHelper.GetTimeDifference(now, (int)banExpiryTS);
 			
+			// check if ban has expired
 			if(now >= (int)banExpiryTS)
 			{
-				// ban has expired
+				String staffUUID = null;
+				if(e.IsPlayer)
+				{
+					PlayerUUID staff = BanHelper.GetUUID(e.Plugin, e.Sender.getName());
+					staffUUID = staff.GetUUID();
+				}
+				
 				try
 				{
-					if(banUUID == null)
-					{
-						adapter.Execute("UPDATE pcban_active_bans SET is_active=0 WHERE banned_name=?",
-							username
-						);
-					}
-					else
-					{
-						adapter.Execute("UPDATE pcban_active_bans SET is_active=0 WHERE banned_name=? or banned_uuid=?",
-							username,
-							banUUID
-						);
-					}
+					adapter.Execute("UPDATE pcban_active_bans SET is_active=0 WHERE id=?", banId);
+					
+					adapter.Execute(
+						new QueryBuilder().Insert("pcban_unbans")
+							.Field("ban_id", banId)
+							.Field("staff_uuid", staffUUID)
+							.Field("date", (int)banExpiryTS)
+							.Build()
+					);
 				}
 				catch(SQLException err)
 				{

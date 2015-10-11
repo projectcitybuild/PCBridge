@@ -12,8 +12,10 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerLoginEvent;
 
 import com.pcb.pcbridge.ban.BanHelper;
+import com.pcb.pcbridge.library.TimestampHelper;
 import com.pcb.pcbridge.library.controllers.listeners.AbstractListener;
 import com.pcb.pcbridge.library.database.adapters.AbstractAdapter;
+import com.pcb.pcbridge.library.database.querybuilder.QueryBuilder;
 
 /**
  * Check if a player is banned upon entry to the server
@@ -54,12 +56,17 @@ public final class ListenerOnPlayerLogin extends AbstractListener implements Lis
 			long now = (long) (new Date().getTime() / 1000L);
 			if(now >= timestamp)
 			{
+				long banId = (long)results.get(0).get("id");
+				
 				// ban has expired
 				try 
 				{
-					adapter.Execute("UPDATE pcban_active_bans SET is_active=0 WHERE banned_name=? or banned_uuid=?",
-						username,
-						uuid
+					adapter.Execute("UPDATE pcban_active_bans SET is_active=0 WHERE id=?", banId);
+					adapter.Execute(
+						new QueryBuilder().Insert("pcban_unbans")
+							.Field("ban_id", banId)
+							.Field("date", timestamp)
+							.Build()
 					);
 				} 
 				catch (SQLException err) 
