@@ -2,6 +2,7 @@ package com.pcb.pcbridge.ban;
 
 import org.bukkit.event.Listener;
 
+import com.pcb.pcbridge.PCBridge;
 import com.pcb.pcbridge.ban.commands.*;
 import com.pcb.pcbridge.ban.listeners.*;
 import com.pcb.pcbridge.library.controllers.AbstractController;
@@ -9,6 +10,9 @@ import com.pcb.pcbridge.library.controllers.commands.CommandRoute;
 import com.pcb.pcbridge.library.controllers.commands.ICommandController;
 import com.pcb.pcbridge.library.controllers.listeners.IListenerController;
 
+/**
+ * Controller: Handles any ban related routing
+ */
 public class BanController extends AbstractController implements ICommandController, IListenerController
 {
 	public CommandRoute[] GetCommands() 
@@ -30,5 +34,11 @@ public class BanController extends AbstractController implements ICommandControl
 		{
 			new ListenerOnPlayerLogin()
 		};
+	}
+	
+	@Override
+	public void OnBoot(PCBridge plugin)
+	{
+		new ListenerOnBoot(plugin).Execute();
 	}
 }

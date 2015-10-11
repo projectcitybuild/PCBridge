@@ -43,8 +43,8 @@ public final class PCBridge extends JavaPlugin
 	{
 		LoadConfig();
 		
-		_controllerManager = new ControllerManager(this);
 		_connectionManager = new ConnectionManager(this, Adapter.MYSQL);
+		_controllerManager = new ControllerManager(this);
 		_uuidLookup = new UUIDLookup();
 	}
 	

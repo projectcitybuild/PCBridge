@@ -45,6 +45,8 @@ public final class ControllerManager implements CommandExecutor
 			
 			if(controller instanceof IListenerController)
 				RegisterListeners((IListenerController)controller);
+			
+			controller.OnBoot(_plugin);
 		}
 	}
 	
@@ -88,6 +90,7 @@ public final class ControllerManager implements CommandExecutor
 	/**
 	 * Listen for commands and route them to an appropriate command handler
 	 */
+	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) 
 	{
 		ICommand handler = Commands.get( command.getName().toLowerCase() );
@@ -95,7 +98,7 @@ public final class ControllerManager implements CommandExecutor
 		if(handler != null)
 		{
 			CommandArgs packet = new CommandArgs(_plugin, sender, label, args);
-			return handler.Execute(packet, null);
+			return handler.Execute(packet, (Object)null);
 		}
 		
 		return false;
