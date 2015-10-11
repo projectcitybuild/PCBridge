@@ -1,5 +1,6 @@
 package com.pcb.pcbridge.library.database.querybuilder;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -17,9 +18,16 @@ public class QueryBuilder
 	private LinkedList<QueryCriteria> _criteria = new LinkedList<QueryCriteria>();
 	private String _table;
 	private QueryType _operation;
+	private List<String> _columns = new ArrayList<String>();
 	
 	
-	public QueryBuilder Select(String table, String[] columns)
+	public QueryBuilder Select(String table, List<String> columns)
+	{
+		_columns = columns;
+		return SetOperation(table, QueryType.SELECT);
+	}
+	
+	public QueryBuilder Select(String table)
 	{
 		return SetOperation(table, QueryType.SELECT);
 	}
@@ -134,7 +142,7 @@ public class QueryBuilder
 				break;
 		}
 		
-		SQLBuilderParams args = new SQLBuilderParams(_parameters, _table);
+		SQLBuilderParams args = new SQLBuilderParams(_parameters, _table, _columns);
 		String sql = builder.Build(args);
 		
 		return new QueryBuilderSQL(sql, builder.GetStoredParameters());

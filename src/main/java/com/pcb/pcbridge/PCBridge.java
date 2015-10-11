@@ -2,6 +2,7 @@ package com.pcb.pcbridge;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.pcb.pcbridge.library.UUIDLookup;
 import com.pcb.pcbridge.library.controllers.ControllerManager;
 import com.pcb.pcbridge.library.database.ConnectionManager;
 import com.pcb.pcbridge.library.database.adapters.AbstractAdapter;
@@ -20,6 +21,7 @@ public final class PCBridge extends JavaPlugin
 {
 	private ControllerManager _controllerManager;
 	private ConnectionManager _connectionManager;
+	private UUIDLookup _uuidLookup;
 	
 	public AbstractAdapter GetAdapter()
 	{
@@ -31,6 +33,11 @@ public final class PCBridge extends JavaPlugin
 		return _controllerManager;
 	}
 	
+	public UUIDLookup GetUUIDLookup()
+	{
+		return _uuidLookup;
+	}
+	
 	@Override
 	public void onEnable()
 	{
@@ -38,6 +45,7 @@ public final class PCBridge extends JavaPlugin
 		
 		_controllerManager = new ControllerManager(this);
 		_connectionManager = new ConnectionManager(this, Adapter.MYSQL);
+		_uuidLookup = new UUIDLookup();
 	}
 	
 	@Override

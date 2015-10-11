@@ -118,10 +118,9 @@ public final class BanHelper
 			uuid = null;
 			
 			// retrieve the player's UUID from Mojang because they've never joined the server before
-			UUIDLookup fetcher = new UUIDLookup();
 			try 
 			{
-				uuid = fetcher.GetCurrentUUID(username);				
+				uuid = plugin.GetUUIDLookup().GetCurrentUUID(username);				
 			} 
 			catch (IOException | ParseException err) 
 			{
