@@ -23,13 +23,8 @@ commands:
     usage: /<command> [player] [time][m|h|d|w|mo|y] [reason]
     permission: <plugin name>.ban.tempban
     permission-message: You don't have <permission>
-  banstats:
-    description: Prints out server and player specific ban stats.
-    usage: /<command>
-    permission: <plugin name>.ban.stats
-    permission-message: You don't have <permission>
   lookup:
-    description: Retrieves the specified player's UUID from Mojang
-    usage: /<command> [player]
+    description: Retrieves UUID data about a player from Mojang's web service
+    usage: /<command> [history|uuid] [player]
     permission: <plugin name>.ban.lookup
     permission-message: You don't have <permission>
