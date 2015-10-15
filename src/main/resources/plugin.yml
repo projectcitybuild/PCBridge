@@ -13,18 +13,18 @@ commands:
     usage: /<command> [player]
     permission: <plugin name>.ban.unban
     permission-message: You don't have <permission>
-  checkban:
+  lookup:
     description: Checks if the specified player is currently banned.
     usage: /<command> [player]
-    permission: <plugin name>.ban.checkban
+    permission: <plugin name>.ban.lookup
     permission-message: You don't have <permission>
   tempban:
     description: Temporarily bans the specified player from the server.
     usage: /<command> [player] [time][m|h|d|w|mo|y] [reason]
     permission: <plugin name>.ban.tempban
     permission-message: You don't have <permission>
-  lookup:
+  uuid:
     description: Retrieves UUID data about a player from Mojang's web service
     usage: /<command> [history|uuid] [player]
-    permission: <plugin name>.ban.lookup
+    permission: <plugin name>.ban.uuid
     permission-message: You don't have <permission>

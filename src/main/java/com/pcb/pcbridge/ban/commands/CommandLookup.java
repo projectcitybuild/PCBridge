@@ -1,152 +1,130 @@
 package com.pcb.pcbridge.ban.commands;
 
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map.Entry;
-import java.util.UUID;
+import java.util.List;
 
-import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 
 import com.pcb.pcbridge.ban.BanHelper;
 import com.pcb.pcbridge.ban.PlayerUUID;
 import com.pcb.pcbridge.library.TimestampHelper;
-import com.pcb.pcbridge.library.UUIDLookup;
 import com.pcb.pcbridge.library.controllers.commands.CommandArgs;
 import com.pcb.pcbridge.library.controllers.commands.ICommand;
+import com.pcb.pcbridge.library.database.adapters.AbstractAdapter;
+import com.pcb.pcbridge.library.database.querybuilder.QueryBuilder;
 
 /**
- * Command: Queries the Mojang web api for the specified user's UUID
+ * Command: Retrieves data about the specified player (eg. whether currently banned, ban reason, etc)
+ * 
+ * TODO: past record checks
  */
 
 public final class CommandLookup implements ICommand 
 {	
-	private UUIDLookup _uuidLookup = new UUIDLookup();
-	
-	public boolean Execute(final CommandArgs e, Object... args) 
+	public boolean Execute(CommandArgs e, Object... args) 
 	{
-		if(e.Args.length > 2 || e.Args.length < 1)
+		if(e.Args.length == 0 || e.Args.length > 1)
 			return false;
 		
-		String operation = e.Args[0];
-		switch(operation.toLowerCase())
+		// retrieve ban from storage
+		String username = e.Args[0];
+		AbstractAdapter adapter = e.Plugin.GetAdapter();
+		List<HashMap<String, Object>> results;
+		try 
 		{
-			case "uuid":
-				GetCurrentUUID(e);
-				break;
-			case "history":
-				GetNameHistory(e);
-				break;
-			default:
-				return false;
+			results = BanHelper.LookupPlayer(adapter, username, null);
+		} 
+		catch (SQLException err) 
+		{
+			e.Sender.sendMessage(ChatColor.RED + "ERROR: Could not lookup player in ban records.");
+			e.Plugin.getLogger().severe("Could not lookup player in ban records: " + err.getMessage());
+			return true;
 		}
+		
+		if(results == null || results.size() == 0)
+		{
+			e.Sender.sendMessage(ChatColor.AQUA + username + ChatColor.WHITE + " is not currently banned.");
+			return true;
+		}
+		
+		// player is banned; compile their ban record into a nice message
+		HashMap<String, Object> ban = results.get(0);		
+		
+		long banId			= (long) ban.get("id");
+		int banDateTS 		= (int) ban.get("date_ban");
+		Object banExpiryTS 	= ban.get("date_expire");
+		String banStaff		= (String) ban.get("staff_name");
+		String banReason 	= (String) ban.get("reason");
+		String banUUID		= (String) ban.get("banned_uuid");
+		Date banDate 		= TimestampHelper.GetDateFromTimestamp((long)banDateTS);
+		
+		String banExpiry;
+		String banExpiresIn = null;
+		if(banExpiryTS == null)
+		{
+			// perma banned
+			banExpiry = "Never";
+		}
+		else
+		{
+			// temp banned
+			long now = TimestampHelper.GetNowTimestamp();
+			
+			Date expiryDate = TimestampHelper.GetDateFromTimestamp((int)banExpiryTS);
+			banExpiry = expiryDate.toString();
+			banExpiresIn = TimestampHelper.GetTimeDifference(now, (int)banExpiryTS);
+			
+			// check if ban has expired
+			if(now >= (int)banExpiryTS)
+			{
+				String staffUUID = null;
+				if(e.IsPlayer)
+				{
+					PlayerUUID staff = BanHelper.GetUUID(e.Plugin, e.Sender.getName());
+					staffUUID = staff.GetUUID();
+				}
 				
+				try
+				{
+					adapter.Execute("UPDATE pcban_active_bans SET is_active=0 WHERE id=?", banId);
+					
+					adapter.Execute(
+						new QueryBuilder().Insert("pcban_unbans")
+							.Field("ban_id", banId)
+							.Field("staff_uuid", staffUUID)
+							.Field("date", (int)banExpiryTS)
+							.Build()
+					);
+				}
+				catch(SQLException err)
+				{
+					e.Sender.sendMessage(ChatColor.RED + "ERROR: Ban has expired but an error prevented its removal.");
+					e.Plugin.getLogger().severe("Could not remove expired ban on lookup: " + err.getMessage());
+					return true;
+				}
+				
+				e.Sender.sendMessage(ChatColor.AQUA + username + ChatColor.WHITE + " is not currently banned.");
+				return true;
+			}
+		}
+		
+		String msg = ChatColor.DARK_RED + username + " is currently banned.\n\n" +
+				"---\n" +
+				"Reason: " + banReason + "\n" +
+				"---\n" +
+				"Banned by: " + banStaff + "\n" +
+				"Date: " + banDate + "\n" +
+				"Expiry Date: " + banExpiry;
+		
+		if(banExpiry != "Never")
+		{
+			msg += "\nExpires in: " + banExpiresIn;
+		}
+			
+		e.Sender.sendMessage(msg);
+		
 		return true;
-	}
-	
-	/**
-	 * Lookup the current UUID of the specified username
-	 * 
-	 * @param plugin
-	 * @param e
-	 */
-	private void GetCurrentUUID(final CommandArgs e)
-	{
-		final String username = e.Args[1];
-		
-		Bukkit.getScheduler().runTaskAsynchronously(e.Plugin, new Runnable()
-		{
-			@Override
-			public void run()
-			{
-				try
-				{
-					UUID uuid = _uuidLookup.GetCurrentUUID(username);
-					OnSuccess(e, username + ": " + uuid.toString());
-				}
-				catch(Exception err)
-				{
-					OnError(e, "ERROR: An error occured trying to perform a lookup", err.getMessage());
-				}
-			}
-		});
-	}
-	
-	/**
-	 * Get the name history of the given username
-	 * 
-	 * @param e
-	 */
-	private void GetNameHistory(final CommandArgs e)
-	{
-		final String username = e.Args[1];
-		final PlayerUUID uuid = BanHelper.GetUUID(e.Plugin, username);
-		
-		if(uuid.GetUUID() == "")
-		{
-			e.Sender.sendMessage("ERROR: Could not determine the player's UUID");
-			return;
-		}
-		
-		Bukkit.getScheduler().runTaskAsynchronously(e.Plugin, new Runnable()
-		{
-			@Override
-			public void run()
-			{
-				HashMap<String, Long> history = null;
-				
-				try
-				{
-					history = _uuidLookup.GetNameHistory(uuid.GetUUID());
-				}
-				catch(Exception err)
-				{
-					OnError(e, "ERROR: An error occured trying to perform a lookup", err.getMessage());
-				}
-				
-				StringBuilder output = new StringBuilder();
-				output.append("Name history of ")
-					.append(username)
-					.append("\n(UUID: ").append(uuid.GetUUID()).append(")")
-					.append("\n---\n");
-				
-				Iterator<Entry<String, Long>> i = history.entrySet().iterator();
-				while(i.hasNext())
-				{
-					Entry<String, Long> pair = i.next();
-					
-					output.append("Name: ")
-						.append(pair.getKey());
-					
-					// only show the 'name change date' if it exists
-					if(pair.getValue() != null)
-					{
-						Long timestamp = pair.getValue();
-						Date date = TimestampHelper.GetDateFromTimestamp(timestamp);
-						
-						output.append("\n")
-							.append("Changed to on: ")
-							.append(date);
-					}					
-					
-					if(i.hasNext())
-						output.append("\n---\n");
-				}
-				
-				OnSuccess(e, output.toString());
-			}
-		});
-	}
-	
-	
-	private void OnSuccess(CommandArgs e, String message)
-	{
-		e.Sender.sendMessage(message);
-	}
-	
-	private void OnError(CommandArgs e, String playerMsg, String logMsg)
-	{
-		e.Sender.sendMessage(playerMsg);
-		e.Plugin.getLogger().severe(logMsg);
-	}
+	}	
 }
