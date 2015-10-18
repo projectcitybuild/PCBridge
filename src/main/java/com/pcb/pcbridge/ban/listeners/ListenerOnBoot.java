@@ -11,8 +11,6 @@ import com.pcb.pcbridge.library.TimestampHelper;
 
 /**
  * A special listener that invokes when PCBridge is enabled via onEnable()
- * 
- * TODO: output any errors to a log file
  */
 
 public class ListenerOnBoot 
@@ -34,6 +32,8 @@ public class ListenerOnBoot
 	 */
 	public void Execute()
 	{
+		_plugin.getLogger().info("Checking for any expired bans...");
+		
 		_plugin.GetAdapter().QueryAsync(
 			new AsyncAdapterParams(
 				"SELECT id,date_expire FROM pcban_active_bans WHERE is_active=1 and date_expire<=?", 
@@ -84,7 +84,7 @@ public class ListenerOnBoot
 				@Override
 				public void OnError(Exception err) 
 				{
-					
+					// TODO: add to a list of errors and output the list at the end
 				}
 			}
 		);

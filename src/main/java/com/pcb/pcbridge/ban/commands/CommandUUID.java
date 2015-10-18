@@ -9,7 +9,7 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 
 import com.pcb.pcbridge.ban.BanHelper;
-import com.pcb.pcbridge.ban.PlayerUUID;
+import com.pcb.pcbridge.library.PlayerUUID;
 import com.pcb.pcbridge.library.TimestampHelper;
 import com.pcb.pcbridge.library.UUIDLookup;
 import com.pcb.pcbridge.library.controllers.commands.CommandArgs;

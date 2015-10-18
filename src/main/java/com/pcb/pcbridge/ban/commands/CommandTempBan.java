@@ -1,15 +1,7 @@
 package com.pcb.pcbridge.ban.commands;
 
-import java.sql.SQLException;
-import java.util.Date;
-
-import org.bukkit.ChatColor;
-
-import com.pcb.pcbridge.ban.BanHelper;
-import com.pcb.pcbridge.ban.PlayerUUID;
 import com.pcb.pcbridge.library.controllers.commands.CommandArgs;
 import com.pcb.pcbridge.library.controllers.commands.ICommand;
-import com.pcb.pcbridge.library.database.adapters.AbstractAdapter;
 /**
  * Command: Ban the specified user (via username) for a temporary period of time
  */

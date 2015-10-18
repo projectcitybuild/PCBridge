@@ -9,9 +9,9 @@ import java.util.regex.Pattern;
 import org.bukkit.ChatColor;
 
 import com.pcb.pcbridge.ban.BanHelper;
-import com.pcb.pcbridge.ban.PlayerUUID;
 import com.pcb.pcbridge.library.AsyncAdapterParams;
 import com.pcb.pcbridge.library.AsyncCallback;
+import com.pcb.pcbridge.library.PlayerUUID;
 import com.pcb.pcbridge.library.TimestampHelper;
 import com.pcb.pcbridge.library.controllers.commands.CommandArgs;
 import com.pcb.pcbridge.library.controllers.commands.ICommand;
@@ -167,7 +167,7 @@ public final class CommandBan implements ICommand
 			@Override
 			public void OnSuccess(Object results) 
 			{
-				e.Sender.sendMessage(ChatColor.GRAY + username + " has been banned.");
+				e.Plugin.getServer().broadcastMessage(ChatColor.GRAY + username + " has been banned.");
 			}
 				
 			@Override
@@ -194,4 +194,6 @@ public final class CommandBan implements ICommand
 		
 		return true;
 	}
+	
+	
 }

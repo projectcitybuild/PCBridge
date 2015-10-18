@@ -8,7 +8,7 @@ import java.util.List;
 import org.bukkit.ChatColor;
 
 import com.pcb.pcbridge.ban.BanHelper;
-import com.pcb.pcbridge.ban.PlayerUUID;
+import com.pcb.pcbridge.library.PlayerUUID;
 import com.pcb.pcbridge.library.TimestampHelper;
 import com.pcb.pcbridge.library.controllers.commands.CommandArgs;
 import com.pcb.pcbridge.library.controllers.commands.ICommand;
@@ -57,7 +57,7 @@ public final class CommandLookup implements ICommand
 		Object banExpiryTS 	= ban.get("date_expire");
 		String banStaff		= (String) ban.get("staff_name");
 		String banReason 	= (String) ban.get("reason");
-		String banUUID		= (String) ban.get("banned_uuid");
+		//String banUUID		= (String) ban.get("banned_uuid");
 		Date banDate 		= TimestampHelper.GetDateFromTimestamp((long)banDateTS);
 		
 		String banExpiry;

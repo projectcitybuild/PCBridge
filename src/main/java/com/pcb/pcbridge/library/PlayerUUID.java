@@ -1,4 +1,4 @@
-package com.pcb.pcbridge.ban;
+package com.pcb.pcbridge.library;
 
 import java.util.UUID;
 import org.bukkit.entity.Player;
