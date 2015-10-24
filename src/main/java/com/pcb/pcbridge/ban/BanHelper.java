@@ -13,8 +13,8 @@ import org.json.simple.parser.ParseException;
 
 import com.pcb.pcbridge.PCBridge;
 import com.pcb.pcbridge.library.AsyncAdapterParams;
-import com.pcb.pcbridge.library.AsyncCallback;
 import com.pcb.pcbridge.library.PlayerUUID;
+import com.pcb.pcbridge.library.async.IFutureCallback;
 import com.pcb.pcbridge.library.database.adapters.AbstractAdapter;
 
 /**
@@ -126,7 +126,7 @@ public final class BanHelper
 	 * @param username
 	 * @return
 	 */
-	public static void GetUUIDAsync(final PCBridge plugin, final String username, final AsyncCallback<PlayerUUID> callback)
+	public static void GetUUIDAsync(final PCBridge plugin, final String username, final IFutureCallback<PlayerUUID> callback)
 	{
 		UUID uuid = null;
 		String ip = "";

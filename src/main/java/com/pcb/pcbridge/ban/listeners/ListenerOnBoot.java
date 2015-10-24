@@ -6,8 +6,8 @@ import java.util.ListIterator;
 
 import com.pcb.pcbridge.PCBridge;
 import com.pcb.pcbridge.library.AsyncAdapterParams;
-import com.pcb.pcbridge.library.AsyncCallback;
 import com.pcb.pcbridge.library.TimestampHelper;
+import com.pcb.pcbridge.library.async.IFutureCallback;
 
 /**
  * A special listener that invokes when PCBridge is enabled via onEnable()
@@ -40,7 +40,7 @@ public class ListenerOnBoot
 				TimestampHelper.GetNowTimestamp()
 			),
 			
-			new AsyncCallback<List<HashMap<String, Object>>>() 
+			new IFutureCallback<List<HashMap<String, Object>>>() 
 			{			
 				@Override
 				public void OnSuccess(List<HashMap<String, Object>> results) 
@@ -76,7 +76,7 @@ public class ListenerOnBoot
 				TimestampHelper.GetNowTimestamp()
 			),
 			
-			new AsyncCallback<Object>() 
+			new IFutureCallback<Object>() 
 			{			
 				@Override
 				public void OnSuccess(Object results) { }
@@ -105,7 +105,7 @@ public class ListenerOnBoot
 					(int)ban.get("date_expire")
 				),
 					
-				new AsyncCallback<Object>() 
+				new IFutureCallback<Object>() 
 				{			
 					@Override
 					public void OnSuccess(Object results) 

@@ -11,9 +11,9 @@ import org.bukkit.entity.Player;
 
 import com.pcb.pcbridge.ban.BanHelper;
 import com.pcb.pcbridge.library.AsyncAdapterParams;
-import com.pcb.pcbridge.library.AsyncCallback;
 import com.pcb.pcbridge.library.PlayerUUID;
 import com.pcb.pcbridge.library.TimestampHelper;
+import com.pcb.pcbridge.library.async.IFutureCallback;
 import com.pcb.pcbridge.library.controllers.commands.CommandArgs;
 import com.pcb.pcbridge.library.controllers.commands.ICommand;
 import com.pcb.pcbridge.library.database.adapters.AbstractAdapter;
@@ -30,7 +30,7 @@ public final class CommandUnban implements ICommand
 		if(e.Args.length == 0 || e.Args.length > 1)
 			return false;
 		
-		BanHelper.GetUUIDAsync(e.Plugin, e.Args[0], new AsyncCallback<PlayerUUID>() 
+		BanHelper.GetUUIDAsync(e.Plugin, e.Args[0], new IFutureCallback<PlayerUUID>() 
 		{			
 			@Override
 			public void OnSuccess(PlayerUUID player) 
@@ -60,7 +60,7 @@ public final class CommandUnban implements ICommand
 		AbstractAdapter adapter = e.Plugin.GetAdapter();
 				
 		AsyncAdapterParams params = BanHelper.GetLookupSQL(adapter, e.Args[0], player.GetUUID());
-		adapter.QueryAsync(params, new AsyncCallback<List<HashMap<String, Object>>>() 
+		adapter.QueryAsync(params, new IFutureCallback<List<HashMap<String, Object>>>() 
 		{
 			@Override
 			public void OnSuccess(List<HashMap<String, Object>> records) 

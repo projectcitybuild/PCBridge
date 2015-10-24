@@ -9,10 +9,9 @@ import java.util.regex.Pattern;
 import org.bukkit.ChatColor;
 
 import com.pcb.pcbridge.ban.BanHelper;
-import com.pcb.pcbridge.library.AsyncAdapterParams;
-import com.pcb.pcbridge.library.AsyncCallback;
 import com.pcb.pcbridge.library.PlayerUUID;
 import com.pcb.pcbridge.library.TimestampHelper;
+import com.pcb.pcbridge.library.async.IFutureCallback;
 import com.pcb.pcbridge.library.controllers.commands.CommandArgs;
 import com.pcb.pcbridge.library.controllers.commands.ICommand;
 import com.pcb.pcbridge.library.database.adapters.AbstractAdapter;
@@ -55,7 +54,7 @@ public final class CommandBan implements ICommand
 		final String username = e.Args[0];
 		PlayerUUID player = BanHelper.GetUUID(e.Plugin, username);
 		AbstractAdapter adapter = e.Plugin.GetAdapter();
-
+		
 		// check if the user is already banned
 		boolean isBanned = false;
 		try
@@ -162,7 +161,7 @@ public final class CommandBan implements ICommand
 			player.IP
 		);
 		
-		adapter.ExecuteAsync(query,	new AsyncCallback<Object>() 
+		adapter.ExecuteAsync(query,	new IFutureCallback<Object>() 
 		{			
 			@Override
 			public void OnSuccess(Object results) 

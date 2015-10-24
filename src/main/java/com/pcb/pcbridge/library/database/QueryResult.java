@@ -6,8 +6,10 @@ import java.util.List;
 import java.util.ListIterator;
 
 /**
- * A container to get rid of those ugly List<HashMap<String, Object>> declarations.
  * Represents the result of an adapter SELECT query.
+ * 
+ * - ie. A container to get rid of those ugly List<HashMap<String, Object>> declarations.
+ * - The trade-off however is that results are no longer being lazy-loaded... for now
  */
 
 public class QueryResult 

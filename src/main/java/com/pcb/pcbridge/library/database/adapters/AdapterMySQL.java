@@ -16,7 +16,7 @@ import org.bukkit.Bukkit;
 
 import com.pcb.pcbridge.PCBridge;
 import com.pcb.pcbridge.library.AsyncAdapterParams;
-import com.pcb.pcbridge.library.AsyncCallback;
+import com.pcb.pcbridge.library.async.IFutureCallback;
 import com.pcb.pcbridge.library.database.querybuilder.QueryBuilderSQL;
 
 /**
@@ -129,19 +129,6 @@ public class AdapterMySQL extends AbstractAdapter
 		return Execute(sql, (Object)null);
 	}
 	
-	@Override
-	public int Execute(QueryBuilderSQL queryBuilder) throws SQLException
-	{
-		try (
-				Connection connection = getConnection();
-				PreparedStatement statement = connection.prepareStatement(queryBuilder.GetSQL())
-		) {
-			MapParams(statement, queryBuilder.GetParameters().toArray());
-			
-			return statement.executeUpdate();
-		}
-	}
-	
 	/**
 	 * Queries the current connection for a ResultSet
 	 * 
@@ -238,79 +225,5 @@ public class AdapterMySQL extends AbstractAdapter
 		}
 		
 		return rows;
-	}
-	
-	
-	/**
-	 * Same as adapter Execute(), but asynchronous
-	 * 
-	 * @param callback
-	 * @param sql
-	 * @param args
-	 */
-	public void ExecuteAsync(final AsyncAdapterParams params, final AsyncCallback callback) 
-	{
-		Bukkit.getScheduler().runTaskAsynchronously(_plugin, new Runnable()
-		{
-			@Override
-			public void run()
-			{
-				try
-				{
-					int result = Execute(params.SQL, params.Args);
-					callback.OnSuccess(result);
-				}
-				catch(SQLException e)
-				{
-					callback.OnError(e);
-				}
-			}
-		});
-	}
-	
-	/**
-	 * Same as adapter Query(), but asynchronous
-	 */
-	public void QueryAsync(final AsyncAdapterParams params, final AsyncCallback callback) 
-	{
-		Bukkit.getScheduler().runTaskAsynchronously(_plugin, new Runnable()
-		{
-			@Override
-			public void run()
-			{
-				try
-				{
-					List<HashMap<String, Object>> results = Query(params.SQL, params.Args);
-					callback.OnSuccess(results);
-				}
-				catch(SQLException e)
-				{
-					callback.OnError(e);
-				}
-			}
-		});
-	}
-	
-	/**
-	 * Same as adapter Count(), but asynchronous
-	 */
-	public void CountAsync(final AsyncAdapterParams params, final AsyncCallback callback) 
-	{
-		Bukkit.getScheduler().runTaskAsynchronously(_plugin, new Runnable()
-		{
-			@Override
-			public void run()
-			{
-				try
-				{
-					int result = Count(params.SQL, params.Args);
-					callback.OnSuccess(result);
-				}
-				catch(SQLException e)
-				{
-					callback.OnError(e);
-				}
-			}
-		});
-	}
+	}	
 }

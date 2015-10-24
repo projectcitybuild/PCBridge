@@ -11,7 +11,6 @@ A Bukkit (and Spigot) plugin to bridge [Project City Build](www.projectcitybuild
   * Username -> Name history
   
 * JDBC MySQL wrapper
-* SQL query builder (sql via method chaining)
 
 ### Want to contribute?
 Great! But you'll first need to set up a local MySQL database named "PCBridge"
@@ -31,6 +30,6 @@ If you're using different versions to the ones listed above, ensure you update t
 * <b>/ban</b> [name] [reason]
 * <b>/tempban</b> [name] [time] [reason]
 * <b>/unban</b> [name]
-* <b>/checkban</b> [name]
-* <b>/lookup uuid</b> [name]
-* <b>/lookup history</b> [name]
+* <b>/lookup</b> [name]
+* <b>/uuid</b> [name]
+* <b>/uuid history</b> [name]
