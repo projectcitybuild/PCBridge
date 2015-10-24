@@ -28,3 +28,8 @@ commands:
     usage: /<command> [history|uuid] [player]
     permission: <plugin name>.ban.uuid
     permission-message: You don't have <permission>
+  pcbridge:
+    description: Config and settings for the PCBridge plugin
+    usage: /<command> config [key] [on|off]
+    permission: <plugin name>.utility
+    permission-message: You don't have <permission>

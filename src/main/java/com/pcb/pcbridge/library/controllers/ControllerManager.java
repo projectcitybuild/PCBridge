@@ -15,6 +15,7 @@ import com.pcb.pcbridge.library.controllers.commands.ICommand;
 import com.pcb.pcbridge.library.controllers.commands.ICommandController;
 import com.pcb.pcbridge.library.controllers.listeners.AbstractListener;
 import com.pcb.pcbridge.library.controllers.listeners.IListenerController;
+import com.pcb.pcbridge.utility.UtilityController;
 
 /**
  * Instantiates controllers and registers each of their commands & listeners with Bukkit
@@ -31,7 +32,8 @@ public final class ControllerManager implements CommandExecutor
 		
 		CreateControllers(new AbstractController[] 
 		{
-			new BanController()
+			new BanController(),
+			new UtilityController()
 		});		
 	}
 	
@@ -98,7 +100,7 @@ public final class ControllerManager implements CommandExecutor
 		if(handler != null)
 		{
 			CommandArgs packet = new CommandArgs(_plugin, sender, label, args);
-			return handler.Execute(packet, (Object)null);
+			return handler.Execute(packet);
 		}
 		
 		return false;
@@ -117,8 +119,11 @@ public final class ControllerManager implements CommandExecutor
 	{
 		ICommand handler = Commands.get( routeName );
 		
+		if(args.length > 0)
+			e.RouteArgs = args;
+		
 		if(handler != null)
-			return handler.Execute(e, args);
+			return handler.Execute(e);
 				
 		return false;
 	}
