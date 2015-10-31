@@ -1,2 +1,2 @@
 Manifest-Version: 1.0
-Class-Path: lib/commons-dbcp2-2.0.1.jar lib/commons-logging-1.1.3.jar lib/commons-pool2-2.2.jar
+Class-Path: lib/commons-dbcp2-2.0.1.jar lib/commons-logging-1.1.3.jar lib/commons-pool2-2.2.jar Vault.jar

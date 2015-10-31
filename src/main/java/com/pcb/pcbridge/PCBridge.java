@@ -1,5 +1,8 @@
 package com.pcb.pcbridge;
 
+import net.milkbowl.vault.permission.Permission;
+
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.pcb.pcbridge.ban.BanController;
@@ -30,6 +33,7 @@ public final class PCBridge extends JavaPlugin
 	private ConnectionManager _connectionManager;
 	private PlayerManager _playerManager;
 	private UUIDLookup _uuidFetcher;
+	private Permission _permissions;
 	
 	public AbstractAdapter GetAdapter(DbConn name)
 	{
@@ -55,6 +59,7 @@ public final class PCBridge extends JavaPlugin
 	public void onEnable()
 	{
 		LoadConfig();
+		HookPermissions();
 		
 		_uuidFetcher = new UUIDLookup();
 		
@@ -79,6 +84,34 @@ public final class PCBridge extends JavaPlugin
 	@Override
 	public void onDisable()
 	{
+	}
+	
+	/**
+	 * Hook into the permissions API via Vault
+	 * 
+	 * @return
+	 */
+	private void HookPermissions()
+	{
+		RegisteredServiceProvider<Permission> rsp = getServer().getServicesManager().getRegistration(Permission.class);
+		if(rsp == null)
+		{
+			getLogger().severe("No permissions plugin to hook into!");
+			return;
+		}
+		
+		_permissions = rsp.getProvider();
+
+		if(_permissions == null)
+		{
+			getLogger().severe("Failed to hook into permissions API");
+			return;
+		}
+		else
+		{
+			getLogger().info("Hooked into permissions API");
+		}
+	    
 	}
 	
 	/**

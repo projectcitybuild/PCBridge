@@ -1,40 +1,35 @@
 name: PCBridge
 main: com.pcb.pcbridge.PCBridge
 version: 0.2.1
+depend: [Vault]
+softdepend: [PermissionsEx]
 
 commands:
   ban:
     description: Permanently bans the specified player from the server.
     usage: /<command> [player] [reason]
     permission: pcbridge.ban.ban
-    permission-message: You don't have <permission>
   unban:
     description: Unbans the specified player.
     usage: /<command> [player]
     permission: pcbridge.ban.unban
-    permission-message: You don't have <permission>
   lookup:
     description: Checks if the specified player is currently banned.
     usage: /<command> [player]
     permission: pcbridge.ban.lookup
-    permission-message: You don't have <permission>
   tempban:
     description: Temporarily bans the specified player from the server.
     usage: /<command> [player] [time][m|h|d|w|mo|y] [reason]
     permission: pcbridge.ban.tempban
-    permission-message: You don't have <permission>
   uuid:
     description: Retrieves UUID data about a player from Mojang's web service
     usage: /<command> [history|uuid] [player]
     permission: pcbridge.ban.uuid
-    permission-message: You don't have <permission>
   pcbridge:
     description: Config and settings for the PCBridge plugin
     usage: /<command> config [key] [on|off]
     permission: pcbridge.utility
-    permission-message: You don't have <permission>
   swearblock:
     description: Toggles on/off the chat swear filter
     usage: /<command>
     permission: pcbridge.swearblock.toggle
-    permission-message: You don't have <permission>
