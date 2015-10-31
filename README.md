@@ -9,13 +9,16 @@ A Bukkit (and Spigot) plugin to bridge [Project City Build](www.projectcitybuild
 * Mojang UUID lookup
   * Username -> UUID
   * Username -> Name history
+* Swear filter
   
 * JDBC MySQL wrapper
 
 ### Want to contribute?
-Great! But you'll first need to set up a local MySQL database named "PCBridge"
+Great! But first you'll need to set up a local MySQL database.
 
-Run the plugin once to generate the config file (plugin.yml). Add in your MySQL connection details there as necessary.
+1. Run the plugin once to generate the config file (plugin.yml)
+2. Add in your MySQL connection details there as necessary
+3. Add in dependencies
 
 PCBridge depends on Apache's [DBCP2 library](https://commons.apache.org/proper/commons-dbcp/) for database connection pooling. Once the dependencies are downloaded (eg. via Maven), ensure they are in the <b>lib/</b> folder inside your <b>plugins/</b> folder.
 
@@ -33,3 +36,5 @@ If you're using different versions to the ones listed above, ensure you update t
 * <b>/lookup</b> [name]
 * <b>/uuid</b> [name]
 * <b>/uuid history</b> [name]
+* <b>/swearblock</b> [on/off]   (argument optional)
+* <b>/pcbridge config</b> [key] [value]
