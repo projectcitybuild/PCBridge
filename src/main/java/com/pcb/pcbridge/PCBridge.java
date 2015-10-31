@@ -68,11 +68,13 @@ public final class PCBridge extends JavaPlugin
 		getConfig().addDefault("database.remote.port", 3306);
 		getConfig().addDefault("database.remote.username", "root");
 		getConfig().addDefault("database.remote.password", "");
+		getConfig().addDefault("database.remote.database", "pcbridge_remote");
 		
 		getConfig().addDefault("database.local.address", "localhost");
 		getConfig().addDefault("database.local.port", 3306);
 		getConfig().addDefault("database.local.username", "root");
 		getConfig().addDefault("database.local.password", "");
+		getConfig().addDefault("database.local.database", "pcbridge_local");
 		
 		getConfig().addDefault("database.boot_test_connection", true);
 		getConfig().addDefault("database.first_run", true);

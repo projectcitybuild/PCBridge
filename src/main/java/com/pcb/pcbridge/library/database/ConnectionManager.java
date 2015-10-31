@@ -51,6 +51,7 @@ public final class ConnectionManager
 		String port 	= _plugin.getConfig().getString("database." + conn + ".port");
 		String username = _plugin.getConfig().getString("database." + conn + ".username");
 		String password = _plugin.getConfig().getString("database." + conn + ".password");
+		String database = _plugin.getConfig().getString("database." + conn + ".database");
 		
 		AbstractAdapter adapter;
 		
@@ -58,7 +59,7 @@ public final class ConnectionManager
 		{
 			default:
 			case MYSQL:
-				adapter = new AdapterMySQL(address, port, "pcbridge", username, password);
+				adapter = new AdapterMySQL(address, port, database, username, password);
 				break;
 		}
 		
