@@ -76,7 +76,7 @@ public final class ConnectionManager
 		}
 		
 		// test connection on boot
-		TestConnection(adapter);	
+		TestConnection(adapter, name);	
 		
 		// TODO: revert to file adapter storage if db connection failed
 	}
@@ -85,13 +85,22 @@ public final class ConnectionManager
 	 * Attempt a basic (synchronous) query to test the database connection.
 	 * Recommended ON if using a remote connection as the connection gets pooled during boot.
 	 */
-	private void TestConnection(AbstractAdapter adapter)
+	private void TestConnection(AbstractAdapter adapter, DbConn name)
 	{
 		if(_plugin.getConfig().getBoolean("database.boot_test_connection"))
 		{
 			try
 			{
-				adapter.Query("SELECT * FROM pcban_active_bans LIMIT 0,?", 1);
+				// TODO: replace these hardcoded tests
+				if(name == DbConn.REMOTE)
+				{
+					adapter.Query("SELECT * FROM pcbridge_active_bans LIMIT 0,?", 1);
+				}
+				else
+				{
+					adapter.Query("SELECT * FROM pcbridge_users LIMIT 0,?", 1);
+				}
+				
 				_plugin.getLogger().info("DB connection test succeeded");
 			}
 			catch(SQLException err)
