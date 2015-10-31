@@ -30,17 +30,10 @@ public final class ControllerManager implements CommandExecutor
 	public ControllerManager(PCBridge plugin)
 	{
 		this._plugin = plugin;
-		
-		CreateControllers(new AbstractController[] 
-		{
-			new BanController(),
-			new SwearBlockController(),
-			new UtilityController()
-		});		
 	}
 	
 
-	private void CreateControllers(AbstractController[] controllers)
+	public void CreateControllers(AbstractController[] controllers)
 	{
 		for(AbstractController controller : controllers)
 		{			
