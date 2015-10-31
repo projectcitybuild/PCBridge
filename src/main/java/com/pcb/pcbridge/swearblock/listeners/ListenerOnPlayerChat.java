@@ -41,7 +41,7 @@ public final class ListenerOnPlayerChat extends AbstractListener implements List
 	        String edited = e.getMessage().replace(caught, stars);
 	        
 	        for (Player p : e.getRecipients()) 
-		    {	        	
+		    {
 	        	// check if message receiver has filter activate
 	        	PlayerData settings = _plugin.GetPlayerManager().GetSettings(p.getUniqueId());
 	        	if(settings.SwearFilter)

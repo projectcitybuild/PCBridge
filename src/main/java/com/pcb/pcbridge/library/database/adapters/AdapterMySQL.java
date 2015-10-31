@@ -226,4 +226,14 @@ public class AdapterMySQL extends AbstractAdapter
 		
 		return rows;
 	}
+
+	@Override
+	public void UseDatabase(String name) throws SQLException 
+	{
+		try (
+				Connection connection = getConnection();
+		) {
+			connection.setCatalog(name);
+		}
+	}
 }

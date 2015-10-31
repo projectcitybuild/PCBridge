@@ -8,8 +8,9 @@ import com.pcb.pcbridge.library.controllers.AbstractController;
 import com.pcb.pcbridge.library.controllers.listeners.IListenerController;
 
 /**
- * Controller: Handles any ban related routing
+ * Controller: Handles routing for the retrieval/creation of player settings
  */
+
 public class PlayerController extends AbstractController implements IListenerController
 {
 	public Listener[] GetListeners() 

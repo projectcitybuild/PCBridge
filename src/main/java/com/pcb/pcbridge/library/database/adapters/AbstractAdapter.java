@@ -61,4 +61,11 @@ public abstract class AbstractAdapter
 	public abstract int Count(String sql, Object... args) throws SQLException;
 	public abstract int Count(String sql) throws SQLException;
 	
+	/**
+	 * Switches the connection to the specified database
+	 * 
+	 * @param name
+	 * @throws SQLException
+	 */
+	public abstract void UseDatabase(String name) throws SQLException;
 }

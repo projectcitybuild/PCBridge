@@ -9,7 +9,7 @@ A Bukkit (and Spigot) plugin to bridge [Project City Build](www.projectcitybuild
 * Mojang UUID lookup
   * Username -> UUID
   * Username -> Name history
-* Swear filter
+* Chat swear filter
   
 * JDBC MySQL wrapper
 

@@ -15,6 +15,7 @@ import com.pcb.pcbridge.library.database.adapters.AbstractAdapter;
 import com.pcb.pcbridge.library.database.adapters.Adapter;
 import com.pcb.pcbridge.players.PlayerController;
 import com.pcb.pcbridge.players.PlayerManager;
+import com.pcb.pcbridge.ranks.RankController;
 import com.pcb.pcbridge.swearblock.SwearBlockController;
 import com.pcb.pcbridge.utility.UtilityController;
 
@@ -55,6 +56,11 @@ public final class PCBridge extends JavaPlugin
 		return _playerManager;
 	}
 	
+	public Permission GetPermissions()
+	{
+		return _permissions;
+	}
+	
 	@Override
 	public void onEnable()
 	{
@@ -72,6 +78,7 @@ public final class PCBridge extends JavaPlugin
 		_controllerManager.CreateControllers(new AbstractController[] 
 		{
 			new PlayerController(),
+			new RankController(),
 			new BanController(),
 			new SwearBlockController(),
 			new UtilityController()
@@ -134,6 +141,8 @@ public final class PCBridge extends JavaPlugin
 		
 		getConfig().addDefault("database.boot_test_connection", true);
 		getConfig().addDefault("database.first_run", true);
+		
+		getConfig().addDefault("database.forum.database", "pcbridge_forums");
 		
 		getConfig().options().copyDefaults(true);
 		saveConfig();
