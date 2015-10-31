@@ -12,7 +12,6 @@ import org.bukkit.entity.Player;
 import org.json.simple.parser.ParseException;
 
 import com.pcb.pcbridge.PCBridge;
-import com.pcb.pcbridge.library.AsyncAdapterParams;
 import com.pcb.pcbridge.library.PlayerUUID;
 import com.pcb.pcbridge.library.async.IFutureCallback;
 import com.pcb.pcbridge.library.database.adapters.AbstractAdapter;
@@ -36,7 +35,7 @@ public final class BanHelper
 	 * @return
 	 * @throws SQLException
 	 */
-	public static List<HashMap<String, Object>> LookupPlayer(AbstractAdapter adapter, String name, String uuid) throws SQLException
+	/*public static List<HashMap<String, Object>> LookupPlayer(AbstractAdapter adapter, String name, String uuid) throws SQLException
 	{
 		String SQL = "SELECT * FROM pcban_active_bans WHERE is_active=1 ";
 		List<HashMap<String, Object>> results;
@@ -63,7 +62,7 @@ public final class BanHelper
 		// TODO: check if its a temp ban and has now expired
 			
 		return results;
-	}
+	}*/
 	
 	/**
 	 * Builds the SQL required to check if a name and/or uuid is banned, in async
@@ -75,7 +74,7 @@ public final class BanHelper
 	 * @return
 	 * @throws SQLException
 	 */
-	public static AsyncAdapterParams GetLookupSQL(AbstractAdapter adapter, String name, String uuid)
+	/*public static AsyncAdapterParams GetLookupSQL(AbstractAdapter adapter, String name, String uuid)
 	{
 		String sql = "SELECT * FROM pcban_active_bans WHERE is_active=1 ";
 		Object[] params;
@@ -102,7 +101,7 @@ public final class BanHelper
 		}
 		
 		return new AsyncAdapterParams(sql, params);
-	}
+	}*/
 	
 	/**
 	 * Checks if the specified username and/or UUID is currently banned
@@ -113,11 +112,11 @@ public final class BanHelper
 	 * @return
 	 * @throws SQLException
 	 */
-	public static boolean IsPlayerBanned(AbstractAdapter adapter, String name, String uuid) throws SQLException
+	/*public static boolean IsPlayerBanned(AbstractAdapter adapter, String name, String uuid) throws SQLException
 	{
 		List<HashMap<String, Object>> results = LookupPlayer(adapter, name, uuid);
 		return (results != null && results.size() > 0);
-	}
+	}*/
 	
 	/**
 	 * Retrieves a player's UUID regardless of online state or join history
@@ -165,7 +164,7 @@ public final class BanHelper
 				{
 					try 
 					{
-						UUID result = plugin.GetUUIDLookup().GetCurrentUUID(username);
+						UUID result = plugin.GetUUIDFetcher().GetCurrentUUID(username);
 						
 						if(result == null)
 							throw new NullPointerException("Mojang API UUID query returned null");
@@ -223,7 +222,7 @@ public final class BanHelper
 			// retrieve the player's UUID from Mojang because they've never joined the server before
 			try 
 			{
-				uuid = plugin.GetUUIDLookup().GetCurrentUUID(username);				
+				uuid = plugin.GetUUIDFetcher().GetCurrentUUID(username);				
 			} 
 			catch (IOException | ParseException err) 
 			{

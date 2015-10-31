@@ -26,10 +26,10 @@ public final class MessageHelper
 				msg.append(ChatColor.RED).append("ERROR: ");
 				break;
 			case FATAL:
-				msg.append(ChatColor.RED).append(ChatColor.BOLD).append("FATAL: ");
+				msg.append(ChatColor.RED).append(ChatColor.ITALIC).append("FATAL: ");
 				break;
 			case INFO:
-				msg.append(ChatColor.GRAY).append("INFO: ");
+				msg.append(ChatColor.GRAY);
 				break;
 			case CONFIRM:
 				msg.append(ChatColor.GREEN).append("CONFIRM: ");
@@ -48,4 +48,5 @@ public final class MessageHelper
 	{
 		Send(MessageType.NORMAL, sender, message);
 	}
+
 }

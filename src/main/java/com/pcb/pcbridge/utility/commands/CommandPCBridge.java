@@ -3,12 +3,12 @@ package com.pcb.pcbridge.utility.commands;
 import com.pcb.pcbridge.library.MessageHelper;
 import com.pcb.pcbridge.library.MessageType;
 import com.pcb.pcbridge.library.controllers.commands.CommandArgs;
-import com.pcb.pcbridge.library.controllers.commands.ICommand;
+import com.pcb.pcbridge.library.controllers.commands.AbstractCommand;
 /**
  * Command: Ban the specified user (via username) for a temporary period of time
  */
 
-public final class CommandPCBridge implements ICommand 
+public final class CommandPCBridge extends AbstractCommand 
 {	
 	public boolean Execute(CommandArgs e) 
 	{
@@ -43,9 +43,9 @@ public final class CommandPCBridge implements ICommand
 		switch(e.Args[1].toLowerCase())
 		{
 			case "db_test":
-				e.Plugin.getConfig().set("database.boot_test_connection", on);
+				_plugin.getConfig().set("database.boot_test_connection", on);
 				MessageHelper.Send(MessageType.INFO, e.Sender, "'DB test on boot' set to " + e.Args[2].toUpperCase());
-				e.Plugin.saveConfig();
+				_plugin.saveConfig();
 				break;
 			default:
 				return false;

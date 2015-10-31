@@ -15,7 +15,6 @@ import com.pcb.pcbridge.ban.BanHelper;
 import com.pcb.pcbridge.library.TimestampHelper;
 import com.pcb.pcbridge.library.controllers.listeners.AbstractListener;
 import com.pcb.pcbridge.library.database.adapters.AbstractAdapter;
-import com.pcb.pcbridge.library.database.querybuilder.QueryBuilder;
 
 /**
  * Check if a player is banned upon entry to the server
@@ -26,7 +25,7 @@ public final class ListenerOnPlayerLogin extends AbstractListener implements Lis
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void OnPlayerLogin(PlayerLoginEvent e)
 	{		
-		String username = e.getPlayer().getName();
+		/*String username = e.getPlayer().getName();
 		String uuid 	= e.getPlayer().getUniqueId().toString();
 
 		AbstractAdapter adapter = _plugin.GetAdapter();
@@ -86,6 +85,6 @@ public final class ListenerOnPlayerLogin extends AbstractListener implements Lis
 								 
 						 "Åòb" + "Appeal @ www.projectcitybuild.com";
 		
-		e.disallow(PlayerLoginEvent.Result.KICK_BANNED, message);	
+		e.disallow(PlayerLoginEvent.Result.KICK_BANNED, message);	*/
 	}
 }

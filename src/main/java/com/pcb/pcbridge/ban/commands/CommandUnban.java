@@ -10,27 +10,25 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import com.pcb.pcbridge.ban.BanHelper;
-import com.pcb.pcbridge.library.AsyncAdapterParams;
 import com.pcb.pcbridge.library.PlayerUUID;
 import com.pcb.pcbridge.library.TimestampHelper;
 import com.pcb.pcbridge.library.async.IFutureCallback;
 import com.pcb.pcbridge.library.controllers.commands.CommandArgs;
-import com.pcb.pcbridge.library.controllers.commands.ICommand;
+import com.pcb.pcbridge.library.controllers.commands.AbstractCommand;
 import com.pcb.pcbridge.library.database.adapters.AbstractAdapter;
-import com.pcb.pcbridge.library.database.querybuilder.QueryBuilder;
 
 /**
  * Command: Unbans the specified player
  */
 
-public final class CommandUnban implements ICommand 
+public final class CommandUnban extends AbstractCommand 
 {	
-	public boolean Execute(final CommandArgs e, Object... args) 
+	public boolean Execute(final CommandArgs e) 
 	{
 		if(e.Args.length == 0 || e.Args.length > 1)
 			return false;
 		
-		BanHelper.GetUUIDAsync(e.Plugin, e.Args[0], new IFutureCallback<PlayerUUID>() 
+		/*BanHelper.GetUUIDAsync(e.Plugin, e.Args[0], new IFutureCallback<PlayerUUID>() 
 		{			
 			@Override
 			public void OnSuccess(PlayerUUID player) 
@@ -44,11 +42,11 @@ public final class CommandUnban implements ICommand
 				e.Sender.sendMessage(ChatColor.RED + "ERROR: Could not determine player's UUID.");
 				e.Plugin.getLogger().severe("Mojang API query for UUID failed: " + err.getMessage());			
 			}
-		});
+		});*/
 		
 		return true;
 	}
-	
+
 	/**
 	 * Checks if the given player is currently banned
 	 * 
@@ -56,7 +54,7 @@ public final class CommandUnban implements ICommand
 	 */
 	private void LookupPlayer(final CommandArgs e, final PlayerUUID player)
 	{
-		// retrieve ban from storage
+		/*// retrieve ban from storage
 		AbstractAdapter adapter = e.Plugin.GetAdapter();
 				
 		AsyncAdapterParams params = BanHelper.GetLookupSQL(adapter, e.Args[0], player.GetUUID());
@@ -82,12 +80,12 @@ public final class CommandUnban implements ICommand
 				e.Sender.sendMessage(ChatColor.RED + "ERROR: Could not lookup player in ban records.");
 				e.Plugin.getLogger().severe("Could not lookup player in ban records: " + err.getMessage());			
 			}
-		});		
+		});		*/
 	}
 	
 	private void UnbanPlayer(final CommandArgs e, PlayerUUID player, List<HashMap<String, Object>> records)
 	{
-		AbstractAdapter adapter = e.Plugin.GetAdapter();
+		/*AbstractAdapter adapter = e.Plugin.GetAdapter();
 		
 		// unban the user but keep a record of who unbanned and when
 		String staffUUID = null;
@@ -123,6 +121,6 @@ public final class CommandUnban implements ICommand
 			}
 		}		
 						
-		e.Sender.sendMessage(ChatColor.AQUA + e.Args[0] + ChatColor.WHITE + " has been unbanned.");
+		e.Sender.sendMessage(ChatColor.AQUA + e.Args[0] + ChatColor.WHITE + " has been unbanned.");*/
 	}
 }

@@ -1,6 +1,7 @@
 package com.pcb.pcbridge.library.database;
 
 import java.sql.SQLException;
+import java.util.HashMap;
 
 import com.pcb.pcbridge.PCBridge;
 import com.pcb.pcbridge.library.database.adapters.AbstractAdapter;
@@ -8,67 +9,88 @@ import com.pcb.pcbridge.library.database.adapters.Adapter;
 import com.pcb.pcbridge.library.database.adapters.AdapterMySQL;
 
 /**
- * Factory for different Storage implementations
- * (currently only supports MySQL)
+ * Factory for different Storage implementations.
+ * Also acts as an access point to separate database connections
  */
 
 public final class ConnectionManager 
 {			
-	private final AbstractAdapter _adapter;
+	private HashMap<DbConn, AbstractAdapter> _adapters;
 	private final PCBridge _plugin;
 	
-	public ConnectionManager(PCBridge plugin, Adapter adapter)
+	public ConnectionManager(PCBridge plugin)
 	{
 		this._plugin = plugin;
+	}
+
+	/**
+	 * Returns an adapter for use by config name
+	 * 
+	 * @param name
+	 * @return
+	 */
+	public AbstractAdapter GetAdapter(DbConn name)
+	{
+		AbstractAdapter adapter = _adapters.get(name);
+		assert(adapter != null);
 		
-		String address 	= plugin.getConfig().getString("database.address");
-		String port 	= plugin.getConfig().getString("database.port");
-		String username = plugin.getConfig().getString("database.username");
-		String password = plugin.getConfig().getString("database.password");
+		return adapter;
+	}
+	
+	/**
+	 * Adds an adapter to the list of available connections
+	 * 
+	 * @param name
+	 * @param adapter
+	 */
+	public void AddAdapter(DbConn name, Adapter adapterType)
+	{	
+		String conn = name.toString().toLowerCase();
 		
-		switch(adapter)
+		String address 	= _plugin.getConfig().getString("database." + conn + ".address");
+		String port 	= _plugin.getConfig().getString("database." + conn + ".port");
+		String username = _plugin.getConfig().getString("database." + conn + ".username");
+		String password = _plugin.getConfig().getString("database." + conn + ".password");
+		
+		AbstractAdapter adapter;
+		
+		switch(adapterType)
 		{
 			default:
 			case MYSQL:
-				_adapter = new AdapterMySQL(plugin, address, port, "pcbridge", username, password);
+				adapter = new AdapterMySQL(address, port, "pcbridge", username, password);
 				break;
 		}
 		
+		_adapters.put(name, adapter);
+		
 		// first run? generate tables
-		if(plugin.getConfig().getBoolean("database.first_run"))
+		if(_plugin.getConfig().getBoolean("database.first_run"))
 		{
-			if(GenerateTables())
+			if(GenerateTables(adapter))
 			{
-				plugin.getConfig().set("database.first_run", false);
-				plugin.saveConfig();
-			}		
-			
-			// test connection on boot
-			TestConnection();	
+				_plugin.getConfig().set("database.first_run", false);
+				_plugin.saveConfig();
+			}					
 		}
-		else
-		{
-			// test connection on boot
-			TestConnection();	
-		}
-	}
-
-	public AbstractAdapter GetAdapter()
-	{
-		return _adapter;
+		
+		// test connection on boot
+		TestConnection(adapter);	
+		
+		// TODO: revert to file adapter storage if db connection failed
 	}
 		
 	/**
 	 * Attempt a basic (synchronous) query to test the database connection.
 	 * Recommended ON if using a remote connection as the connection gets pooled during boot.
 	 */
-	private void TestConnection()
+	private void TestConnection(AbstractAdapter adapter)
 	{
 		if(_plugin.getConfig().getBoolean("database.boot_test_connection"))
 		{
 			try
 			{
-				_adapter.Query("SELECT * FROM pcban_active_bans LIMIT 0,?", 1);
+				adapter.Query("SELECT * FROM pcban_active_bans LIMIT 0,?", 1);
 				_plugin.getLogger().info("DB connection test succeeded");
 			}
 			catch(SQLException err)
@@ -83,7 +105,7 @@ public final class ConnectionManager
 	 * 
 	 * @return	True if generation success; False if failed
 	 */
-	private boolean GenerateTables()
+	private boolean GenerateTables(AbstractAdapter adapter)
 	{
 		String sql = "CREATE TABLE IF NOT EXISTS pcban_active_bans ("
 				  + "id int(11) unsigned NOT NULL AUTO_INCREMENT,"
@@ -101,7 +123,7 @@ public final class ConnectionManager
 		
 		try 
 		{
-			_adapter.Execute(sql, 50);
+			adapter.Execute(sql, 50);
 		} 
 		catch (SQLException err) 
 		{

@@ -1,19 +1,26 @@
 package com.pcb.pcbridge.ban.commands;
 
-import java.sql.SQLException;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Executors;
 
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 
-import com.pcb.pcbridge.ban.BanHelper;
+import com.pcb.pcbridge.ban.Ban;
+import com.pcb.pcbridge.library.MessageHelper;
+import com.pcb.pcbridge.library.MessageType;
 import com.pcb.pcbridge.library.PlayerUUID;
 import com.pcb.pcbridge.library.TimestampHelper;
 import com.pcb.pcbridge.library.async.IFutureCallback;
+import com.pcb.pcbridge.library.async.NonBlockingExecutor;
+import com.pcb.pcbridge.library.async.NonBlockingFuture;
 import com.pcb.pcbridge.library.controllers.commands.CommandArgs;
-import com.pcb.pcbridge.library.controllers.commands.ICommand;
+import com.pcb.pcbridge.library.controllers.commands.AbstractCommand;
+import com.pcb.pcbridge.library.database.DbConn;
 import com.pcb.pcbridge.library.database.adapters.AbstractAdapter;
 
 /**
@@ -24,175 +31,301 @@ import com.pcb.pcbridge.library.database.adapters.AbstractAdapter;
  * - Adds their username and UUID to the ban list in storage
  */
 
-public final class CommandBan implements ICommand 
+public final class CommandBan extends AbstractCommand 
 {	
-	/**
-	 * Determines if it's a permanent or temporary ban
-	 */
-	public boolean Execute(CommandArgs e, Object... args) 
+	private NonBlockingExecutor _executor;
+	private CommandArgs _e;
+	private PlayerUUID _uuid;
+	
+	public boolean Execute(CommandArgs e) 
 	{
 		if(e.Args.length == 0)
 			return false;
 		
+		_executor = new NonBlockingExecutor(Executors.newCachedThreadPool());
+		_e = e;
+		_uuid = null;
+		
 		// if invoked via text input, it's a permanent ban
-		if(args == null)
-			return BanPlayer(e, false);
+		if(e.RouteArgs == null)
+			return BanPlayer(false);
 		
 		// if invoked via code, it's a temporary ban
-		return BanPlayer(e, (boolean) args[0]);
+		return BanPlayer(true);
 	}
 	
 	/**
-	 * The actual ban logic lives here
+	 * Bans the player
 	 * 
 	 * @param e
 	 * @param isTempBan
-	 * @return
 	 */
-	private boolean BanPlayer(final CommandArgs e, boolean isTempBan)
+	private boolean BanPlayer(boolean isTempBan)
 	{
-		final String username = e.Args[0];
-		PlayerUUID player = BanHelper.GetUUID(e.Plugin, username);
-		AbstractAdapter adapter = e.Plugin.GetAdapter();
-		
-		// check if the user is already banned
-		boolean isBanned = false;
-		try
+		NonBlockingFuture<PlayerUUID> uuidTask = GetUUIDTask();
+
+		uuidTask.SetCallback(new IFutureCallback<PlayerUUID>()
 		{
-			isBanned = BanHelper.IsPlayerBanned(adapter, username, player.GetUUID());
-		}
-		catch(SQLException err)
-		{
-			e.Sender.sendMessage(ChatColor.RED + "ERROR: Could not look up player in ban records. Aborting");
-			e.Plugin.getLogger().severe("Could not look up player in ban records: " + err.getMessage());
-			return true;
-		}
-		
-		if(isBanned)
-		{
-			e.Sender.sendMessage(ChatColor.GRAY + username + " is already banned.");
-			return true;
-		}
-		
-		long now = TimestampHelper.GetNowTimestamp();
-		long expireDate = 0;
-		if(isTempBan)
-		{
-			if(e.Args.length < 2)
-				return false;
-			
-			String duration = e.Args[1];
-			
-			// ensure a numeric AND a time indicator is given
-			String pattern = "^[0-9]+[a-z]+$";
-			Pattern r = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE);
-			Matcher m = r.matcher(duration);
-			if(!m.find())
-			{
-				e.Sender.sendMessage(ChatColor.RED + "ERROR: Invalid ban duration given. Numeric AND a time indicator required (eg. 10h)");
-				return false;
-			}
-			
-			// determine ban length numeric
-			int i = 0;
-			while(Character.isDigit(duration.charAt(i))) i++;
-			int length = Integer.parseInt( duration.substring(0, i) );
-						
-			// determine what time indicator was used
-			String indicator = duration.substring(i, duration.length()).toLowerCase();
-			Calendar c = Calendar.getInstance();
-			switch(indicator)
-			{
-			case "m":
-				c.add(Calendar.MINUTE, length);
-				break;
-			case "h":
-				c.add(Calendar.HOUR, length);
-				break;
-			case "d":
-				c.add(Calendar.HOUR, length * 24);
-				break;
-			case "w":
-				c.add(Calendar.HOUR, length * 168);
-				break;
-			case "mo":
-				c.add(Calendar.MONTH, length);				
-				break;
-			case "y":
-				c.add(Calendar.YEAR, length);
-				break;
-			default:
-				e.Sender.sendMessage(ChatColor.RED + "ERROR: Invalid time indicator.");
-				return false;
-			}
-			
-			expireDate = c.getTime().getTime() / 1000L;
-		}
-				
-		// if given, stitch together the 'ban reason' which spans multiple args
-		String banReason = "Griefing";
-		int startIndex = isTempBan ? 2 : 1;
-		if(e.Args.length > startIndex)
-		{
-			StringBuilder builder = new StringBuilder();
-			for(int x=startIndex; x<e.Args.length; x++)
-			{
-				if(x > startIndex)
-					builder.append(" ");
-				
-				builder.append(e.Args[x]);
-			}
-			banReason = builder.toString();
-		}
-		
-		String staffName = e.Sender.getName();
-		@SuppressWarnings("deprecation")	// deprecated, but no alternative to get players by name exists...
-		String staffUUID = e.IsPlayer ? e.Plugin.getServer().getPlayer(staffName).getUniqueId().toString() : "";
-		
-		// create the ban in storage
-		AsyncAdapterParams query = new AsyncAdapterParams("INSERT INTO pcban_active_bans(banned_name, banned_uuid, date_ban, date_expire, staff_uuid, staff_name, reason, ip) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-			username, 
-			player.GetUUID(), 
-			now, 
-			isTempBan ? expireDate : null,
-			staffUUID,
-			staffName,
-			banReason, 
-			player.IP
-		);
-		
-		adapter.ExecuteAsync(query,	new IFutureCallback<Object>() 
-		{			
 			@Override
-			public void OnSuccess(Object results) 
+			public void OnSuccess(PlayerUUID uuid) 
 			{
-				e.Plugin.getServer().broadcastMessage(ChatColor.GRAY + username + " has been banned.");
-			}
+				// exit if no UUID found at all - the player doesn't exist
+				if(uuid.GetUUID() == "")
+				{
+					// TODO: prompt if the user still wants to proceed
+					MessageHelper.Send(MessageType.ERROR, _e.Sender, "No UUID found. This player most likely does not exist");
+					return;
+				}
 				
-			@Override
-			public void OnError(Exception err) 
-			{
-				e.Sender.sendMessage(ChatColor.RED + "ERROR: Could not ban user. Please notify an administrator if this persists");
-				e.Plugin.getLogger().severe("Could not add user to ban list: " + err.getMessage());
+				_uuid = uuid;
+				GetBanRecordTask(uuid.GetUUID());
 			}
+
+			@Override
+			public void OnError(Throwable e)
+			{
+				MessageHelper.Send(MessageType.FATAL, _e.Sender, "Could not determine UUID of given player. Please contact an admin if this persists");
+				_plugin.getLogger().severe("UUID Lookup: " + e.getMessage());
+				e.printStackTrace();
+			}			
 		});
-		
-		// kick the player if they're online
-		if(player.IsOnline && player.Player != null)
-		{
-			String expiry = isTempBan ? new Date(expireDate * 1000L).toString() : "Never";
-			String message = "Åòc" + "You have been banned.\n\n" +
-					
-						 "Åò8" + "Reason: Åòf" + banReason + "\n" +
-						 "Åò8" + "Expires: Åòf" + expiry + "\n\n" + 
-								 
-						 "Åòb" + "Appeal @ www.projectcitybuild.com";
 			
-			player.Player.kickPlayer(message);
-		}
-		
 		return true;
 	}
 	
 	
+	/**
+	 * Async Task: Retrieves the given username (arg 0) either internally or from Mojang
+	 * 
+	 * @return NonBlockingFuture
+	 */
+	private NonBlockingFuture<PlayerUUID> GetUUIDTask()
+	{
+		NonBlockingFuture<PlayerUUID> future = _executor.Submit(new Callable<PlayerUUID>()
+		{
+			@Override
+			public PlayerUUID call() throws Exception
+			{
+				UUID uuid = null;
+				String ip = "";
+				
+				// check if player is currently online
+				@SuppressWarnings("deprecation")
+				Player player = _plugin.getServer().getPlayer(_e.Args[0]);
+				
+				if(player != null)
+				{
+					uuid 	= player.getUniqueId();
+					ip 		= player.getAddress().getHostString();
+					
+					return new PlayerUUID(_e.Args[0], ip, uuid, true, true, player);
+				}
+				
+				// otherwise check if player has played before
+				@SuppressWarnings("deprecation")
+				OfflinePlayer offlinePlayer	= _plugin.getServer().getOfflinePlayer(_e.Args[0]);
+				
+				boolean hasPlayedBefore = offlinePlayer.hasPlayedBefore();			
+				if(hasPlayedBefore)
+				{
+					uuid = offlinePlayer.getUniqueId();
+				}
+				else
+				{
+					// retrieve the player's UUID from Mojang because they've never joined the server before
+					uuid = _plugin.GetUUIDFetcher().GetCurrentUUID(_e.Args[0]);
+				}
+				
+				return new PlayerUUID(_e.Args[0], ip, uuid, false, hasPlayedBefore, null);	
+			}
+		});
+		
+		return future;
+	}
+	
+	/**
+	 * Async Task: Retrieves any ban records for the given UUID/username
+	 * 
+	 * @return NonBlockingFuture
+	 */
+	private NonBlockingFuture<Ban> GetBanRecordTask(final String uuid)
+	{
+		NonBlockingFuture<Ban> future = _executor.Submit(new Callable<Ban>()
+		{
+			@Override
+			public Ban call() throws Exception
+			{
+				AbstractAdapter adapter = _plugin.GetAdapter(DbConn.REMOTE);
+				List<HashMap<String, Object>> result = adapter.Query("SELECT * FROM pcban_active_bans WHERE is_active=1 and (banned_name=? or banned_uuid=?) LIMIT 0,1",
+					_e.Args[0], uuid
+				);
+				
+				if(result != null && result.size() > 0)
+				{
+					Ban ban = new Ban(result.get(0));
+					
+					// check if the ban has expired
+					if(ban.IsTempBan() && ban.ExpiryDate <= TimestampHelper.GetNowTimestamp())
+					{
+						UpdateExpiredBanTask(ban);
+						return null;
+					}
+					
+					return ban;
+				}
+				
+				return null;
+			}
+		});
+		
+		future.SetCallback(new IFutureCallback<Ban>()
+		{
+			@Override
+			public void OnSuccess(Ban ban) 
+			{
+				if(ban != null)
+				{
+					MessageHelper.Send(MessageType.INFO, _e.Sender, _e.Args[0] + " is already banned.");
+					return;				
+				}
+				
+				CreateBanTask();
+			}
+
+			@Override
+			public void OnError(Throwable e)
+			{
+				MessageHelper.Send(MessageType.FATAL, _e.Sender, "Failed to retrieve ban records. Please contact an admin if this persists");
+				_plugin.getLogger().severe("Failed to retrieve ban records: " + e.getMessage());
+				e.printStackTrace();
+			}			
+		});
+				
+		return future;
+	}
+	
+	/**
+	 * Async Task: Deactivates the given expired ban and logs it
+	 * 
+	 * @return NonBlockingFuture
+	 */
+	private NonBlockingFuture<Boolean> UpdateExpiredBanTask(final Ban ban)
+	{
+		NonBlockingFuture<Boolean> future = _executor.Submit(new Callable<Boolean>()
+		{
+			@Override
+			public Boolean call() throws Exception
+			{
+				AbstractAdapter adapter = _plugin.GetAdapter(DbConn.REMOTE);
+				adapter.Execute("UPDATE pcban_active_bans SET is_active=0 WHERE id=?", ban.Id);
+				
+				adapter.Execute("INSERT INTO pcban_unbans (ban_id, date, auto_expired) VALUES (?, ?, true)",
+							ban.Id, ban.ExpiryDate
+						);
+				
+				return true;
+			}
+		});
+		
+		future.SetCallback(new IFutureCallback<Boolean>()
+		{
+			@Override
+			public void OnSuccess(Boolean ban) { }
+
+			@Override
+			public void OnError(Throwable e)
+			{
+				MessageHelper.Send(MessageType.WARNING, _e.Sender, "The player's ban has expired but failed to update in the database. Please contact an admin if this persists");
+				_plugin.getLogger().severe("Failed to update expired ban: " + e.getMessage());
+				e.printStackTrace();
+			}			
+		});
+				
+		return future;
+	}
+
+	/**
+	 * Async Task: Save the new ban in storage
+	 * 
+	 * @return NonBlockingFuture
+	 */
+	private NonBlockingFuture<Boolean> CreateBanTask()
+	{
+		// if given, stitch together the 'ban reason' which spans multiple args
+		String banReason = "Griefing";
+		int startIndex = 1;
+		if(_e.Args.length > startIndex)
+		{
+			StringBuilder builder = new StringBuilder();
+			for(int x = startIndex; x < _e.Args.length; x++)
+			{
+				if(x > startIndex)
+					builder.append(" ");
+						
+				builder.append(_e.Args[x]);
+			}
+			banReason = builder.toString();
+		}
+		final String banReasonStr = banReason;
+		
+		// get the banner's name and uuid
+		final String staffName = _e.Sender.getName();
+		@SuppressWarnings("deprecation")
+		final String staffUUID = _e.IsPlayer ? _plugin.getServer().getPlayer(staffName).getUniqueId().toString() : "";
+		
+		// create the ban in storage
+		NonBlockingFuture<Boolean> future = _executor.Submit(new Callable<Boolean>()
+		{
+			@Override
+			public Boolean call() throws Exception
+			{
+				AbstractAdapter adapter = _plugin.GetAdapter(DbConn.REMOTE);
+				adapter.Execute("INSERT INTO pcban_active_bans(banned_name, banned_uuid, date_ban, date_expire, staff_uuid, staff_name, reason, ip) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+						_e.Args[0], 
+						_uuid.GetUUID(), 
+						TimestampHelper.GetNowTimestamp(),
+						null,
+						staffUUID,
+						staffName,
+						banReasonStr, 
+						_uuid.IP
+					);
+				
+				return true;
+			}
+		});
+		
+		future.SetCallback(new IFutureCallback<Boolean>()
+		{
+			@Override
+			public void OnSuccess(Boolean ban) 
+			{ 
+				_plugin.getServer().broadcastMessage(ChatColor.GRAY + _e.Args[0] + " has been banned.");
+				
+				// kick the player if they're online
+				//if(_uuid.IsOnline && _uuid.Player != null)
+				//{
+					String expiry = "Never";
+					String message = "Åòc" + "You have been banned.\n\n" +
+									
+								 	"Åò8" + "Reason: Åòf" + banReasonStr + "\n" +
+									"Åò8" + "Expires: Åòf" + expiry + "\n\n" + 
+												 
+									"Åòb" + "Appeal @ www.projectcitybuild.com";
+							
+					_uuid.Player.kickPlayer(message);
+				//}
+			}
+
+			@Override
+			public void OnError(Throwable e)
+			{
+				MessageHelper.Send(MessageType.FATAL, _e.Sender, "Failed to create the new ban in storage. Please contact an admin if this persists");
+				_plugin.getLogger().severe("Failed to create new ban: " + e.getMessage());
+				e.printStackTrace();
+			}			
+		});
+		
+		return future;
+	}
 }

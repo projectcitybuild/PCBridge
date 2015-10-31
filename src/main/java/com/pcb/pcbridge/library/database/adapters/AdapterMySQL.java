@@ -12,12 +12,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.dbcp2.BasicDataSource;
-import org.bukkit.Bukkit;
-
-import com.pcb.pcbridge.PCBridge;
-import com.pcb.pcbridge.library.AsyncAdapterParams;
-import com.pcb.pcbridge.library.async.IFutureCallback;
-import com.pcb.pcbridge.library.database.querybuilder.QueryBuilderSQL;
 
 /**
  * Adapter implementation for MySQL interactivity
@@ -27,15 +21,13 @@ public class AdapterMySQL extends AbstractAdapter
 {	
 	private String _username;
 	private String _password;
-	private PCBridge _plugin;
 	
 	private BasicDataSource dataSource = new BasicDataSource();
 		
-	public AdapterMySQL(PCBridge plugin, String host, String port, String database, String username, String password)
+	public AdapterMySQL(String host, String port, String database, String username, String password)
 	{
 		this._username	= username;
 		this._password 	= password;
-		this._plugin 	= plugin;
 		
 		dataSource.setDriverClassName("com.mysql.jdbc.Driver");
 		dataSource.setUrl("jdbc:mysql://" + host + ":" + port + "/" + database);

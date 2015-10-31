@@ -11,9 +11,8 @@ import com.pcb.pcbridge.ban.BanHelper;
 import com.pcb.pcbridge.library.PlayerUUID;
 import com.pcb.pcbridge.library.TimestampHelper;
 import com.pcb.pcbridge.library.controllers.commands.CommandArgs;
-import com.pcb.pcbridge.library.controllers.commands.ICommand;
+import com.pcb.pcbridge.library.controllers.commands.AbstractCommand;
 import com.pcb.pcbridge.library.database.adapters.AbstractAdapter;
-import com.pcb.pcbridge.library.database.querybuilder.QueryBuilder;
 
 /**
  * Command: Retrieves data about the specified player (eg. whether currently banned, ban reason, etc)
@@ -21,11 +20,11 @@ import com.pcb.pcbridge.library.database.querybuilder.QueryBuilder;
  * TODO: past record checks
  */
 
-public final class CommandLookup implements ICommand 
+public final class CommandLookup extends AbstractCommand 
 {	
-	public boolean Execute(CommandArgs e, Object... args) 
+	public boolean Execute(CommandArgs e) 
 	{
-		if(e.Args.length == 0 || e.Args.length > 1)
+		/*if(e.Args.length == 0 || e.Args.length > 1)
 			return false;
 		
 		// retrieve ban from storage
@@ -123,7 +122,7 @@ public final class CommandLookup implements ICommand
 			msg += "\nExpires in: " + banExpiresIn;
 		}
 			
-		e.Sender.sendMessage(msg);
+		e.Sender.sendMessage(msg);*/
 		
 		return true;
 	}	

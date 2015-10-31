@@ -15,11 +15,10 @@ public class CommandArgs
 	public String Alias;
 	public String[] Args;
 	public boolean IsPlayer;
-	public PCBridge Plugin;
+	public Object[] RouteArgs;	// allows extra args when manually invoking a route
 	
-	public CommandArgs(PCBridge plugin, CommandSender sender, String alias, String[] args)
+	public CommandArgs(CommandSender sender, String alias, String[] args)
 	{
-		this.Plugin		= plugin;
 		this.Sender		= sender;
 		this.Alias 		= alias;
 		this.Args 		= args;

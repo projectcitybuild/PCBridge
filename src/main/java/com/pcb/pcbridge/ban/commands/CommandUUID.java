@@ -13,17 +13,17 @@ import com.pcb.pcbridge.library.PlayerUUID;
 import com.pcb.pcbridge.library.TimestampHelper;
 import com.pcb.pcbridge.library.UUIDLookup;
 import com.pcb.pcbridge.library.controllers.commands.CommandArgs;
-import com.pcb.pcbridge.library.controllers.commands.ICommand;
+import com.pcb.pcbridge.library.controllers.commands.AbstractCommand;
 
 /**
  * Command: Queries the Mojang web api for the specified user's UUID
  */
 
-public final class CommandUUID implements ICommand 
+public final class CommandUUID extends AbstractCommand 
 {	
 	private UUIDLookup _uuidLookup = new UUIDLookup();
 	
-	public boolean Execute(final CommandArgs e, Object... args) 
+	public boolean Execute(final CommandArgs e) 
 	{
 		if(e.Args.length > 2 || e.Args.length < 1)
 			return false;
@@ -54,7 +54,7 @@ public final class CommandUUID implements ICommand
 	{
 		final String username = e.Args[1];
 		
-		Bukkit.getScheduler().runTaskAsynchronously(e.Plugin, new Runnable()
+		Bukkit.getScheduler().runTaskAsynchronously(_plugin, new Runnable()
 		{
 			@Override
 			public void run()
@@ -80,7 +80,7 @@ public final class CommandUUID implements ICommand
 	private void GetNameHistory(final CommandArgs e)
 	{
 		final String username = e.Args[1];
-		final PlayerUUID uuid = BanHelper.GetUUID(e.Plugin, username);
+		final PlayerUUID uuid = BanHelper.GetUUID(_plugin, username);
 		
 		if(uuid.GetUUID() == "")
 		{
@@ -88,7 +88,7 @@ public final class CommandUUID implements ICommand
 			return;
 		}
 		
-		Bukkit.getScheduler().runTaskAsynchronously(e.Plugin, new Runnable()
+		Bukkit.getScheduler().runTaskAsynchronously(_plugin, new Runnable()
 		{
 			@Override
 			public void run()
@@ -147,6 +147,6 @@ public final class CommandUUID implements ICommand
 	private void OnError(CommandArgs e, String playerMsg, String logMsg)
 	{
 		e.Sender.sendMessage(playerMsg);
-		e.Plugin.getLogger().severe(logMsg);
+		_plugin.getLogger().severe(logMsg);
 	}
 }

@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.ListIterator;
 
 import com.pcb.pcbridge.PCBridge;
-import com.pcb.pcbridge.library.AsyncAdapterParams;
 import com.pcb.pcbridge.library.TimestampHelper;
 import com.pcb.pcbridge.library.async.IFutureCallback;
 
@@ -32,7 +31,7 @@ public class ListenerOnBoot
 	 */
 	public void Execute()
 	{
-		_plugin.getLogger().info("Checking for any expired bans...");
+		/*_plugin.getLogger().info("Checking for any expired bans...");
 		
 		_plugin.GetAdapter().QueryAsync(
 			new AsyncAdapterParams(
@@ -54,7 +53,7 @@ public class ListenerOnBoot
 					_plugin.getLogger().severe("Could not retrieve expired bans: " + err.getMessage());
 				}
 			}
-		);
+		);*/
 	}
 	
 	/**
@@ -64,7 +63,7 @@ public class ListenerOnBoot
 	 */
 	private void UpdateExpiredBans(List<HashMap<String, Object>> results)
 	{		
-		if(results.size() == 0)
+		/*if(results.size() == 0)
 		{
 			_plugin.getLogger().info("0 expired bans to update. Skipping step");
 			return;
@@ -123,7 +122,7 @@ public class ListenerOnBoot
 					}
 				}
 			);
-		}
+		}*/
 	}
 	
 	/**

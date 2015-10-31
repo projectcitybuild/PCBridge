@@ -1,35 +1,35 @@
 name: PCBridge
 main: com.pcb.pcbridge.PCBridge
-version: 0.0.1
+version: 0.2.1
 
 commands:
   ban:
     description: Permanently bans the specified player from the server.
     usage: /<command> [player] [reason]
-    permission: <plugin name>.ban.ban
+    permission: pcbridge.ban.ban
     permission-message: You don't have <permission>
   unban:
     description: Unbans the specified player.
     usage: /<command> [player]
-    permission: <plugin name>.ban.unban
+    permission: pcbridge.ban.unban
     permission-message: You don't have <permission>
   lookup:
     description: Checks if the specified player is currently banned.
     usage: /<command> [player]
-    permission: <plugin name>.ban.lookup
+    permission: pcbridge.ban.lookup
     permission-message: You don't have <permission>
   tempban:
     description: Temporarily bans the specified player from the server.
     usage: /<command> [player] [time][m|h|d|w|mo|y] [reason]
-    permission: <plugin name>.ban.tempban
+    permission: pcbridge.ban.tempban
     permission-message: You don't have <permission>
   uuid:
     description: Retrieves UUID data about a player from Mojang's web service
     usage: /<command> [history|uuid] [player]
-    permission: <plugin name>.ban.uuid
+    permission: pcbridge.ban.uuid
     permission-message: You don't have <permission>
   pcbridge:
     description: Config and settings for the PCBridge plugin
     usage: /<command> config [key] [on|off]
-    permission: <plugin name>.utility
+    permission: pcbridge.utility
     permission-message: You don't have <permission>

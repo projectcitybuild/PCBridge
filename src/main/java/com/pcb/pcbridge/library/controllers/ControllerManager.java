@@ -11,10 +11,11 @@ import com.pcb.pcbridge.PCBridge;
 import com.pcb.pcbridge.ban.BanController;
 import com.pcb.pcbridge.library.controllers.commands.CommandArgs;
 import com.pcb.pcbridge.library.controllers.commands.CommandRoute;
-import com.pcb.pcbridge.library.controllers.commands.ICommand;
+import com.pcb.pcbridge.library.controllers.commands.AbstractCommand;
 import com.pcb.pcbridge.library.controllers.commands.ICommandController;
 import com.pcb.pcbridge.library.controllers.listeners.AbstractListener;
 import com.pcb.pcbridge.library.controllers.listeners.IListenerController;
+import com.pcb.pcbridge.swearblock.SwearBlockController;
 import com.pcb.pcbridge.utility.UtilityController;
 
 /**
@@ -23,7 +24,7 @@ import com.pcb.pcbridge.utility.UtilityController;
 
 public final class ControllerManager implements CommandExecutor
 {
-	public HashMap<String, ICommand> Commands = new HashMap<String, ICommand>();
+	public HashMap<String, AbstractCommand> Commands = new HashMap<String, AbstractCommand>();
 	private PCBridge _plugin;
 
 	public ControllerManager(PCBridge plugin)
@@ -33,6 +34,7 @@ public final class ControllerManager implements CommandExecutor
 		CreateControllers(new AbstractController[] 
 		{
 			new BanController(),
+			new SwearBlockController(),
 			new UtilityController()
 		});		
 	}
@@ -71,6 +73,8 @@ public final class ControllerManager implements CommandExecutor
 			{
 				_plugin.getLogger().info("ERROR: Failed to register command [" + route.Alias + "] - missing definition in plugin.yml");
 			}
+			
+			route.Command.SetPlugin(_plugin);
 		}			
 	}
 	
@@ -95,11 +99,11 @@ public final class ControllerManager implements CommandExecutor
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) 
 	{
-		ICommand handler = Commands.get( command.getName().toLowerCase() );
+		AbstractCommand handler = Commands.get( command.getName().toLowerCase() );
 		
 		if(handler != null)
 		{
-			CommandArgs packet = new CommandArgs(_plugin, sender, label, args);
+			CommandArgs packet = new CommandArgs(sender, label, args);
 			return handler.Execute(packet);
 		}
 		
@@ -117,7 +121,7 @@ public final class ControllerManager implements CommandExecutor
 	 */
 	public boolean InvokeRoute(CommandArgs e, String routeName, Object... args)
 	{
-		ICommand handler = Commands.get( routeName );
+		AbstractCommand handler = Commands.get( routeName );
 		
 		if(args.length > 0)
 			e.RouteArgs = args;
