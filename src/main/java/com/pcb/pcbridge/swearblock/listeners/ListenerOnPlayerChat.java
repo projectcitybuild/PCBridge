@@ -11,6 +11,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 import com.pcb.pcbridge.library.controllers.listeners.AbstractListener;
+import com.pcb.pcbridge.players.PlayerData;
 
 /**
  * SwearBlock v2
@@ -40,8 +41,13 @@ public final class ListenerOnPlayerChat extends AbstractListener implements List
 	        String edited = e.getMessage().replace(caught, stars);
 	        
 	        for (Player p : e.getRecipients()) 
-		    {
-		        p.sendMessage("<" + e.getPlayer().getWorld().getName() + ">" + String.format(e.getFormat(), new Object[] { e.getPlayer().getDisplayName(), edited }));
+		    {	        	
+	        	// check if message receiver has filter activate
+	        	PlayerData settings = _plugin.GetPlayerManager().GetSettings(p.getUniqueId());
+	        	if(settings.SwearFilter)
+	        		p.sendMessage(String.format(e.getFormat(), new Object[] { e.getPlayer().getDisplayName(), edited }));
+	        	else
+	        		p.sendMessage(String.format(e.getFormat(), new Object[] { e.getPlayer().getDisplayName(), e.getMessage() }));
 		    }
 	        
 	        // log the message since we're cancelling the event

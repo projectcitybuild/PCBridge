@@ -10,6 +10,7 @@ import com.pcb.pcbridge.library.database.ConnectionManager;
 import com.pcb.pcbridge.library.database.DbConn;
 import com.pcb.pcbridge.library.database.adapters.AbstractAdapter;
 import com.pcb.pcbridge.library.database.adapters.Adapter;
+import com.pcb.pcbridge.players.PlayerController;
 import com.pcb.pcbridge.players.PlayerManager;
 import com.pcb.pcbridge.swearblock.SwearBlockController;
 import com.pcb.pcbridge.utility.UtilityController;
@@ -65,6 +66,7 @@ public final class PCBridge extends JavaPlugin
 		_controllerManager = new ControllerManager(this);
 		_controllerManager.CreateControllers(new AbstractController[] 
 		{
+			new PlayerController(),
 			new BanController(),
 			new SwearBlockController(),
 			new UtilityController()

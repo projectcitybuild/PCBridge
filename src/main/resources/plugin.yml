@@ -33,3 +33,8 @@ commands:
     usage: /<command> config [key] [on|off]
     permission: pcbridge.utility
     permission-message: You don't have <permission>
+  swearblock:
+    description: Toggles on/off the chat swear filter
+    usage: /<command>
+    permission: pcbridge.swearblock.toggle
+    permission-message: You don't have <permission>

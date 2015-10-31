@@ -23,6 +23,22 @@ public abstract class AbstractAdapter
 	public abstract int Execute(String sql, Object... args) throws SQLException;
 	public abstract int Execute(String sql) throws SQLException;
 	
+	
+	/**
+	 * Creates a prepared statement and adds it to a batch
+	 * @param sql
+	 * @param args
+	 * @throws SQLException
+	 */
+	//public abstract void AddToBatch(String sql, Object... args) throws SQLException;
+	
+	/**
+	 * Executes (and then clears) all prepared statements currently in the batch
+	 * 
+	 * @throws SQLException
+	 */
+	//public abstract void ExecuteBatch() throws SQLException;
+	
 	/**
 	 * Queries the current connection for a ResultSet
 	 * 

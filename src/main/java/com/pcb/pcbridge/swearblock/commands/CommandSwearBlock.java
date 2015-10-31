@@ -1,7 +1,14 @@
 package com.pcb.pcbridge.swearblock.commands;
 
+import java.util.UUID;
+
+import org.bukkit.entity.Player;
+
+import com.pcb.pcbridge.library.MessageHelper;
+import com.pcb.pcbridge.library.MessageType;
 import com.pcb.pcbridge.library.controllers.commands.CommandArgs;
 import com.pcb.pcbridge.library.controllers.commands.AbstractCommand;
+import com.pcb.pcbridge.players.PlayerData;
 
 /**
  * Command: Toggles on/off the swear filter per player
@@ -10,25 +17,65 @@ import com.pcb.pcbridge.library.controllers.commands.AbstractCommand;
 public final class CommandSwearBlock extends AbstractCommand 
 {	
 	/**
-	 * Determines if it's a permanent or temporary ban
+	 * Toggle on/off the player's swear filter
 	 */
 	@Override
 	public boolean Execute(CommandArgs e) 
 	{
-		if(e.Args.length == 0 || e.Args.length > 1)
+		// console cannot invoke this command
+		if(!e.IsPlayer)
+			return true;
+		
+		if(e.Args.length > 1)
 			return false;
 		
-		switch(e.Args[1].toLowerCase())
+		Player player = (Player)e.Sender;
+		PlayerData settings = _plugin.GetPlayerManager().GetSettings(player.getUniqueId());
+		
+		Boolean value;
+		if(e.Args.length == 1)
 		{
-			case "on":
-				break;
-			case "off":
-				break;
-			default:
-				return false;
+			// 'on/off' specified - use that
+			value = StrToBool(e.Args[0]);
+		}
+		else
+		{
+			// no arg given - flip the current setting's value
+			value = !settings.SwearFilter;
 		}
 		
+		if(value == null)
+			return false;
+		
+		settings.SwearFilter = value;
+		
+		_plugin.GetPlayerManager().SaveSettings(player.getUniqueId());
+		MessageHelper.Send(MessageType.INFO, e.Sender, "Swear filter toggled " + BoolToStr(value));
+		
 		return true;
+	}
+	
+	/**
+	 * Converts 'on/off' string to boolean
+	 * 
+	 * @param str
+	 * @return
+	 */
+	private Boolean StrToBool(String str)
+	{
+		str = str.toLowerCase();
+		
+		if(str == "on") return true;
+		else if(str == "off") return false;
+		else return null;
+	}
+	
+	private String BoolToStr(boolean bool)
+	{
+		if(bool)
+			return "on";
+		else
+			return "off";
 	}
 	
 }

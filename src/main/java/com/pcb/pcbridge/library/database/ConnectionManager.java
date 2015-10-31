@@ -15,7 +15,7 @@ import com.pcb.pcbridge.library.database.adapters.AdapterMySQL;
 
 public final class ConnectionManager 
 {			
-	private HashMap<DbConn, AbstractAdapter> _adapters;
+	private HashMap<DbConn, AbstractAdapter> _adapters = new HashMap<DbConn, AbstractAdapter>();
 	private final PCBridge _plugin;
 	
 	public ConnectionManager(PCBridge plugin)
@@ -43,7 +43,7 @@ public final class ConnectionManager
 	 * @param name
 	 * @param adapter
 	 */
-	public void AddAdapter(DbConn name, Adapter adapterType)
+	public ConnectionManager AddAdapter(DbConn name, Adapter adapterType)
 	{	
 		String conn = name.toString().toLowerCase();
 		
@@ -79,6 +79,8 @@ public final class ConnectionManager
 		TestConnection(adapter, name);	
 		
 		// TODO: revert to file adapter storage if db connection failed
+		
+		return this;
 	}
 		
 	/**

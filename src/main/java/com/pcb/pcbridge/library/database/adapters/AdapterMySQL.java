@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -99,7 +100,7 @@ public class AdapterMySQL extends AbstractAdapter
 	 * 
 	 * @param sql	SQL query
 	 * @param args	Query parameters to be injected
-	 * @return	 * 
+	 * @return int	Row number of affected query (or -1 if none)
 	 * @throws SQLException
 	 */
 	@Override
@@ -107,11 +108,18 @@ public class AdapterMySQL extends AbstractAdapter
 	{
 		try (
 				Connection connection = getConnection();
-				PreparedStatement statement = connection.prepareStatement(sql)
+				PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)
 		) {
 			MapParams(statement, args);
 			
-			return statement.executeUpdate();
+			int result = statement.executeUpdate();
+			
+			ResultSet rs = statement.getGeneratedKeys();
+			if (rs.next())
+			{
+			    return rs.getInt(1);
+			}			
+			return -1;
 		}
 	}
 	
@@ -217,5 +225,5 @@ public class AdapterMySQL extends AbstractAdapter
 		}
 		
 		return rows;
-	}	
+	}
 }
