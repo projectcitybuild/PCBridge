@@ -8,15 +8,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.event.Listener;
 
 import com.pcb.pcbridge.PCBridge;
-import com.pcb.pcbridge.ban.BanController;
-import com.pcb.pcbridge.library.controllers.commands.CommandArgs;
-import com.pcb.pcbridge.library.controllers.commands.CommandRoute;
-import com.pcb.pcbridge.library.controllers.commands.AbstractCommand;
-import com.pcb.pcbridge.library.controllers.commands.ICommandController;
-import com.pcb.pcbridge.library.controllers.listeners.AbstractListener;
-import com.pcb.pcbridge.library.controllers.listeners.IListenerController;
-import com.pcb.pcbridge.swearblock.SwearBlockController;
-import com.pcb.pcbridge.utility.UtilityController;
+import com.pcb.pcbridge.bukkit.ban.BanController;
+import com.pcb.pcbridge.bukkit.swearblock.SwearBlockController;
+import com.pcb.pcbridge.bukkit.utility.UtilityController;
 
 /**
  * Instantiates controllers and registers each of their commands & listeners with Bukkit

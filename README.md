@@ -10,6 +10,7 @@ A Bukkit (and Spigot) plugin to bridge [Project City Build](www.projectcitybuild
   * Username -> UUID
   * Username -> Name history
 * Chat swear filter
+* Rank synchronisation with forums (SMF)
   
 * JDBC MySQL wrapper
 
@@ -43,5 +44,6 @@ If you're using different versions or filenames to the ones listed above, ensure
 * <b>/lookup</b> [name]
 * <b>/uuid</b> [name]
 * <b>/uuid history</b> [name]
-* <b>/swearblock</b> [on/off]   (argument optional)
+* <b>/swearblock</b> [on/off]   --on/off argument optional
 * <b>/pcbridge config</b> [key] [value]
+* <b>/pcbridge reload</b>

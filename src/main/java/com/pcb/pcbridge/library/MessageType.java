@@ -7,6 +7,9 @@ public enum MessageType
 	// extra information to supply to the user
 	INFO,
 	
+	// something succeeded or executed entirely
+	SUCCESS,
+	
 	// something bad happened, execution cancelled (eg. bad command input formatting, invalid arguement, etc)
 	ERROR,
 	

@@ -1,11 +1,17 @@
 package com.pcb.pcbridge;
 
+import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.permission.Permission;
 
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.pcb.pcbridge.ban.BanController;
+import com.pcb.pcbridge.bukkit.ban.BanController;
+import com.pcb.pcbridge.bukkit.players.PlayerController;
+import com.pcb.pcbridge.bukkit.players.PlayerManager;
+import com.pcb.pcbridge.bukkit.ranks.RankController;
+import com.pcb.pcbridge.bukkit.swearblock.SwearBlockController;
+import com.pcb.pcbridge.bukkit.utility.UtilityController;
 import com.pcb.pcbridge.library.UUIDLookup;
 import com.pcb.pcbridge.library.controllers.AbstractController;
 import com.pcb.pcbridge.library.controllers.ControllerManager;
@@ -13,11 +19,6 @@ import com.pcb.pcbridge.library.database.ConnectionManager;
 import com.pcb.pcbridge.library.database.DbConn;
 import com.pcb.pcbridge.library.database.adapters.AbstractAdapter;
 import com.pcb.pcbridge.library.database.adapters.Adapter;
-import com.pcb.pcbridge.players.PlayerController;
-import com.pcb.pcbridge.players.PlayerManager;
-import com.pcb.pcbridge.ranks.RankController;
-import com.pcb.pcbridge.swearblock.SwearBlockController;
-import com.pcb.pcbridge.utility.UtilityController;
 
 /**
  * 
@@ -35,6 +36,7 @@ public final class PCBridge extends JavaPlugin
 	private PlayerManager _playerManager;
 	private UUIDLookup _uuidFetcher;
 	private Permission _permissions;
+	private Chat _chat;
 	
 	public AbstractAdapter GetAdapter(DbConn name)
 	{
@@ -56,9 +58,14 @@ public final class PCBridge extends JavaPlugin
 		return _playerManager;
 	}
 	
-	public Permission GetPermissions()
+	public Permission GetPermissionsHook()
 	{
 		return _permissions;
+	}
+	
+	public Chat GetChatHook()
+	{
+		return _chat;
 	}
 	
 	@Override
@@ -66,6 +73,7 @@ public final class PCBridge extends JavaPlugin
 	{
 		LoadConfig();
 		HookPermissions();
+		HookChat();
 		
 		_uuidFetcher = new UUIDLookup();
 		
@@ -95,8 +103,6 @@ public final class PCBridge extends JavaPlugin
 	
 	/**
 	 * Hook into the permissions API via Vault
-	 * 
-	 * @return
 	 */
 	private void HookPermissions()
 	{
@@ -118,7 +124,32 @@ public final class PCBridge extends JavaPlugin
 		{
 			getLogger().info("Hooked into permissions API");
 		}
-	    
+	}
+	
+	/**
+	 * Hook into the chat API via Vault
+	 */
+	private void HookChat()
+	{
+		 RegisteredServiceProvider<Chat> rsp = getServer().getServicesManager().getRegistration(Chat.class);
+	     if (rsp == null) 
+	     {
+	    	 getLogger().severe("No chat api to hook into!");
+	    	 return;
+	     }
+	     
+	     _chat = rsp.getProvider();
+	     
+	     if(_chat == null)
+	     {
+	    	 getLogger().severe("Failed to hook into chat API");
+	    	 return;
+	     }
+	     else
+	     {
+	    	 getLogger().info("Hooked into chat API");
+	     }
+	     
 	}
 	
 	/**
