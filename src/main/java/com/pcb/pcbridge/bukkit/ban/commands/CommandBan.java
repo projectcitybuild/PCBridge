@@ -91,9 +91,12 @@ public final class CommandBan extends AbstractCommand
 		}
 		
 		String staffName = e.Sender.getName();
+		Player player = _plugin.getServer().getPlayer(e.Args[0]);
+		String ip = player.getAddress().getAddress().getHostAddress();
 		
 		// add ban to storage
-		try {
+		try 
+		{
 			adapter.Execute("INSERT INTO banlist(name, reason, admin, time, temptime, type, ip) VALUES (?, ?, ?, ?, ?, ?, ?)",
 					e.Args[0], 
 					banReason, 
@@ -101,7 +104,7 @@ public final class CommandBan extends AbstractCommand
 					TimestampHelper.GetNowTimestamp(),
 					0,
 					0,
-					null
+					ip
 				);
 			
 			_plugin.getServer().broadcastMessage(ChatColor.GRAY + e.Args[0] + " has been banned by " + staffName + ".");
@@ -115,7 +118,6 @@ public final class CommandBan extends AbstractCommand
 		
 		
 		// kick the player if they're online
-		Player player = _plugin.getServer().getPlayer(e.Args[0]);
 		if(player != null && player.isOnline())
 		{
 			String expiry = "Never";
