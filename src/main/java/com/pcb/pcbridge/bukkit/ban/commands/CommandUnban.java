@@ -62,6 +62,7 @@ public final class CommandUnban extends AbstractCommand
 			);
 			
 			_plugin.getServer().broadcastMessage(ChatColor.GRAY + e.Args[0] + " has been unbanned by " + e.Sender.getName() + ".");
+			_plugin.getLogger().info(e.Args[0] + " has been unbanned by " + e.Sender.getName());
 		} 
 		catch (SQLException err) 
 		{

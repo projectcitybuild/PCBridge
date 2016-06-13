@@ -51,12 +51,12 @@ public final class CommandLookup extends AbstractCommand
 			Date banDate 		= TimestampHelper.GetDateFromTimestamp((long)banDateTS);
 				
 			String msg = ChatColor.DARK_RED + e.Args[0] + " is currently banned.\n\n" +
-					"---\n" +
-					"Reason: " + banReason + "\n" +
-					"---\n" +
-					"Banned by: " + banStaff + "\n" +
-					"Date: " + banDate + "\n" +
-					"Expiry Date: " + "Never";
+					ChatColor.GRAY + "---\n" +
+					ChatColor.YELLOW + "Reason: " + ChatColor.GRAY + banReason + "\n" +
+					ChatColor.GRAY + "---\n" +
+					ChatColor.YELLOW + "Banned by: " + ChatColor.GRAY + banStaff + "\n" +
+					ChatColor.YELLOW + "Date: " + ChatColor.GRAY + banDate + "\n" +
+					ChatColor.YELLOW + "Expiry Date: " + ChatColor.GRAY + "Never";
 					
 			MessageHelper.Send(MessageType.INFO, e.Sender, msg);
 			
