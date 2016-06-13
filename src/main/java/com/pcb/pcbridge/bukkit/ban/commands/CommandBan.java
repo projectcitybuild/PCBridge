@@ -107,7 +107,8 @@ public final class CommandBan extends AbstractCommand
 					ip
 				);
 			
-			_plugin.getServer().broadcastMessage(ChatColor.GRAY + e.Args[0] + " has been banned by " + staffName + ".");
+			_plugin.getServer().broadcastMessage("" + ChatColor.DARK_GRAY + ChatColor.BOLD + e.Args[0] + ChatColor.RESET + ChatColor.GRAY + " has been banned by " + staffName + ": " + banReason);
+			_plugin.getLogger().info(e.Args[0] + " has been banned by " + staffName + ": " + banReason);
 		} 
 		catch (SQLException err) 
 		{
