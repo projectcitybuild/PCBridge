@@ -1,38 +1,20 @@
 package com.pcb.pcbridge.library.database;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
 
 /**
- * Represents the result of an adapter SELECT query.
- * 
- * - ie. A container to get rid of those ugly List<HashMap<String, Object>> declarations.
- * - The trade-off however is that results are no longer being lazy-loaded... for now
+ * Represents an immutable result of an adapter SELECT query.
  */
 
-public class QueryResult 
+public class QueryResult
 {
-	private final List<QueryResultRow> _rows;
+	private final List<HashMap<String, Object>> _rows;
 	
-	/**
-	 * Convert HashMap<String, Object> into QueryResultRows and store it
-	 * 
-	 * @param data
-	 */
 	public QueryResult(List<HashMap<String, Object>> data)
 	{
-		List<QueryResultRow> table = new ArrayList<QueryResultRow>();
-		
-		ListIterator<HashMap<String, Object>> i = data.listIterator();
-		while(i.hasNext())
-		{
-			QueryResultRow row = new QueryResultRow(i.next());
-			table.add(row);
-		}
-		
-		_rows = table;
+		this._rows = data;
 	}
 	
 	/**
@@ -49,7 +31,18 @@ public class QueryResult
 	public boolean IsEmpty()
 	{
 		return _rows.size() == 0;
-	}	
+	}
+	
+	/**
+	 * Get the HashMap (cols) at the specified index (row)
+	 * 
+	 * @param index
+	 * @return HashMap of data by columns
+	 */
+	public HashMap<String, Object> Get(int index)
+	{
+		return _rows.get(index);
+	}
 	
 	@Override
 	public String toString()
@@ -57,10 +50,10 @@ public class QueryResult
 		StringBuilder output = new StringBuilder();
 		
 		int index = 0;
-		ListIterator<QueryResultRow> i = _rows.listIterator();
+		ListIterator<HashMap<String, Object>> i = _rows.listIterator();
 		while(i.hasNext())
 		{
-			QueryResultRow row = i.next();
+			HashMap<String, Object> row = i.next();
 			
 			output.append("Row ").append(index).append("\n");
 			output.append("- ").append(row.toString());

@@ -68,15 +68,15 @@ public final class ConnectionManager
 		// first run? generate tables
 		if(_plugin.getConfig().getBoolean("database.first_run"))
 		{
-			if(GenerateTables(adapter))
+			/*if(GenerateTables(adapter))
 			{
 				_plugin.getConfig().set("database.first_run", false);
 				_plugin.saveConfig();
-			}					
+			}*/					
 		}
 		
 		// test connection on boot
-		TestConnection(adapter, name);	
+		//TestConnection(adapter, name);	
 		
 		// TODO: revert to file adapter storage if db connection failed
 		

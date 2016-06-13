@@ -3,8 +3,6 @@ package com.pcb.pcbridge.library.controllers;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import com.pcb.pcbridge.PCBridge;
-
 /**
  * A container for grouping a command's parameters when handling a command
  */

@@ -8,9 +8,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.event.Listener;
 
 import com.pcb.pcbridge.PCBridge;
-import com.pcb.pcbridge.bukkit.ban.BanController;
-import com.pcb.pcbridge.bukkit.swearblock.SwearBlockController;
-import com.pcb.pcbridge.bukkit.utility.UtilityController;
 
 /**
  * Instantiates controllers and registers each of their commands & listeners with Bukkit

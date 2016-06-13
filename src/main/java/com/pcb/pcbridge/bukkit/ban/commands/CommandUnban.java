@@ -10,11 +10,14 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import com.pcb.pcbridge.bukkit.ban.BanHelper;
+import com.pcb.pcbridge.library.MessageHelper;
+import com.pcb.pcbridge.library.MessageType;
 import com.pcb.pcbridge.library.PlayerUUID;
 import com.pcb.pcbridge.library.TimestampHelper;
 import com.pcb.pcbridge.library.async.IFutureCallback;
 import com.pcb.pcbridge.library.controllers.AbstractCommand;
 import com.pcb.pcbridge.library.controllers.CommandArgs;
+import com.pcb.pcbridge.library.database.DbConn;
 import com.pcb.pcbridge.library.database.adapters.AbstractAdapter;
 
 /**
@@ -28,99 +31,47 @@ public final class CommandUnban extends AbstractCommand
 		if(e.Args.length == 0 || e.Args.length > 1)
 			return false;
 		
-		/*BanHelper.GetUUIDAsync(e.Plugin, e.Args[0], new IFutureCallback<PlayerUUID>() 
-		{			
-			@Override
-			public void OnSuccess(PlayerUUID player) 
+		// check if specified player is already banned
+		AbstractAdapter adapter = _plugin.GetAdapter(DbConn.REMOTE);
+		List<HashMap<String, Object>> result;
+		try 
+		{
+			result = adapter.Query("SELECT * FROM banlist WHERE name=? LIMIT 0,1",
+				e.Args[0]
+			);
+					
+			if(result == null && result.size() <= 0)
 			{
-				LookupPlayer(e, player);
+				MessageHelper.Send(MessageType.INFO, e.Sender, e.Args[0] + " is not currently banned.");
+				return true;
 			}
+		} 
+		catch (SQLException err) 
+		{
+			MessageHelper.Send(MessageType.FATAL, e.Sender, "Failed to lookup ban entry.");
+			_plugin.getLogger().severe("Failed to lookup ban entry: " + err.getMessage());
+			err.printStackTrace();
+		}
+		
+		
+		// unban the player
+		try 
+		{
+			adapter.Execute("DELETE FROM banlist WHERE name=?",
+				e.Args[0]
+			);
 			
-			@Override
-			public void OnError(Exception err) 
-			{
-				e.Sender.sendMessage(ChatColor.RED + "ERROR: Could not determine player's UUID.");
-				e.Plugin.getLogger().severe("Mojang API query for UUID failed: " + err.getMessage());			
-			}
-		});*/
+			_plugin.getServer().broadcastMessage(ChatColor.GRAY + e.Args[0] + " has been unbanned by " + e.Sender.getName() + ".");
+		} 
+		catch (SQLException err) 
+		{
+			MessageHelper.Send(MessageType.FATAL, e.Sender, "Failed to remove ban from database.");
+			_plugin.getLogger().severe("Failed to remove ban from database: " + err.getMessage());
+			err.printStackTrace();
+		}
+		
 		
 		return true;
 	}
-
-	/**
-	 * Checks if the given player is currently banned
-	 * 
-	 * @param player
-	 */
-	private void LookupPlayer(final CommandArgs e, final PlayerUUID player)
-	{
-		/*// retrieve ban from storage
-		AbstractAdapter adapter = e.Plugin.GetAdapter();
-				
-		AsyncAdapterParams params = BanHelper.GetLookupSQL(adapter, e.Args[0], player.GetUUID());
-		adapter.QueryAsync(params, new IFutureCallback<List<HashMap<String, Object>>>() 
-		{
-			@Override
-			public void OnSuccess(List<HashMap<String, Object>> records) 
-			{
-				boolean isBanned = (records != null && records.size() > 0);			
-				if(!isBanned)
-				{
-					e.Sender.sendMessage(ChatColor.AQUA + e.Args[0] + ChatColor.WHITE + " is not currently banned.");
-				}
-				else
-				{
-					UnbanPlayer(e, player, records);
-				}
-			}
-
-			@Override
-			public void OnError(Exception err) 
-			{
-				e.Sender.sendMessage(ChatColor.RED + "ERROR: Could not lookup player in ban records.");
-				e.Plugin.getLogger().severe("Could not lookup player in ban records: " + err.getMessage());			
-			}
-		});		*/
-	}
 	
-	private void UnbanPlayer(final CommandArgs e, PlayerUUID player, List<HashMap<String, Object>> records)
-	{
-		/*AbstractAdapter adapter = e.Plugin.GetAdapter();
-		
-		// unban the user but keep a record of who unbanned and when
-		String staffUUID = null;
-		if(e.IsPlayer)
-		{
-			@SuppressWarnings("deprecation")
-			Player staff = e.Plugin.getServer().getPlayer(e.Sender.getName());
-			staffUUID = staff.getUniqueId().toString();
-		}
-						
-		ListIterator<HashMap<String, Object>> i = records.listIterator();
-		while(i.hasNext())
-		{
-			HashMap<String, Object> record = i.next();
-			long id = (long) record.get("id");
-							
-			try
-			{
-				adapter.Execute("UPDATE pcban_active_bans SET is_active=0 WHERE id=?", id);
-								
-				adapter.Execute(
-					new QueryBuilder().Insert("pcban_unbans")
-						.Field("ban_id", id)
-						.Field("staff_uuid", staffUUID)
-						.Field("date", TimestampHelper.GetNowTimestamp())
-						.Build()
-				);
-			} 
-			catch (SQLException err) 
-			{
-				e.Sender.sendMessage(ChatColor.RED + "ERROR: Could not unban player.");
-				e.Plugin.getLogger().severe("Could not unban player: " + err.getMessage());
-			}
-		}		
-						
-		e.Sender.sendMessage(ChatColor.AQUA + e.Args[0] + ChatColor.WHITE + " has been unbanned.");*/
-	}
 }
