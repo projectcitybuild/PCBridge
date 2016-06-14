@@ -7,9 +7,13 @@ import java.util.ListIterator;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import com.pcb.pcbridge.bukkit.ban.Ban;
+import com.pcb.pcbridge.bukkit.ban.BanCache;
 import com.pcb.pcbridge.bukkit.ban.BanHelper;
+import com.pcb.pcbridge.bukkit.ban.BanQueueItem;
 import com.pcb.pcbridge.library.MessageHelper;
 import com.pcb.pcbridge.library.MessageType;
 import com.pcb.pcbridge.library.PlayerUUID;
@@ -26,50 +30,51 @@ import com.pcb.pcbridge.library.database.adapters.AbstractAdapter;
 
 public final class CommandUnban extends AbstractCommand 
 {	
-	public boolean Execute(final CommandArgs e) 
+	public boolean Execute(CommandArgs e) 
 	{
+		final String username = e.Args[0];
+		
 		if(e.Args.length == 0 || e.Args.length > 1)
 			return false;
 		
 		// check if specified player is already banned
-		AbstractAdapter adapter = _plugin.GetAdapter(DbConn.REMOTE);
-		List<HashMap<String, Object>> result;
-		try 
+		BanCache cache = _plugin.GetBanCache();
+		Ban entry = cache.Get(username);
+		
+		if(entry == null)
 		{
-			result = adapter.Query("SELECT * FROM banlist WHERE name=? LIMIT 0,1",
-				e.Args[0]
-			);
-					
-			if(result == null && result.size() <= 0)
+			MessageHelper.Send(MessageType.INFO, e.Sender, username + " is not currently banned.");
+			return true;
+		}
+		
+		
+		// remove player from ban cache
+		final CommandSender sender = e.Sender;
+		cache.Forget(username, new BanQueueItem() {
+			@Override
+			public void OnProcess() 
 			{
-				MessageHelper.Send(MessageType.INFO, e.Sender, e.Args[0] + " is not currently banned.");
-				return true;
+				// queue operation to remove player from ban database
+				try 
+				{
+					AbstractAdapter adapter = _plugin.GetAdapter(DbConn.REMOTE);
+					adapter.Execute("DELETE FROM banlist WHERE name=?",
+						username
+					);
+					
+					_plugin.getLogger().info(username + " unregistered from the ban database.");
+				} 
+				catch (SQLException err) 
+				{
+					MessageHelper.Send(MessageType.FATAL, sender, "Failed to remove ban from database.");
+					_plugin.getLogger().severe("Failed to remove ban from database: " + err.getMessage());
+					err.printStackTrace();
+				}
 			}
-		} 
-		catch (SQLException err) 
-		{
-			MessageHelper.Send(MessageType.FATAL, e.Sender, "Failed to lookup ban entry.");
-			_plugin.getLogger().severe("Failed to lookup ban entry: " + err.getMessage());
-			err.printStackTrace();
-		}
+		});
 		
-		
-		// unban the player
-		try 
-		{
-			adapter.Execute("DELETE FROM banlist WHERE name=?",
-				e.Args[0]
-			);
-			
-			_plugin.getServer().broadcastMessage(ChatColor.GRAY + e.Args[0] + " has been unbanned by " + e.Sender.getName() + ".");
-			_plugin.getLogger().info(e.Args[0] + " has been unbanned by " + e.Sender.getName());
-		} 
-		catch (SQLException err) 
-		{
-			MessageHelper.Send(MessageType.FATAL, e.Sender, "Failed to remove ban from database.");
-			_plugin.getLogger().severe("Failed to remove ban from database: " + err.getMessage());
-			err.printStackTrace();
-		}
+		_plugin.getServer().broadcastMessage(ChatColor.GRAY + username + " has been unbanned by " + sender.getName() + ".");
+		_plugin.getLogger().info(username + " removed from ban cache by " + sender.getName());
 		
 		
 		return true;

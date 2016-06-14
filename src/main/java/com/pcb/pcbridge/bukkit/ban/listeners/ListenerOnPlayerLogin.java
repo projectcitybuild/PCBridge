@@ -11,6 +11,8 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerLoginEvent;
 
+import com.pcb.pcbridge.bukkit.ban.Ban;
+import com.pcb.pcbridge.bukkit.ban.BanCache;
 import com.pcb.pcbridge.bukkit.ban.BanHelper;
 import com.pcb.pcbridge.library.MessageHelper;
 import com.pcb.pcbridge.library.MessageType;
@@ -30,31 +32,20 @@ public final class ListenerOnPlayerLogin extends AbstractListener implements Lis
 	{		
 		String username = e.getPlayer().getName();
 
-		AbstractAdapter adapter = _plugin.GetAdapter(DbConn.REMOTE);
-		List<HashMap<String, Object>> result;
-		try 
+		BanCache cache = _plugin.GetBanCache();
+		Ban entry = cache.Get(username);
+		
+		if(entry != null)
 		{
-			result = adapter.Query("SELECT * FROM banlist WHERE name=? LIMIT 0,1",
-				username
-			);
-			
-			if(result.size() <= 0 || result == null)
-				return;
-			
-			HashMap<String, Object> ban = result.get(0);
 			String message = "Åòc" + "You are currently banned.\n\n" +
-				
-							 "Åò8" + "Reason: Åòf" + ban.get("reason") + "\n" +
+					
+							 "Åò8" + "Reason: Åòf" + entry.Reason + "\n" +
 							 "Åò8" + "Expires: Åòf" + "Never" + "\n\n" + 
 									 
 							 "Åòb" + "Appeal @ www.projectcitybuild.com";
 			
 			e.disallow(PlayerLoginEvent.Result.KICK_BANNED, message);
-		} 
-		catch (SQLException err) 
-		{
-			_plugin.getLogger().severe("Failed to lookup ban entry on server join: " + err.getMessage());
-			err.printStackTrace();
 		}
+		
 	}
 }

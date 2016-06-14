@@ -1,7 +1,11 @@
 package com.pcb.pcbridge;
 
+import java.util.HashMap;
+
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.pcb.pcbridge.bukkit.ban.Ban;
+import com.pcb.pcbridge.bukkit.ban.BanCache;
 import com.pcb.pcbridge.bukkit.ban.BanController;
 import com.pcb.pcbridge.library.UUIDLookup;
 import com.pcb.pcbridge.library.controllers.AbstractController;
@@ -26,6 +30,7 @@ public final class PCBridge extends JavaPlugin
 	private ControllerManager _controllerManager;
 	private ConnectionManager _connectionManager;
 	private UUIDLookup _uuidFetcher;
+	private BanCache _banCache;
 	
 	public AbstractAdapter GetAdapter(DbConn name)
 	{
@@ -42,6 +47,12 @@ public final class PCBridge extends JavaPlugin
 		return _uuidFetcher;
 	}
 	
+	public BanCache GetBanCache()
+	{
+		return _banCache;
+	}
+	
+	
 	@Override
 	public void onEnable()
 	{
@@ -53,15 +64,20 @@ public final class PCBridge extends JavaPlugin
 		_connectionManager
 		  //.AddAdapter(DbConn.LOCAL, Adapter.MYSQL)
 			.AddAdapter(DbConn.REMOTE, Adapter.MYSQL);
+
+		_banCache = new BanCache(this);
 		
 		_controllerManager = new ControllerManager(this);
 		_controllerManager.CreateControllers(new AbstractController[] {
 			new BanController()
-		});
+		});		
 	}
 	
 	@Override
-	public void onDisable()	{ }
+	public void onDisable()	
+	{
+		_banCache = null;
+	}
 	
 	
 	/**

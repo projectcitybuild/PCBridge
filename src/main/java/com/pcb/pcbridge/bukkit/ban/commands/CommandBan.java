@@ -9,9 +9,12 @@ import java.util.concurrent.Executors;
 
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.pcb.pcbridge.bukkit.ban.Ban;
+import com.pcb.pcbridge.bukkit.ban.BanCache;
+import com.pcb.pcbridge.bukkit.ban.BanQueueItem;
 import com.pcb.pcbridge.library.MessageHelper;
 import com.pcb.pcbridge.library.MessageType;
 import com.pcb.pcbridge.library.PlayerUUID;
@@ -51,29 +54,18 @@ public final class CommandBan extends AbstractCommand
 	 */
 	private boolean BanPlayer(CommandArgs e)
 	{
+		String username = e.Args[0];
+		
 		// check if specified player is already banned
-		AbstractAdapter adapter = _plugin.GetAdapter(DbConn.REMOTE);
-		List<HashMap<String, Object>> result;
-		try 
-		{
-			result = adapter.Query("SELECT * FROM banlist WHERE name=? LIMIT 0,1",
-				e.Args[0]
-			);
-			
-			if(result != null && result.size() > 0)
-			{
-				MessageHelper.Send(MessageType.INFO, e.Sender, e.Args[0] + " is already banned.");
-				return true;
-			}
-		} 
-		catch (SQLException err) 
-		{
-			MessageHelper.Send(MessageType.FATAL, e.Sender, "Failed to lookup ban entry.");
-			_plugin.getLogger().severe("Failed to lookup ban entry: " + err.getMessage());
-			err.printStackTrace();
-		}	
+		BanCache cache = _plugin.GetBanCache();
+		Ban entry = cache.Get(username);
 		
-		
+		if(entry != null)
+		{
+			MessageHelper.Send(MessageType.INFO, e.Sender, username + " is already banned.");
+			return true;
+		}
+				
 		// if given, stitch together the 'ban reason' which spans multiple args
 		String banReason = "Griefing";
 		int startIndex = 1;
@@ -91,32 +83,43 @@ public final class CommandBan extends AbstractCommand
 		}
 		
 		String staffName = e.Sender.getName();
-		Player player = _plugin.getServer().getPlayer(e.Args[0]);
-		String ip = player.getAddress().getAddress().getHostAddress();
+		Player player = _plugin.getServer().getPlayer(username);
+		String ip = player != null ? player.getAddress().getAddress().getHostAddress() : null;
 		
-		// add ban to storage
-		try 
-		{
-			adapter.Execute("INSERT INTO banlist(name, reason, admin, time, temptime, type, ip) VALUES (?, ?, ?, ?, ?, ?, ?)",
-					e.Args[0], 
-					banReason, 
-					staffName,
-					TimestampHelper.GetNowTimestamp(),
-					0,
-					0,
-					ip
-				);
-			
-			_plugin.getServer().broadcastMessage("" + ChatColor.DARK_GRAY + ChatColor.BOLD + e.Args[0] + ChatColor.RESET + ChatColor.GRAY + " has been banned by " + staffName + ": " + banReason);
-			_plugin.getLogger().info(e.Args[0] + " has been banned by " + staffName + ": " + banReason);
-		} 
-		catch (SQLException err) 
-		{
-			MessageHelper.Send(MessageType.FATAL, e.Sender, "Failed to insert new ban record into the database.");
-			_plugin.getLogger().severe("Failed to insert new ban record into the database: " + err.getMessage());
-			err.printStackTrace();
-		}
+		// add ban to cache
+		final Ban ban = new Ban(username, TimestampHelper.GetNowTimestamp(), (long) 0, 0, staffName, banReason, ip);
+		final CommandSender sender = e.Sender;
+		cache.Remember(username, ban, new BanQueueItem() {
+			@Override
+			public void OnProcess() 
+			{
+				// queue operation to add ban to storage
+				try 
+				{
+					AbstractAdapter adapter = _plugin.GetAdapter(DbConn.REMOTE);
+					adapter.Execute("INSERT INTO banlist(name, reason, admin, time, temptime, type, ip) VALUES (?, ?, ?, ?, ?, ?, ?)",
+							ban.Name, 
+							ban.Reason, 
+							ban.StaffName,
+							ban.BanDate,
+							0,
+							0,
+							ban.IP
+						);
+										
+					_plugin.getLogger().info(ban.Name + " registered in ban database");
+				} 
+				catch (SQLException err) 
+				{
+					MessageHelper.Send(MessageType.FATAL, sender, "Failed to insert new ban record into the database. Player may be able to connect to the server after reboot!");
+					_plugin.getLogger().severe("Failed to insert new ban record into the database: " + err.getMessage());
+					err.printStackTrace();
+				}
+			}
+		});
 		
+		_plugin.getServer().broadcastMessage("" + ChatColor.DARK_GRAY + ChatColor.BOLD + ban.Name + ChatColor.RESET + ChatColor.GRAY + " has been banned by " + ban.StaffName + ": " + ban.Reason);
+		_plugin.getLogger().info(ban.Name + " added to ban cache by " + ban.StaffName + ": " + ban.Reason);
 		
 		// kick the player if they're online
 		if(player != null && player.isOnline())
