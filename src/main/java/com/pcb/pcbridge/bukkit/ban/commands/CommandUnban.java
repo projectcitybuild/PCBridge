@@ -39,18 +39,34 @@ public final class CommandUnban extends AbstractCommand
 		
 		// check if specified player is already banned
 		BanCache cache = _plugin.GetBanCache();
-		Ban entry = cache.Get(username);
+		List<Ban> entries = cache.Get(username);
 		
-		if(entry == null)
+		Boolean isBanned = false;
+		if(entries != null)
+		{
+			ListIterator<Ban> i = entries.listIterator();		
+			while(i.hasNext())
+			{
+				Ban entry = i.next();
+				
+				if(entry.IsActive)
+				{
+					isBanned = true;
+					entry.IsActive = false;
+				}
+			}
+		}
+				
+		if(!isBanned)
 		{
 			MessageHelper.Send(MessageType.INFO, e.Sender, username + " is not currently banned.");
 			return true;
-		}
+		}		
 		
 		
 		// remove player from ban cache
 		final CommandSender sender = e.Sender;
-		cache.Forget(username, new BanQueueItem() {
+		cache.Set(username, entries, new BanQueueItem() {
 			@Override
 			public void OnProcess() 
 			{
@@ -58,7 +74,7 @@ public final class CommandUnban extends AbstractCommand
 				try 
 				{
 					AbstractAdapter adapter = _plugin.GetAdapter(DbConn.REMOTE);
-					adapter.Execute("DELETE FROM banlist WHERE name=?",
+					adapter.Execute("UPDATE banlist SET is_active='0' WHERE name=?",
 						username
 					);
 					

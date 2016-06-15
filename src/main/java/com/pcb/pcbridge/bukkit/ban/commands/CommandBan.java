@@ -3,6 +3,7 @@ package com.pcb.pcbridge.bukkit.ban.commands;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
@@ -58,12 +59,22 @@ public final class CommandBan extends AbstractCommand
 		
 		// check if specified player is already banned
 		BanCache cache = _plugin.GetBanCache();
-		Ban entry = cache.Get(username);
+		List<Ban> entries = cache.Get(username);
 		
-		if(entry != null)
+		if(entries != null)
 		{
-			MessageHelper.Send(MessageType.INFO, e.Sender, username + " is already banned.");
-			return true;
+			Boolean isBanned;
+			ListIterator<Ban> i = entries.listIterator();		
+			while(i.hasNext())
+			{
+				Ban entry = i.next();
+				
+				if(entry.IsActive)
+				{
+					MessageHelper.Send(MessageType.INFO, e.Sender, username + " is already banned.");
+					return true;
+				}
+			}
 		}
 				
 		// if given, stitch together the 'ban reason' which spans multiple args
@@ -87,7 +98,7 @@ public final class CommandBan extends AbstractCommand
 		String ip = player != null ? player.getAddress().getAddress().getHostAddress() : null;
 		
 		// add ban to cache
-		final Ban ban = new Ban(username, TimestampHelper.GetNowTimestamp(), (long) 0, 0, staffName, banReason, ip);
+		final Ban ban = new Ban(username, TimestampHelper.GetNowTimestamp(), (long) 0, 0, staffName, banReason, ip, true);
 		final CommandSender sender = e.Sender;
 		cache.Remember(username, ban, new BanQueueItem() {
 			@Override
@@ -97,14 +108,15 @@ public final class CommandBan extends AbstractCommand
 				try 
 				{
 					AbstractAdapter adapter = _plugin.GetAdapter(DbConn.REMOTE);
-					adapter.Execute("INSERT INTO banlist(name, reason, admin, time, temptime, type, ip) VALUES (?, ?, ?, ?, ?, ?, ?)",
+					adapter.Execute("INSERT INTO banlist(name, reason, admin, time, temptime, type, ip, is_active) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
 							ban.Name, 
 							ban.Reason, 
 							ban.StaffName,
 							ban.BanDate,
 							0,
 							0,
-							ban.IP
+							ban.IP,
+							true
 						);
 										
 					_plugin.getLogger().info(ban.Name + " registered in ban database");

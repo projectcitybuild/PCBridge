@@ -17,8 +17,9 @@ public class Ban
 	public String StaffName;
 	public String Reason;
 	public String IP;
+	public Boolean IsActive;
 
-	public Ban(String name, Long banDate, Long expiryDate, Integer type, String staffName, String reason, String ip) 
+	public Ban(String name, Long banDate, Long expiryDate, Integer type, String staffName, String reason, String ip, Boolean isActive) 
 	{ 
 		Name 		= name;
 		BanDate 	= banDate;
@@ -27,6 +28,7 @@ public class Ban
 		StaffName 	= staffName;
 		Reason 		= reason;
 		IP 			= ip;
+		IsActive	= isActive;
 	}
 	
 	public Ban(HashMap<String, Object> record)
@@ -39,6 +41,7 @@ public class Ban
 		StaffName 	= (String) record.get("admin");
 		Reason 		= (String) record.get("reason");
 		IP 			= (String) record.get("ip");
+		IsActive	= (Boolean) record.get("is_active");
 	}
 	
 	public boolean IsTempBan()

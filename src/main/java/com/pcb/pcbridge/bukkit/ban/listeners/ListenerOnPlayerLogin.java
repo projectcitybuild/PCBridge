@@ -1,11 +1,8 @@
 package com.pcb.pcbridge.bukkit.ban.listeners;
 
-import java.sql.SQLException;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
+import java.util.ListIterator;
 
-import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -13,13 +10,7 @@ import org.bukkit.event.player.PlayerLoginEvent;
 
 import com.pcb.pcbridge.bukkit.ban.Ban;
 import com.pcb.pcbridge.bukkit.ban.BanCache;
-import com.pcb.pcbridge.bukkit.ban.BanHelper;
-import com.pcb.pcbridge.library.MessageHelper;
-import com.pcb.pcbridge.library.MessageType;
-import com.pcb.pcbridge.library.TimestampHelper;
 import com.pcb.pcbridge.library.controllers.AbstractListener;
-import com.pcb.pcbridge.library.database.DbConn;
-import com.pcb.pcbridge.library.database.adapters.AbstractAdapter;
 
 /**
  * Check if a player is banned upon entry to the server
@@ -33,18 +24,30 @@ public final class ListenerOnPlayerLogin extends AbstractListener implements Lis
 		String username = e.getPlayer().getName();
 
 		BanCache cache = _plugin.GetBanCache();
-		Ban entry = cache.Get(username);
+		List<Ban> entries = cache.Get(username);
 		
-		if(entry != null)
+		if(entries != null)
 		{
-			String message = "Åòc" + "You are currently banned.\n\n" +
-					
+			ListIterator<Ban> i = entries.listIterator();		
+			while(i.hasNext())
+			{
+				Ban entry = i.next();
+				
+				if(entry.IsActive)
+				{
+					String message = "Åòc" + "You are currently banned.\n\n" +
+							
 							 "Åò8" + "Reason: Åòf" + entry.Reason + "\n" +
 							 "Åò8" + "Expires: Åòf" + "Never" + "\n\n" + 
 									 
 							 "Åòb" + "Appeal @ www.projectcitybuild.com";
 			
-			e.disallow(PlayerLoginEvent.Result.KICK_BANNED, message);
+					
+					e.disallow(PlayerLoginEvent.Result.KICK_BANNED, message);
+				}
+			}		
+			
+			
 		}
 		
 	}

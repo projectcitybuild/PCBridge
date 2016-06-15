@@ -1,6 +1,9 @@
 package com.pcb.pcbridge.bukkit.ban.commands;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.ListIterator;
 
 import org.bukkit.ChatColor;
 
@@ -28,7 +31,27 @@ public final class CommandLookup extends AbstractCommand
 		
 		// check the ban cache for an entry under the given username
 		BanCache cache = _plugin.GetBanCache();
-		Ban ban = cache.Get(username);
+		List<Ban> entries = cache.Get(username);
+		
+		Ban ban = null;
+		List<Ban> historyEntries = new ArrayList<Ban>();
+		if(entries != null)
+		{
+			ListIterator<Ban> i = entries.listIterator();		
+			while(i.hasNext())
+			{
+				Ban entry = i.next();
+				
+				if(entry.IsActive)
+				{
+					ban = entry;
+				}
+				else
+				{
+					historyEntries.add(entry);
+				}
+			}
+		}
 		
 		if(ban != null)
 		{			
@@ -46,8 +69,32 @@ public final class CommandLookup extends AbstractCommand
 		}
 		else
 		{
-			MessageHelper.Send(MessageType.INFO, e.Sender, username + " is not banned.");
+			MessageHelper.Send(MessageType.INFO, e.Sender, ChatColor.GREEN + username + " is not banned.");
 		}
+		
+		
+		// also display any previous bans if they exist
+		if(historyEntries.size() > 0)
+		{
+			MessageHelper.Send(MessageType.INFO, e.Sender, ChatColor.GRAY + "---\n");
+			MessageHelper.Send(MessageType.INFO, e.Sender, ChatColor.GRAY + "Found " + historyEntries.size() + " previous bans\n");
+			
+			ListIterator<Ban> i = historyEntries.listIterator();		
+			while(i.hasNext())
+			{
+				Ban entry = i.next();
+				
+				Date banDate = TimestampHelper.GetDateFromTimestamp(entry.BanDate);
+				
+				String msg = ChatColor.GRAY + "---\n" +
+						ChatColor.YELLOW + "Reason: " + ChatColor.GRAY + entry.Reason + "\n" +
+						ChatColor.YELLOW + "Banned by: " + ChatColor.GRAY + entry.StaffName + "\n" +
+						ChatColor.YELLOW + "Date: " + ChatColor.GRAY + banDate + "\n";
+						
+				MessageHelper.Send(MessageType.INFO, e.Sender, msg);
+			}
+		}
+		
 						
 		return true;
 	}	

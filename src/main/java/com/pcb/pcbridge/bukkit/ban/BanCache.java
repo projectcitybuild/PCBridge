@@ -1,7 +1,9 @@
 package com.pcb.pcbridge.bukkit.ban;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 
 import org.bukkit.scheduler.BukkitScheduler;
@@ -10,7 +12,7 @@ import com.pcb.pcbridge.PCBridge;
 
 public class BanCache 
 {
-	private HashMap<String, Ban> _cache = new HashMap<String, Ban>();
+	private HashMap<String, List<Ban>> _cache = new HashMap<String, List<Ban>>();
 	private Queue<BanQueueItem> _processQueue = new LinkedList<BanQueueItem>();
 	private PCBridge _plugin;
 	private BukkitScheduler _scheduler;
@@ -30,8 +32,27 @@ public class BanCache
 	 * @param queueItem	Time intensive operation
 	 */
 	public void Remember(String name, Ban entry, BanQueueItem queueItem)
+	{		
+		List<Ban> entries = _cache.containsKey(name) ? 
+				_cache.get(name) : new ArrayList<Ban>();
+		
+		entries.add(entry);
+		_cache.put(name, entries);
+		
+		Enqueue(queueItem);
+	}
+	
+	/**
+	 * Replaces cache data with the given entries
+	 * 
+	 * @param name
+	 * @param entries
+	 * @param queueItem	Time intensive operation
+	 */
+	public void Set(String name, List<Ban> entries, BanQueueItem queueItem)
 	{
-		_cache.put(name, entry);
+		_cache.put(name, entries);
+		
 		Enqueue(queueItem);
 	}
 	
@@ -54,7 +75,7 @@ public class BanCache
 	 * @param name	Player's name
 	 * @return
 	 */
-	public Ban Get(String name)
+	public List<Ban> Get(String name)
 	{
 		return _cache.get(name);
 	}
