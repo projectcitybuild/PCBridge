@@ -70,6 +70,17 @@ public class BanCache
 	}
 	
 	/**
+	 * Returns whether the cache contains an entry for the given name
+	 * 
+	 * @param name
+	 * @return
+	 */
+	public Boolean Contains(String name)
+	{
+		return _cache.containsKey(name);
+	}
+	
+	/**
 	 * Retrieves a ban from cache by name.
 	 * 
 	 * @param name	Player's name
