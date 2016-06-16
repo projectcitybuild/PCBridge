@@ -49,4 +49,18 @@ public final class MessageHelper
 		Send(MessageType.NORMAL, sender, message);
 	}
 
+	/**
+	 * Converts a word to plural based on the given number
+	 * 
+	 * @param word
+	 * @param count
+	 * @return
+	 */
+	public static String Plural(String word, int count)
+	{
+		if(count <= 1)
+			return word;
+		
+		return word + "s";
+	}
 }

@@ -18,7 +18,8 @@ public class Ban
 	public String Reason;
 	public String IP;
 	public Boolean IsActive;
-
+	public String UnbannedBy;
+	
 	public Ban(String name, Long banDate, Long expiryDate, Integer type, String staffName, String reason, String ip, Boolean isActive) 
 	{ 
 		Name 		= name;
@@ -42,6 +43,7 @@ public class Ban
 		Reason 		= (String) record.get("reason");
 		IP 			= (String) record.get("ip");
 		IsActive	= (Boolean) record.get("is_active");
+		UnbannedBy	= (String) record.get("unbanned_by");
 	}
 	
 	public boolean IsTempBan()

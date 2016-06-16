@@ -77,7 +77,8 @@ public final class CommandLookup extends AbstractCommand
 		if(historyEntries.size() > 0)
 		{
 			MessageHelper.Send(MessageType.INFO, e.Sender, ChatColor.GRAY + "---\n");
-			MessageHelper.Send(MessageType.INFO, e.Sender, ChatColor.GRAY + "Found " + historyEntries.size() + " previous bans\n");
+			MessageHelper.Send(MessageType.INFO, e.Sender, ChatColor.GRAY + "Found " + historyEntries.size() + 
+					" previous " + MessageHelper.Plural("ban", historyEntries.size()) + "\n");
 			
 			ListIterator<Ban> i = historyEntries.listIterator();		
 			while(i.hasNext())
@@ -88,7 +89,8 @@ public final class CommandLookup extends AbstractCommand
 				
 				String msg = ChatColor.GRAY + "---\n" +
 						ChatColor.YELLOW + "Reason: " + ChatColor.GRAY + entry.Reason + "\n" +
-						ChatColor.YELLOW + "Banned by: " + ChatColor.GRAY + entry.StaffName + "\n" +
+						ChatColor.YELLOW + "Banned by: " + ChatColor.GRAY + entry.StaffName + ChatColor.GRAY + " | " + 
+						ChatColor.YELLOW + "Unbanned by: " + ChatColor.GRAY + entry.UnbannedBy + "\n" +
 						ChatColor.YELLOW + "Date: " + ChatColor.GRAY + banDate + "\n";
 						
 				MessageHelper.Send(MessageType.INFO, e.Sender, msg);

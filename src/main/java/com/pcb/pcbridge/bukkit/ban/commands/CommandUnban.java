@@ -53,6 +53,7 @@ public final class CommandUnban extends AbstractCommand
 				{
 					isBanned = true;
 					entry.IsActive = false;
+					entry.UnbannedBy = e.Sender.getName();
 				}
 			}
 		}
@@ -74,8 +75,9 @@ public final class CommandUnban extends AbstractCommand
 				try 
 				{
 					AbstractAdapter adapter = _plugin.GetAdapter(DbConn.REMOTE);
-					adapter.Execute("UPDATE banlist SET is_active='0' WHERE name=?",
-						username
+					adapter.Execute("UPDATE banlist SET is_active='0', unbanned_by=? WHERE name=?",
+						username,
+						sender.getName()
 					);
 					
 					_plugin.getLogger().info(username + " unregistered from the ban database.");
