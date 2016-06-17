@@ -23,3 +23,7 @@ commands:
     description: Retrieves UUID data about a player from Mojang's web service
     usage: /<command> [history|uuid] [player]
     permission: pcbridge.ban.uuid
+  pcbridge:
+    description: Utility commands
+    usage: /<command> [key] [value]
+    permission: pcbridge.utility

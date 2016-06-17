@@ -18,6 +18,8 @@ import com.pcb.pcbridge.library.database.adapters.AbstractAdapter;
 
 /**
  * Collection of Ban related methods used across most of the Ban commands
+ * 
+ * TODO: delete this
  */
 
 public final class BanHelper 

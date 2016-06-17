@@ -89,7 +89,7 @@ public final class ConnectionManager
 	 */
 	private void TestConnection(AbstractAdapter adapter, DbConn name)
 	{
-		if(_plugin.getConfig().getBoolean("database.boot_test_connection"))
+		/*if(_plugin.getConfig().getBoolean("database.boot_test_connection"))
 		{
 			try
 			{
@@ -109,7 +109,7 @@ public final class ConnectionManager
 			{
 				_plugin.getLogger().severe("Could not connect to database: " + err.getMessage());
 			}
-		}
+		}*/
 	}
 	
 	/**
@@ -119,7 +119,7 @@ public final class ConnectionManager
 	 */
 	private boolean GenerateTables(AbstractAdapter adapter)
 	{
-		String sql = "CREATE TABLE IF NOT EXISTS pcban_active_bans ("
+		/*String sql = "CREATE TABLE IF NOT EXISTS pcban_active_bans ("
 				  + "id int(11) unsigned NOT NULL AUTO_INCREMENT,"
 				  + "banned_uuid varchar(60) CHARACTER SET latin1 COLLATE latin1_bin DEFAULT NULL,"
 				  + "banned_name varchar(?) NOT NULL,"
@@ -141,7 +141,7 @@ public final class ConnectionManager
 		{
 			_plugin.getLogger().severe("Could not generate tables: " + err.getMessage());
 			return false;
-		}
+		}*/
 		
 		return true;
 	}
