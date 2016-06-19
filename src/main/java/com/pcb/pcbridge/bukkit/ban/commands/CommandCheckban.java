@@ -8,7 +8,7 @@ import java.util.ListIterator;
 import org.bukkit.ChatColor;
 
 import com.pcb.pcbridge.bukkit.ban.Ban;
-import com.pcb.pcbridge.bukkit.ban.BanCache;
+import com.pcb.pcbridge.bukkit.ban.cache.BanCache;
 import com.pcb.pcbridge.library.MessageHelper;
 import com.pcb.pcbridge.library.MessageType;
 import com.pcb.pcbridge.library.TimestampHelper;

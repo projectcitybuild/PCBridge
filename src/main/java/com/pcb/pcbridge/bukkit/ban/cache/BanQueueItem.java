@@ -1,4 +1,4 @@
-package com.pcb.pcbridge.bukkit.ban;
+package com.pcb.pcbridge.bukkit.ban.cache;
 
 public interface BanQueueItem
 {

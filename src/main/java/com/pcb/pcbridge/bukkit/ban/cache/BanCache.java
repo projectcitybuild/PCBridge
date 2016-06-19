@@ -1,4 +1,4 @@
-package com.pcb.pcbridge.bukkit.ban;
+package com.pcb.pcbridge.bukkit.ban.cache;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,6 +9,7 @@ import java.util.Queue;
 import org.bukkit.scheduler.BukkitScheduler;
 
 import com.pcb.pcbridge.PCBridge;
+import com.pcb.pcbridge.bukkit.ban.Ban;
 
 public class BanCache 
 {

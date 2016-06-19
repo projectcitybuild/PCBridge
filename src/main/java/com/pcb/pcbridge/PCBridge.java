@@ -5,8 +5,8 @@ import java.util.HashMap;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.pcb.pcbridge.bukkit.ban.Ban;
-import com.pcb.pcbridge.bukkit.ban.BanCache;
 import com.pcb.pcbridge.bukkit.ban.BanController;
+import com.pcb.pcbridge.bukkit.ban.cache.BanCache;
 import com.pcb.pcbridge.bukkit.utility.UtilityController;
 import com.pcb.pcbridge.library.UUIDLookup;
 import com.pcb.pcbridge.library.controllers.AbstractController;

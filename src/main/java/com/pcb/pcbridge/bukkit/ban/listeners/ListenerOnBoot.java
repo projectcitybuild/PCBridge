@@ -13,7 +13,7 @@ import org.bukkit.entity.Player;
 import com.google.common.collect.Lists;
 import com.pcb.pcbridge.PCBridge;
 import com.pcb.pcbridge.bukkit.ban.Ban;
-import com.pcb.pcbridge.bukkit.ban.BanCache;
+import com.pcb.pcbridge.bukkit.ban.cache.BanCache;
 import com.pcb.pcbridge.library.database.DbConn;
 import com.pcb.pcbridge.library.database.adapters.AbstractAdapter;
 

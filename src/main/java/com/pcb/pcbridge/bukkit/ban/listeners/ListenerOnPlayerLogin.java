@@ -9,7 +9,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerLoginEvent;
 
 import com.pcb.pcbridge.bukkit.ban.Ban;
-import com.pcb.pcbridge.bukkit.ban.BanCache;
+import com.pcb.pcbridge.bukkit.ban.cache.BanCache;
 import com.pcb.pcbridge.library.controllers.AbstractListener;
 
 /**
