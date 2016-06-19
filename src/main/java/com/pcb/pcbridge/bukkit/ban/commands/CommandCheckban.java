@@ -20,7 +20,7 @@ import com.pcb.pcbridge.library.controllers.CommandArgs;
  * 
  */
 
-public final class CommandLookup extends AbstractCommand 
+public final class CommandCheckban extends AbstractCommand 
 {	
 	public boolean Execute(CommandArgs e) 
 	{		
