@@ -4,8 +4,6 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 
-import com.pcb.pcbridge.library.async.IFutureCallback;
-
 /**
  * Abstract interface for different storage implementations
  */

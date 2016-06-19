@@ -23,6 +23,7 @@ public class BanController extends AbstractController implements ICommandControl
 			new CommandRoute("unban", 		new CommandUnban()),
 			new CommandRoute("checkban", 	new CommandCheckban()),
 			new CommandRoute("uuid", 		new CommandUUID()),
+			new CommandRoute("tempban", 	new CommandTempBan()),
 		};
 	}
 
