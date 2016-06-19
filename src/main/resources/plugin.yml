@@ -27,3 +27,7 @@ commands:
     description: Utility commands
     usage: /<command> [key] [value]
     permission: pcbridge.utility
+  buyhead:
+    description: Purchases the head of the specified player
+    usage: /<command> player:[name]
+    permission: pcbridge.economy.buyhead

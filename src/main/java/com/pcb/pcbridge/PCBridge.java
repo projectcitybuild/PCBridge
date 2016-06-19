@@ -1,13 +1,11 @@
 package com.pcb.pcbridge;
 
-import java.util.HashMap;
-
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.pcb.pcbridge.bukkit.ban.Ban;
 import com.pcb.pcbridge.bukkit.ban.BanController;
 import com.pcb.pcbridge.bukkit.ban.cache.BanCache;
 import com.pcb.pcbridge.bukkit.utility.UtilityController;
+import com.pcb.pcbridge.bukkit.economy.EconomyController;
 import com.pcb.pcbridge.library.UUIDLookup;
 import com.pcb.pcbridge.library.controllers.AbstractController;
 import com.pcb.pcbridge.library.controllers.ControllerManager;
@@ -71,6 +69,7 @@ public final class PCBridge extends JavaPlugin
 		_controllerManager = new ControllerManager(this);
 		_controllerManager.CreateControllers(new AbstractController[] {
 			new BanController(),
+			new EconomyController(),
 			new UtilityController()
 		});		
 	}
@@ -94,11 +93,11 @@ public final class PCBridge extends JavaPlugin
 		getConfig().addDefault("database.remote.password", "");
 		getConfig().addDefault("database.remote.database", "banlist");
 		
-		getConfig().addDefault("database.local.address", "localhost");
+		/*getConfig().addDefault("database.local.address", "localhost");
 		getConfig().addDefault("database.local.port", 3306);
 		getConfig().addDefault("database.local.username", "root");
 		getConfig().addDefault("database.local.password", "");
-		getConfig().addDefault("database.local.database", "pcbridge_local");
+		getConfig().addDefault("database.local.database", "pcbridge_local");*/
 		
 		getConfig().addDefault("database.boot_test_connection", true);
 		getConfig().addDefault("database.first_run", true);
