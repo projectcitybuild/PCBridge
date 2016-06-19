@@ -44,7 +44,12 @@ public final class CommandBan extends AbstractCommand
 			return false;
 
 		// if invoked via code, it's a temporary ban
-		return BanPlayer(e);
+		if(e.RouteArgs != null)
+		{
+			return BanPlayer(e, (Boolean)e.RouteArgs[0]);
+		}
+		
+		return BanPlayer(e, false);
 	}
 	
 	/**
@@ -53,7 +58,7 @@ public final class CommandBan extends AbstractCommand
 	 * @param e
 	 * @param isTempBan
 	 */
-	private boolean BanPlayer(CommandArgs e)
+	private boolean BanPlayer(CommandArgs e, Boolean isTempBan)
 	{
 		String username = e.Args[0];
 		

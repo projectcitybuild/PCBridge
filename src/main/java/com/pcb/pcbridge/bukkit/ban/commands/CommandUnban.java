@@ -12,7 +12,6 @@ import org.bukkit.entity.Player;
 
 import com.pcb.pcbridge.bukkit.ban.Ban;
 import com.pcb.pcbridge.bukkit.ban.BanCache;
-import com.pcb.pcbridge.bukkit.ban.BanHelper;
 import com.pcb.pcbridge.bukkit.ban.BanQueueItem;
 import com.pcb.pcbridge.library.MessageHelper;
 import com.pcb.pcbridge.library.MessageType;

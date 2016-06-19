@@ -2,12 +2,12 @@ package com.pcb.pcbridge.bukkit.ban.commands;
 
 import com.pcb.pcbridge.library.controllers.AbstractCommand;
 import com.pcb.pcbridge.library.controllers.CommandArgs;
-/**
- * Command: Ban the specified user (via username) for a temporary period of time
- */
 
 public final class CommandTempBan extends AbstractCommand 
 {	
+	/**
+	 * Command: Ban the specified user (via username) for a temporary period of time
+	 */
 	public boolean Execute(CommandArgs e) 
 	{
 		if(e.Args.length == 0)

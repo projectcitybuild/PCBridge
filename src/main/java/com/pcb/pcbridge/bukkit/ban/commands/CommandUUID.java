@@ -1,5 +1,6 @@
 package com.pcb.pcbridge.bukkit.ban.commands;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -7,8 +8,11 @@ import java.util.Map.Entry;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
+import org.json.simple.parser.ParseException;
 
-import com.pcb.pcbridge.bukkit.ban.BanHelper;
+import com.pcb.pcbridge.PCBridge;
 import com.pcb.pcbridge.library.PlayerUUID;
 import com.pcb.pcbridge.library.TimestampHelper;
 import com.pcb.pcbridge.library.UUIDLookup;
@@ -80,7 +84,7 @@ public final class CommandUUID extends AbstractCommand
 	private void GetNameHistory(final CommandArgs e)
 	{
 		final String username = e.Args[1];
-		final PlayerUUID uuid = BanHelper.GetUUID(_plugin, username);
+		final PlayerUUID uuid = GetUUID(_plugin, username);
 		
 		if(uuid.GetUUID() == "")
 		{
@@ -136,6 +140,50 @@ public final class CommandUUID extends AbstractCommand
 				OnSuccess(e, output.toString());
 			}
 		});
+	}
+	
+	private PlayerUUID GetUUID(PCBridge plugin, String username)
+	{
+		UUID uuid = null;
+		String ip = "";
+		
+		// check if player is currently online
+		@SuppressWarnings("deprecation")
+		Player player = plugin.getServer().getPlayer(username);
+		
+		if(player != null)
+		{
+			uuid 	= player.getUniqueId();
+			ip 		= player.getAddress().getHostString();
+			
+			return new PlayerUUID(username, ip, uuid, true, true, player);
+		}
+		
+		// otherwise check if player has played before
+		@SuppressWarnings("deprecation")
+		OfflinePlayer offlinePlayer	= plugin.getServer().getOfflinePlayer(username);
+		
+		boolean hasPlayedBefore = offlinePlayer.hasPlayedBefore();			
+		if(hasPlayedBefore)
+		{
+			uuid = offlinePlayer.getUniqueId();
+		}
+		else
+		{
+			uuid = null;
+			
+			// retrieve the player's UUID from Mojang because they've never joined the server before
+			try 
+			{
+				uuid = plugin.GetUUIDFetcher().GetCurrentUUID(username);				
+			} 
+			catch (IOException | ParseException err) 
+			{
+				plugin.getLogger().severe("Could not retrieve UUID [" + username + "] from Mojang web service: " + err.getMessage());
+			}
+		}
+		
+		return new PlayerUUID(username, ip, uuid, false, hasPlayedBefore, null);	
 	}
 	
 	
