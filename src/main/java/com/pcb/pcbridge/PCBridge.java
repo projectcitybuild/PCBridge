@@ -101,7 +101,7 @@ public final class PCBridge extends JavaPlugin
 		getConfig().addDefault("database.local.database", "pcbridge_local");
 		
 		getConfig().addDefault("database.boot_test_connection", true);
-		getConfig().addDefault("database.first_run", false);
+		getConfig().addDefault("database.first_run", true);
 		
 		getConfig().addDefault("settings.maintenance_mode", false);
 		

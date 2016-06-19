@@ -68,15 +68,15 @@ public final class ConnectionManager
 		// first run? generate tables
 		if(_plugin.getConfig().getBoolean("database.first_run"))
 		{
-			/*if(GenerateTables(adapter))
+			if(GenerateTables(adapter))
 			{
 				_plugin.getConfig().set("database.first_run", false);
 				_plugin.saveConfig();
-			}*/					
+			}		
 		}
 		
 		// test connection on boot
-		//TestConnection(adapter, name);	
+		TestConnection(adapter, name);	
 		
 		// TODO: revert to file adapter storage if db connection failed
 		
@@ -119,19 +119,18 @@ public final class ConnectionManager
 	 */
 	private boolean GenerateTables(AbstractAdapter adapter)
 	{
-		/*String sql = "CREATE TABLE IF NOT EXISTS pcban_active_bans ("
-				  + "id int(11) unsigned NOT NULL AUTO_INCREMENT,"
-				  + "banned_uuid varchar(60) CHARACTER SET latin1 COLLATE latin1_bin DEFAULT NULL,"
-				  + "banned_name varchar(?) NOT NULL,"
-				  + "date_ban int(8) NOT NULL,"
-				  + "date_expire int(8) DEFAULT NULL,"
-				  + "staff_uuid varchar(60) CHARACTER SET latin1 COLLATE latin1_bin NOT NULL,"
-				  + "staff_name varchar(50) NOT NULL,"
+		String sql = "CREATE TABLE IF NOT EXISTS banlist ("
+				  + "name varchar(32) NOT NULL,"
 				  + "reason text NOT NULL,"
-				  + "ip varchar(15) NOT NULL,"
+				  + "admin varchar(32) NOT NULL,"
+				  + "time bigint(20) NOT NULL,"
+				  + "temptime bigint(20) NOT NULL DEFAULT '0',"
+				  + "type int(11) NOT NULL DEFAULT '0',"
+				  + "id int(11) unsigned NOT NULL AUTO_INCREMENT,"
+				  + "ip varchar(16) DEFAULT NULL,"
 				  + "is_active tinyint(1) NOT NULL DEFAULT '1',"
 				  + "PRIMARY KEY (id)"
-				  + ") ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=20 ;";
+				  + ") ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=0 ;";
 		
 		try 
 		{
@@ -141,7 +140,7 @@ public final class ConnectionManager
 		{
 			_plugin.getLogger().severe("Could not generate tables: " + err.getMessage());
 			return false;
-		}*/
+		}
 		
 		return true;
 	}
