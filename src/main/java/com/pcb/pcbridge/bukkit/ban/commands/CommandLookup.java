@@ -24,10 +24,10 @@ public final class CommandLookup extends AbstractCommand
 {	
 	public boolean Execute(CommandArgs e) 
 	{		
-		String username = e.Args[0];
-		
 		if(e.Args.length < 1)
 			return false;
+		
+		String username = e.Args[0];
 		
 		// check the ban cache for an entry under the given username
 		BanCache cache = _plugin.GetBanCache();

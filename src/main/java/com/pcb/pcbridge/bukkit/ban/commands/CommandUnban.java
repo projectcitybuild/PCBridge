@@ -31,10 +31,10 @@ public final class CommandUnban extends AbstractCommand
 {	
 	public boolean Execute(CommandArgs e) 
 	{
-		final String username = e.Args[0];
-		
 		if(e.Args.length == 0 || e.Args.length > 1)
 			return false;
+		
+		final String username = e.Args[0];
 		
 		// check if specified player is already banned
 		BanCache cache = _plugin.GetBanCache();
