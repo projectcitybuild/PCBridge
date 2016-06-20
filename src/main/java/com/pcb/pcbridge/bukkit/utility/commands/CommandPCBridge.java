@@ -45,6 +45,6 @@ public final class CommandPCBridge extends AbstractCommand
 		MessageHelper.Send(MessageType.INFO, e.Sender, "Maintenance mode toggled " + arg.toUpperCase());
 		
 		return true;
-	}	
+	}
 		
 }
