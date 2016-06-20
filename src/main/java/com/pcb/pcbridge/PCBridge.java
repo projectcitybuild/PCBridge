@@ -1,5 +1,8 @@
 package com.pcb.pcbridge;
 
+import net.milkbowl.vault.economy.Economy;
+
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.pcb.pcbridge.bukkit.ban.BanController;
@@ -31,6 +34,9 @@ public final class PCBridge extends JavaPlugin
 	private UUIDLookup _uuidFetcher;
 	private BanCache _banCache;
 	
+	private Economy _economy = null;
+	
+	
 	public AbstractAdapter GetAdapter(DbConn name)
 	{
 		return _connectionManager.GetAdapter(name);
@@ -49,6 +55,11 @@ public final class PCBridge extends JavaPlugin
 	public BanCache GetBanCache()
 	{
 		return _banCache;
+	}
+	
+	public Economy GetEconomyHook()
+	{
+		return _economy;
 	}
 	
 	
@@ -71,13 +82,39 @@ public final class PCBridge extends JavaPlugin
 			new BanController(),
 			new EconomyController(),
 			new UtilityController()
-		});		
+		});
+		
+		if (!HookEconomy()) 
+		{
+            getLogger().severe("Disabled due to no Vault dependency found!");
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
 	}
 	
 	@Override
 	public void onDisable()	
 	{
 		_banCache = null;
+	}
+	
+	/**
+	 * Hooks into any existing economy plugin via the Vault API
+	 * 
+	 * @return
+	 */
+	private boolean HookEconomy() 
+	{
+		if (getServer().getPluginManager().getPlugin("Vault") == null) 
+			return false;
+		
+		RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
+		if (rsp == null) 
+		{
+			return false;
+		}
+		_economy = rsp.getProvider();
+		return _economy != null;
 	}
 	
 	

@@ -34,6 +34,9 @@ public final class MessageHelper
 			case CONFIRM:
 				msg.append(ChatColor.GREEN).append("CONFIRM: ");
 				break;
+			case SUCCESS:
+				msg.append(ChatColor.GREEN).append("SUCCESS: ");
+				break;
 			case WARNING:
 				msg.append(ChatColor.YELLOW).append("WARNING: ");
 				break;

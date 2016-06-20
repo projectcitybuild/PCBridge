@@ -1,6 +1,7 @@
 name: PCBridge
 main: com.pcb.pcbridge.PCBridge
 version: 1.0.0
+depend: [Vault]
 
 commands:
   ban:
@@ -29,5 +30,5 @@ commands:
     permission: pcbridge.utility
   buyhead:
     description: Purchases the head of the specified player
-    usage: /<command> player:[name]
+    usage: /<command> player:[name] [quantity]
     permission: pcbridge.economy.buyhead
