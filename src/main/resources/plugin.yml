@@ -1,0 +1,11 @@
+name: PCBridge
+main: com.pcb.pcbridge.PCBridge
+version: 2.0.0
+website: http://www.projectcitybuild.com
+description: Bridges PCB game servers with the website
+depend: [Essentials]
+
+commands:
+  ban:
+  unban:
+  mute:

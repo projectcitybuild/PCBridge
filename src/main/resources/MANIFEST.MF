@@ -1,0 +1,2 @@
+Manifest-Version: 1.0
+Class-Path: lib/HikariCP-java7-2.4.9.jar lib/slf4j-api-1.7.21.jar
