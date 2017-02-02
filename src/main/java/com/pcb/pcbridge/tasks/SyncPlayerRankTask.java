@@ -145,6 +145,10 @@ public class SyncPlayerRankTask {
 					permissions.playerAddGroup(null, player, "Guide");
 					hasRegisteredGroup = true;
 					break;
+				case "26":
+					permissions.playerAddGroup(null, player, "Retired");
+					hasRegisteredGroup = true;
+					break;
 				default:
 					continue;
 			}
