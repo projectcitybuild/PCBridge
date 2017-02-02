@@ -133,6 +133,8 @@ public final class PCBridge extends JavaPlugin {
 				new CommandSync(),
 				new CommandTpLastPos(),
 				new CommandBuySkull(),
+				new CommandPrefix(),
+				new CommandSuffix(),
 				//new CommandBuyRepair(),
 				//new CommandSendChest(),
 				new CommandRescue(),

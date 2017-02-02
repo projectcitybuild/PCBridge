@@ -39,6 +39,8 @@ public class PlayerConfig {
 
 	public boolean IsMuted;
 	public boolean IsSwearblockEnabled;
+	public String Prefix;
+	public String Suffix;
 	public ItemStack[] Chest;
 	public boolean NeedsRescue;
 	public Location RescueCoords;
@@ -53,12 +55,14 @@ public class PlayerConfig {
 		
 		if(!_file.exists())
 		{			
-			IsMuted = false;
-			IsSwearblockEnabled = false;
-			Chest = null;
-			NeedsRescue = false;
-			RescueCoords = null;
-			LastPos = null;
+			this.IsMuted = false;
+			this.IsSwearblockEnabled = false;
+			this.Prefix = null;
+			this.Suffix = null;
+			this.Chest = null;
+			this.NeedsRescue = false;
+			this.RescueCoords = null;
+			this.LastPos = null;
 			
 			try
 			{
@@ -74,6 +78,8 @@ public class PlayerConfig {
 			YamlConfiguration reader = GetReader();
 			this.IsMuted = reader.getBoolean("chat.muted");
 			this.IsSwearblockEnabled = reader.getBoolean("chat.swearblock");
+			this.Prefix = reader.getString("chat.prefix");
+			this.Suffix = reader.getString("chat.suffix");
 			this.NeedsRescue = reader.getBoolean("server.rescue.needed");
 			this.RescueCoords = (Location) reader.get("server.rescue.coordinates");
 			this.LastPos = (Location) reader.get("server.lastpos");
@@ -102,6 +108,8 @@ public class PlayerConfig {
 		YamlConfiguration reader = GetReader();
 		reader.set("chat.muted", IsMuted);
 		reader.set("chat.swearblock", IsSwearblockEnabled);
+		reader.set("chat.prefix", Prefix);
+		reader.set("chat.suffix", Suffix);
 		reader.set("server.chest", Chest);
 		reader.set("server.rescue.needed", NeedsRescue);
 		reader.set("server.rescue.coordinates", RescueCoords);

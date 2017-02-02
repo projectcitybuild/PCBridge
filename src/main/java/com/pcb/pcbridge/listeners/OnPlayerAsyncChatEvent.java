@@ -28,6 +28,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.md_5.bungee.api.ChatColor;
+import net.milkbowl.vault.chat.Chat;
 
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.World;
@@ -80,6 +81,9 @@ public final class OnPlayerAsyncChatEvent extends AbstractListener
 	{
 		if(event.isCancelled())
 			return;
+        
+		StaticCache<UUID, PlayerConfig> cache = GetEnv().GetPlayerCache();
+		PlayerConfig senderConfig = cache.Get(event.getPlayer().getUniqueId());
 		
 		Matcher matcher = _pattern.matcher( event.getMessage() );
 	    if (matcher.find()) 
@@ -91,15 +95,13 @@ public final class OnPlayerAsyncChatEvent extends AbstractListener
 	        String stars = StringUtils.repeat("*", caught.length());
 	        String edited = event.getMessage().replace(caught, stars);
 	        
-			StaticCache<UUID, PlayerConfig> cache = GetEnv().GetPlayerCache();
-	        
 	        for (Player player : event.getRecipients()) 
 		    {
 	        	PlayerConfig config = cache.Get(player.getUniqueId());
 				if(config.IsSwearblockEnabled)
-					player.sendMessage( FormatMessage(event.getPlayer(), edited) );
+					player.sendMessage( FormatMessage(event.getPlayer(), senderConfig, edited) );
 				else
-					player.sendMessage( FormatMessage(event.getPlayer(), event.getMessage()) );
+					player.sendMessage( FormatMessage(event.getPlayer(), senderConfig, event.getMessage()) );
 		    }
 	        
 		    event.setCancelled(true);
@@ -110,7 +112,7 @@ public final class OnPlayerAsyncChatEvent extends AbstractListener
 	    else
 	    {	    	
 	    	event.getRecipients().forEach(player -> {
-	    		player.sendMessage( FormatMessage(event.getPlayer(), event.getMessage()) );
+	    		player.sendMessage( FormatMessage(event.getPlayer(), senderConfig, event.getMessage()) );
 	    	});
 	    	event.setCancelled(true);
 	    }
@@ -122,30 +124,43 @@ public final class OnPlayerAsyncChatEvent extends AbstractListener
 	 * 
 	 * @param message
 	 */
-	private String FormatMessage(Player player, String message)
+	private String FormatMessage(Player player, PlayerConfig senderConfig, String message)
 	{
 		World world = player.getWorld();
 		
 		// build the player's group prefix
 	    String[] groups = PCBridge.GetVaultHook().GetPermission().getPlayerGroups(player);      
-        StringBuilder builder = new StringBuilder();
+        StringBuilder prefixBuilder = new StringBuilder();
+        StringBuilder suffixBuilder = new StringBuilder();
+        
+        // add any manual pre/suffixes to their prefix list
+        if(senderConfig.Prefix != null)
+        	prefixBuilder.insert(0, senderConfig.Prefix);
+        
         for(String group : groups)
         {
-        	String prefix = PCBridge.GetVaultHook()
-        			.GetChat()
-        			.getGroupPrefix(world, group)
-        			.trim();
+        	Chat chat = PCBridge.GetVaultHook().GetChat();
         	
-        	// donators have the [$] appear before any other group prefix
+        	String prefix = chat.getGroupPrefix(world, group).trim();
+        	String suffix = chat.getGroupSuffix(world, group).trim();
+        	
+        	// donators have the [$] appear before any other group prefix or the manual prefix
         	if(group.equalsIgnoreCase("donator"))
-        		builder.insert(0, prefix);
+        		prefixBuilder.insert(0, prefix);
         	else
-        		builder.append(prefix);
+        		prefixBuilder.append(prefix);
+        	
+        	suffixBuilder.append(suffix);
         }
-        String group = builder.toString().replace("&", "Åò");
-
+        
+        if(senderConfig.Suffix != null)
+        	suffixBuilder.append(senderConfig.Suffix);
+        
+        String prefix = prefixBuilder.toString().replace("&", "Åò");
+        String suffix = suffixBuilder.toString().replace("&", "Åò");
+        
         // put everything together to form the entire message
-        String output = "<" + world.getName() + "><" + group + " " + player.getDisplayName() + ChatColor.WHITE + "> " + message;
+        String output = "<" + world.getName() + "><" + prefix + " " + player.getDisplayName() + suffix + ChatColor.WHITE + "> " + message;
         
         return output;
 	}

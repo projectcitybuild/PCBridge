@@ -15,6 +15,7 @@ A Spigot plugin to bridge [Project City Build](www.projectcitybuild.com) and its
 * Mute players
 * Chat swear filter
 * House purchasing
+* Chat name prefixes & suffixes
 
 * Command registering without plugin.yml
 * Command prompts (eg. type /confirm to continue)
@@ -31,6 +32,8 @@ Great! But first you'll need to:
 3. Compile PCBridge into a .jar and place it in the <b>plugins/</b> folder
 4. Run the server once to generate the config file (config.yml)
 5. Add your database connection details into the config file
+
+Be sure to check the [Wiki](https://github.com/andimage/PCBridge/wiki/Contributing) on how PCBridge works.
 
 ### Dependencies
 PCBridge uses Maven to shade dependencies into the final JAR file.
@@ -55,6 +58,8 @@ PCBridge uses Maven to shade dependencies into the final JAR file.
 * <b>/swearblock</b> <on|off>
 * <b>/tplastpos</b> <name>
 * <b>/rescue</b> <name> [x] [y] [z] [world]
+* <b>/prefix</b> <name> <prefix>
+* <b>/suffix</b> <name> <suffix>
 * <b>/pcbridge</b> maintenance <on|off>
 * <b>/pcbridge</b> migrate <migration>
 * <b>/pcbridge</b> reload
