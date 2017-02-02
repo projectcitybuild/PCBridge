@@ -27,20 +27,24 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * A basic Map-type cache. Forgets data if manually removed or
- * whenever the plugin is disabled
+ * A basic Key-Value map. The actual map implementation must
+ * be provided on construction
  *
  * @param <K>
  * @param <V>
  */
-public class StaticCache<K, V> implements ICache<K, V> {
-
-	private Map<K, V> _map = new HashMap<>();
-
-	@Override
-	public boolean ContainsKey(K key)
+public class StaticCache<K, V> extends AbstractCache<K, V> {
+	
+	private Map<K, V> _map;
+	
+	public StaticCache(Map<K, V> mapType)
 	{
-		return _map.containsKey(key);
+		this._map = mapType;
+	}
+	
+	public StaticCache() 
+	{
+		this(new HashMap<K, V>());
 	}
 	
 	@Override
@@ -48,12 +52,19 @@ public class StaticCache<K, V> implements ICache<K, V> {
 	{
 		return _map.get(key);
 	}
-
-	public void Remember(K key, V value)
+	
+	@Override
+	public boolean ContainsKey(K key)
 	{
-		_map.put(key, value);		
+		return _map.containsKey(key);
 	}
-
+	
+	@Override
+	public boolean ContainsValue(V value)
+	{
+		return _map.containsValue(value);
+	}
+	
 	@Override
 	public void Forget(K key)
 	{
@@ -67,15 +78,13 @@ public class StaticCache<K, V> implements ICache<K, V> {
 	}
 	
 	@Override
-	public void Destroy()
-	{
-		Clear();
-		_map = null;
-	}
-	
-	@Override
 	public int Size()
 	{
 		return _map.size();
+	}
+	
+	public void Remember(K key, V value)
+	{
+		_map.put(key, value);
 	}
 }

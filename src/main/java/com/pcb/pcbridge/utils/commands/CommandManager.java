@@ -30,7 +30,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.milkbowl.vault.permission.Permission;
+
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandMap;
@@ -46,6 +49,7 @@ import com.pcb.pcbridge.Environment;
 public class CommandManager implements CommandExecutor, TabCompleter {
 
 	private final Environment _env;
+	private final Permission _permissions;
 	private final CommandPromptManager _promptManager;
 	private Map<String, AbstractCommand> _commands = new HashMap<>();
 	private CommandMap _commandMap;
@@ -55,9 +59,10 @@ public class CommandManager implements CommandExecutor, TabCompleter {
 		return _promptManager;
 	}
 	
-	public CommandManager(Environment environment, AbstractCommand[] commands)
+	public CommandManager(Environment environment, Permission permissions, AbstractCommand[] commands)
 	{		
 		this._env = environment;
+		this._permissions = permissions;
 		this._promptManager = new CommandPromptManager(environment);
 		
 		for(AbstractCommand command : commands)
@@ -168,11 +173,18 @@ public class CommandManager implements CommandExecutor, TabCompleter {
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) 
 	{
-		_env.GetLogger().info("Call to: " + cmd.getLabel());
+		//_env.GetLogger().info("Call to: " + cmd.getLabel());
 		
 		AbstractCommand handler = _commands.get(cmd.getLabel());
 		if(handler == null)
 			return false;
+		
+		// check player has permission to use the command
+		if(!_permissions.has(sender, handler.GetPermission()))
+		{
+			sender.sendMessage(ChatColor.RED + "You do not have access to that command.");
+			return true;
+		}
 		
 		CommandArgs commandArgs = new CommandArgs(sender, cmd, label, args);
 		try

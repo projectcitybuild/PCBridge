@@ -58,7 +58,7 @@ public final class OnPluginEnabledEvent extends AbstractListener
 				List<Player> playersToBoot = new ArrayList<>();
 				for(Player player : onlinePlayers)
 				{
-					List<PlayerBan> bans = GetBansTask.GetByUuid(player.getUniqueId().toString(), true);
+					List<PlayerBan> bans = GetBansTask.GetAllByUuid(player.getUniqueId().toString(), true);
 					if(bans.size() > 0)
 						playersToBoot.add(player);
 				}

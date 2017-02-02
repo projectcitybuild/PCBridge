@@ -140,7 +140,7 @@ public class CommandPCBridge extends AbstractCommand {
 		{
 			case "banlist_v2":
 				migration = BanListV2Migration.class;
-				db = BanListContract.Database;
+				db = BanListContract.DATABASE;
 				break;
 			default:
 				args.GetSender().sendMessage(ChatColor.RED + "Invalid migration name");

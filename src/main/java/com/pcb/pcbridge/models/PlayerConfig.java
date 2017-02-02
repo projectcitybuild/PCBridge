@@ -52,20 +52,19 @@ public class PlayerConfig {
 		this._file = new File(playerFolder, uuid + ".yml");
 		
 		if(!_file.exists())
-		{
-			YamlConfiguration reader = GetReader();
-			reader.set("chat.muted", false);
-			reader.set("chat.swearblock", false);
-			reader.set("server.chest", null);
-			reader.set("server.rescue.needed", false);
-			reader.set("server.rescue.coordinates", null);
-			reader.set("server.lastpos", null);
+		{			
+			IsMuted = false;
+			IsSwearblockEnabled = false;
+			Chest = null;
+			NeedsRescue = false;
+			RescueCoords = null;
+			LastPos = null;
 			
-			try 
+			try
 			{
-				reader.save(_file);
-			} 
-			catch (IOException e) 
+				Save();
+			}
+			catch (IOException e)
 			{
 				e.printStackTrace();
 			}

@@ -23,6 +23,8 @@
  */
 package com.pcb.pcbridge.utils.cache;
 
+import com.pcb.pcbridge.utils.Actions.Action2;
+
 /**
  * A cache for syncing with a data source (one-way).
  * eg. when this cache is updated, it asynchronously updates a database in the background
@@ -33,15 +35,10 @@ package com.pcb.pcbridge.utils.cache;
  * @param <V>
  */
 public class SyncedCache<K, V> extends StaticCache<K, V> {
-
-	public interface UpdateListener<K, V>
-	{
-		void OnUpdate(K key, V value);
-	}
 	
-	public void Remember(K key, V value, UpdateListener<K, V> callback)
+	public void Remember(K key, V value, Action2<K, V> callback)
 	{
 		super.Remember(key, value);
-		callback.OnUpdate(key, value);
+		callback.Call(key, value);
 	}
 }

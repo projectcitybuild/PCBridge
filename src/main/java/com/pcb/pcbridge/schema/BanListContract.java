@@ -27,7 +27,7 @@ import com.pcb.pcbridge.utils.database.AbstractSchemaTable;
 
 public final class BanListContract {
 
-	public static final String Database = "pcbridge";
+	public static final String DATABASE = "pcbridge";
 	
 	// prevent this class from being instantiated
 	protected BanListContract() { }

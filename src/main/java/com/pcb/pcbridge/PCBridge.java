@@ -29,6 +29,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 import org.bukkit.Bukkit;
@@ -63,6 +64,12 @@ public final class PCBridge extends JavaPlugin {
 	public StaticCache<UUID, PlayerConfig> GetPlayerCache()
 	{
 		return _playerCache;
+	}
+	
+	private BanCache _banCache;
+	public BanCache GetBanCache()
+	{
+		return _banCache;
 	}
 	
 	private static TaskChainFactory _taskChainFactory;
@@ -113,7 +120,7 @@ public final class PCBridge extends JavaPlugin {
 		Environment env = new Environment(this);
 		
 		// register commands
-		_commandManager = new CommandManager(env, new AbstractCommand[] {
+		_commandManager = new CommandManager(env, _vaultHook.GetPermission(), new AbstractCommand[] {
 				new CommandBan(),
 				new CommandUnban(),
 				new CommandTempBan(),
@@ -147,7 +154,11 @@ public final class PCBridge extends JavaPlugin {
 				//new OnPlayerInteractEvent()
 		});
 		
-		_playerCache = new StaticCache<>();
+		// create caches
+		_playerCache = new StaticCache<>(new ConcurrentHashMap<>());
+		
+		/*if( getConfig().getBoolean("server.cache_bans") )
+			_banCache = new BanCache(this);*/
 		
 		// call the PluginEnabled event
 		getServer().getPluginManager().callEvent( new PluginEnabledEvent() );
@@ -178,7 +189,7 @@ public final class PCBridge extends JavaPlugin {
      */
     private void PrepareDatabase()
     {
-    	try(Connection conn = GetConnectionPool().GetConnection(BanListContract.Database))
+    	try(Connection conn = GetConnectionPool().GetConnection(BanListContract.DATABASE))
     	{		
 			MigrationHandler handler = new MigrationHandler(getLogger());	
 
@@ -237,6 +248,7 @@ public final class PCBridge extends JavaPlugin {
     private void LoadConfig()
     {    	
     	getConfig().addDefault("server.maintenance", false);
+    	//getConfig().addDefault("server.cache_bans", false);
     	
     	getConfig().addDefault("database.connections.local.host", "localhost");
     	getConfig().addDefault("database.connections.local.port", 3306);

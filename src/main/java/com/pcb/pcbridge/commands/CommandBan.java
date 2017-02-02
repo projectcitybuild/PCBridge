@@ -125,7 +125,7 @@ public class CommandBan extends AbstractCommand {
 	 */
 	private UUID CheckIfBanned(UUID uuid)
 	{
-		List<PlayerBan> bans = GetBansTask.GetByUuid(uuid.toString(), true);
+		List<PlayerBan> bans = GetBansTask.GetAllByUuid(uuid.toString(), true);
 		if(bans.size() == 1)
 			return null;
 		
@@ -248,7 +248,7 @@ public class CommandBan extends AbstractCommand {
 	 */
 	private void StoreBan(PlayerBan ban)
 	{
-		try(Connection conn = PCBridge.GetConnectionPool().GetConnection(BanListContract.Database))
+		try(Connection conn = PCBridge.GetConnectionPool().GetConnection(BanListContract.DATABASE))
 		{
 			// get the ids of player and staff
 			int playerId = GetPlayerIdTask.Run(conn, ban.PlayerUUID, ban.PlayerAlias);

@@ -31,7 +31,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 
 import com.pcb.pcbridge.models.PlayerConfig;
-import com.pcb.pcbridge.utils.cache.CacheManager;
 import com.pcb.pcbridge.utils.cache.StaticCache;
 import com.pcb.pcbridge.utils.listeners.AbstractListener;
 

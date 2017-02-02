@@ -21,35 +21,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.pcb.pcbridge.schema;
+package com.pcb.pcbridge.utils.cache;
 
-import com.pcb.pcbridge.utils.database.AbstractSchemaTable;
+public abstract class AbstractCache<K, V> {
 
-public final class PlayerContract {
-
-	public static final String DATABASE = "pcbridge";
-	
-	// prevent this class from being instantiated
-	protected PlayerContract() { }
-	/**
-	 * Table where each unique player has a row
-	 */
-	public static final class TablePlayers extends AbstractSchemaTable
-	{
-		public static final String TABLE_NAME = "ban_players";
-		
-		public static final String COL_ALIAS 		= "alias";
-		public static final String COL_UUID 		= "uuid";
-		
-		public static final String SQL_CREATE = 
-				"CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " ( "
-							+ _ID + " INT UNSIGNED NOT NULL AUTO_INCREMENT ,"
-							+ COL_ALIAS + " VARCHAR(100) NOT NULL ,"
-							+ COL_UUID + " VARCHAR(60) NULL UNIQUE ,"
-							+ "PRIMARY KEY (" + _ID + ")"
-						+ ") ENGINE = InnoDB;";
-		
-		public static final String SQL_DROP = "DROP TABLE IF EXISTS " + TABLE_NAME;
-	}
+	public abstract V Get(K key);
+	public abstract boolean ContainsKey(K key);
+	public abstract boolean ContainsValue(V value);
+	public abstract void Forget(K key);
+	public abstract void Clear();
+	public abstract int Size();	
 	
 }

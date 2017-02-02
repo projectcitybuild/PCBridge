@@ -32,7 +32,6 @@ import org.bukkit.inventory.ItemStack;
 import com.pcb.pcbridge.PCBridge;
 import com.pcb.pcbridge.tasks.GetPlayerCacheTask;
 import com.pcb.pcbridge.tasks.GetUuidTask;
-import com.pcb.pcbridge.utils.cache.CacheManager;
 import com.pcb.pcbridge.utils.cache.StaticCache;
 import com.pcb.pcbridge.utils.commands.AbstractCommand;
 import com.pcb.pcbridge.utils.commands.CommandArgs;

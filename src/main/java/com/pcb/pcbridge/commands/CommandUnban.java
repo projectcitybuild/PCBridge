@@ -108,7 +108,7 @@ public class CommandUnban extends AbstractCommand {
 	
 	private List<PlayerBan> GetBans(UUID uuid)
 	{
-		List<PlayerBan> bans = GetBansTask.GetByUuid(uuid.toString(), true);
+		List<PlayerBan> bans = GetBansTask.GetAllByUuid(uuid.toString(), true);
 		if(bans.size() == 0)
 			return null;
 		
@@ -125,7 +125,7 @@ public class CommandUnban extends AbstractCommand {
 	 */
 	private String StoreUnban(List<PlayerBan> bans, CommandArgs args)
 	{
-		try(Connection conn = PCBridge.GetConnectionPool().GetConnection(BanListContract.Database))
+		try(Connection conn = PCBridge.GetConnectionPool().GetConnection(BanListContract.DATABASE))
 		{
 			String staffAlias = "CONSOLE";
 			String staffUuid = "CONSOLE";

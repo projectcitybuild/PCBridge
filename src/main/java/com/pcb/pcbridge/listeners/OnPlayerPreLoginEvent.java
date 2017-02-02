@@ -57,9 +57,8 @@ public final class OnPlayerPreLoginEvent extends AbstractListener
 	 */
 	private void CheckIfBanned(AsyncPlayerPreLoginEvent event)
 	{
-		List<PlayerBan> bans = GetBansTask.GetByUuid(event.getUniqueId().toString(), true);
+		List<PlayerBan> bans = GetBansTask.GetAllByUuid(event.getUniqueId().toString(), true);
 		
-		// manually check the bans in-case a temp ban that just expired is still in the list
 		for(PlayerBan ban : bans)
 		{
 			if(!ban.IsActive)

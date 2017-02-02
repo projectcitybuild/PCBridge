@@ -23,15 +23,12 @@
  */
 package com.pcb.pcbridge.commands;
 
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
 import com.pcb.pcbridge.PCBridge;
 import com.pcb.pcbridge.models.PlayerBan;
-import com.pcb.pcbridge.schema.BanListContract;
 import com.pcb.pcbridge.tasks.GetBansTask;
 import com.pcb.pcbridge.tasks.GetUuidTask;
 import com.pcb.pcbridge.utils.MessageBuilder;
@@ -96,7 +93,7 @@ public class CommandShowBans extends AbstractCommand {
 			.asyncFirst( () -> GetUuidTask.FindOrFetch(GetEnv().GetServer(), alias) )
 			.abortIfNull()
 			
-			.async( uuid -> GetBansTask.GetByUuid(uuid.toString(), false) )				
+			.async( uuid -> GetBansTask.GetAllByUuid(uuid.toString(), false) )				
 			.syncLast( bans -> DisplayBans(bans, args) )
 			.execute();
 		

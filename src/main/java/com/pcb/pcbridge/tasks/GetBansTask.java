@@ -29,13 +29,37 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
+import com.pcb.pcbridge.BanCache;
 import com.pcb.pcbridge.PCBridge;
 import com.pcb.pcbridge.models.PlayerBan;
 import com.pcb.pcbridge.schema.BanListContract;
 import com.pcb.pcbridge.schema.PlayerContract;
 
 public class GetBansTask {
+	
+	/**
+	 * Gets the first active ban record for the given UUID.
+	 * Performs lookup in a cache instead if given
+	 * 
+	 * @param uuid
+	 * @param cache
+	 * @return
+	 */
+	public static PlayerBan GetBanByUuid(UUID uuid, BanCache cache)
+	{
+		if(cache != null)
+		{
+			return cache.GetBan(uuid);
+		}
+		
+		List<PlayerBan> bans = GetAllByUuid(uuid.toString(), true);
+		if(bans.size() == 0)
+			return null;
+		
+		return bans.get(0);
+	}
 	
 	/**
 	 * Gets all bans for the given UUID
@@ -45,11 +69,11 @@ public class GetBansTask {
 	 * @param activeOnly
 	 * @return
 	 */
-	public static List<PlayerBan> GetByUuid(String uuid, boolean activeOnly)
+	public static List<PlayerBan> GetAllByUuid(String uuid, boolean activeOnly)
 	{
-		try(Connection conn = PCBridge.GetConnectionPool().GetConnection(BanListContract.Database))
+		try(Connection conn = PCBridge.GetConnectionPool().GetConnection(BanListContract.DATABASE))
 		{
-			String selectQuery = "SELECT * "  
+			String selectQuery = "SELECT * " 
 					+ " FROM " + BanListContract.TableBans.TABLE_NAME + " AS s"
 					+ " LEFT JOIN " + PlayerContract.TablePlayers.TABLE_NAME + " AS t1"
 					+ " ON s." + BanListContract.TableBans.COL_PLAYER_ID + " = t1." + PlayerContract.TablePlayers._ID
@@ -64,6 +88,42 @@ public class GetBansTask {
 			
 			PreparedStatement stmt = conn.prepareStatement(selectQuery);
 			stmt.setString(1, uuid);
+			ResultSet results = stmt.executeQuery();
+			
+			List<PlayerBan> bans = BuildSet(results);
+			
+			stmt.close();
+			results.close();
+			
+			return bans;
+		}
+		catch(SQLException e)
+		{
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	/**
+	 * Get a list of all active bans
+	 * 
+	 * @return
+	 */
+	public static List<PlayerBan> GetAllActive()
+	{
+		try(Connection conn = PCBridge.GetConnectionPool().GetConnection(BanListContract.DATABASE))
+		{
+			String selectQuery = "SELECT * "  
+					+ " FROM " + BanListContract.TableBans.TABLE_NAME + " AS s"
+					+ " LEFT JOIN " + PlayerContract.TablePlayers.TABLE_NAME + " AS t1"
+					+ " ON s." + BanListContract.TableBans.COL_PLAYER_ID + " = t1." + PlayerContract.TablePlayers._ID
+					+ " LEFT JOIN " + PlayerContract.TablePlayers.TABLE_NAME + " AS t2"
+					+ " ON s." + BanListContract.TableBans.COL_STAFF_ID + " = t2." + PlayerContract.TablePlayers._ID
+					+ " WHERE s." + BanListContract.TableBans.COL_IS_BANNED + " = ?"
+					+ " ORDER BY s." + BanListContract.TableBans.COL_TIMESTAMP + " DESC";
+						
+			PreparedStatement stmt = conn.prepareStatement(selectQuery);
+			stmt.setBoolean(1, true);
 			ResultSet results = stmt.executeQuery();
 			
 			List<PlayerBan> bans = BuildSet(results);
@@ -136,7 +196,7 @@ public class GetBansTask {
 	 */
 	private static boolean SetBanInactive(int id)
 	{
-		try(Connection conn = PCBridge.GetConnectionPool().GetConnection(BanListContract.Database))
+		try(Connection conn = PCBridge.GetConnectionPool().GetConnection(BanListContract.DATABASE))
 		{
 			PreparedStatement stmt = conn.prepareStatement(
 					"UPDATE " + BanListContract.TableBans.TABLE_NAME

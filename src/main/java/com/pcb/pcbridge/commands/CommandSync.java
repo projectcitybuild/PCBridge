@@ -67,6 +67,9 @@ public class CommandSync extends AbstractCommand {
 	@Override
 	public boolean OnExecute(CommandArgs args) 
 	{
+		if(args.GetArgs().length != 1)
+			return false;
+		
 		String alias = args.GetArg(0);
 		
 		PCBridge.NewChain()

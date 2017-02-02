@@ -37,7 +37,7 @@ import com.pcb.pcbridge.utils.Actions.Action0;
  * @param <K>	Key
  * @param <V>	Value
  */
-public class TimedCache<K, V> implements ICache<K, V> {
+public class TimedCache<K, V> extends AbstractCache <K, V> {
 
 	private final Plugin _plugin;
 	private Map<K, CachedItem> _map = new HashMap<>();
@@ -45,12 +45,6 @@ public class TimedCache<K, V> implements ICache<K, V> {
 	public TimedCache(Plugin plugin)
 	{
 		this._plugin = plugin;
-	}
-	
-	@Override
-	public int Size()
-	{
-		return _map.size();
 	}
 	
 	@Override
@@ -95,19 +89,12 @@ public class TimedCache<K, V> implements ICache<K, V> {
 	@Override
 	public void Clear()
 	{
-		_map.clear();
-	}
-	
-	@Override
-	public void Destroy()
-	{		
 		for(K key : _map.keySet())
 		{
 			StopTimer(key);
 		}		
-
-		Clear();
-		_map = null;
+		
+		_map.clear();
 	}
 	
 	@Override
@@ -116,6 +103,23 @@ public class TimedCache<K, V> implements ICache<K, V> {
 		return _map.containsKey(key);
 	}
 	
+	@Override
+	public boolean ContainsValue(V value) 
+	{
+		return _map.containsValue(value);
+	}
+
+	@Override
+	public int Size() 
+	{
+		return _map.size();
+	}
+	
+	/**
+	 * Stops the given cache key's timer
+	 * 
+	 * @param key
+	 */
 	private void StopTimer(K key)
 	{
 		CachedItem item = _map.get(key);
@@ -125,7 +129,10 @@ public class TimedCache<K, V> implements ICache<K, V> {
 		Bukkit.getScheduler().cancelTask(item.TimerId);
 	}
 	
-	
+	/**
+	 * A data object to store in the cache instead of the value.
+	 * It contains a reference to its timer id and the value.
+	 */
 	private class CachedItem
 	{
 		public final int TimerId;

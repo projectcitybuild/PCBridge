@@ -27,7 +27,7 @@ import com.pcb.pcbridge.utils.database.AbstractSchemaTable;
 
 public final class ForumContract {
 
-	public static final String Database = "pcb_forums";
+	public static final String DATABASE = "forums";
 	
 	// prevent this class from being instantiated
 	protected ForumContract() { }

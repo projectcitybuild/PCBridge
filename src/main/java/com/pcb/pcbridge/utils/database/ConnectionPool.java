@@ -29,8 +29,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import com.pcb.pcbridge.schema.BanListContract;
-
 /**
  * Provides access to a collection of data sources and their connections
  */
@@ -96,7 +94,7 @@ public class ConnectionPool {
 			_logger.info("Testing database connection to: " + source.GetDatabaseName());
 			
 			long start = System.nanoTime();
-			try(Connection conn = GetConnection(BanListContract.Database))
+			try(Connection conn = GetConnection( source.GetDatabaseName() ))
 			{
 				long end = System.nanoTime() - start;
 				_logger.info("Connection success [" + end / 1000000 + "ms]");

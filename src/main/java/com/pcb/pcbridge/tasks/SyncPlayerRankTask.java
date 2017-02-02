@@ -48,7 +48,7 @@ public class SyncPlayerRankTask {
 	 */
 	public static List<String> FetchRank(String alias)
 	{
-		try(Connection conn = PCBridge.GetConnectionPool().GetConnection(ForumContract.Database))
+		try(Connection conn = PCBridge.GetConnectionPool().GetConnection(ForumContract.DATABASE))
 		{
 			try(PreparedStatement stmt = conn.prepareStatement(
 					"SELECT " 

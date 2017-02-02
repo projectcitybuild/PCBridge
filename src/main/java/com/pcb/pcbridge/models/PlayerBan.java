@@ -48,7 +48,7 @@ public class PlayerBan {
 	 */
 	public String GetTimeUntilExpiry()
 	{
-		if(ExpiryTimestamp == 0 || ExpiryTimestamp == null)
+		if(ExpiryTimestamp == null || ExpiryTimestamp == 0)
 			return "Never";
 		
 		long now = System.currentTimeMillis() / 1000L;

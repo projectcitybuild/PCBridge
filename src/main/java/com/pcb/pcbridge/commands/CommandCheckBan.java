@@ -81,7 +81,7 @@ public class CommandCheckBan extends AbstractCommand {
 			
 			.async(uuid -> {
 				chain.setTaskData("UUID", uuid);
-				return GetBansTask.GetByUuid(uuid.toString(), false); 
+				return GetBansTask.GetAllByUuid(uuid.toString(), false); 
 			})
 			
 			.syncLast( bans -> DisplayBans(bans, args, chain.getTaskData("UUID")) )
