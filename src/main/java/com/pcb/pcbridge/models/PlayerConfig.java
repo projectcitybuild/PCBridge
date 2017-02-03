@@ -46,12 +46,15 @@ public class PlayerConfig {
 	public Location RescueCoords;
 	public Location LastPos;
 	
+	public final UUID Uuid;
+	
 	
 	private final File _file;
 	
 	public PlayerConfig(File playerFolder, UUID uuid)
 	{
 		this._file = new File(playerFolder, uuid + ".yml");
+		this.Uuid = uuid;
 		
 		if(!_file.exists())
 		{

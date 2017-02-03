@@ -21,36 +21,27 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.pcb.pcbridge.schema;
+package com.pcb.pcbridge.listeners;
 
-import com.pcb.pcbridge.utils.database.AbstractSchemaTable;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 
-public final class ForumContract {
-	
-	// prevent this class from being instantiated
-	protected ForumContract() { }
+import com.pcb.pcbridge.tasks.GetPlayerNameTask;
+import com.pcb.pcbridge.utils.listeners.AbstractListener;
+import com.pcb.pcbridge.utils.listeners.events.PlayerNameChangedEvent;
+
+public final class OnPlayerNameChangedEvent extends AbstractListener
+{
 	/**
-	 * Table where each unique player has a row
+	 * Sets the player's Tab list name whenever their name changes
+	 * 
+	 * @param event
 	 */
-	public static final class TableMembers extends AbstractSchemaTable
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void OnPlayerNameChanged(PlayerNameChangedEvent event)
 	{
-		public static final String TABLE_NAME = "smf_members";
+		String name = GetPlayerNameTask.GetFormattedName(GetEnv(), event.GetPlayer());
 		
-		public static final String _ID 					= "id_member";
-		public static final String COL_ALIAS 			= "real_name";
-		public static final String COL_PRIMARY_GROUP 	= "id_group";
-		public static final String COL_SECONDARY_GROUPS = "additional_groups";
-		
-		public static final String SQL_CREATE = 
-				"CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " ( "
-							+ _ID + " MEDIUMINT(8) UNSIGNED NOT NULL AUTO_INCREMENT ,"
-							+ COL_ALIAS + " VARCHAR(255) NOT NULL ,"
-							+ COL_PRIMARY_GROUP + " SMALLINT(5) NOT NULL ,"
-							+ COL_SECONDARY_GROUPS + " VARCHAR(255) NOTNULL DEFAULT '',"
-							+ "PRIMARY KEY (" + _ID + ")"
-						+ ") ENGINE = InnoDB;";
-		
-		public static final String SQL_DROP = "DROP TABLE IF EXISTS " + TABLE_NAME;
+        event.GetPlayer().setPlayerListName(name);
 	}
-	
 }

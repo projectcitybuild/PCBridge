@@ -84,7 +84,7 @@ public class CommandSync extends AbstractCommand {
 			.abortIfNull( AbortTask.Send(args.GetSender(), ChatColor.RED + "%s is not online", alias) )
 			
 			.async( player -> {
-				SyncPlayerRankTask.Sync(player);
+				SyncPlayerRankTask.Sync(GetEnv(), player);
 				return player;
 			} )
 			.syncLast( player -> {

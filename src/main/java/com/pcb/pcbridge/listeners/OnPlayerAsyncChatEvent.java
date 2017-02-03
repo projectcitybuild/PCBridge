@@ -39,8 +39,10 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 import com.pcb.pcbridge.PCBridge;
 import com.pcb.pcbridge.models.PlayerConfig;
+import com.pcb.pcbridge.tasks.GetPlayerNameTask;
 import com.pcb.pcbridge.utils.cache.StaticCache;
 import com.pcb.pcbridge.utils.listeners.AbstractListener;
+import com.pcb.pcbridge.utils.listeners.events.PlayerNameChangedEvent;
 
 /**
  * @credits Hard24Get - for the original Swearblock plugin and regex pattern
@@ -116,6 +118,10 @@ public final class OnPlayerAsyncChatEvent extends AbstractListener
 	    	});
 	    	event.setCancelled(true);
 	    }
+	    
+	    // a player's Tab list name changes everytime they chat, so we need to
+	    // rebuild their name again
+		GetEnv().BroadcastEvent( new PlayerNameChangedEvent(event.getPlayer()) );
 	}
 	
 	/**
@@ -126,41 +132,11 @@ public final class OnPlayerAsyncChatEvent extends AbstractListener
 	 */
 	private String FormatMessage(Player player, PlayerConfig senderConfig, String message)
 	{
-		World world = player.getWorld();
-		
-		// build the player's group prefix
-	    String[] groups = PCBridge.GetVaultHook().GetPermission().getPlayerGroups(player);      
-        StringBuilder prefixBuilder = new StringBuilder();
-        StringBuilder suffixBuilder = new StringBuilder();
-        
-        // add any manual pre/suffixes to their prefix list
-        if(senderConfig.Prefix != null)
-        	prefixBuilder.insert(0, senderConfig.Prefix);
-        
-        for(String group : groups)
-        {
-        	Chat chat = PCBridge.GetVaultHook().GetChat();
-        	
-        	String prefix = chat.getGroupPrefix(world, group).trim();
-        	String suffix = chat.getGroupSuffix(world, group).trim();
-        	
-        	// donators have the [$] appear before any other group prefix or the manual prefix
-        	if(group.equalsIgnoreCase("donator"))
-        		prefixBuilder.insert(0, prefix);
-        	else
-        		prefixBuilder.append(prefix);
-        	
-        	suffixBuilder.append(suffix);
-        }
-        
-        if(senderConfig.Suffix != null)
-        	suffixBuilder.append(senderConfig.Suffix);
-        
-        String prefix = prefixBuilder.toString().replace("&", "Åò");
-        String suffix = suffixBuilder.toString().replace("&", "Åò");
+		World world = player.getWorld();		
+		String name = GetPlayerNameTask.GetFormattedName(GetEnv(), player, senderConfig);
         
         // put everything together to form the entire message
-        String output = "<" + world.getName() + "><" + prefix + " " + player.getDisplayName() + suffix + ChatColor.WHITE + "> " + message;
+        String output = "<" + world.getName() + "><" + name + ChatColor.WHITE + "> " + message;
         
         return output;
 	}

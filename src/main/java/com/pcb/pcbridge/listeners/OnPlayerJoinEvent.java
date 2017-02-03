@@ -35,7 +35,8 @@ import com.pcb.pcbridge.PCBridge;
 import com.pcb.pcbridge.models.PlayerConfig;
 import com.pcb.pcbridge.tasks.SyncPlayerRankTask;
 import com.pcb.pcbridge.utils.listeners.AbstractListener;
-import com.pcb.pcbridge.utils.listeners.PluginEnabledEvent;
+import com.pcb.pcbridge.utils.listeners.events.PlayerNameChangedEvent;
+import com.pcb.pcbridge.utils.listeners.events.PluginEnabledEvent;
 
 public final class OnPlayerJoinEvent extends AbstractListener
 {
@@ -49,6 +50,12 @@ public final class OnPlayerJoinEvent extends AbstractListener
 	{
 		GetPlayerConfig(event.getPlayer());
 		SyncPlayerRank(event.getPlayer());
+		
+		// set the player's Tab list name, but we need to delay it by a few 
+		// ticks, or else Bukkit will immediately overwrite it
+		GetEnv().GetServer().getScheduler().scheduleSyncDelayedTask(GetEnv().GetPlugin(), () -> {
+			GetEnv().BroadcastEvent( new PlayerNameChangedEvent(event.getPlayer()) );
+		}, 5);
 	}
 	
 	@EventHandler(priority = EventPriority.HIGHEST)
@@ -106,7 +113,7 @@ public final class OnPlayerJoinEvent extends AbstractListener
 	private void SyncPlayerRank(Player player)
 	{
 		PCBridge.NewChain()
-			.async( () -> SyncPlayerRankTask.Sync(player) )
+			.async( () -> SyncPlayerRankTask.Sync(GetEnv(), player) )
 			.execute();
-	}
+	}	
 }

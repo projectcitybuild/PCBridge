@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.pcb.pcbridge.utils.listeners;
+package com.pcb.pcbridge.utils.listeners.events;
 
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;

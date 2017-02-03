@@ -35,6 +35,7 @@ import net.milkbowl.vault.permission.Permission;
 
 import org.bukkit.entity.Player;
 
+import com.pcb.pcbridge.Environment;
 import com.pcb.pcbridge.PCBridge;
 import com.pcb.pcbridge.schema.ForumContract;
 
@@ -46,9 +47,11 @@ public class SyncPlayerRankTask {
 	 * @param alias
 	 * @return
 	 */
-	public static List<String> FetchRank(String alias)
+	public static List<String> FetchRank(Environment env, String alias)
 	{
-		try(Connection conn = PCBridge.GetConnectionPool().GetConnection(ForumContract.DATABASE))
+		String database = env.GetConfig().getString("database.forums.database");
+		
+		try(Connection conn = PCBridge.GetConnectionPool().GetConnection( database ))
 		{
 			try(PreparedStatement stmt = conn.prepareStatement(
 					"SELECT " 
@@ -89,7 +92,7 @@ public class SyncPlayerRankTask {
 	 * @param permissions
 	 * @param player
 	 */
-	public static void Sync(Player player)
+	public static void Sync(Environment env, Player player)
 	{	
 		String alias = player.getName();
 		Permission permissions = PCBridge.GetVaultHook().GetPermission();
@@ -101,7 +104,7 @@ public class SyncPlayerRankTask {
 			permissions.playerRemoveGroup(null, player, group);
 		}
 		
-		List<String> groups = FetchRank(alias);
+		List<String> groups = FetchRank(env, alias);
 		
 		// if no forum account, assign the player to Guest
 		if(groups.size() == 0)

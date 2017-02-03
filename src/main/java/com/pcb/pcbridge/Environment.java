@@ -30,6 +30,7 @@ import java.util.logging.Logger;
 
 import org.bukkit.Server;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.event.Event;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.pcb.pcbridge.models.PlayerConfig;
@@ -84,6 +85,11 @@ public class Environment
 	public SimpleDateFormat GetDateFormatter()
 	{
 		return _dateFormat;
+	}
+	
+	public void BroadcastEvent(Event event)
+	{
+		this.GetServer().getPluginManager().callEvent(event);
 	}
 	
 	/**

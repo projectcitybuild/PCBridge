@@ -24,13 +24,16 @@
 package com.pcb.pcbridge.commands;
 
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 
 import com.pcb.pcbridge.PCBridge;
 import com.pcb.pcbridge.tasks.GetPlayerCacheTask;
 import com.pcb.pcbridge.tasks.GetUuidTask;
 import com.pcb.pcbridge.utils.commands.AbstractCommand;
 import com.pcb.pcbridge.utils.commands.CommandArgs;
+import com.pcb.pcbridge.utils.listeners.events.PlayerNameChangedEvent;
 import com.pcb.pcbridge.utils.MessageBuilder;
+
 import java.lang.StringBuilder;
 
 public class CommandPrefix extends AbstractCommand {
@@ -101,6 +104,10 @@ public class CommandPrefix extends AbstractCommand {
 					.Build();
 				
 				args.GetSender().sendMessage(message);
+				
+				// broadcast name change event
+				Player player = GetEnv().GetServer().getPlayer(config.Uuid);
+				GetEnv().BroadcastEvent( new PlayerNameChangedEvent(player) );
 			})
 			.execute();
 		

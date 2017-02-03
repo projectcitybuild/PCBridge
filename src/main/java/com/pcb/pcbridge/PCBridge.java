@@ -32,15 +32,12 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
-
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
-
 
 import co.aikar.taskchain.BukkitTaskChainFactory;
 import co.aikar.taskchain.TaskChain;
 import co.aikar.taskchain.TaskChainFactory;
-
 
 import com.pcb.pcbridge.commands.*;
 import com.pcb.pcbridge.listeners.*;
@@ -56,7 +53,7 @@ import com.pcb.pcbridge.utils.database.migrations.CreateBanListMigration;
 import com.pcb.pcbridge.utils.database.migrations.CreatePlayersMigration;
 import com.pcb.pcbridge.utils.listeners.AbstractListener;
 import com.pcb.pcbridge.utils.listeners.ListenerManager;
-import com.pcb.pcbridge.utils.listeners.PluginEnabledEvent;
+import com.pcb.pcbridge.utils.listeners.events.PluginEnabledEvent;
 
 public final class PCBridge extends JavaPlugin {
 	
@@ -154,6 +151,7 @@ public final class PCBridge extends JavaPlugin {
 				new OnPluginEnabledEvent(),
 				new OnPlayerQuitEvent(),
 				new OnPlayerAsyncChatEvent(),
+				new OnPlayerNameChangedEvent(),
 				//new OnInventoryClickEvent(),
 				//new OnInventoryCloseEvent(),
 				//new OnPlayerInteractEvent()

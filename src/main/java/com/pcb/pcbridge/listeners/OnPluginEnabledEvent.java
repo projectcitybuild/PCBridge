@@ -34,7 +34,7 @@ import com.pcb.pcbridge.PCBridge;
 import com.pcb.pcbridge.models.PlayerBan;
 import com.pcb.pcbridge.tasks.GetBansTask;
 import com.pcb.pcbridge.utils.listeners.AbstractListener;
-import com.pcb.pcbridge.utils.listeners.PluginEnabledEvent;
+import com.pcb.pcbridge.utils.listeners.events.PluginEnabledEvent;
 
 public final class OnPluginEnabledEvent extends AbstractListener
 {

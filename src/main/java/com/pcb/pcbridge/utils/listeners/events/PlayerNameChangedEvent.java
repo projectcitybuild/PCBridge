@@ -21,36 +21,38 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.pcb.pcbridge.schema;
+package com.pcb.pcbridge.utils.listeners.events;
 
-import com.pcb.pcbridge.utils.database.AbstractSchemaTable;
+import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
+import org.bukkit.event.HandlerList;
 
-public final class ForumContract {
+/**
+ * Event that gets called when a player's name was changed via commands
+ */
+public final class PlayerNameChangedEvent extends Event {
 	
-	// prevent this class from being instantiated
-	protected ForumContract() { }
-	/**
-	 * Table where each unique player has a row
-	 */
-	public static final class TableMembers extends AbstractSchemaTable
-	{
-		public static final String TABLE_NAME = "smf_members";
-		
-		public static final String _ID 					= "id_member";
-		public static final String COL_ALIAS 			= "real_name";
-		public static final String COL_PRIMARY_GROUP 	= "id_group";
-		public static final String COL_SECONDARY_GROUPS = "additional_groups";
-		
-		public static final String SQL_CREATE = 
-				"CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " ( "
-							+ _ID + " MEDIUMINT(8) UNSIGNED NOT NULL AUTO_INCREMENT ,"
-							+ COL_ALIAS + " VARCHAR(255) NOT NULL ,"
-							+ COL_PRIMARY_GROUP + " SMALLINT(5) NOT NULL ,"
-							+ COL_SECONDARY_GROUPS + " VARCHAR(255) NOTNULL DEFAULT '',"
-							+ "PRIMARY KEY (" + _ID + ")"
-						+ ") ENGINE = InnoDB;";
-		
-		public static final String SQL_DROP = "DROP TABLE IF EXISTS " + TABLE_NAME;
-	}
-	
+    private static final HandlerList handlers = new HandlerList();
+    private Player _player;
+    
+    public PlayerNameChangedEvent(Player player)
+    {
+    	this._player = player;
+    }
+    
+    public Player GetPlayer()
+    {
+    	return this._player;
+    }
+
+    public HandlerList getHandlers()
+    {
+        return handlers;
+    }
+
+    public static HandlerList getHandlerList()
+    {
+        return handlers;
+    }
 }
+
