@@ -33,7 +33,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 
 /**
- * Represents the data inside a player's config file
+ * Represents persistent data inside a player's file
  */
 public class PlayerConfig {
 
@@ -54,7 +54,7 @@ public class PlayerConfig {
 		this._file = new File(playerFolder, uuid + ".yml");
 		
 		if(!_file.exists())
-		{			
+		{
 			this.IsMuted = false;
 			this.IsSwearblockEnabled = false;
 			this.Prefix = null;

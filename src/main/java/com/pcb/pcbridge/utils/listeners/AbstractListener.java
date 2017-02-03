@@ -44,4 +44,10 @@ public class AbstractListener implements Listener {
 		return _environment;
 	}
 	
+	/**
+	 * Any logic that should invoke when this listener gets disabled
+	 * should go in here
+	 */
+	public void OnDisable() {}
+	
 }

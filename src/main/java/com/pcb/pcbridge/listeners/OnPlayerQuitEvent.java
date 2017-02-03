@@ -43,11 +43,20 @@ public final class OnPlayerQuitEvent extends AbstractListener
 		RemovePlayerCache(event.getPlayer());
 	}
 	
+	@Override
+	public void OnDisable()
+	{
+		// manually save every player's config when this listener gets disabled
+		this._environment.GetServer().getOnlinePlayers().forEach(player -> {
+			RemovePlayerCache(player);
+		});
+	}
+	
 	/**
 	 * Saves a player's last known position and then removes 
 	 * their PlayerConfig from the cache
 	 */
-	private void RemovePlayerCache(Player player)
+	public void RemovePlayerCache(Player player)
 	{		
 		StaticCache<UUID, PlayerConfig> cache = GetEnv().GetPlayerCache();
 		if(cache != null)

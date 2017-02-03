@@ -23,6 +23,10 @@
  */
 package com.pcb.pcbridge.utils.listeners;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import org.bukkit.event.HandlerList;
 
 import com.pcb.pcbridge.Environment;
@@ -33,6 +37,7 @@ import com.pcb.pcbridge.Environment;
 public class ListenerManager {
 
 	private Environment _environment;
+	private List<AbstractListener> _listeners = new ArrayList<>();
 	
 	public ListenerManager(Environment environment, AbstractListener[] listeners)
 	{
@@ -56,6 +61,8 @@ public class ListenerManager {
 			.getServer()
 			.getPluginManager()
 			.registerEvents(listener, _environment.GetPlugin());
+		
+		_listeners.add(listener);
 	}
 	
 	/**
@@ -63,7 +70,19 @@ public class ListenerManager {
 	 */
 	public void UnregisterAll()
 	{
+		// unregister every listener from the plugin
 		HandlerList.unregisterAll(_environment.GetPlugin());
+				
+		// call the OnDisable on each listener and then remove it from memory
+		Iterator<AbstractListener> iterator = _listeners.iterator();
+		while(iterator.hasNext())
+		{
+			AbstractListener listener = iterator.next();
+			listener.OnDisable();
+			iterator.remove();
+		}
+		
+		_listeners.clear();
 	}
 	
 }
