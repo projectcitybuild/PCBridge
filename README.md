@@ -56,6 +56,8 @@ PCBridge uses Maven to shade dependencies into the final JAR file.
 * /buyskull player:[name] [quantity]
 * /mute [name]
 * /unmute [name]
+* /warn [name] new|silent [reason]
+* /warn list [name]
 * /swearblock [on|off]
 * /tplastpos [name]
 * /rescue [name] [x] [y] [z] [world]

@@ -117,7 +117,7 @@ public class CommandUuid extends AbstractCommand {
 	 * @param alias
 	 */
 	private void GetNameHistory(CommandSender sender, String alias)
-	{
+	{		
 		TaskChain<?> chain = PCBridge.NewChain();
 		chain
 			.asyncFirst( () -> GetUuidTask.FindOrFetch(GetEnv().GetServer(), alias) )
@@ -141,8 +141,12 @@ public class CommandUuid extends AbstractCommand {
 			
 			.syncLast(history -> {
 				MessageBuilder builder = new MessageBuilder()
-					.Stringln("Name history of %s (%s)", alias, chain.getTaskData("UUID"))
-					.Linebreak(2);
+					.Colour(ChatColor.BOLD)
+					.String("Name history of %s ", alias)
+					.Reset()
+					.String("(%s)", chain.getTaskData("UUID"))
+					.Linebreak()
+					.Stringln("---");
 				
 				Iterator<Entry<String, Long>> i = history.entrySet().iterator();
 				while(i.hasNext())
@@ -163,6 +167,8 @@ public class CommandUuid extends AbstractCommand {
 					if(i.hasNext())
 						builder.Stringln("---");
 				}
+				
+				sender.sendMessage(builder.Build());
 			})
 			.execute();
 	}

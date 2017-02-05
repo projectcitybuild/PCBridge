@@ -51,7 +51,7 @@ public class CommandTpLastPos extends AbstractCommand {
 	@Override
 	public String GetPermission() 
 	{
-		return "pcbridge.admin.tplastpos";
+		return "pcbridge.util.tplastpos";
 	}
 
 	@Override

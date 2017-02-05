@@ -55,7 +55,7 @@ public class CommandPCBridge extends AbstractCommand {
 	@Override
 	public String GetPermission() 
 	{
-		return "pcbridge.utility";
+		return "pcbridge.admin";
 	}
 
 	@Override

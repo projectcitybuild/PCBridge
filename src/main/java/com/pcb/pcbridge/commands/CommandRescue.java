@@ -52,7 +52,7 @@ public class CommandRescue extends AbstractCommand {
 	@Override
 	public String GetPermission() 
 	{
-		return "pcbridge.admin.rescue";
+		return "pcbridge.util.rescue";
 	}
 
 	@Override
