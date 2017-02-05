@@ -108,7 +108,11 @@ public class CommandWarn extends AbstractCommand {
 				String database = GetEnv().GetConfig().getString("database.warnings.database");
 				try(Connection conn = PCBridge.GetConnectionPool().GetConnection(database))
 				{
-					String selectQuery = "SELECT * " 
+					String selectQuery = "SELECT *,"
+							+ " t1." + PlayerContract.TablePlayers.COL_ALIAS + " AS playerAlias,"
+							+ " t1." + PlayerContract.TablePlayers.COL_UUID + " AS playerUuid," 
+							+ " t2." + PlayerContract.TablePlayers.COL_ALIAS + " AS staffAlias,"
+							+ " t2." + PlayerContract.TablePlayers.COL_UUID + " AS staffUuid"
 							+ " FROM " + WarningContract.TableWarnings.TABLE_NAME + " AS s"
 							+ " LEFT JOIN " + PlayerContract.TablePlayers.TABLE_NAME + " AS t1"
 							+ " ON s." + WarningContract.TableWarnings.COL_PLAYER_ID + " = t1." + PlayerContract.TablePlayers._ID
@@ -127,10 +131,10 @@ public class CommandWarn extends AbstractCommand {
 							do
 							{
 								PlayerWarning warning = new PlayerWarning();
-								warning.PlayerName 	= results.getString(PlayerContract.TablePlayers.COL_ALIAS);
-								warning.PlayerUUID 	= results.getString(PlayerContract.TablePlayers.COL_UUID);
-								warning.StaffName 	= results.getString(PlayerContract.TablePlayers.COL_ALIAS);
-								warning.StaffUUID 	= results.getString(PlayerContract.TablePlayers.COL_UUID);
+								warning.PlayerName 	= results.getString("playerAlias");
+								warning.PlayerUUID 	= results.getString("playerUuid");
+								warning.StaffName 	= results.getString("staffAlias");
+								warning.StaffUUID 	= results.getString("staffUuid");
 								warning.Reason 		= results.getString(WarningContract.TableWarnings.COL_REASON);
 								warning.Timestamp 	= results.getLong(WarningContract.TableWarnings.COL_TIMESTAMP);
 								
