@@ -38,11 +38,21 @@ import com.pcb.pcbridge.utils.cache.StaticCache;
 import com.pcb.pcbridge.utils.commands.CommandPromptManager;
 
 public class Environment 
-{
-	private final String DATE_FORMAT_LONG = "EEE, MMM d, yyyy 'at' h:mm a";
+{	
+	public final static class DateFormat
+	{		
+		public static SimpleDateFormat Long()
+		{
+			return new SimpleDateFormat("EEE, MMM d, yyyy 'at' h:mm a");
+		}
+		
+		public static SimpleDateFormat Short()
+		{
+			return new SimpleDateFormat("MMM d, yyyy");
+		}
+	}
 	
 	private final JavaPlugin _plugin;
-	private final SimpleDateFormat _dateFormat = new SimpleDateFormat(DATE_FORMAT_LONG);
 	private CommandPromptManager _promptManager;
 	
 	public Environment(JavaPlugin plugin)
@@ -82,15 +92,12 @@ public class Environment
 		this._promptManager = cpm;
 	}
 	
-	public SimpleDateFormat GetDateFormatter()
-	{
-		return _dateFormat;
-	}
-	
 	public void BroadcastEvent(Event event)
 	{
 		this.GetServer().getPluginManager().callEvent(event);
 	}
+	
+	
 	
 	/**
 	 * Returns the cache containing a PlayerConfig for each online player

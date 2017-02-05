@@ -51,6 +51,7 @@ import com.pcb.pcbridge.utils.database.ConnectionSource;
 import com.pcb.pcbridge.utils.database.MigrationHandler;
 import com.pcb.pcbridge.utils.database.migrations.CreateBanListMigration;
 import com.pcb.pcbridge.utils.database.migrations.CreatePlayersMigration;
+import com.pcb.pcbridge.utils.database.migrations.CreateWarningsMigration;
 import com.pcb.pcbridge.utils.listeners.AbstractListener;
 import com.pcb.pcbridge.utils.listeners.ListenerManager;
 import com.pcb.pcbridge.utils.listeners.events.PluginEnabledEvent;
@@ -129,6 +130,7 @@ public final class PCBridge extends JavaPlugin {
 				new CommandUuid(),
 				new CommandMute(),
 				new CommandUnmute(),
+				new CommandWarn(),
 				new CommandSwearblock(),
 				new CommandSync(),
 				new CommandTpLastPos(),
@@ -219,6 +221,12 @@ public final class PCBridge extends JavaPlugin {
 		    	handler.Migrate(conn, CreateBanListMigration.class);
 			}
 			
+			// create warnings
+			if( !tables.contains(WarningContract.TableWarnings.TABLE_NAME) )
+			{
+				handler.Migrate(conn, CreateWarningsMigration.class);
+			}
+			
 		} 
     	catch (SQLException e) 
     	{
@@ -266,6 +274,8 @@ public final class PCBridge extends JavaPlugin {
     	getConfig().addDefault("database.banlist.connection", "remote");
     	getConfig().addDefault("database.forums.database", "pcb_forums");
     	getConfig().addDefault("database.forums.connection", "remote");
+    	getConfig().addDefault("database.warnings.database", "pcbridge");
+    	getConfig().addDefault("database.warnings.connection", "remote");
     	
     	getConfig().options().copyDefaults(true);
     	saveConfig();

@@ -34,6 +34,7 @@ import org.json.simple.parser.ParseException;
 
 import co.aikar.taskchain.TaskChain;
 
+import com.pcb.pcbridge.Environment;
 import com.pcb.pcbridge.PCBridge;
 import com.pcb.pcbridge.tasks.AbortTask;
 import com.pcb.pcbridge.tasks.GetUuidTask;
@@ -156,7 +157,7 @@ public class CommandUuid extends AbstractCommand {
 						Date date = new Date();
 						date.setTime((long)pair.getValue());
 						
-						builder.Stringln("Changed to on: %s", GetEnv().GetDateFormatter().format(date));
+						builder.Stringln("Changed to on: %s", Environment.DateFormat.Long().format(date));
 					}					
 					
 					if(i.hasNext())

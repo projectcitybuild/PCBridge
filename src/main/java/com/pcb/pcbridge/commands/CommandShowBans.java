@@ -27,6 +27,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import com.pcb.pcbridge.Environment;
 import com.pcb.pcbridge.PCBridge;
 import com.pcb.pcbridge.models.PlayerBan;
 import com.pcb.pcbridge.tasks.GetBansTask;
@@ -125,7 +126,7 @@ public class CommandShowBans extends AbstractCommand {
 		String alias = (args.GetArgs().length == 0) ? null : args.GetArg(0);
 		for(PlayerBan ban : bans)
 		{		
-			SimpleDateFormat formatter = GetEnv().GetDateFormatter();
+			SimpleDateFormat formatter = Environment.DateFormat.Long();
 			
 			Date dtBan = new Date();
 			dtBan.setTime((long)ban.Timestamp * 1000);			

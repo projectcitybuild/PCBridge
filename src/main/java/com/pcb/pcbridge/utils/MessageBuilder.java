@@ -64,6 +64,11 @@ public class MessageBuilder {
 		public final static String RESET 		= "Åòr";
 	}
 	
+	public interface MessageAction
+	{
+		public MessageBuilder Do(MessageBuilder builder);
+	}
+	
 	private StringBuilder _builder = new StringBuilder();
 	
 	public MessageBuilder() { }
@@ -157,6 +162,28 @@ public class MessageBuilder {
 	public MessageBuilder Linebreak()
 	{
 		return Linebreak(1);
+	}
+	
+	
+	/**
+	 * Performs an action if the condition is met, or the elseAction if the condition is not
+	 * 
+	 * @param condition
+	 * @param action		Action to perform if condition == true
+	 * @param elseAction	Action to perform if condition == false
+	 * @return
+	 */
+	public MessageBuilder When(boolean condition, MessageAction action, MessageAction elseAction)
+	{
+		if(!condition)
+			return elseAction == null ? this : elseAction.Do(this);
+		
+		return action.Do(this);
+	}
+	
+	public MessageBuilder When(boolean condition, MessageAction action)
+	{
+		return When(condition, action, null);
 	}
 		
 	

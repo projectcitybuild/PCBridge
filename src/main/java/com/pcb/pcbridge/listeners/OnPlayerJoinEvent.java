@@ -24,8 +24,13 @@
 package com.pcb.pcbridge.listeners;
 
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.UUID;
 
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -33,10 +38,13 @@ import org.bukkit.event.player.PlayerJoinEvent;
 
 import com.pcb.pcbridge.PCBridge;
 import com.pcb.pcbridge.models.PlayerConfig;
+import com.pcb.pcbridge.schema.PlayerContract;
+import com.pcb.pcbridge.schema.WarningContract;
 import com.pcb.pcbridge.tasks.SyncPlayerRankTask;
 import com.pcb.pcbridge.utils.listeners.AbstractListener;
 import com.pcb.pcbridge.utils.listeners.events.PlayerNameChangedEvent;
 import com.pcb.pcbridge.utils.listeners.events.PluginEnabledEvent;
+import com.pcb.pcbridge.utils.MessageBuilder;
 
 public final class OnPlayerJoinEvent extends AbstractListener
 {
@@ -56,6 +64,8 @@ public final class OnPlayerJoinEvent extends AbstractListener
 		GetEnv().GetServer().getScheduler().scheduleSyncDelayedTask(GetEnv().GetPlugin(), () -> {
 			GetEnv().BroadcastEvent( new PlayerNameChangedEvent(event.getPlayer()) );
 		}, 5);
+		
+		FetchWarnings(event.getPlayer());
 	}
 	
 	@EventHandler(priority = EventPriority.HIGHEST)
@@ -115,5 +125,64 @@ public final class OnPlayerJoinEvent extends AbstractListener
 		PCBridge.NewChain()
 			.async( () -> SyncPlayerRankTask.Sync(GetEnv(), player) )
 			.execute();
-	}	
+	}
+	
+	private void FetchWarnings(Player player)
+	{
+		PCBridge.NewChain()
+			.asyncFirst( () -> {
+				int warnings = 0;
+				
+				String database = GetEnv().GetConfig().getString("database.warnings.database");
+				try(Connection conn = PCBridge.GetConnectionPool().GetConnection(database))
+				{
+					String selectQuery = "SELECT COUNT(*) " 
+							+ " FROM " + WarningContract.TableWarnings.TABLE_NAME + " AS s"
+							+ " LEFT JOIN " + PlayerContract.TablePlayers.TABLE_NAME + " AS t1"
+							+ " ON s." + WarningContract.TableWarnings.COL_PLAYER_ID + " = t1." + PlayerContract.TablePlayers._ID
+							+ " WHERE t1." + PlayerContract.TablePlayers.COL_UUID + " = ?";
+					
+					try(PreparedStatement stmt = conn.prepareStatement(selectQuery))
+					{
+						stmt.setString(1, player.getUniqueId().toString());
+						ResultSet results = stmt.executeQuery();
+						
+						if(results.first())
+							warnings = results.getInt(1);
+					}
+				}
+				catch(SQLException e)
+				{
+					e.printStackTrace();
+				}
+				
+				return warnings;
+			})
+			.syncLast(warnings -> {
+				
+				if(warnings == 0)
+					return;
+				
+				GetEnv().GetServer().getOnlinePlayers().forEach(onlinePlayer -> 
+				{						
+					if(onlinePlayer.hasPermission("pcbridge.warn.notify"))
+					{
+						String msg = new MessageBuilder()
+							.Colour(ChatColor.RED)
+							.When(warnings == 1, b -> {
+								return b.String("@staff: %s has 1 warning on record", player.getName());
+							}, b -> {
+								return b.String("@staff: %s has %s warnings on record", player.getName(), warnings);
+							})
+							.Build();
+						
+						onlinePlayer.sendMessage(msg);
+					}
+						
+				});
+				
+				
+			})
+			.execute();
+	}
 }

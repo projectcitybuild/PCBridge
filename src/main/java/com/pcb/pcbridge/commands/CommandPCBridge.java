@@ -35,7 +35,8 @@ import com.pcb.pcbridge.utils.commands.AbstractCommand;
 import com.pcb.pcbridge.utils.commands.CommandArgs;
 import com.pcb.pcbridge.utils.database.IMigrate;
 import com.pcb.pcbridge.utils.database.MigrationHandler;
-import com.pcb.pcbridge.utils.database.migrations.BanListV2Migration;
+//import com.pcb.pcbridge.utils.database.migrations.BanListV2Migration;
+import com.pcb.pcbridge.utils.database.migrations.WarningsV2Migration;
 
 public class CommandPCBridge extends AbstractCommand {
 
@@ -138,8 +139,14 @@ public class CommandPCBridge extends AbstractCommand {
 		String db = null;
 		switch(args.GetArg(1).toLowerCase())
 		{
-			case "banlist_v2":
-				migration = BanListV2Migration.class;
+			// disabled - no need to run this migration anymore
+		
+			//case "banlist_v2":
+			//	migration = BanListV2Migration.class;
+			//	db = BanListContract.DATABASE;
+			//	break;
+			case "warnings_v2":
+				migration = WarningsV2Migration.class;
 				db = BanListContract.DATABASE;
 				break;
 			default:

@@ -32,6 +32,7 @@ import org.bukkit.ChatColor;
 
 import co.aikar.taskchain.TaskChain;
 
+import com.pcb.pcbridge.Environment;
 import com.pcb.pcbridge.PCBridge;
 import com.pcb.pcbridge.models.PlayerBan;
 import com.pcb.pcbridge.tasks.AbortTask;
@@ -108,7 +109,7 @@ public class CommandCheckBan extends AbstractCommand {
 		MessageBuilder builder = new MessageBuilder();
 		if(isBanned)
 		{
-			SimpleDateFormat formatter = GetEnv().GetDateFormatter();
+			SimpleDateFormat formatter = Environment.DateFormat.Long();
 			
 			Date dtBan = new Date();
 			dtBan.setTime((long)banEntry.Timestamp * 1000);

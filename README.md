@@ -17,19 +17,20 @@ A Spigot plugin to bridge [Project City Build](www.projectcitybuild.com) and its
 * House purchasing
 * Chat name prefixes & suffixes
 
-* Command registering without plugin.yml
-* Command prompts (eg. type /confirm to continue)
-* Database connection pooling
-* Vault integration
-* A few cache implementations
-* Database migrations
+* Framework features
+  * Command registering without plugin.yml
+  * Command prompts (eg. type /confirm to continue)
+  * Database connection pooling
+  * Vault integration
+  * A few cache implementations
+  * Database migrations
 
 ### Want to contribute?
 Great! But first you'll need to:
 
 1. Set up a local MySQL/MariaDB database.
 2. Have Spigot downloaded and set up
-3. Compile PCBridge into a .jar and place it in the <b>plugins/</b> folder
+3. Compile PCBridge into a .jar and place it in the plugins/ folder
 4. Run the server once to generate the config file (config.yml)
 5. Add your database connection details into the config file
 
@@ -44,23 +45,23 @@ PCBridge uses Maven to shade dependencies into the final JAR file.
 * https://github.com/brettwooldridge/HikariCP - HikariCP - Connection pool
 
 
-### Commands:
-* <b>/ban</b> <name> [reason]
-* <b>/tempban</b> <name> <time> [reason]
-* <b>/unban</b> <name>
-* <b>/checkban</b> <name>
-* <b>/showbans</b> <name>
-* <b>/uuid</b> <name>
-* <b>/uuid history</b> <name>
-* <b>/buyskull player:<name> [quantity]
-* <b>/mute</b> <name>
-* <b>/unmute</b> <name>
-* <b>/swearblock</b> <on|off>
-* <b>/tplastpos</b> <name>
-* <b>/rescue</b> <name> [x] [y] [z] [world]
-* <b>/prefix</b> <name> <prefix>
-* <b>/suffix</b> <name> <suffix>
-* <b>/pcbridge</b> maintenance <on|off>
-* <b>/pcbridge</b> migrate <migration>
-* <b>/pcbridge</b> reload
-* <b>/pcbridge</b> reloadconfig
+## Commands:
+* /ban [name] [reason]
+* /tempban [name] [time] [reason]
+* /unban [name]
+* /checkban [name]
+* /showbans [name]
+* /uuid [name]
+* /uuid history [name]
+* /buyskull player:[name] [quantity]
+* /mute [name]
+* /unmute [name]
+* /swearblock [on|off]
+* /tplastpos [name]
+* /rescue [name] [x] [y] [z] [world]
+* /prefix [name] [prefix]
+* /suffix [name] [suffix]
+* /pcbridge maintenance [on|off]
+* /pcbridge migrate [migration]
+* /pcbridge reload
+* /pcbridge reloadconfig
