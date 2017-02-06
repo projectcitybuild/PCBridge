@@ -73,7 +73,11 @@ public class GetBansTask {
 	{
 		try(Connection conn = PCBridge.GetConnectionPool().GetConnection(BanListContract.DATABASE))
 		{
-			String selectQuery = "SELECT * " 
+			String selectQuery = "SELECT *,"
+					+ " t1." + PlayerContract.TablePlayers.COL_ALIAS + " AS playerAlias,"
+					+ " t1." + PlayerContract.TablePlayers.COL_UUID + " AS playerUuid,"
+					+ " t2." + PlayerContract.TablePlayers.COL_ALIAS + " AS staffAlias,"
+					+ " t2." + PlayerContract.TablePlayers.COL_UUID + " AS staffUuid"
 					+ " FROM " + BanListContract.TableBans.TABLE_NAME + " AS s"
 					+ " LEFT JOIN " + PlayerContract.TablePlayers.TABLE_NAME + " AS t1"
 					+ " ON s." + BanListContract.TableBans.COL_PLAYER_ID + " = t1." + PlayerContract.TablePlayers._ID
@@ -155,10 +159,10 @@ public class GetBansTask {
 			{
 				PlayerBan ban = new PlayerBan();
 				ban.Id 			= results.getInt(BanListContract.TableBans._ID);
-				ban.PlayerAlias = results.getString(PlayerContract.TablePlayers.COL_ALIAS);
-				ban.PlayerUUID 	= results.getString(PlayerContract.TablePlayers.COL_UUID);
-				ban.StaffAlias 	= results.getString(PlayerContract.TablePlayers.COL_ALIAS);
-				ban.StaffUUID 	= results.getString(PlayerContract.TablePlayers.COL_UUID);
+				ban.PlayerAlias = results.getString("playerAlias");
+				ban.PlayerUUID 	= results.getString("playerUuid");
+				ban.StaffAlias 	= results.getString("staffAlias");
+				ban.StaffUUID 	= results.getString("staffUuid");
 				ban.Reason 		= results.getString(BanListContract.TableBans.COL_REASON);
 				ban.Timestamp 	= results.getLong(BanListContract.TableBans.COL_TIMESTAMP);
 				ban.Server 		= results.getString(BanListContract.TableBans.COL_SERVER);
