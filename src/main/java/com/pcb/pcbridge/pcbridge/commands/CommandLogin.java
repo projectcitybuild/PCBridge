@@ -149,7 +149,7 @@ public class CommandLogin extends AbstractCommand {
 			OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
 
 			Retrofit retrofit = new Retrofit.Builder()
-					.baseUrl("https://dev.projectcitybuild.com/api/")
+					.baseUrl("https://projectcitybuild.com/api/")
 					.client(httpClient.build())
 					.addConverterFactory(GsonConverterFactory.create())
 					.build();
