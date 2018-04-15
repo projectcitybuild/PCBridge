@@ -36,32 +36,32 @@ public class MessageBuilder {
 	 */
 	public final static class RawColours
 	{
-		public final static String BLACK 		= "˜0";
-		public final static String DARK_BLUE 	= "˜1";
-		public final static String DARK_GREEN 	= "˜2";
-		public final static String DARK_AQUA 	= "˜3";
-		public final static String DARK_RED 	= "˜4";
-		public final static String DARK_PURPLE 	= "˜5";
-		public final static String GOLD 		= "˜6";
-		public final static String GRAY 		= "˜7";
-		public final static String DARK_GRAY 	= "˜8";
-		public final static String BLUE 		= "˜9";
-		public final static String GREEN 		= "˜a";
-		public final static String AQUA 		= "˜b";
-		public final static String RED 			= "˜c";
-		public final static String LIGHT_PURPLE = "˜d";
-		public final static String YELLOW 		= "˜e";
-		public final static String WHITE 		= "˜f";
+		public final static String BLACK 		= "Â§0";
+		public final static String DARK_BLUE 	= "Â§1";
+		public final static String DARK_GREEN 	= "Â§2";
+		public final static String DARK_AQUA 	= "Â§3";
+		public final static String DARK_RED 	= "Â§4";
+		public final static String DARK_PURPLE 	= "Â§5";
+		public final static String GOLD 		= "Â§6";
+		public final static String GRAY 		= "Â§7";
+		public final static String DARK_GRAY 	= "Â§8";
+		public final static String BLUE 		= "Â§9";
+		public final static String GREEN 		= "Â§a";
+		public final static String AQUA 		= "Â§b";
+		public final static String RED 			= "Â§c";
+		public final static String LIGHT_PURPLE = "Â§d";
+		public final static String YELLOW 		= "Â§e";
+		public final static String WHITE 		= "Â§f";
 	}
 	
 	public final static class RawFormats
 	{
-		public final static String OBFUSCATED 	= "˜k";
-		public final static String BOLD 		= "˜l";
-		public final static String STRIKETHROUGH = "˜m";
-		public final static String UNDERLINE 	= "˜n";
-		public final static String ITALIC 		= "˜o";
-		public final static String RESET 		= "˜r";
+		public final static String OBFUSCATED 	= "Â§k";
+		public final static String BOLD 		= "Â§l";
+		public final static String STRIKETHROUGH = "Â§m";
+		public final static String UNDERLINE 	= "Â§n";
+		public final static String ITALIC 		= "Â§o";
+		public final static String RESET 		= "Â§r";
 	}
 	
 	public interface MessageAction
