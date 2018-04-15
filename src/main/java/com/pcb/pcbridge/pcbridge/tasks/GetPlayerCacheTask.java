@@ -21,42 +21,28 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.pcb.pcbridge.utils.database.migrations;
+package com.pcb.pcbridge.pcbridge.tasks;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.logging.Logger;
+import java.util.UUID;
 
-import com.pcb.pcbridge.pcbridge.schema.PlayerContract;
-import com.pcb.pcbridge.utils.database.IMigrate;
+import com.pcb.pcbridge.Environment;
+import com.pcb.pcbridge.pcbridge.models.PlayerConfig;
+import com.pcb.pcbridge.utils.cache.StaticCache;
 
-public class CreatePlayersMigration implements IMigrate {
-
-	@Override
-	public boolean IsTransaction()
+public class GetPlayerCacheTask {
+	
+	/**
+	 * Fetches a player's config from the cache (or puts it there if not found)
+	 */
+	public static PlayerConfig Get(Environment env, UUID uuid)
 	{
-		return true;
+		StaticCache<UUID, PlayerConfig> cache = env.GetPlayerCache();
+		
+		PlayerConfig config = cache.Get(uuid);
+		if(config == null)
+			config = new PlayerConfig(env.GetPlayerFolder(), uuid);
+		
+		return config;
 	}
 	
-	@Override
-	public void OnMigrate(Connection connection, Logger logger) throws SQLException 
-	{
-		Statement stmt;
-		
-		stmt = connection.createStatement();
-		stmt.executeUpdate(PlayerContract.TablePlayers.SQL_CREATE);
-		stmt.close();
-		
-		PreparedStatement prepStmt = connection.prepareStatement(
-				"INSERT INTO " + PlayerContract.TablePlayers.TABLE_NAME
-				+ " (" + PlayerContract.TablePlayers.COL_ALIAS + "," + PlayerContract.TablePlayers.COL_UUID + ") "
-				+ " VALUES (?,?)");
-		prepStmt.setString(1, "CONSOLE");
-		prepStmt.setString(2, "CONSOLE");
-		prepStmt.executeUpdate();
-		prepStmt.close();
-	}
-
 }

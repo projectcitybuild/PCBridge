@@ -21,42 +21,39 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.pcb.pcbridge.utils.database.migrations;
+package com.pcb.pcbridge.pcbridge.listeners;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.logging.Logger;
+import java.io.IOException;
 
-import com.pcb.pcbridge.pcbridge.schema.PlayerContract;
-import com.pcb.pcbridge.utils.database.IMigrate;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 
-public class CreatePlayersMigration implements IMigrate {
+import com.pcb.pcbridge.pcbridge.models.PlayerConfig;
+import com.pcb.pcbridge.utils.cache.StaticCache;
+import com.pcb.pcbridge.utils.listeners.AbstractListener;
 
-	@Override
-	public boolean IsTransaction()
+public final class OnInventoryCloseEvent extends AbstractListener
+{
+	@EventHandler(priority = EventPriority.NORMAL)
+	public void OnClick(InventoryCloseEvent event)
 	{
-		return true;
+		/*CacheManager cacheManager = GetEnv().GetCache();
+		StaticCache<String, Player> cache = cacheManager.Get("SENDCHEST");
+		if(cache != null)
+		{
+			String invName = event.getInventory().getName();
+			PlayerConfig config = (PlayerConfig) cache.Get(invName);
+			config.Chest = event.getInventory().getContents();
+			
+			try {
+				config.Save();
+				cache.Forget(invName);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
+		}*/
 	}
-	
-	@Override
-	public void OnMigrate(Connection connection, Logger logger) throws SQLException 
-	{
-		Statement stmt;
-		
-		stmt = connection.createStatement();
-		stmt.executeUpdate(PlayerContract.TablePlayers.SQL_CREATE);
-		stmt.close();
-		
-		PreparedStatement prepStmt = connection.prepareStatement(
-				"INSERT INTO " + PlayerContract.TablePlayers.TABLE_NAME
-				+ " (" + PlayerContract.TablePlayers.COL_ALIAS + "," + PlayerContract.TablePlayers.COL_UUID + ") "
-				+ " VALUES (?,?)");
-		prepStmt.setString(1, "CONSOLE");
-		prepStmt.setString(2, "CONSOLE");
-		prepStmt.executeUpdate();
-		prepStmt.close();
-	}
-
 }

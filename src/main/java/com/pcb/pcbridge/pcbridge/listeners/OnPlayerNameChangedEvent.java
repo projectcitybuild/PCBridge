@@ -21,42 +21,27 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.pcb.pcbridge.utils.database.migrations;
+package com.pcb.pcbridge.pcbridge.listeners;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.logging.Logger;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 
-import com.pcb.pcbridge.pcbridge.schema.PlayerContract;
-import com.pcb.pcbridge.utils.database.IMigrate;
+import com.pcb.pcbridge.pcbridge.tasks.GetPlayerNameTask;
+import com.pcb.pcbridge.utils.listeners.AbstractListener;
+import com.pcb.pcbridge.utils.listeners.events.PlayerNameChangedEvent;
 
-public class CreatePlayersMigration implements IMigrate {
-
-	@Override
-	public boolean IsTransaction()
+public final class OnPlayerNameChangedEvent extends AbstractListener
+{
+	/**
+	 * Sets the player's Tab list name whenever their name changes
+	 * 
+	 * @param event
+	 */
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void OnPlayerNameChanged(PlayerNameChangedEvent event)
 	{
-		return true;
-	}
-	
-	@Override
-	public void OnMigrate(Connection connection, Logger logger) throws SQLException 
-	{
-		Statement stmt;
+		String name = GetPlayerNameTask.GetFormattedName(GetEnv(), event.GetPlayer());
 		
-		stmt = connection.createStatement();
-		stmt.executeUpdate(PlayerContract.TablePlayers.SQL_CREATE);
-		stmt.close();
-		
-		PreparedStatement prepStmt = connection.prepareStatement(
-				"INSERT INTO " + PlayerContract.TablePlayers.TABLE_NAME
-				+ " (" + PlayerContract.TablePlayers.COL_ALIAS + "," + PlayerContract.TablePlayers.COL_UUID + ") "
-				+ " VALUES (?,?)");
-		prepStmt.setString(1, "CONSOLE");
-		prepStmt.setString(2, "CONSOLE");
-		prepStmt.executeUpdate();
-		prepStmt.close();
+        event.GetPlayer().setPlayerListName(name);
 	}
-
 }

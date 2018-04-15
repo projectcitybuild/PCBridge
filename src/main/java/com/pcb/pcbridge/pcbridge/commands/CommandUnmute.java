@@ -21,42 +21,43 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.pcb.pcbridge.utils.database.migrations;
+package com.pcb.pcbridge.pcbridge.commands;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.logging.Logger;
+import com.pcb.pcbridge.utils.commands.AbstractCommand;
+import com.pcb.pcbridge.utils.commands.CommandArgs;
 
-import com.pcb.pcbridge.pcbridge.schema.PlayerContract;
-import com.pcb.pcbridge.utils.database.IMigrate;
-
-public class CreatePlayersMigration implements IMigrate {
+public class CommandUnmute extends AbstractCommand {
 
 	@Override
-	public boolean IsTransaction()
+	public String GetName() 
 	{
-		return true;
+		return "unmute";
 	}
 	
 	@Override
-	public void OnMigrate(Connection connection, Logger logger) throws SQLException 
+	public String GetDescription() 
 	{
-		Statement stmt;
-		
-		stmt = connection.createStatement();
-		stmt.executeUpdate(PlayerContract.TablePlayers.SQL_CREATE);
-		stmt.close();
-		
-		PreparedStatement prepStmt = connection.prepareStatement(
-				"INSERT INTO " + PlayerContract.TablePlayers.TABLE_NAME
-				+ " (" + PlayerContract.TablePlayers.COL_ALIAS + "," + PlayerContract.TablePlayers.COL_UUID + ") "
-				+ " VALUES (?,?)");
-		prepStmt.setString(1, "CONSOLE");
-		prepStmt.setString(2, "CONSOLE");
-		prepStmt.executeUpdate();
-		prepStmt.close();
+		return "Allows a player to send chat messages again";
+	}
+
+	@Override
+	public String GetPermission() 
+	{
+		return "pcbridge.ban.mute";
+	}
+
+	@Override
+	public String GetUsage()
+	{
+		return "/unmute <name>";
+	}
+
+	@Override
+	public boolean OnExecute(CommandArgs args) 
+	{
+		// route the command to CommandMute since it's the same logic
+		args.AddData("UNMUTE", true);
+		return GetCommandManager().InvokeCommand("mute", args);
 	}
 
 }

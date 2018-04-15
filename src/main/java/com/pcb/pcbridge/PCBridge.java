@@ -1,26 +1,3 @@
-/*
- * The MIT License
- *
- * Copyright 2016 Andy Saw
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
 package com.pcb.pcbridge;
 
 import java.sql.Connection;
@@ -39,10 +16,10 @@ import co.aikar.taskchain.BukkitTaskChainFactory;
 import co.aikar.taskchain.TaskChain;
 import co.aikar.taskchain.TaskChainFactory;
 
-import com.pcb.pcbridge.commands.*;
-import com.pcb.pcbridge.listeners.*;
-import com.pcb.pcbridge.models.PlayerConfig;
-import com.pcb.pcbridge.schema.*;
+import com.pcb.pcbridge.pcbridge.commands.*;
+import com.pcb.pcbridge.pcbridge.listeners.*;
+import com.pcb.pcbridge.pcbridge.models.PlayerConfig;
+import com.pcb.pcbridge.pcbridge.schema.*;
 import com.pcb.pcbridge.utils.cache.StaticCache;
 import com.pcb.pcbridge.utils.commands.AbstractCommand;
 import com.pcb.pcbridge.utils.commands.CommandManager;
@@ -65,12 +42,6 @@ public final class PCBridge extends JavaPlugin {
 	public StaticCache<UUID, PlayerConfig> GetPlayerCache()
 	{
 		return _playerCache;
-	}
-	
-	private BanCache _banCache;
-	public BanCache GetBanCache()
-	{
-		return _banCache;
 	}
 	
 	private static TaskChainFactory _taskChainFactory;
@@ -103,8 +74,7 @@ public final class PCBridge extends JavaPlugin {
 		_taskChainFactory = BukkitTaskChainFactory.create(this);
 		
 		_connectionPool = new ConnectionPool( getLogger() )
-			.AddSource( GetConnectionSource("banlist") )
-			.AddSource( GetConnectionSource("forums") );
+			.AddSource( GetConnectionSource("banlist") );
 		
 		if(!_connectionPool.TestConnections())
 		{
@@ -132,15 +102,11 @@ public final class PCBridge extends JavaPlugin {
 				new CommandUnmute(),
 				new CommandWarn(),
 				new CommandSwearblock(),
-				new CommandSync(),
+				new CommandLogin(),
 				new CommandTpLastPos(),
-				new CommandBuySkull(),
 				new CommandPrefix(),
 				new CommandSuffix(),
-				//new CommandBuyRepair(),
-				//new CommandSendChest(),
 				new CommandRescue(),
-				//new CommandBuyHome(),
 				new CommandPCBridge()
         });
 		env.SetPromptManager( _commandManager.GetPromptManager() );
@@ -154,16 +120,10 @@ public final class PCBridge extends JavaPlugin {
 				new OnPlayerQuitEvent(),
 				new OnPlayerAsyncChatEvent(),
 				new OnPlayerNameChangedEvent(),
-				//new OnInventoryClickEvent(),
-				//new OnInventoryCloseEvent(),
-				//new OnPlayerInteractEvent()
 		});
 		
 		// create caches
 		_playerCache = new StaticCache<>(new ConcurrentHashMap<>());
-		
-		/*if( getConfig().getBoolean("server.cache_bans") )
-			_banCache = new BanCache(this);*/
 		
 		// call the PluginEnabled event
 		getServer().getPluginManager().callEvent( new PluginEnabledEvent() );
@@ -174,18 +134,19 @@ public final class PCBridge extends JavaPlugin {
     {    	
     	_listenerManager.UnregisterAll();
     	_commandManager.UnregisterAll();
-    	_connectionPool.Destroy();
     	
     	_taskChainFactory.shutdown(10, TimeUnit.SECONDS);
     	_taskChainFactory = null;
     	
     	_commandManager = null;
     	_listenerManager = null;
-    	_connectionPool = null;
     	_playerCache = null;
     	_vaultHook = null;
     	
     	getServer().getScheduler().cancelAllTasks();
+
+    	_connectionPool.Destroy();
+    	_connectionPool = null;
     }
     
     /**
@@ -272,8 +233,6 @@ public final class PCBridge extends JavaPlugin {
     	
     	getConfig().addDefault("database.banlist.database", "pcbridge");
     	getConfig().addDefault("database.banlist.connection", "remote");
-    	getConfig().addDefault("database.forums.database", "pcb_forums");
-    	getConfig().addDefault("database.forums.connection", "remote");
     	getConfig().addDefault("database.warnings.database", "pcbridge");
     	getConfig().addDefault("database.warnings.connection", "remote");
     	

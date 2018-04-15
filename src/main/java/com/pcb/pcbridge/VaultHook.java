@@ -27,19 +27,12 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
 import net.milkbowl.vault.chat.Chat;
-import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 
 public class VaultHook {
 
-	private Economy _economy;
 	private Permission _permission;
 	private Chat _chat;
-	
-	public Economy GetEconomy()
-	{
-		return _economy;
-	}
 	
 	public Permission GetPermission()
 	{
@@ -53,31 +46,10 @@ public class VaultHook {
 	
 	public VaultHook(Plugin plugin)
 	{
-		HookEconomy(plugin);
 		HookPermission(plugin);
 		HookChat(plugin);
 	}
-	
-	/**
-	 * Uses Vault to hook into whatever economy plugin is present
-	 * 
-	 * @param plugin
-	 * @return boolean	Hook success
-	 */
-	public boolean HookEconomy(Plugin plugin)
-	{
-		RegisteredServiceProvider<Economy> provider = plugin.getServer().getServicesManager().getRegistration(Economy.class);
-		if (provider != null)
-			_economy = provider.getProvider();
-        
-		if(_economy == null)
-			plugin.getLogger().severe("Failed to hook into Economy plugin");
-		else
-			plugin.getLogger().info("Hooked into Economy plugin");
-		
-		return _economy != null;
-	}
-	
+
 	/**
 	 * Uses Vault to hook into whatever permission plugin is present
 	 * 
@@ -116,14 +88,6 @@ public class VaultHook {
         	plugin.getLogger().info("Hooked into Permission plugin");
         
         return _chat != null;
-	}
-	
-	/**
-	 * Removes the hook to the economy plugin
-	 */
-	public void UnhookEconomy()
-	{
-		_economy = null;
 	}
 	
 	/**

@@ -28,7 +28,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.logging.Logger;
 
-import com.pcb.pcbridge.schema.BanListContract;
+import com.pcb.pcbridge.pcbridge.schema.BanListContract;
 import com.pcb.pcbridge.utils.database.IMigrate;
 
 /**

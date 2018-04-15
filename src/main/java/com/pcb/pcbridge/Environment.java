@@ -33,7 +33,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.Event;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.pcb.pcbridge.models.PlayerConfig;
+import com.pcb.pcbridge.pcbridge.models.PlayerConfig;
 import com.pcb.pcbridge.utils.cache.StaticCache;
 import com.pcb.pcbridge.utils.commands.CommandPromptManager;
 

@@ -37,8 +37,8 @@ import java.util.logging.Logger;
 
 import org.json.simple.parser.ParseException;
 
-import com.pcb.pcbridge.schema.BanListContract;
-import com.pcb.pcbridge.schema.PlayerContract;
+import com.pcb.pcbridge.pcbridge.schema.BanListContract;
+import com.pcb.pcbridge.pcbridge.schema.PlayerContract;
 import com.pcb.pcbridge.utils.UUIDFetcher;
 import com.pcb.pcbridge.utils.database.IMigrate;
 

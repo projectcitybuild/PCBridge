@@ -21,42 +21,35 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.pcb.pcbridge.utils.database.migrations;
+package com.pcb.pcbridge.pcbridge.schema;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.logging.Logger;
+import com.pcb.pcbridge.utils.database.AbstractSchemaTable;
 
-import com.pcb.pcbridge.pcbridge.schema.PlayerContract;
-import com.pcb.pcbridge.utils.database.IMigrate;
+public final class PlayerContract {
 
-public class CreatePlayersMigration implements IMigrate {
-
-	@Override
-	public boolean IsTransaction()
+	public static final String DATABASE = "pcbridge";
+	
+	// prevent this class from being instantiated
+	protected PlayerContract() { }
+	/**
+	 * Table where each unique player has a row
+	 */
+	public static final class TablePlayers extends AbstractSchemaTable
 	{
-		return true;
+		public static final String TABLE_NAME = "ban_players";
+		
+		public static final String COL_ALIAS 		= "alias";
+		public static final String COL_UUID 		= "uuid";
+		
+		public static final String SQL_CREATE = 
+				"CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " ( "
+							+ _ID + " INT UNSIGNED NOT NULL AUTO_INCREMENT ,"
+							+ COL_ALIAS + " VARCHAR(100) NOT NULL ,"
+							+ COL_UUID + " VARCHAR(60) NULL UNIQUE ,"
+							+ "PRIMARY KEY (" + _ID + ")"
+						+ ") ENGINE = InnoDB;";
+		
+		public static final String SQL_DROP = "DROP TABLE IF EXISTS " + TABLE_NAME;
 	}
 	
-	@Override
-	public void OnMigrate(Connection connection, Logger logger) throws SQLException 
-	{
-		Statement stmt;
-		
-		stmt = connection.createStatement();
-		stmt.executeUpdate(PlayerContract.TablePlayers.SQL_CREATE);
-		stmt.close();
-		
-		PreparedStatement prepStmt = connection.prepareStatement(
-				"INSERT INTO " + PlayerContract.TablePlayers.TABLE_NAME
-				+ " (" + PlayerContract.TablePlayers.COL_ALIAS + "," + PlayerContract.TablePlayers.COL_UUID + ") "
-				+ " VALUES (?,?)");
-		prepStmt.setString(1, "CONSOLE");
-		prepStmt.setString(2, "CONSOLE");
-		prepStmt.executeUpdate();
-		prepStmt.close();
-	}
-
 }

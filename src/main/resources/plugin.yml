@@ -1,7 +1,7 @@
 name: PCBridge
 main: com.pcb.pcbridge.PCBridge
-version: 2.0.0
-website: http://www.projectcitybuild.com
+version: 2.1.0
+website: https://projectcitybuild.com
 description: Bridges PCB game servers with the website
 depend: [Essentials]
 

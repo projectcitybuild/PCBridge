@@ -21,42 +21,34 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.pcb.pcbridge.utils.database.migrations;
+package com.pcb.pcbridge.pcbridge.listeners;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.logging.Logger;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.inventory.InventoryClickEvent;
 
-import com.pcb.pcbridge.pcbridge.schema.PlayerContract;
-import com.pcb.pcbridge.utils.database.IMigrate;
+import com.pcb.pcbridge.utils.listeners.AbstractListener;
 
-public class CreatePlayersMigration implements IMigrate {
-
-	@Override
-	public boolean IsTransaction()
+public final class OnInventoryClickEvent extends AbstractListener
+{
+	@EventHandler(priority = EventPriority.NORMAL)
+	public void OnClick(InventoryClickEvent event)
 	{
-		return true;
+		//event.getClickedInventory().getName();
+		
+		//SerialiseSendChest(event);
 	}
 	
-	@Override
-	public void OnMigrate(Connection connection, Logger logger) throws SQLException 
+	/**
+	 * If the player just closed a SendChest, serialise the chest contents
+	 * back to the chest owner's local player file
+	 * 
+	 * @param event
+	 */
+	private void SerialiseSendChest(InventoryClickEvent event)
 	{
-		Statement stmt;
-		
-		stmt = connection.createStatement();
-		stmt.executeUpdate(PlayerContract.TablePlayers.SQL_CREATE);
-		stmt.close();
-		
-		PreparedStatement prepStmt = connection.prepareStatement(
-				"INSERT INTO " + PlayerContract.TablePlayers.TABLE_NAME
-				+ " (" + PlayerContract.TablePlayers.COL_ALIAS + "," + PlayerContract.TablePlayers.COL_UUID + ") "
-				+ " VALUES (?,?)");
-		prepStmt.setString(1, "CONSOLE");
-		prepStmt.setString(2, "CONSOLE");
-		prepStmt.executeUpdate();
-		prepStmt.close();
+		/*File playerFile = new File(GetEnv().GetPlayerFolder(), uuid + ".yml");		
+		YamlConfiguration reader = YamlConfiguration.loadConfiguration(playerFile);
+		reader.getString("chest.contents", null);*/
 	}
-
 }
