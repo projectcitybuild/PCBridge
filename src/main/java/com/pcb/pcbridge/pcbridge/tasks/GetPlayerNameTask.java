@@ -75,8 +75,8 @@ public class GetPlayerNameTask {
         if(config.Suffix != null)
         	suffixBuilder.append(config.Suffix);
         
-        String prefix = prefixBuilder.toString().replace("&", "Åò");
-        String suffix = suffixBuilder.toString().replace("&", "Åò");
+        String prefix = prefixBuilder.toString().replace("&", "¬ß");
+        String suffix = suffixBuilder.toString().replace("&", "¬ß");
         
         String name = prefix + " " + player.getDisplayName() + suffix;
         
