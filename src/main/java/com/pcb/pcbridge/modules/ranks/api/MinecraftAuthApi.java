@@ -1,4 +1,4 @@
-package com.pcb.pcbridge.pcbridge.api;
+package com.pcb.pcbridge.modules.ranks.api;
 
 import com.pcb.pcbridge.pcbridge.models.MinecraftAuthBaseResponse;
 import retrofit2.Call;

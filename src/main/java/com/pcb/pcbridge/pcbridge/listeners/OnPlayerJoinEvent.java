@@ -40,8 +40,6 @@ import com.pcb.pcbridge.PCBridge;
 import com.pcb.pcbridge.pcbridge.models.PlayerConfig;
 import com.pcb.pcbridge.pcbridge.schema.PlayerContract;
 import com.pcb.pcbridge.pcbridge.schema.WarningContract;
-import com.pcb.pcbridge.pcbridge.tasks.SyncPlayerRankTask;
-import com.pcb.pcbridge.utils.listeners.AbstractListener;
 import com.pcb.pcbridge.utils.listeners.events.PlayerNameChangedEvent;
 import com.pcb.pcbridge.utils.listeners.events.PluginEnabledEvent;
 import com.pcb.pcbridge.utils.MessageBuilder;

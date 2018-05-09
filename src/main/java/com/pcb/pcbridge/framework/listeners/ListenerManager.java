@@ -21,68 +21,57 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.pcb.pcbridge.utils.listeners;
+package com.pcb.pcbridge.framework.listeners;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.bukkit.event.HandlerList;
 
-import com.pcb.pcbridge.Environment;
+import org.bukkit.event.Listener;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginManager;
 
-/**
- * Handles registration and un/subscription of any event listeners
- */
 public class ListenerManager {
 
-	private Environment _environment;
-	private List<AbstractListener> _listeners = new ArrayList<>();
+	private final WeakReference<Plugin> plugin;
+	private final List<EventListener> listeners = new ArrayList<>();
 	
-	public ListenerManager(Environment environment, AbstractListener[] listeners)
-	{
-		this._environment = environment;
-		
-		for(AbstractListener listener : listeners)
-		{
-			listener.SetEnv(environment);
-			RegisterListener(listener);
+	public ListenerManager(Plugin plugin) {
+		this.plugin = new WeakReference<>(plugin);
+	}
+
+	/**
+	 * Registers a collection of event listeners
+	 *
+	 * @param listeners	Listeners to register
+	 */
+	public void registerListeners(EventListener[] listeners) {
+		final Plugin plugin = this.plugin.get();
+		if(plugin == null) {
+			return;
+		}
+
+		final PluginManager pluginManager = plugin.getServer().getPluginManager();
+		for(EventListener listener : listeners) {
+			pluginManager.registerEvents((Listener)listener, plugin);
+			listener.onRegister();
+
+			this.listeners.add(listener);
 		}
 	}
-	
+
 	/**
-	 * Registers the given listener
-	 * 
-	 * @param listener
+	 * Unregisters and deallocates all event
+	 * listeners
 	 */
-	private void RegisterListener(AbstractListener listener)
-	{
-		_environment.GetPlugin()
-			.getServer()
-			.getPluginManager()
-			.registerEvents(listener, _environment.GetPlugin());
-		
-		_listeners.add(listener);
-	}
-	
-	/**
-	 * Unregisters all listeners registered by this plugin
-	 */
-	public void UnregisterAll()
-	{
-		// unregister every listener from the plugin
-		HandlerList.unregisterAll(_environment.GetPlugin());
-				
-		// call the OnDisable on each listener and then remove it from memory
-		Iterator<AbstractListener> iterator = _listeners.iterator();
-		while(iterator.hasNext())
-		{
-			AbstractListener listener = iterator.next();
-			listener.OnDisable();
-			iterator.remove();
+	public void unregisterAll() {
+		for(EventListener listener : listeners) {
+			listener.onDeregister();
 		}
-		
-		_listeners.clear();
+		HandlerList.unregisterAll();
+		listeners.clear();
 	}
-	
+
 }

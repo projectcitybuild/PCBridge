@@ -27,7 +27,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 
 import com.pcb.pcbridge.pcbridge.tasks.GetPlayerNameTask;
-import com.pcb.pcbridge.utils.listeners.AbstractListener;
 import com.pcb.pcbridge.utils.listeners.events.PlayerNameChangedEvent;
 
 public final class OnPlayerNameChangedEvent extends AbstractListener

@@ -23,16 +23,9 @@
  */
 package com.pcb.pcbridge.pcbridge.listeners;
 
-import java.io.IOException;
-
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.inventory.InventoryCloseEvent;
-
-import com.pcb.pcbridge.pcbridge.models.PlayerConfig;
-import com.pcb.pcbridge.utils.cache.StaticCache;
-import com.pcb.pcbridge.utils.listeners.AbstractListener;
 
 public final class OnInventoryCloseEvent extends AbstractListener
 {

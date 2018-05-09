@@ -30,7 +30,6 @@ import org.bukkit.event.player.PlayerLoginEvent.Result;
 
 import com.pcb.pcbridge.utils.MessageBuilder;
 import com.pcb.pcbridge.utils.MessageBuilder.RawColours;
-import com.pcb.pcbridge.utils.listeners.AbstractListener;
 
 public final class OnPlayerLoginEvent extends AbstractListener
 {

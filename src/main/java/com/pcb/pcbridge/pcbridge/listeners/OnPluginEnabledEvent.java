@@ -33,7 +33,6 @@ import org.bukkit.event.EventPriority;
 import com.pcb.pcbridge.PCBridge;
 import com.pcb.pcbridge.pcbridge.models.PlayerBan;
 import com.pcb.pcbridge.pcbridge.tasks.GetBansTask;
-import com.pcb.pcbridge.utils.listeners.AbstractListener;
 import com.pcb.pcbridge.utils.listeners.events.PluginEnabledEvent;
 
 public final class OnPluginEnabledEvent extends AbstractListener

@@ -28,7 +28,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.md_5.bungee.api.ChatColor;
-import net.milkbowl.vault.chat.Chat;
 
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.World;
@@ -37,11 +36,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
-import com.pcb.pcbridge.PCBridge;
 import com.pcb.pcbridge.pcbridge.models.PlayerConfig;
 import com.pcb.pcbridge.pcbridge.tasks.GetPlayerNameTask;
 import com.pcb.pcbridge.utils.cache.StaticCache;
-import com.pcb.pcbridge.utils.listeners.AbstractListener;
 import com.pcb.pcbridge.utils.listeners.events.PlayerNameChangedEvent;
 
 /**

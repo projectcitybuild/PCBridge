@@ -33,7 +33,6 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 import com.pcb.pcbridge.pcbridge.models.PlayerConfig;
 import com.pcb.pcbridge.utils.cache.StaticCache;
-import com.pcb.pcbridge.utils.listeners.AbstractListener;
 
 public final class OnPlayerQuitEvent extends AbstractListener
 {

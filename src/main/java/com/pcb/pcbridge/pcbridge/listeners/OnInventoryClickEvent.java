@@ -27,8 +27,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
-import com.pcb.pcbridge.utils.listeners.AbstractListener;
-
 public final class OnInventoryClickEvent extends AbstractListener
 {
 	@EventHandler(priority = EventPriority.NORMAL)

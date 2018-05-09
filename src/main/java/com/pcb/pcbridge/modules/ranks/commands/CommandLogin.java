@@ -21,23 +21,19 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.pcb.pcbridge.pcbridge.commands;
+package com.pcb.pcbridge.modules.ranks.commands;
 
 import com.google.gson.Gson;
 import com.pcb.pcbridge.PCBridge;
-import com.pcb.pcbridge.pcbridge.api.MinecraftAuthApi;
+import com.pcb.pcbridge.modules.ranks.api.MinecraftAuthApi;
 import com.pcb.pcbridge.pcbridge.models.MinecraftAuthBaseResponse;
 import com.pcb.pcbridge.pcbridge.models.MinecraftAuthError;
 import com.pcb.pcbridge.pcbridge.models.MinecraftAuthResult;
 import com.pcb.pcbridge.utils.commands.AbstractCommand;
 import com.pcb.pcbridge.utils.commands.CommandArgs;
 import okhttp3.OkHttpClient;
-import okhttp3.ResponseBody;
-import okhttp3.logging.HttpLoggingInterceptor;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitScheduler;
 import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;

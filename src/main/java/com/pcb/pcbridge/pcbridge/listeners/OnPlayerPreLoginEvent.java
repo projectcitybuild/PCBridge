@@ -34,7 +34,6 @@ import com.pcb.pcbridge.pcbridge.models.PlayerBan;
 import com.pcb.pcbridge.pcbridge.tasks.GetBansTask;
 import com.pcb.pcbridge.utils.MessageBuilder;
 import com.pcb.pcbridge.utils.MessageBuilder.RawColours;
-import com.pcb.pcbridge.utils.listeners.AbstractListener;
 
 public final class OnPlayerPreLoginEvent extends AbstractListener
 {
