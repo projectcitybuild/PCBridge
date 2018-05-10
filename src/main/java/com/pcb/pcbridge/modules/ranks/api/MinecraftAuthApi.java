@@ -1,6 +1,6 @@
 package com.pcb.pcbridge.modules.ranks.api;
 
-import com.pcb.pcbridge.pcbridge.models.MinecraftAuthBaseResponse;
+import com.pcb.pcbridge.archived.pcbridge.models.MinecraftAuthBaseResponse;
 import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;

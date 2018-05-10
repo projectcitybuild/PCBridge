@@ -15,16 +15,20 @@ import com.pcb.pcbridge.framework.listeners.ListenerManager;
 
 public final class PCBridge extends JavaPlugin {
 
-	private Optional<ListenerManager> listenerManager = Optional.empty();
-
 	@Inject
 	private VaultHook vault;
 
+	private Optional<ListenerManager> listenerManager = Optional.empty();
+
+	/**
+	 * Logic to run everytime this plugin
+	 * is enabled (ie. initial boot-up, reloads)
+	 */
 	@Override
     public void onEnable() {
 		// manually force dependency injection since
 		// we can't have Guice instantiate this file
-		// at the beginning
+		// for us at the beginning
 		Injector injector = Guice.createInjector();
 		injector.injectMembers(this);
 
@@ -47,13 +51,19 @@ public final class PCBridge extends JavaPlugin {
 		});
 		this.listenerManager = Optional.of(listenerManager);
     }
-    
-    @Override
+
+	/**
+	 * Logic to run everytime this plugin
+	 * is disabled (ie. server shutdown, reloads)
+	 */
+	@Override
     public void onDisable() {
     	listenerManager.ifPresent(manager -> manager.unregisterAll());
+    	listenerManager = Optional.empty();
 
 		vault.unhookFromPermissionPlugin();
 		vault.unhookFromChatPlugin();
+		vault = null;
     }
     
     /**
