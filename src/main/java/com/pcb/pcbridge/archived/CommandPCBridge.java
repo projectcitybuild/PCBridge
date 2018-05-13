@@ -11,7 +11,7 @@
 ////import com.pcb.pcbridge.utils.database.migrations.BanListV2Migration;
 //
 //
-//public class CommandPCBridge extends AbstractCommand {
+//public class CommandMaintenance extends AbstractCommand {
 //
 //	@Override
 //	public String GetName()
