@@ -4,8 +4,6 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import org.bukkit.plugin.PluginLogger;
 
-import java.util.logging.Logger;
-
 public class BaseContainer extends AbstractModule {
 
     private PCBridge plugin;

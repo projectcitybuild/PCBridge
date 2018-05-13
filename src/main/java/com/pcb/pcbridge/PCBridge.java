@@ -13,6 +13,7 @@ import com.pcb.pcbridge.framework.vault.ChatHookFailedException;
 import com.pcb.pcbridge.framework.vault.PermissionHookFailedException;
 import com.pcb.pcbridge.framework.vault.VaultHook;
 import com.pcb.pcbridge.spigot.chat.commands.CommandMute;
+import com.pcb.pcbridge.spigot.maintenance.listeners.ListenerMaintenanceLogin;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -48,6 +49,7 @@ public final class PCBridge extends JavaPlugin {
 			vault.hookIntoChatPlugin(this);
 		} catch(PermissionHookFailedException | ChatHookFailedException e) {
 			getLogger().severe(e.getLocalizedMessage());
+			e.printStackTrace();
 
 			// this plugin cannot function properly without
 			// the required plugin hooks working
@@ -60,7 +62,7 @@ public final class PCBridge extends JavaPlugin {
 		// register event listeners
 		ListenerManager listenerManager = new ListenerManager(this);
 		listenerManager.registerListeners(new EventListener[] {
-
+                injector.getInstance(ListenerMaintenanceLogin.class),
 		});
 		this.listenerManager = Optional.of(listenerManager);
 
