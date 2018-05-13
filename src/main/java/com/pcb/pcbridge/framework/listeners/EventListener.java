@@ -6,9 +6,9 @@ import java.lang.ref.WeakReference;
 
 public class EventListener {
 
-    private final WeakReference<Plugin> plugin;
+    protected WeakReference<Plugin> plugin;
 
-    public EventListener(Plugin plugin) {
+    public void setPlugin(Plugin plugin) {
         this.plugin = new WeakReference<>(plugin);
     }
 

@@ -5,9 +5,15 @@ import java.util.Optional;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
-import com.pcb.pcbridge.framework.database.DatabaseConnectionPool;
+import com.pcb.pcbridge.features.config.ConfigManager;
+import com.pcb.pcbridge.framework.commands.AbstractCommand;
+import com.pcb.pcbridge.framework.commands.CommandManager;
 import com.pcb.pcbridge.framework.listeners.EventListener;
+import com.pcb.pcbridge.framework.vault.ChatHookFailedException;
+import com.pcb.pcbridge.framework.vault.PermissionHookFailedException;
 import com.pcb.pcbridge.framework.vault.VaultHook;
+import com.pcb.pcbridge.spigot.chat.commands.CommandMute;
+import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -18,10 +24,14 @@ public final class PCBridge extends JavaPlugin {
 	@Inject
 	private VaultHook vault;
 
+	@Inject
+	private ConfigManager configManager;
+
 	private Optional<ListenerManager> listenerManager = Optional.empty();
+	private Optional<CommandManager> commandManager = Optional.empty();
 
 	/**
-	 * Logic to run everytime this plugin
+	 * Logic to run every time this plugin
 	 * is enabled (ie. initial boot-up, reloads)
 	 */
 	@Override
@@ -29,13 +39,14 @@ public final class PCBridge extends JavaPlugin {
 		// manually force dependency injection since
 		// we can't have Guice instantiate this file
 		// for us at the beginning
-		Injector injector = Guice.createInjector();
+		BaseContainer container = new BaseContainer(this);
+		Injector injector = Guice.createInjector(container);
 		injector.injectMembers(this);
 
 		try {
 			vault.hookIntoPermissionPlugin(this);
 			vault.hookIntoChatPlugin(this);
-		} catch(Exception e) {
+		} catch(PermissionHookFailedException | ChatHookFailedException e) {
 			getLogger().severe(e.getLocalizedMessage());
 
 			// this plugin cannot function properly without
@@ -44,22 +55,40 @@ public final class PCBridge extends JavaPlugin {
 			return;
 		}
 
+		configManager.load();
+
 		// register event listeners
 		ListenerManager listenerManager = new ListenerManager(this);
 		listenerManager.registerListeners(new EventListener[] {
 
 		});
 		this.listenerManager = Optional.of(listenerManager);
+
+		// register commands
+		Optional<Permission> permission = vault.getPermission();
+		if(!permission.isPresent()) {
+			getLogger().severe("No permission plugin instance available for command registration");
+			Bukkit.getPluginManager().disablePlugin(this);
+			return;
+		}
+		CommandManager commandManager = new CommandManager(permission.get());
+		commandManager.registerCommands(this, new AbstractCommand[] {
+				new CommandMute(),
+		});
+		this.commandManager = Optional.of(commandManager);
     }
 
 	/**
-	 * Logic to run everytime this plugin
+	 * Logic to run every time this plugin
 	 * is disabled (ie. server shutdown, reloads)
 	 */
 	@Override
     public void onDisable() {
     	listenerManager.ifPresent(manager -> manager.unregisterAll());
     	listenerManager = Optional.empty();
+
+    	commandManager.ifPresent(manager -> manager.unregister());
+    	commandManager = Optional.empty();
 
 		vault.unhookFromPermissionPlugin();
 		vault.unhookFromChatPlugin();
@@ -111,29 +140,6 @@ public final class PCBridge extends JavaPlugin {
 //    		Bukkit.getPluginManager().disablePlugin(this);
 //			e.printStackTrace();
 //		}
-//    }
-    
-//    private void loadConfig()
-//    {
-//    	getConfig().addDefault("server.maintenance", false);
-//    	//getConfig().addDefault("server.cache_bans", false);
-//
-//    	getConfig().addDefault("database.connections.local.host", "localhost");
-//    	getConfig().addDefault("database.connections.local.port", 3306);
-//    	getConfig().addDefault("database.connections.local.user", "root");
-//    	getConfig().addDefault("database.connections.local.pass", "");
-//    	getConfig().addDefault("database.connections.remote.host", "192.184.93.126");
-//    	getConfig().addDefault("database.connections.remote.port", 3306);
-//    	getConfig().addDefault("database.connections.remote.user", "root");
-//    	getConfig().addDefault("database.connections.remote.pass", "");
-//
-//    	getConfig().addDefault("database.banlist.database", "pcbridge");
-//    	getConfig().addDefault("database.banlist.connection", "remote");
-//    	getConfig().addDefault("database.warnings.database", "pcbridge");
-//    	getConfig().addDefault("database.warnings.connection", "remote");
-//
-//    	getConfig().options().copyDefaults(true);
-//    	saveConfig();
 //    }
     
 }

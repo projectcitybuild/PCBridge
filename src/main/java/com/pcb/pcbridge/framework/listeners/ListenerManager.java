@@ -33,6 +33,7 @@ public class ListenerManager {
 		final PluginManager pluginManager = plugin.getServer().getPluginManager();
 		for(EventListener listener : listeners) {
 			pluginManager.registerEvents((Listener)listener, plugin);
+			listener.setPlugin(plugin);
 			listener.onRegister();
 
 			this.listeners.add(listener);
