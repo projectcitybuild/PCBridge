@@ -1,10 +1,11 @@
 package com.pcb.pcbridge.framework.listeners;
 
+import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 
 import java.lang.ref.WeakReference;
 
-public class EventListener {
+public class EventListener implements Listener {
 
     protected WeakReference<Plugin> plugin;
 

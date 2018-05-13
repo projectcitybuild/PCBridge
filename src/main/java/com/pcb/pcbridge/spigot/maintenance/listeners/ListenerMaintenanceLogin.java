@@ -3,7 +3,6 @@ package com.pcb.pcbridge.spigot.maintenance.listeners;
 import com.google.inject.Inject;
 import com.pcb.pcbridge.features.config.ConfigManager;
 import com.pcb.pcbridge.features.config.models.ConfigModel;
-import com.pcb.pcbridge.framework.Colors;
 import com.pcb.pcbridge.framework.RawColor;
 import com.pcb.pcbridge.framework.listeners.EventListener;
 import org.bukkit.event.EventHandler;
@@ -32,6 +31,7 @@ public final class ListenerMaintenanceLogin extends EventListener {
      */
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void handle(PlayerLoginEvent event) {
+	    logger.info("Checking if maintenance mode");
         Optional<ConfigModel> optionalConfig = configManager.getConfig();
         if(!optionalConfig.isPresent()) {
             logger.severe("Failed to handle maintenance login: No config present");
