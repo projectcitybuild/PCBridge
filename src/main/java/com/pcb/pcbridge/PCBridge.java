@@ -13,6 +13,7 @@ import com.pcb.pcbridge.framework.vault.ChatHookFailedException;
 import com.pcb.pcbridge.framework.vault.PermissionHookFailedException;
 import com.pcb.pcbridge.framework.vault.VaultHook;
 import com.pcb.pcbridge.spigot.chat.commands.CommandMute;
+import com.pcb.pcbridge.spigot.chat.commands.CommandUnmute;
 import com.pcb.pcbridge.spigot.chat.listeners.ListenerChatMute;
 import com.pcb.pcbridge.spigot.chat.listeners.ListenerPlayerCacheJoin;
 import com.pcb.pcbridge.spigot.chat.listeners.ListenerPlayerCacheQuit;
@@ -83,6 +84,7 @@ public final class PCBridge extends JavaPlugin {
 		CommandManager commandManager = new CommandManager(permission.get());
 		commandManager.registerCommands(this, new AbstractCommand[] {
                 injector.getInstance(CommandMute.class),
+				injector.getInstance(CommandUnmute.class),
                 injector.getInstance(CommandMaintenance.class),
 		});
 		this.commandManager = Optional.of(commandManager);

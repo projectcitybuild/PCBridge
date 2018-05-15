@@ -3,7 +3,6 @@ main: com.pcb.pcbridge.PCBridge
 version: 3.0.0
 website: https://projectcitybuild.com
 description: Bridges PCB game servers with the website
-depend: [Essentials]
 
 commands:
   maintenance:
@@ -14,3 +13,7 @@ commands:
     description: Prevents a player from chatting (can still use commands)
     usage: "/mute <name>"
     permission: pcbridge.chat.mute
+  unmute:
+      description: Allows a player to chat again
+      usage: "/unmute <name>"
+      permission: pcbridge.chat.mute

@@ -28,6 +28,15 @@ public class PlayerModel {
     public void load() {
         YamlConfiguration reader = YamlConfiguration.loadConfiguration(getStoragePath());
         isMuted = reader.getBoolean("chat.muted");
+
+
+        if(!getStoragePath().exists()) {
+            try {
+                save();
+            } catch(IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public void save() throws IOException {

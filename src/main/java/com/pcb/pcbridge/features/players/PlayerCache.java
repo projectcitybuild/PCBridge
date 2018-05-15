@@ -7,6 +7,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 @Singleton
 public class PlayerCache {
@@ -22,6 +25,18 @@ public class PlayerCache {
         Optional<PlayerModel> result = Optional.ofNullable(player);
 
         return result;
+    }
+
+    public PlayerModel get(UUID uuid, Supplier<PlayerModel> orMake) {
+        Optional<PlayerModel> player = get(uuid);
+        if(player.isPresent()) {
+            return player.get();
+        }
+
+        PlayerModel newValue = orMake.get();
+        players.put(uuid, newValue);
+
+        return newValue;
     }
 
     public boolean has(UUID uuid) {
