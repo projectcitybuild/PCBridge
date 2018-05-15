@@ -24,6 +24,10 @@ public class PlayerCache {
         return result;
     }
 
+    public boolean has(UUID uuid) {
+        return players.containsKey(uuid);
+    }
+
     public void remove(UUID uuid) {
         players.remove(uuid);
     }

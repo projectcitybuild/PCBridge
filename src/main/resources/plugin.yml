@@ -10,3 +10,7 @@ commands:
     description: De/activates service maintenance mode
     usage: "/maintenance [on|off]"
     permission: pcbridge.maintenance.set
+  mute:
+    description: Prevents a player from chatting (can still use commands)
+    usage: "/mute <name>"
+    permission: pcbridge.chat.mute
