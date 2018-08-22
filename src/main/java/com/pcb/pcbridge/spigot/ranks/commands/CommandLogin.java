@@ -18,7 +18,7 @@ public class CommandLogin extends AbstractCommand {
 
 //	@Override
 //	public String GetUsage() {
-//		return "/login <username> <password>";
+//		return "/login <email> <password>";
 //	}
 
 	@Override
