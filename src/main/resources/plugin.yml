@@ -1,11 +1,11 @@
+main: com.projectcitybuild.PCBridge
 name: PCBridge
-main: com.pcb.pcbridge.PCBridge
-version: 2.1.0
-website: https://projectcitybuild.com
-description: Bridges PCB game servers with the website
-depend: [Essentials]
+version: 1.0.0
 
 commands:
-  ban:
-  unban:
-  mute:
+   announce:
+      description: Announces a message to the server
+      usage: /announce <message>
+   maintenance:
+      description: Toggles 'Maintenance Mode' on the server, allowing only staff to connect
+      usage: /maintenance [on|off] [message]
