@@ -1,7 +1,7 @@
 package com.projectcitybuild.spigot
 
-import com.projectcitybuild.core.protocols.Environment
-import com.projectcitybuild.core.protocols.Listenable
+import com.projectcitybuild.core.contracts.Environment
+import com.projectcitybuild.core.contracts.Listenable
 import org.bukkit.event.Event
 import org.bukkit.plugin.java.JavaPlugin
 import java.lang.ref.WeakReference

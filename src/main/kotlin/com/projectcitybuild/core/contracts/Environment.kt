@@ -1,4 +1,4 @@
-package com.projectcitybuild.core.protocols
+package com.projectcitybuild.core.contracts
 
 import com.projectcitybuild.entities.models.LogLevel
 import com.projectcitybuild.entities.models.Player

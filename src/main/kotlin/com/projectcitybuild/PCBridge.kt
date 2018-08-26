@@ -1,7 +1,7 @@
 package com.projectcitybuild
 
-import com.projectcitybuild.core.protocols.Controller
-import com.projectcitybuild.core.protocols.Listenable
+import com.projectcitybuild.core.contracts.Controller
+import com.projectcitybuild.core.contracts.Listenable
 import com.projectcitybuild.core.extensions.addDefault
 import com.projectcitybuild.entities.models.PluginConfig
 import com.projectcitybuild.spigot.CommandDelegate

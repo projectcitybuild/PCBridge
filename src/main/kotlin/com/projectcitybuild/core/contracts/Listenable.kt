@@ -1,4 +1,4 @@
-package com.projectcitybuild.core.protocols
+package com.projectcitybuild.core.contracts
 
 import org.bukkit.event.Event
 import org.bukkit.event.EventHandler

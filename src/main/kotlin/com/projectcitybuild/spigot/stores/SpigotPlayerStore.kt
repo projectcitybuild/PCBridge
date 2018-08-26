@@ -1,7 +1,7 @@
 package com.projectcitybuild.spigot.stores
 
 import com.projectcitybuild.core.extensions.makeModel
-import com.projectcitybuild.core.protocols.PlayerStoreWrapper
+import com.projectcitybuild.core.contracts.PlayerStoreWrapper
 import com.projectcitybuild.core.services.PlayerStore
 import com.projectcitybuild.entities.models.Player
 import org.bukkit.configuration.file.YamlConfiguration

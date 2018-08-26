@@ -1,7 +1,7 @@
 package com.projectcitybuild.spigot
 
-import com.projectcitybuild.core.protocols.Commandable
-import com.projectcitybuild.core.protocols.Environment
+import com.projectcitybuild.core.contracts.Commandable
+import com.projectcitybuild.core.contracts.Environment
 import org.bukkit.plugin.java.JavaPlugin
 import java.lang.ref.WeakReference
 

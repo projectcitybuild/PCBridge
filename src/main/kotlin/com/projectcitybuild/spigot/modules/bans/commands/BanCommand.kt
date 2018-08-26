@@ -1,7 +1,7 @@
 package com.projectcitybuild.spigot.modules.bans.commands
 
-import com.projectcitybuild.core.protocols.Commandable
-import com.projectcitybuild.core.protocols.Environment
+import com.projectcitybuild.core.contracts.Commandable
+import com.projectcitybuild.core.contracts.Environment
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 

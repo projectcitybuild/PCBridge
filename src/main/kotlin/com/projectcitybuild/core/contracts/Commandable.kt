@@ -1,4 +1,4 @@
-package com.projectcitybuild.core.protocols
+package com.projectcitybuild.core.contracts
 
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender

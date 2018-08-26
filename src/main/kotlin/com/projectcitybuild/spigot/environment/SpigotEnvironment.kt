@@ -1,6 +1,6 @@
 package com.projectcitybuild.spigot.environment
 
-import com.projectcitybuild.core.protocols.Environment
+import com.projectcitybuild.core.contracts.Environment
 import com.projectcitybuild.core.services.PlayerStore
 import com.projectcitybuild.entities.models.LogLevel
 import com.projectcitybuild.entities.models.Player

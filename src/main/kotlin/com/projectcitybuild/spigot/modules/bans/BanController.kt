@@ -1,7 +1,7 @@
 package com.projectcitybuild.spigot.modules.bans
 
-import com.projectcitybuild.core.protocols.Commandable
-import com.projectcitybuild.core.protocols.Controller
+import com.projectcitybuild.core.contracts.Commandable
+import com.projectcitybuild.core.contracts.Controller
 import com.projectcitybuild.spigot.modules.bans.commands.BanCommand
 
 class BanController : Controller {

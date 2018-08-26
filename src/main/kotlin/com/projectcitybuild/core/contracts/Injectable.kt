@@ -1,4 +1,4 @@
-package com.projectcitybuild.core.protocols
+package com.projectcitybuild.core.contracts
 
 interface Injectable {
     var environment: Environment?
