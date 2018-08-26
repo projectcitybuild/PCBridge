@@ -4,10 +4,14 @@ import com.projectcitybuild.core.protocols.Environment
 import com.projectcitybuild.core.services.PlayerStore
 import com.projectcitybuild.entities.models.LogLevel
 import com.projectcitybuild.entities.models.Player
+import com.projectcitybuild.entities.models.PluginConfigPair
+import org.bukkit.configuration.file.FileConfiguration
 import java.util.*
 import java.util.logging.Logger
 
-class SpigotEnvironment(val logger: Logger, val playerStore: PlayerStore) : Environment {
+class SpigotEnvironment(val logger: Logger,
+                        val playerStore: PlayerStore,
+                        val config: FileConfiguration) : Environment {
 
     override fun log(level: LogLevel, message: String) {
         when (level) {
@@ -17,6 +21,14 @@ class SpigotEnvironment(val logger: Logger, val playerStore: PlayerStore) : Envi
             LogLevel.WARNING -> logger.warning(message)
             LogLevel.FATAL -> logger.severe(message)
         }
+    }
+
+    override fun get(key: PluginConfigPair): Any {
+        return config.get(key.key)
+    }
+
+    override fun set(key: PluginConfigPair, value: Any) {
+        config.set(key.key, value)
     }
 
     override fun get(player: UUID): Player? {

@@ -2,9 +2,10 @@ package com.projectcitybuild
 
 import com.projectcitybuild.core.protocols.Controller
 import com.projectcitybuild.core.protocols.Listenable
+import com.projectcitybuild.core.extensions.addDefault
 import com.projectcitybuild.entities.models.PluginConfig
-import com.projectcitybuild.spigot.CommandDelegator
-import com.projectcitybuild.spigot.ListenerDelegator
+import com.projectcitybuild.spigot.CommandDelegate
+import com.projectcitybuild.spigot.ListenerDelegate
 import com.projectcitybuild.spigot.environment.SpigotEnvironment
 import com.projectcitybuild.spigot.modules.bans.BanController
 import com.projectcitybuild.spigot.stores.SpigotPlayerStore
@@ -14,19 +15,19 @@ import java.lang.ref.WeakReference
 
 class PCBridge : JavaPlugin() {
 
-    private var commandDelegate: CommandDelegator? = null
-    private var listenerDelegate: ListenerDelegator? = null
+    private var commandDelegate: CommandDelegate? = null
+    private var listenerDelegate: ListenerDelegate? = null
 
     override fun onEnable() {
         super.onEnable()
 
-        val playerStore = SpigotPlayerStore(plugin = WeakReference(this))
-        val environment = SpigotEnvironment(logger = logger, playerStore = playerStore.store)
-
-        commandDelegate = CommandDelegator(plugin = WeakReference(this), environment = environment)
-        listenerDelegate = ListenerDelegator(plugin = WeakReference(this), environment = environment)
-
         createDefaultConfig()
+
+        val playerStore = SpigotPlayerStore(plugin = WeakReference(this))
+        val environment = SpigotEnvironment(logger = logger, playerStore = playerStore.store, config = config)
+
+        commandDelegate = CommandDelegate(plugin = WeakReference(this), environment = environment)
+        listenerDelegate = ListenerDelegate(plugin = WeakReference(this), environment = environment)
 
         this.register(modules = arrayOf(
                 BanController()
@@ -56,9 +57,9 @@ class PCBridge : JavaPlugin() {
     }
 
     private fun createDefaultConfig() {
-        config.addDefault(PluginConfig.Settings.MAINTENANCE_MODE().key, false)
-        config.addDefault(PluginConfig.Api.KEY().key, "")
-        config.addDefault(PluginConfig.Api.BASE_URL().key, "https://projectcitybuild.com/api")
+        config.addDefault<PluginConfig.Settings.MAINTENANCE_MODE>()
+        config.addDefault<PluginConfig.Api.KEY>()
+        config.addDefault<PluginConfig.Api.BASE_URL>()
 
         config.options().copyDefaults(true)
         saveConfig()

@@ -5,8 +5,8 @@ import com.projectcitybuild.core.protocols.Environment
 import org.bukkit.plugin.java.JavaPlugin
 import java.lang.ref.WeakReference
 
-internal class CommandDelegator constructor(val plugin: WeakReference<JavaPlugin>,
-                                            val environment: Environment) {
+internal class CommandDelegate constructor(val plugin: WeakReference<JavaPlugin>,
+                                           val environment: Environment) {
 
     fun register(command: Commandable) {
         command.inject(environment)
