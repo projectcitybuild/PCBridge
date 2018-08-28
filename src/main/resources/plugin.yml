@@ -3,9 +3,12 @@ name: PCBridge
 version: 1.0.0
 
 commands:
-   announce:
-      description: Announces a message to the server
-      usage: /announce <message>
    maintenance:
       description: Toggles 'Maintenance Mode' on the server, allowing only staff to connect
       usage: /maintenance [on|off] [message]
+   mute:
+      description: Prevents a player from chatting
+      usage: /mute <name>
+   unmute:
+      description: Removes a chat mute on a player
+      usage: /unmute <name>

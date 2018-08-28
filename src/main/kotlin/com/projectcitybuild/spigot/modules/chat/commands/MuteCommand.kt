@@ -1,34 +1,36 @@
 package com.projectcitybuild.spigot.modules.chat.commands
 
-import com.projectcitybuild.core.extensions.getOnlinePlayer
+import com.projectcitybuild.spigot.extensions.getOnlinePlayer
 import com.projectcitybuild.core.contracts.Commandable
 import com.projectcitybuild.core.contracts.Environment
-import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 
 class MuteCommand : Commandable {
-    override var environment: Environment? = null
     override val label: String = "mute"
 
-    override fun execute(sender: CommandSender?, command: Command?, label: String?, args: Array<String>?): Boolean {
-        val targetPlayerName = args?.first() ?: return false
+    override var environment: Environment? = null
 
-        val targetPlayer = sender?.server?.getOnlinePlayer(targetPlayerName)
+    override fun execute(sender: CommandSender, args: Array<String>, isConsole: Boolean): Boolean {
+        if (environment == null) throw Exception("Environment missing")
+        if (args.isEmpty()) return false
+
+        val targetPlayerName = args.first()
+        val targetPlayer = sender.server?.getOnlinePlayer(name = targetPlayerName)
         if (targetPlayer == null) {
-            sender?.sendMessage("Failed to mute: Player not found")
+            sender.sendMessage("Failed to mute: Player $targetPlayerName not found")
             return true
         }
 
-        val environment = environment!!
-        val player = environment.get(targetPlayer.uniqueId)
+        val player = environment?.get(targetPlayer.uniqueId)
+            ?: throw Exception("Player missing from cache")
 
-        if (player?.isMuted == true) {
+        if (player.isMuted) {
             sender.sendMessage("Failed to mute: That player is already muted")
             return true
         }
 
-        player?.isMuted = true
-        environment.set(player!!)
+        player.isMuted = true
+        environment?.set(player)
 
         sender.sendMessage("${targetPlayer.name} has been muted")
         targetPlayer.sendMessage("You have been muted by ${sender.name}")

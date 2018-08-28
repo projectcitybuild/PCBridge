@@ -1,6 +1,5 @@
 package com.projectcitybuild.core.contracts
 
-import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 
 interface Commandable : Injectable {
@@ -8,5 +7,5 @@ interface Commandable : Injectable {
     val aliases: Array<String>
         get() = arrayOf()
 
-    fun execute(sender: CommandSender?, command: Command?, label: String?, args: Array<String>?) : Boolean
+    fun execute(sender: CommandSender, args: Array<String>, isConsole: Boolean) : Boolean
 }

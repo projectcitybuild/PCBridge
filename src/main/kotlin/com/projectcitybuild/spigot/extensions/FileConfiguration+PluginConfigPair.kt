@@ -1,4 +1,4 @@
-package com.projectcitybuild.core.extensions
+package com.projectcitybuild.spigot.extensions
 
 import com.projectcitybuild.entities.models.PluginConfigPair
 import org.bukkit.configuration.file.FileConfiguration

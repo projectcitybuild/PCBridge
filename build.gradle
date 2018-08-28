@@ -1,4 +1,4 @@
-group 'com.projectcitybuild.dev'
+group 'com.projectcitybuild'
 version '1.0-SNAPSHOT'
 
 buildscript {

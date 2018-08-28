@@ -9,6 +9,6 @@ import java.lang.ref.WeakReference
 class ListenerDelegate constructor(val plugin: WeakReference<JavaPlugin>, val environment: Environment) {
     fun register(listener: Listenable<Event>) {
         listener.inject(environment)
-//        plugin.get()?.server?.pluginManager?.registerEvent()
+        plugin.get()?.server?.pluginManager?.registerEvents(listener, plugin.get())
     }
 }

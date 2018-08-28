@@ -1,4 +1,4 @@
-package com.projectcitybuild.core.extensions
+package com.projectcitybuild.spigot.extensions
 
 import org.bukkit.entity.Player
 

@@ -2,12 +2,13 @@ package com.projectcitybuild
 
 import com.projectcitybuild.core.contracts.Controller
 import com.projectcitybuild.core.contracts.Listenable
-import com.projectcitybuild.core.extensions.addDefault
+import com.projectcitybuild.spigot.extensions.addDefault
 import com.projectcitybuild.entities.models.PluginConfig
 import com.projectcitybuild.spigot.CommandDelegate
 import com.projectcitybuild.spigot.ListenerDelegate
 import com.projectcitybuild.spigot.environment.SpigotEnvironment
 import com.projectcitybuild.spigot.modules.bans.BanController
+import com.projectcitybuild.spigot.modules.chat.ChatController
 import com.projectcitybuild.spigot.stores.SpigotPlayerStore
 import org.bukkit.event.Event
 import org.bukkit.plugin.java.JavaPlugin
@@ -21,6 +22,16 @@ class PCBridge : JavaPlugin() {
     override fun onEnable() {
         super.onEnable()
 
+        logger.info("""
+            ██████╗  ██████╗██████╗ ██████╗ ██╗██████╗  ██████╗ ███████╗
+            ██╔══██╗██╔════╝██╔══██╗██╔══██╗██║██╔══██╗██╔════╝ ██╔════╝
+            ██████╔╝██║     ██████╔╝██████╔╝██║██║  ██║██║  ███╗█████╗
+            ██╔═══╝ ██║     ██╔══██╗██╔══██╗██║██║  ██║██║   ██║██╔══╝
+            ██║     ╚██████╗██████╔╝██║  ██║██║██████╔╝╚██████╔╝███████╗
+            ╚═╝      ╚═════╝╚═════╝ ╚═╝  ╚═╝╚═╝╚═════╝  ╚═════╝ ╚══════╝
+            https://projectcitybuild.com
+        """)
+
         createDefaultConfig()
 
         val playerStore = SpigotPlayerStore(plugin = WeakReference(this))
@@ -30,10 +41,11 @@ class PCBridge : JavaPlugin() {
         listenerDelegate = ListenerDelegate(plugin = WeakReference(this), environment = environment)
 
         this.register(modules = arrayOf(
-                BanController()
+                BanController(),
+                ChatController()
         ))
 
-        this.logger.info("PCBridge enabled")
+        logger.info("PCBridge enabled")
     }
 
     override fun onDisable() {
@@ -42,7 +54,7 @@ class PCBridge : JavaPlugin() {
         commandDelegate = null
         listenerDelegate = null
 
-        this.logger.info("PCBridge disabled")
+        logger.info("PCBridge disabled")
     }
 
     private fun register(modules: Array<Controller>) {

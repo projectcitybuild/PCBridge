@@ -1,6 +1,6 @@
 package com.projectcitybuild.spigot.stores
 
-import com.projectcitybuild.core.extensions.makeModel
+import com.projectcitybuild.spigot.extensions.makeModel
 import com.projectcitybuild.core.contracts.PlayerStoreWrapper
 import com.projectcitybuild.core.services.PlayerStore
 import com.projectcitybuild.entities.models.Player
@@ -65,7 +65,7 @@ class SpigotPlayerStore(val plugin: WeakReference<JavaPlugin>) : PlayerStoreWrap
         val file = File(folder, "$uuid.yml")
 
         val reader = YamlConfiguration.loadConfiguration(file)
-        reader.set("uuid", uuid)
+        reader.set("uuid", uuid.toString())
         reader.set("chat.isMuted", player?.isMuted ?: false)
 
         reader.save(file)
