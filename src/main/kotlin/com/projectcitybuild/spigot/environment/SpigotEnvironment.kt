@@ -15,8 +15,10 @@ class SpigotEnvironment(val logger: Logger,
 
     override fun log(level: LogLevel, message: String) {
         when (level) {
-            LogLevel.VERBOSE -> logger.finest(message)
-            LogLevel.DEBUG -> logger.fine(message)
+//            LogLevel.VERBOSE -> logger.finest(message)
+//            LogLevel.DEBUG -> logger.fine(message)
+            LogLevel.VERBOSE -> logger.info(message)    // spigot doesn't log FINE and FINEST level
+            LogLevel.DEBUG -> logger.info(message)      // spigot doesn't log FINE and FINEST level
             LogLevel.INFO -> logger.info(message)
             LogLevel.WARNING -> logger.warning(message)
             LogLevel.FATAL -> logger.severe(message)

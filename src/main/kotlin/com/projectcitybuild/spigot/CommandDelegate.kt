@@ -14,11 +14,16 @@ internal class CommandDelegate constructor(val plugin: WeakReference<JavaPlugin>
 
         command.aliases.plus(command.label).forEach { alias ->
             plugin.get()?.getCommand(alias)?.setExecutor { sender, _, _, args ->
-                command.execute(
-                        sender = sender,
-                        args = args ?: arrayOf(),
-                        isConsole = sender !is Player
-                )
+                try {
+                    command.execute(
+                            sender = sender,
+                            args = args ?: arrayOf(),
+                            isConsole = sender !is Player
+                    )
+                } catch (error: Exception) {
+                    sender.sendMessage("An error occurred performing a command")
+                    true
+                }
             }
         }
     }

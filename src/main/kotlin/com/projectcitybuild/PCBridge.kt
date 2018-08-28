@@ -13,6 +13,7 @@ import com.projectcitybuild.spigot.stores.SpigotPlayerStore
 import org.bukkit.event.Event
 import org.bukkit.plugin.java.JavaPlugin
 import java.lang.ref.WeakReference
+import java.util.logging.Level
 
 class PCBridge : JavaPlugin() {
 
@@ -21,6 +22,8 @@ class PCBridge : JavaPlugin() {
 
     override fun onEnable() {
         super.onEnable()
+
+        logger.level = Level.ALL
 
         logger.info("""
             ██████╗  ██████╗██████╗ ██████╗ ██╗██████╗  ██████╗ ███████╗
@@ -45,11 +48,13 @@ class PCBridge : JavaPlugin() {
                 ChatController()
         ))
 
-        logger.info("PCBridge enabled")
+        logger.info("PCBridge ready")
     }
 
     override fun onDisable() {
         super.onDisable()
+
+        listenerDelegate?.unregisterAll()
 
         commandDelegate = null
         listenerDelegate = null
@@ -62,7 +67,7 @@ class PCBridge : JavaPlugin() {
             controller.commands.forEach { command ->
                 commandDelegate?.register(command)
             }
-            controller.listeners.forEach { listener: Listenable<Event> ->
+            controller.listeners.forEach { listener ->
                 listenerDelegate?.register(listener)
             }
         }

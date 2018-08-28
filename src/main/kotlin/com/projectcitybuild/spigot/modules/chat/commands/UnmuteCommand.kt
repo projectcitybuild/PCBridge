@@ -5,8 +5,8 @@ import com.projectcitybuild.core.contracts.Commandable
 import com.projectcitybuild.core.contracts.Environment
 import org.bukkit.command.CommandSender
 
-class MuteCommand : Commandable {
-    override val label: String = "mute"
+class UnmuteCommand : Commandable {
+    override val label: String = "unmute"
 
     override var environment: Environment? = null
 
@@ -22,18 +22,18 @@ class MuteCommand : Commandable {
         }
 
         val player = environment?.get(targetPlayer.uniqueId)
-            ?: throw Exception("Player ${targetPlayerName} missing from cache")
+            ?: throw Exception("Player $targetPlayerName missing from cache")
 
-        if (player.isMuted) {
-            sender.sendMessage("$targetPlayerName is already muted")
+        if (!player.isMuted) {
+            sender.sendMessage("$targetPlayerName is not muted")
             return true
         }
 
-        player.isMuted = true
+        player.isMuted = false
         environment?.set(player)
 
-        sender.sendMessage("${targetPlayer.name} has been muted")
-        targetPlayer.sendMessage("You have been muted by ${sender.name}")
+        sender.sendMessage("${targetPlayer.name} has been unmuted")
+        targetPlayer.sendMessage("You have been unmuted by ${sender.name}")
 
         return true
     }
