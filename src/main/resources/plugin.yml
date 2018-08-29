@@ -1,19 +1,14 @@
+main: com.projectcitybuild.PCBridge
 name: PCBridge
-main: com.pcb.pcbridge.PCBridge
-version: 3.0.0
-website: https://projectcitybuild.com
-description: Bridges PCB game servers with the website
+version: 1.0.0
 
 commands:
-  maintenance:
-    description: De/activates service maintenance mode
-    usage: "/maintenance [on|off]"
-    permission: pcbridge.maintenance.set
-  mute:
-    description: Prevents a player from chatting (can still use commands)
-    usage: "/mute <name>"
-    permission: pcbridge.chat.mute
-  unmute:
-      description: Allows a player to chat again
-      usage: "/unmute <name>"
-      permission: pcbridge.chat.mute
+   maintenance:
+      description: Toggles 'Maintenance Mode' on the server, allowing only staff to connect
+      usage: /maintenance [on|off] [message]
+   mute:
+      description: Prevents a player from chatting
+      usage: /mute <name>
+   unmute:
+      description: Removes a chat mute on a player
+      usage: /unmute <name>
