@@ -9,6 +9,7 @@ import com.projectcitybuild.spigot.ListenerDelegate
 import com.projectcitybuild.spigot.environment.SpigotEnvironment
 import com.projectcitybuild.spigot.modules.bans.BanController
 import com.projectcitybuild.spigot.modules.chat.ChatController
+import com.projectcitybuild.spigot.modules.maintenance.MaintenanceController
 import com.projectcitybuild.spigot.stores.SpigotPlayerStore
 import org.bukkit.event.Event
 import org.bukkit.plugin.java.JavaPlugin
@@ -45,7 +46,8 @@ class PCBridge : JavaPlugin() {
 
         this.register(modules = arrayOf(
                 BanController(),
-                ChatController()
+                ChatController(),
+                MaintenanceController()
         ))
 
         logger.info("PCBridge ready")

@@ -11,7 +11,9 @@ class ChatListener : Listenable<AsyncPlayerChatEvent> {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     override fun observe(event: AsyncPlayerChatEvent) {
-        val sendingPlayer = environment!!.get(event.player.uniqueId)
+        val environment = environment ?: return
+
+        val sendingPlayer = environment.get(event.player.uniqueId)
         if (sendingPlayer?.isMuted == true) {
             event.isCancelled = true
             event.player.sendMessage("You cannot chat while muted")
