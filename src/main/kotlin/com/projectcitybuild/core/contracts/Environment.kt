@@ -3,6 +3,7 @@ package com.projectcitybuild.core.contracts
 import com.projectcitybuild.entities.models.LogLevel
 import com.projectcitybuild.entities.models.Player
 import com.projectcitybuild.entities.models.PluginConfigPair
+import net.milkbowl.vault.permission.Permission
 import java.util.*
 
 interface Environment {
@@ -13,4 +14,6 @@ interface Environment {
 
     fun get(player: UUID) : Player? { throw NotImplementedError() }
     fun set(player: Player) { throw NotImplementedError() }
+
+    fun permissions() : Permission? { throw NotImplementedError() }
 }

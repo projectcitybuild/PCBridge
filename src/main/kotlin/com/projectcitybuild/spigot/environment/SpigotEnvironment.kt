@@ -5,13 +5,15 @@ import com.projectcitybuild.core.services.PlayerStore
 import com.projectcitybuild.entities.models.LogLevel
 import com.projectcitybuild.entities.models.Player
 import com.projectcitybuild.entities.models.PluginConfigPair
+import net.milkbowl.vault.permission.Permission
 import org.bukkit.configuration.file.FileConfiguration
 import java.util.*
 import java.util.logging.Logger
 
-class SpigotEnvironment(val logger: Logger,
-                        val playerStore: PlayerStore,
-                        val config: FileConfiguration) : Environment {
+class SpigotEnvironment(private val logger: Logger,
+                        private val playerStore: PlayerStore,
+                        private val config: FileConfiguration,
+                        private val hooks: SpigotPluginHook) : Environment {
 
     override fun log(level: LogLevel, message: String) {
         when (level) {
@@ -39,6 +41,10 @@ class SpigotEnvironment(val logger: Logger,
 
     override fun set(player: Player) {
         playerStore.put(player.uuid, player)
+    }
+
+    override fun permissions(): Permission? {
+        return hooks.permissions
     }
 
 }
