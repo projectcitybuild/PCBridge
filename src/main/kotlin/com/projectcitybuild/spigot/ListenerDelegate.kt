@@ -2,8 +2,7 @@ package com.projectcitybuild.spigot
 
 import com.projectcitybuild.core.contracts.Environment
 import com.projectcitybuild.core.contracts.Listenable
-import com.projectcitybuild.entities.models.LogLevel
-import org.bukkit.event.Event
+import com.projectcitybuild.entities.LogLevel
 import org.bukkit.event.HandlerList
 import org.bukkit.plugin.java.JavaPlugin
 import java.lang.ref.WeakReference

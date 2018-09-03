@@ -1,0 +1,3 @@
+package com.projectcitybuild.entities.requests
+
+data class GameBanStatusRequest

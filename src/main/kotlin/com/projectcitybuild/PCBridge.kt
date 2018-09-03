@@ -19,17 +19,25 @@ class PCBridge : JavaPlugin() {
     private var commandDelegate: CommandDelegate? = null
     private var listenerDelegate: ListenerDelegate? = null
 
+    private val weakRef: WeakReference<JavaPlugin>
+        get() = WeakReference(this)
+
     override fun onEnable() {
         super.onEnable()
 
         createDefaultConfig()
 
-        val pluginHooks = SpigotPluginHook(plugin = WeakReference(this))
-        val playerStore = SpigotPlayerStore(plugin = WeakReference(this))
-        val environment = SpigotEnvironment(logger = logger, playerStore = playerStore.store, config = config, hooks = pluginHooks)
+        val pluginHooks = SpigotPluginHook(plugin = weakRef)
+        val playerStore = SpigotPlayerStore(plugin = weakRef)
+        val environment = SpigotEnvironment(
+                logger = logger,
+                playerStore = playerStore.store,
+                config = config,
+                hooks = pluginHooks
+        )
 
-        commandDelegate = CommandDelegate(plugin = WeakReference(this), environment = environment)
-        listenerDelegate = ListenerDelegate(plugin = WeakReference(this), environment = environment)
+        commandDelegate = CommandDelegate(plugin = weakRef, environment = environment)
+        listenerDelegate = ListenerDelegate(plugin = weakRef, environment = environment)
 
         this.register(modules = arrayOf(
                 BanController(),

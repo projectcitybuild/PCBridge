@@ -1,6 +1,6 @@
 package com.projectcitybuild.core.contracts
 
-import com.projectcitybuild.entities.models.LogLevel
+import com.projectcitybuild.entities.LogLevel
 import com.projectcitybuild.entities.models.Player
 import com.projectcitybuild.entities.models.PluginConfigPair
 import net.milkbowl.vault.permission.Permission
