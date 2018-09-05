@@ -5,6 +5,7 @@ import com.projectcitybuild.core.contracts.Environment
 import com.projectcitybuild.entities.LogLevel
 import com.projectcitybuild.entities.requests.GameBanStatusRequest
 import org.bukkit.command.CommandSender
+import java.util.*
 
 class BanStatusCommand : Commandable {
     override var environment: Environment? = null
@@ -14,15 +15,26 @@ class BanStatusCommand : Commandable {
         val environment = environment ?: throw Exception("Environment is null")
         val banApi = environment.apiClient().banApi
 
-        val request = GameBanStatusRequest(playerId = "bee2c0bb-2f5b-47ce-93f9-734b3d7fef5f", playerType = "minecraft_uuid")
-        val response = banApi.requestStatus(request).execute()
-        val status = response.body()
+        val request = banApi.requestStatus(playerId = "bee2c0bb-2f5b-47ce-93f9-734b3d7fef5f", playerType = "minecraft_uuid")
+        val response = request.execute()
+        val json = response.body()
 
-        if (status != null) {
-            environment.log(LogLevel.INFO, status.reason)
-        } else {
-            environment.log(LogLevel.INFO, "Status is null")
+        if (json?.data == null) {
+            sender.sendMessage("User is not currently banned")
+            return true
         }
+
+        val status = json.data
+        if (!status.isActive) {
+            sender.sendMessage("User is not currently banned")
+            return true
+        }
+
+        if (status.expiresAt != null && status.expiresAt <= Date().time) {
+            sender.sendMessage("User is not currently banned")
+            return true
+        }
+
         return true
     }
 }
