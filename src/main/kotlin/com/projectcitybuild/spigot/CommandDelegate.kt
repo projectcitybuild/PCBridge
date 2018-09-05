@@ -2,6 +2,7 @@ package com.projectcitybuild.spigot
 
 import com.projectcitybuild.core.contracts.Commandable
 import com.projectcitybuild.core.contracts.Environment
+import com.projectcitybuild.entities.LogLevel
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
 import java.lang.ref.WeakReference
@@ -22,6 +23,7 @@ internal class CommandDelegate constructor(val plugin: WeakReference<JavaPlugin>
                     )
                 } catch (error: Exception) {
                     sender.sendMessage("An error occurred performing a command")
+                    error.localizedMessage.let { message -> environment.log(LogLevel.FATAL, message) }
                     true
                 }
             }

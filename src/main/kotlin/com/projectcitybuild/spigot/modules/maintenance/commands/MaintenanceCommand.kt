@@ -45,5 +45,6 @@ class MaintenanceCommand : Commandable {
                 sender.sendMessage("Server is now open to all players")
             }
         }
+        return true
     }
 }

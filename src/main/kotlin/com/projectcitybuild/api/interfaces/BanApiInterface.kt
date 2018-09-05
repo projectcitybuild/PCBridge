@@ -16,7 +16,7 @@ interface BanApiInterface {
     @POST("bans/store/unban")
     fun storeUnban(@Body request: GameUnbanRequest) : Call<GameUnban>
 
-    @POST("bans/status/check")
-    fun requestStatus(@Body request: GameBanStatusRequest) : Call<List<GameBan>?>
+    @POST("bans/status")
+    fun requestStatus(@Body request: GameBanStatusRequest) : Call<GameBan?>
 
 }

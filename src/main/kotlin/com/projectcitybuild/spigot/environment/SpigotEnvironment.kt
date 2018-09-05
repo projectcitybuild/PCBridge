@@ -1,9 +1,11 @@
 package com.projectcitybuild.spigot.environment
 
+import com.projectcitybuild.api.client.PCBClient
 import com.projectcitybuild.core.contracts.Environment
 import com.projectcitybuild.core.services.PlayerStore
 import com.projectcitybuild.entities.LogLevel
 import com.projectcitybuild.entities.models.Player
+import com.projectcitybuild.entities.models.PluginConfig
 import com.projectcitybuild.entities.models.PluginConfigPair
 import net.milkbowl.vault.permission.Permission
 import org.bukkit.configuration.file.FileConfiguration
@@ -17,8 +19,6 @@ class SpigotEnvironment(private val logger: Logger,
 
     override fun log(level: LogLevel, message: String) {
         when (level) {
-//            LogLevel.VERBOSE -> logger.finest(message)
-//            LogLevel.DEBUG -> logger.fine(message)
             LogLevel.VERBOSE -> logger.info(message)    // spigot doesn't log FINEST level properly
             LogLevel.DEBUG -> logger.info(message)      // spigot doesn't log FINE level properly
             LogLevel.INFO -> logger.info(message)
@@ -45,6 +45,22 @@ class SpigotEnvironment(private val logger: Logger,
 
     override fun permissions(): Permission? {
         return hooks.permissions
+    }
+
+
+    private var client: PCBClient? = null
+
+    override fun apiClient(): PCBClient {
+        if (client == null) {
+            val authToken = get(PluginConfig.Api.KEY()) as? String
+                    ?: throw Exception("Could not cast auth token to String")
+
+            val baseUrl = get(PluginConfig.Api.BASE_URL()) as? String
+                    ?: throw Exception("Could not cast base url to String")
+
+            client = PCBClient(authToken = authToken, baseUrl = baseUrl)
+        }
+        return client!!
     }
 
 }

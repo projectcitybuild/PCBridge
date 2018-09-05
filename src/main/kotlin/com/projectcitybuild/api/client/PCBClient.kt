@@ -2,31 +2,40 @@ package com.projectcitybuild.api.client
 
 import com.projectcitybuild.api.interfaces.BanApiInterface
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class PCBClient(private val token: String) {
+class PCBClient(private val authToken: String,
+                private val baseUrl: String) {
+
     private val instance: Retrofit = build()
 
-    val banAPI = instance.create(BanApiInterface::class.java)
+    val banApi: BanApiInterface = instance.create(BanApiInterface::class.java)
 
     private fun build() : Retrofit {
-        val authenticatedClient = makeAuthenticatedClient(token)
+        val authenticatedClient = makeAuthenticatedClient(authToken)
         return Retrofit.Builder()
-                .baseUrl("https://projectcitybuild.com/api")
+                .baseUrl(baseUrl)
                 .client(authenticatedClient)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
     }
 
     private fun makeAuthenticatedClient(token: String) : OkHttpClient {
-        val clientFactory = OkHttpClient().newBuilder().addInterceptor { chain ->
-            val request = chain.request()
-            val requestBuilder = request.newBuilder().header("Authorization", token)
-            val nextRequest = requestBuilder.build()
+        val interceptor = HttpLoggingInterceptor()
+        interceptor.level = HttpLoggingInterceptor.Level.BODY
 
-            chain.proceed(nextRequest)
-        }
+        val clientFactory = OkHttpClient().newBuilder()
+                .addInterceptor { chain ->
+                    val request = chain.request()
+                    val requestBuilder = request.newBuilder().header("Authorization", "Bearer $token")
+                    val nextRequest = requestBuilder.build()
+
+                    chain.proceed(nextRequest)
+                }
+                .addInterceptor(interceptor)
+
         return clientFactory.build()
     }
 }
