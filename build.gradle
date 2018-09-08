@@ -18,6 +18,12 @@ buildscript {
 apply plugin: 'kotlin'
 apply plugin: 'com.github.johnrengelman.shadow'
 
+kotlin {
+    experimental {
+        coroutines 'enable'
+    }
+}
+
 sourceCompatibility = 1.8
 
 repositories {
@@ -27,15 +33,18 @@ repositories {
     maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
     maven { url = 'https://oss.sonatype.org/content/repositories/snapshots' }
     maven { url = 'http://nexus.hc.to/content/repositories/pub_releases' }
+    maven { url = 'http://nexus.okkero.com/repository/maven-releases/' }
 }
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    compile 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.21'
     compileOnly 'org.spigotmc:spigot-api:1.12.2-R0.1-SNAPSHOT'
     compile 'com.squareup.retrofit2:retrofit:2.3.0'
     compile 'com.squareup.retrofit2:converter-gson:2.3.0'
     compile 'com.squareup.okhttp3:logging-interceptor:3.5.0'
     compile 'net.milkbowl.vault:VaultAPI:1.6'
+    compile 'com.okkero.skedule:skedule:1.2.3'
 }
 
 compileKotlin {
@@ -51,6 +60,7 @@ shadowJar {
         include(dependency('org.jetbrains.kotlin:kotlin-stdlib'))
         include(dependency('com.squareup.*:.*'))
         include(dependency('net.milkbowl.vault:VaultAPI'))
+        include(dependency('com.okkero.skedule'))
     }
 }
 

@@ -9,13 +9,18 @@ import com.projectcitybuild.entities.models.PluginConfig
 import com.projectcitybuild.entities.models.PluginConfigPair
 import net.milkbowl.vault.permission.Permission
 import org.bukkit.configuration.file.FileConfiguration
+import org.bukkit.plugin.java.JavaPlugin
+import java.lang.ref.WeakReference
 import java.util.*
 import java.util.logging.Logger
 
-class SpigotEnvironment(private val logger: Logger,
-                        private val playerStore: PlayerStore,
-                        private val config: FileConfiguration,
-                        private val hooks: SpigotPluginHook) : Environment {
+class SpigotEnvironment(
+        private val pluginRef: WeakReference<JavaPlugin>,
+        private val logger: Logger,
+        private val playerStore: PlayerStore,
+        private val config: FileConfiguration,
+        private val hooks: SpigotPluginHook
+) : Environment {
 
     override fun log(level: LogLevel, message: String) {
         when (level) {
@@ -43,24 +48,24 @@ class SpigotEnvironment(private val logger: Logger,
         playerStore.put(player.uuid, player)
     }
 
-    override fun permissions(): Permission? {
-        return hooks.permissions
-    }
 
+    override val permissions: Permission? = hooks.permissions
 
     private var client: PCBClient? = null
+    override val apiClient: PCBClient
+        get() {
+            if (client == null) {
+                val authToken = get(PluginConfig.Api.KEY()) as? String
+                        ?: throw Exception("Could not cast auth token to String")
 
-    override fun apiClient(): PCBClient {
-        if (client == null) {
-            val authToken = get(PluginConfig.Api.KEY()) as? String
-                    ?: throw Exception("Could not cast auth token to String")
+                val baseUrl = get(PluginConfig.Api.BASE_URL()) as? String
+                        ?: throw Exception("Could not cast base url to String")
 
-            val baseUrl = get(PluginConfig.Api.BASE_URL()) as? String
-                    ?: throw Exception("Could not cast base url to String")
-
-            client = PCBClient(authToken = authToken, baseUrl = baseUrl)
+                client = PCBClient(authToken = authToken, baseUrl = baseUrl)
+            }
+            return client!!
         }
-        return client!!
-    }
 
+    override val plugin: JavaPlugin?
+        get() = pluginRef.get()
 }

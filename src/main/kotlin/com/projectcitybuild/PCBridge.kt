@@ -30,6 +30,7 @@ class PCBridge : JavaPlugin() {
         val pluginHooks = SpigotPluginHook(plugin = weakRef)
         val playerStore = SpigotPlayerStore(plugin = weakRef)
         val environment = SpigotEnvironment(
+                pluginRef = WeakReference(this),
                 logger = logger,
                 playerStore = playerStore.store,
                 config = config,

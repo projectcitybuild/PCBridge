@@ -2,8 +2,6 @@ package com.projectcitybuild.spigot.modules.bans.commands
 
 import com.projectcitybuild.core.contracts.Commandable
 import com.projectcitybuild.core.contracts.Environment
-import com.projectcitybuild.entities.LogLevel
-import com.projectcitybuild.entities.requests.GameBanStatusRequest
 import org.bukkit.command.CommandSender
 import java.util.*
 
@@ -13,7 +11,7 @@ class BanStatusCommand : Commandable {
 
     override fun execute(sender: CommandSender, args: Array<String>, isConsole: Boolean): Boolean {
         val environment = environment ?: throw Exception("Environment is null")
-        val banApi = environment.apiClient().banApi
+        val banApi = environment.apiClient.banApi
 
         val request = banApi.requestStatus(playerId = "bee2c0bb-2f5b-47ce-93f9-734b3d7fef5f", playerType = "minecraft_uuid")
         val response = request.execute()
