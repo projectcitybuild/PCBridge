@@ -1,5 +1,6 @@
 package com.projectcitybuild.core.contracts
 
+import com.projectcitybuild.api.client.MojangClient
 import com.projectcitybuild.api.client.PCBClient
 import com.projectcitybuild.entities.LogLevel
 import com.projectcitybuild.entities.models.Player
@@ -19,6 +20,9 @@ interface Environment {
         get() = throw NotImplementedError()
 
     val apiClient: PCBClient
+        get() = throw NotImplementedError()
+
+    val mojangClient: MojangClient
         get() = throw NotImplementedError()
 
     val plugin: JavaPlugin?

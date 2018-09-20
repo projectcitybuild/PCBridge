@@ -1,5 +1,6 @@
 package com.projectcitybuild.spigot.environment
 
+import com.projectcitybuild.api.client.MojangClient
 import com.projectcitybuild.api.client.PCBClient
 import com.projectcitybuild.core.contracts.Environment
 import com.projectcitybuild.core.services.PlayerStore
@@ -51,20 +52,22 @@ class SpigotEnvironment(
 
     override val permissions: Permission? = hooks.permissions
 
-    private var client: PCBClient? = null
+    private var pcbClient: PCBClient? = null
     override val apiClient: PCBClient
         get() {
-            if (client == null) {
+            if (pcbClient == null) {
                 val authToken = get(PluginConfig.Api.KEY()) as? String
                         ?: throw Exception("Could not cast auth token to String")
 
                 val baseUrl = get(PluginConfig.Api.BASE_URL()) as? String
                         ?: throw Exception("Could not cast base url to String")
 
-                client = PCBClient(authToken = authToken, baseUrl = baseUrl)
+                pcbClient = PCBClient(authToken = authToken, baseUrl = baseUrl)
             }
-            return client!!
+            return pcbClient!!
         }
+
+    override val mojangClient: MojangClient = MojangClient()
 
     override val plugin: JavaPlugin?
         get() = pluginRef.get()

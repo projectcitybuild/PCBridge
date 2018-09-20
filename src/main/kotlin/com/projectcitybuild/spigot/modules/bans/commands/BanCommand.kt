@@ -3,8 +3,10 @@ package com.projectcitybuild.spigot.modules.bans.commands
 import com.okkero.skedule.BukkitDispatcher
 import com.projectcitybuild.core.contracts.Commandable
 import com.projectcitybuild.core.contracts.Environment
+import com.projectcitybuild.core.extensions.toDashFormattedUUID
 import com.projectcitybuild.spigot.extensions.getOnlinePlayer
 import com.projectcitybuild.spigot.modules.bans.actions.CreateBanAction
+import com.projectcitybuild.spigot.modules.bans.actions.GetMojangPlayerAction
 import kotlinx.coroutines.experimental.launch
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
@@ -20,18 +22,34 @@ class BanCommand : Commandable {
 
         if (args.isEmpty()) return false
 
-        val targetPlayerName = args.first()
-        val targetPlayer = sender.server.getOnlinePlayer(name = targetPlayerName)
-        if (targetPlayer == null) {
-        }
-
         val staffPlayer = if(isConsole) null else sender as Player
         val reason = if(args.size > 1) args.sliceArray(1..args.size).joinToString(separator = " ") else null
 
         launch(BukkitDispatcher(plugin, async = true)) {
+            var targetUUID: UUID? = null
+            val targetPlayerName = args.first()
+            val targetPlayer = sender.server.getOnlinePlayer(name = targetPlayerName)
+            if (targetPlayer != null) {
+                targetUUID = targetPlayer.uniqueId
+            } else {
+                val mojangPlayerAction = GetMojangPlayerAction(environment)
+                val result = mojangPlayerAction.execute(playerName = targetPlayerName)
+                if (result is GetMojangPlayerAction.Result.FAILED) {
+                    sender.sendMessage("That player does not exist in Mojang's database")
+                    return@launch
+                }
+                if (result is GetMojangPlayerAction.Result.SUCCESS) {
+                    targetUUID = UUID.fromString(result.player.uuid.toDashFormattedUUID())
+                }
+            }
+            if (targetUUID == null) {
+                sender.sendMessage("Error: Failed to retrieve UUID of given player")
+                return@launch
+            }
+
             val action = CreateBanAction(environment)
             val result = action.execute(
-                    playerId = UUID.fromString("bee2c0bb-2f5b-47ce-93f9-734b3d7fef5f"),
+                    playerId = targetUUID,
                     playerName = targetPlayerName,
                     staffId = staffPlayer?.uniqueId,
                     reason = reason
