@@ -8,6 +8,7 @@ import retrofit2.http.POST
 
 interface BanApiInterface {
 
+    @FormUrlEncoded
     @POST("bans/store/ban")
     fun storeBan(
             @Field("player_id") playerId: String,
@@ -20,6 +21,7 @@ interface BanApiInterface {
             @Field("is_global_ban") isGlobalBan: Boolean
     ) : Call<ApiResponse<GameBan>>
 
+    @FormUrlEncoded
     @POST("bans/store/unban")
     fun storeUnban(
             @Field("player_id") playerId: String,
