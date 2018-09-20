@@ -3,6 +3,9 @@ A Spigot plugin to bridge [Project City Build](https://projectcitybuild.com) and
 (Currently being rewritten in Kotlin)
 
 ## Commands:
-* /mute [name]
-* /unmute [name]
+* /ban <name> [reason]
+* /unban <name>
+* /status <name>
+* /mute <name>
+* /unmute <name>
 * /maintenance [on|off]
