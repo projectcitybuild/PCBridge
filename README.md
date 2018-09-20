@@ -3,9 +3,9 @@ A Spigot plugin to bridge [Project City Build](https://projectcitybuild.com) and
 (Currently being rewritten in Kotlin)
 
 ## Commands:
-* /ban <name> [reason]
-* /unban <name>
-* /status <name>
-* /mute <name>
-* /unmute <name>
-* /maintenance [on|off]
+* `/ban <name> [reason]` - Bans a player from the PCB game network
+* `/unban <name>` - Unbans a player
+* `/status <name>` - Checks the ban status of a player
+* `/mute <name>` - Prevents a player from sending chat messages
+* `/unmute <name>` - Removes a player's mute
+* `/maintenance [on|off]` - Puts the server into Maintenance Mode; no non-staff player can join while active
