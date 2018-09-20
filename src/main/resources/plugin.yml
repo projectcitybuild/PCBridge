@@ -15,6 +15,9 @@ commands:
    ban:
       description: Globally bans a player from connecting to any PCB game servers
       usage: /ban <name> [reason]
+   unban:
+      description: Globally unbans a player from all PCB game servers
+      usage: /unban <name>
    status:
       description: Checks the ban status of the given player
       usage: /status <name>
