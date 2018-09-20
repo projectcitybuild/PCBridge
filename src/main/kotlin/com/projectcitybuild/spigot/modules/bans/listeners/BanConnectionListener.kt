@@ -13,7 +13,7 @@ class BanConnectionListener : Listenable<PlayerJoinEvent> {
     @EventHandler(priority = EventPriority.HIGHEST)
     override fun observe(event: PlayerJoinEvent) {
         val environment = environment ?: throw Exception("Environment is null")
-        val banApi = environment.apiClient().banApi
+        val banApi = environment.apiClient.banApi
 
         val request = banApi.requestStatus(playerId = event.player.uniqueId.toString(), playerType = "minecraft_uuid")
         val response = request.execute()

@@ -1,6 +1,7 @@
 package com.projectcitybuild.spigot.modules.bans.actions
 
 import com.projectcitybuild.core.contracts.Environment
+import java.util.*
 
 class CreateBanAction(private val environment: Environment) {
     sealed class Result {
@@ -13,14 +14,14 @@ class CreateBanAction(private val environment: Environment) {
         DESERIALIZE_FAILED,
     }
 
-    fun execute(playerName: String, staffId: String?, reason: String?) : Result {
+    fun execute(playerId: UUID, playerName: String, staffId: UUID?, reason: String?) : Result {
         val banApi = environment.apiClient.banApi
 
         val request = banApi.storeBan(
-                playerId = "bee2c0bb-2f5b-47ce-93f9-734b3d7fef5f",
+                playerId = playerId.toString(),
                 playerIdType = "minecraft_uuid",
                 playerAlias = playerName,
-                staffId = staffId,
+                staffId = staffId.toString(),
                 staffIdType = "minecraft_uuid",
                 reason = reason,
                 expiresAt = null,

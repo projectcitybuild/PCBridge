@@ -58,9 +58,10 @@ compileTestKotlin {
 shadowJar {
     dependencies {
         include(dependency('org.jetbrains.kotlin:kotlin-stdlib'))
+        include(dependency('org.jetbrains.kotlinx:kotlinx-coroutines-core'))
         include(dependency('com.squareup.*:.*'))
         include(dependency('net.milkbowl.vault:VaultAPI'))
-        include(dependency('com.okkero.skedule'))
+        include(dependency('com.okkero.skedule.*:.*'))
     }
 }
 

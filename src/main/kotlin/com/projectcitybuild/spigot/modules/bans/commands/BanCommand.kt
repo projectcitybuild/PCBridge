@@ -1,16 +1,14 @@
 package com.projectcitybuild.spigot.modules.bans.commands
 
 import com.okkero.skedule.BukkitDispatcher
-import com.okkero.skedule.SynchronizationContext
-import com.okkero.skedule.schedule
 import com.projectcitybuild.core.contracts.Commandable
 import com.projectcitybuild.core.contracts.Environment
 import com.projectcitybuild.spigot.extensions.getOnlinePlayer
 import com.projectcitybuild.spigot.modules.bans.actions.CreateBanAction
 import kotlinx.coroutines.experimental.launch
-import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
+import java.util.*
 
 class BanCommand : Commandable {
     override var environment: Environment? = null
@@ -33,11 +31,11 @@ class BanCommand : Commandable {
         launch(BukkitDispatcher(plugin, async = true)) {
             val action = CreateBanAction(environment)
             val result = action.execute(
+                    playerId = UUID.fromString("bee2c0bb-2f5b-47ce-93f9-734b3d7fef5f"),
                     playerName = targetPlayerName,
-                    staffId = staffPlayer?.uniqueId.toString(),
+                    staffId = staffPlayer?.uniqueId,
                     reason = reason
             )
-
             if (result is CreateBanAction.Result.FAILED) {
                 when (result.reason) {
                     CreateBanAction.Failure.PLAYER_ALREADY_BANNED -> {
