@@ -7,7 +7,6 @@ import com.projectcitybuild.spigot.extensions.getOfflinePlayer
 import com.projectcitybuild.spigot.modules.bans.actions.CheckBanStatusAction
 import kotlinx.coroutines.experimental.launch
 import org.bukkit.command.CommandSender
-import java.util.*
 
 class BanStatusCommand : Commandable {
     override var environment: Environment? = null
@@ -40,7 +39,13 @@ class BanStatusCommand : Commandable {
                 if (result.ban == null) {
                     sender.sendMessage("Player is not currently banned")
                 } else {
-                    sender.sendMessage(result.ban.reason)
+                    sender.sendMessage("""
+                        $targetPlayerName is currently banned.
+                        ---
+                        Reason: ${result.ban.reason}
+                        Date: ${result.ban.createdAt}
+                        Expires: ${result.ban.expiresAt ?: "Never"}
+                    """)
                 }
             }
         }
