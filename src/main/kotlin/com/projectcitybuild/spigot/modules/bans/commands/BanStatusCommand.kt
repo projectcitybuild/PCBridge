@@ -3,6 +3,7 @@ package com.projectcitybuild.spigot.modules.bans.commands
 import com.okkero.skedule.BukkitDispatcher
 import com.projectcitybuild.core.contracts.Commandable
 import com.projectcitybuild.core.contracts.Environment
+import com.projectcitybuild.spigot.extensions.getOfflinePlayer
 import com.projectcitybuild.spigot.modules.bans.actions.CheckBanStatusAction
 import kotlinx.coroutines.experimental.launch
 import org.bukkit.command.CommandSender
@@ -17,9 +18,16 @@ class BanStatusCommand : Commandable {
         val plugin = environment.plugin ?: throw Exception("Plugin has already been deallocated")
 
         launch(BukkitDispatcher(plugin, async = true)) {
+            val targetPlayerName = args.first()
+            val playerUUID = sender.server.getOfflinePlayer(name = targetPlayerName, environment = environment)
+            if (playerUUID == null) {
+                sender.sendMessage("Error: Failed to retrieve UUID of given player")
+                return@launch
+            }
+
             val action = CheckBanStatusAction(environment)
             val result = action.execute(
-                    playerId = UUID.fromString("bee2c0bb-2f5b-47ce-93f9-734b3d7fef5f")
+                    playerId = playerUUID
             )
             if (result is CheckBanStatusAction.Result.FAILED) {
                 when (result.reason) {
