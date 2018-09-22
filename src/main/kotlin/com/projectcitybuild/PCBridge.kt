@@ -10,6 +10,7 @@ import com.projectcitybuild.spigot.environment.SpigotPluginHook
 import com.projectcitybuild.spigot.modules.bans.BanController
 import com.projectcitybuild.spigot.modules.chat.ChatController
 import com.projectcitybuild.spigot.modules.maintenance.MaintenanceController
+import com.projectcitybuild.spigot.modules.ranks.RankController
 import com.projectcitybuild.spigot.stores.SpigotPlayerStore
 import org.bukkit.plugin.java.JavaPlugin
 import java.lang.ref.WeakReference
@@ -43,7 +44,8 @@ class PCBridge : JavaPlugin() {
         this.register(modules = arrayOf(
                 BanController(),
                 ChatController(),
-                MaintenanceController()
+                MaintenanceController(),
+                RankController()
         ))
 
         logger.info("PCBridge ready")

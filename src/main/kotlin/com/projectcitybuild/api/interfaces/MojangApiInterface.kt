@@ -1,6 +1,6 @@
 package com.projectcitybuild.api.interfaces
 
-import com.projectcitybuild.entities.models.*
+import com.projectcitybuild.entities.models.MojangPlayer
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Path
