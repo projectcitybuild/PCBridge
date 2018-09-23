@@ -23,13 +23,13 @@ class BanConnectionListener : Listenable<AsyncPlayerPreLoginEvent> {
             event.disallow(
                     AsyncPlayerPreLoginEvent.Result.KICK_BANNED,
                     """
-                        ${RawColor.RED}${RawFormat.BOLD}You are currently banned.${RawFormat.RESET}\n\n
+                        ${RawColor.RED}${RawFormat.BOLD}You are currently banned.${RawFormat.RESET}
 
-                        ${RawColor.GRAY}Reason: ${RawColor.WHITE}${result.ban.reason}\n
-                        ${RawColor.GRAY}Expires: ${RawColor.WHITE}${result.ban.expiresAt}\n\n
+                        ${RawColor.GRAY}Reason: ${RawColor.WHITE}${result.ban.reason}
+                        ${RawColor.GRAY}Expires: ${RawColor.WHITE}${result.ban.expiresAt ?: "Never"}
 
                         ${RawColor.AQUA}Appeal @ https://projectcitybuild.com
-                    """
+                    """.trimIndent()
             )
         }
     }
