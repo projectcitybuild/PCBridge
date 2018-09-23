@@ -2,27 +2,35 @@ package com.projectcitybuild.spigot.modules.bans.listeners
 
 import com.projectcitybuild.core.contracts.Environment
 import com.projectcitybuild.core.contracts.Listenable
+import com.projectcitybuild.spigot.environment.RawColor
+import com.projectcitybuild.spigot.environment.RawFormat
+import com.projectcitybuild.spigot.modules.bans.actions.CheckBanStatusAction
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
-import org.bukkit.event.player.PlayerJoinEvent
-import java.util.*
+import org.bukkit.event.player.AsyncPlayerPreLoginEvent
 
-class BanConnectionListener : Listenable<PlayerJoinEvent> {
+class BanConnectionListener : Listenable<AsyncPlayerPreLoginEvent> {
     override var environment: Environment? = null
 
     @EventHandler(priority = EventPriority.HIGHEST)
-    override fun observe(event: PlayerJoinEvent) {
+    override fun observe(event: AsyncPlayerPreLoginEvent) {
         val environment = environment ?: throw Exception("Environment is null")
-        val banApi = environment.apiClient.banApi
 
-        val request = banApi.requestStatus(playerId = event.player.uniqueId.toString(), playerType = "minecraft_uuid")
-        val response = request.execute()
+        val action = CheckBanStatusAction(environment)
+        val result = action.execute(playerId = event.uniqueId)
 
-        val status = response.body()?.data ?: return
+        if (result is CheckBanStatusAction.Result.SUCCESS && result.ban != null) {
+            event.disallow(
+                    AsyncPlayerPreLoginEvent.Result.KICK_BANNED,
+                    """
+                        ${RawColor.RED}${RawFormat.BOLD}You are currently banned.${RawFormat.RESET}\n\n
 
-        if (status.isActive == false) return
-        if (status.expiresAt != null && status.expiresAt <= Date().time) return
+                        ${RawColor.GRAY}Reason: ${RawColor.WHITE}${result.ban.reason}\n
+                        ${RawColor.GRAY}Expires: ${RawColor.WHITE}${result.ban.expiresAt}\n\n
 
-        event.player.kickPlayer("You are currently banned. Please appeal @ https://projectcitybuild.com")
+                        ${RawColor.AQUA}Appeal @ https://projectcitybuild.com
+                    """
+            )
+        }
     }
 }

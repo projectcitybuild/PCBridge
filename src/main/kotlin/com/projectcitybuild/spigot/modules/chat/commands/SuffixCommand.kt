@@ -26,8 +26,8 @@ class SuffixCommand : Commandable {
         }
 
         if (args.size == 1) {
-            val suffix = environment?.chat?.getPlayerSuffix(targetPlayer)
-            sender.sendMessage("Suffix for ${targetPlayer.name}: $suffix")
+            environment?.chat?.setPlayerSuffix(targetPlayer, null)
+            sender.sendMessage("${targetPlayer.name} suffix reset")
             return true
         }
         if (args.size == 2) {

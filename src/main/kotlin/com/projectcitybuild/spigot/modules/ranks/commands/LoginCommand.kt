@@ -9,7 +9,7 @@ import org.bukkit.entity.Player
 
 class LoginCommand : Commandable {
     override var environment: Environment? = null
-    override val label: String = "maintenance"
+    override val label: String = "login"
 
     override fun execute(sender: CommandSender, args: Array<String>, isConsole: Boolean): Boolean {
         val environment = environment ?: throw Exception("Environment is null")

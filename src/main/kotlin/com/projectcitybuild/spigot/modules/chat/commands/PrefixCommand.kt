@@ -26,8 +26,8 @@ class PrefixCommand : Commandable {
         }
 
         if (args.size == 1) {
-            val prefix = environment?.chat?.getPlayerPrefix(targetPlayer)
-            sender.sendMessage("Prefix for ${targetPlayer.name}: $prefix")
+            environment?.chat?.setPlayerPrefix(targetPlayer, null)
+            sender.sendMessage("${targetPlayer.name} prefix reset")
             return true
         }
         if (args.size == 2) {
