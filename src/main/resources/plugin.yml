@@ -12,6 +12,12 @@ commands:
    unmute:
       description: Removes a chat mute on a player
       usage: /unmute <name>
+   prefix:
+      description: Sets (or gets) the prefix of a player
+      usage: /prefix <name> [prefix]
+   suffix:
+         description: Sets (or gets) the suffix of a player
+         usage: /suffix <name> [suffix]
    ban:
       description: Globally bans a player from connecting to any PCB game servers
       usage: /ban <name> [reason]

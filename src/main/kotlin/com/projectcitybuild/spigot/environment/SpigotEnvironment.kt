@@ -8,6 +8,7 @@ import com.projectcitybuild.entities.LogLevel
 import com.projectcitybuild.entities.models.Player
 import com.projectcitybuild.entities.models.PluginConfig
 import com.projectcitybuild.entities.models.PluginConfigPair
+import net.milkbowl.vault.chat.Chat
 import net.milkbowl.vault.permission.Permission
 import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.plugin.java.JavaPlugin
@@ -51,6 +52,7 @@ class SpigotEnvironment(
 
 
     override val permissions: Permission? = hooks.permissions
+    override val chat: Chat? = hooks.chat
 
     private var pcbClient: PCBClient? = null
     override val apiClient: PCBClient

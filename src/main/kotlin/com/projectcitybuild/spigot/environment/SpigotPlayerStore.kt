@@ -1,4 +1,4 @@
-package com.projectcitybuild.spigot.stores
+package com.projectcitybuild.spigot.environment
 
 import com.projectcitybuild.spigot.extensions.makeModel
 import com.projectcitybuild.core.contracts.PlayerStoreWrapper

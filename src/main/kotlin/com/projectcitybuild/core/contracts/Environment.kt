@@ -5,6 +5,7 @@ import com.projectcitybuild.api.client.PCBClient
 import com.projectcitybuild.entities.LogLevel
 import com.projectcitybuild.entities.models.Player
 import com.projectcitybuild.entities.models.PluginConfigPair
+import net.milkbowl.vault.chat.Chat
 import net.milkbowl.vault.permission.Permission
 import org.bukkit.plugin.java.JavaPlugin
 import java.util.*
@@ -17,6 +18,9 @@ interface Environment {
     fun set(player: Player) { throw NotImplementedError() }
 
     val permissions: Permission?
+        get() = throw NotImplementedError()
+
+    val chat: Chat?
         get() = throw NotImplementedError()
 
     val apiClient: PCBClient
