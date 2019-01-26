@@ -1,6 +1,8 @@
 package com.projectcitybuild
 
+import com.projectcitybuild.core.contracts.CommandDelegatable
 import com.projectcitybuild.core.contracts.Controller
+import com.projectcitybuild.core.contracts.ListenerDelegatable
 import com.projectcitybuild.spigot.extensions.addDefault
 import com.projectcitybuild.entities.models.PluginConfig
 import com.projectcitybuild.spigot.CommandDelegate
@@ -17,8 +19,8 @@ import java.lang.ref.WeakReference
 
 class PCBridge : JavaPlugin() {
 
-    private var commandDelegate: CommandDelegate? = null
-    private var listenerDelegate: ListenerDelegate? = null
+    private var commandDelegate: CommandDelegatable? = null
+    private var listenerDelegate: ListenerDelegatable? = null
 
     private val weakRef: WeakReference<JavaPlugin>
         get() = WeakReference(this)
