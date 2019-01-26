@@ -5,14 +5,11 @@ import com.projectcitybuild.core.contracts.Controller
 import com.projectcitybuild.core.contracts.ListenerDelegatable
 import com.projectcitybuild.spigot.extensions.addDefault
 import com.projectcitybuild.entities.models.PluginConfig
-import com.projectcitybuild.spigot.CommandDelegate
-import com.projectcitybuild.spigot.ListenerDelegate
+import com.projectcitybuild.spigot.SpigotCommandDelegate
+import com.projectcitybuild.spigot.SpigotListenerDelegate
+import com.projectcitybuild.spigot.SpigotEventController
 import com.projectcitybuild.spigot.environment.SpigotEnvironment
 import com.projectcitybuild.spigot.environment.SpigotPluginHook
-import com.projectcitybuild.spigot.modules.bans.BanController
-import com.projectcitybuild.spigot.modules.chat.ChatController
-import com.projectcitybuild.spigot.modules.maintenance.MaintenanceController
-import com.projectcitybuild.spigot.modules.ranks.RankController
 import com.projectcitybuild.spigot.environment.SpigotPlayerStore
 import org.bukkit.plugin.java.JavaPlugin
 import java.lang.ref.WeakReference
@@ -40,14 +37,11 @@ class PCBridge : JavaPlugin() {
                 hooks = pluginHooks
         )
 
-        commandDelegate = CommandDelegate(plugin = weakRef, environment = environment)
-        listenerDelegate = ListenerDelegate(plugin = weakRef, environment = environment)
+        commandDelegate = SpigotCommandDelegate(plugin = weakRef, environment = environment)
+        listenerDelegate = SpigotListenerDelegate(plugin = weakRef, environment = environment)
 
         this.register(modules = arrayOf(
-                BanController(),
-                ChatController(),
-                MaintenanceController(),
-                RankController()
+                SpigotEventController()
         ))
 
         logger.info("PCBridge ready")

@@ -1,6 +1,6 @@
 package com.projectcitybuild.spigot
 
-import com.projectcitybuild.core.contracts.Environment
+import com.projectcitybuild.core.contracts.EnvironmentProvider
 import com.projectcitybuild.core.contracts.Listenable
 import com.projectcitybuild.core.contracts.ListenerDelegatable
 import com.projectcitybuild.entities.LogLevel
@@ -8,9 +8,9 @@ import org.bukkit.event.HandlerList
 import org.bukkit.plugin.java.JavaPlugin
 import java.lang.ref.WeakReference
 
-class ListenerDelegate constructor(
+class SpigotListenerDelegate constructor(
         val plugin: WeakReference<JavaPlugin>,
-        val environment: Environment
+        val environment: EnvironmentProvider
     ): ListenerDelegatable {
 
     override fun register(listener: Listenable<*>) {

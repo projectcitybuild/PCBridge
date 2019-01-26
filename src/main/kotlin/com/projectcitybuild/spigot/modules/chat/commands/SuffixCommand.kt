@@ -2,16 +2,16 @@ package com.projectcitybuild.spigot.modules.chat.commands
 
 import com.projectcitybuild.spigot.extensions.getOnlinePlayer
 import com.projectcitybuild.core.contracts.Commandable
-import com.projectcitybuild.core.contracts.Environment
+import com.projectcitybuild.core.contracts.EnvironmentProvider
 import org.bukkit.command.CommandSender
 
 class SuffixCommand : Commandable {
     override val label: String = "suffix"
 
-    override var environment: Environment? = null
+    override var environment: EnvironmentProvider? = null
 
     override fun execute(sender: CommandSender, args: Array<String>, isConsole: Boolean): Boolean {
-        if (environment == null) throw Exception("Environment missing")
+        if (environment == null) throw Exception("EnvironmentProvider missing")
         if (args.isEmpty() || args.size > 2) return false
 
         val targetPlayerName = args.first()

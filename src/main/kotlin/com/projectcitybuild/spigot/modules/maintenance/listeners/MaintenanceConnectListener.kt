@@ -1,6 +1,6 @@
 package com.projectcitybuild.spigot.modules.maintenance.listeners
 
-import com.projectcitybuild.core.contracts.Environment
+import com.projectcitybuild.core.contracts.EnvironmentProvider
 import com.projectcitybuild.core.contracts.Listenable
 import com.projectcitybuild.entities.models.PluginConfig
 import org.bukkit.event.EventHandler
@@ -8,7 +8,7 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.player.PlayerLoginEvent
 
 class MaintenanceConnectListener : Listenable<PlayerLoginEvent> {
-    override var environment: Environment? = null
+    override var environment: EnvironmentProvider? = null
 
     @EventHandler(priority = EventPriority.HIGHEST)
     override fun observe(event: PlayerLoginEvent) {

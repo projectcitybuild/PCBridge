@@ -2,7 +2,7 @@ package com.projectcitybuild.spigot.environment
 
 import com.projectcitybuild.api.client.MojangClient
 import com.projectcitybuild.api.client.PCBClient
-import com.projectcitybuild.core.contracts.Environment
+import com.projectcitybuild.core.contracts.EnvironmentProvider
 import com.projectcitybuild.core.services.PlayerStore
 import com.projectcitybuild.entities.LogLevel
 import com.projectcitybuild.entities.models.Player
@@ -22,7 +22,7 @@ class SpigotEnvironment(
         private val playerStore: PlayerStore,
         private val config: FileConfiguration,
         private val hooks: SpigotPluginHook
-) : Environment {
+) : EnvironmentProvider {
 
     override fun log(level: LogLevel, message: String) {
         when (level) {

@@ -2,7 +2,7 @@ package com.projectcitybuild.spigot.modules.bans.commands
 
 import com.okkero.skedule.BukkitDispatcher
 import com.projectcitybuild.core.contracts.Commandable
-import com.projectcitybuild.core.contracts.Environment
+import com.projectcitybuild.core.contracts.EnvironmentProvider
 import com.projectcitybuild.spigot.extensions.getOfflinePlayer
 import com.projectcitybuild.actions.CreateUnbanAction
 import kotlinx.coroutines.experimental.launch
@@ -10,11 +10,11 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
 class UnbanCommand : Commandable {
-    override var environment: Environment? = null
+    override var environment: EnvironmentProvider? = null
     override val label: String = "unban"
 
     override fun execute(sender: CommandSender, args: Array<String>, isConsole: Boolean): Boolean {
-        val environment = environment ?: throw Exception("Environment is null")
+        val environment = environment ?: throw Exception("EnvironmentProvider is null")
         val plugin = environment.plugin ?: throw Exception("Plugin has already been deallocated")
 
         if (args.isEmpty()) return false

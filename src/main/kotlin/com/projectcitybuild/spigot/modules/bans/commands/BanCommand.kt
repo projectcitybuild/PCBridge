@@ -2,9 +2,10 @@ package com.projectcitybuild.spigot.modules.bans.commands
 
 import com.okkero.skedule.BukkitDispatcher
 import com.projectcitybuild.core.contracts.Commandable
-import com.projectcitybuild.core.contracts.Environment
+import com.projectcitybuild.core.contracts.EnvironmentProvider
 import com.projectcitybuild.spigot.extensions.getOfflinePlayer
 import com.projectcitybuild.actions.CreateBanAction
+import com.projectcitybuild.core.extensions.joinWithWhitespaces
 import com.projectcitybuild.spigot.modules.bans.interactors.BanCommandInteractor
 import kotlinx.coroutines.experimental.launch
 import org.bukkit.command.CommandSender
@@ -12,24 +13,17 @@ import org.bukkit.entity.Player
 
 class BanCommand: Commandable {
 
-    override var environment: Environment? = null
+    override var environment: EnvironmentProvider? = null
     override val label: String = "ban"
 
     private var interactor: BanCommandInteractor? = null
 
-
-    private fun Array<String>.joinWithWhitespaces(range: IntRange): String? {
-        if (this.size > 1) {
-            return null
-        }
-        return this.sliceArray(range).joinToString(separator = " ")
-    }
-
     override fun execute(sender: CommandSender, args: Array<String>, isConsole: Boolean): Boolean {
+        // TODO: move instantiation out of this class
         interactor = BanCommandInteractor(sender = sender)
 
         val environment = environment
-                ?: throw Exception("Environment is null")
+                ?: throw Exception("EnvironmentProvider is null")
         val plugin = environment.plugin
                 ?: throw Exception("Plugin has already been deallocated")
 

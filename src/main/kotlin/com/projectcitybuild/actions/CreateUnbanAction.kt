@@ -1,9 +1,9 @@
 package com.projectcitybuild.actions
 
-import com.projectcitybuild.core.contracts.Environment
+import com.projectcitybuild.core.contracts.EnvironmentProvider
 import java.util.*
 
-class CreateUnbanAction(private val environment: Environment) {
+class CreateUnbanAction(private val environment: EnvironmentProvider) {
     sealed class Result {
         class SUCCESS : Result()
         class FAILED(val reason: Failure) : Result()

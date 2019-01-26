@@ -1,9 +1,9 @@
 package com.projectcitybuild.actions
 
-import com.projectcitybuild.core.contracts.Environment
+import com.projectcitybuild.core.contracts.EnvironmentProvider
 import com.projectcitybuild.entities.models.MojangPlayer
 
-class GetMojangPlayerAction(private val environment: Environment) {
+class GetMojangPlayerAction(private val environment: EnvironmentProvider) {
     sealed class Result {
         class SUCCESS(val player: MojangPlayer) : Result()
         class FAILED(val reason: Failure) : Result()

@@ -1,9 +1,9 @@
 package com.projectcitybuild.core.contracts
 
 interface Injectable {
-    var environment: Environment?
+    var environment: EnvironmentProvider?
 
-    fun inject(environment: Environment) {
+    fun inject(environment: EnvironmentProvider) {
         this.environment = environment
     }
 }

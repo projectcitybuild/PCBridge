@@ -1,10 +1,10 @@
 package com.projectcitybuild.actions
 
-import com.projectcitybuild.core.contracts.Environment
+import com.projectcitybuild.core.contracts.EnvironmentProvider
 import com.projectcitybuild.entities.models.GameBan
 import java.util.*
 
-class CheckBanStatusAction(private val environment: Environment) {
+class CheckBanStatusAction(private val environment: EnvironmentProvider) {
     sealed class Result {
         class SUCCESS(val ban: GameBan?) : Result()
         class FAILED(val reason: Failure) : Result()

@@ -1,13 +1,13 @@
 package com.projectcitybuild.spigot.extensions
 
-import com.projectcitybuild.core.contracts.Environment
+import com.projectcitybuild.core.contracts.EnvironmentProvider
 import com.projectcitybuild.core.extensions.toDashFormattedUUID
 import com.projectcitybuild.actions.GetMojangPlayerAction
 import org.bukkit.Server
 import org.bukkit.entity.Player
 import java.util.*
 
-fun Server.getOfflinePlayer(name: String, environment : Environment) : UUID? {
+fun Server.getOfflinePlayer(name: String, environment : EnvironmentProvider) : UUID? {
     val player = this.getOnlinePlayer(name)
     if (player != null) {
         return player.uniqueId

@@ -10,7 +10,15 @@ import net.milkbowl.vault.permission.Permission
 import org.bukkit.plugin.java.JavaPlugin
 import java.util.*
 
-interface Environment {
+/**
+ * The dependency injection layer for each platform (Spigot, Bungee, etc).
+ *
+ * Each platform has a different way of performing logging, storing configurations,
+ * displaying chat colors, etc. Therefore each platform must provide its own
+ * specific implementations via an EnvironmentProvider
+ *
+ */
+interface EnvironmentProvider {
     fun get(key: PluginConfigPair) : Any { throw NotImplementedError() }
     fun set(key: PluginConfigPair, value: Any) { throw NotImplementedError() }
     fun log(level: LogLevel, message: String) { System.out.println(message) }

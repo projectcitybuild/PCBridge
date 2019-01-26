@@ -13,10 +13,10 @@ PCBridge is designed to be modular - allowing it to be simultaneously built for 
 * `bungee`: Contains logic specific to just Bungee (not created yet)
 
 #### Environment
-Each target has its own Environment and Module. Spigot contains a `SpigotEnvironment` which serves as a dependency injection layer, providing Spigot specific implementations of services such as the logger, config file, chat colors, plugin hooks, etc.
+Each platform has its own Environment and Module. Spigot contains a `SpigotEnvironment` which serves as a dependency injection layer, providing Spigot specific implementations of services such as the logger, config file, chat colors, plugin hooks, etc.
 
 #### Data Flow
-Each target has a `CommandDelegatable` and `ListenerDelegatable` which serve as the wiring between a user and their events. 
+Each platform has a `CommandDelegatable` and `ListenerDelegatable` which serve as the wiring between a user and their events. 
 
 A command (represented by `Commandable`) is an event where the user types in a command such as `/ban`. A command event is received by the `CommandDelegatable` and dispatches to the relevant command handler - in this case the `BanCommand` - which performs all the required logic and data flow management (think of it as a *Presenter* in MVP). Finally, the data is passed off to an interactor - in this case the `BanCommandInteractor` which just handles user interactions such as displaying text to the command sender, or handling clicking a 'Confirm' link (think of it as the *View* in MVP).
 

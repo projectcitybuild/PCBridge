@@ -1,6 +1,6 @@
 package com.projectcitybuild.spigot.modules.bans.listeners
 
-import com.projectcitybuild.core.contracts.Environment
+import com.projectcitybuild.core.contracts.EnvironmentProvider
 import com.projectcitybuild.core.contracts.Listenable
 import com.projectcitybuild.spigot.environment.RawColor
 import com.projectcitybuild.spigot.environment.RawFormat
@@ -10,11 +10,11 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent
 
 class BanConnectionListener : Listenable<AsyncPlayerPreLoginEvent> {
-    override var environment: Environment? = null
+    override var environment: EnvironmentProvider? = null
 
     @EventHandler(priority = EventPriority.HIGHEST)
     override fun observe(event: AsyncPlayerPreLoginEvent) {
-        val environment = environment ?: throw Exception("Environment is null")
+        val environment = environment ?: throw Exception("EnvironmentProvider is null")
 
         val action = CheckBanStatusAction(environment)
         val result = action.execute(playerId = event.uniqueId)
