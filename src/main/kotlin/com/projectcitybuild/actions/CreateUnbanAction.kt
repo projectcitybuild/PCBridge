@@ -1,37 +1,33 @@
-package com.projectcitybuild.spigot.modules.bans.actions
+package com.projectcitybuild.actions
 
 import com.projectcitybuild.core.contracts.Environment
 import java.util.*
 
-class CreateBanAction(private val environment: Environment) {
+class CreateUnbanAction(private val environment: Environment) {
     sealed class Result {
         class SUCCESS : Result()
         class FAILED(val reason: Failure) : Result()
     }
 
     enum class Failure {
-        PLAYER_ALREADY_BANNED,
+        PLAYER_NOT_BANNED,
         DESERIALIZE_FAILED,
     }
 
-    fun execute(playerId: UUID, playerName: String, staffId: UUID?, reason: String?) : Result {
+    fun execute(playerId: UUID, staffId: UUID?) : Result {
         val banApi = environment.apiClient.banApi
 
-        val request = banApi.storeBan(
+        val request = banApi.storeUnban(
                 playerId = playerId.toString(),
                 playerIdType = "minecraft_uuid",
-                playerAlias = playerName,
                 staffId = staffId.toString(),
-                staffIdType = "minecraft_uuid",
-                reason = reason,
-                expiresAt = null,
-                isGlobalBan = true
+                staffIdType = "minecraft_uuid"
         )
         val response = request.execute()
         val json = response.body()
 
-        if (json?.error != null && json.error.id == "player_already_banned") {
-            return Result.FAILED(reason = Failure.PLAYER_ALREADY_BANNED)
+        if (json?.error != null && json.error.id == "player_not_banned") {
+            return Result.FAILED(reason = Failure.PLAYER_NOT_BANNED)
         }
         if (json == null || json.data == null) {
             return Result.FAILED(reason = Failure.DESERIALIZE_FAILED)

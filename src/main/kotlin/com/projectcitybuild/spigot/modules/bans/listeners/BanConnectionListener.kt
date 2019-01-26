@@ -4,7 +4,7 @@ import com.projectcitybuild.core.contracts.Environment
 import com.projectcitybuild.core.contracts.Listenable
 import com.projectcitybuild.spigot.environment.RawColor
 import com.projectcitybuild.spigot.environment.RawFormat
-import com.projectcitybuild.spigot.modules.bans.actions.CheckBanStatusAction
+import com.projectcitybuild.actions.CheckBanStatusAction
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent

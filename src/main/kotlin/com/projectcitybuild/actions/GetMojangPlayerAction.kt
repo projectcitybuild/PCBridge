@@ -1,4 +1,4 @@
-package com.projectcitybuild.spigot.modules.bans.actions
+package com.projectcitybuild.actions
 
 import com.projectcitybuild.core.contracts.Environment
 import com.projectcitybuild.entities.models.MojangPlayer

@@ -4,7 +4,7 @@ import com.okkero.skedule.BukkitDispatcher
 import com.projectcitybuild.core.contracts.Commandable
 import com.projectcitybuild.core.contracts.Environment
 import com.projectcitybuild.spigot.extensions.getOfflinePlayer
-import com.projectcitybuild.spigot.modules.bans.actions.CheckBanStatusAction
+import com.projectcitybuild.actions.CheckBanStatusAction
 import kotlinx.coroutines.experimental.launch
 import org.bukkit.command.CommandSender
 

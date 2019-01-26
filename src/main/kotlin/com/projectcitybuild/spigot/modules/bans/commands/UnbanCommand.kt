@@ -4,12 +4,10 @@ import com.okkero.skedule.BukkitDispatcher
 import com.projectcitybuild.core.contracts.Commandable
 import com.projectcitybuild.core.contracts.Environment
 import com.projectcitybuild.spigot.extensions.getOfflinePlayer
-import com.projectcitybuild.spigot.extensions.getOnlinePlayer
-import com.projectcitybuild.spigot.modules.bans.actions.CreateUnbanAction
+import com.projectcitybuild.actions.CreateUnbanAction
 import kotlinx.coroutines.experimental.launch
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
-import java.util.*
 
 class UnbanCommand : Commandable {
     override var environment: Environment? = null
