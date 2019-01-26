@@ -3,7 +3,7 @@ A Spigot plugin to bridge [Project City Build](https://projectcitybuild.com) and
 (Currently being rewritten in Kotlin)
 
 ## Project Structure
-PCBridge is designed to be modular - allowing it to be simultaneously built for Spigot, Bungee, or whatever is the latest server server.
+PCBridge is designed to be modular - allowing it to be simultaneously built for Spigot, Bungee, or whatever is the latest server software.
 
 * `core`: Contains interfaces and extensions used across all modules. This is the main framework module
 * `api`: Contains API requests (Retrofit)
