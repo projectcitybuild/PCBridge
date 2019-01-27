@@ -2,7 +2,7 @@ group 'com.projectcitybuild'
 version '2.0-SNAPSHOT'
 
 buildscript {
-    ext.kotlin_version = '1.2.31'
+    ext.kotlin_version = '1.3.20'
 
     repositories {
         mavenCentral()
@@ -11,18 +11,12 @@ buildscript {
 
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.2'
+        classpath 'com.github.jengelman.gradle.plugins:shadow:4.0.4'
     }
 }
 
 apply plugin: 'kotlin'
 apply plugin: 'com.github.johnrengelman.shadow'
-
-kotlin {
-    experimental {
-        coroutines 'enable'
-    }
-}
 
 sourceCompatibility = 1.8
 
@@ -38,13 +32,13 @@ repositories {
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-    compile 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.21'
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.0.1"
     compileOnly 'org.spigotmc:spigot-api:1.12.2-R0.1-SNAPSHOT'
-    compile 'com.squareup.retrofit2:retrofit:2.3.0'
-    compile 'com.squareup.retrofit2:converter-gson:2.3.0'
-    compile 'com.squareup.okhttp3:logging-interceptor:3.5.0'
-    compile 'net.milkbowl.vault:VaultAPI:1.6'
-    compile 'com.okkero.skedule:skedule:1.2.3'
+    implementation 'com.squareup.retrofit2:retrofit:2.5.0'
+    implementation'com.squareup.retrofit2:converter-gson:2.5.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.5.0'
+    compileOnly 'net.milkbowl.vault:VaultAPI:1.7'
+    compileOnly 'com.okkero.skedule:skedule:1.2.4'
 }
 
 compileKotlin {
