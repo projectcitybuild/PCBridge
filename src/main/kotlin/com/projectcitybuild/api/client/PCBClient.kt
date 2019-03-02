@@ -26,7 +26,8 @@ class PCBClient(private val authToken: String,
 
     private fun makeAuthenticatedClient(token: String) : OkHttpClient {
         val interceptor = HttpLoggingInterceptor()
-        interceptor.level = HttpLoggingInterceptor.Level.BODY
+//        interceptor.level = HttpLoggingInterceptor.Level.BODY
+        interceptor.level = HttpLoggingInterceptor.Level.NONE
 
         val clientFactory = OkHttpClient().newBuilder()
                 .addInterceptor { chain ->
