@@ -28,10 +28,12 @@ class ChatListener : Listenable<AsyncPlayerChatEvent> {
             throw Exception("Failed to get chat hook")
         }
 
-//        val prefix = mutableListOf<String>(chat.getPlayerPrefix(event.player)).distinct().map { suffix -> suffix.replace(oldValue = "&", newValue = "§") }
-//        val suffix = mutableListOf<String>(chat.getPlayerSuffix(event.player)).distinct().map { suffix -> suffix.replace(oldValue = "&", newValue = "§") }
-        val prefix = mutableListOf<String>()
-        val suffix = mutableListOf<String>()
+        var prefix: String? = null
+        var suffix: String? = null
+        if (sendingPlayer != null) {
+            prefix = environment?.get(sendingPlayer.uuid)?.prefix?.replace(oldValue = "&", newValue = "§")
+            suffix = environment?.get(sendingPlayer.uuid)?.suffix?.replace(oldValue = "&", newValue = "§")
+        }
 
         val groupNames = mutableListOf<String>()
 
@@ -48,10 +50,9 @@ class ChatListener : Listenable<AsyncPlayerChatEvent> {
             }
         }
 
-        val finalPrefix = prefix.distinct().joinToString(separator = "")
-        val finalSuffix = suffix.distinct().joinToString(separator = "")
+        val finalPrefix = prefix ?: ""
+        val finalSuffix = suffix ?: ""
         val finalGroups = groupNames.distinct().joinToString(separator = "")
-
         val name = "$finalPrefix$finalGroups${event.player.displayName}$finalSuffix"
 
         event.format = "<$name${ChatColor.RESET}> ${event.message}"

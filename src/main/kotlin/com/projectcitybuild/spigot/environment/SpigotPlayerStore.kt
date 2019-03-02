@@ -56,8 +56,12 @@ class SpigotPlayerStore(val plugin: WeakReference<JavaPlugin>) : PlayerStoreWrap
 
         val reader = YamlConfiguration.loadConfiguration(file)
 
-        return Player(uuid = uuid,
-                      isMuted = reader.getBoolean("chat.isMuted"))
+        return Player(
+                uuid = uuid,
+                isMuted = reader.getBoolean("chat.isMuted"),
+                prefix = reader.getString("chat.prefix"),
+                suffix = reader.getString("chat.suffix")
+        )
     }
 
     private fun serializeToFile(uuid: UUID, player: Player? = null) {
@@ -67,6 +71,8 @@ class SpigotPlayerStore(val plugin: WeakReference<JavaPlugin>) : PlayerStoreWrap
         val reader = YamlConfiguration.loadConfiguration(file)
         reader.set("uuid", uuid.toString())
         reader.set("chat.isMuted", player?.isMuted ?: false)
+        reader.set("chat.prefix", null)
+        reader.set("chat.suffix", null)
 
         reader.save(file)
     }
