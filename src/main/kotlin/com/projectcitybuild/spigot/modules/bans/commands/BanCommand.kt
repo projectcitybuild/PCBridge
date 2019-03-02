@@ -31,7 +31,7 @@ class BanCommand: Commandable {
         if (args.isEmpty()) return false
 
         val staffPlayer = if(isConsole) null else sender as Player
-        val reason = args.joinWithWhitespaces(1..args.size)
+        val reason = args.joinWithWhitespaces(1..args.size-1)
 
         GlobalScope.launch(BukkitDispatcher(plugin, async = true)) {
             val targetPlayerName = args.first()
