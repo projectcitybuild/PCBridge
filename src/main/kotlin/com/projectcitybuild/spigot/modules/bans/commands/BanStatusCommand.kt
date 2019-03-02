@@ -12,6 +12,7 @@ import org.bukkit.command.CommandSender
 class BanStatusCommand : Commandable {
     override var environment: EnvironmentProvider? = null
     override val label: String = "status"
+    override val permission: String = "pcbridge.ban.status"
 
     override fun execute(sender: CommandSender, args: Array<String>, isConsole: Boolean): Boolean {
         val environment = environment ?: throw Exception("EnvironmentProvider is null")

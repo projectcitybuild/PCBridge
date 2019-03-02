@@ -8,6 +8,7 @@ import org.bukkit.command.CommandSender
 class MaintenanceCommand : Commandable {
     override var environment: EnvironmentProvider? = null
     override val label: String = "maintenance"
+    override val permission: String = "pcbridge.maintenance"
 
     override fun execute(sender: CommandSender, args: Array<String>, isConsole: Boolean): Boolean {
         val environment = environment ?: throw Exception("EnvironmentProvider missing")

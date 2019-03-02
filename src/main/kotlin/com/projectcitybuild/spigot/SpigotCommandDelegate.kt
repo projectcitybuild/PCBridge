@@ -30,6 +30,7 @@ internal class SpigotCommandDelegate constructor(
                     true
                 }
             }
+            plugin.get()?.getCommand(alias)?.permission = command.permission
         }
     }
 }

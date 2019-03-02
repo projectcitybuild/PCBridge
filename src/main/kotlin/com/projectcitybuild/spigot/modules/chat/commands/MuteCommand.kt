@@ -7,6 +7,7 @@ import org.bukkit.command.CommandSender
 
 class MuteCommand : Commandable {
     override val label: String = "mute"
+    override val permission: String = "pcbridge.chat.mute"
 
     override var environment: EnvironmentProvider? = null
 

@@ -7,6 +7,7 @@ import org.bukkit.command.CommandSender
 
 class SuffixCommand : Commandable {
     override val label: String = "suffix"
+    override val permission: String = "pcbridge.chat.suffix"
 
     override var environment: EnvironmentProvider? = null
 

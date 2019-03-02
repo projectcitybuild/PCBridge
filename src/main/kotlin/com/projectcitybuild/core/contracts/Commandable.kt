@@ -13,6 +13,7 @@ interface Commandable : Injectable {
     val label: String
     val aliases: Array<String>
         get() = arrayOf()
+    val permission: String
 
     fun execute(sender: CommandSender, args: Array<String>, isConsole: Boolean) : Boolean
 }

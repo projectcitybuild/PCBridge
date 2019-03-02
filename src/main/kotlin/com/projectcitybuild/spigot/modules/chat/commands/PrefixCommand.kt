@@ -7,6 +7,7 @@ import org.bukkit.command.CommandSender
 
 class PrefixCommand : Commandable {
     override val label: String = "prefix"
+    override val permission: String = "pcbridge.chat.prefix"
 
     override var environment: EnvironmentProvider? = null
 

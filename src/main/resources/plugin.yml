@@ -7,36 +7,27 @@ commands:
    maintenance:
       description: Toggles 'Maintenance Mode' on the server, allowing only staff to connect
       usage: /maintenance [on|off] [message]
-      permission: pcbridge.maintenance
    mute:
       description: Prevents a player from chatting
       usage: /mute <name>
-      permission: pcbridge.mute.mute
    unmute:
       description: Removes a chat mute on a player
       usage: /unmute <name>
-      permission: pcbridge.mute.unmute
    prefix:
       description: Sets (or gets) the prefix of a player
       usage: /prefix <name> [prefix]
-      permission: pcbridge.chat.prefix
    suffix:
       description: Sets (or gets) the suffix of a player
       usage: /suffix <name> [suffix]
-      permission: pcbridge.chat.suffix
    ban:
       description: Globally bans a player from connecting to any PCB game servers
       usage: /ban <name> [reason]
-      permission: pcbridge.ban.ban
    unban:
       description: Globally unbans a player from all PCB game servers
       usage: /unban <name>
-      permission: pcbridge.ban.unban
    status:
       description: Checks the ban status of the given player
       usage: /status <name>
-      permission: pcbridge.ban.status
    login:
       description: Syncs your Minecraft account rank with your PCB account
       usage: /login <email> <password>
-      permission: pcbridge.sync.login

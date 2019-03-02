@@ -7,6 +7,7 @@ import org.bukkit.command.CommandSender
 
 class UnmuteCommand : Commandable {
     override val label: String = "unmute"
+    override val permission: String = "pcbridge.chat.unmute"
 
     override var environment: EnvironmentProvider? = null
 

@@ -16,6 +16,7 @@ class BanCommand: Commandable {
 
     override var environment: EnvironmentProvider? = null
     override val label: String = "ban"
+    override val permission: String = "pcbridge.ban.ban"
 
     private var interactor: BanCommandInteractor? = null
 

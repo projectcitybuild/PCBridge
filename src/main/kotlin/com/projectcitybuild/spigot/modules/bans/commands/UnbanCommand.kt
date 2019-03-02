@@ -13,6 +13,7 @@ import org.bukkit.entity.Player
 class UnbanCommand : Commandable {
     override var environment: EnvironmentProvider? = null
     override val label: String = "unban"
+    override val permission: String = "pcbridge.ban.unban"
 
     override fun execute(sender: CommandSender, args: Array<String>, isConsole: Boolean): Boolean {
         val environment = environment ?: throw Exception("EnvironmentProvider is null")
