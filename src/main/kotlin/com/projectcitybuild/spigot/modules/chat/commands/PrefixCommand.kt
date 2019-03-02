@@ -15,7 +15,7 @@ class PrefixCommand : Commandable {
 
     override fun execute(sender: CommandSender, args: Array<String>, isConsole: Boolean): Boolean {
         if (environment == null) throw Exception("EnvironmentProvider missing")
-        if (args.size > 3) return false
+        if (args.size < 1 || args.size > 3) return false
 
         val targetPlayerName = args.first()
         val targetPlayer = sender.server?.getOnlinePlayer(name = targetPlayerName)
@@ -28,13 +28,23 @@ class PrefixCommand : Commandable {
             throw Exception("Chat hook unavailable")
         }
 
-        val action = args[1]
-        val newPrefix = args[2]
+        if (args.size == 1) {
+            getPrefixFor(player = targetPlayer, sender = sender)
+            return true
+        }
 
-        when (action) {
-            null -> getPrefixFor(player = targetPlayer, sender = sender)
-            "set" -> setPrefixFor(player = targetPlayer, sender = sender, newPrefix = newPrefix)
-            "clear" -> clearPrefixFor(player = targetPlayer, sender = sender)
+        when (args[1]) {
+            "set" -> {
+                if (args.size != 3) {
+                    return false
+                }
+                val newPrefix = args[2]
+                setPrefixFor(player = targetPlayer, sender = sender, newPrefix = newPrefix)
+            }
+            "clear" -> {
+                clearPrefixFor(player = targetPlayer, sender = sender)
+            }
+            else -> return false
         }
 
         return true
