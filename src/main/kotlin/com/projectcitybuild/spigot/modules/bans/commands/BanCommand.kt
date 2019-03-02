@@ -60,6 +60,12 @@ class BanCommand: Commandable {
             if (result is CreateBanAction.Result.SUCCESS) {
                 interactor?.broadcastPlayerBanned(name = args.first())
             }
+
+            // kick the player regardless
+            val player = sender.server.onlinePlayers.first { player ->
+                player.name.toLowerCase() == targetPlayerName.toLowerCase()
+            }
+            player?.kickPlayer("You have been banned")
         }
 
         return true
