@@ -3,7 +3,8 @@ package com.projectcitybuild.spigot.modules.ranks.commands
 import com.okkero.skedule.BukkitDispatcher
 import com.projectcitybuild.core.contracts.Commandable
 import com.projectcitybuild.core.contracts.EnvironmentProvider
-import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
@@ -21,7 +22,7 @@ class LoginCommand : Commandable {
         }
         if (args.size < 2) return false
 
-        launch(BukkitDispatcher(plugin, async = true)) {
+        GlobalScope.launch(BukkitDispatcher(plugin, async = true)) {
             val rankApi = environment.apiClient.rankApi
 
             val request = rankApi.login(

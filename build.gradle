@@ -32,13 +32,13 @@ repositories {
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.0.1"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.1.1"
     compileOnly 'org.spigotmc:spigot-api:1.12.2-R0.1-SNAPSHOT'
     implementation 'com.squareup.retrofit2:retrofit:2.5.0'
     implementation'com.squareup.retrofit2:converter-gson:2.5.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:3.5.0'
     compileOnly 'net.milkbowl.vault:VaultAPI:1.7'
-    compileOnly 'com.okkero.skedule:skedule:1.2.4'
+    compileOnly 'com.okkero.skedule:skedule:1.2.5'
 }
 
 compileKotlin {
@@ -55,6 +55,7 @@ shadowJar {
         include(dependency('org.jetbrains.kotlinx:kotlinx-coroutines-core'))
         include(dependency('com.squareup.*:.*'))
         include(dependency('net.milkbowl.vault:VaultAPI'))
+        include(dependency('net.milkbowl.*:.*'))
         include(dependency('com.okkero.skedule.*:.*'))
     }
 }

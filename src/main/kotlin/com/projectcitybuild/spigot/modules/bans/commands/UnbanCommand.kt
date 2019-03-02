@@ -5,7 +5,8 @@ import com.projectcitybuild.core.contracts.Commandable
 import com.projectcitybuild.core.contracts.EnvironmentProvider
 import com.projectcitybuild.spigot.extensions.getOfflinePlayer
 import com.projectcitybuild.actions.CreateUnbanAction
-import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
@@ -19,7 +20,7 @@ class UnbanCommand : Commandable {
 
         if (args.isEmpty()) return false
 
-        launch(BukkitDispatcher(plugin, async = true)) {
+        GlobalScope.launch(BukkitDispatcher(plugin, async = true)) {
             val targetPlayerName = args.first()
             val playerUUID = sender.server.getOfflinePlayer(name = targetPlayerName, environment = environment)
             if (playerUUID == null) {

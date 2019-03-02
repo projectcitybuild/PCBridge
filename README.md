@@ -29,3 +29,7 @@ A command (represented by `Commandable`) is an event where the user types in a c
 * `/maintenance [on|off]` - Puts the server into Maintenance Mode; no non-staff player can join while active
 * `/prefix <name> [prefix]` - Appends a prefix to a player's display name (blank = reset)
 * `/suffix <name> [suffix]` - Appends a suffix to a player's display name (blank = reset)
+
+## Using on Server
+PCBridge relies on [Vault](https://www.spigotmc.org/resources/vault.34315/) for managing ranks.
+Make sure that you have Vault.jar in your server's plugin folder, as well as a permission management plugin jar of your choice (eg. PEX).

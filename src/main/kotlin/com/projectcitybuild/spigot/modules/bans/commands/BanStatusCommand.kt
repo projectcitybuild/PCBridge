@@ -5,7 +5,8 @@ import com.projectcitybuild.core.contracts.Commandable
 import com.projectcitybuild.core.contracts.EnvironmentProvider
 import com.projectcitybuild.spigot.extensions.getOfflinePlayer
 import com.projectcitybuild.actions.CheckBanStatusAction
-import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import org.bukkit.command.CommandSender
 
 class BanStatusCommand : Commandable {
@@ -16,7 +17,7 @@ class BanStatusCommand : Commandable {
         val environment = environment ?: throw Exception("EnvironmentProvider is null")
         val plugin = environment.plugin ?: throw Exception("Plugin has already been deallocated")
 
-        launch(BukkitDispatcher(plugin, async = true)) {
+        GlobalScope.launch(BukkitDispatcher(plugin, async = true)) {
             val targetPlayerName = args.first()
             val playerUUID = sender.server.getOfflinePlayer(name = targetPlayerName, environment = environment)
             if (playerUUID == null) {

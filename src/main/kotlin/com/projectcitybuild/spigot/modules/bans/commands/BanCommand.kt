@@ -7,7 +7,8 @@ import com.projectcitybuild.spigot.extensions.getOfflinePlayer
 import com.projectcitybuild.actions.CreateBanAction
 import com.projectcitybuild.core.extensions.joinWithWhitespaces
 import com.projectcitybuild.spigot.modules.bans.interactors.BanCommandInteractor
-import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
@@ -32,7 +33,7 @@ class BanCommand: Commandable {
         val staffPlayer = if(isConsole) null else sender as Player
         val reason = args.joinWithWhitespaces(1..args.size)
 
-        launch(BukkitDispatcher(plugin, async = true)) {
+        GlobalScope.launch(BukkitDispatcher(plugin, async = true)) {
             val targetPlayerName = args.first()
             val playerUUID = sender.server.getOfflinePlayer(name = targetPlayerName, environment = environment)
             if (playerUUID == null) {
