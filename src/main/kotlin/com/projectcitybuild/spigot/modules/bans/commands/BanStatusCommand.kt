@@ -18,8 +18,13 @@ class BanStatusCommand : Commandable {
         val environment = environment ?: throw Exception("EnvironmentProvider is null")
         val plugin = environment.plugin ?: throw Exception("Plugin has already been deallocated")
 
+        if (args.count() == 0) {
+           return false
+        }
+
+        val targetPlayerName = args.first()
+
         GlobalScope.launch(BukkitDispatcher(plugin, async = true)) {
-            val targetPlayerName = args.first()
             val playerUUID = sender.server.getOfflinePlayer(name = targetPlayerName, environment = environment)
             if (playerUUID == null) {
                 sender.sendMessage("Error: Failed to retrieve UUID of given player")
