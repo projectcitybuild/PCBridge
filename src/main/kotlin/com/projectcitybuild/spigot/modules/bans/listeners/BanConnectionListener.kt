@@ -25,7 +25,7 @@ class BanConnectionListener : Listenable<AsyncPlayerPreLoginEvent> {
                     """
                         ${RawColor.RED}${RawFormat.BOLD}You are currently banned.${RawFormat.RESET}
 
-                        ${RawColor.GRAY}Reason: ${RawColor.WHITE}${result.ban.reason}
+                        ${RawColor.GRAY}Reason: ${RawColor.WHITE}${result.ban.reason ?: "No reason provided"}
                         ${RawColor.GRAY}Expires: ${RawColor.WHITE}${result.ban.expiresAt ?: "Never"}
 
                         ${RawColor.AQUA}Appeal @ https://projectcitybuild.com

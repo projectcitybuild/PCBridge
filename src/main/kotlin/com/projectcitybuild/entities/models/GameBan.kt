@@ -10,7 +10,7 @@ data class GameBan(
         @SerializedName("banned_alias_at_time") val playerAlias: String,
         @SerializedName("staff_player_id") val staffId: String?,
         @SerializedName("staff_player_type") val staffType: String,
-        @SerializedName("reason") val reason: String,
+        @SerializedName("reason") val reason: String?,
         @SerializedName("is_active") val isActive: Boolean,
         @SerializedName("is_global_ban") val isGlobalBan: Boolean,
         @SerializedName("created_at") val createdAt: Long,
