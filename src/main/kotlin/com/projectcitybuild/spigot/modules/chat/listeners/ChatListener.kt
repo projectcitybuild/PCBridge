@@ -28,14 +28,17 @@ class ChatListener : Listenable<AsyncPlayerChatEvent> {
             throw Exception("Failed to get chat hook")
         }
 
-        val prefix = mutableListOf<String>(chat.getPlayerPrefix(event.player)).distinct().map { suffix -> suffix.replace(oldValue = "&", newValue = "§") }
-        val suffix = mutableListOf<String>(chat.getPlayerSuffix(event.player)).distinct().map { suffix -> suffix.replace(oldValue = "&", newValue = "§") }
+//        val prefix = mutableListOf<String>(chat.getPlayerPrefix(event.player)).distinct().map { suffix -> suffix.replace(oldValue = "&", newValue = "§") }
+//        val suffix = mutableListOf<String>(chat.getPlayerSuffix(event.player)).distinct().map { suffix -> suffix.replace(oldValue = "&", newValue = "§") }
+        val prefix = mutableListOf<String>()
+        val suffix = mutableListOf<String>()
 
         val groupNames = mutableListOf<String>()
 
         environment.permissions?.getPlayerGroups(event.player)?.forEach { group ->
             val groupPrefix = chat.getGroupPrefix(event.player.world, group).replace(oldValue = "&", newValue = "§")
 //            val groupSuffix = chat.getGroupSuffix(event.player.world, group).replace(oldValue = "&", newValue = "§")
+            val groupName = groupPrefix
 
             // donators have the [$] appear before everything
             if (group.toLowerCase() == "donator") {
@@ -49,9 +52,9 @@ class ChatListener : Listenable<AsyncPlayerChatEvent> {
         val finalSuffix = suffix.distinct().joinToString(separator = "")
         val finalGroups = groupNames.distinct().joinToString(separator = "")
 
-        val name = "$finalPrefix $finalGroups ${event.player.displayName} $finalSuffix"
+        val name = "$finalPrefix$finalGroups${event.player.displayName}$finalSuffix"
 
-        event.format = "<$name{${ChatColor.RESET}}> ${event.message}"
+        event.format = "<$name${ChatColor.RESET}> ${event.message}"
     }
 
 }
