@@ -50,9 +50,10 @@ class ChatListener : Listenable<AsyncPlayerChatEvent> {
             }
         }
 
-        val finalPrefix = prefix ?: ""
-        val finalSuffix = suffix ?: ""
+        val finalPrefix = if (prefix != null) "$prefix " else ""
+        val finalSuffix = if (suffix != null) " $suffix" else ""
         val finalGroups = groupNames.distinct().joinToString(separator = "")
+
         val name = "$finalPrefix$finalGroups${event.player.displayName}$finalSuffix"
 
         event.format = "<$name${ChatColor.RESET}> ${event.message}"
