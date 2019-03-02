@@ -38,15 +38,15 @@ class BanStatusCommand : Commandable {
             }
             if (result is CheckBanStatusAction.Result.SUCCESS) {
                 if (result.ban == null) {
-                    sender.sendMessage("Player is not currently banned")
+                    sender.sendMessage("$targetPlayerName is not currently banned")
                 } else {
                     sender.sendMessage("""
-                        $targetPlayerName is currently banned.
-                        ---
-                        Reason: ${result.ban.reason}
-                        Date: ${result.ban.createdAt}
-                        Expires: ${result.ban.expiresAt ?: "Never"}
-                    """)
+                        #$targetPlayerName is currently banned.
+                        #---
+                        #Reason: ${result.ban.reason}
+                        #Date: ${result.ban.createdAt}
+                        #Expires: ${result.ban.expiresAt ?: "Never"}
+                    """.trimMargin("#"))
                 }
             }
         }

@@ -25,7 +25,7 @@ internal class SpigotCommandDelegate constructor(
                             isConsole = sender !is Player
                     )
                 } catch (error: Exception) {
-                    sender.sendMessage("An error occurred performing a command")
+                    sender.sendMessage("An internal error occurred performing your command")
                     error.localizedMessage.let { message -> environment.log(LogLevel.FATAL, message) }
                     true
                 }
