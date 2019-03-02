@@ -31,8 +31,8 @@ class ChatListener : Listenable<AsyncPlayerChatEvent> {
         val suffix = mutableListOf<String>(chat.getPlayerSuffix(event.player))
 
         environment.permissions?.getPlayerGroups(event.player)?.forEach { group ->
-            val groupPrefix = chat.getGroupPrefix(event.player.world, group)
-            val groupSuffix = chat.getGroupSuffix(event.player.world, group)
+            val groupPrefix = chat.getGroupPrefix(event.player.world, group).replace(oldValue = "&", newValue = "§")
+            val groupSuffix = chat.getGroupSuffix(event.player.world, group).replace(oldValue = "&", newValue = "§")
 
             // donators have the [$] appear before everything
             if (group.toLowerCase() == "donator") {
