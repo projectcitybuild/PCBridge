@@ -43,7 +43,7 @@ class ChatListener : Listenable<AsyncPlayerChatEvent> {
             suffix.add(groupSuffix)
         }
 
-        val name = "${prefix.joinToString()} ${event.player.displayName} ${suffix.joinToString()}"
+        val name = "${prefix.joinToString(separator = "")} ${event.player.displayName} ${suffix.joinToString(separator = "")}"
         event.format = "<$name> ${event.message}"
     }
 
