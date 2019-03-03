@@ -30,8 +30,10 @@ A command (represented by `Commandable`) is an event where the user types in a c
 * `/mute <name>` - Prevents a player from sending chat messages
 * `/unmute <name>` - Removes a player's mute
 * `/maintenance [on|off]` - Puts the server into Maintenance Mode; no non-staff player can join while active
-* `/prefix <name> [prefix]` - Appends a prefix to a player's display name (blank = reset)
-* `/suffix <name> [suffix]` - Appends a suffix to a player's display name (blank = reset)
+* `/prefix <name> [set|clear] <prefix>` - Sets or resets a player's prefix
+* `/prefix <name>` - Gets a player's current prefix
+* `/suffix <name> [set|clear] <suffix>` - Sets or resets a player's suffix
+* `/suffix <name>` - Gets a player's current suffix
 
 ## Using on Server
 PCBridge relies on [Vault](https://www.spigotmc.org/resources/vault.34315/) for managing ranks.
