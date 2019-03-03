@@ -1,4 +1,7 @@
 # PCBridge
+
+[![CircleCI](https://circleci.com/gh/andyksaw/PCBridge/tree/master.svg?style=svg)](https://circleci.com/gh/andyksaw/PCBridge/tree/master)
+
 A Spigot plugin to bridge [Project City Build](https://projectcitybuild.com) and its Minecraft servers
 (Currently being rewritten in Kotlin)
 

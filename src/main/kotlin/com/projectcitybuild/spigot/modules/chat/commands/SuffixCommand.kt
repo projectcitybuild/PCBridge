@@ -83,7 +83,7 @@ class SuffixCommand : Commandable {
         }
         playerConfig.suffix = null
         environment?.set(playerConfig)
-        
+
         sender.sendMessage("Updated suffix for ${player.displayName}")
     }
 }
