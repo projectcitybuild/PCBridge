@@ -17,6 +17,10 @@ class MaintenanceConnectListener : Listenable<PlayerLoginEvent> {
         val isMaintenanceMode = environment.get(PluginConfig.Settings.MAINTENANCE_MODE()) as? Boolean
             ?: throw Exception("Cannot cast MAINTENANCE_MODE value to Boolean")
 
+        if (event.player.hasPermission("pcbridge.maintenance.bypass")) {
+            return
+        }
+
         if (isMaintenanceMode) {
             event.disallow(PlayerLoginEvent.Result.KICK_WHITELIST, "Server is currently in maintenance mode. Please try again later")
         }
