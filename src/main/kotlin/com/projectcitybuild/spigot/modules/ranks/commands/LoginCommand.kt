@@ -38,26 +38,29 @@ class LoginCommand : Commandable {
                 return@launch
             }
             if (json?.data == null) {
-                sender.sendMessage("Login failed: Data unavailable")
+                sender.sendMessage("Login failed: Account data not found. The server might be busy, please try again later")
                 return@launch
             }
-            if (!json.data.isActive) {
-                sender.sendMessage("Cannot authenticate: Your PCB account is suspended")
-                return@launch
-            }
+//            if (!json.data.isActive) {
+//                sender.sendMessage("Cannot authenticate: Your PCB account is suspended")
+//                return@launch
+//            }
 
             val permissions = environment.permissions
             if (permissions == null) {
                 sender.sendMessage("Sync failed: Permission plugin unavailable. Please contact a staff member")
                 return@launch
             }
+
+            // TODO: add user to donator group if necessary
+
             if (permissions.playerInGroup(sender, "Member")) {
                 sender.sendMessage("Your account is already up-to-date")
                 return@launch
             }
 
             permissions.playerAddGroup(null, sender, "Member")
-            sender.sendMessage("Sync complete: Your rank has been set to Member")
+            sender.sendMessage("Sync complete: Your rank has been updated")
         }
 
         return true

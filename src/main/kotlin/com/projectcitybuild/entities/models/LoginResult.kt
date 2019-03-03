@@ -7,6 +7,6 @@ data class LoginResult(
         @SerializedName("username") val username: String,
         @SerializedName("email") val email: String,
         @SerializedName("admin") val isAdmin: Boolean,
-        @SerializedName("active") val isActive: Boolean,
-        @SerializedName("suspended") val isSuspended: Boolean
+        @SerializedName("active") val isActive: Boolean?,
+        @SerializedName("suspended") val isSuspended: Boolean?
 )
