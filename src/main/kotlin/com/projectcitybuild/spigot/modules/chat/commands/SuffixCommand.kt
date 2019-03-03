@@ -55,6 +55,8 @@ class SuffixCommand : Commandable {
             return
         }
         playerConfig.suffix = newSuffix
+        environment?.set(playerConfig)
+
         sender.sendMessage("Updated suffix for ${player.name}")
     }
 
@@ -80,6 +82,8 @@ class SuffixCommand : Commandable {
             return
         }
         playerConfig.suffix = null
+        environment?.set(playerConfig)
+        
         sender.sendMessage("Updated suffix for ${player.displayName}")
     }
 }

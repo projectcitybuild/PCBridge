@@ -56,6 +56,8 @@ class PrefixCommand : Commandable {
             return
         }
         playerConfig.prefix = newPrefix
+        environment?.set(playerConfig)
+
         sender.sendMessage("Updated prefix for ${player.name}")
     }
 
@@ -81,6 +83,8 @@ class PrefixCommand : Commandable {
             return
         }
         playerConfig.prefix = null
+        environment?.set(playerConfig)
+
         sender.sendMessage("Updated prefix for ${player.displayName}")
     }
 }
