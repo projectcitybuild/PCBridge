@@ -1,7 +1,7 @@
 package com.projectcitybuild.api.client
 
 import com.projectcitybuild.api.interfaces.BanApiInterface
-import com.projectcitybuild.api.interfaces.RankApiInterface
+import com.projectcitybuild.api.interfaces.AuthApiInterface
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -13,7 +13,7 @@ class PCBClient(private val authToken: String,
     private val instance: Retrofit = build()
 
     val banApi: BanApiInterface = instance.create(BanApiInterface::class.java)
-    val rankApi: RankApiInterface = instance.create(RankApiInterface::class.java)
+    val rankApi: AuthApiInterface = instance.create(AuthApiInterface::class.java)
 
     private fun build() : Retrofit {
         val authenticatedClient = makeAuthenticatedClient(authToken)
