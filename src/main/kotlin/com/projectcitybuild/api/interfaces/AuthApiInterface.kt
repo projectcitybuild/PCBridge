@@ -1,6 +1,7 @@
 package com.projectcitybuild.api.interfaces
 
 import com.projectcitybuild.entities.models.ApiResponse
+import com.projectcitybuild.entities.models.AuthPlayerGroups
 import com.projectcitybuild.entities.models.AuthURL
 import com.projectcitybuild.entities.models.LoginResult
 import retrofit2.Call
@@ -25,6 +26,6 @@ interface AuthApiInterface {
     @GET("auth/minecraft/{uuid}")
     fun show(
             @Path(value = "uuid", encoded = false) uuid: String
-    ) : Call<ApiResponse<AuthURL>>
+    ) : Call<ApiResponse<AuthPlayerGroups>>
 
 }
