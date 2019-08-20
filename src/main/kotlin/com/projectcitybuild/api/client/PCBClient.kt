@@ -13,7 +13,7 @@ class PCBClient(private val authToken: String,
     private val instance: Retrofit = build()
 
     val banApi: BanApiInterface = instance.create(BanApiInterface::class.java)
-    val rankApi: AuthApiInterface = instance.create(AuthApiInterface::class.java)
+    val authApi: AuthApiInterface = instance.create(AuthApiInterface::class.java)
 
     private fun build() : Retrofit {
         val authenticatedClient = makeAuthenticatedClient(authToken)

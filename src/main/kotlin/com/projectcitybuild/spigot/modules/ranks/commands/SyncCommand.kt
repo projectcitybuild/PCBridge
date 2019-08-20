@@ -22,45 +22,72 @@ class SyncCommand : Commandable {
             return true
         }
 
-        GlobalScope.launch(BukkitDispatcher(plugin, async = true)) {
-            val rankApi = environment.apiClient.rankApi
+        val authApi = environment.apiClient.authApi
 
-            val request = rankApi.login(
-                    email = args[0],
-                    password = args[1]
-            )
-            val response = request.execute()
-            val json = response.body()
+        if (args.isEmpty()) {
+            GlobalScope.launch(BukkitDispatcher(plugin, async = true)) {
+                val request = authApi.store(uuid = sender.uniqueId.toString())
+                val response = request.execute()
+                val json = response.body()
 
-            if (json?.error != null) {
-                sender.sendMessage("Login failed: ${json.error.detail}")
-                return@launch
-            }
-            if (json?.data == null) {
-                sender.sendMessage("Login failed: Account data not found. The server might be busy, please try again later")
-                return@launch
-            }
-//            if (!json.data.isActive) {
-//                sender.sendMessage("Cannot authenticate: Your PCB account is suspended")
-//                return@launch
-//            }
+                if (json?.error != null) {
+                    sender.sendMessage("Sync failed: ${json.error.detail}")
+                    return@launch
+                }
 
-            val permissions = environment.permissions
-            if (permissions == null) {
-                sender.sendMessage("Sync failed: Permission plugin unavailable. Please contact a staff member")
-                return@launch
+                val data = json?.data
+                if (data == null) {
+                    sender.sendMessage("Sync failed: Account data not found. The server might be busy, please try again later")
+                    return@launch
+                }
+
+                sender.sendMessage(
+                        "Please click the below URL to link this account with your PCB account:\n" +
+                        "{text:\"" + "[Link Account]" + "\",clickEvent:{action:open_url,value:\"" + data.url + "\"}}"
+                )
             }
 
-            // TODO: add user to donator group if necessary
+        } else {
+            GlobalScope.launch(BukkitDispatcher(plugin, async = true)) {
+                val request = authApi.show(uuid = sender.uniqueId.toString())
+                val response = request.execute()
+                val json = response.body()
 
-            if (permissions.playerInGroup(sender, "Member")) {
-                sender.sendMessage("Your account is already up-to-date")
-                return@launch
+                if (json?.error != null) {
+                    sender.sendMessage("Sync failed: ${json.error.detail}")
+                    return@launch
+                }
+
+                val data = json?.data
+                if (data == null) {
+                    sender.sendMessage("Sync failed: Account data not found. The server might be busy, please try again later")
+                    return@launch
+                }
+
+                val permissions = environment.permissions
+                if (permissions == null) {
+                    sender.sendMessage("Sync failed: Permission plugin unavailable. Please contact a staff member")
+                    return@launch
+                }
+
+                var isDonator = false
+                data.groups.forEach { group ->
+                    if (group.name == "donator") {
+                        isDonator = true
+                    }
+                }
+
+                if (permissions.playerInGroup(sender, "Member")) {
+                    sender.sendMessage("Your account is already up-to-date")
+                    return@launch
+                }
+
+                permissions.playerAddGroup(null, sender, "Member")
+                sender.sendMessage("Sync complete: Your rank has been updated")
             }
-
-            permissions.playerAddGroup(null, sender, "Member")
-            sender.sendMessage("Sync complete: Your rank has been updated")
         }
+
+
 
         return true
     }
