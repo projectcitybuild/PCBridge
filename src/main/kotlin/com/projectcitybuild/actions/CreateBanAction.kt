@@ -33,7 +33,7 @@ class CreateBanAction(private val environment: EnvironmentProvider) {
         if (json?.error != null && json.error.id == "player_already_banned") {
             return Result.FAILED(reason = Failure.PLAYER_ALREADY_BANNED)
         }
-        if (json == null || json.data == null) {
+        if (json?.data == null) {
             return Result.FAILED(reason = Failure.DESERIALIZE_FAILED)
         }
 
