@@ -2,6 +2,7 @@ package com.projectcitybuild.core.contracts
 
 import com.projectcitybuild.api.client.MojangClient
 import com.projectcitybuild.api.client.PCBClient
+import com.projectcitybuild.entities.AsyncCancellable
 import com.projectcitybuild.entities.LogLevel
 import com.projectcitybuild.entities.Result
 import com.projectcitybuild.entities.models.Player
@@ -25,7 +26,7 @@ interface EnvironmentProvider {
     fun log(level: LogLevel, message: String) { println(message) }
     fun get(player: UUID) : Player? { throw NotImplementedError() }
     fun set(player: Player) { throw NotImplementedError() }
-    fun <T> async(completion: (Result<T>) -> Void)
+    fun <T> async(task: ((Result<T>) -> Unit) -> Void): AsyncCancellable<T>
 
     val permissions: Permission?
         get() = throw NotImplementedError()

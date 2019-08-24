@@ -4,7 +4,9 @@ import com.projectcitybuild.api.client.MojangClient
 import com.projectcitybuild.api.client.PCBClient
 import com.projectcitybuild.core.contracts.EnvironmentProvider
 import com.projectcitybuild.core.services.PlayerStore
+import com.projectcitybuild.entities.AsyncCancellable
 import com.projectcitybuild.entities.LogLevel
+import com.projectcitybuild.entities.Result
 import com.projectcitybuild.entities.models.Player
 import com.projectcitybuild.entities.models.PluginConfig
 import com.projectcitybuild.entities.models.PluginConfigPair
@@ -48,6 +50,22 @@ class SpigotEnvironment(
 
     override fun set(player: Player) {
         playerStore.put(player.uuid, player)
+    }
+
+    override fun <T> async(task: ((Result<T>) -> Unit) -> Void): AsyncCancellable<T> {
+        val plugin = plugin ?: throw Exception("Plugin already deallocated")
+        val cancellable = AsyncCancellable<T>()
+
+        val runnable = Runnable {
+            task { result ->
+                cancellable.resolve(result)
+            }
+        }
+        val bukkitTask = plugin.server?.scheduler?.runTaskAsynchronously(plugin, runnable)
+        cancellable.cancelListener = {
+            bukkitTask?.cancel()
+        }
+        return cancellable
     }
 
 
