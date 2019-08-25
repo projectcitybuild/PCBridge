@@ -5,6 +5,8 @@ import com.projectcitybuild.api.client.PCBClient
 import com.projectcitybuild.core.contracts.EnvironmentProvider
 import com.projectcitybuild.core.utilities.PlayerStore
 import com.projectcitybuild.core.utilities.AsyncCancellable
+import com.projectcitybuild.core.utilities.AsyncTask
+import com.projectcitybuild.core.utilities.Cancellable
 import com.projectcitybuild.entities.LogLevel
 import com.projectcitybuild.entities.Result
 import com.projectcitybuild.entities.models.Player
@@ -52,20 +54,20 @@ class SpigotEnvironment(
         playerStore.put(player.uuid, player)
     }
 
-    override fun <T> async(task: ((Result<T>) -> Unit) -> Void): AsyncCancellable<T> {
+    override fun <T> async(task: ((T) -> Unit) -> Unit): AsyncTask<T> {
         val plugin = plugin ?: throw Exception("Plugin already deallocated")
-        val cancellable = AsyncCancellable<T>()
 
-        val runnable = Runnable {
-            task { result ->
-                cancellable.resolve(result)
+        // Bukkit/Spigot performs Asynchronous units of work via their internal Scheduler
+        return AsyncTask<T> { resolve ->
+            val runnable = Runnable {
+                task { result -> resolve(result) }
+            }
+            val bukkitTask = plugin.server?.scheduler?.runTaskAsynchronously(plugin, runnable)
+
+            Cancellable {
+                bukkitTask?.cancel()
             }
         }
-        val bukkitTask = plugin.server?.scheduler?.runTaskAsynchronously(plugin, runnable)
-        cancellable.cancelListener = {
-            bukkitTask?.cancel()
-        }
-        return cancellable
     }
 
 

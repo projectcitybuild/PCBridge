@@ -5,7 +5,7 @@ import java.util.concurrent.locks.ReentrantLock
 /**
  * Thread-safe wrapper for anything that can be cancelled
  */
-class Cancellable(private val handler: () -> Void) {
+class Cancellable(private val handler: () -> Unit) {
     private val lock = ReentrantLock()
 
     var isCancelled: Boolean = false

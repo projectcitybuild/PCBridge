@@ -3,12 +3,13 @@ package com.projectcitybuild.core.utilities
 import com.projectcitybuild.entities.Result
 import java.util.concurrent.locks.ReentrantLock
 
-private typealias CompletionHandler<T> = (T) -> Void
+private typealias Resolver<T> = (T) -> Unit
+private typealias CompletionHandler<T> = (T) -> Unit
 
 /**
  * Wraps a unit of work to be performed in the future that can be cancelled
  */
-class AsyncTask<T>(private val task: (CompletionHandler<T>) -> Cancellable) {
+class AsyncTask<T>(private val task: (Resolver<T>) -> Cancellable) {
     private val lock = ReentrantLock()
 
     var isExecuting: Boolean = false
