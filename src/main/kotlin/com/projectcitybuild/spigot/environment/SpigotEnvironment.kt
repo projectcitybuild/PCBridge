@@ -4,11 +4,9 @@ import com.projectcitybuild.api.client.MojangClient
 import com.projectcitybuild.api.client.PCBClient
 import com.projectcitybuild.core.contracts.EnvironmentProvider
 import com.projectcitybuild.core.utilities.PlayerStore
-import com.projectcitybuild.core.utilities.AsyncCancellable
 import com.projectcitybuild.core.utilities.AsyncTask
 import com.projectcitybuild.core.utilities.Cancellable
 import com.projectcitybuild.entities.LogLevel
-import com.projectcitybuild.entities.Result
 import com.projectcitybuild.entities.models.Player
 import com.projectcitybuild.entities.models.PluginConfig
 import com.projectcitybuild.entities.models.PluginConfigPair
@@ -70,6 +68,20 @@ class SpigotEnvironment(
         }
     }
 
+    override fun <T> sync(task: ((T) -> Unit) -> Unit): AsyncTask<T> {
+        val plugin = plugin ?: throw Exception("Plugin already deallocated")
+
+        // Bukkit/Spigot performs Asynchronous units of work via their internal Scheduler
+        return AsyncTask<T> { resolve ->
+            val runnable = Runnable {
+                task { result -> resolve(result) }
+            }
+            plugin.server?.scheduler?.scheduleSyncDelayedTask(plugin, runnable)
+
+            // Synchronous tasks can't be cancelled (because they're run (almost) immediately)
+            Cancellable {}
+        }
+    }
 
     override val permissions: Permission? = hooks.permissions
     override val chat: Chat? = hooks.chat

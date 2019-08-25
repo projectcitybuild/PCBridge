@@ -27,7 +27,12 @@ interface EnvironmentProvider {
     fun log(level: LogLevel, message: String) { println(message) }
     fun get(player: UUID) : Player? { throw NotImplementedError() }
     fun set(player: Player) { throw NotImplementedError() }
+
+    // Runs a given unit of work on a background thread asynchronously
     fun <T> async(task: ((T) -> Unit) -> Unit): AsyncTask<T>
+
+    // Runs a given unit of work on the main thread synchronously
+    fun <T> sync(task: ((T) -> Unit) -> Unit): AsyncTask<T>
 
     val permissions: Permission?
         get() = throw NotImplementedError()
