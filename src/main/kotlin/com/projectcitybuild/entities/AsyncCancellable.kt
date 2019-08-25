@@ -1,5 +1,8 @@
 package com.projectcitybuild.entities
 
+/**
+ * Wraps a unit of work to be performed in the future that can be cancelled
+ */
 class AsyncCancellable<T> {
     private var listener: ((Result<T>) -> Void)? = null
 
