@@ -3,8 +3,8 @@ package com.projectcitybuild.spigot.environment
 import com.projectcitybuild.api.client.MojangClient
 import com.projectcitybuild.api.client.PCBClient
 import com.projectcitybuild.core.contracts.EnvironmentProvider
-import com.projectcitybuild.core.services.PlayerStore
-import com.projectcitybuild.entities.AsyncCancellable
+import com.projectcitybuild.core.utilities.PlayerStore
+import com.projectcitybuild.core.utilities.AsyncCancellable
 import com.projectcitybuild.entities.LogLevel
 import com.projectcitybuild.entities.Result
 import com.projectcitybuild.entities.models.Player

@@ -2,7 +2,7 @@ package com.projectcitybuild.core.contracts
 
 import com.projectcitybuild.api.client.MojangClient
 import com.projectcitybuild.api.client.PCBClient
-import com.projectcitybuild.entities.AsyncCancellable
+import com.projectcitybuild.core.utilities.AsyncCancellable
 import com.projectcitybuild.entities.LogLevel
 import com.projectcitybuild.entities.Result
 import com.projectcitybuild.entities.models.Player
