@@ -27,7 +27,6 @@ repositories {
     maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
     maven { url = 'https://oss.sonatype.org/content/repositories/snapshots' }
     maven { url = 'http://nexus.hc.to/content/repositories/pub_releases' }
-    maven { url = 'http://nexus.okkero.com/repository/maven-releases/' }
 }
 
 dependencies {
@@ -38,7 +37,6 @@ dependencies {
     implementation'com.squareup.retrofit2:converter-gson:2.5.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:3.5.0'
     compileOnly 'net.milkbowl.vault:VaultAPI:1.7'
-    implementation 'com.okkero.skedule:skedule:1.2.6'
 }
 
 compileKotlin {
