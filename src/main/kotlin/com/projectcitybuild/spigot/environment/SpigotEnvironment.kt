@@ -68,19 +68,11 @@ class SpigotEnvironment(
         }
     }
 
-    override fun <T> sync(task: ((T) -> Unit) -> Unit): AsyncTask<T> {
+    override fun sync(task: () -> Unit) {
         val plugin = plugin ?: throw Exception("Plugin already deallocated")
+        val runnable = Runnable { task() }
 
-        // Bukkit/Spigot performs Asynchronous units of work via their internal Scheduler
-        return AsyncTask<T> { resolve ->
-            val runnable = Runnable {
-                task { result -> resolve(result) }
-            }
-            plugin.server?.scheduler?.scheduleSyncDelayedTask(plugin, runnable)
-
-            // Synchronous tasks can't be cancelled (because they're run (almost) immediately)
-            Cancellable {}
-        }
+        plugin.server?.scheduler?.scheduleSyncDelayedTask(plugin, runnable)
     }
 
     override val permissions: Permission? = hooks.permissions

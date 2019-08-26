@@ -32,7 +32,7 @@ interface EnvironmentProvider {
     fun <T> async(task: ((T) -> Unit) -> Unit): AsyncTask<T>
 
     // Runs a given unit of work on the main thread synchronously
-    fun <T> sync(task: ((T) -> Unit) -> Unit): AsyncTask<T>
+    fun sync(task: () -> Unit)
 
     val permissions: Permission?
         get() = throw NotImplementedError()
