@@ -14,7 +14,7 @@ import com.projectcitybuild.spigot.modules.chat.commands.UnmuteCommand
 import com.projectcitybuild.spigot.modules.chat.listeners.ChatListener
 import com.projectcitybuild.spigot.modules.maintenance.commands.MaintenanceCommand
 import com.projectcitybuild.spigot.modules.maintenance.listeners.MaintenanceConnectListener
-import com.projectcitybuild.spigot.modules.ranks.commands.LoginCommand
+import com.projectcitybuild.spigot.modules.ranks.commands.SyncCommand
 
 class SpigotEventController: Controller {
     override val commands: Array<Commandable> = arrayOf(
@@ -29,7 +29,7 @@ class SpigotEventController: Controller {
 
             MaintenanceCommand(),
 
-            LoginCommand()
+            SyncCommand()
     )
 
     override val listeners: Array<Listenable<*>> = arrayOf(
