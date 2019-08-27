@@ -15,7 +15,7 @@ interface AuthApiInterface {
      */
     @FormUrlEncoded
     @POST("auth/minecraft")
-    fun store(
+    fun getVerificationUrl(
             @Field("minecraft_uuid") uuid: String
     ) : Call<ApiResponse<AuthURL>>
 
@@ -24,7 +24,7 @@ interface AuthApiInterface {
      */
     @FormUrlEncoded
     @GET("auth/minecraft/{uuid}")
-    fun show(
+    fun getUserGroups(
             @Path(value = "uuid", encoded = false) uuid: String
     ) : Call<ApiResponse<AuthPlayerGroups>>
 

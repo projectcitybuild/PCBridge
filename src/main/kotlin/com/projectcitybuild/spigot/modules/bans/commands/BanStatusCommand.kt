@@ -16,9 +16,7 @@ class BanStatusCommand : Commandable {
     override fun execute(sender: CommandSender, args: Array<String>, isConsole: Boolean): Boolean {
         val environment = environment ?: throw Exception("EnvironmentProvider is null")
 
-        if (args.count() == 0) {
-           return false
-        }
+        if (args.isEmpty()) return false
 
         val targetPlayerName = args.first()
         getOfflinePlayerUUID(server = sender.server, playerName = targetPlayerName) { uuid ->
@@ -30,24 +28,26 @@ class BanStatusCommand : Commandable {
             }
 
             checkBanStatus(playerId = uuid) { result ->
-                if (result is CheckBanStatusAction.Result.FAILED) {
-                    when (result.reason) {
-                        CheckBanStatusAction.Failure.DESERIALIZE_FAILED -> {
-                            sender.sendMessage("Error: Bad response received from the ban server. Please contact an admin")
+                environment.sync {
+                    if (result is CheckBanStatusAction.Result.FAILED) {
+                        when (result.reason) {
+                            CheckBanStatusAction.Failure.DESERIALIZE_FAILED -> {
+                                sender.sendMessage("Error: Bad response received from the ban server. Please contact an admin")
+                            }
                         }
                     }
-                }
-                if (result is CheckBanStatusAction.Result.SUCCESS) {
-                    if (result.ban == null) {
-                        sender.sendMessage("$targetPlayerName is not currently banned")
-                    } else {
-                        sender.sendMessage("""
+                    if (result is CheckBanStatusAction.Result.SUCCESS) {
+                        if (result.ban == null) {
+                            sender.sendMessage("$targetPlayerName is not currently banned")
+                        } else {
+                            sender.sendMessage("""
                             #$targetPlayerName is currently banned.
                             #---
                             #Reason: ${result.ban.reason}
                             #Date: ${result.ban.createdAt}
                             #Expires: ${result.ban.expiresAt ?: "Never"}
                         """.trimMargin("#"))
+                        }
                     }
                 }
             }

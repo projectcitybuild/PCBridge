@@ -31,18 +31,20 @@ class UnbanCommand : Commandable {
             }
 
             createUnban(playerId = uuid, staffId = staffPlayer?.uniqueId) { result ->
-                if (result is CreateUnbanAction.Result.FAILED) {
-                    when (result.reason) {
-                        CreateUnbanAction.Failure.PLAYER_NOT_BANNED -> {
-                            sender.sendMessage("${args.first()} is not currently banned")
-                        }
-                        else -> {
-                            sender.sendMessage("Error: Bad response received from the ban server. Please contact an admin")
+                environment.sync {
+                    if (result is CreateUnbanAction.Result.FAILED) {
+                        when (result.reason) {
+                            CreateUnbanAction.Failure.PLAYER_NOT_BANNED -> {
+                                sender.sendMessage("${args.first()} is not currently banned")
+                            }
+                            else -> {
+                                sender.sendMessage("Error: Bad response received from the ban server. Please contact an admin")
+                            }
                         }
                     }
-                }
-                if (result is CreateUnbanAction.Result.SUCCESS) {
-                    sender.server.broadcast("${args.first()} has been unbanned", "*")
+                    if (result is CreateUnbanAction.Result.SUCCESS) {
+                        sender.server.broadcast("${args.first()} has been unbanned", "*")
+                    }
                 }
             }
         }
