@@ -25,6 +25,10 @@ class SyncRankLoginListener : Listenable<PlayerLoginEvent> {
 
         getPlayerGroups(playerId = player.uniqueId) { result ->
             val json = result.body()
+            if (json?.data == null) {
+                return@getPlayerGroups
+            }
+
             if (json?.error != null) {
                 if (json.error.id != "account_not_linked") {
                     environment.sync {
@@ -40,13 +44,15 @@ class SyncRankLoginListener : Listenable<PlayerLoginEvent> {
                     permissions.playerRemoveGroup(player, group)
                 }
 
-                if (json?.data == null) {
-                    player.sendMessage("No account found: Set to Guest")
-                    return@sync
-                }
-
+                // TODO: [@andy] use Config file instead of hardcoding group mappings
+                // TODO: [@andy] wrap this up so we can reuse it between command and listener
                 json.data.groups.forEach { group ->
                     when (group.name) {
+                        "member" -> {
+                            if (!permissions.playerInGroup(player, "Member")) {
+                                permissions.playerAddGroup(null, player, "Member")
+                            }
+                        }
                         "donator" -> {
                             if (!permissions.playerInGroup(player, "Donator")) {
                                 permissions.playerAddGroup(null, player, "Donator")
@@ -78,10 +84,6 @@ class SyncRankLoginListener : Listenable<PlayerLoginEvent> {
                             }
                         }
                     }
-                }
-
-                if (json.data.groups.isEmpty()) {
-                    permissions.playerAddGroup(null, player, "Member")
                 }
             }
         }

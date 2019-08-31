@@ -92,8 +92,15 @@ class SyncCommand : Commandable {
                     return@sync
                 }
 
+                // TODO: [@andy] use Config file instead of hardcoding group mappings
+                // TODO: [@andy] wrap this up so we can reuse it between command and listener
                 json.data.groups.forEach { group ->
                     when (group.name) {
+                        "member" -> {
+                            if (!permissions.playerInGroup(sender, "Member")) {
+                                permissions.playerAddGroup(null, sender, "Member")
+                            }
+                        }
                         "donator" -> {
                             if (!permissions.playerInGroup(sender, "Donator")) {
                                 permissions.playerAddGroup(null, sender, "Donator")
@@ -125,10 +132,6 @@ class SyncCommand : Commandable {
                             }
                         }
                     }
-                }
-
-                if (json.data.groups.isEmpty()) {
-                    permissions.playerAddGroup(null, sender, "Member")
                 }
 
                 sender.sendMessage("Sync Complete")
