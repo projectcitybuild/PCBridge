@@ -36,9 +36,7 @@ class MaintenanceCommand : Commandable {
             return false
         }
 
-        val newValue = MaintenanceMode.valueOf(newValueInput)
-
-        when (newValue) {
+        when (MaintenanceMode.valueOf(newValueInput)) {
             MaintenanceMode.ON ->
                 if (isMaintenanceMode) {
                     sender.sendMessage("Server is already in maintenance mode")

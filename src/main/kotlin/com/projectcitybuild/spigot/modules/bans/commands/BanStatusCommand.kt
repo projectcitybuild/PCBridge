@@ -10,8 +10,8 @@ import java.util.*
 
 class BanStatusCommand : Commandable {
     override var environment: EnvironmentProvider? = null
-    override val label: String = "status"
-    override val permission: String = "pcbridge.ban.status"
+    override val label: String = "checkban"
+    override val permission: String = "pcbridge.ban.checkban"
 
     override fun execute(sender: CommandSender, args: Array<String>, isConsole: Boolean): Boolean {
         val environment = environment ?: throw Exception("EnvironmentProvider is null")
