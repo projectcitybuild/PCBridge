@@ -42,13 +42,15 @@ class SyncCommand : Commandable {
                 val annotation = object : Annotation {}
                 val converter = environment.apiClient.instance
                         .responseBodyConverter<ApiResponse<VerificationUrl>>(ApiResponse::class.java, arrayOf(annotation))
-                val model = converter.convert(response.errorBody())
+
+                val body = response.errorBody() ?: throw Exception("Error body deserialization failed")
+                val model = converter.convert(body)
 
                 environment.sync {
-                    if (model.error.id == "already_authenticated") {
+                    if (model?.error?.id == "already_authenticated") {
                         sender.sendMessage("Error: You have already linked your account")
                     } else {
-                        sender.sendMessage("Failed to fetch verification URL: ${model.error.detail}")
+                        sender.sendMessage("Failed to fetch verification URL: ${model?.error?.detail}")
                     }
                 }
                 return@getVerificationLink
