@@ -36,4 +36,4 @@ commands:
       usage: /status <name>
    sync:
       description: Syncs your Minecraft account rank with your PCB account
-      usage: /sync [complete]
+      usage: /sync [finish]

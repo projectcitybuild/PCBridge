@@ -5,7 +5,6 @@ import com.projectcitybuild.core.contracts.EnvironmentProvider
 import com.projectcitybuild.entities.models.ApiResponse
 import com.projectcitybuild.entities.models.AuthPlayerGroups
 import com.projectcitybuild.entities.models.AuthURL
-import com.projectcitybuild.entities.models.VerificationUrl
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import retrofit2.Response
@@ -27,7 +26,7 @@ class SyncCommand : Commandable {
         if (args.isEmpty()) {
             return beginSyncFlow(sender, environment)
         }
-        if (args.size == 1 && args[1] == "finish") {
+        if (args.size == 1 && args[0] == "finish") {
             return endSyncFlow(sender, environment)
         }
         return false
@@ -41,7 +40,7 @@ class SyncCommand : Commandable {
             if (!response.isSuccessful) {
                 val annotation = object : Annotation {}
                 val converter = environment.apiClient.instance
-                        .responseBodyConverter<ApiResponse<VerificationUrl>>(ApiResponse::class.java, arrayOf(annotation))
+                        .responseBodyConverter<ApiResponse<AuthURL>>(ApiResponse::class.java, arrayOf(annotation))
 
                 val body = response.errorBody() ?: throw Exception("Error body deserialization failed")
                 val model = converter.convert(body)

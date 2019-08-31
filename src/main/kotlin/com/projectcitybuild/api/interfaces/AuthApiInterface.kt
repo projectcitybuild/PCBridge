@@ -22,10 +22,9 @@ interface AuthApiInterface {
     /**
      * Fetches the groups that the given UUID belongs to
      */
-    @FormUrlEncoded
     @GET("auth/minecraft/{uuid}")
     fun getUserGroups(
-            @Path(value = "uuid", encoded = false) uuid: String
+            @Path(value = "uuid") uuid: String
     ) : Call<ApiResponse<AuthPlayerGroups>>
 
 }
