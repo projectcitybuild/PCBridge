@@ -11,6 +11,9 @@ import com.projectcitybuild.spigot.SpigotEventRegistry
 import com.projectcitybuild.spigot.environment.SpigotEnvironment
 import com.projectcitybuild.spigot.environment.SpigotPluginHook
 import com.projectcitybuild.spigot.environment.SpigotPlayerStore
+import io.sentry.Sentry
+import io.sentry.SentryClient
+import io.sentry.SentryClientFactory
 import org.bukkit.plugin.java.JavaPlugin
 import java.lang.ref.WeakReference
 
@@ -21,6 +24,9 @@ class PCBridge : JavaPlugin() {
 
     private val weakRef: WeakReference<JavaPlugin>
         get() = WeakReference(this)
+
+    var sentry: SentryClient? = null
+        private set
 
     override fun onEnable() {
         super.onEnable()
@@ -36,6 +42,13 @@ class PCBridge : JavaPlugin() {
                 config = config,
                 hooks = pluginHooks
         )
+
+        // Enable Sentry if DSN is set
+        val isSentryEnabled = environment.get(PluginConfig.Sentry.ENABLED()) as Boolean
+        val sentryDSN = environment.get(PluginConfig.Sentry.DSN()) as String
+        if (isSentryEnabled && sentryDSN.isNotEmpty()) {
+            sentry = SentryClientFactory.sentryClient(sentryDSN)
+        }
 
         commandDelegate = SpigotCommandDelegate(plugin = weakRef, environment = environment)
         listenerDelegate = SpigotListenerDelegate(plugin = weakRef, environment = environment)
@@ -55,6 +68,8 @@ class PCBridge : JavaPlugin() {
         commandDelegate = null
         listenerDelegate = null
 
+        sentry = null
+
         logger.info("PCBridge disabled")
     }
 
@@ -73,6 +88,8 @@ class PCBridge : JavaPlugin() {
         config.addDefault<PluginConfig.Settings.MAINTENANCE_MODE>()
         config.addDefault<PluginConfig.Api.KEY>()
         config.addDefault<PluginConfig.Api.BASE_URL>()
+        config.addDefault<PluginConfig.Sentry.ENABLED>()
+        config.addDefault<PluginConfig.Sentry.DSN>()
 
         config.options().copyDefaults(true)
         saveConfig()

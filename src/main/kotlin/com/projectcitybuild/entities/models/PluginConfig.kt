@@ -10,4 +10,8 @@ sealed class PluginConfig {
     sealed class Settings {
         class MAINTENANCE_MODE: PluginConfigPair("settings.maintenance_mode", defaultValue = false)
     }
+    sealed class Sentry {
+        class ENABLED: PluginConfigPair("sentry.enabled", defaultValue = false)
+        class DSN: PluginConfigPair("sentry.dsn", defaultValue = "FILL_THIS_IN")
+    }
 }
