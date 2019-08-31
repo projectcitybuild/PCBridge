@@ -4,6 +4,7 @@ import com.projectcitybuild.core.contracts.EnvironmentProvider
 import com.projectcitybuild.core.contracts.Listenable
 import com.projectcitybuild.entities.models.ApiResponse
 import com.projectcitybuild.entities.models.AuthPlayerGroups
+import com.projectcitybuild.spigot.modules.ranks.RankMapper
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
@@ -44,45 +45,10 @@ class SyncRankLoginListener : Listenable<PlayerLoginEvent> {
                     permissions.playerRemoveGroup(player, group)
                 }
 
-                // TODO: [@andy] use Config file instead of hardcoding group mappings
-                // TODO: [@andy] wrap this up so we can reuse it between command and listener
-                json.data.groups.forEach { group ->
-                    when (group.name) {
-                        "member" -> {
-                            if (!permissions.playerInGroup(player, "Member")) {
-                                permissions.playerAddGroup(null, player, "Member")
-                            }
-                        }
-                        "donator" -> {
-                            if (!permissions.playerInGroup(player, "Donator")) {
-                                permissions.playerAddGroup(null, player, "Donator")
-                            }
-                        }
-                        "trusted" -> {
-                            if (!permissions.playerInGroup(player, "Trusted")) {
-                                permissions.playerAddGroup(null, player, "Trusted")
-                            }
-                        }
-                        "moderator" -> {
-                            if (!permissions.playerInGroup(player, "Mod")) {
-                                permissions.playerAddGroup(null, player, "Mod")
-                            }
-                        }
-                        "operator" -> {
-                            if (!permissions.playerInGroup(player, "OP")) {
-                                permissions.playerAddGroup(null, player, "OP")
-                            }
-                        }
-                        "senior operator" -> {
-                            if (!permissions.playerInGroup(player, "SOP")) {
-                                permissions.playerAddGroup(null, player, "SOP")
-                            }
-                        }
-                        "administrator" -> {
-                            if (!permissions.playerInGroup(player, "Admin")) {
-                                permissions.playerAddGroup(null, player, "Admin")
-                            }
-                        }
+                val permissionGroups = RankMapper.mapGroupsToPermissionGroups(json.data.groups)
+                permissionGroups.forEach { group ->
+                    if (!permissions.playerInGroup(player, group)) {
+                        permissions.playerAddGroup(null, player, group)
                     }
                 }
             }

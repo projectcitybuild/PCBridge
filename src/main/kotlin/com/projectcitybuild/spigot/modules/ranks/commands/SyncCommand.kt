@@ -5,6 +5,7 @@ import com.projectcitybuild.core.contracts.EnvironmentProvider
 import com.projectcitybuild.entities.models.ApiResponse
 import com.projectcitybuild.entities.models.AuthPlayerGroups
 import com.projectcitybuild.entities.models.AuthURL
+import com.projectcitybuild.spigot.modules.ranks.RankMapper
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import retrofit2.Response
@@ -92,49 +93,14 @@ class SyncCommand : Commandable {
                     return@sync
                 }
 
-                // TODO: [@andy] use Config file instead of hardcoding group mappings
-                // TODO: [@andy] wrap this up so we can reuse it between command and listener
-                json.data.groups.forEach { group ->
-                    when (group.name) {
-                        "member" -> {
-                            if (!permissions.playerInGroup(sender, "Member")) {
-                                permissions.playerAddGroup(null, sender, "Member")
-                            }
-                        }
-                        "donator" -> {
-                            if (!permissions.playerInGroup(sender, "Donator")) {
-                                permissions.playerAddGroup(null, sender, "Donator")
-                            }
-                        }
-                        "trusted" -> {
-                            if (!permissions.playerInGroup(sender, "Trusted")) {
-                                permissions.playerAddGroup(null, sender, "Trusted")
-                            }
-                        }
-                        "moderator" -> {
-                            if (!permissions.playerInGroup(sender, "Mod")) {
-                                permissions.playerAddGroup(null, sender, "Mod")
-                            }
-                        }
-                        "operator" -> {
-                            if (!permissions.playerInGroup(sender, "OP")) {
-                                permissions.playerAddGroup(null, sender, "OP")
-                            }
-                        }
-                        "senior operator" -> {
-                            if (!permissions.playerInGroup(sender, "SOP")) {
-                                permissions.playerAddGroup(null, sender, "SOP")
-                            }
-                        }
-                        "administrator" -> {
-                            if (!permissions.playerInGroup(sender, "Admin")) {
-                                permissions.playerAddGroup(null, sender, "Admin")
-                            }
-                        }
+                val permissionGroups = RankMapper.mapGroupsToPermissionGroups(json.data.groups)
+                permissionGroups.forEach { group ->
+                    if (!permissions.playerInGroup(sender, group)) {
+                        permissions.playerAddGroup(null, sender, group)
                     }
                 }
 
-                sender.sendMessage("Sync Complete")
+                sender.sendMessage("Account successfully linked. Your rank will be automatically synchronized with the PCB network")
             }
         }
 
