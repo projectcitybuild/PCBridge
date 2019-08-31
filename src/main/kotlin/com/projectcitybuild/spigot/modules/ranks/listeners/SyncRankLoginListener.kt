@@ -24,13 +24,17 @@ class SyncRankLoginListener : Listenable<PlayerLoginEvent> {
         val permissions = environment.permissions ?: throw Exception("Permission plugin is null")
 
         getPlayerGroups(playerId = player.uniqueId) { result ->
-            environment.sync {
-                val json = result.body()
-                if (json?.error != null) {
-                    player.sendMessage("Sync failed: Trouble communicating with the authentication server")
-                    return@sync
+            val json = result.body()
+            if (json?.error != null) {
+                if (json.error.id != "account_not_linked") {
+                    environment.sync {
+                        player.sendMessage("Failed to sync rank: Trouble communicating with the authentication server...")
+                    }
                 }
+                return@getPlayerGroups
+            }
 
+            environment.sync {
                 // Remove all groups from the player before syncing
                 permissions.getPlayerGroups(player).forEach { group ->
                     permissions.playerRemoveGroup(player, group)
