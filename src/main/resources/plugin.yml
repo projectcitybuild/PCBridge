@@ -34,6 +34,6 @@ commands:
    status:
       description: Checks the ban status of the given player
       usage: /status <name>
-   login:
+   sync:
       description: Syncs your Minecraft account rank with your PCB account
-      usage: /login <email> <password>
+      usage: /sync [finish]

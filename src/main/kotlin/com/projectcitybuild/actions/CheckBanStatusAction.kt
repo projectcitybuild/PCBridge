@@ -25,20 +25,20 @@ class CheckBanStatusAction(private val environment: EnvironmentProvider) {
         val json = response.body()
 
         if (json == null) {
-            return CheckBanStatusAction.Result.FAILED(reason = CheckBanStatusAction.Failure.DESERIALIZE_FAILED)
+            return Result.FAILED(reason = Failure.DESERIALIZE_FAILED)
         }
 
         val ban = json.data
         if (ban == null) {
-            return CheckBanStatusAction.Result.SUCCESS(null)
+            return Result.SUCCESS(null)
         }
         if (!ban.isActive) {
-            return CheckBanStatusAction.Result.SUCCESS(null)
+            return Result.SUCCESS(null)
         }
         if (ban.expiresAt != null && ban.expiresAt <= Date().time) {
-            return CheckBanStatusAction.Result.SUCCESS(null)
+            return Result.SUCCESS(null)
         }
 
-        return CheckBanStatusAction.Result.SUCCESS(ban)
+        return Result.SUCCESS(ban)
     }
 }

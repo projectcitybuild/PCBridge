@@ -1,4 +1,4 @@
-package com.projectcitybuild.core.services
+package com.projectcitybuild.core.utilities
 
 import com.projectcitybuild.entities.models.Player
 import java.util.*

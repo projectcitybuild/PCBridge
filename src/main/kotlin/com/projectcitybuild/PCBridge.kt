@@ -7,7 +7,7 @@ import com.projectcitybuild.spigot.extensions.addDefault
 import com.projectcitybuild.entities.models.PluginConfig
 import com.projectcitybuild.spigot.SpigotCommandDelegate
 import com.projectcitybuild.spigot.SpigotListenerDelegate
-import com.projectcitybuild.spigot.SpigotEventController
+import com.projectcitybuild.spigot.SpigotEventRegistry
 import com.projectcitybuild.spigot.environment.SpigotEnvironment
 import com.projectcitybuild.spigot.environment.SpigotPluginHook
 import com.projectcitybuild.spigot.environment.SpigotPlayerStore
@@ -41,7 +41,7 @@ class PCBridge : JavaPlugin() {
         listenerDelegate = SpigotListenerDelegate(plugin = weakRef, environment = environment)
 
         this.register(modules = arrayOf(
-                SpigotEventController()
+                SpigotEventRegistry()
         ))
 
         logger.info("PCBridge ready")

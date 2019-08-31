@@ -1,7 +1,7 @@
 package com.projectcitybuild.api.client
 
 import com.projectcitybuild.api.interfaces.BanApiInterface
-import com.projectcitybuild.api.interfaces.RankApiInterface
+import com.projectcitybuild.api.interfaces.AuthApiInterface
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -10,10 +10,10 @@ import retrofit2.converter.gson.GsonConverterFactory
 class PCBClient(private val authToken: String,
                 private val baseUrl: String) {
 
-    private val instance: Retrofit = build()
+    val instance: Retrofit = build()
 
     val banApi: BanApiInterface = instance.create(BanApiInterface::class.java)
-    val rankApi: RankApiInterface = instance.create(RankApiInterface::class.java)
+    val authApi: AuthApiInterface = instance.create(AuthApiInterface::class.java)
 
     private fun build() : Retrofit {
         val authenticatedClient = makeAuthenticatedClient(authToken)
@@ -30,6 +30,7 @@ class PCBClient(private val authToken: String,
 
         val clientFactory = OkHttpClient().newBuilder()
                 .addInterceptor { chain ->
+                    // Add access token as header to each API request
                     val request = chain.request()
                     val requestBuilder = request.newBuilder().header("Authorization", "Bearer $token")
                     val nextRequest = requestBuilder.build()
