@@ -15,26 +15,25 @@ import com.projectcitybuild.spigot.modules.chat.listeners.ChatListener
 import com.projectcitybuild.spigot.modules.maintenance.commands.MaintenanceCommand
 import com.projectcitybuild.spigot.modules.maintenance.listeners.MaintenanceConnectListener
 import com.projectcitybuild.spigot.modules.ranks.commands.SyncCommand
+import com.projectcitybuild.spigot.modules.ranks.listeners.SyncRankLoginListener
 
-class SpigotEventController: Controller {
+class SpigotEventRegistry: Controller {
     override val commands: Array<Commandable> = arrayOf(
             BanCommand(),
             UnbanCommand(),
             BanStatusCommand(),
-
             MuteCommand(),
             UnmuteCommand(),
             PrefixCommand(),
             SuffixCommand(),
-
             MaintenanceCommand(),
-
             SyncCommand()
     )
 
     override val listeners: Array<Listenable<*>> = arrayOf(
             BanConnectionListener(),
             ChatListener(),
-            MaintenanceConnectListener()
+            MaintenanceConnectListener(),
+            SyncRankLoginListener()
     )
 }

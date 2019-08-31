@@ -67,10 +67,6 @@ class SyncCommand : Commandable {
                 sender.sendMessage("To link your account, please ${json.data.url} and login if required:")
             }
         }
-//            sender.sendMessage(
-//                    "Please click the below URL to link this account with your PCB account:\n" +
-//                            "{text:\"" + "[Link Account]" + "\",clickEvent:{action:open_url,value:\"" + data.url + "\"}}"
-//            )
 
         return true
     }
