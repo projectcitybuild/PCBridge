@@ -3,7 +3,9 @@ package com.projectcitybuild.spigot.environment
 import com.projectcitybuild.api.client.MojangClient
 import com.projectcitybuild.api.client.PCBClient
 import com.projectcitybuild.core.contracts.EnvironmentProvider
-import com.projectcitybuild.core.services.PlayerStore
+import com.projectcitybuild.core.utilities.PlayerStore
+import com.projectcitybuild.core.utilities.AsyncTask
+import com.projectcitybuild.core.utilities.Cancellable
 import com.projectcitybuild.entities.LogLevel
 import com.projectcitybuild.entities.models.Player
 import com.projectcitybuild.entities.models.PluginConfig
@@ -50,6 +52,28 @@ class SpigotEnvironment(
         playerStore.put(player.uuid, player)
     }
 
+    override fun <T> async(task: ((T) -> Unit) -> Unit): AsyncTask<T> {
+        val plugin = plugin ?: throw Exception("Plugin already deallocated")
+
+        // Bukkit/Spigot performs Asynchronous units of work via their internal Scheduler
+        return AsyncTask<T> { resolve ->
+            val runnable = Runnable {
+                task { result -> resolve(result) }
+            }
+            val bukkitTask = plugin.server?.scheduler?.runTaskAsynchronously(plugin, runnable)
+
+            Cancellable {
+                bukkitTask?.cancel()
+            }
+        }
+    }
+
+    override fun sync(task: () -> Unit) {
+        val plugin = plugin ?: throw Exception("Plugin already deallocated")
+        val runnable = Runnable { task() }
+
+        plugin.server?.scheduler?.scheduleSyncDelayedTask(plugin, runnable)
+    }
 
     override val permissions: Permission? = hooks.permissions
     override val chat: Chat? = hooks.chat

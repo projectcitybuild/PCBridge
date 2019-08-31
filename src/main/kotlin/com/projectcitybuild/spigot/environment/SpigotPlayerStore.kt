@@ -2,7 +2,7 @@ package com.projectcitybuild.spigot.environment
 
 import com.projectcitybuild.spigot.extensions.makeModel
 import com.projectcitybuild.core.contracts.PlayerStoreWrapper
-import com.projectcitybuild.core.services.PlayerStore
+import com.projectcitybuild.core.utilities.PlayerStore
 import com.projectcitybuild.entities.models.Player
 import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.event.EventHandler

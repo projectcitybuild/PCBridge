@@ -31,9 +31,9 @@ commands:
    unban:
       description: Globally unbans a player from all PCB game servers
       usage: /unban <name>
-   status:
+   checkban:
       description: Checks the ban status of the given player
-      usage: /status <name>
-   login:
+      usage: /checkban <name>
+   sync:
       description: Syncs your Minecraft account rank with your PCB account
-      usage: /login <email> <password>
+      usage: /sync [finish]
