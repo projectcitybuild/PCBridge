@@ -12,6 +12,7 @@ class CreateUnbanAction(private val environment: EnvironmentProvider) {
     enum class Failure {
         PLAYER_NOT_BANNED,
         DESERIALIZE_FAILED,
+        BAD_REQUEST,
     }
 
     fun execute(playerId: UUID, staffId: UUID?) : Result {
@@ -26,8 +27,11 @@ class CreateUnbanAction(private val environment: EnvironmentProvider) {
         val response = request.execute()
         val json = response.body()
 
-        if (json?.error != null && json.error.id == "player_not_banned") {
-            return Result.FAILED(reason = Failure.PLAYER_NOT_BANNED)
+        if (json?.error != null) {
+            when (json.error.id) {
+                "player_not_banned" -> return Result.FAILED(reason = Failure.PLAYER_NOT_BANNED)
+                "bad_input" -> return Result.FAILED(reason = Failure.BAD_REQUEST)
+            }
         }
         if (json?.data == null) {
             return Result.FAILED(reason = Failure.DESERIALIZE_FAILED)
