@@ -40,17 +40,20 @@ class BanCommand: Commandable {
                         is CreateBanAction.Result.FAILED ->
                             when (result.reason) {
                                 CreateBanAction.Failure.PLAYER_ALREADY_BANNED -> sender.sendMessage("${args.first()} is already banned")
+                                CreateBanAction.Failure.BAD_REQUEST -> sender.sendMessage("Bad request sent to the ban server. Please contact an administrator to have this fixed")
                                 else -> sender.sendMessage("Error: Bad response received from the ban server. Please contact an admin")
                             }
 
-                        is CreateBanAction.Result.SUCCESS -> sender.server.broadcast("${args.first()} has been banned", "*")
+                        is CreateBanAction.Result.SUCCESS -> {
+                            sender.server.broadcast("${args.first()} has been banned", "*")
+
+                            val player = sender.server.onlinePlayers.first { player ->
+                                player.name.toLowerCase() == targetPlayerName.toLowerCase()
+                            }
+                            player?.kickPlayer("You have been banned")
+                        }
                     }
 
-                    // kick the player regardless
-                    val player = sender.server.onlinePlayers.first { player ->
-                        player.name.toLowerCase() == targetPlayerName.toLowerCase()
-                    }
-                    player?.kickPlayer("You have been banned")
                 }
             }
         }

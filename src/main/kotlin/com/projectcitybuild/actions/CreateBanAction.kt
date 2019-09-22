@@ -12,6 +12,7 @@ class CreateBanAction(private val environment: EnvironmentProvider) {
     enum class Failure {
         PLAYER_ALREADY_BANNED,
         DESERIALIZE_FAILED,
+        BAD_REQUEST,
     }
 
     fun execute(playerId: UUID, playerName: String, staffId: UUID?, reason: String?) : Result {
@@ -25,13 +26,16 @@ class CreateBanAction(private val environment: EnvironmentProvider) {
                 staffIdType = "minecraft_uuid",
                 reason = reason,
                 expiresAt = null,
-                isGlobalBan = true
+                isGlobalBan = 1
         )
         val response = request.execute()
         val json = response.body()
 
-        if (json?.error != null && json.error.id == "player_already_banned") {
-            return Result.FAILED(reason = Failure.PLAYER_ALREADY_BANNED)
+        if (json?.error != null) {
+            when (json.error.id) {
+                "player_already_banned" -> return Result.FAILED(reason = Failure.PLAYER_ALREADY_BANNED)
+                "bad_input" -> return Result.FAILED(reason = Failure.BAD_REQUEST)
+            }
         }
         if (json?.data == null) {
             return Result.FAILED(reason = Failure.DESERIALIZE_FAILED)

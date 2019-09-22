@@ -18,7 +18,7 @@ interface BanApiInterface {
             @Field("staff_id_type") staffIdType: String,
             @Field("reason") reason: String?,
             @Field("expires_at") expiresAt: Long?,
-            @Field("is_global_ban") isGlobalBan: Boolean
+            @Field("is_global_ban") isGlobalBan: Int
     ) : Call<ApiResponse<GameBan>>
 
     @FormUrlEncoded
