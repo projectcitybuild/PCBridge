@@ -65,7 +65,7 @@ class SyncCommand : Commandable {
                     sender.sendMessage("Server failed to generate verification URL. Please try again later")
                     return@sync
                 }
-                sender.sendMessage("To link your account, please ${json.data.url} and login if required:")
+                sender.sendMessage("To link your account, please click the link and login if required:&9 ${json.data.url}")
             }
         }
 
