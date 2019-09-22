@@ -18,11 +18,8 @@ class GetMojangPlayerAction(private val environment: EnvironmentProvider) {
 
         val request = mojangApi.getMojangPlayer(playerName, timestamp = at)
         val response = request.execute()
-        val player = response.body()
+        val player = response.body() ?: return Result.FAILED(reason = Failure.DESERIALIZE_FAILED)
 
-        if (player == null) {
-            return Result.FAILED(reason = Failure.DESERIALIZE_FAILED)
-        }
         return Result.SUCCESS(player)
     }
 }

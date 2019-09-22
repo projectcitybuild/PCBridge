@@ -17,6 +17,11 @@ fun Server.getOfflinePlayer(name: String, environment : EnvironmentProvider) : U
     if (result is GetMojangPlayerAction.Result.SUCCESS) {
         return UUID.fromString(result.player.uuid.toDashFormattedUUID())
     }
+    if (result is GetMojangPlayerAction.Result.FAILED) {
+        when (result.reason) {
+            GetMojangPlayerAction.Failure.DESERIALIZE_FAILED -> throw Exception("Bad response from Mojang server when fetching UUID for offline player")
+        }
+    }
     return null
 }
 
