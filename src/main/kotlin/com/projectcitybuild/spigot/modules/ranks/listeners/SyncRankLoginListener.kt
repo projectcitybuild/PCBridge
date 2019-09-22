@@ -26,9 +26,6 @@ class SyncRankLoginListener : Listenable<PlayerLoginEvent> {
 
         getPlayerGroups(playerId = player.uniqueId) { result ->
             val json = result.body()
-            if (json?.data == null) {
-                return@getPlayerGroups
-            }
 
             if (json?.error != null) {
                 if (json.error.id != "account_not_linked") {
@@ -44,12 +41,21 @@ class SyncRankLoginListener : Listenable<PlayerLoginEvent> {
                 permissions.getPlayerGroups(player).forEach { group ->
                     permissions.playerRemoveGroup(player, group)
                 }
+                if (json?.data == null) {
+                    return@sync
+                }
 
                 val permissionGroups = RankMapper.mapGroupsToPermissionGroups(json.data.groups)
                 permissionGroups.forEach { group ->
                     if (!permissions.playerInGroup(player, group)) {
                         permissions.playerAddGroup(null, player, group)
                     }
+                }
+
+                // Some plugins manually set users to Guest if you clear all their groups, so we
+                // need to manually remove the Guest group if necessary
+                if (permissionGroups.isNotEmpty()) {
+                    permissions.playerRemoveGroup(player, "Guest")
                 }
             }
         }

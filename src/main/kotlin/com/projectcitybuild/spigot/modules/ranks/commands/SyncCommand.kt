@@ -100,6 +100,12 @@ class SyncCommand : Commandable {
                     }
                 }
 
+                // Some plugins manually set users to Guest if you clear all their groups, so we
+                // need to manually remove the Guest group if necessary
+                if (permissionGroups.isNotEmpty()) {
+                    permissions.playerRemoveGroup(sender, "Guest")
+                }
+
                 sender.sendMessage("Account successfully linked. Your rank will be automatically synchronized with the PCB network")
             }
         }
