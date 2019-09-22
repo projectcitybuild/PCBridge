@@ -6,6 +6,7 @@ import com.projectcitybuild.spigot.extensions.getOfflinePlayer
 import com.projectcitybuild.actions.CreateBanAction
 import com.projectcitybuild.core.extensions.joinWithWhitespaces
 import com.projectcitybuild.core.utilities.AsyncTask
+import org.bukkit.ChatColor
 import org.bukkit.Server
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
@@ -48,7 +49,7 @@ class BanCommand: Commandable {
                         }
 
                         is CreateBanAction.Result.SUCCESS -> {
-                            sender.server.broadcast("${args.first()} has been banned", "*")
+                            sender.server.broadcast("${ChatColor.GRAY}${args.first()} has been banned by ${sender.name}: ${reason ?: "No reason given"}", "*")
 
                             val player = sender.server.onlinePlayers.first { player ->
                                 player.name.toLowerCase() == targetPlayerName.toLowerCase()

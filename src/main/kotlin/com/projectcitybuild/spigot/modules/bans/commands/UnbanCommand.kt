@@ -33,14 +33,11 @@ class UnbanCommand : Commandable {
             createUnban(playerId = uuid, staffId = staffPlayer?.uniqueId) { result ->
                 environment.sync {
                     if (result is CreateUnbanAction.Result.FAILED) {
-                        when (result.reason) {
-                            CreateUnbanAction.Failure.PLAYER_NOT_BANNED -> {
-                                sender.sendMessage("${args.first()} is not currently banned")
-                            }
-                            else -> {
-                                sender.sendMessage("Error: Bad response received from the ban server. Please contact an admin")
-                            }
+                        val message = when (result.reason) {
+                            CreateUnbanAction.Failure.PLAYER_NOT_BANNED -> "${args.first()} is not currently banned"
+                            else -> "Error: Bad response received from the ban server. Please contact an admin"
                         }
+                        sender.sendMessage(message)
                     }
                     if (result is CreateUnbanAction.Result.SUCCESS) {
                         sender.server.broadcast("${args.first()} has been unbanned", "*")
