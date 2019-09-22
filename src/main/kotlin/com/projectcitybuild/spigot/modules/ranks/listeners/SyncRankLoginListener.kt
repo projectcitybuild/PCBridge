@@ -8,15 +8,15 @@ import com.projectcitybuild.spigot.modules.ranks.RankMapper
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
-import org.bukkit.event.player.PlayerLoginEvent
+import org.bukkit.event.player.PlayerJoinEvent
 import retrofit2.Response
 import java.util.*
 
-class SyncRankLoginListener : Listenable<PlayerLoginEvent> {
+class SyncRankLoginListener : Listenable<PlayerJoinEvent> {
     override var environment: EnvironmentProvider? = null
 
     @EventHandler(priority = EventPriority.HIGH)
-    override fun observe(event: PlayerLoginEvent) {
+    override fun observe(event: PlayerJoinEvent) {
         syncRankWithServer(event.player)
     }
 

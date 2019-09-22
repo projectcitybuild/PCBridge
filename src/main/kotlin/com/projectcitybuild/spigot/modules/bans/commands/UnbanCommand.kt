@@ -37,7 +37,6 @@ class UnbanCommand : Commandable {
                             CreateUnbanAction.Failure.PLAYER_NOT_BANNED -> "${args.first()} is not currently banned"
                             CreateUnbanAction.Failure.BAD_REQUEST -> "Bad request sent to the ban server. Please contact an administrator to have this fixed"
                             CreateUnbanAction.Failure.DESERIALIZE_FAILED -> "Error: Bad response received from the ban server. Please contact an admin"
-                            else -> "Error: An unexpected error has occurred"
                         }
                         sender.sendMessage(message)
                     }
