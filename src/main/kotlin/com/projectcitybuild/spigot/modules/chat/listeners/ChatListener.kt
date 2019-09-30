@@ -3,6 +3,7 @@ package com.projectcitybuild.spigot.modules.chat.listeners
 import com.projectcitybuild.core.contracts.EnvironmentProvider
 import com.projectcitybuild.core.contracts.Listenable
 import com.projectcitybuild.entities.LogLevel
+import me.lucko.luckperms.api.Group
 import me.lucko.luckperms.api.Node
 import org.bukkit.ChatColor
 import org.bukkit.event.EventHandler
@@ -30,36 +31,41 @@ class ChatListener : Listenable<AsyncPlayerChatEvent> {
         val lpUser = permissions.userManager.getUser(event.player.uniqueId)
                 ?: throw Exception("Could not load user from LuckPerms")
 
-        val groups = lpUser.ownNodes.stream()
+        val groupNodes = lpUser.ownNodes.stream()
                 .filter(Node::isGroupNode)
-                .map(Node::getGroupName)
+                .map { node -> permissions.groupManager.getGroup(node.groupName) }
                 .collect(Collectors.toSet())
 
         val prefixes = lpUser.ownNodes.stream()
                 .filter(Node::isPrefix)
-                .map(Node::getPrefix)
+                .map { node -> node.prefix.value }
                 .collect(Collectors.toSet())
                 .joinToString(separator = "")
 
         val suffixes = lpUser.ownNodes.stream()
                 .filter(Node::isSuffix)
-                .map(Node::getSuffix)
+                .map { node -> node.suffix.value }
                 .collect(Collectors.toSet())
                 .joinToString(separator = "")
 
-        val groupNames = mutableListOf<String>()
-        groups.forEach { group ->
+        val groups = mutableListOf<String>()
+        groupNodes.forEach { group ->
+            val group = group ?: return
+            val displayName = group.displayName ?: group.name
+
             // Donators have the [$] appear before everything
-            if (group.toLowerCase() == "donator") {
-                groupNames.add(index = 0, element = group)
+            if (group.name.toLowerCase() == "donator") {
+                groups.add(index = 0, element = displayName)
             } else {
-                groupNames.add(group)
+                groups.add(displayName)
             }
         }
+        val groupNames = groups.joinToString(separator = "")
 
         val name = "$prefixes${ChatColor.RESET} ${event.player.displayName} $suffixes${ChatColor.RESET}"
+        val message = "$groupNames${ChatColor.RESET} <$name> ${event.message}"
 
-        event.format = "$groupNames${ChatColor.RESET} <$name}> ${event.message}"
+        event.format = message
     }
 
 }
