@@ -65,7 +65,10 @@ class ChatListener : Listenable<AsyncPlayerChatEvent> {
         val name = "$prefixes${ChatColor.RESET} ${event.player.displayName} $suffixes${ChatColor.RESET}"
         val message = "$groupNames${ChatColor.RESET} <$name> ${event.message}"
 
-        event.format = message
+        // Escape % from message
+        val escapedMessage = message.replace("%", newValue = "%%")
+
+        event.format = escapedMessage
     }
 
 }
