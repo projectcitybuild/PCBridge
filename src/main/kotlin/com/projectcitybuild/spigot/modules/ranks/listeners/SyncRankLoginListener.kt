@@ -46,7 +46,7 @@ class SyncRankLoginListener : Listenable<PlayerJoinEvent> {
                 }
 
                 // Remove all groups from the player before syncing
-                lpUser.getAllNodes().stream()
+                lpUser.allNodes.stream()
                         .filter(Node::isGroupNode)
                         .collect(Collectors.toSet())
                         .forEach { groupNode ->

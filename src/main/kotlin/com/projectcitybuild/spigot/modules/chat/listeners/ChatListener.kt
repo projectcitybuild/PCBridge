@@ -2,6 +2,7 @@ package com.projectcitybuild.spigot.modules.chat.listeners
 
 import com.projectcitybuild.core.contracts.EnvironmentProvider
 import com.projectcitybuild.core.contracts.Listenable
+import com.projectcitybuild.entities.LogLevel
 import me.lucko.luckperms.api.Node
 import org.bukkit.ChatColor
 import org.bukkit.event.EventHandler
@@ -17,7 +18,7 @@ class ChatListener : Listenable<AsyncPlayerChatEvent> {
         val environment = environment ?: return
         val permissions = environment.permissions ?: throw Exception("Permission plugin is null")
 
-        // player muting
+        // Mute player if necessary
         val sendingPlayer = environment.get(event.player.uniqueId)
         if (sendingPlayer?.isMuted == true) {
             event.isCancelled = true
@@ -25,51 +26,40 @@ class ChatListener : Listenable<AsyncPlayerChatEvent> {
             return
         }
 
-        // chat formatting
-        val chat = environment.chat
-        if (chat == null) {
-            throw Exception("Failed to get chat hook")
-        }
-
-        var prefix: String? = null
-        var suffix: String? = null
-        if (sendingPlayer != null) {
-            prefix = environment?.get(sendingPlayer.uuid)?.prefix?.replace(oldValue = "&", newValue = "§")
-            suffix = environment?.get(sendingPlayer.uuid)?.suffix?.replace(oldValue = "&", newValue = "§")
-        }
-
-        val groupNames = mutableListOf<String>()
-
+        // Format user display name
         val lpUser = permissions.userManager.getUser(event.player.uniqueId)
-        if (lpUser == null) {
-            throw Exception("Could not load user from LuckPerms")
-        }
+                ?: throw Exception("Could not load user from LuckPerms")
 
-        val groups = lpUser.getAllNodes().stream()
+        val groups = lpUser.ownNodes.stream()
                 .filter(Node::isGroupNode)
                 .map(Node::getGroupName)
                 .collect(Collectors.toSet())
 
-        groups.forEach { group ->
-            val groupPrefix = chat.getGroupPrefix(event.player.world, group).replace(oldValue = "&", newValue = "§")
-//            val groupSuffix = chat.getGroupSuffix(event.player.world, group).replace(oldValue = "&", newValue = "§")
-            val groupName = groupPrefix
+        val prefixes = lpUser.ownNodes.stream()
+                .filter(Node::isPrefix)
+                .map(Node::getPrefix)
+                .collect(Collectors.toSet())
+                .joinToString(separator = "")
 
-            // donators have the [$] appear before everything
+        val suffixes = lpUser.ownNodes.stream()
+                .filter(Node::isSuffix)
+                .map(Node::getSuffix)
+                .collect(Collectors.toSet())
+                .joinToString(separator = "")
+
+        val groupNames = mutableListOf<String>()
+        groups.forEach { group ->
+            // Donators have the [$] appear before everything
             if (group.toLowerCase() == "donator") {
-                groupNames.add(index = 0, element = groupName)
+                groupNames.add(index = 0, element = group)
             } else {
-                groupNames.add(groupName)
+                groupNames.add(group)
             }
         }
 
-        val finalPrefix = if (prefix != null) "$prefix " else ""
-        val finalSuffix = if (suffix != null) " $suffix" else ""
-        val finalGroups = groupNames.distinct().joinToString(separator = "")
+        val name = "$prefixes${ChatColor.RESET} ${event.player.displayName} $suffixes${ChatColor.RESET}"
 
-        val name = "$finalPrefix$finalGroups${event.player.displayName}$finalSuffix"
-
-        event.format = "<$name${ChatColor.RESET}> ${event.message}"
+        event.format = "$groupNames${ChatColor.RESET} <$name}> ${event.message}"
     }
 
 }
