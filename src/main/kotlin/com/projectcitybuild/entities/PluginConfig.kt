@@ -1,4 +1,4 @@
-package com.projectcitybuild.entities.models
+package com.projectcitybuild.entities
 
 open class PluginConfigPair(val key: String, val defaultValue: Any)
 

@@ -8,10 +8,10 @@ import com.projectcitybuild.core.utilities.AsyncTask
 import com.projectcitybuild.core.utilities.Cancellable
 import com.projectcitybuild.entities.LogLevel
 import com.projectcitybuild.entities.models.Player
-import com.projectcitybuild.entities.models.PluginConfig
-import com.projectcitybuild.entities.models.PluginConfigPair
+import com.projectcitybuild.entities.PluginConfig
+import com.projectcitybuild.entities.PluginConfigPair
+import me.lucko.luckperms.api.LuckPermsApi
 import net.milkbowl.vault.chat.Chat
-import net.milkbowl.vault.permission.Permission
 import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.plugin.java.JavaPlugin
 import java.lang.ref.WeakReference
@@ -75,7 +75,7 @@ class SpigotEnvironment(
         plugin.server?.scheduler?.scheduleSyncDelayedTask(plugin, runnable)
     }
 
-    override val permissions: Permission? = hooks.permissions
+    override val permissions: LuckPermsApi? = hooks.permissions
     override val chat: Chat? = hooks.chat
 
     private var pcbClient: PCBClient? = null

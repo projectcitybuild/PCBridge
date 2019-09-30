@@ -2,7 +2,7 @@ package com.projectcitybuild.spigot.modules.maintenance.listeners
 
 import com.projectcitybuild.core.contracts.EnvironmentProvider
 import com.projectcitybuild.core.contracts.Listenable
-import com.projectcitybuild.entities.models.PluginConfig
+import com.projectcitybuild.entities.PluginConfig
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.player.PlayerLoginEvent

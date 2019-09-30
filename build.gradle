@@ -39,6 +39,7 @@ dependencies {
     implementation'com.squareup.retrofit2:converter-gson:2.5.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:3.5.0'
     compileOnly 'net.milkbowl.vault:VaultAPI:1.7'
+    compile 'me.lucko.luckperms:luckperms-api:4.4'
 }
 
 compileKotlin {

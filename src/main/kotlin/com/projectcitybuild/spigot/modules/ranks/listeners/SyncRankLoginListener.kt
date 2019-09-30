@@ -5,12 +5,14 @@ import com.projectcitybuild.core.contracts.Listenable
 import com.projectcitybuild.entities.models.ApiResponse
 import com.projectcitybuild.entities.models.AuthPlayerGroups
 import com.projectcitybuild.spigot.modules.ranks.RankMapper
+import me.lucko.luckperms.api.Node
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.player.PlayerJoinEvent
 import retrofit2.Response
 import java.util.*
+import java.util.stream.Collectors
 
 class SyncRankLoginListener : Listenable<PlayerJoinEvent> {
     override var environment: EnvironmentProvider? = null
@@ -37,26 +39,33 @@ class SyncRankLoginListener : Listenable<PlayerJoinEvent> {
             }
 
             environment.sync {
-                // Remove all groups from the player before syncing
-                permissions.getPlayerGroups(player).forEach { group ->
-                    permissions.playerRemoveGroup(player, group)
+                val lpUser = permissions.userManager.getUser(player.uniqueId)
+                if (lpUser == null) {
+                    player.sendMessage("Sync failed: Could not load user from permission system. Please contact a staff member")
+                    throw Exception("Could not load user from LuckPerms")
                 }
+
+                // Remove all groups from the player before syncing
+                lpUser.getAllNodes().stream()
+                        .filter(Node::isGroupNode)
+                        .collect(Collectors.toSet())
+                        .forEach { groupNode ->
+                            lpUser.unsetPermission(groupNode)
+                        }
+
                 if (json?.data == null) {
                     return@sync
                 }
 
                 val permissionGroups = RankMapper.mapGroupsToPermissionGroups(json.data.groups)
                 permissionGroups.forEach { group ->
-                    if (!permissions.playerInGroup(player, group)) {
-                        permissions.playerAddGroup(null, player, group)
+                    val groupNode = permissions.nodeFactory.makeGroupNode(group).build()
+                    if (!lpUser.hasPermission(groupNode).asBoolean()) {
+                        lpUser.setPermission(groupNode)
                     }
                 }
 
-                // Some plugins manually set users to Guest if you clear all their groups, so we
-                // need to manually remove the Guest group if necessary
-                if (permissionGroups.isNotEmpty()) {
-                    permissions.playerRemoveGroup(player, "Guest")
-                }
+                permissions.userManager.saveUser(lpUser)
             }
         }
     }

@@ -1,6 +1,6 @@
 package com.projectcitybuild.spigot.extensions
 
-import com.projectcitybuild.entities.models.PluginConfigPair
+import com.projectcitybuild.entities.PluginConfigPair
 import org.bukkit.configuration.file.FileConfiguration
 
 inline fun <reified Pair: PluginConfigPair> FileConfiguration.addDefault() {

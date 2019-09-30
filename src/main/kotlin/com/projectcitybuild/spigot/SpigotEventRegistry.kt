@@ -4,7 +4,7 @@ import com.projectcitybuild.core.contracts.Commandable
 import com.projectcitybuild.core.contracts.Controller
 import com.projectcitybuild.core.contracts.Listenable
 import com.projectcitybuild.spigot.modules.bans.commands.BanCommand
-import com.projectcitybuild.spigot.modules.bans.commands.BanStatusCommand
+import com.projectcitybuild.spigot.modules.bans.commands.CheckBanCommand
 import com.projectcitybuild.spigot.modules.bans.commands.UnbanCommand
 import com.projectcitybuild.spigot.modules.bans.listeners.BanConnectionListener
 import com.projectcitybuild.spigot.modules.chat.commands.MuteCommand
@@ -21,7 +21,7 @@ class SpigotEventRegistry: Controller {
     override val commands: Array<Commandable> = arrayOf(
             BanCommand(),
             UnbanCommand(),
-            BanStatusCommand(),
+            CheckBanCommand(),
             MuteCommand(),
             UnmuteCommand(),
             PrefixCommand(),

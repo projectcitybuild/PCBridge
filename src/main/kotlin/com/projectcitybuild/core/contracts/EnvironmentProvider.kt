@@ -3,13 +3,11 @@ package com.projectcitybuild.core.contracts
 import com.projectcitybuild.api.client.MojangClient
 import com.projectcitybuild.api.client.PCBClient
 import com.projectcitybuild.core.utilities.AsyncTask
-import com.projectcitybuild.core.utilities.Cancellable
 import com.projectcitybuild.entities.LogLevel
-import com.projectcitybuild.entities.Result
 import com.projectcitybuild.entities.models.Player
-import com.projectcitybuild.entities.models.PluginConfigPair
+import com.projectcitybuild.entities.PluginConfigPair
+import me.lucko.luckperms.api.LuckPermsApi
 import net.milkbowl.vault.chat.Chat
-import net.milkbowl.vault.permission.Permission
 import org.bukkit.plugin.java.JavaPlugin
 import java.util.*
 
@@ -34,7 +32,7 @@ interface EnvironmentProvider {
     // Runs a given unit of work on the main thread synchronously
     fun sync(task: () -> Unit)
 
-    val permissions: Permission?
+    val permissions: LuckPermsApi?
         get() = throw NotImplementedError()
 
     val chat: Chat?

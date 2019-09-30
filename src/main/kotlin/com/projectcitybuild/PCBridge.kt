@@ -4,7 +4,7 @@ import com.projectcitybuild.core.contracts.CommandDelegatable
 import com.projectcitybuild.core.contracts.Controller
 import com.projectcitybuild.core.contracts.ListenerDelegatable
 import com.projectcitybuild.spigot.extensions.addDefault
-import com.projectcitybuild.entities.models.PluginConfig
+import com.projectcitybuild.entities.PluginConfig
 import com.projectcitybuild.spigot.SpigotCommandDelegate
 import com.projectcitybuild.spigot.SpigotListenerDelegate
 import com.projectcitybuild.spigot.SpigotEventRegistry

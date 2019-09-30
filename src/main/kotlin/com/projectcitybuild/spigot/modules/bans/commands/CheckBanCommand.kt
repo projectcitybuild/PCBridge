@@ -8,7 +8,7 @@ import org.bukkit.Server
 import org.bukkit.command.CommandSender
 import java.util.*
 
-class BanStatusCommand : Commandable {
+class CheckBanCommand : Commandable {
     override var environment: EnvironmentProvider? = null
     override val label: String = "checkban"
     override val permission: String = "pcbridge.ban.checkban"

@@ -1,6 +1,6 @@
 main: com.projectcitybuild.PCBridge
 name: PCBridge
-version: 2.1.2
+version: 2.2.0
 softdepend: [Vault, PermissionsEX]
 
 commands:

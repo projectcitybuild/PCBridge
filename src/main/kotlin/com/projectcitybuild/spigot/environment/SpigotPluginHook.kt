@@ -1,12 +1,13 @@
 package com.projectcitybuild.spigot.environment
 
+import me.lucko.luckperms.api.LuckPermsApi
 import net.milkbowl.vault.chat.Chat
-import net.milkbowl.vault.permission.Permission
+import org.bukkit.Bukkit
 import org.bukkit.plugin.java.JavaPlugin
 import java.lang.ref.WeakReference
 
 class SpigotPluginHook(private val plugin: WeakReference<JavaPlugin>) {
-    var permissions: Permission? = null
+    var permissions: LuckPermsApi? = null
         private set
 
     var chat: Chat? = null
@@ -18,9 +19,10 @@ class SpigotPluginHook(private val plugin: WeakReference<JavaPlugin>) {
     }
 
     private fun setupPermissionHook() {
-        val plugin = this.plugin.get() ?: throw Exception("Plugin reference is null")
-        val rsp = plugin.server.servicesManager.getRegistration(Permission::class.java)
-        permissions = rsp.provider
+        val provider = Bukkit.getServicesManager().getRegistration(LuckPermsApi::class.java)
+        if (provider != null) {
+            permissions = provider.provider
+        }
     }
 
     private fun setupChatHook() {

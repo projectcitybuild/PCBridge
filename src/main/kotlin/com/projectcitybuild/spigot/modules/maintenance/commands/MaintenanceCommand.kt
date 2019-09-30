@@ -2,7 +2,7 @@ package com.projectcitybuild.spigot.modules.maintenance.commands
 
 import com.projectcitybuild.core.contracts.Commandable
 import com.projectcitybuild.core.contracts.EnvironmentProvider
-import com.projectcitybuild.entities.models.PluginConfig
+import com.projectcitybuild.entities.PluginConfig
 import org.bukkit.command.CommandSender
 
 class MaintenanceCommand : Commandable {
