@@ -101,6 +101,9 @@ class SyncCommand : Commandable {
                         }
 
                 if (json?.data == null) {
+                    val groupNode = permissions.nodeFactory.makeGroupNode("guest").build()
+                    lpUser.setPermission(groupNode)
+
                     sender.sendMessage("No account found: Set to Guest")
                     return@sync
                 }
@@ -111,6 +114,12 @@ class SyncCommand : Commandable {
                     if (!lpUser.hasPermission(groupNode).asBoolean()) {
                         lpUser.setPermission(groupNode)
                     }
+                }
+
+                // Just in case, assign to Guest if no groups available (shouldn't happen though)
+                if (permissionGroups.isEmpty()) {
+                    val groupNode = permissions.nodeFactory.makeGroupNode("guest").build()
+                    lpUser.setPermission(groupNode)
                 }
 
                 permissions.userManager.saveUser(lpUser)
