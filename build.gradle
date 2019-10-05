@@ -1,5 +1,5 @@
 group 'com.projectcitybuild'
-version '2.1-SNAPSHOT'
+version '2.3.0'
 
 wrapper {
     gradleVersion = '5.5.1'
