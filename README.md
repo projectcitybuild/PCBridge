@@ -31,5 +31,5 @@ A command (represented by `Commandable`) is an event where the user types in a c
 * `/maintenance [on|off]` - Puts the server into Maintenance Mode; no non-staff player can join while active
 
 ## Using on Server
-PCBridge relies on [Vault](https://www.spigotmc.org/resources/vault.34315/) for managing ranks.
-Make sure that you have Vault.jar in your server's plugin folder, as well as a permission management plugin jar of your choice (eg. PEX).
+PCBridge relies on [LuckPerms](https://www.spigotmc.org/resources/luckperms-an-advanced-permissions-plugin.28140/) for managing ranks.
+Make sure that you have the LuckPerms.jar in your server's plugin folder.

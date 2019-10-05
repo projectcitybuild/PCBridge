@@ -76,7 +76,6 @@ class SpigotEnvironment(
     }
 
     override val permissions: LuckPermsApi? = hooks.permissions
-    override val chat: Chat? = hooks.chat
 
     private var pcbClient: PCBClient? = null
     override val apiClient: PCBClient

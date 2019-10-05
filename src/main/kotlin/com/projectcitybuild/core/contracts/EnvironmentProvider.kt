@@ -35,9 +35,6 @@ interface EnvironmentProvider {
     val permissions: LuckPermsApi?
         get() = throw NotImplementedError()
 
-    val chat: Chat?
-        get() = throw NotImplementedError()
-
     val apiClient: PCBClient
         get() = throw NotImplementedError()
 

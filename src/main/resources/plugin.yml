@@ -1,7 +1,7 @@
 main: com.projectcitybuild.PCBridge
 name: PCBridge
 version: 2.3.0
-softdepend: [Vault, LuckyPerms]
+softdepend: [LuckPerms]
 
 commands:
    maintenance:
