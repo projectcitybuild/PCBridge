@@ -14,7 +14,7 @@ object RankMapper {
                 "donator" -> permissionGroups.add("Donator")
                 "trusted" -> permissionGroups.add("Trusted")
                 "trusted plus" -> permissionGroups.add("Trusted+")
-                "moderator" -> permissionGroups.add("Mod")
+                "moderator" -> permissionGroups.add("Moderator")
                 "operator" -> permissionGroups.add("OP")
                 "senior operator" -> permissionGroups.add("SOP")
                 "administrator" -> permissionGroups.add("Admin")
