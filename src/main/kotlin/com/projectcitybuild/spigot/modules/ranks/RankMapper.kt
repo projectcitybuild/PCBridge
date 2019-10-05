@@ -10,14 +10,14 @@ object RankMapper {
         // TODO: [@andy] use Config file instead of hardcoding these
         groups.forEach { group ->
             when (group.name) {
-                "member" -> permissionGroups.add("Member")
-                "donator" -> permissionGroups.add("Donator")
-                "trusted" -> permissionGroups.add("Trusted")
-                "trusted plus" -> permissionGroups.add("Trusted+")
-                "moderator" -> permissionGroups.add("Moderator")
-                "operator" -> permissionGroups.add("OP")
-                "senior operator" -> permissionGroups.add("SOP")
-                "administrator" -> permissionGroups.add("Admin")
+                "member" -> permissionGroups.add("member")
+                "donator" -> permissionGroups.add("donator")
+                "trusted" -> permissionGroups.add("trusted")
+                "trusted plus" -> permissionGroups.add("trusted+")
+                "moderator" -> permissionGroups.add("moderator")
+                "operator" -> permissionGroups.add("op")
+                "senior operator" -> permissionGroups.add("sop")
+                "administrator" -> permissionGroups.add("admin")
             }
         }
 
