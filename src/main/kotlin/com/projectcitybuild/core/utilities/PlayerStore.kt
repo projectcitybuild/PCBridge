@@ -1,6 +1,6 @@
 package com.projectcitybuild.core.utilities
 
-import com.projectcitybuild.entities.models.Player
+import com.projectcitybuild.entities.Player
 import java.util.*
 
 class PlayerStore {

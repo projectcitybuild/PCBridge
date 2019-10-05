@@ -4,7 +4,7 @@ import com.projectcitybuild.api.client.MojangClient
 import com.projectcitybuild.api.client.PCBClient
 import com.projectcitybuild.core.utilities.AsyncTask
 import com.projectcitybuild.entities.LogLevel
-import com.projectcitybuild.entities.models.Player
+import com.projectcitybuild.entities.Player
 import com.projectcitybuild.entities.PluginConfigPair
 import me.lucko.luckperms.api.LuckPermsApi
 import net.milkbowl.vault.chat.Chat

@@ -7,7 +7,7 @@ import com.projectcitybuild.core.utilities.PlayerStore
 import com.projectcitybuild.core.utilities.AsyncTask
 import com.projectcitybuild.core.utilities.Cancellable
 import com.projectcitybuild.entities.LogLevel
-import com.projectcitybuild.entities.models.Player
+import com.projectcitybuild.entities.Player
 import com.projectcitybuild.entities.PluginConfig
 import com.projectcitybuild.entities.PluginConfigPair
 import me.lucko.luckperms.api.LuckPermsApi

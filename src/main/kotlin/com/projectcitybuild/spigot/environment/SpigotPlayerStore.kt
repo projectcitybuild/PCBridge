@@ -3,7 +3,7 @@ package com.projectcitybuild.spigot.environment
 import com.projectcitybuild.spigot.extensions.makeModel
 import com.projectcitybuild.core.contracts.PlayerStoreWrapper
 import com.projectcitybuild.core.utilities.PlayerStore
-import com.projectcitybuild.entities.models.Player
+import com.projectcitybuild.entities.Player
 import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -58,9 +58,7 @@ class SpigotPlayerStore(val plugin: WeakReference<JavaPlugin>) : PlayerStoreWrap
 
         return Player(
                 uuid = uuid,
-                isMuted = reader.getBoolean("chat.isMuted"),
-                prefix = reader.getString("chat.prefix"),
-                suffix = reader.getString("chat.suffix")
+                isMuted = reader.getBoolean("chat.isMuted")
         )
     }
 
@@ -71,8 +69,6 @@ class SpigotPlayerStore(val plugin: WeakReference<JavaPlugin>) : PlayerStoreWrap
         val reader = YamlConfiguration.loadConfiguration(file)
         reader.set("uuid", uuid.toString())
         reader.set("chat.isMuted", player?.isMuted ?: false)
-        reader.set("chat.prefix", null)
-        reader.set("chat.suffix", null)
 
         reader.save(file)
     }

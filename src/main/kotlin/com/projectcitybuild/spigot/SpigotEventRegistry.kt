@@ -8,8 +8,6 @@ import com.projectcitybuild.spigot.modules.bans.commands.CheckBanCommand
 import com.projectcitybuild.spigot.modules.bans.commands.UnbanCommand
 import com.projectcitybuild.spigot.modules.bans.listeners.BanConnectionListener
 import com.projectcitybuild.spigot.modules.chat.commands.MuteCommand
-import com.projectcitybuild.spigot.modules.chat.commands.PrefixCommand
-import com.projectcitybuild.spigot.modules.chat.commands.SuffixCommand
 import com.projectcitybuild.spigot.modules.chat.commands.UnmuteCommand
 import com.projectcitybuild.spigot.modules.chat.listeners.ChatListener
 import com.projectcitybuild.spigot.modules.maintenance.commands.MaintenanceCommand
@@ -24,8 +22,6 @@ class SpigotEventRegistry: Controller {
             CheckBanCommand(),
             MuteCommand(),
             UnmuteCommand(),
-            PrefixCommand(),
-            SuffixCommand(),
             MaintenanceCommand(),
             SyncCommand()
     )

@@ -1,6 +1,6 @@
 main: com.projectcitybuild.PCBridge
 name: PCBridge
-version: 2.2.0
+version: 2.3.0
 softdepend: [Vault, PermissionsEX]
 
 commands:
@@ -13,18 +13,6 @@ commands:
    unmute:
       description: Removes a chat mute on a player
       usage: /unmute <name>
-   prefix:
-      description: Sets (or gets) the prefix of a player
-      usage: |
-         /prefix <name> set <prefix>
-         /prefix <name> clear
-         /prefix <name>
-   suffix:
-      description: Sets (or gets) the suffix of a player
-      usage: |
-         /suffix <name> set <suffix>
-         /suffix <name> clear
-         /suffix <name>
    ban:
       description: Globally bans a player from connecting to any PCB game servers
       usage: /ban <name> [reason]
