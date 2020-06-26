@@ -2,7 +2,9 @@ package com.projectcitybuild.spigot.modules.chat.listeners
 
 import com.projectcitybuild.core.contracts.EnvironmentProvider
 import com.projectcitybuild.core.contracts.Listenable
-import me.lucko.luckperms.api.Node
+import net.luckperms.api.node.Node
+import net.luckperms.api.node.NodeType
+import net.luckperms.api.node.types.PrefixNode
 import org.bukkit.ChatColor
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
@@ -29,30 +31,32 @@ class ChatListener : Listenable<AsyncPlayerChatEvent> {
         val lpUser = permissions.userManager.getUser(event.player.uniqueId)
                 ?: throw Exception("Could not load user from LuckPerms")
 
-        val groupNodes = lpUser.ownNodes.stream()
-                .filter(Node::isGroupNode)
-                .map { node -> permissions.groupManager.getGroup(node.groupName) }
+        val groupNodes = lpUser.nodes.stream()
+                .filter(NodeType.INHERITANCE::matches)
+                .map(NodeType.INHERITANCE::cast)
                 .collect(Collectors.toSet())
 
-        val prefixes = lpUser.ownNodes.stream()
-                .filter(Node::isPrefix)
-                .map { node -> node.prefix.value }
+        val prefixes = lpUser.nodes.stream()
+                .filter(NodeType.PREFIX::matches)
+                .map(NodeType.INHERITANCE::cast)
+                .map {  node -> node.value }
                 .collect(Collectors.toSet())
                 .joinToString(separator = "")
 
-        val suffixes = lpUser.ownNodes.stream()
-                .filter(Node::isSuffix)
-                .map { node -> node.suffix.value }
+        val suffixes = lpUser.nodes.stream()
+                .filter(NodeType.SUFFIX::matches)
+                .map(NodeType.INHERITANCE::cast)
+                .map { node -> node.value }
                 .collect(Collectors.toSet())
                 .joinToString(separator = "")
 
         val groups = mutableListOf<String>()
         groupNodes.forEach { group ->
             val group = group ?: return
-            val displayName = group.displayName ?: group.name
+            val displayName = group.groupName
 
             // Donators have the [$] appear before everything
-            if (group.name.toLowerCase() == "donator") {
+            if (group.groupName.toLowerCase() == "donator") {
                 groups.add(index = 0, element = displayName)
             } else {
                 groups.add(displayName)

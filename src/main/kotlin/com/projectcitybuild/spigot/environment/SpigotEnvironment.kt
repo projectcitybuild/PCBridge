@@ -10,7 +10,7 @@ import com.projectcitybuild.entities.LogLevel
 import com.projectcitybuild.entities.Player
 import com.projectcitybuild.entities.PluginConfig
 import com.projectcitybuild.entities.PluginConfigPair
-import me.lucko.luckperms.api.LuckPermsApi
+import net.luckperms.api.LuckPerms
 import net.milkbowl.vault.chat.Chat
 import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.plugin.java.JavaPlugin
@@ -75,7 +75,7 @@ class SpigotEnvironment(
         plugin.server?.scheduler?.scheduleSyncDelayedTask(plugin, runnable)
     }
 
-    override val permissions: LuckPermsApi? = hooks.permissions
+    override val permissions: LuckPerms? = hooks.permissions
 
     private var pcbClient: PCBClient? = null
     override val apiClient: PCBClient
