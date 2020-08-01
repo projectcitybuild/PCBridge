@@ -4,6 +4,7 @@ import com.projectcitybuild.core.contracts.Commandable
 import com.projectcitybuild.core.contracts.EnvironmentProvider
 import com.projectcitybuild.spigot.extensions.getOfflinePlayer
 import com.projectcitybuild.actions.CreateUnbanAction
+import com.projectcitybuild.api.APIProvider
 import org.bukkit.Server
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
@@ -11,6 +12,7 @@ import java.util.*
 
 class UnbanCommand : Commandable {
     override var environment: EnvironmentProvider? = null
+    override var apiProvider: APIProvider? = null
     override val label: String = "unban"
     override val permission: String = "pcbridge.ban.unban"
 
@@ -52,18 +54,24 @@ class UnbanCommand : Commandable {
 
     private fun getOfflinePlayerUUID(server: Server, playerName: String, completion: (UUID?) -> Unit) {
         val environment = environment ?: throw Exception("EnvironmentProvider is null")
+        val apiProvider = apiProvider ?: throw Exception("API provider is null")
 
         environment.async<UUID?> { resolve ->
-            val uuid = server.getOfflinePlayer(name = playerName, environment = environment)
+            val uuid = server.getOfflinePlayer(
+                    name = playerName,
+                    environment = environment,
+                    apiProvider = apiProvider
+            )
             resolve(uuid)
         }.startAndSubscribe(completion)
     }
 
     private fun createUnban(playerId: UUID, staffId: UUID?, completion: (CreateUnbanAction.Result) -> Unit) {
         val environment = environment ?: throw Exception("EnvironmentProvider is null")
+        val apiProvider = apiProvider ?: throw Exception("API provider is null")
 
         environment.async<CreateUnbanAction.Result> { resolve ->
-            val action = CreateUnbanAction(environment)
+            val action = CreateUnbanAction(environment, apiProvider)
             val result = action.execute(
                     playerId = playerId,
                     staffId = staffId

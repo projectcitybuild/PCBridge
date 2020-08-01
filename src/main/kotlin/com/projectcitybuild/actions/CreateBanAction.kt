@@ -1,9 +1,13 @@
 package com.projectcitybuild.actions
 
+import com.projectcitybuild.api.APIProvider
 import com.projectcitybuild.core.contracts.EnvironmentProvider
 import java.util.*
 
-class CreateBanAction(private val environment: EnvironmentProvider) {
+class CreateBanAction(
+        private val environment: EnvironmentProvider,
+        private val apiProvider: APIProvider
+) {
     sealed class Result {
         class SUCCESS : Result()
         class FAILED(val reason: Failure) : Result()
@@ -16,7 +20,7 @@ class CreateBanAction(private val environment: EnvironmentProvider) {
     }
 
     fun execute(playerId: UUID, playerName: String, staffId: UUID?, reason: String?) : Result {
-        val banApi = environment.apiClient.banApi
+        val banApi = apiProvider.pcb.banApi
 
         val request = banApi.storeBan(
                 playerId = playerId.toString(),

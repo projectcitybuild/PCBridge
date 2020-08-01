@@ -9,7 +9,7 @@ import org.bukkit.command.CommandSender
  * For example, performing a player ban would be handled by
  * BanCommand inheriting from Commandable
  */
-interface Commandable : Injectable {
+interface Commandable: Injectable {
     val label: String
     val aliases: Array<String>
         get() = arrayOf()

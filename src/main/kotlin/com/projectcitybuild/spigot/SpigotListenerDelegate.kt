@@ -1,5 +1,6 @@
 package com.projectcitybuild.spigot
 
+import com.projectcitybuild.api.APIProvider
 import com.projectcitybuild.core.contracts.EnvironmentProvider
 import com.projectcitybuild.core.contracts.Listenable
 import com.projectcitybuild.core.contracts.ListenerDelegatable
@@ -9,15 +10,16 @@ import org.bukkit.plugin.java.JavaPlugin
 import java.lang.ref.WeakReference
 
 class SpigotListenerDelegate constructor(
-        val plugin: WeakReference<JavaPlugin>,
-        val environment: EnvironmentProvider
+        private val plugin: WeakReference<JavaPlugin>,
+        private val environment: EnvironmentProvider,
+        private val apiProvider: APIProvider
     ): ListenerDelegatable {
 
     override fun register(listener: Listenable<*>) {
         val plugin = plugin.get() ?: throw Exception("Failed to register listener: Plugin is deallocated")
         environment.log(LogLevel.VERBOSE, "Beginning listener registration...")
 
-        listener.inject(environment)
+        listener.inject(environment, apiProvider)
         plugin.server?.pluginManager?.registerEvents(listener, plugin).let {
             environment.log(LogLevel.VERBOSE, "Registered listener: ${listener::class}")
         }

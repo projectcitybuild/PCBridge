@@ -1,5 +1,6 @@
 package com.projectcitybuild.spigot
 
+import com.projectcitybuild.api.APIProvider
 import com.projectcitybuild.core.contracts.CommandDelegatable
 import com.projectcitybuild.core.contracts.Commandable
 import com.projectcitybuild.core.contracts.EnvironmentProvider
@@ -10,11 +11,12 @@ import java.lang.ref.WeakReference
 
 internal class SpigotCommandDelegate constructor(
         val plugin: WeakReference<JavaPlugin>,
-        val environment: EnvironmentProvider
+        val environment: EnvironmentProvider,
+        val apiProvider: APIProvider
     ): CommandDelegatable {
 
     override fun register(command: Commandable) {
-        command.inject(environment)
+        command.inject(environment, apiProvider)
 
         command.aliases.plus(command.label).forEach { alias ->
             plugin.get()?.getCommand(alias)?.setExecutor { sender, _, _, args ->

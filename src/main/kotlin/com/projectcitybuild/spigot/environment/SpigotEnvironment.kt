@@ -1,14 +1,11 @@
 package com.projectcitybuild.spigot.environment
 
-import com.projectcitybuild.api.client.MojangClient
-import com.projectcitybuild.api.client.PCBClient
 import com.projectcitybuild.core.contracts.EnvironmentProvider
 import com.projectcitybuild.core.utilities.PlayerStore
 import com.projectcitybuild.core.utilities.AsyncTask
 import com.projectcitybuild.core.utilities.Cancellable
 import com.projectcitybuild.entities.LogLevel
 import com.projectcitybuild.entities.Player
-import com.projectcitybuild.entities.PluginConfig
 import com.projectcitybuild.entities.PluginConfigPair
 import net.luckperms.api.LuckPerms
 import org.bukkit.configuration.file.FileConfiguration
@@ -75,26 +72,6 @@ class SpigotEnvironment(
     }
 
     override val permissions: LuckPerms? = hooks.permissions
-
-    private var pcbClient: PCBClient? = null
-    override val apiClient: PCBClient
-        get() {
-            if (pcbClient == null) {
-                val authToken = get(PluginConfig.API.KEY()) as? String
-                        ?: throw Exception("Could not cast auth token to String")
-
-                val baseUrl = get(PluginConfig.API.BASE_URL()) as? String
-                        ?: throw Exception("Could not cast base url to String")
-
-                val isLoggingEnabled = get(PluginConfig.API.IS_LOGGING_ENABLED()) as? Boolean
-                        ?: throw Exception("Could not cast is_logging_enabled to Boolean")
-
-                pcbClient = PCBClient(authToken = authToken, baseUrl = baseUrl, withLogging = isLoggingEnabled)
-            }
-            return pcbClient!!
-        }
-
-    override val mojangClient: MojangClient = MojangClient()
 
     override val plugin: JavaPlugin?
         get() = pluginRef.get()

@@ -1,15 +1,17 @@
 package com.projectcitybuild.spigot.modules.chat.commands
 
+import com.projectcitybuild.api.APIProvider
 import com.projectcitybuild.spigot.extensions.getOnlinePlayer
 import com.projectcitybuild.core.contracts.Commandable
 import com.projectcitybuild.core.contracts.EnvironmentProvider
 import org.bukkit.command.CommandSender
 
 class UnmuteCommand : Commandable {
+    override var environment: EnvironmentProvider? = null
+    override var apiProvider: APIProvider? = null
+
     override val label: String = "unmute"
     override val permission: String = "pcbridge.chat.unmute"
-
-    override var environment: EnvironmentProvider? = null
 
     override fun execute(sender: CommandSender, args: Array<String>, isConsole: Boolean): Boolean {
         if (environment == null) throw Exception("EnvironmentProvider missing")

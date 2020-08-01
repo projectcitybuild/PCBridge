@@ -4,12 +4,14 @@ import com.projectcitybuild.core.contracts.Commandable
 import com.projectcitybuild.core.contracts.EnvironmentProvider
 import com.projectcitybuild.spigot.extensions.getOfflinePlayer
 import com.projectcitybuild.actions.CheckBanStatusAction
+import com.projectcitybuild.api.APIProvider
 import org.bukkit.Server
 import org.bukkit.command.CommandSender
 import java.util.*
 
 class CheckBanCommand : Commandable {
     override var environment: EnvironmentProvider? = null
+    override var apiProvider: APIProvider? = null
     override val label: String = "checkban"
     override val permission: String = "pcbridge.ban.checkban"
 
@@ -58,18 +60,24 @@ class CheckBanCommand : Commandable {
 
     private fun getOfflinePlayerUUID(server: Server, playerName: String, completion: (UUID?) -> Unit) {
         val environment = environment ?: throw Exception("EnvironmentProvider is null")
+        val apiProvider = apiProvider ?: throw Exception("API provider is null")
 
         environment.async<UUID?> { resolve ->
-            val uuid = server.getOfflinePlayer(name = playerName, environment = environment)
+            val uuid = server.getOfflinePlayer(
+                    name = playerName,
+                    environment = environment,
+                    apiProvider = apiProvider
+            )
             resolve(uuid)
         }.startAndSubscribe(completion)
     }
 
     private fun checkBanStatus(playerId: UUID, completion: (CheckBanStatusAction.Result) -> Unit) {
         val environment = environment ?: throw Exception("EnvironmentProvider is null")
+        val apiProvider = apiProvider ?: throw Exception("API provider is null")
 
         environment.async<CheckBanStatusAction.Result> { resolve ->
-            val action = CheckBanStatusAction(environment)
+            val action = CheckBanStatusAction(environment, apiProvider)
             val result = action.execute(
                     playerId = playerId
             )

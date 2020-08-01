@@ -1,5 +1,8 @@
 package com.projectcitybuild
 
+import com.projectcitybuild.api.APIProvider
+import com.projectcitybuild.api.client.MojangClient
+import com.projectcitybuild.api.client.PCBClient
 import com.projectcitybuild.core.contracts.*
 import com.projectcitybuild.entities.PluginConfig
 import com.projectcitybuild.spigot.SpigotCommandDelegate
@@ -19,10 +22,8 @@ import com.projectcitybuild.spigot.modules.maintenance.commands.MaintenanceComma
 import com.projectcitybuild.spigot.modules.maintenance.listeners.MaintenanceConnectListener
 import com.projectcitybuild.spigot.modules.ranks.commands.SyncCommand
 import com.projectcitybuild.spigot.modules.ranks.listeners.SyncRankLoginListener
-import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.plugin.java.JavaPlugin
 import java.lang.ref.WeakReference
-import java.util.logging.Logger
 
 class SpigotPlatform (plugin: JavaPlugin): PlatformBridgable {
 
@@ -30,6 +31,7 @@ class SpigotPlatform (plugin: JavaPlugin): PlatformBridgable {
     private var listenerDelegate: ListenerDelegatable? = null
 
     private val weakRef = WeakReference(plugin)
+    private val apiProvider = createAPIProvider()
 
     override val environment: EnvironmentProvider = SpigotEnvironment(
             pluginRef = weakRef,
@@ -42,11 +44,11 @@ class SpigotPlatform (plugin: JavaPlugin): PlatformBridgable {
     override fun onEnable() {
         createDefaultConfig()
 
-        val commandDelegate = SpigotCommandDelegate(plugin = weakRef, environment = environment)
+        val commandDelegate = SpigotCommandDelegate(plugin = weakRef, environment = environment, apiProvider = apiProvider)
         registerCommands(delegate = commandDelegate)
         this.commandDelegate = commandDelegate
 
-        val listenerDelegate = SpigotListenerDelegate(plugin = weakRef, environment = environment)
+        val listenerDelegate = SpigotListenerDelegate(plugin = weakRef, environment = environment, apiProvider = apiProvider)
         registerListeners(delegate = listenerDelegate)
         this.listenerDelegate = listenerDelegate
     }
@@ -90,5 +92,17 @@ class SpigotPlatform (plugin: JavaPlugin): PlatformBridgable {
 
         plugin.config.options().copyDefaults(true)
         plugin.saveConfig()
+    }
+
+    private fun createAPIProvider(): APIProvider {
+        val pcbClient = PCBClient(
+                authToken = environment.get(PluginConfig.API.KEY()) as? String
+                        ?: throw Exception("Could not cast auth token to String"),
+                baseUrl = environment.get(PluginConfig.API.BASE_URL()) as? String
+                        ?: throw Exception("Could not cast base url to String"),
+                withLogging = environment.get(PluginConfig.API.IS_LOGGING_ENABLED()) as? Boolean
+                        ?: throw Exception("Could not cast is_logging_enabled to Boolean")
+        )
+        return APIProvider(pcb = pcbClient, mojang = MojangClient())
     }
 }

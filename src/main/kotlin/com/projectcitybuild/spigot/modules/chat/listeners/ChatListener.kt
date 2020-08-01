@@ -1,5 +1,6 @@
 package com.projectcitybuild.spigot.modules.chat.listeners
 
+import com.projectcitybuild.api.APIProvider
 import com.projectcitybuild.core.contracts.EnvironmentProvider
 import com.projectcitybuild.core.contracts.Listenable
 import net.luckperms.api.node.NodeType
@@ -9,8 +10,9 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.player.AsyncPlayerChatEvent
 import java.util.stream.Collectors
 
-class ChatListener : Listenable<AsyncPlayerChatEvent> {
+class ChatListener: Listenable<AsyncPlayerChatEvent> {
     override var environment: EnvironmentProvider? = null
+    override var apiProvider: APIProvider? = null
 
     @EventHandler(priority = EventPriority.HIGHEST)
     override fun observe(event: AsyncPlayerChatEvent) {

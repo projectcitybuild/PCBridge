@@ -4,8 +4,8 @@ import com.projectcitybuild.core.contracts.Commandable
 import com.projectcitybuild.core.contracts.EnvironmentProvider
 import com.projectcitybuild.spigot.extensions.getOfflinePlayer
 import com.projectcitybuild.actions.CreateBanAction
+import com.projectcitybuild.api.APIProvider
 import com.projectcitybuild.core.extensions.joinWithWhitespaces
-import com.projectcitybuild.core.utilities.AsyncTask
 import org.bukkit.ChatColor
 import org.bukkit.Server
 import org.bukkit.command.CommandSender
@@ -15,6 +15,7 @@ import java.util.*
 class BanCommand: Commandable {
 
     override var environment: EnvironmentProvider? = null
+    override var apiProvider: APIProvider? = null
     override val label: String = "ban"
     override val permission: String = "pcbridge.ban.ban"
 
@@ -66,18 +67,24 @@ class BanCommand: Commandable {
 
     private fun getOfflinePlayerUUID(server: Server, playerName: String, completion: (UUID?) -> Unit) {
         val environment = environment ?: throw Exception("EnvironmentProvider is null")
+        val apiProvider = apiProvider ?: throw Exception("API provider is null")
 
         environment.async<UUID?> { resolve ->
-            val uuid = server.getOfflinePlayer(name = playerName, environment = environment)
+            val uuid = server.getOfflinePlayer(
+                    name = playerName,
+                    environment = environment,
+                    apiProvider = apiProvider
+            )
             resolve(uuid)
         }.startAndSubscribe(completion)
     }
 
     private fun createBan(playerId: UUID, playerName: String, staffId: UUID?, reason: String?, completion: (CreateBanAction.Result) -> Unit) {
         val environment = environment ?: throw Exception("EnvironmentProvider is null")
+        val apiProvider = apiProvider ?: throw Exception("API provider is null")
 
         environment.async<CreateBanAction.Result> { resolve ->
-            val action = CreateBanAction(environment)
+            val action = CreateBanAction(environment, apiProvider)
             val result = action.execute(playerId, playerName, staffId, reason)
             resolve(result)
         }.startAndSubscribe(completion)

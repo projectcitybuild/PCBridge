@@ -1,5 +1,6 @@
 package com.projectcitybuild.spigot.modules.maintenance.commands
 
+import com.projectcitybuild.api.APIProvider
 import com.projectcitybuild.core.contracts.Commandable
 import com.projectcitybuild.core.contracts.EnvironmentProvider
 import com.projectcitybuild.entities.PluginConfig
@@ -12,6 +13,8 @@ class MaintenanceCommand : Commandable {
     }
 
     override var environment: EnvironmentProvider? = null
+    override var apiProvider: APIProvider? = null
+
     override val label: String = "maintenance"
     override val permission: String = "pcbridge.maintenance"
 
