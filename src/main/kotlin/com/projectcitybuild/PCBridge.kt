@@ -3,9 +3,8 @@ package com.projectcitybuild
 import com.projectcitybuild.core.contracts.PlatformBridgable
 import org.bukkit.plugin.java.JavaPlugin
 import java.lang.Exception
-import java.lang.ref.WeakReference
 
-class PCBridge : JavaPlugin() {
+class PCBridge: JavaPlugin() {
 
     private enum class Platform {
         SPIGOT,
@@ -17,11 +16,7 @@ class PCBridge : JavaPlugin() {
 
     init {
         when (platform) {
-            Platform.SPIGOT -> this.platformBridge = SpigotPlatform(
-                    plugin = WeakReference(this),
-                    config = config,
-                    logger = logger
-            )
+            Platform.SPIGOT -> this.platformBridge = SpigotPlatform(plugin = this)
 
             Platform.BUNGEECORD -> throw Exception("Platform bridging not implemented")
         }

@@ -2,7 +2,6 @@ package com.projectcitybuild.spigot.modules.chat.listeners
 
 import com.projectcitybuild.core.contracts.EnvironmentProvider
 import com.projectcitybuild.core.contracts.Listenable
-import com.projectcitybuild.entities.LogLevel
 import net.luckperms.api.node.NodeType
 import org.bukkit.ChatColor
 import org.bukkit.event.EventHandler
