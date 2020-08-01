@@ -71,8 +71,8 @@ class PCBridge : JavaPlugin() {
 
     private fun createDefaultConfig() {
         config.addDefault<PluginConfig.Settings.MAINTENANCE_MODE>()
-        config.addDefault<PluginConfig.Api.KEY>()
-        config.addDefault<PluginConfig.Api.BASE_URL>()
+        config.addDefault<PluginConfig.API.KEY>()
+        config.addDefault<PluginConfig.API.BASE_URL>()
 
         config.options().copyDefaults(true)
         saveConfig()
