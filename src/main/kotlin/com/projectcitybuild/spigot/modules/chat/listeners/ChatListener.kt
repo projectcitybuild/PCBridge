@@ -50,12 +50,12 @@ class ChatListener : Listenable<AsyncPlayerChatEvent> {
                 .joinToString(separator = "")
 
         val groups = mutableListOf<String>()
-        groupNodes.forEach { group ->
-            val group = group ?: return
-            val displayName = group.groupName
+        groupNodes.forEach { groupNode ->
+            val group = permissions.groupManager.getGroup(groupNode.groupName)
+            val displayName = group?.displayName ?: groupNode.groupName
 
             // Donators have the [$] appear before everything
-            if (group.groupName.toLowerCase() == "donator") {
+            if (groupNode.groupName.toLowerCase() == "donator") {
                 groups.add(index = 0, element = displayName)
             } else {
                 groups.add(displayName)
