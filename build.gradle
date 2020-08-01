@@ -56,6 +56,7 @@ shadowJar {
         include(dependency('com.squareup.*:.*'))
         include(dependency('net.milkbowl.vault:VaultAPI'))
         include(dependency('net.milkbowl.*:.*'))
+        include(dependency('net.luckperms.*:.*'))
     }
 }
 
