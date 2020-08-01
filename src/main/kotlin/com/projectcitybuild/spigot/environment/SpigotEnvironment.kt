@@ -80,13 +80,16 @@ class SpigotEnvironment(
     override val apiClient: PCBClient
         get() {
             if (pcbClient == null) {
-                val authToken = get(PluginConfig.Api.KEY()) as? String
+                val authToken = get(PluginConfig.API.KEY()) as? String
                         ?: throw Exception("Could not cast auth token to String")
 
-                val baseUrl = get(PluginConfig.Api.BASE_URL()) as? String
+                val baseUrl = get(PluginConfig.API.BASE_URL()) as? String
                         ?: throw Exception("Could not cast base url to String")
 
-                pcbClient = PCBClient(authToken = authToken, baseUrl = baseUrl)
+                val isLoggingEnabled = get(PluginConfig.API.IS_LOGGING_ENABLED()) as? Boolean
+                        ?: throw Exception("Could not cast is_logging_enabled to Boolean")
+
+                pcbClient = PCBClient(authToken = authToken, baseUrl = baseUrl, withLogging = isLoggingEnabled)
             }
             return pcbClient!!
         }
