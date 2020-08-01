@@ -15,7 +15,6 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 1.8
-        restore-keys: ${{ runner.os }}-gradle
 
     - name: Cache Gradle packages
       uses: actions/cache@v2
