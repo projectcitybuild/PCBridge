@@ -38,14 +38,14 @@ class ChatListener : Listenable<AsyncPlayerChatEvent> {
 
         val prefixes = lpUser.nodes.stream()
                 .filter(NodeType.PREFIX::matches)
-                .map(NodeType.INHERITANCE::cast)
-                .map {  node -> node.value }
+                .map(NodeType.PREFIX::cast)
+                .map { node -> node.value }
                 .collect(Collectors.toSet())
                 .joinToString(separator = "")
 
         val suffixes = lpUser.nodes.stream()
                 .filter(NodeType.SUFFIX::matches)
-                .map(NodeType.INHERITANCE::cast)
+                .map(NodeType.SUFFIX::cast)
                 .map { node -> node.value }
                 .collect(Collectors.toSet())
                 .joinToString(separator = "")
