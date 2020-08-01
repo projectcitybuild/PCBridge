@@ -17,9 +17,10 @@ import retrofit2.Response
 import java.util.*
 import java.util.stream.Collectors
 
-class SyncRankLoginListener: Listenable<PlayerJoinEvent> {
-    override var environment: EnvironmentProvider? = null
-    override var apiProvider: APIProvider? = null
+class SyncRankLoginListener(
+        private val environment: EnvironmentProvider,
+        private val apiProvider: APIProvider
+): Listenable<PlayerJoinEvent> {
 
     @EventHandler(priority = EventPriority.HIGH)
     override fun observe(event: PlayerJoinEvent) {
@@ -27,7 +28,6 @@ class SyncRankLoginListener: Listenable<PlayerJoinEvent> {
     }
 
     private fun syncRankWithServer(player: Player) {
-        val environment = environment ?: throw Exception("EnvironmentProvider has already been deallocated")
         val permissions = environment.permissions ?: throw Exception("Permission plugin is null")
 
         getPlayerGroups(playerId = player.uniqueId) { result ->
@@ -84,9 +84,6 @@ class SyncRankLoginListener: Listenable<PlayerJoinEvent> {
     }
 
     private fun getPlayerGroups(playerId: UUID, completion: (Response<ApiResponse<AuthPlayerGroups>>) -> Unit) {
-        val environment = environment ?: throw Exception("EnvironmentProvider is null")
-        val apiProvider = apiProvider ?: throw Exception("API provider is null")
-
         val authApi = apiProvider.pcb.authApi
 
         environment.async<Response<ApiResponse<AuthPlayerGroups>>> { resolve ->

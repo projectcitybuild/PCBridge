@@ -3,17 +3,13 @@ package com.projectcitybuild.spigot.modules.ranks.commands
 import com.projectcitybuild.api.APIProvider
 import com.projectcitybuild.core.contracts.Commandable
 import com.projectcitybuild.core.contracts.EnvironmentProvider
-import com.projectcitybuild.core.contracts.Injectable
 import com.projectcitybuild.entities.CommandInput
-import com.projectcitybuild.entities.LogLevel
 import com.projectcitybuild.entities.models.ApiResponse
 import com.projectcitybuild.entities.models.AuthPlayerGroups
 import com.projectcitybuild.entities.models.AuthURL
 import com.projectcitybuild.spigot.modules.ranks.RankMapper
-import net.luckperms.api.node.Node
 import net.luckperms.api.node.NodeType
 import net.luckperms.api.node.types.InheritanceNode
-import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import retrofit2.Response
 import java.util.*

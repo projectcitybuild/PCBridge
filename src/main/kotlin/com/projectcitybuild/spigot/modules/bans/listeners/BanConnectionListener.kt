@@ -10,15 +10,13 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent
 
-class BanConnectionListener : Listenable<AsyncPlayerPreLoginEvent> {
-    override var environment: EnvironmentProvider? = null
-    override var apiProvider: APIProvider? = null
+class BanConnectionListener(
+        private val environment: EnvironmentProvider,
+        private val apiProvider: APIProvider
+): Listenable<AsyncPlayerPreLoginEvent> {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     override fun observe(event: AsyncPlayerPreLoginEvent) {
-        val environment = environment ?: throw Exception("EnvironmentProvider is null")
-        val apiProvider = apiProvider ?: throw Exception("API provider is null")
-
         val action = CheckBanStatusAction(environment, apiProvider)
         val result = action.execute(playerId = event.uniqueId)
 

@@ -11,15 +11,13 @@ import java.lang.ref.WeakReference
 
 class SpigotListenerDelegate constructor(
         private val plugin: WeakReference<JavaPlugin>,
-        private val environment: EnvironmentProvider,
-        private val apiProvider: APIProvider
+        private val environment: EnvironmentProvider
     ): ListenerDelegatable {
 
     override fun register(listener: Listenable<*>) {
         val plugin = plugin.get() ?: throw Exception("Failed to register listener: Plugin is deallocated")
         environment.log(LogLevel.VERBOSE, "Beginning listener registration...")
 
-        listener.inject(environment, apiProvider)
         plugin.server?.pluginManager?.registerEvents(listener, plugin).let {
             environment.log(LogLevel.VERBOSE, "Registered listener: ${listener::class}")
         }

@@ -48,7 +48,7 @@ class SpigotPlatform (plugin: JavaPlugin): PlatformBridgable {
         registerCommands(delegate = commandDelegate)
         this.commandDelegate = commandDelegate
 
-        val listenerDelegate = SpigotListenerDelegate(plugin = weakRef, environment = environment, apiProvider = apiProvider)
+        val listenerDelegate = SpigotListenerDelegate(plugin = weakRef, environment = environment)
         registerListeners(delegate = listenerDelegate)
         this.listenerDelegate = listenerDelegate
     }
@@ -75,10 +75,10 @@ class SpigotPlatform (plugin: JavaPlugin): PlatformBridgable {
 
     private fun registerListeners(delegate: SpigotListenerDelegate) {
         val listeners = arrayOf(
-                BanConnectionListener(),
-                ChatListener(),
-                MaintenanceConnectListener(),
-                SyncRankLoginListener()
+                BanConnectionListener(environment, apiProvider),
+                ChatListener(environment),
+                MaintenanceConnectListener(environment),
+                SyncRankLoginListener(environment, apiProvider)
         )
         listeners.forEach { listener -> delegate.register(listener) }
     }
