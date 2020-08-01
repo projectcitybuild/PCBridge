@@ -1,6 +1,6 @@
 package com.projectcitybuild.core.contracts
 
-import org.bukkit.command.CommandSender
+import com.projectcitybuild.entities.CommandInput
 
 /**
  * Represents a Command that a user can use to perform
@@ -9,11 +9,17 @@ import org.bukkit.command.CommandSender
  * For example, performing a player ban would be handled by
  * BanCommand inheriting from Commandable
  */
-interface Commandable: Injectable {
+interface Commandable {
+
+    // String used to execute the command in-game (eg. "ban", "unban")
     val label: String
+
+    // Alternative Strings to execute the command in-game
     val aliases: Array<String>
         get() = arrayOf()
+
+    // Permission node required to execute the command
     val permission: String
 
-    fun execute(sender: CommandSender, args: Array<String>, isConsole: Boolean) : Boolean
+    fun execute(input: CommandInput): Boolean
 }

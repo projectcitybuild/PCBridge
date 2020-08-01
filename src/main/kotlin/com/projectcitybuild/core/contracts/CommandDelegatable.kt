@@ -10,5 +10,6 @@ import kotlin.NotImplementedError;
  *
  */
 interface CommandDelegatable {
+
     fun register(command: Commandable) { throw NotImplementedError() }
 }

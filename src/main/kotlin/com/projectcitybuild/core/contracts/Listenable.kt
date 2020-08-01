@@ -11,7 +11,8 @@ import org.bukkit.event.Listener
  * can be observed by conforming to the Listenable interface and then
  * registering it in a ListenerDelegatable.
  */
-interface Listenable<in EventType: Event> : Listener, Injectable {
+interface Listenable<in EventType: Event>: Listener {
+
     @EventHandler
     fun observe(event: EventType)
 }

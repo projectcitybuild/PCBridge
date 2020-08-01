@@ -4,6 +4,7 @@ import com.projectcitybuild.api.APIProvider
 import com.projectcitybuild.core.contracts.Commandable
 import com.projectcitybuild.core.contracts.EnvironmentProvider
 import com.projectcitybuild.core.contracts.Injectable
+import com.projectcitybuild.entities.CommandInput
 import com.projectcitybuild.entities.LogLevel
 import com.projectcitybuild.entities.models.ApiResponse
 import com.projectcitybuild.entities.models.AuthPlayerGroups
@@ -18,26 +19,25 @@ import retrofit2.Response
 import java.util.*
 import java.util.stream.Collectors
 
-class SyncCommand: Commandable {
-    override var environment: EnvironmentProvider? = null
-    override var apiProvider: APIProvider? = null
+class SyncCommand(
+        private val environment: EnvironmentProvider,
+        private val apiProvider: APIProvider
+): Commandable {
+
     override val label: String = "sync"
     override val permission: String = "pcbridge.sync.login"
 
-    override fun execute(sender: CommandSender, args: Array<String>, isConsole: Boolean): Boolean {
-        val environment = environment ?: throw Exception("EnvironmentProvider is null")
-        val apiProvider = apiProvider ?: throw Exception("API provider is null")
-
-        if (sender !is Player) {
-            sender.sendMessage("Console cannot use this command")
+    override fun execute(input: CommandInput): Boolean {
+        if (input.sender !is Player) {
+            input.sender.sendMessage("Console cannot use this command")
             return true
         }
 
-        if (args.isEmpty()) {
-            return beginSyncFlow(sender, environment, apiProvider)
+        if (input.args.isEmpty()) {
+            return beginSyncFlow(input.sender, environment, apiProvider)
         }
-        if (args.size == 1 && args[0] == "finish") {
-            return endSyncFlow(sender, environment)
+        if (input.args.size == 1 && input.args[0] == "finish") {
+            return endSyncFlow(input.sender, environment)
         }
         return false
     }
@@ -139,9 +139,6 @@ class SyncCommand: Commandable {
     }
 
     private fun getVerificationLink(playerId: UUID, completion: (Response<ApiResponse<AuthURL>>) -> Unit) {
-        val environment = environment ?: throw Exception("EnvironmentProvider is null")
-        val apiProvider = apiProvider ?: throw Exception("API provider is null")
-
         val authApi = apiProvider.pcb.authApi
 
         environment.async<Response<ApiResponse<AuthURL>>> { resolve ->
@@ -153,9 +150,6 @@ class SyncCommand: Commandable {
     }
 
     private fun getPlayerGroups(playerId: UUID, completion: (Response<ApiResponse<AuthPlayerGroups>>) -> Unit) {
-        val environment = environment ?: throw Exception("EnvironmentProvider is null")
-        val apiProvider = apiProvider ?: throw Exception("API provider is null")
-
         val authApi = apiProvider.pcb.authApi
 
         environment.async<Response<ApiResponse<AuthPlayerGroups>>> { resolve ->

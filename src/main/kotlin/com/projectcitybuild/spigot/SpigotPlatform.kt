@@ -44,7 +44,7 @@ class SpigotPlatform (plugin: JavaPlugin): PlatformBridgable {
     override fun onEnable() {
         createDefaultConfig()
 
-        val commandDelegate = SpigotCommandDelegate(plugin = weakRef, environment = environment, apiProvider = apiProvider)
+        val commandDelegate = SpigotCommandDelegate(plugin = weakRef, environment = environment)
         registerCommands(delegate = commandDelegate)
         this.commandDelegate = commandDelegate
 
@@ -62,13 +62,13 @@ class SpigotPlatform (plugin: JavaPlugin): PlatformBridgable {
 
     private fun registerCommands(delegate: SpigotCommandDelegate) {
         val commands = arrayOf(
-                BanCommand(),
-                UnbanCommand(),
-                CheckBanCommand(),
-                MuteCommand(),
-                UnmuteCommand(),
-                MaintenanceCommand(),
-                SyncCommand()
+                BanCommand(environment, apiProvider),
+                UnbanCommand(environment, apiProvider),
+                CheckBanCommand(environment, apiProvider),
+                MuteCommand(environment),
+                UnmuteCommand(environment),
+                MaintenanceCommand(environment),
+                SyncCommand(environment, apiProvider)
         )
         commands.forEach { command -> delegate.register(command) }
     }

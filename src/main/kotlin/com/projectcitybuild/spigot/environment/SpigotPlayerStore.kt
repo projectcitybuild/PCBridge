@@ -1,7 +1,7 @@
 package com.projectcitybuild.spigot.environment
 
 import com.projectcitybuild.spigot.extensions.makeModel
-import com.projectcitybuild.core.contracts.PlayerStoreWrapper
+import com.projectcitybuild.core.contracts.PlayerStoreHoldable
 import com.projectcitybuild.core.utilities.PlayerStore
 import com.projectcitybuild.entities.Player
 import org.bukkit.configuration.file.YamlConfiguration
@@ -14,7 +14,7 @@ import java.io.File
 import java.lang.ref.WeakReference
 import java.util.*
 
-class SpigotPlayerStore(val plugin: WeakReference<JavaPlugin>) : PlayerStoreWrapper, Listener, PlayerStore.PlayerStoreDelegate {
+class SpigotPlayerStore(val plugin: WeakReference<JavaPlugin>) : PlayerStoreHoldable, Listener, PlayerStore.PlayerStoreDelegate {
     override val store: PlayerStore = PlayerStore()
 
     init {
