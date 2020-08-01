@@ -2,9 +2,8 @@ package com.projectcitybuild.spigot.modules.chat.listeners
 
 import com.projectcitybuild.core.contracts.EnvironmentProvider
 import com.projectcitybuild.core.contracts.Listenable
-import net.luckperms.api.node.Node
+import com.projectcitybuild.entities.LogLevel
 import net.luckperms.api.node.NodeType
-import net.luckperms.api.node.types.PrefixNode
 import org.bukkit.ChatColor
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
@@ -39,14 +38,14 @@ class ChatListener : Listenable<AsyncPlayerChatEvent> {
         val prefixes = lpUser.nodes.stream()
                 .filter(NodeType.PREFIX::matches)
                 .map(NodeType.PREFIX::cast)
-                .map { node -> node.value }
+                .map { node -> node.metaValue }
                 .collect(Collectors.toSet())
                 .joinToString(separator = "")
 
         val suffixes = lpUser.nodes.stream()
                 .filter(NodeType.SUFFIX::matches)
                 .map(NodeType.SUFFIX::cast)
-                .map { node -> node.value }
+                .map { node -> node.metaValue }
                 .collect(Collectors.toSet())
                 .joinToString(separator = "")
 
