@@ -1,12 +1,12 @@
 package com.projectcitybuild.spigot.environment
 
-import me.lucko.luckperms.api.LuckPermsApi
+import net.luckperms.api.LuckPerms
 import org.bukkit.Bukkit
 import org.bukkit.plugin.java.JavaPlugin
 import java.lang.ref.WeakReference
 
 class SpigotPluginHook(private val plugin: WeakReference<JavaPlugin>) {
-    var permissions: LuckPermsApi? = null
+    var permissions: LuckPerms? = null
         private set
 
     init {
@@ -14,7 +14,7 @@ class SpigotPluginHook(private val plugin: WeakReference<JavaPlugin>) {
     }
 
     private fun setupPermissionHook() {
-        val provider = Bukkit.getServicesManager().getRegistration(LuckPermsApi::class.java)
+        val provider = Bukkit.getServicesManager().getRegistration(LuckPerms::class.java)
         if (provider != null) {
             permissions = provider.provider
         }

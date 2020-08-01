@@ -1,5 +1,5 @@
 group 'com.projectcitybuild'
-version '2.3.0'
+version '2.4.0'
 
 wrapper {
     gradleVersion = '5.5.1'
@@ -7,7 +7,7 @@ wrapper {
 }
 
 buildscript {
-    ext.kotlin_version = '1.3.50'
+    ext.kotlin_version = '1.3.72'
 
     repositories {
         mavenCentral()
@@ -35,11 +35,11 @@ repositories {
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     compileOnly 'org.spigotmc:spigot-api:1.12.2-R0.1-SNAPSHOT'
+    compileOnly 'net.milkbowl.vault:VaultAPI:1.7'
+    implementation 'net.luckperms:api:5.0'
     implementation 'com.squareup.retrofit2:retrofit:2.5.0'
     implementation'com.squareup.retrofit2:converter-gson:2.5.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:3.5.0'
-    compileOnly 'net.milkbowl.vault:VaultAPI:1.7'
-    compile 'me.lucko.luckperms:luckperms-api:4.4'
 }
 
 compileKotlin {
@@ -56,6 +56,7 @@ shadowJar {
         include(dependency('com.squareup.*:.*'))
         include(dependency('net.milkbowl.vault:VaultAPI'))
         include(dependency('net.milkbowl.*:.*'))
+        include(dependency('net.luckperms.*:.*'))
     }
 }
 

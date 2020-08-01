@@ -6,7 +6,7 @@ import com.projectcitybuild.core.utilities.AsyncTask
 import com.projectcitybuild.entities.LogLevel
 import com.projectcitybuild.entities.Player
 import com.projectcitybuild.entities.PluginConfigPair
-import me.lucko.luckperms.api.LuckPermsApi
+import net.luckperms.api.LuckPerms
 import net.milkbowl.vault.chat.Chat
 import org.bukkit.plugin.java.JavaPlugin
 import java.util.*
@@ -32,7 +32,7 @@ interface EnvironmentProvider {
     // Runs a given unit of work on the main thread synchronously
     fun sync(task: () -> Unit)
 
-    val permissions: LuckPermsApi?
+    val permissions: LuckPerms?
         get() = throw NotImplementedError()
 
     val apiClient: PCBClient

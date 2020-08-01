@@ -5,7 +5,9 @@ import com.projectcitybuild.core.contracts.Listenable
 import com.projectcitybuild.entities.models.ApiResponse
 import com.projectcitybuild.entities.models.AuthPlayerGroups
 import com.projectcitybuild.spigot.modules.ranks.RankMapper
-import me.lucko.luckperms.api.Node
+import net.luckperms.api.node.Node
+import net.luckperms.api.node.NodeType
+import net.luckperms.api.node.types.InheritanceNode
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
@@ -46,31 +48,32 @@ class SyncRankLoginListener : Listenable<PlayerJoinEvent> {
                 }
 
                 // Remove all groups from the player before syncing
-                lpUser.allNodes.stream()
-                        .filter(Node::isGroupNode)
+                lpUser.nodes.stream()
+                        .filter(NodeType.INHERITANCE::matches)
+                        .map(NodeType.INHERITANCE::cast)
                         .collect(Collectors.toSet())
                         .forEach { groupNode ->
-                            lpUser.unsetPermission(groupNode)
+                            lpUser.data().remove(groupNode)
                         }
 
                 if (json?.data == null) {
-                    val groupNode = permissions.nodeFactory.makeGroupNode("guest").build()
-                    lpUser.setPermission(groupNode)
+                    val groupNode = InheritanceNode.builder("guest").build()
+                    lpUser.data().add(groupNode)
                     return@sync
                 }
 
                 val permissionGroups = RankMapper.mapGroupsToPermissionGroups(json.data.groups)
                 permissionGroups.forEach { group ->
-                    val groupNode = permissions.nodeFactory.makeGroupNode(group).build()
-                    if (!lpUser.hasPermission(groupNode).asBoolean()) {
-                        lpUser.setPermission(groupNode)
+                    val groupNode = InheritanceNode.builder(group).build()
+                    if (!lpUser.nodes.contains(groupNode)) {
+                        lpUser.data().add(groupNode)
                     }
                 }
 
                 // Just in case, assign to Guest if no groups available (shouldn't happen though)
                 if (permissionGroups.isEmpty()) {
-                    val groupNode = permissions.nodeFactory.makeGroupNode("guest").build()
-                    lpUser.setPermission(groupNode)
+                    val groupNode = InheritanceNode.builder("guest").build()
+                    lpUser.data().add(groupNode)
                 }
 
                 permissions.userManager.saveUser(lpUser)
