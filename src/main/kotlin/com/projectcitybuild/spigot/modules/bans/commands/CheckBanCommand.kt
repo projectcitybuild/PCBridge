@@ -6,6 +6,8 @@ import com.projectcitybuild.spigot.extensions.getOfflinePlayer
 import com.projectcitybuild.actions.CheckBanStatusAction
 import com.projectcitybuild.api.APIProvider
 import com.projectcitybuild.entities.CommandInput
+import com.projectcitybuild.entities.LogLevel
+import org.bukkit.ChatColor
 import org.bukkit.Server
 import org.bukkit.command.CommandSender
 import java.util.*
@@ -19,9 +21,12 @@ class CheckBanCommand(
     override val permission: String = "pcbridge.ban.checkban"
 
     override fun execute(input: CommandInput): Boolean {
-        if (input.args.isEmpty()) return false
+        if (!input.hasArguments) return false
 
         val targetPlayerName = input.args.first()
+
+        input.sender.sendMessage("${ChatColor.GRAY}Searching for active bans for $targetPlayerName...")
+
         getOfflinePlayerUUID(server = input.sender.server, playerName = targetPlayerName) { uuid ->
             if (uuid == null) {
                 environment.sync {
@@ -72,12 +77,12 @@ class CheckBanCommand(
 
     private fun checkBanStatus(playerId: UUID, completion: (CheckBanStatusAction.Result) -> Unit) {
         environment.async<CheckBanStatusAction.Result> { resolve ->
-            val action = CheckBanStatusAction(environment, apiProvider)
+            val action = CheckBanStatusAction(apiProvider)
             val result = action.execute(
                     playerId = playerId
             )
             resolve(result)
-        }
+        }.startAndSubscribe(completion)
     }
 
 }

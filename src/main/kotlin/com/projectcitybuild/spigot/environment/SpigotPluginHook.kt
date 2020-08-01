@@ -2,10 +2,8 @@ package com.projectcitybuild.spigot.environment
 
 import net.luckperms.api.LuckPerms
 import org.bukkit.Bukkit
-import org.bukkit.plugin.java.JavaPlugin
-import java.lang.ref.WeakReference
 
-class SpigotPluginHook(private val plugin: WeakReference<JavaPlugin>) {
+class SpigotPluginHook {
     var permissions: LuckPerms? = null
         private set
 

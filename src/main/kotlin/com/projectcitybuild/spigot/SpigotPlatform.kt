@@ -25,20 +25,28 @@ import com.projectcitybuild.spigot.modules.ranks.listeners.SyncRankLoginListener
 import org.bukkit.plugin.java.JavaPlugin
 import java.lang.ref.WeakReference
 
-class SpigotPlatform (plugin: JavaPlugin): PlatformBridgable {
+class SpigotPlatform(plugin: JavaPlugin): PlatformBridgable {
 
     private var commandDelegate: CommandDelegatable? = null
     private var listenerDelegate: ListenerDelegatable? = null
 
+    private var _apiProvider: APIProvider? = null
+    private val apiProvider: APIProvider
+        get() {
+            if (_apiProvider == null) {
+                _apiProvider = createAPIProvider()
+            }
+            return _apiProvider!!
+        }
+
     private val weakRef = WeakReference(plugin)
-    private val apiProvider = createAPIProvider()
 
     override val environment: EnvironmentProvider = SpigotEnvironment(
             pluginRef = weakRef,
             logger = plugin.logger,
             playerStore = SpigotPlayerStore(plugin = weakRef).store,
             config = plugin.config,
-            hooks = SpigotPluginHook(plugin = weakRef)
+            hooks = SpigotPluginHook()
     )
 
     override fun onEnable() {
@@ -61,7 +69,7 @@ class SpigotPlatform (plugin: JavaPlugin): PlatformBridgable {
     }
 
     private fun registerCommands(delegate: SpigotCommandDelegate) {
-        val commands = arrayOf(
+        arrayOf(
                 BanCommand(environment, apiProvider),
                 UnbanCommand(environment, apiProvider),
                 CheckBanCommand(environment, apiProvider),
@@ -70,17 +78,17 @@ class SpigotPlatform (plugin: JavaPlugin): PlatformBridgable {
                 MaintenanceCommand(environment),
                 SyncCommand(environment, apiProvider)
         )
-        commands.forEach { command -> delegate.register(command) }
+        .forEach { command -> delegate.register(command) }
     }
 
     private fun registerListeners(delegate: SpigotListenerDelegate) {
-        val listeners = arrayOf(
+        arrayOf(
                 BanConnectionListener(environment, apiProvider),
                 ChatListener(environment),
                 MaintenanceConnectListener(environment),
                 SyncRankLoginListener(environment, apiProvider)
         )
-        listeners.forEach { listener -> delegate.register(listener) }
+        .forEach { listener -> delegate.register(listener) }
     }
 
     private fun createDefaultConfig() {
@@ -95,14 +103,19 @@ class SpigotPlatform (plugin: JavaPlugin): PlatformBridgable {
     }
 
     private fun createAPIProvider(): APIProvider {
+        val isLoggingEnabled = environment.get(PluginConfig.API.IS_LOGGING_ENABLED()) as? Boolean
+                ?: throw Exception("Could not cast is_logging_enabled to Boolean")
+
         val pcbClient = PCBClient(
                 authToken = environment.get(PluginConfig.API.KEY()) as? String
                         ?: throw Exception("Could not cast auth token to String"),
                 baseUrl = environment.get(PluginConfig.API.BASE_URL()) as? String
                         ?: throw Exception("Could not cast base url to String"),
-                withLogging = environment.get(PluginConfig.API.IS_LOGGING_ENABLED()) as? Boolean
-                        ?: throw Exception("Could not cast is_logging_enabled to Boolean")
+                withLogging = isLoggingEnabled
         )
-        return APIProvider(pcb = pcbClient, mojang = MojangClient())
+        val mojangClient = MojangClient(
+                withLogging = isLoggingEnabled
+        )
+        return APIProvider(pcb = pcbClient, mojang = mojangClient)
     }
 }

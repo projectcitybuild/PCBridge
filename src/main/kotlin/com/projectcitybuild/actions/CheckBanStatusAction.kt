@@ -6,7 +6,6 @@ import com.projectcitybuild.entities.models.GameBan
 import java.util.*
 
 class CheckBanStatusAction(
-        private val environment: EnvironmentProvider,
         private val apiProvider: APIProvider
 ) {
     sealed class Result {

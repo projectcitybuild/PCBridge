@@ -2,25 +2,17 @@ package com.projectcitybuild
 
 import com.projectcitybuild.core.contracts.PlatformBridgable
 import org.bukkit.plugin.java.JavaPlugin
-import java.lang.Exception
 
 class PCBridge: JavaPlugin() {
 
-    private enum class Platform {
-        SPIGOT,
-        BUNGEECORD,
-    }
-
-    private val platform: Platform = Platform.SPIGOT // TODO: remove hardcoding if we support BungeeCord
+    private var _platformBridge: PlatformBridgable? = null
     private val platformBridge: PlatformBridgable
-
-    init {
-        when (platform) {
-            Platform.SPIGOT -> this.platformBridge = SpigotPlatform(plugin = this)
-
-            Platform.BUNGEECORD -> throw Exception("Platform bridging not implemented")
+        get() {
+            if (_platformBridge == null) {
+                _platformBridge = SpigotPlatform(plugin = this)
+            }
+            return _platformBridge!!
         }
-    }
 
     override fun onEnable() {
         super.onEnable()
