@@ -1,48 +1,23 @@
 package com.projectcitybuild
 
-import com.projectcitybuild.core.contracts.CommandDelegatable
-import com.projectcitybuild.core.contracts.Controller
-import com.projectcitybuild.core.contracts.ListenerDelegatable
-import com.projectcitybuild.spigot.extensions.addDefault
-import com.projectcitybuild.entities.PluginConfig
-import com.projectcitybuild.spigot.SpigotCommandDelegate
-import com.projectcitybuild.spigot.SpigotListenerDelegate
-import com.projectcitybuild.spigot.SpigotEventRegistry
-import com.projectcitybuild.spigot.environment.SpigotEnvironment
-import com.projectcitybuild.spigot.environment.SpigotPluginHook
-import com.projectcitybuild.spigot.environment.SpigotPlayerStore
+import com.projectcitybuild.core.contracts.PlatformBridgable
 import org.bukkit.plugin.java.JavaPlugin
-import java.lang.ref.WeakReference
 
-class PCBridge : JavaPlugin() {
+class PCBridge: JavaPlugin() {
 
-    private var commandDelegate: CommandDelegatable? = null
-    private var listenerDelegate: ListenerDelegatable? = null
-
-    private val weakRef: WeakReference<JavaPlugin>
-        get() = WeakReference(this)
+    private var _platformBridge: PlatformBridgable? = null
+    private val platformBridge: PlatformBridgable
+        get() {
+            if (_platformBridge == null) {
+                _platformBridge = SpigotPlatform(plugin = this)
+            }
+            return _platformBridge!!
+        }
 
     override fun onEnable() {
         super.onEnable()
 
-        createDefaultConfig()
-
-        val pluginHooks = SpigotPluginHook(plugin = weakRef)
-        val playerStore = SpigotPlayerStore(plugin = weakRef)
-        val environment = SpigotEnvironment(
-                pluginRef = WeakReference(this),
-                logger = logger,
-                playerStore = playerStore.store,
-                config = config,
-                hooks = pluginHooks
-        )
-
-        commandDelegate = SpigotCommandDelegate(plugin = weakRef, environment = environment)
-        listenerDelegate = SpigotListenerDelegate(plugin = weakRef, environment = environment)
-
-        this.register(modules = arrayOf(
-                SpigotEventRegistry()
-        ))
+        platformBridge.onEnable()
 
         logger.info("PCBridge ready")
     }
@@ -50,32 +25,8 @@ class PCBridge : JavaPlugin() {
     override fun onDisable() {
         super.onDisable()
 
-        listenerDelegate?.unregisterAll()
-
-        commandDelegate = null
-        listenerDelegate = null
+        platformBridge.onDisable()
 
         logger.info("PCBridge disabled")
     }
-
-    private fun register(modules: Array<Controller>) {
-        modules.forEach { controller ->
-            controller.commands.forEach { command ->
-                commandDelegate?.register(command)
-            }
-            controller.listeners.forEach { listener ->
-                listenerDelegate?.register(listener)
-            }
-        }
-    }
-
-    private fun createDefaultConfig() {
-        config.addDefault<PluginConfig.Settings.MAINTENANCE_MODE>()
-        config.addDefault<PluginConfig.API.KEY>()
-        config.addDefault<PluginConfig.API.BASE_URL>()
-
-        config.options().copyDefaults(true)
-        saveConfig()
-    }
-
 }

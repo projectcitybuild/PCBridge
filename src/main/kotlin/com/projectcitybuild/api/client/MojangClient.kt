@@ -6,17 +6,21 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class MojangClient {
+class MojangClient(private val withLogging: Boolean) {
 
     private val instance: Retrofit = build()
     private val client: OkHttpClient
         get() {
-            val interceptor = HttpLoggingInterceptor()
-            interceptor.level = HttpLoggingInterceptor.Level.BODY
+            var clientBuilder = OkHttpClient().newBuilder()
 
-            return OkHttpClient().newBuilder()
-                    .addInterceptor(interceptor)
-                    .build()
+            if (withLogging) {
+                val loggingInterceptor = HttpLoggingInterceptor()
+                loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
+
+                clientBuilder = clientBuilder.addInterceptor(loggingInterceptor)
+            }
+
+            return clientBuilder.build()
         }
 
     val mojangApi = instance.create(MojangApiInterface::class.java)

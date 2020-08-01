@@ -1,5 +1,6 @@
 package com.projectcitybuild.spigot.modules.ranks.listeners
 
+import com.projectcitybuild.api.APIProvider
 import com.projectcitybuild.core.contracts.EnvironmentProvider
 import com.projectcitybuild.core.contracts.Listenable
 import com.projectcitybuild.entities.models.ApiResponse
@@ -16,8 +17,10 @@ import retrofit2.Response
 import java.util.*
 import java.util.stream.Collectors
 
-class SyncRankLoginListener : Listenable<PlayerJoinEvent> {
-    override var environment: EnvironmentProvider? = null
+class SyncRankLoginListener(
+        private val environment: EnvironmentProvider,
+        private val apiProvider: APIProvider
+): Listenable<PlayerJoinEvent> {
 
     @EventHandler(priority = EventPriority.HIGH)
     override fun observe(event: PlayerJoinEvent) {
@@ -25,7 +28,6 @@ class SyncRankLoginListener : Listenable<PlayerJoinEvent> {
     }
 
     private fun syncRankWithServer(player: Player) {
-        val environment = environment ?: throw Exception("EnvironmentProvider has already been deallocated")
         val permissions = environment.permissions ?: throw Exception("Permission plugin is null")
 
         getPlayerGroups(playerId = player.uniqueId) { result ->
@@ -82,8 +84,7 @@ class SyncRankLoginListener : Listenable<PlayerJoinEvent> {
     }
 
     private fun getPlayerGroups(playerId: UUID, completion: (Response<ApiResponse<AuthPlayerGroups>>) -> Unit) {
-        val environment = environment ?: throw Exception("EnvironmentProvider is null")
-        val authApi = environment.apiClient.authApi
+        val authApi = apiProvider.pcb.authApi
 
         environment.async<Response<ApiResponse<AuthPlayerGroups>>> { resolve ->
             val request = authApi.getUserGroups(uuid = playerId.toString())

@@ -1,8 +1,8 @@
 package com.projectcitybuild.spigot.modules.chat.listeners
 
+import com.projectcitybuild.api.APIProvider
 import com.projectcitybuild.core.contracts.EnvironmentProvider
 import com.projectcitybuild.core.contracts.Listenable
-import com.projectcitybuild.entities.LogLevel
 import net.luckperms.api.node.NodeType
 import org.bukkit.ChatColor
 import org.bukkit.event.EventHandler
@@ -10,12 +10,12 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.player.AsyncPlayerChatEvent
 import java.util.stream.Collectors
 
-class ChatListener : Listenable<AsyncPlayerChatEvent> {
-    override var environment: EnvironmentProvider? = null
+class ChatListener(
+        private val environment: EnvironmentProvider
+): Listenable<AsyncPlayerChatEvent> {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     override fun observe(event: AsyncPlayerChatEvent) {
-        val environment = environment ?: return
         val permissions = environment.permissions ?: throw Exception("Permission plugin is null")
 
         // Mute player if necessary

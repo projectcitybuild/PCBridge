@@ -1,7 +1,5 @@
 package com.projectcitybuild.core.contracts
 
-import com.projectcitybuild.api.client.MojangClient
-import com.projectcitybuild.api.client.PCBClient
 import com.projectcitybuild.core.utilities.AsyncTask
 import com.projectcitybuild.entities.LogLevel
 import com.projectcitybuild.entities.Player
@@ -19,6 +17,7 @@ import java.util.*
  *
  */
 interface EnvironmentProvider {
+
     fun get(key: PluginConfigPair) : Any { throw NotImplementedError() }
     fun set(key: PluginConfigPair, value: Any) { throw NotImplementedError() }
     fun log(level: LogLevel, message: String) { println(message) }
@@ -32,12 +31,6 @@ interface EnvironmentProvider {
     fun sync(task: () -> Unit)
 
     val permissions: LuckPerms?
-        get() = throw NotImplementedError()
-
-    val apiClient: PCBClient
-        get() = throw NotImplementedError()
-
-    val mojangClient: MojangClient
         get() = throw NotImplementedError()
 
     val plugin: JavaPlugin?

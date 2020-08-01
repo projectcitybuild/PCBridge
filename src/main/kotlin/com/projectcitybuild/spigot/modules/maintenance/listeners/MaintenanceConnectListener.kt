@@ -7,20 +7,18 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.player.PlayerLoginEvent
 
-class MaintenanceConnectListener : Listenable<PlayerLoginEvent> {
-    override var environment: EnvironmentProvider? = null
+class MaintenanceConnectListener(
+        private val environment: EnvironmentProvider
+) : Listenable<PlayerLoginEvent> {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     override fun observe(event: PlayerLoginEvent) {
-        val environment = environment ?: return
-
         val isMaintenanceMode = environment.get(PluginConfig.Settings.MAINTENANCE_MODE()) as? Boolean
             ?: throw Exception("Cannot cast MAINTENANCE_MODE value to Boolean")
 
         if (event.player.hasPermission("pcbridge.maintenance.bypass")) {
             return
         }
-
         if (isMaintenanceMode) {
             event.disallow(PlayerLoginEvent.Result.KICK_WHITELIST, "Server is currently in maintenance mode. Please try again later")
         }

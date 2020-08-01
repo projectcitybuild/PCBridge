@@ -3,22 +3,22 @@ package com.projectcitybuild.spigot.modules.chat.commands
 import com.projectcitybuild.spigot.extensions.getOnlinePlayer
 import com.projectcitybuild.core.contracts.Commandable
 import com.projectcitybuild.core.contracts.EnvironmentProvider
-import org.bukkit.command.CommandSender
+import com.projectcitybuild.entities.CommandInput
 
-class UnmuteCommand : Commandable {
+class UnmuteCommand(
+        private val environment: EnvironmentProvider
+): Commandable {
+
     override val label: String = "unmute"
     override val permission: String = "pcbridge.chat.unmute"
 
-    override var environment: EnvironmentProvider? = null
+    override fun execute(input: CommandInput): Boolean {
+        if (input.args.isEmpty()) return false
 
-    override fun execute(sender: CommandSender, args: Array<String>, isConsole: Boolean): Boolean {
-        if (environment == null) throw Exception("EnvironmentProvider missing")
-        if (args.isEmpty()) return false
-
-        val targetPlayerName = args.first()
-        val targetPlayer = sender.server?.getOnlinePlayer(name = targetPlayerName)
+        val targetPlayerName = input.args.first()
+        val targetPlayer = input.sender.server?.getOnlinePlayer(name = targetPlayerName)
         if (targetPlayer == null) {
-            sender.sendMessage("Player $targetPlayerName not found")
+            input.sender.sendMessage("Player $targetPlayerName not found")
             return true
         }
 
@@ -26,15 +26,15 @@ class UnmuteCommand : Commandable {
             ?: throw Exception("Player $targetPlayerName missing from cache")
 
         if (!player.isMuted) {
-            sender.sendMessage("$targetPlayerName is not muted")
+            input.sender.sendMessage("$targetPlayerName is not muted")
             return true
         }
 
         player.isMuted = false
         environment?.set(player)
 
-        sender.sendMessage("${targetPlayer.name} has been unmuted")
-        targetPlayer.sendMessage("You have been unmuted by ${sender.name}")
+        input.sender.sendMessage("${targetPlayer.name} has been unmuted")
+        targetPlayer.sendMessage("You have been unmuted by ${input.sender.name}")
 
         return true
     }

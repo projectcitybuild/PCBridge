@@ -1,51 +1,51 @@
 package com.projectcitybuild.spigot.modules.ranks.commands
 
+import com.projectcitybuild.api.APIProvider
 import com.projectcitybuild.core.contracts.Commandable
 import com.projectcitybuild.core.contracts.EnvironmentProvider
-import com.projectcitybuild.entities.LogLevel
+import com.projectcitybuild.entities.CommandInput
 import com.projectcitybuild.entities.models.ApiResponse
 import com.projectcitybuild.entities.models.AuthPlayerGroups
 import com.projectcitybuild.entities.models.AuthURL
 import com.projectcitybuild.spigot.modules.ranks.RankMapper
-import net.luckperms.api.node.Node
 import net.luckperms.api.node.NodeType
 import net.luckperms.api.node.types.InheritanceNode
-import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import retrofit2.Response
 import java.util.*
 import java.util.stream.Collectors
 
-class SyncCommand : Commandable {
-    override var environment: EnvironmentProvider? = null
+class SyncCommand(
+        private val environment: EnvironmentProvider,
+        private val apiProvider: APIProvider
+): Commandable {
+
     override val label: String = "sync"
     override val permission: String = "pcbridge.sync.login"
 
-    override fun execute(sender: CommandSender, args: Array<String>, isConsole: Boolean): Boolean {
-        val environment = environment ?: throw Exception("EnvironmentProvider is null")
-
-        if (sender !is Player) {
-            sender.sendMessage("Console cannot use this command")
+    override fun execute(input: CommandInput): Boolean {
+        if (input.sender !is Player) {
+            input.sender.sendMessage("Console cannot use this command")
             return true
         }
 
-        if (args.isEmpty()) {
-            return beginSyncFlow(sender, environment)
+        if (input.args.isEmpty()) {
+            return beginSyncFlow(input.sender, environment, apiProvider)
         }
-        if (args.size == 1 && args[0] == "finish") {
-            return endSyncFlow(sender, environment)
+        if (input.args.size == 1 && input.args[0] == "finish") {
+            return endSyncFlow(input.sender, environment)
         }
         return false
     }
 
-    private fun beginSyncFlow(sender: Player, environment: EnvironmentProvider): Boolean {
+    private fun beginSyncFlow(sender: Player, environment: EnvironmentProvider, apiProvider: APIProvider): Boolean {
         getVerificationLink(playerId = sender.uniqueId) { response ->
             val json = response.body()
 
             // TODO: handle error serialization in APIClient...
             if (!response.isSuccessful) {
                 val annotation = object : Annotation {}
-                val converter = environment.apiClient.instance
+                val converter = apiProvider.pcb.instance
                         .responseBodyConverter<ApiResponse<AuthURL>>(ApiResponse::class.java, arrayOf(annotation))
 
                 val body = response.errorBody() ?: throw Exception("Error body deserialization failed")
@@ -135,8 +135,7 @@ class SyncCommand : Commandable {
     }
 
     private fun getVerificationLink(playerId: UUID, completion: (Response<ApiResponse<AuthURL>>) -> Unit) {
-        val environment = environment ?: throw Exception("EnvironmentProvider is null")
-        val authApi = environment.apiClient.authApi
+        val authApi = apiProvider.pcb.authApi
 
         environment.async<Response<ApiResponse<AuthURL>>> { resolve ->
             val request = authApi.getVerificationUrl(uuid = playerId.toString())
@@ -147,8 +146,7 @@ class SyncCommand : Commandable {
     }
 
     private fun getPlayerGroups(playerId: UUID, completion: (Response<ApiResponse<AuthPlayerGroups>>) -> Unit) {
-        val environment = environment ?: throw Exception("EnvironmentProvider is null")
-        val authApi = environment.apiClient.authApi
+        val authApi = apiProvider.pcb.authApi
 
         environment.async<Response<ApiResponse<AuthPlayerGroups>>> { resolve ->
             val request = authApi.getUserGroups(uuid = playerId.toString())
