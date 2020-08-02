@@ -1,6 +1,7 @@
 package com.projectcitybuild.spigot
 
 import com.projectcitybuild.core.contracts.CommandDelegatable
+import com.projectcitybuild.core.contracts.CommandResult
 import com.projectcitybuild.core.contracts.Commandable
 import com.projectcitybuild.core.contracts.EnvironmentProvider
 import com.projectcitybuild.entities.CommandInput
@@ -9,21 +10,26 @@ import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
 import java.lang.ref.WeakReference
 
-internal class SpigotCommandDelegate constructor(
+class SpigotCommandDelegate constructor(
         private val plugin: WeakReference<JavaPlugin>,
         private val environment: EnvironmentProvider
 ): CommandDelegatable {
 
     override fun register(command: Commandable) {
         command.aliases.plus(command.label).forEach { alias ->
-            plugin.get()?.getCommand(alias)?.setExecutor { sender, _, _, args ->
+            val plugin = plugin.get() ?: return
+
+            plugin.getCommand(alias)?.setExecutor { sender, _, _, args ->
                 try {
                     val input = CommandInput(
                             sender = sender,
                             args = args ?: arrayOf(),
                             isConsole = sender !is Player
                     )
-                    command.execute(input)
+                    when (command.execute(input)) {
+                        CommandResult.EXECUTED -> true
+                        CommandResult.INVALID_INPUT -> false
+                    }
                 }
                 catch (error: Exception) {
                     sender.sendMessage("An internal error occurred performing your command")
@@ -31,7 +37,7 @@ internal class SpigotCommandDelegate constructor(
                     true
                 }
             }
-            plugin.get()?.getCommand(alias)?.permission = command.permission
+            plugin.getCommand(alias)?.permission = command.permission
         }
     }
 }

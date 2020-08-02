@@ -1,6 +1,7 @@
 package com.projectcitybuild.spigot.modules.ranks.commands
 
 import com.projectcitybuild.api.APIProvider
+import com.projectcitybuild.core.contracts.CommandResult
 import com.projectcitybuild.core.contracts.Commandable
 import com.projectcitybuild.core.contracts.EnvironmentProvider
 import com.projectcitybuild.entities.CommandInput
@@ -23,22 +24,22 @@ class SyncCommand(
     override val label: String = "sync"
     override val permission: String = "pcbridge.sync.login"
 
-    override fun execute(input: CommandInput): Boolean {
+    override fun execute(input: CommandInput): CommandResult {
         if (input.sender !is Player) {
             input.sender.sendMessage("Console cannot use this command")
-            return true
+            return CommandResult.EXECUTED
         }
 
-        if (input.args.isEmpty()) {
+        if (!input.hasArguments) {
             return beginSyncFlow(input.sender, environment, apiProvider)
         }
         if (input.args.size == 1 && input.args[0] == "finish") {
             return endSyncFlow(input.sender, environment)
         }
-        return false
+        return CommandResult.INVALID_INPUT
     }
 
-    private fun beginSyncFlow(sender: Player, environment: EnvironmentProvider, apiProvider: APIProvider): Boolean {
+    private fun beginSyncFlow(sender: Player, environment: EnvironmentProvider, apiProvider: APIProvider): CommandResult {
         getVerificationLink(playerId = sender.uniqueId) { response ->
             val json = response.body()
 
@@ -73,11 +74,10 @@ class SyncCommand(
                 sender.sendMessage("To link your account, please click the link and login if required:§9 ${json.data.url}")
             }
         }
-
-        return true
+        return CommandResult.EXECUTED
     }
 
-    private fun endSyncFlow(sender: Player, environment: EnvironmentProvider): Boolean {
+    private fun endSyncFlow(sender: Player, environment: EnvironmentProvider): CommandResult {
         val permissions = environment.permissions ?: throw Exception("Permission plugin is null")
 
         getPlayerGroups(playerId = sender.uniqueId) { result ->
@@ -130,8 +130,7 @@ class SyncCommand(
                 sender.sendMessage("Account successfully linked. Your rank will be automatically synchronized with the PCB network")
             }
         }
-
-        return true
+        return CommandResult.EXECUTED
     }
 
     private fun getVerificationLink(playerId: UUID, completion: (Response<ApiResponse<AuthURL>>) -> Unit) {

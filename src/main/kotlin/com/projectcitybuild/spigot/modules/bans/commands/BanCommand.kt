@@ -5,6 +5,7 @@ import com.projectcitybuild.core.contracts.EnvironmentProvider
 import com.projectcitybuild.spigot.extensions.getOfflinePlayer
 import com.projectcitybuild.actions.CreateBanAction
 import com.projectcitybuild.api.APIProvider
+import com.projectcitybuild.core.contracts.CommandResult
 import com.projectcitybuild.core.extensions.joinWithWhitespaces
 import com.projectcitybuild.entities.CommandInput
 import org.bukkit.ChatColor
@@ -20,8 +21,8 @@ class BanCommand(
     override val label: String = "ban"
     override val permission: String = "pcbridge.ban.ban"
 
-    override fun execute(input: CommandInput): Boolean {
-        if (input.args.isEmpty()) return false
+    override fun execute(input: CommandInput): CommandResult {
+        if (!input.hasArguments) return CommandResult.INVALID_INPUT
 
         val staffPlayer = if(input.isConsole) null else input.sender as Player
         val reason = input.args.joinWithWhitespaces(1 until input.args.size)
@@ -60,8 +61,7 @@ class BanCommand(
                 }
             }
         }
-
-        return true
+        return CommandResult.EXECUTED
     }
 
     private fun getOfflinePlayerUUID(server: Server, playerName: String, completion: (UUID?) -> Unit) {
@@ -82,5 +82,4 @@ class BanCommand(
             resolve(result)
         }.startAndSubscribe(completion)
     }
-
 }

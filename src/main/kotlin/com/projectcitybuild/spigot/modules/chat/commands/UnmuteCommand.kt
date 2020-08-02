@@ -1,5 +1,6 @@
 package com.projectcitybuild.spigot.modules.chat.commands
 
+import com.projectcitybuild.core.contracts.CommandResult
 import com.projectcitybuild.spigot.extensions.getOnlinePlayer
 import com.projectcitybuild.core.contracts.Commandable
 import com.projectcitybuild.core.contracts.EnvironmentProvider
@@ -12,30 +13,30 @@ class UnmuteCommand(
     override val label: String = "unmute"
     override val permission: String = "pcbridge.chat.unmute"
 
-    override fun execute(input: CommandInput): Boolean {
-        if (input.args.isEmpty()) return false
+    override fun execute(input: CommandInput): CommandResult {
+        if (!input.hasArguments) return CommandResult.INVALID_INPUT
 
         val targetPlayerName = input.args.first()
         val targetPlayer = input.sender.server?.getOnlinePlayer(name = targetPlayerName)
         if (targetPlayer == null) {
             input.sender.sendMessage("Player $targetPlayerName not found")
-            return true
+            return CommandResult.INVALID_INPUT
         }
 
-        val player = environment?.get(targetPlayer.uniqueId)
+        val player = environment.get(targetPlayer.uniqueId)
             ?: throw Exception("Player $targetPlayerName missing from cache")
 
         if (!player.isMuted) {
             input.sender.sendMessage("$targetPlayerName is not muted")
-            return true
+            return CommandResult.INVALID_INPUT
         }
 
         player.isMuted = false
-        environment?.set(player)
+        environment.set(player)
 
         input.sender.sendMessage("${targetPlayer.name} has been unmuted")
         targetPlayer.sendMessage("You have been unmuted by ${input.sender.name}")
 
-        return true
+        return CommandResult.EXECUTED
     }
 }

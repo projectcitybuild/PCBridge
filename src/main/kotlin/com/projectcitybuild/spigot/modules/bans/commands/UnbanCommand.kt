@@ -5,6 +5,7 @@ import com.projectcitybuild.core.contracts.EnvironmentProvider
 import com.projectcitybuild.spigot.extensions.getOfflinePlayer
 import com.projectcitybuild.actions.CreateUnbanAction
 import com.projectcitybuild.api.APIProvider
+import com.projectcitybuild.core.contracts.CommandResult
 import com.projectcitybuild.entities.CommandInput
 import org.bukkit.Server
 import org.bukkit.command.CommandSender
@@ -19,8 +20,8 @@ class UnbanCommand(
     override val label: String = "unban"
     override val permission: String = "pcbridge.ban.unban"
 
-    override fun execute(input: CommandInput): Boolean {
-        if (input.args.isEmpty()) return false
+    override fun execute(input: CommandInput): CommandResult {
+        if (!input.hasArguments) return CommandResult.INVALID_INPUT
 
         val targetPlayerName = input.args.first()
         val staffPlayer = if (input.isConsole) null else input.sender as Player
@@ -49,8 +50,7 @@ class UnbanCommand(
                 }
             }
         }
-
-        return true
+        return CommandResult.EXECUTED
     }
 
     private fun getOfflinePlayerUUID(server: Server, playerName: String, completion: (UUID?) -> Unit) {
