@@ -3,6 +3,9 @@ name: PCBridge
 version: 2.4.0
 softdepend: [LuckPerms]
 
+# Mark the plugin as 1.13 compatible to avoid unnecessary remapping loaded.
+api-version: 1.13
+
 commands:
    maintenance:
       description: Toggles 'Maintenance Mode' on the server, allowing only staff to connect
