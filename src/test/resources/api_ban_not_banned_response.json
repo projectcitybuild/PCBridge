@@ -1,0 +1,8 @@
+{
+  "error": {
+    "id": "player_not_banned",
+    "title": "UserNotBannedException",
+    "detail": "This player is not currently banned",
+    "status": 400
+  }
+}

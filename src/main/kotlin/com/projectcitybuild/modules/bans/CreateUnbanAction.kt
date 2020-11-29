@@ -5,7 +5,6 @@ import com.projectcitybuild.core.contracts.EnvironmentProvider
 import java.util.*
 
 class CreateUnbanAction(
-        private val environment: EnvironmentProvider,
         private val networkClients: NetworkClients
 ) {
     sealed class Result {

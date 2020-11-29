@@ -65,7 +65,7 @@ class UnbanCommand(
 
     private fun createUnban(playerId: UUID, staffId: UUID?, completion: (CreateUnbanAction.Result) -> Unit) {
         environment.async<CreateUnbanAction.Result> { resolve ->
-            val action = CreateUnbanAction(environment, networkClients)
+            val action = CreateUnbanAction(networkClients)
             val result = action.execute(
                     playerId = playerId,
                     staffId = staffId

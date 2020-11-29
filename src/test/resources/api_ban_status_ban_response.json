@@ -1,0 +1,17 @@
+{
+  "data": {
+    "game_ban_id": 111,
+    "server_id": 222,
+    "banned_player_id": 333,
+    "banned_player_type": "minecraft_player",
+    "banned_alias_at_time": "fake_user",
+    "staff_player_id": 444,
+    "staff_player_type": "minecraft_player",
+    "reason": "fake_ban_reason",
+    "is_active": true,
+    "is_global_ban": true,
+    "expires_at": null,
+    "created_at": 1606647622,
+    "updated_at": 1606647633
+  }
+}
