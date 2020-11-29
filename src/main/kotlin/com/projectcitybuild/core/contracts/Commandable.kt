@@ -1,6 +1,6 @@
 package com.projectcitybuild.core.contracts
 
-import com.projectcitybuild.entities.CommandInput
+import com.projectcitybuild.core.entities.CommandInput
 
 /**
  * Represents a Command that a user can use to perform

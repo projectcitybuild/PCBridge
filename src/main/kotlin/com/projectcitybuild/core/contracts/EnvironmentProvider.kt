@@ -1,9 +1,9 @@
 package com.projectcitybuild.core.contracts
 
 import com.projectcitybuild.core.utilities.AsyncTask
-import com.projectcitybuild.entities.LogLevel
-import com.projectcitybuild.entities.Player
-import com.projectcitybuild.entities.PluginConfigPair
+import com.projectcitybuild.core.entities.LogLevel
+import com.projectcitybuild.core.entities.Player
+import com.projectcitybuild.core.entities.PluginConfigPair
 import net.luckperms.api.LuckPerms
 import org.bukkit.plugin.java.JavaPlugin
 import java.util.*
