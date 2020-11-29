@@ -1,8 +1,8 @@
 package com.projectcitybuild
 
 import com.projectcitybuild.core.api.APIProvider
-import com.projectcitybuild.core.api.client.MojangClient
-import com.projectcitybuild.core.api.client.PCBClient
+import com.projectcitybuild.core.api.mojang.client.MojangClient
+import com.projectcitybuild.core.api.pcb.client.PCBClient
 import com.projectcitybuild.core.contracts.*
 import com.projectcitybuild.core.entities.PluginConfig
 import com.projectcitybuild.platforms.spigot.SpigotCommandDelegate

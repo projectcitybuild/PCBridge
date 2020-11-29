@@ -1,7 +1,7 @@
-package com.projectcitybuild.core.api.client
+package com.projectcitybuild.core.api.pcb.client
 
-import com.projectcitybuild.core.api.interfaces.BanApiInterface
-import com.projectcitybuild.core.api.interfaces.AuthApiInterface
+import com.projectcitybuild.core.api.pcb.requests.BanApiInterface
+import com.projectcitybuild.core.api.pcb.requests.AuthApiInterface
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit

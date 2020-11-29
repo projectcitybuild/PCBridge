@@ -1,4 +1,4 @@
-package com.projectcitybuild.core.api.interfaces
+package com.projectcitybuild.core.api.pcb.requests
 
 import com.projectcitybuild.core.entities.models.*
 import retrofit2.Call
