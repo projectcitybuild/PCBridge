@@ -1,6 +1,6 @@
 # PCBridge
 
-![example workflow name](https://github.com/projectcitybuild/PCBridge/workflows/CI/badge.svg)
+![CI](https://github.com/projectcitybuild/PCBridge/workflows/CI/badge.svg?branch=master)
 
 A Spigot/Paper plugin to bridge [Project City Build](https://projectcitybuild.com) and its Minecraft servers
 
