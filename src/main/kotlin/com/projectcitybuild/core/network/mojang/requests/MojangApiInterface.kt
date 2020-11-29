@@ -1,4 +1,4 @@
-package com.projectcitybuild.core.api.mojang.requests
+package com.projectcitybuild.core.network.mojang.requests
 
 import com.projectcitybuild.core.entities.models.MojangPlayer
 import retrofit2.Call

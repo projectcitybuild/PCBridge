@@ -1,11 +1,11 @@
 package com.projectcitybuild.modules.bans
 
-import com.projectcitybuild.core.api.APIProvider
+import com.projectcitybuild.core.network.NetworkClients
 import com.projectcitybuild.core.entities.models.GameBan
 import java.util.*
 
 class CheckBanStatusAction(
-        private val apiProvider: APIProvider
+        private val networkClients: NetworkClients
 ) {
     sealed class Result {
         class SUCCESS(val ban: GameBan?) : Result()
@@ -17,7 +17,7 @@ class CheckBanStatusAction(
     }
 
     fun execute(playerId: UUID) : Result {
-        val banApi = apiProvider.pcb.banApi
+        val banApi = networkClients.pcb.banApi
 
         val request = banApi.requestStatus(
                 playerId = playerId.toString(),

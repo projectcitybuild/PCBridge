@@ -1,6 +1,6 @@
 package com.projectcitybuild.platforms.spigot.commands
 
-import com.projectcitybuild.core.api.APIProvider
+import com.projectcitybuild.core.network.NetworkClients
 import com.projectcitybuild.core.contracts.CommandResult
 import com.projectcitybuild.core.contracts.Commandable
 import com.projectcitybuild.core.contracts.EnvironmentProvider
@@ -18,7 +18,7 @@ import java.util.stream.Collectors
 
 class SyncCommand(
         private val environment: EnvironmentProvider,
-        private val apiProvider: APIProvider
+        private val networkClients: NetworkClients
 ): Commandable {
 
     override val label: String = "sync"
@@ -31,7 +31,7 @@ class SyncCommand(
         }
 
         if (!input.hasArguments) {
-            return beginSyncFlow(input.sender, environment, apiProvider)
+            return beginSyncFlow(input.sender, environment, networkClients)
         }
         if (input.args.size == 1 && input.args[0] == "finish") {
             return endSyncFlow(input.sender, environment)
@@ -39,14 +39,14 @@ class SyncCommand(
         return CommandResult.INVALID_INPUT
     }
 
-    private fun beginSyncFlow(sender: Player, environment: EnvironmentProvider, apiProvider: APIProvider): CommandResult {
+    private fun beginSyncFlow(sender: Player, environment: EnvironmentProvider, networkClients: NetworkClients): CommandResult {
         getVerificationLink(playerId = sender.uniqueId) { response ->
             val json = response.body()
 
             // TODO: handle error serialization in APIClient...
             if (!response.isSuccessful) {
                 val annotation = object : Annotation {}
-                val converter = apiProvider.pcb.instance
+                val converter = networkClients.pcb.instance
                         .responseBodyConverter<ApiResponse<AuthURL>>(ApiResponse::class.java, arrayOf(annotation))
 
                 val body = response.errorBody() ?: throw Exception("Error body deserialization failed")
@@ -134,7 +134,7 @@ class SyncCommand(
     }
 
     private fun getVerificationLink(playerId: UUID, completion: (Response<ApiResponse<AuthURL>>) -> Unit) {
-        val authApi = apiProvider.pcb.authApi
+        val authApi = networkClients.pcb.authApi
 
         environment.async<Response<ApiResponse<AuthURL>>> { resolve ->
             val request = authApi.getVerificationUrl(uuid = playerId.toString())
@@ -145,7 +145,7 @@ class SyncCommand(
     }
 
     private fun getPlayerGroups(playerId: UUID, completion: (Response<ApiResponse<AuthPlayerGroups>>) -> Unit) {
-        val authApi = apiProvider.pcb.authApi
+        val authApi = networkClients.pcb.authApi
 
         environment.async<Response<ApiResponse<AuthPlayerGroups>>> { resolve ->
             val request = authApi.getUserGroups(uuid = playerId.toString())

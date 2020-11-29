@@ -3,19 +3,19 @@ package com.projectcitybuild.platforms.spigot.listeners
 import com.projectcitybuild.core.contracts.EnvironmentProvider
 import com.projectcitybuild.core.contracts.Listenable
 import com.projectcitybuild.modules.bans.CheckBanStatusAction
-import com.projectcitybuild.core.api.APIProvider
+import com.projectcitybuild.core.network.NetworkClients
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent
 
 class BanConnectionListener(
         private val environment: EnvironmentProvider,
-        private val apiProvider: APIProvider
+        private val networkClients: NetworkClients
 ): Listenable<AsyncPlayerPreLoginEvent> {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     override fun observe(event: AsyncPlayerPreLoginEvent) {
-        val action = CheckBanStatusAction(apiProvider)
+        val action = CheckBanStatusAction(networkClients)
         val result = action.execute(playerId = event.uniqueId)
 
         if (result is CheckBanStatusAction.Result.SUCCESS && result.ban != null) {

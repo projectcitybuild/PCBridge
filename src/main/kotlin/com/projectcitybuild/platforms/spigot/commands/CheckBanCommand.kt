@@ -2,18 +2,18 @@ package com.projectcitybuild.platforms.spigot.commands
 
 import com.projectcitybuild.core.contracts.Commandable
 import com.projectcitybuild.core.contracts.EnvironmentProvider
-import com.projectcitybuild.platforms.spigot.extensions.getOfflinePlayer
 import com.projectcitybuild.modules.bans.CheckBanStatusAction
-import com.projectcitybuild.core.api.APIProvider
+import com.projectcitybuild.core.network.NetworkClients
 import com.projectcitybuild.core.contracts.CommandResult
 import com.projectcitybuild.core.entities.CommandInput
+import com.projectcitybuild.platforms.spigot.extensions.getOfflinePlayer
 import org.bukkit.ChatColor
 import org.bukkit.Server
 import java.util.*
 
 class CheckBanCommand(
         private val environment: EnvironmentProvider,
-        private val apiProvider: APIProvider
+        private val networkClients: NetworkClients
 ) : Commandable {
 
     override val label: String = "checkban"
@@ -67,7 +67,7 @@ class CheckBanCommand(
             val uuid = server.getOfflinePlayer(
                     name = playerName,
                     environment = environment,
-                    apiProvider = apiProvider
+                    networkClients = networkClients
             )
             resolve(uuid)
         }.startAndSubscribe(completion)
@@ -75,7 +75,7 @@ class CheckBanCommand(
 
     private fun checkBanStatus(playerId: UUID, completion: (CheckBanStatusAction.Result) -> Unit) {
         environment.async<CheckBanStatusAction.Result> { resolve ->
-            val action = CheckBanStatusAction(apiProvider)
+            val action = CheckBanStatusAction(networkClients)
             val result = action.execute(
                     playerId = playerId
             )

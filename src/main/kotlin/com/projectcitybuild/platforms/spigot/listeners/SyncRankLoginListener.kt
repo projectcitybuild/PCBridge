@@ -1,6 +1,6 @@
 package com.projectcitybuild.platforms.spigot.listeners
 
-import com.projectcitybuild.core.api.APIProvider
+import com.projectcitybuild.core.network.NetworkClients
 import com.projectcitybuild.core.contracts.EnvironmentProvider
 import com.projectcitybuild.core.contracts.Listenable
 import com.projectcitybuild.core.entities.models.ApiResponse
@@ -18,7 +18,7 @@ import java.util.stream.Collectors
 
 class SyncRankLoginListener(
         private val environment: EnvironmentProvider,
-        private val apiProvider: APIProvider
+        private val networkClients: NetworkClients
 ): Listenable<PlayerJoinEvent> {
 
     @EventHandler(priority = EventPriority.HIGH)
@@ -83,7 +83,7 @@ class SyncRankLoginListener(
     }
 
     private fun getPlayerGroups(playerId: UUID, completion: (Response<ApiResponse<AuthPlayerGroups>>) -> Unit) {
-        val authApi = apiProvider.pcb.authApi
+        val authApi = networkClients.pcb.authApi
 
         environment.async<Response<ApiResponse<AuthPlayerGroups>>> { resolve ->
             val request = authApi.getUserGroups(uuid = playerId.toString())

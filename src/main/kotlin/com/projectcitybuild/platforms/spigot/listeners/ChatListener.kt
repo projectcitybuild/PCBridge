@@ -1,6 +1,5 @@
 package com.projectcitybuild.platforms.spigot.listeners
 
-import com.projectcitybuild.api.APIProvider
 import com.projectcitybuild.core.contracts.EnvironmentProvider
 import com.projectcitybuild.core.contracts.Listenable
 import net.luckperms.api.node.NodeType

@@ -2,18 +2,18 @@ package com.projectcitybuild.platforms.spigot.commands
 
 import com.projectcitybuild.core.contracts.Commandable
 import com.projectcitybuild.core.contracts.EnvironmentProvider
-import com.projectcitybuild.platforms.spigot.extensions.getOfflinePlayer
 import com.projectcitybuild.modules.bans.CreateUnbanAction
-import com.projectcitybuild.core.api.APIProvider
+import com.projectcitybuild.core.network.NetworkClients
 import com.projectcitybuild.core.contracts.CommandResult
 import com.projectcitybuild.core.entities.CommandInput
+import com.projectcitybuild.platforms.spigot.extensions.getOfflinePlayer
 import org.bukkit.Server
 import org.bukkit.entity.Player
 import java.util.*
 
 class UnbanCommand(
         private val environment: EnvironmentProvider,
-        private val apiProvider: APIProvider
+        private val networkClients: NetworkClients
 ): Commandable {
 
     override val label: String = "unban"
@@ -57,7 +57,7 @@ class UnbanCommand(
             val uuid = server.getOfflinePlayer(
                     name = playerName,
                     environment = environment,
-                    apiProvider = apiProvider
+                    networkClients = networkClients
             )
             resolve(uuid)
         }.startAndSubscribe(completion)
@@ -65,7 +65,7 @@ class UnbanCommand(
 
     private fun createUnban(playerId: UUID, staffId: UUID?, completion: (CreateUnbanAction.Result) -> Unit) {
         environment.async<CreateUnbanAction.Result> { resolve ->
-            val action = CreateUnbanAction(environment, apiProvider)
+            val action = CreateUnbanAction(environment, networkClients)
             val result = action.execute(
                     playerId = playerId,
                     staffId = staffId
