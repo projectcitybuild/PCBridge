@@ -5,7 +5,7 @@ import com.projectcitybuild.core.contracts.EnvironmentProvider
 import com.projectcitybuild.core.contracts.Listenable
 import com.projectcitybuild.core.entities.models.ApiResponse
 import com.projectcitybuild.core.entities.models.AuthPlayerGroups
-import com.projectcitybuild.spigot.modules.ranks.RankMapper
+import com.projectcitybuild.modules.ranks.RankMapper
 import net.luckperms.api.node.NodeType
 import net.luckperms.api.node.types.InheritanceNode
 import org.bukkit.entity.Player

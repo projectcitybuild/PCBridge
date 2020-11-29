@@ -2,7 +2,7 @@ package com.projectcitybuild.platforms.spigot.commands
 
 import com.projectcitybuild.core.contracts.Commandable
 import com.projectcitybuild.core.contracts.EnvironmentProvider
-import com.projectcitybuild.spigot.extensions.getOfflinePlayer
+import com.projectcitybuild.platforms.spigot.extensions.getOfflinePlayer
 import com.projectcitybuild.modules.bans.CreateBanAction
 import com.projectcitybuild.core.api.APIProvider
 import com.projectcitybuild.core.contracts.CommandResult

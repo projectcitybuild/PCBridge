@@ -5,18 +5,14 @@ import com.projectcitybuild.core.api.client.MojangClient
 import com.projectcitybuild.core.api.client.PCBClient
 import com.projectcitybuild.core.contracts.*
 import com.projectcitybuild.core.entities.PluginConfig
-import com.projectcitybuild.spigot.extensions.addDefault
-import com.projectcitybuild.spigot.modules.bans.commands.BanCommand
-import com.projectcitybuild.spigot.modules.bans.commands.CheckBanCommand
-import com.projectcitybuild.spigot.modules.bans.commands.UnbanCommand
-import com.projectcitybuild.spigot.modules.bans.listeners.BanConnectionListener
-import com.projectcitybuild.spigot.modules.chat.commands.MuteCommand
-import com.projectcitybuild.spigot.modules.chat.commands.UnmuteCommand
-import com.projectcitybuild.spigot.modules.chat.listeners.ChatListener
-import com.projectcitybuild.spigot.modules.maintenance.commands.MaintenanceCommand
-import com.projectcitybuild.spigot.modules.maintenance.listeners.MaintenanceConnectListener
-import com.projectcitybuild.spigot.modules.ranks.commands.SyncCommand
-import com.projectcitybuild.spigot.modules.ranks.listeners.SyncRankLoginListener
+import com.projectcitybuild.platforms.spigot.SpigotCommandDelegate
+import com.projectcitybuild.platforms.spigot.SpigotListenerDelegate
+import com.projectcitybuild.platforms.spigot.environment.SpigotEnvironment
+import com.projectcitybuild.platforms.spigot.environment.SpigotPlayerStore
+import com.projectcitybuild.platforms.spigot.environment.SpigotPluginHook
+import com.projectcitybuild.platforms.spigot.extensions.addDefault
+import com.projectcitybuild.platforms.spigot.commands.*
+import com.projectcitybuild.platforms.spigot.listeners.*
 import org.bukkit.plugin.java.JavaPlugin
 import java.lang.ref.WeakReference
 
@@ -36,22 +32,22 @@ class SpigotPlatform(plugin: JavaPlugin): PlatformBridgable {
 
     private val weakRef = WeakReference(plugin)
 
-    override val environment: EnvironmentProvider = com.projectcitybuild.platforms.spigot.environment.SpigotEnvironment(
+    override val environment: EnvironmentProvider = SpigotEnvironment(
             pluginRef = weakRef,
             logger = plugin.logger,
-            playerStore = com.projectcitybuild.platforms.spigot.environment.SpigotPlayerStore(plugin = weakRef).store,
+            playerStore = SpigotPlayerStore(plugin = weakRef).store,
             config = plugin.config,
-            hooks = com.projectcitybuild.platforms.spigot.environment.SpigotPluginHook()
+            hooks = SpigotPluginHook()
     )
 
     override fun onEnable() {
         createDefaultConfig()
 
-        val commandDelegate = com.projectcitybuild.platforms.spigot.SpigotCommandDelegate(plugin = weakRef, environment = environment)
+        val commandDelegate = SpigotCommandDelegate(plugin = weakRef, environment = environment)
         registerCommands(delegate = commandDelegate)
         this.commandDelegate = commandDelegate
 
-        val listenerDelegate = com.projectcitybuild.platforms.spigot.SpigotListenerDelegate(plugin = weakRef, environment = environment)
+        val listenerDelegate = SpigotListenerDelegate(plugin = weakRef, environment = environment)
         registerListeners(delegate = listenerDelegate)
         this.listenerDelegate = listenerDelegate
     }
@@ -63,7 +59,7 @@ class SpigotPlatform(plugin: JavaPlugin): PlatformBridgable {
         listenerDelegate = null
     }
 
-    private fun registerCommands(delegate: com.projectcitybuild.platforms.spigot.SpigotCommandDelegate) {
+    private fun registerCommands(delegate: SpigotCommandDelegate) {
         arrayOf(
                 BanCommand(environment, apiProvider),
                 UnbanCommand(environment, apiProvider),
@@ -76,7 +72,7 @@ class SpigotPlatform(plugin: JavaPlugin): PlatformBridgable {
         .forEach { command -> delegate.register(command) }
     }
 
-    private fun registerListeners(delegate: com.projectcitybuild.platforms.spigot.SpigotListenerDelegate) {
+    private fun registerListeners(delegate: SpigotListenerDelegate) {
         arrayOf(
                 BanConnectionListener(environment, apiProvider),
                 ChatListener(environment),

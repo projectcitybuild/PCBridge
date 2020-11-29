@@ -1,6 +1,6 @@
 package com.projectcitybuild.platforms.spigot.environment
 
-import com.projectcitybuild.spigot.extensions.makeModel
+import com.projectcitybuild.platforms.spigot.extensions.makeModel
 import com.projectcitybuild.core.contracts.PlayerStoreHoldable
 import com.projectcitybuild.core.utilities.PlayerStore
 import com.projectcitybuild.core.entities.Player

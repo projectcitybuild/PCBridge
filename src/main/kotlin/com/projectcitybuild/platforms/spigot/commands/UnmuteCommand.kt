@@ -1,7 +1,7 @@
 package com.projectcitybuild.platforms.spigot.commands
 
 import com.projectcitybuild.core.contracts.CommandResult
-import com.projectcitybuild.spigot.extensions.getOnlinePlayer
+import com.projectcitybuild.platforms.spigot.extensions.getOnlinePlayer
 import com.projectcitybuild.core.contracts.Commandable
 import com.projectcitybuild.core.contracts.EnvironmentProvider
 import com.projectcitybuild.core.entities.CommandInput
