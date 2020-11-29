@@ -51,7 +51,7 @@ class CheckBanStatusActionTests {
     }
 
     private fun mockResponse(fileName: String): MockResponse {
-        val json = jsonMockResponse("api_ban_status_ban_response.json")
+        val json = jsonMockResponse(fileName)
 
         return MockResponse()
                 .setBody(json)
