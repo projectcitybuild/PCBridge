@@ -1,6 +1,5 @@
 package com.projectcitybuild.core.utilities
 
-import com.projectcitybuild.entities.Result
 import java.util.concurrent.locks.ReentrantLock
 
 private typealias Resolver<T> = (T) -> Unit
