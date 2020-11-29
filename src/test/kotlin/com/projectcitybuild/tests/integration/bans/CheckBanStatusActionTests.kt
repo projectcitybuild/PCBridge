@@ -1,17 +1,15 @@
 package com.projectcitybuild.tests.integration.bans
 
 import com.projectcitybuild.core.entities.models.GameBan
-import com.projectcitybuild.core.network.NetworkClients
-import com.projectcitybuild.core.network.mojang.client.MojangClient
-import com.projectcitybuild.core.network.pcb.client.PCBClient
 import com.projectcitybuild.modules.bans.CheckBanStatusAction
+import com.projectcitybuild.tests.mocks.makeNetworkClients
+import com.projectcitybuild.tests.mocks.withJSONResource
 import junit.framework.TestCase.*
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-import java.io.InputStreamReader
 import java.util.*
 
 class CheckBanStatusActionTests {
@@ -29,42 +27,12 @@ class CheckBanStatusActionTests {
         mockWebServer.shutdown()
     }
 
-    private fun jsonMockResponse(fileName: String): String {
-        val reader = InputStreamReader(javaClass.classLoader.getResourceAsStream(fileName))
-        val content = reader.readText()
-        reader.close()
-        return content
-    }
-
-    private fun networkClients(mockWebServer: MockWebServer): NetworkClients {
-        val baseUrl = mockWebServer.url("")
-        return NetworkClients(
-                PCBClient(
-                        authToken = "",
-                        withLogging = false,
-                        baseUrl = "$baseUrl/"
-                ),
-                MojangClient(
-                        withLogging = false
-                )
-        )
-    }
-
-    private fun mockResponse(fileName: String): MockResponse {
-        val json = jsonMockResponse(fileName)
-
-        return MockResponse()
-                .setBody(json)
-                .setHeader("Content-Type", "application/json")
-    }
-
     @Test
     fun `ban response returns success with ban model`() {
-        val response = mockResponse("api_ban_status_ban_response.json")
+        val response = MockResponse().withJSONResource("api_ban_status_ban_response.json")
         mockWebServer.enqueue(response)
 
-        val networkClients = networkClients(mockWebServer)
-        val action = CheckBanStatusAction(networkClients)
+        val action = CheckBanStatusAction(mockWebServer.makeNetworkClients())
         val result = action.execute(UUID.randomUUID())
 
         if (result !is CheckBanStatusAction.Result.SUCCESS) {
@@ -92,11 +60,10 @@ class CheckBanStatusActionTests {
 
     @Test
     fun `empty response returns success with no ban model`() {
-        val response = mockResponse("api_no_data_response.json")
+        val response = MockResponse().withJSONResource("api_no_data_response.json")
         mockWebServer.enqueue(response)
 
-        val networkClients = networkClients(mockWebServer)
-        val action = CheckBanStatusAction(networkClients)
+        val action = CheckBanStatusAction(mockWebServer.makeNetworkClients())
         val result = action.execute(UUID.randomUUID())
 
         when (result) {
