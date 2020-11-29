@@ -1,6 +1,6 @@
 # PCBridge
 
-[![CircleCI](https://circleci.com/gh/andyksaw/PCBridge/tree/master.svg?style=svg)](https://circleci.com/gh/andyksaw/PCBridge/tree/master)
+![example workflow name](https://github.com/projectcitybuild/PCBridge/workflows/CI/badge.svg)
 
 A Spigot/Paper plugin to bridge [Project City Build](https://projectcitybuild.com) and its Minecraft servers
 
