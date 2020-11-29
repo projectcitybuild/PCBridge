@@ -1,5 +1,6 @@
 package com.projectcitybuild.platforms.spigot
 
+import com.projectcitybuild.api.APIProvider
 import com.projectcitybuild.core.contracts.EnvironmentProvider
 import com.projectcitybuild.core.contracts.Listenable
 import com.projectcitybuild.core.contracts.ListenerDelegatable
