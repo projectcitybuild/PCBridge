@@ -2,12 +2,17 @@ package com.projectcitybuild.platforms.spigot.listeners
 
 import com.projectcitybuild.core.contracts.EnvironmentProvider
 import com.projectcitybuild.core.contracts.Listenable
+import com.projectcitybuild.core.entities.LogLevel
 import net.luckperms.api.node.NodeType
-import org.bukkit.ChatColor
+import net.md_5.bungee.api.ChatColor
+import net.md_5.bungee.api.chat.ComponentBuilder
+import net.md_5.bungee.api.chat.HoverEvent
+import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.player.AsyncPlayerChatEvent
 import java.util.stream.Collectors
+
 
 class ChatListener(
         private val environment: EnvironmentProvider
@@ -38,7 +43,8 @@ class ChatListener(
     }
     data class Group<GroupType>(
             val group: GroupType,
-            val displayName: String
+            val displayName: String,
+            val hoverName: String
     )
     private val trustGroupPriority: HashMap<TrustGroup, Int> = hashMapOf(
             TrustGroup.GUEST to 0,
@@ -116,9 +122,9 @@ class ChatListener(
                 .joinToString(separator = "")
 
         // FIXME: cache so that this isn't performed every time a message is sent
-        var donorGroup = Group(DonorGroup.NONE, "")
-        var buildGroup = Group(BuildGroup.NONE, "")
-        var trustGroup = Group(TrustGroup.GUEST, "")
+        var donorGroup = Group(DonorGroup.NONE, "", "")
+        var buildGroup = Group(BuildGroup.NONE, "", "")
+        var trustGroup = Group(TrustGroup.GUEST, "", "")
 
         groupNodes.forEach { groupNode ->
             val group = permissions.groupManager.getGroup(groupNode.groupName)
@@ -127,70 +133,127 @@ class ChatListener(
             // FIXME: hardcoded for the sake of time, but this should all be from an API
             val groupName = groupNode.groupName.toLowerCase()
             when (groupName) {
-                "donator" -> donorGroup = Group(DonorGroup.DONOR, displayName)
+                "donator" -> donorGroup = Group(DonorGroup.DONOR, displayName, "Donor")
                 "member" -> {
-                    val newGroup = Group(TrustGroup.MEMBER, displayName)
+                    val newGroup = Group(TrustGroup.MEMBER, displayName, "")
                     trustGroup = highestTrustGroup(trustGroup, newGroup)
                 }
                 "trusted" -> {
-                    val newGroup = Group(TrustGroup.TRUSTED, displayName)
+                    val newGroup = Group(TrustGroup.TRUSTED, displayName, "Trusted")
                     trustGroup = highestTrustGroup(trustGroup, newGroup)
                 }
                 "trusted+" -> {
-                    val newGroup = Group(TrustGroup.TRUSTED_PLUS, displayName)
+                    val newGroup = Group(TrustGroup.TRUSTED_PLUS, displayName, "Trusted+")
                     trustGroup = highestTrustGroup(trustGroup, newGroup)
                 }
                 "mod" -> {
-                    val newGroup = Group(TrustGroup.MODERATOR, displayName)
+                    val newGroup = Group(TrustGroup.MODERATOR, displayName, "Staff (Moderator)")
                     trustGroup = highestTrustGroup(trustGroup, newGroup)
                 }
                 "op" -> {
-                    val newGroup = Group(TrustGroup.OPERATOR, displayName)
+                    val newGroup = Group(TrustGroup.OPERATOR, displayName, "Staff (Operator)")
                     trustGroup = highestTrustGroup(trustGroup, newGroup)
                 }
                 "sop" -> {
-                    val newGroup = Group(TrustGroup.SENIOR_OPERATOR, displayName)
+                    val newGroup = Group(TrustGroup.SENIOR_OPERATOR, displayName, "Staff (Senior Operator")
                     trustGroup = highestTrustGroup(trustGroup, newGroup)
                 }
                 "admin" -> {
-                    val newGroup = Group(TrustGroup.ADMINISTRATOR, displayName)
+                    val newGroup = Group(TrustGroup.ADMINISTRATOR, displayName, "Staff (Admin)")
                     trustGroup = highestTrustGroup(trustGroup, newGroup)
                 }
                 "retired" -> {
-                    val newGroup = Group(TrustGroup.RETIRED, displayName)
+                    val newGroup = Group(TrustGroup.RETIRED, displayName, "Retired Staff")
                     trustGroup = highestTrustGroup(trustGroup, newGroup)
                 }
                 "intern" -> {
-                    val newGroup = Group(BuildGroup.INTERN, displayName)
+                    val newGroup = Group(BuildGroup.INTERN, displayName, "Intern")
                     buildGroup = highestBuildGroup(buildGroup, newGroup)
                 }
                 "builder" -> {
-                    val newGroup = Group(BuildGroup.BUILDER, displayName)
+                    val newGroup = Group(BuildGroup.BUILDER, displayName, "Builder")
                     buildGroup = highestBuildGroup(buildGroup, newGroup)
                 }
                 "planner" -> {
-                    val newGroup = Group(BuildGroup.PLANNER, displayName)
+                    val newGroup = Group(BuildGroup.PLANNER, displayName, "Planner")
                     buildGroup = highestBuildGroup(buildGroup, newGroup)
                 }
                 "engineer" -> {
-                    val newGroup = Group(BuildGroup.ENGINEER, displayName)
+                    val newGroup = Group(BuildGroup.ENGINEER, displayName, "Engineer")
                     buildGroup = highestBuildGroup(buildGroup, newGroup)
                 }
                 "architect" -> {
-                    val newGroup = Group(BuildGroup.ARCHITECT, displayName)
+                    val newGroup = Group(BuildGroup.ARCHITECT, displayName, "Architect")
                     buildGroup = highestBuildGroup(buildGroup, newGroup)
                 }
             }
         }
 
-        val groupNames = donorGroup.displayName + buildGroup.displayName + trustGroup.displayName
-        val name = "$prefixes${ChatColor.RESET} ${event.player.displayName} $suffixes${ChatColor.RESET}"
-        val message = "$groupNames${ChatColor.RESET} <$name> ${event.message}"
+        val groupTC = TextComponent()
+        if (donorGroup.group != DonorGroup.NONE) {
+            TextComponent
+                    .fromLegacyText(donorGroup.displayName)
+                    .forEach { c ->
+                        val hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT, ComponentBuilder(donorGroup.hoverName).create())
+                        c.hoverEvent = hoverEvent
+                        groupTC.addExtra(c)
+                    }
+        }
+        if (buildGroup.group != BuildGroup.NONE && buildGroup.displayName.isNotBlank()) {
+            TextComponent
+                    .fromLegacyText(buildGroup.displayName)
+                    .forEach { c ->
+                        val hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT, ComponentBuilder(buildGroup.hoverName).create())
+                        c.hoverEvent = hoverEvent
+                        groupTC.addExtra(c)
+                    }
+        }
+        if (trustGroup.group != TrustGroup.GUEST && trustGroup.displayName.isNotBlank()) {
+            TextComponent
+                    .fromLegacyText(trustGroup.displayName)
+                    .forEach { c ->
+                        val hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT, ComponentBuilder(trustGroup.hoverName).create())
+                        c.hoverEvent = hoverEvent
+                        groupTC.addExtra(c)
+                    }
+        }
 
         // Escape % from message
-        val escapedMessage = message.replace("%", newValue = "%%")
+        val escapedMessage = event.message.replace("%", newValue = "%%")
 
-        event.format = escapedMessage
+        val whitespaceResetTC = TextComponent(" ")
+        whitespaceResetTC.color = ChatColor.RESET
+
+        // Dynamic text from other plugins (eg. LuckyPerms) contains legacy Hexa color codes
+        val prefixTC = TextComponent.fromLegacyText(prefixes)
+        val suffixTC = TextComponent.fromLegacyText(suffixes)
+        val displayNameTC = TextComponent.fromLegacyText(event.player.displayName)
+
+        val textComponent = TextComponent()
+        prefixTC.forEach { c -> textComponent.addExtra(c) }
+        textComponent.addExtra(whitespaceResetTC)
+        textComponent.addExtra(groupTC)
+        textComponent.addExtra(whitespaceResetTC)
+        displayNameTC.forEach { c -> textComponent.addExtra(c)}
+        textComponent.addExtra(whitespaceResetTC)
+        suffixTC.forEach { c -> textComponent.addExtra(c) }
+        textComponent.addExtra(whitespaceResetTC)
+        textComponent.addExtra(escapedMessage)
+
+        event.recipients.forEach { player ->
+            player.spigot().sendMessage(textComponent)
+        }
+
+        // Messages sent to users don't appear in console, so we have to log it manually
+        environment.log(LogLevel.INFO, "<${event.player.displayName}> ${event.message}")
+
+//        // Terrible hack to hide the message without cancelling it.
+//        //
+//        // Normally we would cancel the event, but DiscordSRV is competing for the
+//        // highest priority and won't see the message if we cancel it.
+//        //
+//        // This will probably degrade performance...
+//        event.recipients.clear()
     }
 
 }
