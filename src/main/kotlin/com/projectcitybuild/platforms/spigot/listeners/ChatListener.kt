@@ -13,6 +13,73 @@ class ChatListener(
         private val environment: EnvironmentProvider
 ): Listenable<AsyncPlayerChatEvent> {
 
+    enum class BuildGroup {
+        NONE,
+        INTERN,
+        BUILDER,
+        PLANNER,
+        ENGINEER,
+        ARCHITECT,
+    }
+    enum class TrustGroup {
+        GUEST,
+        MEMBER,
+        TRUSTED,
+        TRUSTED_PLUS,
+        MODERATOR,
+        OPERATOR,
+        SENIOR_OPERATOR,
+        ADMINISTRATOR,
+        RETIRED,
+    }
+    enum class DonorGroup {
+        NONE,
+        DONOR,
+    }
+    data class Group<GroupType>(
+            val group: GroupType,
+            val displayName: String
+    )
+    private val trustGroupPriority: HashMap<TrustGroup, Int> = hashMapOf(
+            TrustGroup.GUEST to 0,
+            TrustGroup.MEMBER to 1,
+            TrustGroup.RETIRED to 2,
+            TrustGroup.TRUSTED to 3,
+            TrustGroup.TRUSTED_PLUS to 4,
+            TrustGroup.MODERATOR to 5,
+            TrustGroup.OPERATOR to 6,
+            TrustGroup.SENIOR_OPERATOR to 7,
+            TrustGroup.ADMINISTRATOR to 8
+    )
+    private val buildGroupPriority: HashMap<BuildGroup, Int> = hashMapOf(
+            BuildGroup.NONE to 0,
+            BuildGroup.INTERN to 1,
+            BuildGroup.BUILDER to 2,
+            BuildGroup.PLANNER to 3,
+            BuildGroup.ENGINEER to 4,
+            BuildGroup.ARCHITECT to 5
+    )
+
+    private fun highestTrustGroup(lhs: Group<TrustGroup>, rhs: Group<TrustGroup>): Group<TrustGroup> {
+        val leftPriority = trustGroupPriority[lhs.group] ?: 0
+        val rightPriority = trustGroupPriority[rhs.group] ?: 0
+
+        if (leftPriority > rightPriority) {
+            return lhs
+        }
+        return rhs
+    }
+
+    private fun highestBuildGroup(lhs: Group<BuildGroup>, rhs: Group<BuildGroup>): Group<BuildGroup> {
+        val leftPriority = buildGroupPriority[lhs.group] ?: -1
+        val rightPriority = buildGroupPriority[rhs.group] ?: -1
+
+        if (leftPriority > rightPriority) {
+            return lhs
+        }
+        return rhs
+    }
+
     @EventHandler(priority = EventPriority.HIGHEST)
     override fun observe(event: AsyncPlayerChatEvent) {
         val permissions = environment.permissions ?: throw Exception("Permission plugin is null")
@@ -48,20 +115,75 @@ class ChatListener(
                 .collect(Collectors.toSet())
                 .joinToString(separator = "")
 
-        val groups = mutableListOf<String>()
+        // FIXME: cache so that this isn't performed every time a message is sent
+        var donorGroup = Group(DonorGroup.NONE, "")
+        var buildGroup = Group(BuildGroup.NONE, "")
+        var trustGroup = Group(TrustGroup.GUEST, "")
+
         groupNodes.forEach { groupNode ->
             val group = permissions.groupManager.getGroup(groupNode.groupName)
             val displayName = group?.displayName ?: groupNode.groupName
 
-            // Donators have the [$] appear before everything
-            if (groupNode.groupName.toLowerCase() == "donator") {
-                groups.add(index = 0, element = displayName)
-            } else {
-                groups.add(displayName)
+            // FIXME: hardcoded for the sake of time, but this should all be from an API
+            val groupName = groupNode.groupName.toLowerCase()
+            when (groupName) {
+                "donator" -> donorGroup = Group(DonorGroup.DONOR, displayName)
+                "member" -> {
+                    val newGroup = Group(TrustGroup.MEMBER, displayName)
+                    trustGroup = highestTrustGroup(trustGroup, newGroup)
+                }
+                "trusted" -> {
+                    val newGroup = Group(TrustGroup.TRUSTED, displayName)
+                    trustGroup = highestTrustGroup(trustGroup, newGroup)
+                }
+                "trusted+" -> {
+                    val newGroup = Group(TrustGroup.TRUSTED_PLUS, displayName)
+                    trustGroup = highestTrustGroup(trustGroup, newGroup)
+                }
+                "mod" -> {
+                    val newGroup = Group(TrustGroup.MODERATOR, displayName)
+                    trustGroup = highestTrustGroup(trustGroup, newGroup)
+                }
+                "op" -> {
+                    val newGroup = Group(TrustGroup.OPERATOR, displayName)
+                    trustGroup = highestTrustGroup(trustGroup, newGroup)
+                }
+                "sop" -> {
+                    val newGroup = Group(TrustGroup.SENIOR_OPERATOR, displayName)
+                    trustGroup = highestTrustGroup(trustGroup, newGroup)
+                }
+                "admin" -> {
+                    val newGroup = Group(TrustGroup.ADMINISTRATOR, displayName)
+                    trustGroup = highestTrustGroup(trustGroup, newGroup)
+                }
+                "retired" -> {
+                    val newGroup = Group(TrustGroup.RETIRED, displayName)
+                    trustGroup = highestTrustGroup(trustGroup, newGroup)
+                }
+                "intern" -> {
+                    val newGroup = Group(BuildGroup.INTERN, displayName)
+                    buildGroup = highestBuildGroup(buildGroup, newGroup)
+                }
+                "builder" -> {
+                    val newGroup = Group(BuildGroup.BUILDER, displayName)
+                    buildGroup = highestBuildGroup(buildGroup, newGroup)
+                }
+                "planner" -> {
+                    val newGroup = Group(BuildGroup.PLANNER, displayName)
+                    buildGroup = highestBuildGroup(buildGroup, newGroup)
+                }
+                "engineer" -> {
+                    val newGroup = Group(BuildGroup.ENGINEER, displayName)
+                    buildGroup = highestBuildGroup(buildGroup, newGroup)
+                }
+                "architect" -> {
+                    val newGroup = Group(BuildGroup.ARCHITECT, displayName)
+                    buildGroup = highestBuildGroup(buildGroup, newGroup)
+                }
             }
         }
-        val groupNames = groups.joinToString(separator = "")
 
+        val groupNames = donorGroup.displayName + buildGroup.displayName + trustGroup.displayName
         val name = "$prefixes${ChatColor.RESET} ${event.player.displayName} $suffixes${ChatColor.RESET}"
         val message = "$groupNames${ChatColor.RESET} <$name> ${event.message}"
 
