@@ -30,6 +30,12 @@ repositories {
     maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
     maven { url = 'https://oss.sonatype.org/content/repositories/snapshots' }
     maven { url = 'http://nexus.hc.to/content/repositories/pub_releases' }
+//    maven { url = 'https://nexus.scarsz.me/content/groups/public/' } // DiscordSRV
+
+    maven {
+        name 'm2-dv8tion'
+        url 'https://m2.dv8tion.net/releases'
+    } // JDA for DiscordSRV
 }
 
 dependencies {
@@ -42,6 +48,9 @@ dependencies {
     testImplementation 'junit:junit:4.13'
     testImplementation 'org.mockito:mockito-core:2.+'
     testImplementation 'com.squareup.okhttp3:mockwebserver:3.5.0'
+//    compileOnly 'com.discordsrv:discordsrv:1.22.0'
+
+//    implementation 'dev.vankka:MCDiscordReserializer:4.2.0' // For DiscordSRV
 }
 
 compileKotlin {

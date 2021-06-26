@@ -13,7 +13,9 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.player.AsyncPlayerChatEvent
 import java.util.stream.Collectors
 
-
+/**
+ * FIXME: Awful hacky, hardcoded stuff in here to save time
+ */
 class ChatListener(
         private val environment: EnvironmentProvider
 ): Listenable<AsyncPlayerChatEvent> {
@@ -147,19 +149,19 @@ class ChatListener(
                     trustGroup = highestTrustGroup(trustGroup, newGroup)
                 }
                 "mod" -> {
-                    val newGroup = Group(TrustGroup.MODERATOR, displayName, "Staff (Moderator)")
+                    val newGroup = Group(TrustGroup.MODERATOR, "§e[Staff]", "Moderator")
                     trustGroup = highestTrustGroup(trustGroup, newGroup)
                 }
                 "op" -> {
-                    val newGroup = Group(TrustGroup.OPERATOR, displayName, "Staff (Operator)")
+                    val newGroup = Group(TrustGroup.OPERATOR, "§6[Staff]", "Operator")
                     trustGroup = highestTrustGroup(trustGroup, newGroup)
                 }
                 "sop" -> {
-                    val newGroup = Group(TrustGroup.SENIOR_OPERATOR, displayName, "Staff (Senior Operator")
+                    val newGroup = Group(TrustGroup.SENIOR_OPERATOR, "§c[Staff]", "Senior Operator")
                     trustGroup = highestTrustGroup(trustGroup, newGroup)
                 }
                 "admin" -> {
-                    val newGroup = Group(TrustGroup.ADMINISTRATOR, displayName, "Staff (Admin)")
+                    val newGroup = Group(TrustGroup.ADMINISTRATOR, "§4[Staff]", "Administrator")
                     trustGroup = highestTrustGroup(trustGroup, newGroup)
                 }
                 "retired" -> {
@@ -199,20 +201,20 @@ class ChatListener(
                         groupTC.addExtra(c)
                     }
         }
-        if (buildGroup.group != BuildGroup.NONE && buildGroup.displayName.isNotBlank()) {
-            TextComponent
-                    .fromLegacyText(buildGroup.displayName)
-                    .forEach { c ->
-                        val hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT, ComponentBuilder(buildGroup.hoverName).create())
-                        c.hoverEvent = hoverEvent
-                        groupTC.addExtra(c)
-                    }
-        }
         if (trustGroup.group != TrustGroup.GUEST && trustGroup.displayName.isNotBlank()) {
             TextComponent
                     .fromLegacyText(trustGroup.displayName)
                     .forEach { c ->
                         val hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT, ComponentBuilder(trustGroup.hoverName).create())
+                        c.hoverEvent = hoverEvent
+                        groupTC.addExtra(c)
+                    }
+        }
+        if (buildGroup.group != BuildGroup.NONE && buildGroup.displayName.isNotBlank()) {
+            TextComponent
+                    .fromLegacyText(buildGroup.displayName)
+                    .forEach { c ->
+                        val hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT, ComponentBuilder(buildGroup.hoverName).create())
                         c.hoverEvent = hoverEvent
                         groupTC.addExtra(c)
                     }
@@ -224,6 +226,9 @@ class ChatListener(
         val whitespaceResetTC = TextComponent(" ")
         whitespaceResetTC.color = ChatColor.RESET
 
+        val colonTC = TextComponent(": ")
+        colonTC.color = ChatColor.RESET
+
         // Dynamic text from other plugins (eg. LuckyPerms) contains legacy Hexa color codes
         val prefixTC = TextComponent.fromLegacyText(prefixes)
         val suffixTC = TextComponent.fromLegacyText(suffixes)
@@ -231,14 +236,20 @@ class ChatListener(
 
         val textComponent = TextComponent()
         prefixTC.forEach { c -> textComponent.addExtra(c) }
-        textComponent.addExtra(whitespaceResetTC)
+        if (prefixTC.size > 0) {
+            textComponent.addExtra(whitespaceResetTC)
+        }
         textComponent.addExtra(groupTC)
         textComponent.addExtra(whitespaceResetTC)
         displayNameTC.forEach { c -> textComponent.addExtra(c)}
-        textComponent.addExtra(whitespaceResetTC)
+        if (suffixTC.size > 0) {
+            textComponent.addExtra(whitespaceResetTC)
+        }
         suffixTC.forEach { c -> textComponent.addExtra(c) }
-        textComponent.addExtra(whitespaceResetTC)
+        textComponent.addExtra(colonTC)
         textComponent.addExtra(escapedMessage)
+
+        event.isCancelled = true
 
         event.recipients.forEach { player ->
             player.spigot().sendMessage(textComponent)
