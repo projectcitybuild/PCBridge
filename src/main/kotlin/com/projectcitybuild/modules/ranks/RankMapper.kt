@@ -1,6 +1,7 @@
 package com.projectcitybuild.modules.ranks
 
 import com.projectcitybuild.core.entities.models.Group
+import com.projectcitybuild.platforms.spigot.listeners.ChatListener
 
 object RankMapper {
 
@@ -19,13 +20,18 @@ object RankMapper {
                 "operator" -> permissionGroups.add("op")
                 "senior operator" -> permissionGroups.add("sop")
                 "administrator" -> permissionGroups.add("admin")
+                "intern" -> permissionGroups.add("intern")
+                "builder" -> permissionGroups.add("builder")
+                "planner" -> permissionGroups.add("planner")
+                "engineer" -> permissionGroups.add("engineer")
+                "architect" -> permissionGroups.add("architect")
             }
         }
 
         // User cannot be a Member if they're in any other group
-        if (permissionGroups.contains("Member") && permissionGroups.size > 1) {
-            permissionGroups.remove("Member")
-        }
+//        if (permissionGroups.contains("Member") && permissionGroups.size > 1) {
+//            permissionGroups.remove("Member")
+//        }
 
         return permissionGroups.toList()
     }
