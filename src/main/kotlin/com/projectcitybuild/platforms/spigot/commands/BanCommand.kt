@@ -15,7 +15,8 @@ import java.util.*
 
 class BanCommand(
         private val environment: EnvironmentProvider,
-        private val networkClients: NetworkClients
+        private val networkClients: NetworkClients,
+        private val createBanAction: CreateBanAction
 ): Commandable {
 
     override val label: String = "ban"
@@ -77,8 +78,7 @@ class BanCommand(
 
     private fun createBan(playerId: UUID, playerName: String, staffId: UUID?, reason: String?, completion: (CreateBanAction.Result) -> Unit) {
         environment.async<CreateBanAction.Result> { resolve ->
-            val action = CreateBanAction(networkClients)
-            val result = action.execute(playerId, playerName, staffId, reason)
+            val result = createBanAction.execute(playerId, playerName, staffId, reason)
             resolve(result)
         }.startAndSubscribe(completion)
     }

@@ -5,6 +5,7 @@ import com.projectcitybuild.core.network.mojang.client.MojangClient
 import com.projectcitybuild.core.network.pcb.client.PCBClient
 import com.projectcitybuild.core.contracts.*
 import com.projectcitybuild.core.entities.PluginConfig
+import com.projectcitybuild.modules.bans.CreateBanAction
 import com.projectcitybuild.platforms.spigot.SpigotCommandDelegate
 import com.projectcitybuild.platforms.spigot.SpigotListenerDelegate
 import com.projectcitybuild.platforms.spigot.environment.SpigotEnvironment
@@ -61,7 +62,7 @@ class SpigotPlatform(plugin: JavaPlugin): PlatformBridgable {
 
     private fun registerCommands(delegate: SpigotCommandDelegate) {
         arrayOf(
-                BanCommand(environment, networkClients),
+                BanCommand(environment, networkClients, CreateBanAction(networkClients)),
                 UnbanCommand(environment, networkClients),
                 CheckBanCommand(environment, networkClients),
                 MuteCommand(environment),
