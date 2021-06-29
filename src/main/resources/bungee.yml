@@ -1,0 +1,3 @@
+name: PCBridge
+main: com.projectcitybuild.platforms.bungeecord.BungeecordPlatform
+version: 3.0.0

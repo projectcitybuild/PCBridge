@@ -16,7 +16,7 @@ import com.projectcitybuild.platforms.spigot.listeners.*
 import org.bukkit.plugin.java.JavaPlugin
 import java.lang.ref.WeakReference
 
-class SpigotPlatform(plugin: JavaPlugin): PlatformBridgable {
+class SpigotPlatform: JavaPlugin() {
 
     private var commandDelegate: CommandDelegatable? = null
     private var listenerDelegate: ListenerDelegatable? = null
@@ -30,13 +30,13 @@ class SpigotPlatform(plugin: JavaPlugin): PlatformBridgable {
             return _networkClients!!
         }
 
-    private val weakRef = WeakReference(plugin)
+    private val weakRef: WeakReference<JavaPlugin> = WeakReference(this)
 
-    override val environment: EnvironmentProvider = SpigotEnvironment(
+    private val environment: EnvironmentProvider = SpigotEnvironment(
             pluginRef = weakRef,
-            logger = plugin.logger,
+            logger = logger,
             playerStore = SpigotPlayerStore(plugin = weakRef).store,
-            config = plugin.config,
+            config = config,
             hooks = SpigotPluginHook()
     )
 
