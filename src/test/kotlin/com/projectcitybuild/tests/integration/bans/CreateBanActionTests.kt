@@ -19,7 +19,7 @@ class CreateBanActionTests {
     private lateinit var mockWebServer: MockWebServer
 
     @Before
-    fun setup() {
+    fun setUp() {
         mockWebServer = MockWebServer()
         mockWebServer.start()
     }
