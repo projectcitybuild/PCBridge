@@ -5,7 +5,7 @@ import com.projectcitybuild.core.network.NetworkClients
 import com.projectcitybuild.modules.bans.CheckBanStatusAction
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.chat.TextComponent
-import net.md_5.bungee.api.event.PreLoginEvent
+import net.md_5.bungee.api.event.LoginEvent
 import net.md_5.bungee.api.plugin.Listener
 import net.md_5.bungee.event.EventHandler
 import net.md_5.bungee.event.EventPriority
@@ -16,7 +16,7 @@ class BanConnectionListener(
 ): Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
-    fun onPreLoginEvent(event: PreLoginEvent) {
+    fun onPreLoginEvent(event: LoginEvent) {
         val action = CheckBanStatusAction(networkClients)
         val result = action.execute(playerId = event.connection.uniqueId)
 
@@ -29,7 +29,7 @@ class BanConnectionListener(
                 this.addExtra(TextComponent("Reason: ").apply {
                     this.color = ChatColor.GRAY
                 })
-                this.addExtra(TextComponent(result.ban.reason ?: "No reason provided" + "\n\n").apply {
+                this.addExtra(TextComponent((result.ban.reason ?: "No reason provided") + "\n").apply {
                     this.color = ChatColor.WHITE
                 })
                 this.addExtra(TextComponent("Expires: ").apply {
@@ -43,6 +43,7 @@ class BanConnectionListener(
                 })
             }
             event.setCancelReason(textComponent)
+            event.isCancelled = true
         }
     }
 }
