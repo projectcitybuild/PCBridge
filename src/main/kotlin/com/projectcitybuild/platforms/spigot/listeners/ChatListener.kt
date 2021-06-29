@@ -6,7 +6,6 @@ import com.projectcitybuild.core.entities.BuildGroup
 import com.projectcitybuild.core.entities.DonorGroup
 import com.projectcitybuild.core.entities.LogLevel
 import com.projectcitybuild.core.entities.TrustGroup
-import com.projectcitybuild.modules.ranks.GroupFactory
 import net.luckperms.api.node.NodeType
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.chat.ComponentBuilder
@@ -15,7 +14,9 @@ import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.player.AsyncPlayerChatEvent
+import java.util.regex.Pattern
 import java.util.stream.Collectors
+
 
 /**
  * FIXME: Awful hacky, hardcoded stuff in here to save time
@@ -68,6 +69,8 @@ class ChatListener(
         }
         return rhs
     }
+
+    private val urlPattern = Pattern.compile("((?:(?:https?)://)?[\\w-_\\.]{2,})\\.([a-zA-Z]{2,3}(?:/\\S+)?)")
 
     @EventHandler(priority = EventPriority.HIGHEST)
     override fun observe(event: AsyncPlayerChatEvent) {
@@ -202,29 +205,35 @@ class ChatListener(
                     }
         }
 
+//        val messageTC = TextComponent()
+//        var text = urlPattern.matcher(event.message).replaceAll("$1 $2")
+//        while (urlPattern.matcher(text).find()) {
+//            text = urlPattern.matcher(text).replaceAll("$1 $2")
+//        }
+
         val whitespaceResetTC = TextComponent(" ")
         whitespaceResetTC.color = ChatColor.RESET
 
-        val colonTC = TextComponent(": ")
+        val colonTC = TextComponent(" » ")
         colonTC.color = ChatColor.RESET
 
-        // Dynamic text from other plugins (eg. LuckyPerms) contains legacy Hexa color codes
+        // Dynamic text from other plugins (eg. LuckyPerms) contains legacy color codes
         val prefixTC = TextComponent.fromLegacyText(prefixes)
         val suffixTC = TextComponent.fromLegacyText(suffixes)
         val displayNameTC = TextComponent.fromLegacyText(event.player.displayName)
 
         val textComponent = TextComponent()
         prefixTC.forEach { c -> textComponent.addExtra(c) }
-        if (prefixTC.size > 0) {
+        if (prefixTC.isNotEmpty()) {
             textComponent.addExtra(whitespaceResetTC)
         }
         textComponent.addExtra(groupTC)
         textComponent.addExtra(whitespaceResetTC)
         displayNameTC.forEach { c -> textComponent.addExtra(c)}
-        if (suffixTC.size > 0) {
+        if (suffixTC.isNotEmpty()) {
             textComponent.addExtra(whitespaceResetTC)
+            suffixTC.forEach { c -> textComponent.addExtra(c) }
         }
-        suffixTC.forEach { c -> textComponent.addExtra(c) }
         textComponent.addExtra(colonTC)
         textComponent.addExtra(event.message)
 
