@@ -70,7 +70,7 @@ class ChatListener(
         return rhs
     }
 
-    private val urlPattern = Pattern.compile("((?:(?:https?)://)?[\\w-_\\.]{2,})\\.([a-zA-Z]{2,3}(?:/\\S+)?)")
+    private val urlPattern = Regex("((?:(?:https?)://)?[\\w-_\\.]{2,})\\.([a-zA-Z]{2,3}(?:/\\S+)?)")
 
     @EventHandler(priority = EventPriority.HIGHEST)
     override fun observe(event: AsyncPlayerChatEvent) {
@@ -205,16 +205,12 @@ class ChatListener(
                     }
         }
 
-//        val messageTC = TextComponent()
-//        var text = urlPattern.matcher(event.message).replaceAll("$1 $2")
-//        while (urlPattern.matcher(text).find()) {
-//            text = urlPattern.matcher(text).replaceAll("$1 $2")
-//        }
+        val messageTC = TextComponent.fromLegacyText(event.message)
 
         val whitespaceResetTC = TextComponent(" ")
         whitespaceResetTC.color = ChatColor.RESET
 
-        val colonTC = TextComponent(" » ")
+        val colonTC = TextComponent(": ")
         colonTC.color = ChatColor.RESET
 
         // Dynamic text from other plugins (eg. LuckyPerms) contains legacy color codes
@@ -224,18 +220,12 @@ class ChatListener(
 
         val textComponent = TextComponent()
         prefixTC.forEach { c -> textComponent.addExtra(c) }
-        if (prefixTC.isNotEmpty()) {
-            textComponent.addExtra(whitespaceResetTC)
-        }
         textComponent.addExtra(groupTC)
         textComponent.addExtra(whitespaceResetTC)
         displayNameTC.forEach { c -> textComponent.addExtra(c)}
-        if (suffixTC.isNotEmpty()) {
-            textComponent.addExtra(whitespaceResetTC)
-            suffixTC.forEach { c -> textComponent.addExtra(c) }
-        }
+        suffixTC.forEach { c -> textComponent.addExtra(c) }
         textComponent.addExtra(colonTC)
-        textComponent.addExtra(event.message)
+        messageTC.forEach { c -> textComponent.addExtra(c) }
 
         event.isCancelled = true
 
