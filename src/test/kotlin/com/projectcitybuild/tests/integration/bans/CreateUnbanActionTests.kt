@@ -20,7 +20,7 @@ class CreateUnbanActionTests {
     private lateinit var mockWebServer: MockWebServer
 
     @Before
-    fun setUp() {
+    fun setup() {
         mockWebServer = MockWebServer()
         mockWebServer.start()
     }
