@@ -2,7 +2,11 @@ package com.projectcitybuild.platforms.spigot.listeners
 
 import com.projectcitybuild.core.contracts.EnvironmentProvider
 import com.projectcitybuild.core.contracts.Listenable
+import com.projectcitybuild.core.entities.BuildGroup
+import com.projectcitybuild.core.entities.DonorGroup
 import com.projectcitybuild.core.entities.LogLevel
+import com.projectcitybuild.core.entities.TrustGroup
+import com.projectcitybuild.modules.ranks.GroupFactory
 import net.luckperms.api.node.NodeType
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.chat.ComponentBuilder
@@ -20,29 +24,6 @@ class ChatListener(
         private val environment: EnvironmentProvider
 ): Listenable<AsyncPlayerChatEvent> {
 
-    enum class BuildGroup {
-        NONE,
-        INTERN,
-        BUILDER,
-        PLANNER,
-        ENGINEER,
-        ARCHITECT,
-    }
-    enum class TrustGroup {
-        GUEST,
-        MEMBER,
-        TRUSTED,
-        TRUSTED_PLUS,
-        MODERATOR,
-        OPERATOR,
-        SENIOR_OPERATOR,
-        ADMINISTRATOR,
-        RETIRED,
-    }
-    enum class DonorGroup {
-        NONE,
-        DONOR,
-    }
     data class Group<GroupType>(
             val group: GroupType,
             val displayName: String,
@@ -134,6 +115,7 @@ class ChatListener(
 
             // FIXME: hardcoded for the sake of time, but this should all be from an API
             val groupName = groupNode.groupName.toLowerCase()
+
             when (groupName) {
                 "donator" -> donorGroup = Group(DonorGroup.DONOR, displayName, "Donor")
                 "member" -> {
@@ -220,9 +202,6 @@ class ChatListener(
                     }
         }
 
-        // Escape % from message
-        val escapedMessage = event.message.replace("%", newValue = "%%")
-
         val whitespaceResetTC = TextComponent(" ")
         whitespaceResetTC.color = ChatColor.RESET
 
@@ -247,7 +226,7 @@ class ChatListener(
         }
         suffixTC.forEach { c -> textComponent.addExtra(c) }
         textComponent.addExtra(colonTC)
-        textComponent.addExtra(escapedMessage)
+        textComponent.addExtra(event.message)
 
         event.isCancelled = true
 
