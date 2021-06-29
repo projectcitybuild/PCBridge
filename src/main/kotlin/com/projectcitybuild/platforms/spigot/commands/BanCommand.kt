@@ -43,7 +43,8 @@ class BanCommand(
                             val message = when (result.reason) {
                                 CreateBanAction.Failure.PLAYER_ALREADY_BANNED -> "${input.args.first()} is already banned"
                                 CreateBanAction.Failure.BAD_REQUEST -> "Bad request sent to the ban server. Please contact an administrator to have this fixed"
-                                CreateBanAction.Failure.DESERIALIZE_FAILED -> "Error: Bad response received from the ban server. Please contact an admin"
+                                CreateBanAction.Failure.DESERIALIZE_FAILED -> "Error: Bad response received from the ban server. Please contact an admin to have this fixed"
+                                CreateBanAction.Failure.UNHANDLED -> "Error: Unexpected error code. Please contact an administrator to have this fixed"
                             }
                             input.sender.sendMessage(message)
                         }

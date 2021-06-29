@@ -16,6 +16,7 @@ class CreateBanAction(
         PLAYER_ALREADY_BANNED,
         DESERIALIZE_FAILED,
         BAD_REQUEST,
+        UNHANDLED,
     }
 
     fun execute(playerId: UUID, playerName: String, staffId: UUID?, reason: String?) : Result {
@@ -35,9 +36,10 @@ class CreateBanAction(
         val json = response.body()
 
         if (json?.error != null) {
-            when (json.error.id) {
-                "player_already_banned" -> return Result.FAILED(reason = Failure.PLAYER_ALREADY_BANNED)
-                "bad_input" -> return Result.FAILED(reason = Failure.BAD_REQUEST)
+            return when (json.error.id) {
+                "player_already_banned" -> Result.FAILED(reason = Failure.PLAYER_ALREADY_BANNED)
+                "bad_input" -> Result.FAILED(reason = Failure.BAD_REQUEST)
+                else -> Result.FAILED(reason = Failure.UNHANDLED)
             }
         }
         if (json?.data == null) {

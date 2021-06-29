@@ -33,6 +33,6 @@ interface EnvironmentProvider {
     val permissions: LuckPerms?
         get() = throw NotImplementedError()
 
-    val plugin: JavaPlugin?
-        get() = throw NotImplementedError()
+//    val plugin: JavaPlugin?
+//        get() = throw NotImplementedError()
 }

@@ -1,4 +1,4 @@
-package com.projectcitybuild
+package com.projectcitybuild.platforms.spigot
 
 import com.projectcitybuild.core.network.NetworkClients
 import com.projectcitybuild.core.network.mojang.client.MojangClient
@@ -32,13 +32,15 @@ class SpigotPlatform: JavaPlugin() {
 
     private val weakRef: WeakReference<JavaPlugin> = WeakReference(this)
 
-    private val environment: EnvironmentProvider = SpigotEnvironment(
-            pluginRef = weakRef,
-            logger = logger,
-            playerStore = SpigotPlayerStore(plugin = weakRef).store,
-            config = config,
-            hooks = SpigotPluginHook()
-    )
+    private val environment: EnvironmentProvider by lazy {
+        SpigotEnvironment(
+                pluginRef = weakRef,
+                logger = logger,
+                playerStore = SpigotPlayerStore(plugin = weakRef).store,
+                config = config,
+                hooks = SpigotPluginHook()
+        )
+    }
 
     override fun onEnable() {
         createDefaultConfig()

@@ -1,25 +1,24 @@
-package com.projectcitybuild.platforms.spigot.environment
+package com.projectcitybuild.platforms.bungeecord.environment
 
 import com.projectcitybuild.core.contracts.EnvironmentProvider
-import com.projectcitybuild.core.utilities.PlayerStore
-import com.projectcitybuild.core.utilities.AsyncTask
-import com.projectcitybuild.core.utilities.Cancellable
 import com.projectcitybuild.core.entities.LogLevel
 import com.projectcitybuild.core.entities.Player
 import com.projectcitybuild.core.entities.PluginConfigPair
+import com.projectcitybuild.core.utilities.AsyncTask
+import com.projectcitybuild.core.utilities.Cancellable
 import net.luckperms.api.LuckPerms
-import org.bukkit.configuration.file.FileConfiguration
-import org.bukkit.plugin.java.JavaPlugin
-import java.lang.ref.WeakReference
+import net.md_5.bungee.api.plugin.Plugin
+import net.md_5.bungee.config.Configuration
+import net.md_5.bungee.config.ConfigurationProvider
+import net.md_5.bungee.config.YamlConfiguration
+import java.io.File
 import java.util.*
+import java.util.concurrent.TimeUnit
 import java.util.logging.Logger
 
-class SpigotEnvironment(
-        private val pluginRef: WeakReference<JavaPlugin>,
-        private val logger: Logger,
-        private val playerStore: PlayerStore,
-        private val config: FileConfiguration,
-        private val hooks: com.projectcitybuild.platforms.spigot.environment.SpigotPluginHook
+class BungeecordEnvironment(
+        private val plugin: Plugin,
+        private val logger: Logger
 ) : EnvironmentProvider {
 
     override fun log(level: LogLevel, message: String) {
@@ -33,30 +32,48 @@ class SpigotEnvironment(
     }
 
     override fun get(key: PluginConfigPair): Any {
+        // FIXME: stop IO thrashing
+        val file = File(plugin.dataFolder, "config.yml")
+
+        val config = ConfigurationProvider
+                .getProvider(YamlConfiguration::class.java)
+                .load(file)
+
         return config.get(key.key)
     }
 
     override fun set(key: PluginConfigPair, value: Any) {
+        // FIXME: stop IO thrashing
+        val file = File(plugin.dataFolder, "config.yml")
+
+        val config = ConfigurationProvider
+                .getProvider(YamlConfiguration::class.java)
+                .load(file)
+
         config.set(key.key, value)
+
+        ConfigurationProvider
+                .getProvider(YamlConfiguration::class.java)
+                .save(config, file)
     }
 
     override fun get(player: UUID): Player? {
-        return playerStore.get(player)
+        TODO()
+//        return playerStore.get(player)
     }
 
     override fun set(player: Player) {
-        playerStore.put(player.uuid, player)
+        TODO()
+//        playerStore.put(player.uuid, player)
     }
 
     override fun <T> async(task: ((T) -> Unit) -> Unit): AsyncTask<T> {
-        val plugin = pluginRef.get() ?: throw Exception("Plugin already deallocated")
-
         // Bukkit/Spigot performs Asynchronous units of work via their internal Scheduler
         return AsyncTask<T> { resolve ->
             val runnable = Runnable {
                 task { result -> resolve(result) }
             }
-            val bukkitTask = plugin.server?.scheduler?.runTaskAsynchronously(plugin, runnable)
+            val bukkitTask = plugin.proxy?.scheduler?.runAsync(plugin, runnable)
 
             Cancellable {
                 bukkitTask?.cancel()
@@ -65,11 +82,11 @@ class SpigotEnvironment(
     }
 
     override fun sync(task: () -> Unit) {
-        val plugin = pluginRef.get() ?: throw Exception("Plugin already deallocated")
         val runnable = Runnable { task() }
-
-        plugin.server?.scheduler?.scheduleSyncDelayedTask(plugin, runnable)
+        plugin.proxy?.scheduler?.schedule(plugin, runnable, 0, TimeUnit.NANOSECONDS)
     }
 
-    override val permissions: LuckPerms? = hooks.permissions
+    override val permissions: LuckPerms? by lazy {
+        TODO("Not implemented yet")
+    }
 }
