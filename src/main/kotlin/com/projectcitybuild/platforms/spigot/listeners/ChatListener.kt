@@ -133,7 +133,7 @@ class ChatListener(
                     val newGroup = Group(TrustGroup.TRUSTED_PLUS, displayName, "Trusted+")
                     trustGroup = highestTrustGroup(trustGroup, newGroup)
                 }
-                "mod" -> {
+                "moderator" -> {
                     val newGroup = Group(TrustGroup.MODERATOR, "§e[Staff]", "Moderator")
                     trustGroup = highestTrustGroup(trustGroup, newGroup)
                 }
