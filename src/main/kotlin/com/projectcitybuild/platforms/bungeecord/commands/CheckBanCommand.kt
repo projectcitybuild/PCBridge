@@ -12,12 +12,13 @@ import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.ProxyServer
 import net.md_5.bungee.api.chat.TextComponent
 import net.md_5.bungee.api.connection.Server
+import java.text.SimpleDateFormat
 import java.util.*
 
 class CheckBanCommand(
         private val proxyServer: ProxyServer,
         private val scheduler: SchedulerProvider,
-        private val networkClients: NetworkClients,
+        private val networkClients: NetworkClients
 ): BungeecordCommand {
 
     override val label = "checkban"
@@ -57,15 +58,46 @@ class CheckBanCommand(
                             }
                             if (result is CheckBanStatusAction.Result.SUCCESS) {
                                 if (result.ban == null) {
-                                    input.sender.sendMessage("$targetPlayerName is not currently banned")
+                                    input.sender.sendMessage(TextComponent("$targetPlayerName is not currently banned").also {
+                                        it.color = ChatColor.GRAY
+                                        it.isBold = true
+                                    })
                                 } else {
-                                    input.sender.sendMessage("""
-                                        #$targetPlayerName is currently banned.
-                                        #---
-                                        #Reason: ${result.ban.reason}
-                                        #Date: ${result.ban.createdAt}
-                                        #Expires: ${result.ban.expiresAt ?: "Never"}
-                                    """.trimMargin("#"))
+                                    val dateFormatter = SimpleDateFormat("yyyy/MM/dd HH:mm")
+                                    val banDate = Date(result.ban.createdAt * 1000)
+                                    val banDateString = dateFormatter.format(banDate)
+
+                                    val expireDateString = result.ban.expiresAt?.let {
+                                        dateFormatter.format(Date(it))
+                                    }
+
+                                    val tc = TextComponent()
+                                    tc.addExtra(TextComponent("$targetPlayerName is currently banned\n").also {
+                                        it.color = ChatColor.AQUA
+                                        it.isBold = true
+                                    })
+                                    tc.addExtra(TextComponent("---\n").also {
+                                        it.color = ChatColor.GRAY
+                                    })
+                                    tc.addExtra(TextComponent("⇒ Reason: ").also {
+                                        it.color = ChatColor.GRAY
+                                    })
+                                    tc.addExtra(TextComponent(result.ban.reason + "\n").also {
+                                        it.color = ChatColor.WHITE
+                                    })
+                                    tc.addExtra(TextComponent("⇒ Date: ").also {
+                                        it.color = ChatColor.GRAY
+                                    })
+                                    tc.addExtra(TextComponent("$banDateString\n").also {
+                                        it.color = ChatColor.WHITE
+                                    })
+                                    tc.addExtra(TextComponent("⇒ Expires: ").also {
+                                        it.color = ChatColor.GRAY
+                                    })
+                                    tc.addExtra(TextComponent("${(expireDateString ?: "Never")}\n").also {
+                                        it.color = ChatColor.WHITE
+                                    })
+                                    input.sender.sendMessage(tc)
                                 }
                             }
                         }

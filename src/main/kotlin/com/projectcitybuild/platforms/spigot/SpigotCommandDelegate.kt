@@ -9,8 +9,7 @@ import org.bukkit.plugin.java.JavaPlugin
 import java.lang.ref.WeakReference
 
 class SpigotCommandDelegate constructor(
-        private val plugin: WeakReference<JavaPlugin>,
-        private val environment: EnvironmentProvider
+        private val plugin: WeakReference<JavaPlugin>
 ) {
 //    fun register(command: Commandable) {
 //        command.aliases.plus(command.label).forEach { alias ->

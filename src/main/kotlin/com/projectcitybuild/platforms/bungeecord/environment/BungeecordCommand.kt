@@ -1,13 +1,16 @@
 package com.projectcitybuild.platforms.bungeecord.environment
 
 import com.projectcitybuild.core.entities.CommandResult
+import net.md_5.bungee.api.CommandSender
 import net.md_5.bungee.api.connection.ProxiedPlayer
 
 data class BungeecordCommandInput(
-        val sender: ProxiedPlayer?,
-        val args: List<String>,
-        val isSenderConsole: Boolean
-)
+        val sender: CommandSender?,
+        val args: List<String>
+) {
+    val isConsoleSender = sender is ProxiedPlayer
+    val player = sender as ProxiedPlayer
+}
 
 interface BungeecordCommand {
 

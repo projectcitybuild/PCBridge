@@ -1,14 +1,5 @@
 package com.projectcitybuild.platforms.spigot
 
-import com.projectcitybuild.core.network.NetworkClients
-import com.projectcitybuild.core.network.mojang.client.MojangClient
-import com.projectcitybuild.core.network.pcb.client.PCBClient
-import com.projectcitybuild.core.contracts.*
-import com.projectcitybuild.core.entities.PluginConfig
-import com.projectcitybuild.platforms.spigot.SpigotCommandDelegate
-import com.projectcitybuild.platforms.spigot.SpigotListenerDelegate
-import com.projectcitybuild.platforms.spigot.commands.*
-import com.projectcitybuild.platforms.spigot.listeners.*
 import org.bukkit.plugin.java.JavaPlugin
 import java.lang.ref.WeakReference
 
@@ -17,26 +8,7 @@ class SpigotPlatform: JavaPlugin() {
     private var commandDelegate: SpigotCommandDelegate? = null
     private var listenerDelegate: SpigotListenerDelegate? = null
 
-//    private var _networkClients: NetworkClients? = null
-//    private val networkClients: NetworkClients
-//        get() {
-//            if (_networkClients == null) {
-//                _networkClients = createAPIProvider()
-//            }
-//            return _networkClients!!
-//        }
-
     private val weakRef: WeakReference<JavaPlugin> = WeakReference(this)
-
-//    private val environment: EnvironmentProvider by lazy {
-//        SpigotEnvironment(
-//                pluginRef = weakRef,
-//                logger = logger,
-//                playerStore = SpigotPlayerStore(plugin = weakRef).store,
-//                config = config,
-//                hooks = SpigotPluginHook()
-//        )
-//    }
 
     override fun onEnable() {
         createDefaultConfig()
@@ -58,24 +30,9 @@ class SpigotPlatform: JavaPlugin() {
     }
 
     private fun registerCommands(delegate: SpigotCommandDelegate) {
-//        arrayOf(
-//                BanCommand(environment, networkClients),
-//                UnbanCommand(environment, networkClients),
-//                MuteCommand(environment),
-//                UnmuteCommand(environment),
-//                MaintenanceCommand(environment),
-//                SyncCommand(environment, networkClients)
-//        )
-//        .forEach { command -> delegate.register(command) }
     }
 
     private fun registerListeners(delegate: SpigotListenerDelegate) {
-//        arrayOf(
-//                ChatListener(environment),
-//                MaintenanceConnectListener(environment),
-//                SyncRankLoginListener(environment, networkClients)
-//        )
-//        .forEach { listener -> delegate.register(listener) }
     }
 
     private fun createDefaultConfig() {
@@ -87,23 +44,5 @@ class SpigotPlatform: JavaPlugin() {
 //
 //        plugin.config.options().copyDefaults(true)
 //        plugin.saveConfig()
-    }
-
-    private fun createAPIProvider(): NetworkClients {
-        TODO()
-//        val isLoggingEnabled = environment.get(PluginConfig.API.IS_LOGGING_ENABLED()) as? Boolean
-//                ?: throw Exception("Could not cast is_logging_enabled to Boolean")
-//
-//        val pcbClient = PCBClient(
-//                authToken = environment.get(PluginConfig.API.KEY()) as? String
-//                        ?: throw Exception("Could not cast auth token to String"),
-//                baseUrl = environment.get(PluginConfig.API.BASE_URL()) as? String
-//                        ?: throw Exception("Could not cast base url to String"),
-//                withLogging = isLoggingEnabled
-//        )
-//        val mojangClient = MojangClient(
-//                withLogging = isLoggingEnabled
-//        )
-//        return NetworkClients(pcb = pcbClient, mojang = mojangClient)
     }
 }

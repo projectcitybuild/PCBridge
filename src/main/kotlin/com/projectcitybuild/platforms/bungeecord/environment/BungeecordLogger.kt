@@ -6,11 +6,11 @@ import java.util.logging.Logger
 class BungeecordLogger(private val logger: Logger): LoggerProvider {
 
     override fun verbose(message: String) {
-        logger.info(message)    // Bungeecord doesn't log FINEST level properly
+        logger.finest(message)
     }
 
     override fun debug(message: String) {
-        logger.info(message)      // Bungeecord doesn't log FINE level properly
+        logger.fine(message)
     }
 
     override fun info(message: String) {

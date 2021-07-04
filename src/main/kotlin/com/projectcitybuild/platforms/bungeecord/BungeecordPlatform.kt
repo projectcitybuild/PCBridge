@@ -2,7 +2,10 @@ package com.projectcitybuild.platforms.bungeecord
 
 import com.projectcitybuild.core.entities.PluginConfig
 import com.projectcitybuild.core.network.NetworkClients
+import com.projectcitybuild.core.network.mojang.client.MojangClient
+import com.projectcitybuild.core.network.pcb.client.PCBClient
 import com.projectcitybuild.platforms.bungeecord.commands.CheckBanCommand
+import com.projectcitybuild.platforms.bungeecord.environment.BungeecordConfig
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordLogger
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordScheduler
 import com.projectcitybuild.platforms.bungeecord.listeners.BanConnectionListener
@@ -15,6 +18,7 @@ class BungeecordPlatform: Plugin() {
 
     private val bungeecordLogger = BungeecordLogger(logger = this.logger)
     private val scheduler = BungeecordScheduler(plugin = this)
+    private val config = BungeecordConfig(plugin = this)
     private var commandDelegate: BungeecordCommandDelegate? = null
     private var listenerDelegate: BungeecordListenerDelegate? = null
 
@@ -43,7 +47,7 @@ class BungeecordPlatform: Plugin() {
 
     private fun registerCommands(delegate: BungeecordCommandDelegate) {
         arrayOf(
-                CheckBanCommand(scheduler, networkClients)
+                CheckBanCommand(proxy, scheduler, networkClients)
         )
         .forEach { command -> delegate.register(command) }
     }
@@ -89,20 +93,16 @@ class BungeecordPlatform: Plugin() {
     }
 
     private fun createAPIProvider(): NetworkClients {
-        TODO()
-//        val isLoggingEnabled = environment.get(PluginConfig.API.IS_LOGGING_ENABLED()) as? Boolean
-//                ?: throw Exception("Could not cast is_logging_enabled to Boolean")
-//
-//        val pcbClient = PCBClient(
-//                authToken = environment.get(PluginConfig.API.KEY()) as? String
-//                        ?: throw Exception("Could not cast auth token to String"),
-//                baseUrl = environment.get(PluginConfig.API.BASE_URL()) as? String
-//                        ?: throw Exception("Could not cast base url to String"),
-//                withLogging = isLoggingEnabled
-//        )
-//        val mojangClient = MojangClient(
-//                withLogging = isLoggingEnabled
-//        )
-//        return NetworkClients(pcb = pcbClient, mojang = mojangClient)
+        val isLoggingEnabled = config.get(PluginConfig.API.IS_LOGGING_ENABLED())
+
+        val pcbClient = PCBClient(
+                authToken = config.get(PluginConfig.API.KEY()),
+                baseUrl = config.get(PluginConfig.API.BASE_URL()),
+                withLogging = isLoggingEnabled
+        )
+        val mojangClient = MojangClient(
+                withLogging = isLoggingEnabled
+        )
+        return NetworkClients(pcb = pcbClient, mojang = mojangClient)
     }
 }
