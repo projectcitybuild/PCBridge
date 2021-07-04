@@ -1,11 +1,10 @@
 package com.projectcitybuild.modules.bans
 
-import com.projectcitybuild.core.network.NetworkClients
-import com.projectcitybuild.core.contracts.EnvironmentProvider
+import com.projectcitybuild.core.network.APIRequestFactory
 import java.util.*
 
 class CreateUnbanAction(
-        private val networkClients: NetworkClients
+        private val apiRequestFactory: APIRequestFactory
 ) {
     sealed class Result {
         class SUCCESS : Result()
@@ -19,7 +18,7 @@ class CreateUnbanAction(
     }
 
     fun execute(playerId: UUID, staffId: UUID?) : Result {
-        val banApi = networkClients.pcb.banApi
+        val banApi = apiRequestFactory.pcb.banApi
 
         val request = banApi.storeUnban(
                 playerId = playerId.toString(),

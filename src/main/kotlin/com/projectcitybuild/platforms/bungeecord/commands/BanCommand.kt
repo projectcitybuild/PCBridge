@@ -2,8 +2,7 @@ package com.projectcitybuild.platforms.bungeecord.commands
 
 import com.projectcitybuild.core.contracts.LoggerProvider
 import com.projectcitybuild.core.contracts.SchedulerProvider
-import com.projectcitybuild.modules.bans.CheckBanStatusAction
-import com.projectcitybuild.core.network.NetworkClients
+import com.projectcitybuild.core.network.APIRequestFactory
 import com.projectcitybuild.core.entities.CommandResult
 import com.projectcitybuild.core.extensions.joinWithWhitespaces
 import com.projectcitybuild.modules.bans.CreateBanAction
@@ -15,14 +14,12 @@ import com.projectcitybuild.platforms.bungeecord.extensions.playerByNameIgnoring
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.ProxyServer
 import net.md_5.bungee.api.chat.TextComponent
-import net.md_5.bungee.api.connection.Server
-import java.text.SimpleDateFormat
 import java.util.*
 
 class BanCommand(
         private val proxyServer: ProxyServer,
         private val scheduler: SchedulerProvider,
-        private val networkClients: NetworkClients,
+        private val apiRequestFactory: APIRequestFactory,
         private val logger: LoggerProvider
 ): BungeecordCommand {
 
@@ -103,7 +100,7 @@ class BanCommand(
 
     private fun getOfflinePlayerUUID(proxyServer: ProxyServer, playerName: String, completion: (GetPlayerUUIDAction.Result) -> Unit) {
         scheduler.async<GetPlayerUUIDAction.Result> { resolve ->
-            val action = GetPlayerUUIDAction(GetMojangPlayerAction(networkClients))
+            val action = GetPlayerUUIDAction(GetMojangPlayerAction(apiRequestFactory))
             val result = action.execute(playerName, proxyServer)
             resolve(result)
         }.startAndSubscribe(completion)
@@ -111,7 +108,7 @@ class BanCommand(
 
     private fun createBan(playerId: UUID, playerName: String, staffId: UUID?, reason: String?, completion: (CreateBanAction.Result) -> Unit) {
         scheduler.async<CreateBanAction.Result> { resolve ->
-            val action = CreateBanAction(networkClients)
+            val action = CreateBanAction(apiRequestFactory)
             val result = action.execute(playerId, playerName, staffId, reason)
             resolve(result)
         }.startAndSubscribe(completion)

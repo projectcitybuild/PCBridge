@@ -1,6 +1,6 @@
 package com.projectcitybuild.platforms.bungeecord.listeners
 
-import com.projectcitybuild.core.network.NetworkClients
+import com.projectcitybuild.core.network.APIRequestFactory
 import com.projectcitybuild.modules.bans.CheckBanStatusAction
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.chat.TextComponent
@@ -10,12 +10,12 @@ import net.md_5.bungee.event.EventHandler
 import net.md_5.bungee.event.EventPriority
 
 class BanConnectionListener(
-        private val networkClients: NetworkClients
+        private val apiRequestFactory: APIRequestFactory
 ): Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     fun onPreLoginEvent(event: LoginEvent) {
-        val action = CheckBanStatusAction(networkClients)
+        val action = CheckBanStatusAction(apiRequestFactory)
         val result = action.execute(playerId = event.connection.uniqueId)
 
         if (result is CheckBanStatusAction.Result.SUCCESS && result.ban != null) {

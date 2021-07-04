@@ -1,7 +1,7 @@
 package com.projectcitybuild.platforms.bungeecord
 
 import com.projectcitybuild.core.entities.PluginConfig
-import com.projectcitybuild.core.network.NetworkClients
+import com.projectcitybuild.core.network.APIRequestFactory
 import com.projectcitybuild.core.network.mojang.client.MojangClient
 import com.projectcitybuild.core.network.pcb.client.PCBClient
 import com.projectcitybuild.platforms.bungeecord.commands.BanCommand
@@ -23,7 +23,7 @@ class BungeecordPlatform: Plugin() {
     private var commandDelegate: BungeecordCommandDelegate? = null
     private var listenerDelegate: BungeecordListenerDelegate? = null
 
-    private val networkClients: NetworkClients by lazy {
+    private val apiRequestFactory: APIRequestFactory by lazy {
         createAPIProvider()
     }
 
@@ -48,15 +48,15 @@ class BungeecordPlatform: Plugin() {
 
     private fun registerCommands(delegate: BungeecordCommandDelegate) {
         arrayOf(
-                BanCommand(proxy, scheduler, networkClients, bungeecordLogger),
-                CheckBanCommand(proxy, scheduler, networkClients)
+                BanCommand(proxy, scheduler, apiRequestFactory, bungeecordLogger),
+                CheckBanCommand(proxy, scheduler, apiRequestFactory)
         )
         .forEach { command -> delegate.register(command) }
     }
 
     private fun registerListeners(delegate: BungeecordListenerDelegate) {
         arrayOf(
-                BanConnectionListener(networkClients)
+                BanConnectionListener(apiRequestFactory)
         )
         .forEach { listener -> delegate.register(listener) }
     }
@@ -94,17 +94,18 @@ class BungeecordPlatform: Plugin() {
         }
     }
 
-    private fun createAPIProvider(): NetworkClients {
+    private fun createAPIProvider(): APIRequestFactory {
         val isLoggingEnabled = config.get(PluginConfig.API.IS_LOGGING_ENABLED())
 
-        val pcbClient = PCBClient(
-                authToken = config.get(PluginConfig.API.KEY()),
-                baseUrl = config.get(PluginConfig.API.BASE_URL()),
-                withLogging = isLoggingEnabled
+        return APIRequestFactory(
+                pcb = PCBClient(
+                        authToken = config.get(PluginConfig.API.KEY()),
+                        baseUrl = config.get(PluginConfig.API.BASE_URL()),
+                        withLogging = isLoggingEnabled
+                ),
+                mojang = MojangClient(
+                        withLogging = isLoggingEnabled
+                )
         )
-        val mojangClient = MojangClient(
-                withLogging = isLoggingEnabled
-        )
-        return NetworkClients(pcb = pcbClient, mojang = mojangClient)
     }
 }

@@ -1,13 +1,5 @@
 package com.projectcitybuild.platforms.spigot.extensions
 
-import com.projectcitybuild.core.contracts.EnvironmentProvider
-import com.projectcitybuild.core.extensions.toDashFormattedUUID
-import com.projectcitybuild.modules.players.GetMojangPlayerAction
-import com.projectcitybuild.core.network.NetworkClients
-import org.bukkit.Server
-import org.bukkit.entity.Player
-import java.util.*
-
 //@Deprecated("Use an action instead")
 //fun Server.getOfflinePlayer(
 //        name: String,

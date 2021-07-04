@@ -2,7 +2,7 @@ package com.projectcitybuild.platforms.bungeecord.commands
 
 import com.projectcitybuild.core.contracts.SchedulerProvider
 import com.projectcitybuild.modules.bans.CheckBanStatusAction
-import com.projectcitybuild.core.network.NetworkClients
+import com.projectcitybuild.core.network.APIRequestFactory
 import com.projectcitybuild.core.entities.CommandResult
 import com.projectcitybuild.modules.players.GetMojangPlayerAction
 import com.projectcitybuild.modules.players.GetPlayerUUIDAction
@@ -11,14 +11,13 @@ import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandIn
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.ProxyServer
 import net.md_5.bungee.api.chat.TextComponent
-import net.md_5.bungee.api.connection.Server
 import java.text.SimpleDateFormat
 import java.util.*
 
 class CheckBanCommand(
         private val proxyServer: ProxyServer,
         private val scheduler: SchedulerProvider,
-        private val networkClients: NetworkClients
+        private val apiRequestFactory: APIRequestFactory
 ): BungeecordCommand {
 
     override val label = "checkban"
@@ -26,7 +25,6 @@ class CheckBanCommand(
 
     override fun execute(input: BungeecordCommandInput): CommandResult {
         if (input.args.isEmpty()) return CommandResult.INVALID_INPUT
-        if (input.sender == null) throw Exception("Command sender is null")
 
         val targetPlayerName = input.args.first()
 
@@ -110,7 +108,7 @@ class CheckBanCommand(
 
     private fun getOfflinePlayerUUID(proxyServer: ProxyServer, playerName: String, completion: (GetPlayerUUIDAction.Result) -> Unit) {
         scheduler.async<GetPlayerUUIDAction.Result> { resolve ->
-            val action = GetPlayerUUIDAction(GetMojangPlayerAction(networkClients))
+            val action = GetPlayerUUIDAction(GetMojangPlayerAction(apiRequestFactory))
             val result = action.execute(playerName, proxyServer)
             resolve(result)
         }.startAndSubscribe(completion)
@@ -118,7 +116,7 @@ class CheckBanCommand(
 
     private fun checkBanStatus(playerId: UUID, completion: (CheckBanStatusAction.Result) -> Unit) {
         scheduler.async<CheckBanStatusAction.Result> { resolve ->
-            val action = CheckBanStatusAction(networkClients)
+            val action = CheckBanStatusAction(apiRequestFactory)
             val result = action.execute(
                     playerId = playerId
             )
