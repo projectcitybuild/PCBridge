@@ -7,10 +7,11 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class PCBClient(private val authToken: String,
-                private val baseUrl: String,
-                withLogging: Boolean) {
-
+class PCBClient(
+        private val authToken: String,
+        private val baseUrl: String,
+        withLogging: Boolean
+) {
     val instance: Retrofit = build(withLogging)
 
     val banApi: BanApiInterface = instance.create(BanApiInterface::class.java)

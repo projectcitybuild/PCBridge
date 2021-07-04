@@ -1,6 +1,5 @@
 package com.projectcitybuild.platforms.bungeecord.listeners
 
-import com.projectcitybuild.core.contracts.EnvironmentProvider
 import com.projectcitybuild.core.network.NetworkClients
 import com.projectcitybuild.modules.bans.CheckBanStatusAction
 import net.md_5.bungee.api.ChatColor
@@ -11,7 +10,6 @@ import net.md_5.bungee.event.EventHandler
 import net.md_5.bungee.event.EventPriority
 
 class BanConnectionListener(
-        private val environment: EnvironmentProvider,
         private val networkClients: NetworkClients
 ): Listener {
 

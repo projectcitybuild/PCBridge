@@ -1,7 +1,6 @@
 package com.projectcitybuild.modules.ranks
 
 import com.projectcitybuild.core.entities.models.Group
-import com.projectcitybuild.platforms.spigot.listeners.ChatListener
 
 object RankMapper {
 

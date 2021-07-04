@@ -2,7 +2,6 @@ package com.projectcitybuild.platforms.spigot
 
 import com.projectcitybuild.core.contracts.EnvironmentProvider
 import com.projectcitybuild.core.contracts.Listenable
-import com.projectcitybuild.core.contracts.ListenerDelegatable
 import com.projectcitybuild.core.entities.LogLevel
 import org.bukkit.event.HandlerList
 import org.bukkit.plugin.java.JavaPlugin

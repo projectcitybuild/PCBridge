@@ -16,10 +16,11 @@ import java.util.*
  * specific implementations via an EnvironmentProvider
  *
  */
+@Deprecated("Use individual services")
 interface EnvironmentProvider {
 
-    fun get(key: PluginConfigPair) : Any { throw NotImplementedError() }
-    fun set(key: PluginConfigPair, value: Any) { throw NotImplementedError() }
+    fun <T> get(key: PluginConfigPair<T>): T { throw NotImplementedError() }
+    fun <T> set(key: PluginConfigPair<T>, value: T) { throw NotImplementedError() }
     fun log(level: LogLevel, message: String) { println(message) }
     fun get(player: UUID) : Player? { throw NotImplementedError() }
     fun set(player: Player) { throw NotImplementedError() }

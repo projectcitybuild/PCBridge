@@ -5,7 +5,6 @@ import com.projectcitybuild.core.contracts.EnvironmentProvider
 import com.projectcitybuild.core.entities.models.MojangPlayer
 
 class GetMojangPlayerAction(
-        private val environment: EnvironmentProvider,
         private val networkClients: NetworkClients
 ) {
     sealed class Result {

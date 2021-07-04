@@ -11,6 +11,7 @@ import org.bukkit.event.Listener
  * can be observed by conforming to the Listenable interface and then
  * registering it in a ListenerDelegatable.
  */
+@Deprecated("Interface not needed")
 interface Listenable<in EventType: Event>: Listener {
 
     @EventHandler
