@@ -11,6 +11,7 @@ import com.projectcitybuild.modules.players.GetMojangPlayerAction
 import com.projectcitybuild.modules.players.GetPlayerUUIDAction
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
+import com.projectcitybuild.platforms.bungeecord.extensions.playerByNameIgnoringCase
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.ProxyServer
 import net.md_5.bungee.api.chat.TextComponent
@@ -36,9 +37,7 @@ class BanCommand(
 
         val targetPlayerName = input.args.first().let {
             // If player is online, match their name casing
-            proxyServer.players.first { player ->
-                player.name.toLowerCase() == it.toLowerCase()
-            }.name ?: it
+            proxyServer.playerByNameIgnoringCase(it)?.name ?: it
         }
 
         getOfflinePlayerUUID(proxyServer = proxyServer, playerName = targetPlayerName) { result ->
@@ -63,8 +62,9 @@ class BanCommand(
                                 is CreateBanAction.Result.FAILED -> {
                                     val message = when (result.reason) {
                                         CreateBanAction.Failure.PLAYER_ALREADY_BANNED -> "${input.args.first()} is already banned"
-                                        CreateBanAction.Failure.BAD_REQUEST -> "Bad request sent to the ban server. Please contact an administrator to have this fixed"
-                                        CreateBanAction.Failure.DESERIALIZE_FAILED -> "Error: Bad response received from the ban server. Please contact an admin to have this fixed"
+                                        CreateBanAction.Failure.BAD_REQUEST -> "Error: Bad request sent to the ban server. Please contact an administrator to have this fixed"
+                                        CreateBanAction.Failure.DESERIALIZE_FAILED -> "Error: Unexpected response format. Please contact an admin to have this fixed"
+                                        CreateBanAction.Failure.UNEXPECTED_EMPTY_BODY -> "Error: Malformed response. Please contact an admin to have this fixed"
                                         CreateBanAction.Failure.UNHANDLED -> "Error: Unexpected error code. Please contact an administrator to have this fixed"
                                     }
                                     input.sender.sendMessage(message)

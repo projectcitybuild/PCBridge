@@ -43,6 +43,7 @@ class BungeecordCommandDelegate constructor(
                         it.color = ChatColor.RED
                     })
                     error.localizedMessage.let { message -> logger.fatal(message) }
+                    error.printStackTrace()
                     true
                 }
             })
