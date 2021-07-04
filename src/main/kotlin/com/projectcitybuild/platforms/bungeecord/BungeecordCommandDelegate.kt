@@ -26,10 +26,12 @@ class BungeecordCommandDelegate constructor(
 
     fun register(command: BungeecordCommand) {
         command.aliases.plus(command.label).forEach { alias ->
-            val handler = CommandProxy(alias) { sender, args ->
+            plugin.proxy.pluginManager.registerCommand(plugin, CommandProxy(alias) { sender, args ->
                 try {
+                    if (sender == null) throw Exception("Attempted to execute command with a null CommandSender")
+
                     val input = BungeecordCommandInput(
-                            sender = sender,
+                            sender = sender!!,
                             args = args?.map { arg -> arg } ?: listOf()
                     )
                     when (command.execute(input)) {
@@ -43,8 +45,7 @@ class BungeecordCommandDelegate constructor(
                     error.localizedMessage.let { message -> logger.fatal(message) }
                     true
                 }
-            }
-            plugin.proxy.pluginManager.registerCommand(plugin, handler)
+            })
 
             // FIXME
 //            plugin.getCommand(alias)?.permission = command.permission

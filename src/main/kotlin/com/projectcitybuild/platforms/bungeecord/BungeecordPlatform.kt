@@ -4,6 +4,7 @@ import com.projectcitybuild.core.entities.PluginConfig
 import com.projectcitybuild.core.network.NetworkClients
 import com.projectcitybuild.core.network.mojang.client.MojangClient
 import com.projectcitybuild.core.network.pcb.client.PCBClient
+import com.projectcitybuild.platforms.bungeecord.commands.BanCommand
 import com.projectcitybuild.platforms.bungeecord.commands.CheckBanCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordConfig
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordLogger
@@ -47,6 +48,7 @@ class BungeecordPlatform: Plugin() {
 
     private fun registerCommands(delegate: BungeecordCommandDelegate) {
         arrayOf(
+                BanCommand(proxy, scheduler, networkClients, bungeecordLogger),
                 CheckBanCommand(proxy, scheduler, networkClients)
         )
         .forEach { command -> delegate.register(command) }

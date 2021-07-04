@@ -68,7 +68,7 @@ class CheckBanCommand(
                                     val banDateString = dateFormatter.format(banDate)
 
                                     val expireDateString = result.ban.expiresAt?.let {
-                                        dateFormatter.format(Date(it))
+                                        dateFormatter.format(Date(it * 1000))
                                     }
 
                                     val tc = TextComponent()
@@ -125,5 +125,4 @@ class CheckBanCommand(
             resolve(result)
         }.startAndSubscribe(completion)
     }
-
 }
