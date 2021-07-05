@@ -5,6 +5,9 @@ import com.google.gson.reflect.TypeToken
 import com.projectcitybuild.core.contracts.LoggerProvider
 import com.projectcitybuild.core.contracts.SchedulerProvider
 import com.projectcitybuild.core.entities.APIClientError
+import com.projectcitybuild.core.entities.Failure
+import com.projectcitybuild.core.entities.Result
+import com.projectcitybuild.core.entities.Success
 import com.projectcitybuild.core.entities.models.ApiResponse
 import com.projectcitybuild.core.entities.models.GameBan
 import com.projectcitybuild.core.utilities.AsyncTask
@@ -15,12 +18,7 @@ class APIClient(
         private val logger: LoggerProvider,
         private val scheduler: SchedulerProvider
 ) {
-    sealed class Result<T> {
-        data class SUCCESS<T>(val value: T) : Result<T>()
-        data class FAILURE<T>(val error: APIClientError) : Result<T>()
-    }
-
-    fun <T> execute(request: Call<ApiResponse<T>>): AsyncTask<Result<T>> {
+    fun <T> execute(request: Call<ApiResponse<T>>): AsyncTask<Result<T, APIClientError>> {
         return scheduler.async { resolver ->
             val response = request.execute()
 
@@ -28,25 +26,26 @@ class APIClient(
                 val errorJson = response.errorBody()?.string()
                 if (errorJson == null) {
                     logger.warning("API error response body was empty")
-                    resolver(Result.FAILURE(APIClientError.EMPTY_RESPONSE()))
+                    resolver(Failure(APIClientError.emptyResponse))
                     return@async
                 }
-
                 try {
-                    val type = object : TypeToken<ApiResponse<GameBan>>() {}.type // Cannot do ApiResponse<T>::class.java
+                    val type = object : TypeToken<ApiResponse<GameBan>>() {}.type // Can't do ApiResponse<T>::class.java
                     val errorModel: ApiResponse<T> = Gson().fromJson(errorJson, type)
                     if (errorModel.error == null) {
-                        resolver(Result.FAILURE(APIClientError.MODEL_DESERIALIZE_FAILED()))
+                        resolver(Failure(APIClientError.deserializeFailed))
                         return@async
                     }
                     if (errorModel.error.id == "bad_input") {
-
+                        logger.warning("Bad request format: ${errorModel.error}")
+                        resolver(Failure(APIClientError.badRequest(errorModel.error)))
+                        return@async
                     }
-                    resolver(Result.FAILURE(APIClientError.BODY(errorModel.error)))
+                    resolver(Failure(APIClientError.responseBody(errorModel.error)))
 
                 } catch (e: IOException) {
                     e.printStackTrace()
-                    resolver(Result.FAILURE(APIClientError.MODEL_DESERIALIZE_FAILED()))
+                    resolver(Failure(APIClientError.deserializeFailed))
                 }
                 return@async
             }
@@ -54,9 +53,9 @@ class APIClient(
             val data = response.body()?.data
             if (data == null) {
                 logger.warning("API success response body was empty")
-                resolver(Result.FAILURE(APIClientError.EMPTY_RESPONSE()))
+                resolver(Failure(APIClientError.emptyResponse))
             } else {
-                resolver(Result.SUCCESS(data))
+                resolver(Success(data))
             }
         }
     }

@@ -1,9 +1,9 @@
 package com.projectcitybuild.core.contracts
 
-import com.projectcitybuild.core.entities.PluginConfigPair
+import com.projectcitybuild.core.entities.PluginConfig
 
 interface ConfigProvider {
 
-    fun <T> get(key: PluginConfigPair<T>): T
-    fun <T> set(key: PluginConfigPair<T>, value: T)
+    fun <T> get(key: PluginConfig.Pair<T>): T
+    fun <T> set(key: PluginConfig.Pair<T>, value: T)
 }

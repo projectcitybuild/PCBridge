@@ -1,6 +1,7 @@
 package com.projectcitybuild.platforms.bungeecord
 
 import com.projectcitybuild.core.entities.PluginConfig
+import com.projectcitybuild.core.network.APIClient
 import com.projectcitybuild.core.network.APIRequestFactory
 import com.projectcitybuild.core.network.mojang.client.MojangClient
 import com.projectcitybuild.core.network.pcb.client.PCBClient
@@ -20,6 +21,7 @@ class BungeecordPlatform: Plugin() {
     private val bungeecordLogger = BungeecordLogger(logger = this.logger)
     private val scheduler = BungeecordScheduler(plugin = this)
     private val config = BungeecordConfig(plugin = this)
+    private val apiClient = APIClient(bungeecordLogger, scheduler)
     private var commandDelegate: BungeecordCommandDelegate? = null
     private var listenerDelegate: BungeecordListenerDelegate? = null
 
@@ -48,7 +50,7 @@ class BungeecordPlatform: Plugin() {
 
     private fun registerCommands(delegate: BungeecordCommandDelegate) {
         arrayOf(
-                BanCommand(proxy, scheduler, apiRequestFactory, bungeecordLogger),
+                BanCommand(proxy, scheduler, apiRequestFactory, apiClient, bungeecordLogger),
                 CheckBanCommand(proxy, scheduler, apiRequestFactory)
         )
         .forEach { command -> delegate.register(command) }

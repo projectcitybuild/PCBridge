@@ -4,7 +4,10 @@ import com.projectcitybuild.core.contracts.LoggerProvider
 import com.projectcitybuild.core.contracts.SchedulerProvider
 import com.projectcitybuild.core.network.APIRequestFactory
 import com.projectcitybuild.core.entities.CommandResult
+import com.projectcitybuild.core.entities.Failure
+import com.projectcitybuild.core.entities.Success
 import com.projectcitybuild.core.extensions.joinWithWhitespaces
+import com.projectcitybuild.core.network.APIClient
 import com.projectcitybuild.modules.bans.CreateBanAction
 import com.projectcitybuild.modules.players.GetMojangPlayerAction
 import com.projectcitybuild.modules.players.GetPlayerUUIDAction
@@ -20,6 +23,7 @@ class BanCommand(
         private val proxyServer: ProxyServer,
         private val scheduler: SchedulerProvider,
         private val apiRequestFactory: APIRequestFactory,
+        private val apiClient: APIClient,
         private val logger: LoggerProvider
 ): BungeecordCommand {
 
@@ -48,7 +52,7 @@ class BanCommand(
                     return@getOfflinePlayerUUID
                 }
                 is GetPlayerUUIDAction.Result.SUCCESS -> {
-                    createBan(
+                    CreateBanAction(apiRequestFactory, apiClient = apiClient).execute(
                             playerId = result.uuid,
                             playerName = targetPlayerName,
                             staffId = staffPlayer?.uniqueId,
@@ -56,18 +60,16 @@ class BanCommand(
                     ) { result ->
                         scheduler.sync {
                             when (result) {
-                                is CreateBanAction.Result.FAILED -> {
+                                is Failure -> {
                                     val message = when (result.reason) {
-                                        CreateBanAction.Failure.PLAYER_ALREADY_BANNED -> "${input.args.first()} is already banned"
-                                        CreateBanAction.Failure.BAD_REQUEST -> "Error: Bad request sent to the ban server. Please contact an administrator to have this fixed"
-                                        CreateBanAction.Failure.DESERIALIZE_FAILED -> "Error: Unexpected response format. Please contact an admin to have this fixed"
-                                        CreateBanAction.Failure.UNEXPECTED_EMPTY_BODY -> "Error: Malformed response. Please contact an admin to have this fixed"
-                                        CreateBanAction.Failure.UNHANDLED -> "Error: Unexpected error code. Please contact an administrator to have this fixed"
+                                        is CreateBanAction.FailReason.PLAYER_ALREADY_BANNED -> "${input.args.first()} is already banned"
+                                        is CreateBanAction.FailReason.API_ERROR -> "Error: ${result.reason.message}"
+                                        is CreateBanAction.FailReason.UNHANDLED -> "Error: An internal error has occurred. Please contact an admin to have this fixed"
                                     }
                                     input.sender.sendMessage(message)
                                 }
 
-                                is CreateBanAction.Result.SUCCESS -> {
+                                is Success -> {
                                     proxyServer.players.forEach {
                                         it.sendMessage(TextComponent("$targetPlayerName has been banned").also {
                                             it.color = ChatColor.RED
@@ -102,14 +104,6 @@ class BanCommand(
         scheduler.async<GetPlayerUUIDAction.Result> { resolve ->
             val action = GetPlayerUUIDAction(GetMojangPlayerAction(apiRequestFactory))
             val result = action.execute(playerName, proxyServer)
-            resolve(result)
-        }.startAndSubscribe(completion)
-    }
-
-    private fun createBan(playerId: UUID, playerName: String, staffId: UUID?, reason: String?, completion: (CreateBanAction.Result) -> Unit) {
-        scheduler.async<CreateBanAction.Result> { resolve ->
-            val action = CreateBanAction(apiRequestFactory)
-            val result = action.execute(playerId, playerName, staffId, reason)
             resolve(result)
         }.startAndSubscribe(completion)
     }
