@@ -1,13 +1,18 @@
 group 'com.projectcitybuild'
 version '3.0.0'
 
+apply plugin: 'kotlin'
+apply plugin: 'com.github.johnrengelman.shadow'
+
+build.dependsOn shadowJar
+
 wrapper {
-    gradleVersion = '5.5.1'
+    gradleVersion = '7.1.1'
     distributionUrl = distributionUrl.replace("bin", "all")
 }
 
 buildscript {
-    ext.kotlin_version = '1.3.72'
+    ext.kotlin_version = '1.5.20'
 
     repositories {
         mavenCentral()
@@ -20,25 +25,23 @@ buildscript {
     }
 }
 
-apply plugin: 'kotlin'
-apply plugin: 'com.github.johnrengelman.shadow'
-
 repositories {
     jcenter()
     mavenCentral()
 
     maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
     maven { url = 'https://oss.sonatype.org/content/repositories/snapshots' }
-    maven { url = 'http://nexus.hc.to/content/repositories/pub_releases' }
+    maven { url = 'https://nexus.hc.to/content/repositories/pub_releases' }
 }
 
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    compileOnly "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     compileOnly 'org.spigotmc:spigot-api:1.12.2-R0.1-SNAPSHOT'
     implementation 'net.luckperms:api:5.0'
     implementation 'com.squareup.retrofit2:retrofit:2.5.0'
     implementation'com.squareup.retrofit2:converter-gson:2.5.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:3.5.0'
+//    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0'
     testImplementation 'junit:junit:4.13'
     testImplementation 'org.mockito:mockito-core:2.+'
     testImplementation 'com.squareup.okhttp3:mockwebserver:3.5.0'
@@ -73,5 +76,3 @@ shadowJar {
         include(dependency('net.luckperms.*:.*'))
     }
 }
-
-build.dependsOn shadowJar
