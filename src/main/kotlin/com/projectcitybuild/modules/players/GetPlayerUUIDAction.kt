@@ -1,38 +1,43 @@
 package com.projectcitybuild.modules.players
 
+import com.projectcitybuild.core.entities.Failure
 import com.projectcitybuild.core.extensions.toDashFormattedUUID
+import com.projectcitybuild.core.entities.Result
+import com.projectcitybuild.core.entities.Success
+import com.projectcitybuild.core.network.APIClient
+import com.projectcitybuild.core.network.APIRequestFactory
+import com.projectcitybuild.modules.bans.CreateBanAction
 import net.md_5.bungee.api.ProxyServer
 import java.util.*
 
-class GetPlayerUUIDAction(private val mojangPlayerAction: GetMojangPlayerAction) {
-
-    sealed class Result {
-        class SUCCESS(val uuid: UUID) : Result()
-        class FAILED(val reason: Failure) : Result()
+class GetPlayerUUIDAction(
+        private val apiRequestFactory: APIRequestFactory,
+        private val apiClient: APIClient
+) {
+    sealed class FailReason {
+        class API_ERROR(val message: String): FailReason()
     }
 
-    enum class Failure {
-        FETCH_FAILED
-    }
-
-    fun execute(playerName: String, proxyServer: ProxyServer): Result {
+    fun execute(
+            playerName: String,
+            timestamp: Long? = null,
+            proxyServer: ProxyServer,
+            completion: (Result<UUID, FailReason>) -> Unit
+    ) {
         // Search for online player first
         val onlinePlayer = proxyServer.getPlayer(playerName)
         if (onlinePlayer != null) {
-            return Result.SUCCESS(onlinePlayer.uniqueId)
+            completion(Success(onlinePlayer.uniqueId))
+            return
         }
 
         // Otherwise fetch from Mojang's API
-        val result = mojangPlayerAction.execute(playerName)
-        return when (result) {
-            is GetMojangPlayerAction.Result.SUCCESS -> {
-                val uuid = UUID.fromString(result.player.uuid.toDashFormattedUUID())
-                Result.SUCCESS(uuid)
-            }
-            is GetMojangPlayerAction.Result.FAILED -> {
-                when (result.reason) {
-                    GetMojangPlayerAction.Failure.DESERIALIZE_FAILED -> Result.FAILED(Failure.FETCH_FAILED)
-                }
+        val mojangApi = apiRequestFactory.mojang.mojangApi
+        val request = mojangApi.getMojangPlayer(playerName, timestamp = timestamp)
+        apiClient.executeMojang(request).startAndSubscribe { result ->
+            when (result) {
+                is Success -> completion(Success(UUID.fromString(result.value.uuid)))
+                is Failure -> completion(Failure(FailReason.API_ERROR(result.reason.message)))
             }
         }
     }

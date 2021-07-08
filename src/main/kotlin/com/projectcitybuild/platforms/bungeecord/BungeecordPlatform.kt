@@ -26,7 +26,17 @@ class BungeecordPlatform: Plugin() {
     private var listenerDelegate: BungeecordListenerDelegate? = null
 
     private val apiRequestFactory: APIRequestFactory by lazy {
-        createAPIProvider()
+        val isLoggingEnabled = config.get(PluginConfig.API.IS_LOGGING_ENABLED())
+        APIRequestFactory(
+                pcb = PCBClient(
+                        authToken = config.get(PluginConfig.API.KEY()),
+                        baseUrl = config.get(PluginConfig.API.BASE_URL()),
+                        withLogging = isLoggingEnabled
+                ),
+                mojang = MojangClient(
+                        withLogging = isLoggingEnabled
+                )
+        )
     }
 
     override fun onEnable() {
@@ -51,7 +61,7 @@ class BungeecordPlatform: Plugin() {
     private fun registerCommands(delegate: BungeecordCommandDelegate) {
         arrayOf(
                 BanCommand(proxy, scheduler, apiRequestFactory, apiClient, bungeecordLogger),
-                CheckBanCommand(proxy, scheduler, apiRequestFactory)
+                CheckBanCommand(proxy, scheduler, apiRequestFactory, apiClient)
         )
         .forEach { command -> delegate.register(command) }
     }
@@ -94,20 +104,5 @@ class BungeecordPlatform: Plugin() {
 
             configProvider.save(config, file)
         }
-    }
-
-    private fun createAPIProvider(): APIRequestFactory {
-        val isLoggingEnabled = config.get(PluginConfig.API.IS_LOGGING_ENABLED())
-
-        return APIRequestFactory(
-                pcb = PCBClient(
-                        authToken = config.get(PluginConfig.API.KEY()),
-                        baseUrl = config.get(PluginConfig.API.BASE_URL()),
-                        withLogging = isLoggingEnabled
-                ),
-                mojang = MojangClient(
-                        withLogging = isLoggingEnabled
-                )
-        )
     }
 }

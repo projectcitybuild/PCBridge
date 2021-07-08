@@ -9,7 +9,6 @@ import com.projectcitybuild.core.entities.Success
 import com.projectcitybuild.core.extensions.joinWithWhitespaces
 import com.projectcitybuild.core.network.APIClient
 import com.projectcitybuild.modules.bans.CreateBanAction
-import com.projectcitybuild.modules.players.GetMojangPlayerAction
 import com.projectcitybuild.modules.players.GetPlayerUUIDAction
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
@@ -17,7 +16,6 @@ import com.projectcitybuild.platforms.bungeecord.extensions.playerByNameIgnoring
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.ProxyServer
 import net.md_5.bungee.api.chat.TextComponent
-import java.util.*
 
 class BanCommand(
         private val proxyServer: ProxyServer,
@@ -41,19 +39,22 @@ class BanCommand(
             proxyServer.playerByNameIgnoringCase(it)?.name ?: it
         }
 
-        getOfflinePlayerUUID(proxyServer = proxyServer, playerName = targetPlayerName) { result ->
+        GetPlayerUUIDAction(apiRequestFactory, apiClient).execute(
+                proxyServer = proxyServer,
+                playerName = targetPlayerName
+        ) { result ->
             when (result) {
-                is GetPlayerUUIDAction.Result.FAILED -> {
+                is Failure -> {
                     scheduler.sync {
                         input.sender.sendMessage(TextComponent("Error: Failed to retrieve UUID of given player").also {
                             it.color = ChatColor.RED
                         })
                     }
-                    return@getOfflinePlayerUUID
+                    return@execute
                 }
-                is GetPlayerUUIDAction.Result.SUCCESS -> {
+                is Success -> {
                     CreateBanAction(apiRequestFactory, apiClient = apiClient).execute(
-                            playerId = result.uuid,
+                            playerId = result.value,
                             playerName = targetPlayerName,
                             staffId = staffPlayer?.uniqueId,
                             reason = reason
@@ -66,13 +67,14 @@ class BanCommand(
                                         is CreateBanAction.FailReason.API_ERROR -> "Error: ${result.reason.message}"
                                         is CreateBanAction.FailReason.UNHANDLED -> "Error: An internal error has occurred. Please contact an admin to have this fixed"
                                     }
-                                    input.sender.sendMessage(message)
+                                    input.sender.sendMessage(TextComponent(message).also {
+                                        it.color = ChatColor.RED
+                                    })
                                 }
-
                                 is Success -> {
                                     proxyServer.players.forEach {
                                         it.sendMessage(TextComponent("$targetPlayerName has been banned").also {
-                                            it.color = ChatColor.RED
+                                            it.color = ChatColor.AQUA
                                             it.isItalic = true
                                         })
                                     }
@@ -98,13 +100,5 @@ class BanCommand(
             }
         }
         return CommandResult.EXECUTED
-    }
-
-    private fun getOfflinePlayerUUID(proxyServer: ProxyServer, playerName: String, completion: (GetPlayerUUIDAction.Result) -> Unit) {
-        scheduler.async<GetPlayerUUIDAction.Result> { resolve ->
-            val action = GetPlayerUUIDAction(GetMojangPlayerAction(apiRequestFactory))
-            val result = action.execute(playerName, proxyServer)
-            resolve(result)
-        }.startAndSubscribe(completion)
     }
 }

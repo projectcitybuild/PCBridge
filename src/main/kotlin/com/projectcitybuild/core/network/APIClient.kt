@@ -8,8 +8,10 @@ import com.projectcitybuild.core.entities.APIClientError
 import com.projectcitybuild.core.entities.Failure
 import com.projectcitybuild.core.entities.Result
 import com.projectcitybuild.core.entities.Success
+import com.projectcitybuild.core.entities.models.ApiError
 import com.projectcitybuild.core.entities.models.ApiResponse
 import com.projectcitybuild.core.entities.models.GameBan
+import com.projectcitybuild.core.entities.models.MojangPlayer
 import com.projectcitybuild.core.utilities.AsyncTask
 import retrofit2.Call
 import java.io.IOException
@@ -51,6 +53,38 @@ class APIClient(
             }
 
             val data = response.body()?.data
+            if (data == null) {
+                logger.warning("API success response body was empty")
+                resolver(Failure(APIClientError.emptyResponse))
+            } else {
+                resolver(Success(data))
+            }
+        }
+    }
+
+    @Deprecated("Need a better way of doing this")
+    fun executeMojang(request: Call<MojangPlayer>): AsyncTask<Result<MojangPlayer, APIClientError>> {
+        return scheduler.async { resolver ->
+            val response = request.execute()
+
+            if (!response.isSuccessful) {
+                val errorJson = response.errorBody()?.string()
+                if (errorJson == null) {
+                    logger.warning("API error response body was empty")
+                    resolver(Failure(APIClientError.emptyResponse))
+                    return@async
+                }
+                val error = ApiError(
+                        id = "",
+                        title = "",
+                        detail = "",
+                        status = response.code()
+                )
+                resolver(Failure(APIClientError.responseBody(error)))
+                return@async
+            }
+
+            val data = response.body()
             if (data == null) {
                 logger.warning("API success response body was empty")
                 resolver(Failure(APIClientError.emptyResponse))

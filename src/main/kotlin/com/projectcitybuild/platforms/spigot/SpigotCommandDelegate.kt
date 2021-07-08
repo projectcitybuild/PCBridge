@@ -1,10 +1,5 @@
 package com.projectcitybuild.platforms.spigot
 
-import com.projectcitybuild.core.contracts.EnvironmentProvider
-import com.projectcitybuild.core.entities.CommandInput
-import com.projectcitybuild.core.entities.CommandResult
-import com.projectcitybuild.core.entities.LogLevel
-import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
 import java.lang.ref.WeakReference
 

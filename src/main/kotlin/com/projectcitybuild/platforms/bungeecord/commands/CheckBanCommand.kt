@@ -4,7 +4,9 @@ import com.projectcitybuild.core.contracts.SchedulerProvider
 import com.projectcitybuild.modules.bans.CheckBanStatusAction
 import com.projectcitybuild.core.network.APIRequestFactory
 import com.projectcitybuild.core.entities.CommandResult
-import com.projectcitybuild.modules.players.GetMojangPlayerAction
+import com.projectcitybuild.core.entities.Failure
+import com.projectcitybuild.core.entities.Success
+import com.projectcitybuild.core.network.APIClient
 import com.projectcitybuild.modules.players.GetPlayerUUIDAction
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
@@ -17,7 +19,8 @@ import java.util.*
 class CheckBanCommand(
         private val proxyServer: ProxyServer,
         private val scheduler: SchedulerProvider,
-        private val apiRequestFactory: APIRequestFactory
+        private val apiRequestFactory: APIRequestFactory,
+        private val apiClient: APIClient
 ): BungeecordCommand {
 
     override val label = "checkban"
@@ -32,18 +35,21 @@ class CheckBanCommand(
             it.color = ChatColor.GRAY
         })
 
-        getOfflinePlayerUUID(proxyServer = proxyServer, playerName = targetPlayerName) { result ->
+        GetPlayerUUIDAction(apiRequestFactory, apiClient).execute(
+                proxyServer = proxyServer,
+                playerName = targetPlayerName
+        ) { result ->
             when (result) {
-                is GetPlayerUUIDAction.Result.FAILED -> {
+                is Failure -> {
                     scheduler.sync {
                         input.sender.sendMessage(TextComponent("Error: Failed to retrieve UUID of given player").also {
                             it.color = ChatColor.RED
                         })
                     }
-                    return@getOfflinePlayerUUID
+                    return@execute
                 }
-                is GetPlayerUUIDAction.Result.SUCCESS -> {
-                    checkBanStatus(playerId = result.uuid) { result ->
+                is Success -> {
+                    checkBanStatus(playerId = result.value) { result ->
                         scheduler.sync {
                             if (result is CheckBanStatusAction.Result.FAILED) {
                                 when (result.reason) {
@@ -104,14 +110,6 @@ class CheckBanCommand(
             }
         }
         return CommandResult.EXECUTED
-    }
-
-    private fun getOfflinePlayerUUID(proxyServer: ProxyServer, playerName: String, completion: (GetPlayerUUIDAction.Result) -> Unit) {
-        scheduler.async<GetPlayerUUIDAction.Result> { resolve ->
-            val action = GetPlayerUUIDAction(GetMojangPlayerAction(apiRequestFactory))
-            val result = action.execute(playerName, proxyServer)
-            resolve(result)
-        }.startAndSubscribe(completion)
     }
 
     private fun checkBanStatus(playerId: UUID, completion: (CheckBanStatusAction.Result) -> Unit) {
