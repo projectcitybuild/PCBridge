@@ -68,7 +68,7 @@ class BungeecordPlatform: Plugin() {
 
     private fun registerListeners(delegate: BungeecordListenerDelegate) {
         arrayOf(
-                BanConnectionListener(apiRequestFactory)
+                BanConnectionListener(apiRequestFactory, apiClient)
         )
         .forEach { listener -> delegate.register(listener) }
     }

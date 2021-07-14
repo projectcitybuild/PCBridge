@@ -31,7 +31,7 @@ class BungeecordCommandDelegate constructor(
                     if (sender == null) throw Exception("Attempted to execute command with a null CommandSender")
 
                     val input = BungeecordCommandInput(
-                            sender = sender!!,
+                            sender = sender,
                             args = args?.map { arg -> arg } ?: listOf()
                     )
                     when (command.execute(input)) {

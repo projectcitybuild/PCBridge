@@ -25,5 +25,4 @@ interface AuthApiInterface {
     fun getUserGroups(
             @Path(value = "uuid") uuid: String
     ) : Call<ApiResponse<AuthPlayerGroups>>
-
 }

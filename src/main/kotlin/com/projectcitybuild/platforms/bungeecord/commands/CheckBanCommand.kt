@@ -49,29 +49,32 @@ class CheckBanCommand(
                     return@execute
                 }
                 is Success -> {
-                    checkBanStatus(playerId = result.value) { result ->
+                    CheckBanStatusAction(apiRequestFactory, apiClient).execute(
+                        playerId = result.value
+                    ) { result ->
                         scheduler.sync {
-                            if (result is CheckBanStatusAction.Result.FAILED) {
+                            if (result is Failure) {
                                 when (result.reason) {
-                                    CheckBanStatusAction.Failure.DESERIALIZE_FAILED -> {
-                                        input.sender.sendMessage(TextComponent("Error: Bad response received from the ban server. Please contact an admin").also {
+                                    is CheckBanStatusAction.FailReason.API_ERROR -> {
+                                        input.sender.sendMessage(TextComponent("Error: ${result.reason.message}").also {
                                             it.color = ChatColor.RED
                                         })
                                     }
                                 }
                             }
-                            if (result is CheckBanStatusAction.Result.SUCCESS) {
-                                if (result.ban == null) {
+                            if (result is Success) {
+                                val ban = result.value
+                                if (ban == null) {
                                     input.sender.sendMessage(TextComponent("$targetPlayerName is not currently banned").also {
                                         it.color = ChatColor.GRAY
                                         it.isBold = true
                                     })
                                 } else {
                                     val dateFormatter = SimpleDateFormat("yyyy/MM/dd HH:mm")
-                                    val banDate = Date(result.ban.createdAt * 1000)
+                                    val banDate = Date(ban.createdAt * 1000)
                                     val banDateString = dateFormatter.format(banDate)
 
-                                    val expireDateString = result.ban.expiresAt?.let {
+                                    val expireDateString = ban.expiresAt?.let {
                                         dateFormatter.format(Date(it * 1000))
                                     }
 
@@ -86,7 +89,7 @@ class CheckBanCommand(
                                     tc.addExtra(TextComponent("⇒ Reason: ").also {
                                         it.color = ChatColor.GRAY
                                     })
-                                    tc.addExtra(TextComponent(result.ban.reason + "\n").also {
+                                    tc.addExtra(TextComponent(ban.reason + "\n").also {
                                         it.color = ChatColor.WHITE
                                     })
                                     tc.addExtra(TextComponent("⇒ Date: ").also {
@@ -110,15 +113,5 @@ class CheckBanCommand(
             }
         }
         return CommandResult.EXECUTED
-    }
-
-    private fun checkBanStatus(playerId: UUID, completion: (CheckBanStatusAction.Result) -> Unit) {
-        scheduler.async<CheckBanStatusAction.Result> { resolve ->
-            val action = CheckBanStatusAction(apiRequestFactory)
-            val result = action.execute(
-                    playerId = playerId
-            )
-            resolve(result)
-        }.startAndSubscribe(completion)
     }
 }

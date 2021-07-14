@@ -81,7 +81,7 @@ class BanCommand(
                                     logger.info("$targetPlayerName was banned by ${input.sender.name}: ${reason ?: "No reason given"}")
 
                                     val player = proxyServer.players.first { player ->
-                                        player.name.toLowerCase() == targetPlayerName.toLowerCase()
+                                        player.name.lowercase() == targetPlayerName.lowercase()
                                     }
                                     player?.disconnect(TextComponent().also {
                                         it.addExtra(TextComponent("You have been banned\n\n").also {
