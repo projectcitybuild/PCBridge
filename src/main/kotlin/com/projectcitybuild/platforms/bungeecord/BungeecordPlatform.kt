@@ -7,6 +7,7 @@ import com.projectcitybuild.core.network.mojang.client.MojangClient
 import com.projectcitybuild.core.network.pcb.client.PCBClient
 import com.projectcitybuild.platforms.bungeecord.commands.BanCommand
 import com.projectcitybuild.platforms.bungeecord.commands.CheckBanCommand
+import com.projectcitybuild.platforms.bungeecord.commands.UnbanCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordConfig
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordLogger
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordScheduler
@@ -61,7 +62,8 @@ class BungeecordPlatform: Plugin() {
     private fun registerCommands(delegate: BungeecordCommandDelegate) {
         arrayOf(
                 BanCommand(proxy, scheduler, apiRequestFactory, apiClient, bungeecordLogger),
-                CheckBanCommand(proxy, scheduler, apiRequestFactory, apiClient)
+                UnbanCommand(proxy, scheduler, apiRequestFactory, apiClient, bungeecordLogger),
+                CheckBanCommand(proxy, scheduler, apiRequestFactory, apiClient),
         )
         .forEach { command -> delegate.register(command) }
     }

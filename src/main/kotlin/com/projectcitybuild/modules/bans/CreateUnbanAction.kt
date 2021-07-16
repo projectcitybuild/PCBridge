@@ -1,44 +1,51 @@
 package com.projectcitybuild.modules.bans
 
+import com.projectcitybuild.core.entities.Failure
+import com.projectcitybuild.core.entities.Success
+import com.projectcitybuild.core.entities.Result
+import com.projectcitybuild.core.network.APIClient
 import com.projectcitybuild.core.network.APIRequestFactory
 import java.util.*
 
 class CreateUnbanAction(
-        private val apiRequestFactory: APIRequestFactory
+        private val apiRequestFactory: APIRequestFactory,
+        private val apiClient: APIClient
 ) {
-    sealed class Result {
-        class SUCCESS : Result()
-        class FAILED(val reason: Failure) : Result()
+    sealed class FailReason {
+        class PLAYER_NOT_BANNED : FailReason()
+        class API_ERROR(val message: String) : FailReason()
+        class UNHANDLED : FailReason()
     }
 
-    enum class Failure {
-        PLAYER_NOT_BANNED,
-        DESERIALIZE_FAILED,
-        BAD_REQUEST,
-    }
-
-    fun execute(playerId: UUID, staffId: UUID?) : Result {
+    fun execute(
+        playerId: UUID,
+        staffId: UUID?,
+        completion: (Result<Unit, FailReason>) -> Unit
+    ) {
         val banApi = apiRequestFactory.pcb.banApi
-
         val request = banApi.storeUnban(
                 playerId = playerId.toString(),
                 playerIdType = "minecraft_uuid",
                 staffId = staffId.toString(),
                 staffIdType = "minecraft_uuid"
         )
-        val response = request.execute()
-        val json = response.body()
+        apiClient.execute(request).startAndSubscribe { result ->
+            when (result) {
+                is Success -> completion(Success(Unit))
 
-        if (json?.error != null) {
-            when (json.error.id) {
-                "player_not_banned" -> return Result.FAILED(reason = Failure.PLAYER_NOT_BANNED)
-                "bad_input" -> return Result.FAILED(reason = Failure.BAD_REQUEST)
+                is Failure -> {
+                    val responseBody = result.reason.responseBody
+                    if (responseBody != null) {
+                        val reason = when (responseBody.id) {
+                            "player_not_banned" -> FailReason.PLAYER_NOT_BANNED()
+                            else -> FailReason.UNHANDLED()
+                        }
+                        completion(Failure(reason))
+                    } else {
+                        completion(Failure(FailReason.API_ERROR(result.reason.message)))
+                    }
+                }
             }
         }
-        if (json?.data == null) {
-            return Result.FAILED(reason = Failure.DESERIALIZE_FAILED)
-        }
-
-        return Result.SUCCESS()
     }
 }
