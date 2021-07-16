@@ -29,6 +29,10 @@ class CheckBanStatusAction(
             when (result) {
                 is Success -> {
                     val ban = result.value
+                    if (ban == null) {
+                        completion(Success(null))
+                        return@startAndSubscribe
+                    }
                     if (!ban.isActive) {
                         completion(Success(null))
                         return@startAndSubscribe
@@ -41,6 +45,30 @@ class CheckBanStatusAction(
                 }
                 is Failure -> completion(Failure(FailReason.API_ERROR(message = result.reason.message)))
             }
+        }
+    }
+
+    fun executeSynchronously(playerId: UUID): Result<GameBan?, FailReason> {
+        val banApi = apiRequestFactory.pcb.banApi
+        val request = banApi.requestStatus(
+            playerId = playerId.toString(),
+            playerType = "minecraft_uuid"
+        )
+        when (val result = apiClient.executeSynchronously(request)) {
+            is Success -> {
+                val ban = result.value
+                if (ban == null) {
+                    return Success(null)
+                }
+                if (!ban.isActive) {
+                    return Success(null)
+                }
+                if (ban.expiresAt != null && ban.expiresAt <= Date().time) {
+                    return Success(null)
+                }
+                return Success(ban)
+            }
+            is Failure -> return Failure(FailReason.API_ERROR(message = result.reason.message))
         }
     }
 }
