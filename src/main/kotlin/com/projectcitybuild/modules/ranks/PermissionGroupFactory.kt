@@ -61,4 +61,28 @@ class PermissionGroupFactory {
             else -> null
         }
     }
+
+    fun fromAPIGroup(groupName: String): Group? {
+        return when (groupName) {
+
+            "intern" -> Group.BUILD(BuildGroup.INTERN)
+            "builder" -> Group.BUILD(BuildGroup.BUILDER)
+            "planner" -> Group.BUILD(BuildGroup.PLANNER)
+            "engineer" -> Group.BUILD(BuildGroup.ENGINEER)
+            "architect" -> Group.BUILD(BuildGroup.ARCHITECT)
+
+            "member" -> Group.TRUST(TrustGroup.MEMBER)
+            "trusted" -> Group.TRUST(TrustGroup.TRUSTED)
+            "trusted plus" -> Group.TRUST(TrustGroup.TRUSTED_PLUS)
+            "moderator" -> Group.TRUST(TrustGroup.MODERATOR)
+            "operator" -> Group.TRUST(TrustGroup.OPERATOR)
+            "senior operator" -> Group.TRUST(TrustGroup.SENIOR_OPERATOR)
+            "administrator" -> Group.TRUST(TrustGroup.ADMINISTRATOR)
+            "retired" -> Group.TRUST(TrustGroup.RETIRED)
+
+            "donator" -> Group.DONOR(DonorGroup.DONOR)
+
+            else -> null
+        }
+    }
 }

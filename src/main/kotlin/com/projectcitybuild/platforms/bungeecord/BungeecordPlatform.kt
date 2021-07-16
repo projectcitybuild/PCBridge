@@ -12,6 +12,8 @@ import com.projectcitybuild.platforms.bungeecord.environment.BungeecordConfig
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordLogger
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordScheduler
 import com.projectcitybuild.platforms.bungeecord.listeners.BanConnectionListener
+import com.projectcitybuild.platforms.bungeecord.listeners.SyncRankLoginListener
+import com.projectcitybuild.platforms.bungeecord.permissions.PermissionsManager
 import net.md_5.bungee.api.plugin.Plugin
 import net.md_5.bungee.config.ConfigurationProvider
 import net.md_5.bungee.config.YamlConfiguration
@@ -25,6 +27,7 @@ class BungeecordPlatform: Plugin() {
     private val apiClient = APIClient(bungeecordLogger, scheduler)
     private var commandDelegate: BungeecordCommandDelegate? = null
     private var listenerDelegate: BungeecordListenerDelegate? = null
+    private var permissionsManager: PermissionsManager? = null
 
     private val apiRequestFactory: APIRequestFactory by lazy {
         val isLoggingEnabled = config.get(PluginConfig.API.IS_LOGGING_ENABLED())
@@ -43,6 +46,8 @@ class BungeecordPlatform: Plugin() {
     override fun onEnable() {
         createDefaultConfig()
 
+        permissionsManager = PermissionsManager()
+
         val commandDelegate = BungeecordCommandDelegate(plugin = this, logger = bungeecordLogger)
         registerCommands(commandDelegate)
         this.commandDelegate = commandDelegate
@@ -55,22 +60,25 @@ class BungeecordPlatform: Plugin() {
     override fun onDisable() {
         listenerDelegate?.unregisterAll()
 
+        permissionsManager = null
+
         commandDelegate = null
         listenerDelegate = null
     }
 
     private fun registerCommands(delegate: BungeecordCommandDelegate) {
         arrayOf(
-                BanCommand(proxy, scheduler, apiRequestFactory, apiClient, bungeecordLogger),
-                UnbanCommand(proxy, scheduler, apiRequestFactory, apiClient, bungeecordLogger),
-                CheckBanCommand(proxy, scheduler, apiRequestFactory, apiClient),
+            BanCommand(proxy, scheduler, apiRequestFactory, apiClient, bungeecordLogger),
+            UnbanCommand(proxy, scheduler, apiRequestFactory, apiClient, bungeecordLogger),
+            CheckBanCommand(proxy, scheduler, apiRequestFactory, apiClient),
         )
         .forEach { command -> delegate.register(command) }
     }
 
     private fun registerListeners(delegate: BungeecordListenerDelegate) {
         arrayOf(
-                BanConnectionListener(apiRequestFactory, apiClient)
+            BanConnectionListener(apiRequestFactory, apiClient),
+            SyncRankLoginListener(apiRequestFactory, apiClient, scheduler, permissionsManager!!, bungeecordLogger),
         )
         .forEach { listener -> delegate.register(listener) }
     }

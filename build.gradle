@@ -37,7 +37,7 @@ repositories {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-//    compileOnly 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0'
+//    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0'
     compileOnly 'org.spigotmc:spigot-api:1.12.2-R0.1-SNAPSHOT'
     implementation 'net.luckperms:api:5.0'
     implementation 'com.squareup.retrofit2:retrofit:2.5.0'
@@ -53,16 +53,6 @@ dependencies {
 
 shadowJar {
     destinationDirectory = file 'build/release'
-
-//    configurations = [project.configurations.compileClasspath]
-
-    dependencies {
-//        include(dependency('org.jetbrains.kotlin:kotlin-stdlib'))
-//        include(dependency('org.jetbrains.kotlin:*'))
-//        include(dependency('com.squareup.*:.*'))
-//        include(dependency('net.milkbowl.*:.*'))
-//        include(dependency('net.luckperms.*:.*'))
-    }
 }
 
 compileKotlin {
