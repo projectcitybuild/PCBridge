@@ -1,5 +1,5 @@
 group 'com.projectcitybuild'
-version '2.5.4'
+version '2.5.5'
 
 wrapper {
     gradleVersion = '5.5.1'
@@ -29,7 +29,7 @@ repositories {
 
     maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
     maven { url = 'https://oss.sonatype.org/content/repositories/snapshots' }
-    maven { url = 'http://nexus.hc.to/content/repositories/pub_releases' }
+    maven { url = 'https://nexus.hc.to/content/repositories/pub_releases' }
 //    maven { url = 'https://nexus.scarsz.me/content/groups/public/' } // DiscordSRV
 
     maven {
@@ -41,7 +41,7 @@ repositories {
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     compileOnly 'org.spigotmc:spigot-api:1.12.2-R0.1-SNAPSHOT'
-    implementation 'net.luckperms:api:5.0'
+    implementation 'net.luckperms:api:5.3'
     implementation 'com.squareup.retrofit2:retrofit:2.5.0'
     implementation'com.squareup.retrofit2:converter-gson:2.5.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:3.5.0'
