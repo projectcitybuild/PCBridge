@@ -32,13 +32,15 @@ class SpigotPlatform(plugin: JavaPlugin): PlatformBridgable {
 
     private val weakRef = WeakReference(plugin)
 
-    override val environment: EnvironmentProvider = SpigotEnvironment(
+    override val environment: EnvironmentProvider by lazy {
+        SpigotEnvironment(
             pluginRef = weakRef,
             logger = plugin.logger,
             playerStore = SpigotPlayerStore(plugin = weakRef).store,
             config = plugin.config,
             hooks = SpigotPluginHook()
-    )
+        )
+    }
 
     override fun onEnable() {
         createDefaultConfig()

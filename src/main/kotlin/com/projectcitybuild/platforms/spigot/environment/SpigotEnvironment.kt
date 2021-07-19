@@ -71,7 +71,8 @@ class SpigotEnvironment(
         plugin.server?.scheduler?.scheduleSyncDelayedTask(plugin, runnable)
     }
 
-    override val permissions: LuckPerms? = hooks.permissions
+    override val permissions: LuckPerms?
+        get() = hooks.permissions
 
     override val plugin: JavaPlugin?
         get() = pluginRef.get()

@@ -1,10 +1,10 @@
 main: com.projectcitybuild.PCBridge
 name: PCBridge
 version: 2.5.5
-depend: [LuckPerms]
+softdepend:
+  - LuckPerms
 
-# Mark the plugin as 1.13 compatible to avoid unnecessary remapping loaded.
-api-version: 1.13
+api-version: 1.16
 
 commands:
    maintenance:

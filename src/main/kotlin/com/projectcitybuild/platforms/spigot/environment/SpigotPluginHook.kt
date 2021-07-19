@@ -7,7 +7,7 @@ import org.bukkit.Bukkit
 class SpigotPluginHook {
 
     private var _permissions: LuckPerms? = null
-    var permissions: LuckPerms? = null
+    val permissions: LuckPerms?
         get() {
             if (_permissions == null) {
                 _permissions = setupPermissionHook()
@@ -20,7 +20,7 @@ class SpigotPluginHook {
         if (provider != null) {
             return provider.provider
         }
-        println("ERROR: LuckPerms not found - searching...")
+        println("ERROR: LuckPerms not found - searching globally...")
         return LuckPermsProvider.get()
     }
 }
