@@ -24,33 +24,23 @@ apply plugin: 'kotlin'
 apply plugin: 'com.github.johnrengelman.shadow'
 
 repositories {
-    jcenter()
     mavenCentral()
 
     maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
     maven { url = 'https://oss.sonatype.org/content/repositories/snapshots' }
     maven { url = 'https://nexus.hc.to/content/repositories/pub_releases' }
-//    maven { url = 'https://nexus.scarsz.me/content/groups/public/' } // DiscordSRV
-
-    maven {
-        name 'm2-dv8tion'
-        url 'https://m2.dv8tion.net/releases'
-    } // JDA for DiscordSRV
 }
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     compileOnly 'org.spigotmc:spigot-api:1.12.2-R0.1-SNAPSHOT'
-    implementation    'net.luckperms:api:5.3'
+    compileOnly 'net.luckperms:api:5.3'
     implementation 'com.squareup.retrofit2:retrofit:2.5.0'
     implementation'com.squareup.retrofit2:converter-gson:2.5.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:3.5.0'
     testImplementation 'junit:junit:4.13'
     testImplementation 'org.mockito:mockito-core:2.+'
     testImplementation 'com.squareup.okhttp3:mockwebserver:3.5.0'
-//    compileOnly 'com.discordsrv:discordsrv:1.22.0'
-
-//    implementation 'dev.vankka:MCDiscordReserializer:4.2.0' // For DiscordSRV
 }
 
 compileKotlin {
@@ -69,15 +59,6 @@ test {
     }
 
     maxHeapSize = '1G'
-}
-
-shadowJar {
-    dependencies {
-        include(dependency('org.jetbrains.kotlin:kotlin-stdlib'))
-        include(dependency('com.squareup.*:.*'))
-        include(dependency('net.milkbowl.*:.*'))
-        include(dependency('net.luckperms.*:.*'))
-    }
 }
 
 build.dependsOn shadowJar
