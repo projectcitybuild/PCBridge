@@ -29,7 +29,7 @@ class BungeecordTimer(
 
     fun cancel(identifier: String) {
         if (tasks.containsKey(identifier)) {
-            tasks[identifier].cancel()
+            tasks[identifier]?.cancel()
             tasks.remove(identifier)
         }
     }

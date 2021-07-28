@@ -5,15 +5,22 @@ import com.projectcitybuild.core.entities.CommandResult
 import com.projectcitybuild.core.entities.PluginConfig
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
+import com.projectcitybuild.platforms.bungeecord.environment.BungeecordTimer
 import net.md_5.bungee.api.ChatColor
+import net.md_5.bungee.api.ProxyServer
 import net.md_5.bungee.api.chat.TextComponent
+import java.util.concurrent.TimeUnit
 
 class MaintenanceCommand(
-        private val config: ConfigProvider
+        private val config: ConfigProvider,
+        private val timer: BungeecordTimer,
+        private val proxy: ProxyServer
 ): BungeecordCommand {
 
     override val label = "maintenance"
     override val permission = "pcbridge.maintenance.toggle"
+
+    private val timerIdentifier = "maintenance_msg_reminder"
 
     override fun execute(input: BungeecordCommandInput): CommandResult {
         fun activate() {
@@ -21,12 +28,22 @@ class MaintenanceCommand(
                 it.color = ChatColor.AQUA
             })
             config.set(PluginConfig.SETTINGS.MAINTENANCE_MODE, true)
+
+            timer.scheduleRepeating(timerIdentifier, 3, TimeUnit.MINUTES) {
+                proxy.players.forEach { player ->
+                    player.sendMessage(TextComponent("Reminder: Maintenance mode is currently ON").also {
+                        it.color = ChatColor.GRAY
+                    })
+                }
+            }
         }
         fun deactivate() {
             input.player.sendMessage(TextComponent("Maintenance mode has been turned OFF").also {
                 it.color = ChatColor.AQUA
             })
             config.set(PluginConfig.SETTINGS.MAINTENANCE_MODE, false)
+
+            timer.cancel(timerIdentifier)
         }
 
         val isMaintenanceModeOn = config.get(PluginConfig.SETTINGS.MAINTENANCE_MODE)
