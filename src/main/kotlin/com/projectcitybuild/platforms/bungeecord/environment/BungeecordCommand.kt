@@ -9,7 +9,7 @@ data class BungeecordCommandInput(
         val args: List<String>
 ) {
     val isConsoleSender = sender is ProxiedPlayer
-    val player = sender as ProxiedPlayer
+    val player = sender as? ProxiedPlayer
 }
 
 interface BungeecordCommand {

@@ -75,7 +75,7 @@ class BungeecordPlatform: Plugin() {
             BanCommand(proxy, scheduler, apiRequestFactory, apiClient, bungeecordLogger),
             UnbanCommand(proxy, scheduler, apiRequestFactory, apiClient, bungeecordLogger),
             CheckBanCommand(proxy, scheduler, apiRequestFactory, apiClient),
-            MaintenanceCommand(config, timer, proxy),
+            MaintenanceCommand(config, timer, proxy, bungeecordLogger),
         )
         .forEach { command -> delegate.register(command) }
     }
