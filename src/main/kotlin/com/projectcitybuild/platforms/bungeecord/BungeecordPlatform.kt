@@ -7,6 +7,7 @@ import com.projectcitybuild.core.network.mojang.client.MojangClient
 import com.projectcitybuild.core.network.pcb.client.PCBClient
 import com.projectcitybuild.platforms.bungeecord.commands.BanCommand
 import com.projectcitybuild.platforms.bungeecord.commands.CheckBanCommand
+import com.projectcitybuild.platforms.bungeecord.commands.MaintenanceCommand
 import com.projectcitybuild.platforms.bungeecord.commands.UnbanCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordConfig
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordLogger
@@ -30,11 +31,11 @@ class BungeecordPlatform: Plugin() {
     private var permissionsManager: PermissionsManager? = null
 
     private val apiRequestFactory: APIRequestFactory by lazy {
-        val isLoggingEnabled = config.get(PluginConfig.API.IS_LOGGING_ENABLED())
+        val isLoggingEnabled = config.get(PluginConfig.API.IS_LOGGING_ENABLED)
         APIRequestFactory(
                 pcb = PCBClient(
-                        authToken = config.get(PluginConfig.API.KEY()),
-                        baseUrl = config.get(PluginConfig.API.BASE_URL()),
+                        authToken = config.get(PluginConfig.API.KEY),
+                        baseUrl = config.get(PluginConfig.API.BASE_URL),
                         withLogging = isLoggingEnabled
                 ),
                 mojang = MojangClient(
@@ -71,6 +72,7 @@ class BungeecordPlatform: Plugin() {
             BanCommand(proxy, scheduler, apiRequestFactory, apiClient, bungeecordLogger),
             UnbanCommand(proxy, scheduler, apiRequestFactory, apiClient, bungeecordLogger),
             CheckBanCommand(proxy, scheduler, apiRequestFactory, apiClient),
+            MaintenanceCommand(config),
         )
         .forEach { command -> delegate.register(command) }
     }
@@ -107,10 +109,10 @@ class BungeecordPlatform: Plugin() {
 
             val config = configProvider.load(file)
 
-            config.set(PluginConfig.Settings.MAINTENANCE_MODE().key, false)
-            config.set(PluginConfig.API.KEY().key, "")
-            config.set(PluginConfig.API.BASE_URL().key, "")
-            config.set(PluginConfig.API.IS_LOGGING_ENABLED().key, false)
+            config.set(PluginConfig.SETTINGS.MAINTENANCE_MODE.key, false)
+            config.set(PluginConfig.API.KEY.key, "")
+            config.set(PluginConfig.API.BASE_URL.key, "")
+            config.set(PluginConfig.API.IS_LOGGING_ENABLED.key, false)
 
             configProvider.save(config, file)
         }
