@@ -21,7 +21,15 @@ class MaintenanceCommand(
     override val permission = "pcbridge.maintenance.toggle"
 
     companion object {
-        val TIMER_IDENTIFIER = "maintenance_msg_reminder"
+        val TIMER_IDENTIFIER = "maintenance.msg_reminder"
+    }
+
+    init {
+        // Schedule reminder if the server booted-up already in maintenance mode
+        val isMaintenanceModeOn = config.get(PluginConfig.SETTINGS.MAINTENANCE_MODE)
+        if (isMaintenanceModeOn) {
+            scheduleReminder()
+        }
     }
 
     override fun execute(input: BungeecordCommandInput): CommandResult {
@@ -31,19 +39,11 @@ class MaintenanceCommand(
                     it.color = ChatColor.AQUA
                 })
                 it.addExtra(TextComponent("(Players will not be able to connect until this mode is deactivated)").also {
-                    it.color = ChatColor.AQUA
+                    it.color = ChatColor.GRAY
                 })
             })
             config.set(PluginConfig.SETTINGS.MAINTENANCE_MODE, true)
-
-            timer.scheduleRepeating(TIMER_IDENTIFIER, 2, TimeUnit.MINUTES) {
-                proxy.players.forEach { player ->
-                    player.sendMessage(TextComponent("Reminder: Maintenance mode is currently ON").also {
-                        it.color = ChatColor.GRAY
-                        it.isItalic = true
-                    })
-                }
-            }
+            scheduleReminder()
         }
         fun deactivate() {
             input.player.sendMessage(TextComponent("Maintenance mode has been turned OFF").also {
@@ -90,5 +90,16 @@ class MaintenanceCommand(
             it.color = ChatColor.RED
         })
         return CommandResult.INVALID_INPUT
+    }
+
+    private fun scheduleReminder() {
+        timer.scheduleRepeating(TIMER_IDENTIFIER, 2, TimeUnit.MINUTES) {
+            proxy.players.forEach { player ->
+                player.sendMessage(TextComponent("Reminder: Maintenance mode is currently ON").also {
+                    it.color = ChatColor.GRAY
+                    it.isItalic = true
+                })
+            }
+        }
     }
 }
