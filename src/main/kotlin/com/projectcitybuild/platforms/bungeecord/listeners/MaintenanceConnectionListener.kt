@@ -6,6 +6,7 @@ import com.projectcitybuild.platforms.bungeecord.permissions.PermissionsManager
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.chat.TextComponent
 import net.md_5.bungee.api.event.LoginEvent
+import net.md_5.bungee.api.event.PostLoginEvent
 import net.md_5.bungee.api.plugin.Listener
 import net.md_5.bungee.event.EventHandler
 import net.md_5.bungee.event.EventPriority
@@ -16,14 +17,18 @@ class MaintenanceConnectionListener(
 ): Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
-    fun onPreLoginEvent(event: LoginEvent) {
+    fun onPostLoginEvent(event: PostLoginEvent) {
         val isMaintenanceModeOn = config.get(PluginConfig.SETTINGS.MAINTENANCE_MODE)
 
         if (!isMaintenanceModeOn) return
 
         // FIXME: this won't work if their rank isn't synced first...
-        val user = permissionsManager.getUser(event.connection.uniqueId)
+        val user = permissionsManager.getUser(event.player.uniqueId)
         if (user != null && user.hasPermission("pcbridge.maintenance.bypass")) {
+            event.player.sendMessage(TextComponent("Maintenance mode is currently ON").also {
+                it.color = ChatColor.RED
+                it.isBold = true
+            })
             return
         }
 
@@ -36,7 +41,6 @@ class MaintenanceConnectionListener(
                 this.color = ChatColor.WHITE
             })
         }
-        event.setCancelReason(textComponent)
-        event.isCancelled = true
+        event.player.disconnect(textComponent)
     }
 }
