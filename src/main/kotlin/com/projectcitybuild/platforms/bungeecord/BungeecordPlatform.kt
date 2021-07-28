@@ -13,6 +13,7 @@ import com.projectcitybuild.platforms.bungeecord.environment.BungeecordConfig
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordLogger
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordScheduler
 import com.projectcitybuild.platforms.bungeecord.listeners.BanConnectionListener
+import com.projectcitybuild.platforms.bungeecord.listeners.MaintenanceConnectionListener
 import com.projectcitybuild.platforms.bungeecord.listeners.SyncRankLoginListener
 import com.projectcitybuild.platforms.bungeecord.permissions.PermissionsManager
 import net.md_5.bungee.api.plugin.Plugin
@@ -81,6 +82,7 @@ class BungeecordPlatform: Plugin() {
         arrayOf(
             BanConnectionListener(apiRequestFactory, apiClient),
             SyncRankLoginListener(apiRequestFactory, apiClient, scheduler, permissionsManager!!, bungeecordLogger),
+            MaintenanceConnectionListener(config),
         )
         .forEach { listener -> delegate.register(listener) }
     }
