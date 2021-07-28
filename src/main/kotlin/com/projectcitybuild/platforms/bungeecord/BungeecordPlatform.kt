@@ -12,6 +12,7 @@ import com.projectcitybuild.platforms.bungeecord.commands.UnbanCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordConfig
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordLogger
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordScheduler
+import com.projectcitybuild.platforms.bungeecord.environment.BungeecordTimer
 import com.projectcitybuild.platforms.bungeecord.listeners.BanConnectionListener
 import com.projectcitybuild.platforms.bungeecord.listeners.MaintenanceConnectionListener
 import com.projectcitybuild.platforms.bungeecord.listeners.SyncRankLoginListener
@@ -27,6 +28,7 @@ class BungeecordPlatform: Plugin() {
     private val scheduler = BungeecordScheduler(plugin = this)
     private val config = BungeecordConfig(plugin = this)
     private val apiClient = APIClient(bungeecordLogger, scheduler)
+    private val timer = BungeecordTimer(this, proxy)
     private var commandDelegate: BungeecordCommandDelegate? = null
     private var listenerDelegate: BungeecordListenerDelegate? = null
     private var permissionsManager: PermissionsManager? = null
@@ -61,9 +63,9 @@ class BungeecordPlatform: Plugin() {
 
     override fun onDisable() {
         listenerDelegate?.unregisterAll()
+        timer.cancelAll()
 
         permissionsManager = null
-
         commandDelegate = null
         listenerDelegate = null
     }

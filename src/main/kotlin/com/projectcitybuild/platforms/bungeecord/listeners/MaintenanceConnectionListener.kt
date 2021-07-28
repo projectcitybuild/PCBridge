@@ -21,6 +21,7 @@ class MaintenanceConnectionListener(
 
         if (!isMaintenanceModeOn) return
 
+        // FIXME: this won't work if their rank isn't synced first...
         val user = permissionsManager.getUser(event.connection.uniqueId)
         if (user != null && user.hasPermission("pcbridge.maintenance.bypass")) {
             return

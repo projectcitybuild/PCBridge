@@ -1,7 +1,6 @@
 package com.projectcitybuild.platforms.bungeecord.commands
 
 import com.projectcitybuild.core.contracts.ConfigProvider
-import com.projectcitybuild.core.contracts.LoggerProvider
 import com.projectcitybuild.core.entities.CommandResult
 import com.projectcitybuild.core.entities.PluginConfig
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
