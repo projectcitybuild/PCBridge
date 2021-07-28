@@ -20,19 +20,27 @@ class MaintenanceCommand(
     override val label = "maintenance"
     override val permission = "pcbridge.maintenance.toggle"
 
-    private val timerIdentifier = "maintenance_msg_reminder"
+    companion object {
+        val TIMER_IDENTIFIER = "maintenance_msg_reminder"
+    }
 
     override fun execute(input: BungeecordCommandInput): CommandResult {
         fun activate() {
-            input.player.sendMessage(TextComponent("Maintenance mode has been turned ON").also {
-                it.color = ChatColor.AQUA
+            input.player.sendMessage(TextComponent().also {
+                it.addExtra(TextComponent("Maintenance mode has been turned ON\n").also {
+                    it.color = ChatColor.AQUA
+                })
+                it.addExtra(TextComponent("(Players will not be able to connect until this mode is deactivated)").also {
+                    it.color = ChatColor.AQUA
+                })
             })
             config.set(PluginConfig.SETTINGS.MAINTENANCE_MODE, true)
 
-            timer.scheduleRepeating(timerIdentifier, 3, TimeUnit.MINUTES) {
+            timer.scheduleRepeating(TIMER_IDENTIFIER, 2, TimeUnit.MINUTES) {
                 proxy.players.forEach { player ->
                     player.sendMessage(TextComponent("Reminder: Maintenance mode is currently ON").also {
                         it.color = ChatColor.GRAY
+                        it.isItalic = true
                     })
                 }
             }
@@ -43,7 +51,7 @@ class MaintenanceCommand(
             })
             config.set(PluginConfig.SETTINGS.MAINTENANCE_MODE, false)
 
-            timer.cancel(timerIdentifier)
+            timer.cancel(TIMER_IDENTIFIER)
         }
 
         val isMaintenanceModeOn = config.get(PluginConfig.SETTINGS.MAINTENANCE_MODE)

@@ -18,7 +18,7 @@ class BungeecordTimer(
     fun scheduleRepeating(identifier: String, interval: Long, unit: TimeUnit, work: () -> Unit): CancellableTask {
         cancel(identifier)
 
-        val scheduledTask = proxyServer.scheduler.schedule(plugin, work, 0, interval, unit)
+        val scheduledTask = proxyServer.scheduler.schedule(plugin, work, interval, interval, unit)
         tasks[identifier] = scheduledTask
 
         return CancellableTask {
