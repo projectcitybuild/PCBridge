@@ -82,7 +82,7 @@ class BungeecordPlatform: Plugin() {
         arrayOf(
             BanConnectionListener(apiRequestFactory, apiClient),
             SyncRankLoginListener(apiRequestFactory, apiClient, scheduler, permissionsManager!!, bungeecordLogger),
-            MaintenanceConnectionListener(config),
+            MaintenanceConnectionListener(config, permissionsManager!!),
         )
         .forEach { listener -> delegate.register(listener) }
     }

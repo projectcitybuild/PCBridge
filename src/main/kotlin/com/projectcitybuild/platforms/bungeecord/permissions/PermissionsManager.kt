@@ -3,6 +3,7 @@ package com.projectcitybuild.platforms.bungeecord.permissions
 import net.luckperms.api.LuckPerms
 import net.luckperms.api.LuckPermsProvider
 import net.luckperms.api.model.user.User
+import net.luckperms.api.node.Node
 import net.luckperms.api.node.NodeType
 import net.luckperms.api.node.types.InheritanceNode
 import java.util.*
@@ -52,6 +53,11 @@ class PermissionsUser(
 
     fun hasGroup(group: PermissionsGroup): Boolean {
         return user.nodes.contains(group.node)
+    }
+
+    fun hasPermission(permission: String): Boolean {
+        val node = Node.builder(permission).build()
+        return user.nodes.contains(node)
     }
 }
 
