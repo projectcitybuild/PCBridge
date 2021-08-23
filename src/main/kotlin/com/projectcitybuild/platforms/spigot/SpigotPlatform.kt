@@ -1,25 +1,32 @@
 package com.projectcitybuild.platforms.spigot
 
+import com.google.common.io.ByteStreams
+import com.projectcitybuild.core.entities.Channel
+import com.projectcitybuild.core.entities.SubChannel
+import com.projectcitybuild.platforms.spigot.environment.SpigotLogger
+import com.projectcitybuild.platforms.spigot.listeners.ChatListener
+import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
-import java.lang.ref.WeakReference
+import org.bukkit.plugin.messaging.PluginMessageListener
 
-class SpigotPlatform: JavaPlugin() {
+class SpigotPlatform: JavaPlugin(), PluginMessageListener {
 
     private var commandDelegate: SpigotCommandDelegate? = null
     private var listenerDelegate: SpigotListenerDelegate? = null
 
-    private val weakRef: WeakReference<JavaPlugin> = WeakReference(this)
+    private val spigotLogger = SpigotLogger(logger)
 
     override fun onEnable() {
-        createDefaultConfig()
-
 //        val commandDelegate = SpigotCommandDelegate(plugin = weakRef, environment = environment)
 //        registerCommands(delegate = commandDelegate)
 //        this.commandDelegate = commandDelegate
 //
-//        val listenerDelegate = SpigotListenerDelegate(plugin = weakRef, environment = environment)
-//        registerListeners(delegate = listenerDelegate)
-//        this.listenerDelegate = listenerDelegate
+        val listenerDelegate = SpigotListenerDelegate(plugin = this, spigotLogger)
+        registerListeners(delegate = listenerDelegate)
+        this.listenerDelegate = listenerDelegate
+
+        server.messenger.registerOutgoingPluginChannel(this, Channel.BUNGEECORD)
+        server.messenger.registerIncomingPluginChannel(this, Channel.BUNGEECORD, this)
     }
 
     override fun onDisable() {
@@ -27,22 +34,29 @@ class SpigotPlatform: JavaPlugin() {
 
         commandDelegate = null
         listenerDelegate = null
+
+        server.messenger.unregisterOutgoingPluginChannel(this)
+        server.messenger.unregisterIncomingPluginChannel(this)
     }
 
     private fun registerCommands(delegate: SpigotCommandDelegate) {
     }
 
     private fun registerListeners(delegate: SpigotListenerDelegate) {
+        arrayOf(
+            ChatListener()
+        )
+        .forEach { listenerDelegate?.register(it) }
     }
 
-    private fun createDefaultConfig() {
-//        val plugin = weakRef.get() ?: throw Exception("Plugin reference lost")
-//
-//        plugin.config.addDefault<PluginConfig.Settings.MAINTENANCE_MODE>()
-//        plugin.config.addDefault<PluginConfig.API.KEY>()
-//        plugin.config.addDefault<PluginConfig.API.BASE_URL>()
-//
-//        plugin.config.options().copyDefaults(true)
-//        plugin.saveConfig()
+    override fun onPluginMessageReceived(channel: String?, player: Player?, message: ByteArray?) {
+        if (channel != Channel.BUNGEECORD) return
+
+        val input = ByteStreams.newDataInput(message)
+        val subchannel = input.readUTF()
+
+        if (subchannel == SubChannel.GLOBAL_CHAT) {
+
+        }
     }
 }

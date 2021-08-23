@@ -1,23 +1,26 @@
 package com.projectcitybuild.platforms.spigot.listeners
 
-//import com.projectcitybuild.core.contracts.EnvironmentProvider
-//import com.projectcitybuild.core.contracts.Listenable
-//import com.projectcitybuild.core.entities.BuildGroup
-//import com.projectcitybuild.core.entities.DonorGroup
-//import com.projectcitybuild.core.entities.LogLevel
-//import com.projectcitybuild.core.entities.TrustGroup
-//import net.luckperms.api.node.NodeType
-//import net.md_5.bungee.api.ChatColor
-//import net.md_5.bungee.api.chat.ComponentBuilder
-//import net.md_5.bungee.api.chat.HoverEvent
-//import net.md_5.bungee.api.chat.TextComponent
-//import org.bukkit.event.EventHandler
-//import org.bukkit.event.EventPriority
-//import org.bukkit.event.player.AsyncPlayerChatEvent
-//import java.util.regex.Pattern
-//import java.util.stream.Collectors
-//
-//
+import com.google.common.io.ByteStreams
+import com.projectcitybuild.core.entities.SubChannel
+import net.md_5.bungee.event.EventHandler
+import net.md_5.bungee.event.EventPriority
+import org.bukkit.event.Listener
+import org.bukkit.event.player.AsyncPlayerChatEvent
+
+class ChatListener: Listener {
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    fun onAsyncPlayerChatEvent(event: AsyncPlayerChatEvent) {
+        event.isCancelled = true
+
+        val message = event.message
+        val senderUUID = event.player.uniqueId
+
+        val output = ByteStreams.newDataOutput()
+        output.writeUTF(SubChannel.GLOBAL_CHAT)
+    }
+}
+
 ///**
 // * FIXME: Awful hacky, hardcoded stuff in here to save time
 // */
