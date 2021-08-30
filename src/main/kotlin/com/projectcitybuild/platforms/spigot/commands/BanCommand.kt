@@ -1,10 +1,10 @@
 package com.projectcitybuild.platforms.spigot.commands
 
 import com.projectcitybuild.core.contracts.Commandable
-import com.projectcitybuild.core.contracts.EnvironmentProvider
 import com.projectcitybuild.modules.bans.CreateBanAction
-import com.projectcitybuild.core.network.NetworkClients
-import com.projectcitybuild.core.contracts.CommandResult
+import com.projectcitybuild.core.network.APIRequestFactory
+import com.projectcitybuild.core.entities.CommandResult
+import com.projectcitybuild.core.contracts.SchedulerProvider
 import com.projectcitybuild.core.extensions.joinWithWhitespaces
 import com.projectcitybuild.core.entities.CommandInput
 import com.projectcitybuild.platforms.spigot.extensions.getOfflinePlayer
@@ -14,8 +14,8 @@ import org.bukkit.entity.Player
 import java.util.*
 
 class BanCommand(
-        private val environment: EnvironmentProvider,
-        private val networkClients: NetworkClients
+        private val scheduler: SchedulerProvider,
+        private val apiRequestFactory: APIRequestFactory
 ): Commandable {
 
     override val label: String = "ban"
@@ -30,14 +30,14 @@ class BanCommand(
 
         getOfflinePlayerUUID(server = input.sender.server, playerName = targetPlayerName) { uuid ->
             if (uuid == null) {
-                environment.sync {
+                scheduler.sync {
                     input.sender.sendMessage("Error: Failed to retrieve UUID of given player")
                 }
                 return@getOfflinePlayerUUID
             }
 
             createBan(playerId = uuid, playerName = targetPlayerName, staffId = staffPlayer?.uniqueId, reason = reason) { result ->
-                environment.sync {
+                scheduler.sync {
                     when (result) {
                         is CreateBanAction.Result.FAILED -> {
                             val message = when (result.reason) {
@@ -65,19 +65,18 @@ class BanCommand(
     }
 
     private fun getOfflinePlayerUUID(server: Server, playerName: String, completion: (UUID?) -> Unit) {
-        environment.async<UUID?> { resolve ->
+        scheduler.async<UUID?> { resolve ->
             val uuid = server.getOfflinePlayer(
                     name = playerName,
-                    environment = environment,
-                    networkClients = networkClients
+                    apiRequestFactory = apiRequestFactory
             )
             resolve(uuid)
         }.startAndSubscribe(completion)
     }
 
     private fun createBan(playerId: UUID, playerName: String, staffId: UUID?, reason: String?, completion: (CreateBanAction.Result) -> Unit) {
-        environment.async<CreateBanAction.Result> { resolve ->
-            val action = CreateBanAction(networkClients)
+        scheduler.async<CreateBanAction.Result> { resolve ->
+            val action = CreateBanAction(apiRequestFactory)
             val result = action.execute(playerId, playerName, staffId, reason)
             resolve(result)
         }.startAndSubscribe(completion)

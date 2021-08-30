@@ -1,13 +1,13 @@
 package com.projectcitybuild.platforms.spigot.commands
 
-import com.projectcitybuild.core.contracts.CommandResult
+import com.projectcitybuild.core.entities.CommandResult
 import com.projectcitybuild.platforms.spigot.extensions.getOnlinePlayer
 import com.projectcitybuild.core.contracts.Commandable
-import com.projectcitybuild.core.contracts.EnvironmentProvider
 import com.projectcitybuild.core.entities.CommandInput
+import com.projectcitybuild.core.utilities.PlayerStore
 
 class UnmuteCommand(
-        private val environment: EnvironmentProvider
+        private val playerStore: PlayerStore
 ): Commandable {
 
     override val label: String = "unmute"
@@ -23,7 +23,7 @@ class UnmuteCommand(
             return CommandResult.INVALID_INPUT
         }
 
-        val player = environment.get(targetPlayer.uniqueId)
+        val player = playerStore.get(targetPlayer.uniqueId)
             ?: throw Exception("Player $targetPlayerName missing from cache")
 
         if (!player.isMuted) {
@@ -32,7 +32,7 @@ class UnmuteCommand(
         }
 
         player.isMuted = false
-        environment.set(player)
+        playerStore.put(player.uuid, player)
 
         input.sender.sendMessage("${targetPlayer.name} has been unmuted")
         targetPlayer.sendMessage("You have been unmuted by ${input.sender.name}")

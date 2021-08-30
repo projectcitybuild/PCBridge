@@ -1,10 +1,10 @@
 package com.projectcitybuild.platforms.spigot.commands
 
 import com.projectcitybuild.core.contracts.Commandable
-import com.projectcitybuild.core.contracts.EnvironmentProvider
 import com.projectcitybuild.modules.bans.CreateUnbanAction
-import com.projectcitybuild.core.network.NetworkClients
-import com.projectcitybuild.core.contracts.CommandResult
+import com.projectcitybuild.core.network.APIRequestFactory
+import com.projectcitybuild.core.entities.CommandResult
+import com.projectcitybuild.core.contracts.SchedulerProvider
 import com.projectcitybuild.core.entities.CommandInput
 import com.projectcitybuild.platforms.spigot.extensions.getOfflinePlayer
 import org.bukkit.Server
@@ -12,8 +12,8 @@ import org.bukkit.entity.Player
 import java.util.*
 
 class UnbanCommand(
-        private val environment: EnvironmentProvider,
-        private val networkClients: NetworkClients
+        private val scheduler: SchedulerProvider,
+        private val apiRequestFactory: APIRequestFactory
 ): Commandable {
 
     override val label: String = "unban"
@@ -27,14 +27,14 @@ class UnbanCommand(
 
         getOfflinePlayerUUID(server = input.sender.server, playerName = targetPlayerName) { uuid ->
             if (uuid == null) {
-                environment.sync {
+                scheduler.sync {
                     input.sender.sendMessage("Error: Failed to retrieve UUID of given player")
                 }
                 return@getOfflinePlayerUUID
             }
 
             createUnban(playerId = uuid, staffId = staffPlayer?.uniqueId) { result ->
-                environment.sync {
+                scheduler.sync {
                     if (result is CreateUnbanAction.Result.FAILED) {
                         val message = when (result.reason) {
                             CreateUnbanAction.Failure.PLAYER_NOT_BANNED -> "${input.args.first()} is not currently banned"
@@ -53,19 +53,18 @@ class UnbanCommand(
     }
 
     private fun getOfflinePlayerUUID(server: Server, playerName: String, completion: (UUID?) -> Unit) {
-        environment.async<UUID?> { resolve ->
+        scheduler.async<UUID?> { resolve ->
             val uuid = server.getOfflinePlayer(
                     name = playerName,
-                    environment = environment,
-                    networkClients = networkClients
+                    apiRequestFactory = apiRequestFactory
             )
             resolve(uuid)
         }.startAndSubscribe(completion)
     }
 
     private fun createUnban(playerId: UUID, staffId: UUID?, completion: (CreateUnbanAction.Result) -> Unit) {
-        environment.async<CreateUnbanAction.Result> { resolve ->
-            val action = CreateUnbanAction(networkClients)
+        scheduler.async<CreateUnbanAction.Result> { resolve ->
+            val action = CreateUnbanAction(apiRequestFactory)
             val result = action.execute(
                     playerId = playerId,
                     staffId = staffId

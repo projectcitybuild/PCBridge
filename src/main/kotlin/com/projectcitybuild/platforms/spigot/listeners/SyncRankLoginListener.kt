@@ -1,95 +1,62 @@
 package com.projectcitybuild.platforms.spigot.listeners
 
-import com.projectcitybuild.core.network.NetworkClients
-import com.projectcitybuild.core.contracts.EnvironmentProvider
-import com.projectcitybuild.core.contracts.Listenable
-import com.projectcitybuild.core.entities.models.ApiResponse
-import com.projectcitybuild.core.entities.models.AuthPlayerGroups
-import com.projectcitybuild.modules.ranks.RankMapper
-import net.luckperms.api.node.NodeType
-import net.luckperms.api.node.types.InheritanceNode
-import org.bukkit.entity.Player
+import com.projectcitybuild.core.contracts.LoggerProvider
+import com.projectcitybuild.core.contracts.SchedulerProvider
+import com.projectcitybuild.core.entities.Success
+import com.projectcitybuild.core.network.APIRequestFactory
+import com.projectcitybuild.core.network.APIClient
+import com.projectcitybuild.modules.ranks.GetGroupsForUUIDAction
+import com.projectcitybuild.platforms.spigot.environment.PermissionsManager
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
+import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
-import retrofit2.Response
 import java.util.*
-import java.util.stream.Collectors
 
 class SyncRankLoginListener(
-        private val environment: EnvironmentProvider,
-        private val networkClients: NetworkClients
-): Listenable<PlayerJoinEvent> {
+        private val scheduler: SchedulerProvider,
+        private val permissionsManager: PermissionsManager,
+        private val apiRequestFactory: APIRequestFactory,
+        private val apiClient: APIClient,
+        private val logger: LoggerProvider
+): Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
-    override fun observe(event: PlayerJoinEvent) {
-        syncRankWithServer(event.player)
-    }
+    fun observe(event: PlayerJoinEvent) {
+        GetGroupsForUUIDAction(apiRequestFactory, apiClient).execute(
+            playerId = event.player.uniqueId
+        ) { result ->
+            val groupsForPlayer = if (result is Success) result.value else listOf()
+            if (groupsForPlayer.isEmpty()) return@execute
 
-    private fun syncRankWithServer(player: Player) {
-        val permissions = environment.permissions ?: throw Exception("Permission plugin is null")
-
-        getPlayerGroups(playerId = player.uniqueId) { result ->
-            val json = result.body()
-
-            if (json?.error != null) {
-                if (json.error.id != "account_not_linked") {
-                    environment.sync {
-                        player.sendMessage("Failed to sync rank: Trouble communicating with the authentication server...")
-                    }
-                }
-                return@getPlayerGroups
-            }
-
-            environment.sync {
-                val lpUser = permissions.userManager.getUser(player.uniqueId)
-                if (lpUser == null) {
-                    player.sendMessage("Sync failed: Could not load user from permission system. Please contact a staff member")
-                    throw Exception("Could not load user from LuckPerms")
-                }
-
-                // Remove all groups from the player before syncing
-                lpUser.nodes.stream()
-                        .filter(NodeType.INHERITANCE::matches)
-                        .map(NodeType.INHERITANCE::cast)
-                        .collect(Collectors.toSet())
-                        .forEach { groupNode ->
-                            lpUser.data().remove(groupNode)
-                        }
-
-                if (json?.data == null) {
-                    val groupNode = InheritanceNode.builder("guest").build()
-                    lpUser.data().add(groupNode)
+            scheduler.sync {
+                val user = permissionsManager.getUser(event.player.uniqueId)
+                if (user == null) {
+                    logger.warning("Could not load user from permissions manager (uuid: ${event.player.uniqueId})")
                     return@sync
                 }
 
-                val permissionGroups = RankMapper.mapGroupsToPermissionGroups(json.data.groups)
-                permissionGroups.forEach { group ->
-                    val groupNode = InheritanceNode.builder(group).build()
-                    if (!lpUser.nodes.contains(groupNode)) {
-                        lpUser.data().add(groupNode)
+                user.removeAllGroups()
+
+                if (groupsForPlayer.isEmpty()) {
+                    // TODO: retrieve this from config instead
+                    val guestGroup = permissionsManager.getGroup("guest")
+                    user.addGroup(guestGroup)
+                    permissionsManager.saveChanges(user)
+                    return@sync
+                }
+
+                groupsForPlayer.forEach { apiGroup ->
+                    if (apiGroup.minecraftName != null) {
+                        logger.info("Assigning to ${apiGroup.minecraftName} group")
+                        val group = permissionsManager.getGroup(apiGroup.minecraftName)
+                        user.addGroup(group)
+                    } else {
+                        logger.info("No group found for ${apiGroup.name}. Skipping...")
                     }
                 }
-
-                // Just in case, assign to Guest if no groups available (shouldn't happen though)
-                if (permissionGroups.isEmpty()) {
-                    val groupNode = InheritanceNode.builder("guest").build()
-                    lpUser.data().add(groupNode)
-                }
-
-                permissions.userManager.saveUser(lpUser)
+                permissionsManager.saveChanges(user)
             }
         }
-    }
-
-    private fun getPlayerGroups(playerId: UUID, completion: (Response<ApiResponse<AuthPlayerGroups>>) -> Unit) {
-        val authApi = networkClients.pcb.authApi
-
-        environment.async<Response<ApiResponse<AuthPlayerGroups>>> { resolve ->
-            val request = authApi.getUserGroups(uuid = playerId.toString())
-            val response = request.execute()
-
-            resolve(response)
-        }.startAndSubscribe(completion)
     }
 }

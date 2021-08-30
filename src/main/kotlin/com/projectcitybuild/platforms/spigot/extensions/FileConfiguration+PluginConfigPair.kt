@@ -1,9 +1,8 @@
 package com.projectcitybuild.platforms.spigot.extensions
 
-import com.projectcitybuild.core.entities.PluginConfigPair
+import com.projectcitybuild.core.entities.PluginConfig
 import org.bukkit.configuration.file.FileConfiguration
 
-inline fun <reified Pair: PluginConfigPair> FileConfiguration.addDefault() {
-    val pair = Pair::class.java.newInstance()
+inline fun <T> FileConfiguration.addDefault(pair: PluginConfig.Pair<T>) {
     addDefault(pair.key, pair.defaultValue)
 }

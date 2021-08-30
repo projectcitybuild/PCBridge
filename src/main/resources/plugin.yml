@@ -1,6 +1,6 @@
-main: com.projectcitybuild.PCBridge
+main: com.projectcitybuild.platforms.spigot.SpigotPlatform
 name: PCBridge
-version: 2.5.5
+version: 2.6.0
 softdepend:
   - LuckPerms
 
@@ -28,3 +28,6 @@ commands:
    sync:
       description: Syncs your Minecraft account rank with your PCB account
       usage: /sync [finish]
+   box:
+      description: Views available mystery boxes for donors, or redeems them once per day
+      usage: /box [redeem]

@@ -1,11 +1,11 @@
 package com.projectcitybuild.platforms.spigot.listeners
 
-import com.projectcitybuild.core.contracts.EnvironmentProvider
-import com.projectcitybuild.core.contracts.Listenable
+import com.projectcitybuild.core.contracts.LoggerProvider
 import com.projectcitybuild.core.entities.BuildGroup
 import com.projectcitybuild.core.entities.DonorGroup
-import com.projectcitybuild.core.entities.LogLevel
 import com.projectcitybuild.core.entities.TrustGroup
+import com.projectcitybuild.core.utilities.PlayerStore
+import com.projectcitybuild.platforms.spigot.environment.PermissionsManager
 import net.luckperms.api.node.NodeType
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.chat.ComponentBuilder
@@ -13,8 +13,8 @@ import net.md_5.bungee.api.chat.HoverEvent
 import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
+import org.bukkit.event.Listener
 import org.bukkit.event.player.AsyncPlayerChatEvent
-import java.util.regex.Pattern
 import java.util.stream.Collectors
 
 
@@ -22,9 +22,10 @@ import java.util.stream.Collectors
  * FIXME: Awful hacky, hardcoded stuff in here to save time
  */
 class ChatListener(
-        private val environment: EnvironmentProvider
-): Listenable<AsyncPlayerChatEvent> {
-
+        private val playerStore: PlayerStore,
+        private val permissionsManager: PermissionsManager,
+        private val logger: LoggerProvider
+): Listener {
     data class Group<GroupType>(
             val group: GroupType,
             val displayName: String,
@@ -70,14 +71,10 @@ class ChatListener(
         return rhs
     }
 
-    private val urlPattern = Regex("((?:(?:https?)://)?[\\w-_\\.]{2,})\\.([a-zA-Z]{2,3}(?:/\\S+)?)")
-
     @EventHandler(priority = EventPriority.HIGHEST)
-    override fun observe(event: AsyncPlayerChatEvent) {
-        val permissions = environment.permissions ?: throw Exception("Permission plugin is null")
-
+    fun observe(event: AsyncPlayerChatEvent) {
         // Mute player if necessary
-        val sendingPlayer = environment.get(event.player.uniqueId)
+        val sendingPlayer = playerStore.get(event.player.uniqueId)
         if (sendingPlayer?.isMuted == true) {
             event.isCancelled = true
             event.player.sendMessage("You cannot chat while muted")
@@ -85,7 +82,7 @@ class ChatListener(
         }
 
         // Format user display name
-        val lpUser = permissions.userManager.getUser(event.player.uniqueId)
+        val lpUser = permissionsManager.getUser(event.player.uniqueId)
                 ?: throw Exception("Could not load user from LuckPerms")
 
         val groupNodes = lpUser.nodes.stream()
@@ -113,7 +110,7 @@ class ChatListener(
         var trustGroup = Group(TrustGroup.GUEST, "", "")
 
         groupNodes.forEach { groupNode ->
-            val group = permissions.groupManager.getGroup(groupNode.groupName)
+            val group = permissionsManager.getGroup(groupNode.groupName)
             val displayName = group?.displayName ?: groupNode.groupName
 
             // FIXME: hardcoded for the sake of time, but this should all be from an API
@@ -234,15 +231,7 @@ class ChatListener(
         }
 
         // Messages sent to users don't appear in console, so we have to log it manually
-        environment.log(LogLevel.INFO, "<${event.player.displayName}> ${event.message}")
-
-//        // Terrible hack to hide the message without cancelling it.
-//        //
-//        // Normally we would cancel the event, but DiscordSRV is competing for the
-//        // highest priority and won't see the message if we cancel it.
-//        //
-//        // This will probably degrade performance...
-//        event.recipients.clear()
+        logger.info("<${event.player.displayName}> ${event.message}")
     }
 
 }

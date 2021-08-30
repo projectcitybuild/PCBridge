@@ -1,6 +1,7 @@
 package com.projectcitybuild.core.contracts
 
 import com.projectcitybuild.core.entities.CommandInput
+import com.projectcitybuild.core.entities.CommandResult
 
 /**
  * Represents a Command that a user can use to perform
@@ -24,7 +25,3 @@ interface Commandable {
     fun execute(input: CommandInput): CommandResult
 }
 
-enum class CommandResult {
-    INVALID_INPUT,
-    EXECUTED,
-}

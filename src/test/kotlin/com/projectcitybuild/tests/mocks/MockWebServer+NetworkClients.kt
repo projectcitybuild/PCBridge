@@ -1,14 +1,14 @@
 package com.projectcitybuild.tests.mocks
 
-import com.projectcitybuild.core.network.NetworkClients
+import com.projectcitybuild.core.network.APIRequestFactory
 import com.projectcitybuild.core.network.mojang.client.MojangClient
 import com.projectcitybuild.core.network.pcb.client.PCBClient
 import okhttp3.mockwebserver.MockWebServer
 
-fun MockWebServer.makeNetworkClients(): NetworkClients {
+fun MockWebServer.makeNetworkClients(): APIRequestFactory {
     val baseUrl = url("")
 
-    return NetworkClients(
+    return APIRequestFactory(
             PCBClient(
                     authToken = "",
                     withLogging = false,

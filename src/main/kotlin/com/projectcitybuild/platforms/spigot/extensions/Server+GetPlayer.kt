@@ -1,23 +1,21 @@
 package com.projectcitybuild.platforms.spigot.extensions
 
-import com.projectcitybuild.core.contracts.EnvironmentProvider
 import com.projectcitybuild.core.extensions.toDashFormattedUUID
 import com.projectcitybuild.modules.players.GetMojangPlayerAction
-import com.projectcitybuild.core.network.NetworkClients
+import com.projectcitybuild.core.network.APIRequestFactory
 import org.bukkit.Server
 import org.bukkit.entity.Player
 import java.util.*
 
 fun Server.getOfflinePlayer(
-        name: String,
-        environment: EnvironmentProvider,
-        networkClients: NetworkClients
+    name: String,
+    apiRequestFactory: APIRequestFactory
 ) : UUID? {
     val player = this.getOnlinePlayer(name)
     if (player != null) {
         return player.uniqueId
     }
-    val mojangPlayerAction = GetMojangPlayerAction(environment, networkClients)
+    val mojangPlayerAction = GetMojangPlayerAction(apiRequestFactory)
     val result = mojangPlayerAction.execute(playerName = name)
     if (result is GetMojangPlayerAction.Result.SUCCESS) {
         return UUID.fromString(result.player.uuid.toDashFormattedUUID())
