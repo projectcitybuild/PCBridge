@@ -77,7 +77,7 @@ class SpigotPlatform: JavaPlugin() {
     private fun registerListeners(delegate: SpigotListenerDelegate) {
         arrayOf(
                 BanConnectionListener(apiRequestFactory),
-                ChatListener(playerStore, permissionsManager, spigotLogger),
+                ChatListener(spigotConfig, playerStore, permissionsManager, spigotLogger),
                 MaintenanceConnectListener(spigotConfig),
                 SyncRankLoginListener(scheduler, permissionsManager, apiRequestFactory, apiClient, spigotLogger)
         )

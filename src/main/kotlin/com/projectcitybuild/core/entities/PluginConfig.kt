@@ -26,6 +26,36 @@ sealed class PluginConfig {
         }
     }
 
+    sealed class GROUPS {
+        companion object {
+            val BUILDER: Pair<Array<String>>
+                get() = Pair(
+                    key = "groups.builder",
+                    defaultValue = arrayOf(
+                        "intern",
+                        "builder",
+                        "planner",
+                        "engineer",
+                        "architect"
+                    )
+                )
+
+            val TRUST: Pair<Array<String>>
+                get() = Pair(
+                    key = "groups.trust",
+                    defaultValue = arrayOf(
+                        "member",
+                        "trusted",
+                        "trusted+",
+                        "mdoerator",
+                        "op",
+                        "sop",
+                        "admin"
+                    )
+                )
+        }
+    }
+
     sealed class SETTINGS {
         companion object {
             val MAINTENANCE_MODE: Pair<Boolean>
