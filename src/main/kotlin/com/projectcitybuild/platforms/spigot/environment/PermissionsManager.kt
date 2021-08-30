@@ -11,7 +11,7 @@ import java.util.stream.Collectors
 
 class PermissionsManager {
 
-    private val plugin = getPermissionPlugin()
+    val plugin = getPermissionPlugin()
 
     private fun getPermissionPlugin(): LuckPerms {
         return LuckPermsProvider.get()
@@ -59,10 +59,43 @@ class PermissionsUser(
         val node = Node.builder(permission).build()
         return user.nodes.contains(node)
     }
+
+    fun groups(): Set<PermissionsGroup> {
+        return user.nodes.stream()
+                .filter(NodeType.INHERITANCE::matches)
+                .map(NodeType.INHERITANCE::cast)
+                .map { PermissionsGroup(node = it) }
+                .collect(Collectors.toUnmodifiableSet())
+                .toSet()
+    }
+
+    fun prefixes(): String {
+        return user.nodes.stream()
+                .filter(NodeType.PREFIX::matches)
+                .map(NodeType.PREFIX::cast)
+                .map { node -> node.metaValue }
+                .collect(Collectors.toSet())
+                .joinToString(separator = "")
+    }
+
+    fun suffixes(): String {
+        return user.nodes.stream()
+                .filter(NodeType.SUFFIX::matches)
+                .map(NodeType.SUFFIX::cast)
+                .map { node -> node.metaValue }
+                .collect(Collectors.toSet())
+                .joinToString(separator = "")
+    }
 }
 
 class PermissionsGroup(
     val node: InheritanceNode
 ) {
+    val name: String
+        get() = node.groupName
 
+    fun getDisplayName(permissionsManager: PermissionsManager): String? {
+        // TODO: find better way to get Display Name node
+        return permissionsManager.plugin.groupManager.getGroup(name)?.displayName
+    }
 }

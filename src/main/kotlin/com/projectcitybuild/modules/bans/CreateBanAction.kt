@@ -26,7 +26,7 @@ class CreateBanAction(
                 playerAlias = playerName,
                 staffId = staffId.toString(),
                 staffIdType = "minecraft_uuid",
-                reason = reason,
+                reason = reason ?: "",
                 expiresAt = null,
                 isGlobalBan = 1
         )

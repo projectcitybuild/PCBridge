@@ -1,4 +1,4 @@
-package com.projectcitybuild
+package com.projectcitybuild.platforms.spigot
 
 import com.projectcitybuild.core.network.APIRequestFactory
 import com.projectcitybuild.core.network.mojang.client.MojangClient
@@ -6,8 +6,6 @@ import com.projectcitybuild.core.network.pcb.client.PCBClient
 import com.projectcitybuild.core.entities.PluginConfig
 import com.projectcitybuild.core.network.APIClient
 import com.projectcitybuild.core.utilities.PlayerStore
-import com.projectcitybuild.platforms.spigot.SpigotCommandDelegate
-import com.projectcitybuild.platforms.spigot.SpigotListenerDelegate
 import com.projectcitybuild.platforms.spigot.commands.*
 import com.projectcitybuild.platforms.spigot.environment.*
 import com.projectcitybuild.platforms.spigot.listeners.*
@@ -22,7 +20,7 @@ class SpigotPlatform: JavaPlugin() {
     private val apiClient = APIClient(spigotLogger, scheduler)
     private val playerStore = PlayerStore()
     private var playerStoreWrapper: SpigotPlayerStore? = null
-    private var permissionsManager = PermissionsManager()
+    private var permissionsManager: PermissionsManager? = null
     private var commandDelegate: SpigotCommandDelegate? = null
     private var listenerDelegate: SpigotListenerDelegate? = null
 
@@ -39,6 +37,7 @@ class SpigotPlatform: JavaPlugin() {
         createDefaultConfig()
 
         playerStoreWrapper = SpigotPlayerStore(plugin = this, store = playerStore)
+        permissionsManager = PermissionsManager()
 
         val commandDelegate = SpigotCommandDelegate(plugin = this, logger = spigotLogger)
         registerCommands(delegate = commandDelegate)
@@ -56,6 +55,7 @@ class SpigotPlatform: JavaPlugin() {
 
         commandDelegate = null
         listenerDelegate = null
+        permissionsManager = null
 
         logger.info("PCBridge disabled")
     }
@@ -68,7 +68,7 @@ class SpigotPlatform: JavaPlugin() {
                 MuteCommand(playerStore),
                 UnmuteCommand(playerStore),
                 MaintenanceCommand(),
-                SyncCommand(scheduler, permissionsManager, apiRequestFactory, apiClient, spigotLogger),
+                SyncCommand(scheduler, permissionsManager!!, apiRequestFactory, apiClient, spigotLogger),
                 BoxCommand(scheduler, apiRequestFactory)
         )
         .forEach { command -> delegate.register(command) }
@@ -77,9 +77,9 @@ class SpigotPlatform: JavaPlugin() {
     private fun registerListeners(delegate: SpigotListenerDelegate) {
         arrayOf(
                 BanConnectionListener(apiRequestFactory),
-                ChatListener(spigotConfig, playerStore, permissionsManager, spigotLogger),
+                ChatListener(spigotConfig, playerStore, permissionsManager!!, spigotLogger),
                 MaintenanceConnectListener(spigotConfig),
-                SyncRankLoginListener(scheduler, permissionsManager, apiRequestFactory, apiClient, spigotLogger)
+                SyncRankLoginListener(scheduler, permissionsManager!!, apiRequestFactory, apiClient, spigotLogger)
         )
         .forEach { listener -> delegate.register(listener) }
     }
@@ -88,6 +88,27 @@ class SpigotPlatform: JavaPlugin() {
         config.addDefault(PluginConfig.SETTINGS.MAINTENANCE_MODE)
         config.addDefault(PluginConfig.API.KEY)
         config.addDefault(PluginConfig.API.BASE_URL)
+        config.addDefault(PluginConfig.GROUPS.TRUST_PRIORITY)
+        config.addDefault(PluginConfig.GROUPS.BUILD_PRIORITY)
+        config.addDefault(PluginConfig.GROUPS.DONOR_PRIORITY)
+
+        config.addDefault("groups.appearance.admin.display_name", "§4[Staff]")
+        config.addDefault("groups.appearance.admin.hover_name", "Administrator")
+        config.addDefault("groups.appearance.sop.display_name", "§c[Staff]")
+        config.addDefault("groups.appearance.sop.hover_name", "Senior Operator")
+        config.addDefault("groups.appearance.op.display_name", "§6[Staff]")
+        config.addDefault("groups.appearance.op.hover_name", "Operator")
+        config.addDefault("groups.appearance.moderator.display_name", "§e[Staff]")
+        config.addDefault("groups.appearance.moderator.hover_name", "Moderator")
+
+        config.addDefault("groups.appearance.trusted+.hover_name", "Trusted+")
+        config.addDefault("groups.appearance.trusted.hover_name", "Trusted")
+        config.addDefault("groups.appearance.donator.hover_name", "Donor")
+        config.addDefault("groups.appearance.architect.hover_name", "Architect")
+        config.addDefault("groups.appearance.engineer.hover_name", "Engineer")
+        config.addDefault("groups.appearance.planner.hover_name", "Planner")
+        config.addDefault("groups.appearance.builder.hover_name", "Builder")
+        config.addDefault("groups.appearance.intern.hover_name", "Intern")
 
         config.options().copyDefaults(true)
         saveConfig()

@@ -13,4 +13,8 @@ class SpigotConfig(private val config: FileConfiguration): ConfigProvider {
     override fun <T> set(key: PluginConfig.Pair<T>, value: T) {
         return config.set(key.key, value)
     }
+
+    override fun get(path: String): Any? {
+        return config.get(path)
+    }
 }

@@ -27,30 +27,40 @@ sealed class PluginConfig {
     }
 
     sealed class GROUPS {
+
         companion object {
-            val BUILDER: Pair<Array<String>>
+            val BUILD_PRIORITY: Pair<ArrayList<String>>
                 get() = Pair(
-                    key = "groups.builder",
-                    defaultValue = arrayOf(
-                        "intern",
-                        "builder",
-                        "planner",
+                    key = "groups.build_priority",
+                    defaultValue = arrayListOf(
+                        "architect",
                         "engineer",
-                        "architect"
+                        "planner",
+                        "builder",
+                        "intern"
                     )
                 )
 
-            val TRUST: Pair<Array<String>>
+            val TRUST_PRIORITY: Pair<ArrayList<String>>
                 get() = Pair(
-                    key = "groups.trust",
-                    defaultValue = arrayOf(
-                        "member",
-                        "trusted",
-                        "trusted+",
-                        "mdoerator",
-                        "op",
+                    key = "groups.trust_priority",
+                    defaultValue = arrayListOf(
+                        "admin",
                         "sop",
-                        "admin"
+                        "op",
+                        "moderator",
+                        "trusted+",
+                        "trusted",
+                        "member"
+                    )
+                )
+
+            val DONOR_PRIORITY: Pair<ArrayList<String>>
+                get() = Pair(
+                    key = "groups.donor_priority",
+                    defaultValue = arrayListOf(
+                        "donator",
+                        "legacy-donator"
                     )
                 )
         }
