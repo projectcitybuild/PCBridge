@@ -4,9 +4,10 @@ import com.projectcitybuild.core.contracts.Commandable
 import com.projectcitybuild.modules.bans.CreateBanAction
 import com.projectcitybuild.core.network.APIRequestFactory
 import com.projectcitybuild.core.entities.CommandResult
-import com.projectcitybuild.core.contracts.SchedulerProvider
 import com.projectcitybuild.core.extensions.joinWithWhitespaces
 import com.projectcitybuild.core.entities.CommandInput
+import com.projectcitybuild.core.entities.Failure
+import com.projectcitybuild.core.entities.Success
 import com.projectcitybuild.core.network.APIClient
 import com.projectcitybuild.platforms.spigot.extensions.getOfflinePlayer
 import org.bukkit.ChatColor
@@ -38,7 +39,7 @@ class BanCommand(
             return CommandResult.EXECUTED
         }
 
-        val action = CreateBanAction(apiRequestFactory)
+        val action = CreateBanAction(apiRequestFactory, apiClient)
         val result = action.execute(
             playerId = uuid,
             playerName = targetPlayerName,
@@ -47,22 +48,20 @@ class BanCommand(
         )
 
         when (result) {
-            is CreateBanAction.Result.FAILED -> {
+            is Failure -> {
                 val message = when (result.reason) {
-                    CreateBanAction.Failure.PLAYER_ALREADY_BANNED -> "${input.args.first()} is already banned"
-                    CreateBanAction.Failure.BAD_REQUEST -> "Bad request sent to the ban server. Please contact an administrator to have this fixed"
-                    CreateBanAction.Failure.DESERIALIZE_FAILED -> "Error: Bad response received from the ban server. Please contact an admin"
+                    is CreateBanAction.FailReason.HTTPError -> "Error: Bad response received from the ban server. Please contact an admin"
+                    is CreateBanAction.FailReason.NetworkError -> "Error: Failed to contact auth server. Please contact an admin"
+                    is CreateBanAction.FailReason.PlayerAlreadyBanned -> "$targetPlayerName is already banned"
                 }
                 input.sender.sendMessage(message)
             }
-
-            is CreateBanAction.Result.SUCCESS -> {
+            is Success -> {
                 input.sender.server.broadcast(
                     "${ChatColor.GRAY}${input.args.first()} has been banned by ${input.sender.name}: ${reason ?: "No reason given"}",
                     "*"
                 )
-
-                val player = input.sender.server.onlinePlayers.first { player ->
+                val player = input.sender.server.onlinePlayers.firstOrNull { player ->
                     player.name.lowercase() == targetPlayerName.lowercase()
                 }
                 player?.kickPlayer("You have been banned")

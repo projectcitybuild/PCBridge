@@ -6,6 +6,8 @@ import com.projectcitybuild.core.network.APIRequestFactory
 import com.projectcitybuild.core.entities.CommandResult
 import com.projectcitybuild.core.contracts.SchedulerProvider
 import com.projectcitybuild.core.entities.CommandInput
+import com.projectcitybuild.core.entities.Failure
+import com.projectcitybuild.core.entities.Success
 import com.projectcitybuild.core.network.APIClient
 import com.projectcitybuild.platforms.spigot.extensions.getOfflinePlayer
 import org.bukkit.entity.Player
@@ -34,21 +36,23 @@ class UnbanCommand(
             return CommandResult.EXECUTED
         }
 
-        val action = CreateUnbanAction(apiRequestFactory)
+        val action = CreateUnbanAction(apiRequestFactory, apiClient)
         val result = action.execute(
                 playerId = uuid,
                 staffId = staffPlayer?.uniqueId
         )
-        if (result is CreateUnbanAction.Result.FAILED) {
-            val message = when (result.reason) {
-                CreateUnbanAction.Failure.PLAYER_NOT_BANNED -> "${input.args.first()} is not currently banned"
-                CreateUnbanAction.Failure.BAD_REQUEST -> "Bad request sent to the ban server. Please contact an administrator to have this fixed"
-                CreateUnbanAction.Failure.DESERIALIZE_FAILED -> "Error: Bad response received from the ban server. Please contact an admin"
+        when (result) {
+            is Failure -> {
+                val message = when (result.reason) {
+                    is CreateUnbanAction.FailReason.PlayerNotBanned -> "$targetPlayerName is not currently banned"
+                    is CreateUnbanAction.FailReason.HTTPError -> "Error: Bad request sent to the ban server. Please contact an admin"
+                    is CreateUnbanAction.FailReason.NetworkError -> "Error: Failed to contact auth server. Please contact an admin"
+                }
+                input.sender.sendMessage(message)
             }
-            input.sender.sendMessage(message)
-        }
-        if (result is CreateUnbanAction.Result.SUCCESS) {
-            input.sender.server.broadcast("${input.args.first()} has been unbanned", "*")
+            is Success -> {
+                input.sender.server.broadcast("${input.args.first()} has been unbanned", "*")
+            }
         }
 
         return CommandResult.EXECUTED
