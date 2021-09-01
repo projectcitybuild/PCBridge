@@ -1,5 +1,7 @@
 package com.projectcitybuild.platforms.spigot
 
+import com.github.shynixn.mccoroutine.asyncDispatcher
+import com.github.shynixn.mccoroutine.minecraftDispatcher
 import com.projectcitybuild.core.network.APIRequestFactory
 import com.projectcitybuild.core.network.mojang.client.MojangClient
 import com.projectcitybuild.core.network.pcb.client.PCBClient
@@ -17,7 +19,7 @@ class SpigotPlatform: JavaPlugin() {
     private val spigotLogger = SpigotLogger(logger = this.logger)
     private val spigotConfig = SpigotConfig(config = this.config)
     private val scheduler = SpigotScheduler(plugin = this)
-    private val apiClient = APIClient(spigotLogger, scheduler)
+    private val apiClient = APIClient(coroutineContext = minecraftDispatcher)
     private val playerStore = PlayerStore()
     private var playerStoreWrapper: SpigotPlayerStore? = null
     private var permissionsManager: PermissionsManager? = null

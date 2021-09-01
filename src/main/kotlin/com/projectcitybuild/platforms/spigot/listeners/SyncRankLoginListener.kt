@@ -22,41 +22,38 @@ class SyncRankLoginListener(
 ): Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
-    fun onPlayerJoinEvent(event: PlayerJoinEvent) {
-        GetGroupsForUUIDAction(apiRequestFactory, apiClient).execute(
-            playerId = event.player.uniqueId
-        ) { result ->
-            val groupsForPlayer = if (result is Success) result.value else listOf()
-            if (groupsForPlayer.isEmpty()) return@execute
+    suspend fun onPlayerJoinEvent(event: PlayerJoinEvent) {
+        val groupsResult = GetGroupsForUUIDAction(apiRequestFactory, apiClient)
+                .execute(playerId = event.player.uniqueId)
 
-            scheduler.sync {
-                val user = permissionsManager.getUser(event.player.uniqueId)
-                if (user == null) {
-                    logger.warning("Could not load user from permissions manager (uuid: ${event.player.uniqueId})")
-                    return@sync
-                }
+        val groupsForPlayer = if (groupsResult is Success) groupsResult.value else listOf()
+        if (groupsForPlayer.isEmpty()) return
 
-                user.removeAllGroups()
+        val user = permissionsManager.getUser(event.player.uniqueId)
+        if (user == null) {
+            logger.warning("Could not load user from permissions manager (uuid: ${event.player.uniqueId})")
+            return
+        }
 
-                if (groupsForPlayer.isEmpty()) {
-                    // TODO: retrieve this from config instead
-                    val guestGroup = permissionsManager.getGroup("guest")
-                    user.addGroup(guestGroup)
-                    permissionsManager.saveChanges(user)
-                    return@sync
-                }
+        user.removeAllGroups()
 
-                groupsForPlayer.forEach { apiGroup ->
-                    if (apiGroup.minecraftName != null) {
-                        logger.info("Assigning to ${apiGroup.minecraftName} group")
-                        val group = permissionsManager.getGroup(apiGroup.minecraftName)
-                        user.addGroup(group)
-                    } else {
-                        logger.info("No group found for ${apiGroup.name}. Skipping...")
-                    }
-                }
-                permissionsManager.saveChanges(user)
+        if (groupsForPlayer.isEmpty()) {
+            // TODO: retrieve this from config instead
+            val guestGroup = permissionsManager.getGroup("guest")
+            user.addGroup(guestGroup)
+            permissionsManager.saveChanges(user)
+            return
+        }
+
+        groupsForPlayer.forEach { apiGroup ->
+            if (apiGroup.minecraftName != null) {
+                logger.info("Assigning to ${apiGroup.minecraftName} group")
+                val group = permissionsManager.getGroup(apiGroup.minecraftName)
+                user.addGroup(group)
+            } else {
+                logger.info("No group found for ${apiGroup.name}. Skipping...")
             }
         }
+        permissionsManager.saveChanges(user)
     }
 }
