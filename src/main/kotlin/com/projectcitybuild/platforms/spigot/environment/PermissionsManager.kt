@@ -65,7 +65,7 @@ class PermissionsUser(
                 .filter(NodeType.INHERITANCE::matches)
                 .map(NodeType.INHERITANCE::cast)
                 .map { PermissionsGroup(node = it) }
-                .collect(Collectors.toUnmodifiableSet())
+                .collect(Collectors.toSet())
                 .toSet()
     }
 
