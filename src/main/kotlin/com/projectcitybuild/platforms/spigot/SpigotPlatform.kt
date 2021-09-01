@@ -1,7 +1,5 @@
 package com.projectcitybuild.platforms.spigot
 
-import com.github.shynixn.mccoroutine.asyncDispatcher
-import com.github.shynixn.mccoroutine.minecraftDispatcher
 import com.projectcitybuild.core.network.APIRequestFactory
 import com.projectcitybuild.core.network.mojang.client.MojangClient
 import com.projectcitybuild.core.network.pcb.client.PCBClient
@@ -80,13 +78,13 @@ class SpigotPlatform: JavaPlugin() {
 
     private fun registerCommands(delegate: SpigotCommandDelegate) {
         arrayOf(
-                BanCommand(scheduler, apiRequestFactory),
-                UnbanCommand(scheduler, apiRequestFactory),
+                BanCommand(apiRequestFactory, apiClient),
+                UnbanCommand( apiRequestFactory, apiClient),
                 CheckBanCommand(scheduler, apiRequestFactory, apiClient, checkBanStatusAction),
                 MuteCommand(playerStore),
                 UnmuteCommand(playerStore),
                 MaintenanceCommand(),
-                SyncCommand(scheduler, permissionsManager!!, apiRequestFactory, apiClient, spigotLogger, syncPlayerGroupAction),
+                SyncCommand(apiRequestFactory, apiClient, syncPlayerGroupAction),
                 SyncOtherCommand(syncPlayerGroupAction),
                 BoxCommand(scheduler, apiRequestFactory)
         )
@@ -95,7 +93,7 @@ class SpigotPlatform: JavaPlugin() {
 
     private fun registerListeners(delegate: SpigotListenerDelegate) {
         arrayOf(
-                BanConnectionListener(apiRequestFactory),
+                BanConnectionListener(apiRequestFactory, apiClient),
                 ChatListener(spigotConfig, playerStore, permissionsManager!!, spigotLogger),
                 MaintenanceConnectListener(spigotConfig),
                 SyncRankLoginListener(syncPlayerGroupAction)

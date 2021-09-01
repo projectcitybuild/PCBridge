@@ -1,6 +1,6 @@
 package com.projectcitybuild.core.extensions
 
-fun Array<String>.joinWithWhitespaces(range: IntRange): String? {
+fun Array<out String>.joinWithWhitespaces(range: IntRange): String? {
     if (this.size < range.first) {
         return null
     }
