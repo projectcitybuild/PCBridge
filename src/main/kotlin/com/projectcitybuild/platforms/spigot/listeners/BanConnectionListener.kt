@@ -14,7 +14,7 @@ class BanConnectionListener(
 ): Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
-    fun observe(event: AsyncPlayerPreLoginEvent) {
+    fun onAsyncPlayerPreLoginEvent(event: AsyncPlayerPreLoginEvent) {
         val action = CheckBanStatusAction(apiRequestFactory)
         val result = action.execute(playerId = event.uniqueId)
 

@@ -22,7 +22,7 @@ class SyncRankLoginListener(
 ): Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
-    fun observe(event: PlayerJoinEvent) {
+    fun onPlayerJoinEvent(event: PlayerJoinEvent) {
         GetGroupsForUUIDAction(apiRequestFactory, apiClient).execute(
             playerId = event.player.uniqueId
         ) { result ->

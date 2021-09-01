@@ -6,6 +6,10 @@ softdepend:
 
 api-version: 1.16
 
+libraries:
+  - com.github.shynixn.mccoroutine:mccoroutine-bukkit-api:1.5.0
+  - com.github.shynixn.mccoroutine:mccoroutine-bukkit-core:1.5.0
+
 commands:
    maintenance:
       description: Toggles 'Maintenance Mode' on the server, allowing only staff to connect

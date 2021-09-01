@@ -49,7 +49,7 @@ class ChatListener(
     )
 
     @EventHandler(priority = EventPriority.HIGHEST)
-    fun observe(event: AsyncPlayerChatEvent) {
+    fun onAsyncPlayerChatEvent(event: AsyncPlayerChatEvent) {
         // Mute player if necessary
         val sendingPlayer = playerStore.get(event.player.uniqueId)
         if (sendingPlayer?.isMuted == true) {

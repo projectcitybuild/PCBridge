@@ -12,7 +12,7 @@ class MaintenanceConnectListener(
 ): Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
-    fun observe(event: PlayerLoginEvent) {
+    fun onPlayerLoginEvent(event: PlayerLoginEvent) {
         val isMaintenanceMode = config.get(PluginConfig.SETTINGS.MAINTENANCE_MODE)
 
         if (event.player.hasPermission("pcbridge.maintenance.bypass")) {
