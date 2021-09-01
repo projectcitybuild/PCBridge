@@ -10,6 +10,8 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent
+import java.text.SimpleDateFormat
+import java.util.*
 
 class BanConnectionListener(
         private val apiRequestFactory: APIRequestFactory,
@@ -23,6 +25,13 @@ class BanConnectionListener(
 
         if (result is Success && result.value != null) {
             val ban = result.value
+
+            val expiryDate = ban.expiresAt?.let {
+                val date = Date(it * 1000)
+                val format = SimpleDateFormat("yyyy/MM/dd HH:mm")
+                format.format(date)
+            } ?: "Never"
+
             val textComponent = TextComponent().apply {
                 this.addExtra(TextComponent("You are currently banned.\n\n").apply {
                     this.color = ChatColor.RED
@@ -37,7 +46,7 @@ class BanConnectionListener(
                 this.addExtra(TextComponent("Expires: ").apply {
                     this.color = ChatColor.GRAY
                 })
-                this.addExtra(TextComponent(ban.expiresAt?.toString() ?: "Never" + "\n\n").apply {
+                this.addExtra(TextComponent(expiryDate + "\n\n").apply {
                     this.color = ChatColor.WHITE
                 })
                 this.addExtra(TextComponent("Appeal @ https://projectcitybuild.com").apply {

@@ -12,6 +12,7 @@ import com.projectcitybuild.core.network.APIClient
 import com.projectcitybuild.platforms.spigot.extensions.getOfflinePlayer
 import org.bukkit.ChatColor
 import org.bukkit.Server
+import java.text.SimpleDateFormat
 import java.util.*
 
 class CheckBanCommand(
@@ -48,12 +49,23 @@ class CheckBanCommand(
                 if (ban == null) {
                     input.sender.sendMessage("$targetPlayerName is not currently banned")
                 } else {
+                    val banDate = ban.createdAt?.let {
+                        val date = Date(it * 1000)
+                        val format = SimpleDateFormat("yyyy/MM/dd HH:mm")
+                        format.format(date)
+                    }
+                    val expiryDate = ban.expiresAt?.let {
+                        val date = Date(it * 1000)
+                        val format = SimpleDateFormat("yyyy/MM/dd HH:mm")
+                        format.format(date)
+                    } ?: "Never"
+
                     input.sender.sendMessage("""
                             #$targetPlayerName is currently banned.
                             #---
                             #Reason: ${ban.reason}
-                            #Date: ${ban.createdAt}
-                            #Expires: ${ban.expiresAt ?: "Never"}
+                            #Date: $banDate
+                            #Expires: $expiryDate
                         """.trimMargin("#"))
                 }
             }
