@@ -86,7 +86,7 @@ class SpigotPlatform: JavaPlugin() {
                 MaintenanceCommand(),
                 SyncCommand(apiRequestFactory, apiClient, syncPlayerGroupAction),
                 SyncOtherCommand(syncPlayerGroupAction),
-                BoxCommand(scheduler, apiRequestFactory)
+                BoxCommand(apiRequestFactory, apiClient)
         )
         .forEach { command -> delegate.register(command) }
     }
