@@ -18,26 +18,26 @@ class CreateUnbanAction(
     }
 
     fun execute(playerId: UUID, staffId: UUID?) : Result {
-        val banApi = apiRequestFactory.pcb.banApi
-
-        val request = banApi.storeUnban(
-                playerId = playerId.toString(),
-                playerIdType = "minecraft_uuid",
-                staffId = staffId.toString(),
-                staffIdType = "minecraft_uuid"
-        )
-        val response = request.execute()
-        val json = response.body()
-
-        if (json?.error != null) {
-            when (json.error.id) {
-                "player_not_banned" -> return Result.FAILED(reason = Failure.PLAYER_NOT_BANNED)
-                "bad_input" -> return Result.FAILED(reason = Failure.BAD_REQUEST)
-            }
-        }
-        if (json?.data == null) {
-            return Result.FAILED(reason = Failure.DESERIALIZE_FAILED)
-        }
+//        val banApi = apiRequestFactory.pcb.banApi
+//
+//        val request = banApi.storeUnban(
+//                playerId = playerId.toString(),
+//                playerIdType = "minecraft_uuid",
+//                staffId = staffId.toString(),
+//                staffIdType = "minecraft_uuid"
+//        )
+//        val response = request.execute()
+//        val json = response.body()
+//
+//        if (json?.error != null) {
+//            when (json.error.id) {
+//                "player_not_banned" -> return Result.FAILED(reason = Failure.PLAYER_NOT_BANNED)
+//                "bad_input" -> return Result.FAILED(reason = Failure.BAD_REQUEST)
+//            }
+//        }
+//        if (json?.data == null) {
+//            return Result.FAILED(reason = Failure.DESERIALIZE_FAILED)
+//        }
 
         return Result.SUCCESS()
     }

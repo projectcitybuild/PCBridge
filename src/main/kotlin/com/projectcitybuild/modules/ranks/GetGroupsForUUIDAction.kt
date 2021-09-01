@@ -15,9 +15,9 @@ class GetGroupsForUUIDAction(
         private val apiClient: APIClient
 ) {
     sealed class FailReason {
-        class NetworkError: FailReason()
         class HTTPError(error: ApiError?): FailReason()
-        class AccountNotLinked: FailReason()
+        object NetworkError : FailReason()
+        object AccountNotLinked : FailReason()
     }
 
     suspend fun execute(playerId: UUID): Result<List<Group>, FailReason> {
@@ -26,10 +26,10 @@ class GetGroupsForUUIDAction(
 
         return when (response) {
             is APIResult.Success -> Success(response.value.data?.groups ?: listOf())
-            is APIResult.NetworkError -> Failure(FailReason.NetworkError())
+            is APIResult.NetworkError -> Failure(FailReason.NetworkError)
             is APIResult.HTTPError -> {
                 if (response.error?.id == "account_not_linked") {
-                    Failure(FailReason.AccountNotLinked())
+                    Failure(FailReason.AccountNotLinked)
                 }
                 Failure(FailReason.HTTPError(response.error))
             }

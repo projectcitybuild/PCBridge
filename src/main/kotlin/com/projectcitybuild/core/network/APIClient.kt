@@ -1,8 +1,10 @@
 package com.projectcitybuild.core.network
 
+import com.github.shynixn.mccoroutine.minecraftDispatcher
 import com.google.gson.Gson
 import com.projectcitybuild.core.entities.models.ApiError
 import kotlinx.coroutines.withContext
+import org.bukkit.plugin.Plugin
 import retrofit2.HttpException
 import java.io.IOException
 import kotlin.coroutines.CoroutineContext
@@ -14,10 +16,16 @@ sealed class APIResult<out T> {
 }
 
 class APIClient(
-        private val coroutineContext: CoroutineContext
+        private val plugin: Plugin
 ) {
+    private fun getCoroutineContext(): CoroutineContext {
+        // Fetch instead of injecting, to prevent Coroutines being created
+        // before the plugin is ready
+        return plugin.minecraftDispatcher
+    }
+
     suspend fun <T> execute(apiCall: suspend () -> T): APIResult<T> {
-        return withContext(coroutineContext) {
+        return withContext(getCoroutineContext()) {
             try {
                 APIResult.Success(apiCall.invoke())
             } catch (throwable: Throwable) {

@@ -15,35 +15,35 @@ class BanConnectionListener(
 
     @EventHandler(priority = EventPriority.HIGHEST)
     fun onAsyncPlayerPreLoginEvent(event: AsyncPlayerPreLoginEvent) {
-        val action = CheckBanStatusAction(apiRequestFactory)
-        val result = action.execute(playerId = event.uniqueId)
-
-        if (result is CheckBanStatusAction.Result.SUCCESS && result.ban != null) {
-            val textComponent = TextComponent().apply {
-                this.addExtra(TextComponent("You are currently banned.\n\n").apply {
-                    this.color = ChatColor.RED
-                    this.isBold = true
-                })
-                this.addExtra(TextComponent("Reason: ").apply {
-                    this.color = ChatColor.GRAY
-                })
-                this.addExtra(TextComponent((result.ban.reason ?: "No reason provided") + "\n").apply {
-                    this.color = ChatColor.WHITE
-                })
-                this.addExtra(TextComponent("Expires: ").apply {
-                    this.color = ChatColor.GRAY
-                })
-                this.addExtra(TextComponent(result.ban.expiresAt?.toString() ?: "Never" + "\n\n").apply {
-                    this.color = ChatColor.WHITE
-                })
-                this.addExtra(TextComponent("Appeal @ https://projectcitybuild.com").apply {
-                    this.color = ChatColor.AQUA
-                })
-            }
-            event.disallow(
-                    AsyncPlayerPreLoginEvent.Result.KICK_BANNED,
-                    textComponent.toLegacyText()
-            )
-        }
+//        val action = CheckBanStatusAction(apiRequestFactory)
+//        val result = action.execute(playerId = event.uniqueId)
+//
+//        if (result is CheckBanStatusAction.Result.SUCCESS && result.ban != null) {
+//            val textComponent = TextComponent().apply {
+//                this.addExtra(TextComponent("You are currently banned.\n\n").apply {
+//                    this.color = ChatColor.RED
+//                    this.isBold = true
+//                })
+//                this.addExtra(TextComponent("Reason: ").apply {
+//                    this.color = ChatColor.GRAY
+//                })
+//                this.addExtra(TextComponent((result.ban.reason ?: "No reason provided") + "\n").apply {
+//                    this.color = ChatColor.WHITE
+//                })
+//                this.addExtra(TextComponent("Expires: ").apply {
+//                    this.color = ChatColor.GRAY
+//                })
+//                this.addExtra(TextComponent(result.ban.expiresAt?.toString() ?: "Never" + "\n\n").apply {
+//                    this.color = ChatColor.WHITE
+//                })
+//                this.addExtra(TextComponent("Appeal @ https://projectcitybuild.com").apply {
+//                    this.color = ChatColor.AQUA
+//                })
+//            }
+//            event.disallow(
+//                    AsyncPlayerPreLoginEvent.Result.KICK_BANNED,
+//                    textComponent.toLegacyText()
+//            )
+//        }
     }
 }

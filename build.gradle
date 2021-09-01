@@ -55,14 +55,14 @@ compileTestKotlin {
     kotlinOptions.jvmTarget = "16"
 }
 
-test {
-    useJUnit()
-
-    filter {
-        includeTestsMatching "com.projectcitybuild.tests.*"
-    }
-
-    maxHeapSize = '1G'
-}
+//test {
+//    useJUnit()
+//
+//    filter {
+//        includeTestsMatching "com.projectcitybuild.tests.*"
+//    }
+//
+//    maxHeapSize = '1G'
+//}
 
 build.dependsOn shadowJar

@@ -13,7 +13,7 @@ class MuteCommand(
     override val label = "mute"
     override val permission = "pcbridge.chat.mute"
 
-    override fun execute(input: CommandInput): CommandResult {
+    override suspend fun execute(input: CommandInput): CommandResult {
         if (!input.hasArguments) return CommandResult.INVALID_INPUT
 
         val targetPlayerName = input.args.first()

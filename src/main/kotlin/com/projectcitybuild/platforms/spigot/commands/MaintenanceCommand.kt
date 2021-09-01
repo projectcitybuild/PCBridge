@@ -9,7 +9,7 @@ class MaintenanceCommand(): Commandable {
     override val label: String = "maintenance"
     override val permission: String = "pcbridge.maintenance"
 
-    override fun execute(input: CommandInput): CommandResult {
+    override suspend fun execute(input: CommandInput): CommandResult {
         input.sender.sendMessage("This command is temporarily disabled, sorry")
         return CommandResult.EXECUTED
     }

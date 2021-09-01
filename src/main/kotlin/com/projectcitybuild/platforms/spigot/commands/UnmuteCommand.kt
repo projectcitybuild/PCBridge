@@ -13,7 +13,7 @@ class UnmuteCommand(
     override val label: String = "unmute"
     override val permission: String = "pcbridge.chat.unmute"
 
-    override fun execute(input: CommandInput): CommandResult {
+    override suspend fun execute(input: CommandInput): CommandResult {
         if (!input.hasArguments) return CommandResult.INVALID_INPUT
 
         val targetPlayerName = input.args.first()

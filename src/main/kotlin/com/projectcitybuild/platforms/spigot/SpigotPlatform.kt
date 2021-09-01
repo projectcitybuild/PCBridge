@@ -8,6 +8,7 @@ import com.projectcitybuild.core.network.pcb.client.PCBClient
 import com.projectcitybuild.core.entities.PluginConfig
 import com.projectcitybuild.core.network.APIClient
 import com.projectcitybuild.core.utilities.PlayerStore
+import com.projectcitybuild.modules.bans.CheckBanStatusAction
 import com.projectcitybuild.modules.ranks.SyncPlayerGroupAction
 import com.projectcitybuild.platforms.spigot.commands.*
 import com.projectcitybuild.platforms.spigot.environment.*
@@ -20,7 +21,7 @@ class SpigotPlatform: JavaPlugin() {
     private val spigotLogger = SpigotLogger(logger = this.logger)
     private val spigotConfig = SpigotConfig(config = this.config)
     private val scheduler = SpigotScheduler(plugin = this)
-    private val apiClient = APIClient(coroutineContext = minecraftDispatcher)
+    private val apiClient = APIClient(plugin = this)
     private val playerStore = PlayerStore()
     private var playerStoreWrapper: SpigotPlayerStore? = null
     private var permissionsManager: PermissionsManager? = null
@@ -44,6 +45,10 @@ class SpigotPlatform: JavaPlugin() {
                 spigotConfig,
                 spigotLogger
         )
+    }
+
+    private val checkBanStatusAction: CheckBanStatusAction by lazy {
+        CheckBanStatusAction(apiRequestFactory, apiClient)
     }
 
     override fun onEnable() {
@@ -77,7 +82,7 @@ class SpigotPlatform: JavaPlugin() {
         arrayOf(
                 BanCommand(scheduler, apiRequestFactory),
                 UnbanCommand(scheduler, apiRequestFactory),
-                CheckBanCommand(scheduler, apiRequestFactory),
+                CheckBanCommand(scheduler, apiRequestFactory, apiClient, checkBanStatusAction),
                 MuteCommand(playerStore),
                 UnmuteCommand(playerStore),
                 MaintenanceCommand(),
