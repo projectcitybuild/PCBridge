@@ -34,6 +34,7 @@ class SpigotCommandDelegate constructor(
                     catch (error: Exception) {
                         sender.sendMessage("An internal error occurred performing your command")
                         error.localizedMessage.let { message -> logger.fatal(message) }
+                        error.printStackTrace()
                         true
                     }
                 }
