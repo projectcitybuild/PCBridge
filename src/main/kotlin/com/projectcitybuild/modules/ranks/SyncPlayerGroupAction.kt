@@ -6,8 +6,11 @@ import com.projectcitybuild.core.entities.Failure
 import com.projectcitybuild.core.entities.PluginConfig
 import com.projectcitybuild.core.entities.Success
 import com.projectcitybuild.core.entities.Result
+import com.projectcitybuild.core.entities.models.ApiError
+import com.projectcitybuild.core.entities.models.Group
 import com.projectcitybuild.core.network.APIClient
 import com.projectcitybuild.core.network.APIRequestFactory
+import com.projectcitybuild.core.network.APIResult
 import com.projectcitybuild.platforms.spigot.environment.PermissionsManager
 import java.util.*
 
@@ -18,21 +21,39 @@ class SyncPlayerGroupAction(
         private val config: ConfigProvider,
         private val logger: LoggerProvider
 ) {
-    suspend fun execute(playerUUID: UUID): Result<Unit, Unit> {
-        val groupsResult = GetGroupsForUUIDAction(apiRequestFactory, apiClient)
-                .execute(playerId = playerUUID)
+    sealed class FailReason {
+        class HTTPError(error: ApiError?): FailReason()
+        object NetworkError: FailReason()
+        object AccountNotLinked: FailReason()
+        object PermissionUserNotFound: FailReason()
+    }
 
-        val groupsForPlayer = if (groupsResult is Success) groupsResult.value else listOf()
+    suspend fun execute(playerUUID: UUID): Result<Unit, FailReason> {
+        val authAPI = apiRequestFactory.pcb.authApi
+        val response = apiClient.execute { authAPI.getUserGroups(uuid = playerUUID.toString()) }
+
+        var groups: List<Group>
+
+        when (response) {
+            is APIResult.Success -> groups = response.value.data?.groups ?: listOf()
+            is APIResult.NetworkError -> return Failure(FailReason.NetworkError)
+            is APIResult.HTTPError -> {
+                if (response.error?.id == "account_not_linked") {
+                    return Failure(FailReason.AccountNotLinked)
+                }
+                return Failure(FailReason.HTTPError(response.error))
+            }
+        }
 
         val user = permissionsManager.getUser(playerUUID)
         if (user == null) {
             logger.warning("Could not load user from permissions manager (UUID: ${playerUUID})")
-            return Failure(Unit)
+            return Failure(FailReason.PermissionUserNotFound)
         }
 
         user.removeAllGroups()
 
-        if (groupsForPlayer.isEmpty()) {
+        if (groups.isEmpty()) {
             val guestGroupName = config.get(PluginConfig.GROUPS.GUEST)
             val guestGroup = permissionsManager.getGroup(guestGroupName)
             user.addGroup(guestGroup)
@@ -41,7 +62,7 @@ class SyncPlayerGroupAction(
             return Success(Unit)
         }
 
-        groupsForPlayer.forEach { apiGroup ->
+        groups.forEach { apiGroup ->
             if (apiGroup.minecraftName != null) {
                 logger.info("Assigning to ${apiGroup.minecraftName} group")
                 val group = permissionsManager.getGroup(apiGroup.minecraftName)

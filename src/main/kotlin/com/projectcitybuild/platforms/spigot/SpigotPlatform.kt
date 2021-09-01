@@ -86,7 +86,7 @@ class SpigotPlatform: JavaPlugin() {
                 MuteCommand(playerStore),
                 UnmuteCommand(playerStore),
                 MaintenanceCommand(),
-                SyncCommand(scheduler, permissionsManager!!, apiRequestFactory, apiClient, spigotLogger),
+                SyncCommand(scheduler, permissionsManager!!, apiRequestFactory, apiClient, spigotLogger, syncPlayerGroupAction),
                 BoxCommand(scheduler, apiRequestFactory)
         )
         .forEach { command -> delegate.register(command) }
