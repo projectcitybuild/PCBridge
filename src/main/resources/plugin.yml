@@ -32,6 +32,9 @@ commands:
    sync:
       description: Syncs your Minecraft account rank with your PCB account
       usage: /sync [finish]
+   syncother:
+     description: Syncs the given Minecraft account rank with their PCB account
+     usage: /syncother [name]
    box:
       description: Views available mystery boxes for donors, or redeems them once per day
       usage: /box [redeem]
