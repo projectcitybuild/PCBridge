@@ -22,6 +22,6 @@ interface Commandable {
     // Permission node required to execute the command
     val permission: String
 
-    fun execute(input: CommandInput): CommandResult
+    suspend fun execute(input: CommandInput): CommandResult
 }
 

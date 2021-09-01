@@ -2,6 +2,7 @@ package com.projectcitybuild.modules.ranks
 
 import com.projectcitybuild.core.entities.Failure
 import com.projectcitybuild.core.entities.Result
+import com.projectcitybuild.core.entities.Success
 import com.projectcitybuild.core.entities.models.ApiError
 import com.projectcitybuild.core.entities.models.Group
 import com.projectcitybuild.core.network.APIClient
@@ -17,7 +18,6 @@ class GetGroupsForUUIDAction(
         class NetworkError: FailReason()
         class HTTPError(error: ApiError?): FailReason()
         class AccountNotLinked: FailReason()
-        class Unhandled: FailReason()
     }
 
     suspend fun execute(playerId: UUID): Result<List<Group>, FailReason> {
@@ -25,6 +25,7 @@ class GetGroupsForUUIDAction(
         val response = apiClient.execute { authAPI.getUserGroups(uuid = playerId.toString()) }
 
         return when (response) {
+            is APIResult.Success -> Success(response.value.data?.groups ?: listOf())
             is APIResult.NetworkError -> Failure(FailReason.NetworkError())
             is APIResult.HTTPError -> {
                 if (response.error?.id == "account_not_linked") {
@@ -32,7 +33,6 @@ class GetGroupsForUUIDAction(
                 }
                 Failure(FailReason.HTTPError(response.error))
             }
-            else -> Failure(FailReason.Unhandled())
         }
     }
 }

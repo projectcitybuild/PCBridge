@@ -29,6 +29,12 @@ sealed class PluginConfig {
     sealed class GROUPS {
 
         companion object {
+            val GUEST: Pair<String>
+                get() = Pair(
+                        key = "groups.guest",
+                        defaultValue = "guest"
+                )
+
             val BUILD_PRIORITY: Pair<ArrayList<String>>
                 get() = Pair(
                     key = "groups.build_priority",

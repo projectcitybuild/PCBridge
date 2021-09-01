@@ -8,6 +8,7 @@ import com.projectcitybuild.core.network.pcb.client.PCBClient
 import com.projectcitybuild.core.entities.PluginConfig
 import com.projectcitybuild.core.network.APIClient
 import com.projectcitybuild.core.utilities.PlayerStore
+import com.projectcitybuild.modules.ranks.SyncPlayerGroupAction
 import com.projectcitybuild.platforms.spigot.commands.*
 import com.projectcitybuild.platforms.spigot.environment.*
 import com.projectcitybuild.platforms.spigot.listeners.*
@@ -34,6 +35,16 @@ class SpigotPlatform: JavaPlugin() {
             }
             return _apiRequestFactory!!
         }
+
+    private val syncPlayerGroupAction: SyncPlayerGroupAction by lazy {
+        SyncPlayerGroupAction(
+                permissionsManager!!,
+                apiRequestFactory,
+                apiClient,
+                spigotConfig,
+                spigotLogger
+        )
+    }
 
     override fun onEnable() {
         createDefaultConfig()
@@ -81,7 +92,7 @@ class SpigotPlatform: JavaPlugin() {
                 BanConnectionListener(apiRequestFactory),
                 ChatListener(spigotConfig, playerStore, permissionsManager!!, spigotLogger),
                 MaintenanceConnectListener(spigotConfig),
-                SyncRankLoginListener(scheduler, permissionsManager!!, apiRequestFactory, apiClient, spigotLogger)
+                SyncRankLoginListener(syncPlayerGroupAction)
         )
         .forEach { listener -> delegate.register(listener) }
     }
@@ -90,6 +101,7 @@ class SpigotPlatform: JavaPlugin() {
         config.addDefault(PluginConfig.SETTINGS.MAINTENANCE_MODE)
         config.addDefault(PluginConfig.API.KEY)
         config.addDefault(PluginConfig.API.BASE_URL)
+        config.addDefault(PluginConfig.GROUPS.GUEST)
         config.addDefault(PluginConfig.GROUPS.TRUST_PRIORITY)
         config.addDefault(PluginConfig.GROUPS.BUILD_PRIORITY)
         config.addDefault(PluginConfig.GROUPS.DONOR_PRIORITY)
