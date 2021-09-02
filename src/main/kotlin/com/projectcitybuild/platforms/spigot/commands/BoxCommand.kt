@@ -52,12 +52,13 @@ class BoxCommand(
                     "${ChatColor.GRAY}Data fetch failed. Please contact staff"
                 }
                 else if (data.secondsUntilRedeemable != null) {
-                    val hours = data.secondsUntilRedeemable / 60
+                    val hours = data.secondsUntilRedeemable / 60 / 60
                     if (hours > 0) {
-                        val seconds = data.secondsUntilRedeemable % 60
-                        "${ChatColor.GRAY}You can redeem more boxes in $hours hours, $seconds seconds"
+                        "${ChatColor.GRAY}You can redeem more boxes $hours hours"
                     } else {
-                        "${ChatColor.GRAY}You can redeem more boxes ${data.secondsUntilRedeemable} seconds"
+                        val minutes = data.secondsUntilRedeemable / 60
+                        val seconds = data.secondsUntilRedeemable % 60
+                        "${ChatColor.GRAY}You can redeem more boxes in $minutes minutes, $seconds seconds"
                     }
                 }
                 else if (data.redeemableBoxes == null) {

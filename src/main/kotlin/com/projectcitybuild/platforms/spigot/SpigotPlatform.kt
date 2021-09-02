@@ -96,7 +96,8 @@ class SpigotPlatform: JavaPlugin() {
                 BanConnectionListener(apiRequestFactory, apiClient),
                 ChatListener(spigotConfig, playerStore, permissionsManager!!, spigotLogger),
                 MaintenanceConnectListener(spigotConfig),
-                SyncRankLoginListener(syncPlayerGroupAction)
+                SyncRankLoginListener(syncPlayerGroupAction),
+                AvailableBoxListener(apiRequestFactory, apiClient)
         )
         .forEach { listener -> delegate.register(listener) }
     }
