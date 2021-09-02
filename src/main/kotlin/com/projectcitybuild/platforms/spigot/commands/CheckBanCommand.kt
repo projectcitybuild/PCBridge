@@ -11,7 +11,6 @@ import com.projectcitybuild.core.entities.Success
 import com.projectcitybuild.core.network.APIClient
 import com.projectcitybuild.platforms.spigot.extensions.getOfflinePlayer
 import org.bukkit.ChatColor
-import org.bukkit.Server
 import java.text.SimpleDateFormat
 import java.util.*
 

@@ -15,7 +15,8 @@ interface DonorApiInterface {
         @Path(value = "uuid") uuid: String
     ) : ApiResponse<AvailableLootBoxes>
 
-    @FormUrlEncoded
-    @POST("minecraft/{uuid}}/boxes/redeem")
-    suspend fun redeemAvailableBoxes() : ApiResponse<LootBoxRedememption>
+    @POST("minecraft/{uuid}/boxes/redeem")
+    suspend fun redeemAvailableBoxes(
+        @Path(value = "uuid") uuid: String
+    ) : ApiResponse<LootBoxRedememption>
 }
