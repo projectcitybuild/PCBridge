@@ -1,20 +1,19 @@
 package com.projectcitybuild.platforms.spigot.listeners
 
-import com.projectcitybuild.core.contracts.EnvironmentProvider
-import com.projectcitybuild.core.contracts.Listenable
+import com.projectcitybuild.core.contracts.ConfigProvider
 import com.projectcitybuild.core.entities.PluginConfig
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
+import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerLoginEvent
 
 class MaintenanceConnectListener(
-        private val environment: EnvironmentProvider
-) : Listenable<PlayerLoginEvent> {
+        private val config: ConfigProvider
+): Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
-    override fun observe(event: PlayerLoginEvent) {
-        val isMaintenanceMode = environment.get(PluginConfig.Settings.MAINTENANCE_MODE()) as? Boolean
-            ?: throw Exception("Cannot cast MAINTENANCE_MODE value to Boolean")
+    fun onPlayerLoginEvent(event: PlayerLoginEvent) {
+        val isMaintenanceMode = config.get(PluginConfig.SETTINGS.MAINTENANCE_MODE)
 
         if (event.player.hasPermission("pcbridge.maintenance.bypass")) {
             return

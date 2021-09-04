@@ -1,6 +1,6 @@
 package com.projectcitybuild.core.entities
 
-sealed class Result<T> {
-    data class Success<T>(val value: T) : Result<T>()
-    data class Failure<T>(val error: Exception) : Result<T>()
-}
+sealed class Result<out Success, out Failure>
+
+data class Success<out Success>(val value: Success) : Result<Success, Nothing>()
+data class Failure<out Failure>(val reason: Failure) : Result<Nothing, Failure>()

@@ -4,7 +4,7 @@ import org.bukkit.command.CommandSender
 
 data class CommandInput(
         val sender: CommandSender,
-        val args: Array<String>,
+        val args: Array<out String>,
         val isConsole: Boolean
 ) {
 

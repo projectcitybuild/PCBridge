@@ -1,6 +1,7 @@
 package com.projectcitybuild.core.contracts
 
 import com.projectcitybuild.core.entities.CommandInput
+import com.projectcitybuild.core.entities.CommandResult
 
 /**
  * Represents a Command that a user can use to perform
@@ -21,10 +22,6 @@ interface Commandable {
     // Permission node required to execute the command
     val permission: String
 
-    fun execute(input: CommandInput): CommandResult
+    suspend fun execute(input: CommandInput): CommandResult
 }
 
-enum class CommandResult {
-    INVALID_INPUT,
-    EXECUTED,
-}

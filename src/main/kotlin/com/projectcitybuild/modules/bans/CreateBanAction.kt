@@ -1,49 +1,47 @@
 package com.projectcitybuild.modules.bans
 
-import com.projectcitybuild.core.network.NetworkClients
-import com.projectcitybuild.core.contracts.EnvironmentProvider
+import com.projectcitybuild.core.entities.Failure
+import com.projectcitybuild.core.entities.models.ApiError
+import com.projectcitybuild.core.entities.Result
+import com.projectcitybuild.core.entities.Success
+import com.projectcitybuild.core.network.APIClient
+import com.projectcitybuild.core.network.APIRequestFactory
+import com.projectcitybuild.core.network.APIResult
 import java.util.*
 
 class CreateBanAction(
-        private val networkClients: NetworkClients
+        private val apiRequestFactory: APIRequestFactory,
+        private val apiClient: APIClient
 ) {
-    sealed class Result {
-        class SUCCESS : Result()
-        class FAILED(val reason: Failure) : Result()
+    sealed class FailReason {
+        class HTTPError(error: ApiError?): FailReason()
+        object NetworkError: FailReason()
+        object PlayerAlreadyBanned: FailReason()
     }
 
-    enum class Failure {
-        PLAYER_ALREADY_BANNED,
-        DESERIALIZE_FAILED,
-        BAD_REQUEST,
-    }
-
-    fun execute(playerId: UUID, playerName: String, staffId: UUID?, reason: String?) : Result {
-        val banApi = networkClients.pcb.banApi
-
-        val request = banApi.storeBan(
+    suspend fun execute(playerId: UUID, playerName: String, staffId: UUID?, reason: String?): Result<Unit, FailReason> {
+        val banApi = apiRequestFactory.pcb.banApi
+        val response = apiClient.execute {
+            banApi.storeBan(
                 playerId = playerId.toString(),
                 playerIdType = "minecraft_uuid",
                 playerAlias = playerName,
                 staffId = staffId.toString(),
                 staffIdType = "minecraft_uuid",
-                reason = reason,
+                reason = reason ?: "",
                 expiresAt = null,
                 isGlobalBan = 1
-        )
-        val response = request.execute()
-        val json = response.body()
-
-        if (json?.error != null) {
-            when (json.error.id) {
-                "player_already_banned" -> return Result.FAILED(reason = Failure.PLAYER_ALREADY_BANNED)
-                "bad_input" -> return Result.FAILED(reason = Failure.BAD_REQUEST)
+            )
+        }
+        return when(response) {
+            is APIResult.HTTPError -> {
+                if (response.error?.id == "player_already_banned") {
+                    return Failure(FailReason.PlayerAlreadyBanned)
+                }
+                return Failure(FailReason.HTTPError(response.error))
             }
+            is APIResult.NetworkError -> Failure(FailReason.NetworkError)
+            is APIResult.Success -> Success(Unit)
         }
-        if (json?.data == null) {
-            return Result.FAILED(reason = Failure.DESERIALIZE_FAILED)
-        }
-
-        return Result.SUCCESS()
     }
 }
