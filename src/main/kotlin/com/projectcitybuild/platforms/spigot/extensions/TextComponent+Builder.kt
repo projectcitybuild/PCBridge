@@ -25,23 +25,3 @@ fun TextComponent.add(message: String, config: ((TextComponent) -> Unit)? = null
 fun TextComponent.add(number: Int, config: ((TextComponent) -> Unit)? = null): TextComponent {
     return add(number.toString(), config)
 }
-
-fun TextComponent.addCommand(command: String, message: String? = null, config: ((TextComponent) -> Unit)? = null): TextComponent {
-    this.addExtra(
-        TextComponent(message ?: command).also {
-            it.clickEvent = ClickEvent(ClickEvent.Action.RUN_COMMAND, command)
-            config?.invoke(it)
-        }
-    )
-    return this
-}
-
-fun TextComponent.addCommandSuggestion(command: String, message: String? = null, config: ((TextComponent) -> Unit)? = null): TextComponent {
-    this.addExtra(
-        TextComponent(message ?: command).also {
-            it.clickEvent = ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, command)
-            config?.invoke(it)
-        }
-    )
-    return this
-}

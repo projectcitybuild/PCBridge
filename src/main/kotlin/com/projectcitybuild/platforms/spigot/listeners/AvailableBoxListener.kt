@@ -4,8 +4,9 @@ import com.projectcitybuild.core.network.APIClient
 import com.projectcitybuild.core.network.APIRequestFactory
 import com.projectcitybuild.core.network.APIResult
 import com.projectcitybuild.platforms.spigot.extensions.add
-import com.projectcitybuild.platforms.spigot.extensions.addCommandSuggestion
 import net.md_5.bungee.api.ChatColor
+import net.md_5.bungee.api.chat.ClickEvent
+import net.md_5.bungee.api.chat.HoverEvent
 import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
@@ -38,9 +39,11 @@ class AvailableBoxListener(
                         .add(redeemableBoxes) { it.color = ChatColor.GREEN }
                         .add(" " + if (redeemableBoxes == 1) "box" else "boxes") { it.color = ChatColor.GRAY }
                         .add(" that can be redeemed today. Use ") { it.color = ChatColor.GRAY }
-                        .addCommandSuggestion( "/box redeem") {
+                        .add( "/box redeem") {
                             it.isBold = true
                             it.color = ChatColor.GREEN
+                            it.clickEvent = ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/box redeem")
+                            it.hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT, arrayOf(TextComponent("Click to type this command")))
                         }
                 )
             }
