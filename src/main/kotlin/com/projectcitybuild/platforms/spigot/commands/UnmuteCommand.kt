@@ -5,6 +5,7 @@ import com.projectcitybuild.platforms.spigot.extensions.getOnlinePlayer
 import com.projectcitybuild.core.contracts.Commandable
 import com.projectcitybuild.core.entities.CommandInput
 import com.projectcitybuild.core.utilities.PlayerStore
+import com.projectcitybuild.platforms.spigot.environment.send
 
 class UnmuteCommand(
         private val playerStore: PlayerStore
@@ -19,7 +20,7 @@ class UnmuteCommand(
         val targetPlayerName = input.args.first()
         val targetPlayer = input.sender.server?.getOnlinePlayer(name = targetPlayerName)
         if (targetPlayer == null) {
-            input.sender.sendMessage("Player $targetPlayerName not found")
+            input.sender.send().error("Player $targetPlayerName not found")
             return CommandResult.INVALID_INPUT
         }
 
@@ -27,14 +28,14 @@ class UnmuteCommand(
             ?: throw Exception("Player $targetPlayerName missing from cache")
 
         if (!player.isMuted) {
-            input.sender.sendMessage("$targetPlayerName is not muted")
+            input.sender.send().error("$targetPlayerName is not muted")
             return CommandResult.INVALID_INPUT
         }
 
         player.isMuted = false
         playerStore.put(player.uuid, player)
 
-        input.sender.sendMessage("${targetPlayer.name} has been unmuted")
+        input.sender.send().success("${targetPlayer.name} has been unmuted")
         targetPlayer.sendMessage("You have been unmuted by ${input.sender.name}")
 
         return CommandResult.EXECUTED

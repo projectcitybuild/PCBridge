@@ -2,7 +2,6 @@ package com.projectcitybuild.core.network
 
 import com.github.shynixn.mccoroutine.minecraftDispatcher
 import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import com.projectcitybuild.core.contracts.LoggerProvider
 import com.projectcitybuild.core.entities.models.ApiError
 import kotlinx.coroutines.withContext

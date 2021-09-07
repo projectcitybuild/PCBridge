@@ -87,33 +87,40 @@ class BoxCommand(
         val donorAPI = apiRequestFactory.pcb.donorApi
         val response = apiClient.execute { donorAPI.redeemAvailableBoxes(player.uniqueId.toString()) }
 
-        val message = when (response) {
+        when (response) {
             is APIResult.HTTPError -> {
-                when (response.error?.id) {
-                    "player_not_found" -> "${ChatColor.GRAY}You have not linked your account. Please run /sync first"
-                    "player_not_linked" -> "${ChatColor.GRAY}You have not linked your account. Please run /sync first"
-                    "no_donor_perks" -> "${ChatColor.GRAY}You do not have any boxes that can be redeemed"
-                    "no_redeemable_boxes" -> "${ChatColor.GRAY}You do not have any boxes that can be redeemed"
-                    else -> "${ChatColor.GRAY}No boxes to be redeemed"
-                }
+                player.send().error(
+                    when (response.error?.id) {
+                        "player_not_found" -> "You have not linked your account. Please run /sync first"
+                        "player_not_linked" -> "}You have not linked your account. Please run /sync first"
+                        "no_donor_perks" -> "You do not have any boxes that can be redeemed"
+                        "no_redeemable_boxes" -> "You do not have any boxes that can be redeemed"
+                        else -> "No boxes to be redeemed"
+                    }
+                )
             }
-            is APIResult.NetworkError -> "Error: Failed to contact server"
+            is APIResult.NetworkError ->
+                player.send().error("Failed to contact auth server. Please try again later")
+
             is APIResult.Success -> {
                 val data = response.value.data
                 if (data == null) {
-                    "${ChatColor.GRAY}Data fetch failed. Please contact staff"
+                    player.send().error("Data fetch failed. Please contact staff")
                 }
                 else if (data.secondsUntilRedeemable != null) {
                     val hours = data.secondsUntilRedeemable / 60
-                    if (hours > 0) {
-                        val seconds = data.secondsUntilRedeemable % 60
-                        "${ChatColor.GRAY}You cannot redeem boxes for another $hours hours, $seconds seconds"
-                    } else {
-                        "${ChatColor.GRAY}You cannot redeem boxes for another ${data.secondsUntilRedeemable} seconds"
-                    }
+
+                    player.send().error(
+                        if (hours > 0) {
+                            val seconds = data.secondsUntilRedeemable % 60
+                            "${ChatColor.GRAY}You cannot redeem boxes for another $hours hours, $seconds seconds"
+                        } else {
+                            "${ChatColor.GRAY}You cannot redeem boxes for another ${data.secondsUntilRedeemable} seconds"
+                        }
+                    )
                 }
                 else if (data.redeemedBoxes == null) {
-                    "${ChatColor.GRAY}An internal error occurred. Please contact staff"
+                    player.send().error("An internal error occurred. Please contact staff")
                 }
                 else {
                     val totalRedeemableBoxes = data.redeemedBoxes.sumOf { it.quantity }
@@ -126,14 +133,15 @@ class BoxCommand(
                         logger.info("${player.name} redeemed {$box.quantity} ${box.name} boxes")
                     }
 
-                    if (totalRedeemableBoxes == 1) {
-                        "1 box redeemed"
-                    } else {
-                        "${ChatColor.GREEN}$totalRedeemableBoxes boxes redeemed"
-                    }
+                    player.send().success(
+                        if (totalRedeemableBoxes == 1) {
+                            "1 box redeemed"
+                        } else {
+                            "$totalRedeemableBoxes boxes redeemed"
+                        }
+                    )
                 }
             }
         }
-        player.sendMessage(message)
     }
 }

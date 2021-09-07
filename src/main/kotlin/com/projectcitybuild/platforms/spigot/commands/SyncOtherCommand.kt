@@ -6,6 +6,7 @@ import com.projectcitybuild.core.entities.CommandInput
 import com.projectcitybuild.core.entities.Failure
 import com.projectcitybuild.core.entities.Success
 import com.projectcitybuild.modules.ranks.SyncPlayerGroupAction
+import com.projectcitybuild.platforms.spigot.environment.send
 import com.projectcitybuild.platforms.spigot.extensions.getOnlinePlayer
 import net.md_5.bungee.api.ChatColor
 
@@ -27,7 +28,7 @@ class SyncOtherCommand(
         val playerName = input.args.first()
         val player = input.sender.server.getOnlinePlayer(playerName)
         if (player == null) {
-            input.sender.sendMessage("$playerName is not online")
+            input.sender.send().error("$playerName is not online")
             return CommandResult.EXECUTED
         }
 
@@ -35,16 +36,18 @@ class SyncOtherCommand(
 
         when (result) {
             is Success -> {
-                input.sender.sendMessage("${ChatColor.GREEN}$playerName has been synchronized")
+                input.sender.send().success("${ChatColor.GREEN}$playerName has been synchronized")
                 player.sendMessage("${ChatColor.GREEN}Your account groups have been synchronized")
             }
             is Failure -> {
-                when (result.reason) {
-                    is SyncPlayerGroupAction.FailReason.AccountNotLinked ->
-                        input.sender.sendMessage("${ChatColor.RED}Sync failed: Player does not have a linked PCB account")
-
-                    else -> input.sender.sendMessage("${ChatColor.RED}Failed to contact auth server")
-                }
+                input.sender.send().error(
+                    when (result.reason) {
+                        is SyncPlayerGroupAction.FailReason.AccountNotLinked -> "Sync failed: Player does not have a linked PCB account"
+                        is SyncPlayerGroupAction.FailReason.NetworkError -> "Failed to contact auth server. Please try again later"
+                        is SyncPlayerGroupAction.FailReason.HTTPError -> "Sync failed. Please contact an admin"
+                        is SyncPlayerGroupAction.FailReason.PermissionUserNotFound -> "Permission user not found. Check that the user exists in the Permission plugin"
+                    }
+                )
             }
         }
         return CommandResult.EXECUTED

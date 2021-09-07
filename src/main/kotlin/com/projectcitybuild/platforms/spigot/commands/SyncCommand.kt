@@ -9,6 +9,7 @@ import com.projectcitybuild.core.entities.Success
 import com.projectcitybuild.core.network.APIClient
 import com.projectcitybuild.core.network.APIResult
 import com.projectcitybuild.modules.ranks.SyncPlayerGroupAction
+import com.projectcitybuild.platforms.spigot.environment.send
 import net.md_5.bungee.api.ChatColor
 import org.bukkit.entity.Player
 
@@ -46,15 +47,15 @@ class SyncCommand(
                 if (error?.id == "already_authenticated") {
                     syncGroups(player)
                 } else {
-                    player.sendMessage("Error: Failed to generate verification URL")
+                    player.send().error("Failed to generate verification URL")
                 }
             }
             is APIResult.NetworkError -> {
-                player.sendMessage("Error: Failed to contact auth server. Please try again later")
+                player.send().error("Failed to contact auth server. Please try again later")
             }
             is APIResult.Success -> {
                 if (response.value.data == null) {
-                    player.sendMessage("Error: Failed to fetch verification URL")
+                    player.send().error("Failed to generate verification URL")
                 } else {
                     player.sendMessage("To link your account, please click the link and login if required:§9 ${response.value.data?.url}")
                 }
@@ -68,13 +69,13 @@ class SyncCommand(
         val result = syncPlayerGroupAction.execute(player.uniqueId)
 
         when (result) {
-            is Success -> player.sendMessage("${ChatColor.GREEN}Account successfully linked. Your rank will be automatically synchronized with the PCB network")
+            is Success -> player.send().success("Account linked! Your rank will be automatically synchronized with the PCB network")
             is Failure -> {
                 when (result.reason) {
                     is SyncPlayerGroupAction.FailReason.AccountNotLinked ->
-                        player.sendMessage("${ChatColor.RED}Sync failed. Did you finish registering your account?")
+                        player.send().error("Sync failed. Did you finish registering your account?")
 
-                    else -> player.sendMessage("${ChatColor.RED}Failed to contact auth server. Please contact staff")
+                    else -> player.send().error("Failed to contact auth server. Please contact staff")
                 }
             }
         }
