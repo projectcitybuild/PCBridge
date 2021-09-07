@@ -36,49 +36,57 @@ class BoxCommand(
         val donorAPI = apiRequestFactory.pcb.donorApi
         val response = apiClient.execute { donorAPI.getAvailableBoxes(player.uniqueId.toString()) }
 
-        val message = when (response) {
+        when (response) {
             is APIResult.HTTPError -> {
-                when (response.error?.id) {
-                    "player_not_found" -> "${ChatColor.GRAY}You have not linked your account. Please run /sync first"
-                    "player_not_linked" -> "${ChatColor.GRAY}You have not linked your account. Please run /sync first"
-                    "no_donor_perks" -> "${ChatColor.GRAY}You do not have any boxes that can be redeemed"
-                    "no_redeemable_boxes" -> "${ChatColor.GRAY}You do not have any boxes that can be redeemed"
-                    else -> "${ChatColor.GRAY}No boxes to be redeemed"
-                }
+                player.send().error(
+                    when (response.error?.id) {
+                        "player_not_found" -> "You have not linked your account. Please run /sync first"
+                        "player_not_linked" -> "You have not linked your account. Please run /sync first"
+                        "no_donor_perks" -> "}You do not have any boxes that can be redeemed"
+                        "no_redeemable_boxes" -> "You do not have any boxes that can be redeemed"
+                        else -> "No boxes to be redeemed"
+                    }
+                )
             }
-            is APIResult.NetworkError -> "Error: Failed to contact server"
+            is APIResult.NetworkError ->
+                player.send().error("Failed to contact server")
+
             is APIResult.Success -> {
                 val data = response.value.data
                 if (data == null) {
-                    "${ChatColor.GRAY}Data fetch failed. Please contact staff"
+                    player.send().error("Data fetch failed. Please contact staff")
                 }
                 else if (data.secondsUntilRedeemable != null) {
                     val hours = data.secondsUntilRedeemable / 60 / 60
-                    if (hours > 0) {
-                        "${ChatColor.GRAY}You can redeem more boxes $hours hours"
-                    } else {
-                        val minutes = data.secondsUntilRedeemable / 60
-                        val seconds = data.secondsUntilRedeemable % 60
-                        "${ChatColor.GRAY}You can redeem more boxes in $minutes minutes, $seconds seconds"
-                    }
+
+                    player.send().info(
+                        if (hours > 0) {
+                            "You can redeem more boxes in $hours hours"
+                        } else {
+                            val minutes = data.secondsUntilRedeemable / 60
+                            val seconds = data.secondsUntilRedeemable % 60
+                            "You can redeem more boxes in $minutes minutes, $seconds seconds"
+                        }
+                    )
                 }
                 else if (data.redeemableBoxes == null) {
-                    "${ChatColor.GRAY}An internal error occurred. Please contact staff"
+                    player.send().error("An internal error occurred. Please contact staff")
                 }
                 else {
                     val totalRedeemableBoxes = data.redeemableBoxes
                         .map { it.quantity }
                         .reduce { total, quantity -> total + quantity }
 
-                    if (totalRedeemableBoxes == 1) {
-                        "${ChatColor.GREEN}You have 1 box that can be redeemed! Use ${ChatColor.BOLD}/box redeem"
-                    } else {
-                        "${ChatColor.GREEN}You have $totalRedeemableBoxes boxes that can be redeemed! Use ${ChatColor.BOLD}/box redeem"
-                    }
+                    player.send().info(
+                        if (totalRedeemableBoxes == 1) {
+                            "You have 1 box that can be redeemed! Use ${ChatColor.BOLD}/box redeem"
+                        } else {
+                            "You have $totalRedeemableBoxes boxes that can be redeemed! Use ${ChatColor.BOLD}/box redeem"
+                        }
+                    )
                 }
             }
         }
-        player.sendMessage(message)
     }
 
     private suspend fun redeemAvailableBoxes(input: CommandInput) {
@@ -108,14 +116,15 @@ class BoxCommand(
                     player.send().error("Data fetch failed. Please contact staff")
                 }
                 else if (data.secondsUntilRedeemable != null) {
-                    val hours = data.secondsUntilRedeemable / 60
+                    val hours = data.secondsUntilRedeemable / 60 / 60
 
                     player.send().error(
                         if (hours > 0) {
-                            val seconds = data.secondsUntilRedeemable % 60
-                            "${ChatColor.GRAY}You cannot redeem boxes for another $hours hours, $seconds seconds"
+                            "You can redeem more boxes in $hours hours"
                         } else {
-                            "${ChatColor.GRAY}You cannot redeem boxes for another ${data.secondsUntilRedeemable} seconds"
+                            val minutes = data.secondsUntilRedeemable / 60
+                            val seconds = data.secondsUntilRedeemable % 60
+                            "You can redeem more boxes in $minutes minutes, $seconds seconds"
                         }
                     )
                 }

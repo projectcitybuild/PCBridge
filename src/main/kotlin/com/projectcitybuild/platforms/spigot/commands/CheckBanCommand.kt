@@ -45,7 +45,7 @@ class CheckBanCommand(
             is Success -> {
                 val ban = currentBan.value
                 if (ban == null) {
-                    input.sender.sendMessage("$targetPlayerName is not currently banned")
+                    input.sender.send().info("$targetPlayerName is not currently banned")
                 } else {
                     val banDate = ban.createdAt?.let {
                         val date = Date(it * 1000)
@@ -58,7 +58,7 @@ class CheckBanCommand(
                         format.format(date)
                     } ?: "Never"
 
-                    input.sender.sendMessage("""
+                    input.sender.send().info("""
                             #${ChatColor.RED}$targetPlayerName is currently banned.
                             #${ChatColor.GRAY}---
                             #${ChatColor.GRAY}Reason: ${ChatColor.WHITE}${ban.reason}

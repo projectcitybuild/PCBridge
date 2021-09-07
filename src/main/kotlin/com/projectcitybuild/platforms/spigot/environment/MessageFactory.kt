@@ -47,6 +47,26 @@ class MessageFactory(
             )
         })
     }
+
+    fun info(message: String) {
+        player.spigot().sendMessage(TextComponent().also {
+            it.addExtra(
+                TextComponent("Info").also {
+                    it.color = ChatColor.GRAY
+                }
+            )
+            it.addExtra(
+                TextComponent(" » ").also {
+                    it.color = ChatColor.GOLD
+                }
+            )
+            it.addExtra(
+                TextComponent("$message").also {
+                    it.color = ChatColor.WHITE
+                }
+            )
+        })
+    }
 }
 
 fun Player.send(): MessageFactory {
