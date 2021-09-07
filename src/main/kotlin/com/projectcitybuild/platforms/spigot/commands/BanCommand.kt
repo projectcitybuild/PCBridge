@@ -58,7 +58,7 @@ class BanCommand(
             }
             is Success -> {
                 input.sender.server.broadcast(
-                    "${ChatColor.GRAY}${input.args.first()} has been banned by ${input.sender.name}: ${reason ?: "No reason given"}",
+                    "${ChatColor.GRAY}${input.args.first()} has been banned by ${input.sender.name}: ${reason?.isNotEmpty() ?: "No reason given"}",
                     "*"
                 )
                 val player = input.sender.server.onlinePlayers.firstOrNull { player ->

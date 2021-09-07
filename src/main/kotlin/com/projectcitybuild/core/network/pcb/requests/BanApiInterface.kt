@@ -15,7 +15,7 @@ interface BanApiInterface {
             @Field("player_alias") playerAlias: String,
             @Field("staff_id") staffId: String?,
             @Field("staff_id_type") staffIdType: String,
-            @Field("reason") reason: String?,
+            @Field("reason") reason: String? = null,
             @Field("expires_at") expiresAt: Long?,
             @Field("is_global_ban") isGlobalBan: Int
     ) : ApiResponse<GameBan>
