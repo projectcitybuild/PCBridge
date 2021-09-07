@@ -31,9 +31,9 @@ class AvailableBoxListener(
                 val redeemableBoxes = data.redeemableBoxes.sumOf { it.quantity }
 
                 val message = if (redeemableBoxes == 1) {
-                    "${ChatColor.GRAY}You have 1 box that can be redeemed today. Use ${ChatColor.BOLD}/box redeem"
+                    "${ChatColor.GRAY}You have ${ChatColor.GREEN}1${ChatColor.GRAY} box that can be redeemed today. Use ${ChatColor.BOLD}/box redeem"
                 } else {
-                    "${ChatColor.GRAY}You have ${redeemableBoxes} boxes that can be redeemed today. Use ${ChatColor.BOLD}/box redeem"
+                    "${ChatColor.GRAY}You have ${ChatColor.GREEN}$redeemableBoxes${ChatColor.GRAY} boxes that can be redeemed today. Use ${ChatColor.BOLD}/box redeem"
                 }
                 event.player.sendMessage(message)
             }

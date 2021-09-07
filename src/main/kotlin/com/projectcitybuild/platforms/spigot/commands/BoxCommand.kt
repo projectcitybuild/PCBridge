@@ -126,7 +126,11 @@ class BoxCommand(
                         logger.info("${player.name} redeemed {$box.quantity} ${box.name} boxes")
                     }
 
-                    "${ChatColor.GREEN}$totalRedeemableBoxes boxes redeemed"
+                    if (totalRedeemableBoxes == 1) {
+                        "1 box redeemed"
+                    } else {
+                        "${ChatColor.GREEN}$totalRedeemableBoxes boxes redeemed"
+                    }
                 }
             }
         }
