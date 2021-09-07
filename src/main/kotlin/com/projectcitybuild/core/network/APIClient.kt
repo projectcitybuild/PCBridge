@@ -2,6 +2,7 @@ package com.projectcitybuild.core.network
 
 import com.github.shynixn.mccoroutine.minecraftDispatcher
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.projectcitybuild.core.contracts.LoggerProvider
 import com.projectcitybuild.core.entities.models.ApiError
 import kotlinx.coroutines.withContext
@@ -20,6 +21,8 @@ class APIClient(
         private val plugin: Plugin,
         private val logger: LoggerProvider
 ) {
+    data class ErrorBody(val error: ApiError)
+
     private fun getCoroutineContext(): CoroutineContext {
         // Fetch instead of injecting, to prevent Coroutines being created
         // before the plugin is ready
@@ -31,8 +34,6 @@ class APIClient(
             try {
                 APIResult.Success(apiCall.invoke())
             } catch (throwable: Throwable) {
-                logger.debug(throwable.toString())
-
                 when (throwable) {
                     is IOException -> APIResult.NetworkError
                     is HttpException -> {
@@ -49,12 +50,8 @@ class APIClient(
     }
 
     private fun convertErrorBody(throwable: HttpException): ApiError? {
-        return try {
-            throwable.response()?.errorBody()?.string()?.let {
-                return Gson().fromJson(it, ApiError::class.java)
-            }
-        } catch (exception: Exception) {
-            null
+        throwable.response()?.errorBody()?.string().let {
+            return Gson().fromJson(it, ErrorBody::class.java).error
         }
     }
 }

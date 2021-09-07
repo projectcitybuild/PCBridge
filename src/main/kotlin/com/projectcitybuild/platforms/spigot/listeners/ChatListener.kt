@@ -16,7 +16,7 @@ import org.bukkit.event.Listener
 import org.bukkit.event.player.AsyncPlayerChatEvent
 
 /**
- * FIXME: Awful hacky, hardcoded stuff in here to save time
+ * FIXME: Awful, hacky stuff in here to save time
  */
 class ChatListener(
         private val config: ConfigProvider,
@@ -40,12 +40,6 @@ class ChatListener(
             throw Exception("Donor group config is empty. Did you forget to set this?")
         }
     }
-
-    data class Group<GroupType>(
-            val group: GroupType,
-            val displayName: String,
-            val hoverName: String
-    )
 
     @EventHandler(priority = EventPriority.HIGHEST)
     fun onAsyncPlayerChatEvent(event: AsyncPlayerChatEvent) {
@@ -171,5 +165,4 @@ class ChatListener(
         // Messages sent to users don't appear in console, so we have to log it manually
         logger.info("<${event.player.displayName}> ${event.message}")
     }
-
 }

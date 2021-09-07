@@ -28,35 +28,35 @@ class SyncCommand(
         }
 
         if (!input.hasArguments) {
-            return beginSyncFlow(input.sender)
+            return generateVerificationURL(input.sender)
         }
         if (input.args.size == 1 && input.args[0] == "finish") {
-            return endSyncFlow(input.sender)
+            return syncGroups(input.sender)
         }
         return CommandResult.INVALID_INPUT
     }
 
-    private suspend fun beginSyncFlow(sender: Player): CommandResult {
+    private suspend fun generateVerificationURL(player: Player): CommandResult {
         val authApi = apiRequestFactory.pcb.authApi
-        val response = apiClient.execute { authApi.getVerificationUrl(uuid = sender.uniqueId.toString()) }
+        val response = apiClient.execute { authApi.getVerificationUrl(uuid = player.uniqueId.toString()) }
 
         when (response) {
             is APIResult.HTTPError -> {
                 val error = response.error
                 if (error?.id == "already_authenticated") {
-                    sender.sendMessage("Error: You have already linked your account")
+                    syncGroups(player)
                 } else {
-                    sender.sendMessage("Error: Failed to fetch verification URL: ${error?.detail}")
+                    player.sendMessage("Error: Failed to generate verification URL")
                 }
             }
             is APIResult.NetworkError -> {
-                sender.sendMessage("Error: Failed to contact auth server. Please try again later")
+                player.sendMessage("Error: Failed to contact auth server. Please try again later")
             }
             is APIResult.Success -> {
                 if (response.value.data == null) {
-                    sender.sendMessage("Error: Failed to fetch verification URL")
+                    player.sendMessage("Error: Failed to fetch verification URL")
                 } else {
-                    sender.sendMessage("To link your account, please click the link and login if required:§9 ${response.value.data?.url}")
+                    player.sendMessage("To link your account, please click the link and login if required:§9 ${response.value.data?.url}")
                 }
             }
         }
@@ -64,7 +64,7 @@ class SyncCommand(
         return CommandResult.EXECUTED
     }
 
-    private suspend fun endSyncFlow(player: Player): CommandResult {
+    private suspend fun syncGroups(player: Player): CommandResult {
         val result = syncPlayerGroupAction.execute(player.uniqueId)
 
         when (result) {
