@@ -2,8 +2,10 @@ package com.projectcitybuild.platforms.spigot.commands
 
 import com.projectcitybuild.core.entities.CommandResult
 import com.projectcitybuild.core.contracts.Commandable
+import com.projectcitybuild.core.contracts.ConfigProvider
 import com.projectcitybuild.core.contracts.LoggerProvider
 import com.projectcitybuild.core.entities.CommandInput
+import com.projectcitybuild.core.entities.PluginConfig
 import com.projectcitybuild.core.network.APIClient
 import com.projectcitybuild.core.network.APIRequestFactory
 import com.projectcitybuild.core.network.APIResult
@@ -15,6 +17,7 @@ import org.bukkit.entity.Player
 class BoxCommand(
         private val apiRequestFactory: APIRequestFactory,
         private val apiClient: APIClient,
+        private val config: ConfigProvider,
         private val logger: LoggerProvider
 ): Commandable {
 
@@ -135,10 +138,7 @@ class BoxCommand(
                     val totalRedeemableBoxes = data.redeemedBoxes.sumOf { it.quantity }
 
                     data.redeemedBoxes.forEach { box ->
-                        Bukkit.dispatchCommand(
-                            Bukkit.getConsoleSender(),
-                            "gmysteryboxes give ${player.name} ${box.quantity}"
-                        )
+                        giveBoxes(player.name, box.quantity)
                         logger.info("${player.name} redeemed {$box.quantity} ${box.name} boxes")
                     }
 
@@ -152,5 +152,22 @@ class BoxCommand(
                 }
             }
         }
+    }
+
+    private fun giveBoxes(targetPlayerName: String, quantity: Int) {
+        val rawCommand = config.get(PluginConfig.DONORS.GIVE_BOX_COMMAND)
+
+        if (rawCommand.isEmpty()) {
+            throw Exception("GIVE_BOX_COMMAND config is empty or missing")
+        }
+
+        val command = rawCommand
+            .replace("%name", targetPlayerName, true)
+            .replace("%quantity", quantity.toString(), true)
+
+        Bukkit.dispatchCommand(
+            Bukkit.getConsoleSender(),
+            command
+        )
     }
 }

@@ -94,7 +94,7 @@ class SpigotPlatform: JavaPlugin() {
                 MaintenanceCommand(),
                 SyncCommand(apiRequestFactory, apiClient, syncPlayerGroupAction),
                 SyncOtherCommand(syncPlayerGroupAction),
-                BoxCommand(apiRequestFactory, apiClient, spigotLogger)
+                BoxCommand(apiRequestFactory, apiClient, spigotConfig, spigotLogger)
         )
         .forEach { command -> delegate.register(command) }
     }
@@ -118,6 +118,7 @@ class SpigotPlatform: JavaPlugin() {
         config.addDefault(PluginConfig.GROUPS.TRUST_PRIORITY)
         config.addDefault(PluginConfig.GROUPS.BUILD_PRIORITY)
         config.addDefault(PluginConfig.GROUPS.DONOR_PRIORITY)
+        config.addDefault(PluginConfig.DONORS.GIVE_BOX_COMMAND)
 
         config.addDefault("groups.appearance.admin.display_name", "§4[Staff]")
         config.addDefault("groups.appearance.admin.hover_name", "Administrator")
