@@ -15,7 +15,6 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.player.AsyncPlayerChatEvent
 
-
 /**
  * FIXME: Awful hacky, hardcoded stuff in here to save time
  */

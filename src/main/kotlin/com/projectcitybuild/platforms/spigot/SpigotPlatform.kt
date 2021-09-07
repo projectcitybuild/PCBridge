@@ -26,14 +26,22 @@ class SpigotPlatform: JavaPlugin() {
     private var commandDelegate: SpigotCommandDelegate? = null
     private var listenerDelegate: SpigotListenerDelegate? = null
 
-    private var _apiRequestFactory: APIRequestFactory? = null
-    private val apiRequestFactory: APIRequestFactory
-        get() {
-            if (_apiRequestFactory == null) {
-                _apiRequestFactory = createAPIProvider()
-            }
-            return _apiRequestFactory!!
-        }
+    private val apiRequestFactory: APIRequestFactory by lazy {
+        val isLoggingEnabled = spigotConfig.get(PluginConfig.API.IS_LOGGING_ENABLED)
+
+        APIRequestFactory(
+            pcb = PCBClient(
+                authToken = spigotConfig.get(PluginConfig.API.KEY) as? String
+                    ?: throw Exception("Could not cast auth token to String"),
+                baseUrl = spigotConfig.get(PluginConfig.API.BASE_URL) as? String
+                    ?: throw Exception("Could not cast base url to String"),
+                withLogging = isLoggingEnabled
+            ),
+            mojang = MojangClient(
+                withLogging = isLoggingEnabled
+            )
+        )
+    }
 
     private val syncPlayerGroupAction: SyncPlayerGroupAction by lazy {
         SyncPlayerGroupAction(
@@ -131,21 +139,5 @@ class SpigotPlatform: JavaPlugin() {
 
         config.options().copyDefaults(true)
         saveConfig()
-    }
-
-    private fun createAPIProvider(): APIRequestFactory {
-        val isLoggingEnabled = spigotConfig.get(PluginConfig.API.IS_LOGGING_ENABLED)
-
-        val pcbClient = PCBClient(
-                authToken = spigotConfig.get(PluginConfig.API.KEY) as? String
-                        ?: throw Exception("Could not cast auth token to String"),
-                baseUrl = spigotConfig.get(PluginConfig.API.BASE_URL) as? String
-                        ?: throw Exception("Could not cast base url to String"),
-                withLogging = isLoggingEnabled
-        )
-        val mojangClient = MojangClient(
-                withLogging = isLoggingEnabled
-        )
-        return APIRequestFactory(pcb = pcbClient, mojang = mojangClient)
     }
 }

@@ -7,6 +7,7 @@ import com.projectcitybuild.core.entities.CommandInput
 import com.projectcitybuild.core.network.APIClient
 import com.projectcitybuild.core.network.APIRequestFactory
 import com.projectcitybuild.core.network.APIResult
+import com.projectcitybuild.platforms.spigot.environment.send
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.entity.Player
@@ -66,7 +67,7 @@ class BoxCommand(
                 }
                 else {
                     val totalRedeemableBoxes = data.redeemableBoxes
-                        .map { it.quantity ?: 0 }
+                        .map { it.quantity }
                         .reduce { total, quantity -> total + quantity }
 
                     if (totalRedeemableBoxes == 1) {
