@@ -1,5 +1,6 @@
 package com.projectcitybuild.platforms.spigot.environment
 
+import com.projectcitybuild.platforms.spigot.extensions.add
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.command.CommandSender
@@ -9,63 +10,30 @@ class MessageFactory(
     private val player: Player
 ) {
     fun error(message: String) {
-        player.spigot().sendMessage(TextComponent().also {
-            it.addExtra(
-                TextComponent("Error").also {
-                    it.color = ChatColor.RED
-                }
-            )
-            it.addExtra(
-                TextComponent(" » ").also {
-                    it.color = ChatColor.GOLD
-                }
-            )
-            it.addExtra(
-                TextComponent("$message").also {
-                    it.color = ChatColor.WHITE
-                }
-            )
-        })
+        player.spigot().sendMessage(
+            TextComponent()
+                .add("Error") { it.color = ChatColor.RED }
+                .add(" » ") { it.color = ChatColor.GOLD }
+                .add(message) { it.color = ChatColor.WHITE }
+        )
     }
 
     fun success(message: String) {
-        player.spigot().sendMessage(TextComponent().also {
-            it.addExtra(
-                TextComponent("Success").also {
-                    it.color = ChatColor.GREEN
-                }
-            )
-            it.addExtra(
-                TextComponent(" » ").also {
-                    it.color = ChatColor.GOLD
-                }
-            )
-            it.addExtra(
-                TextComponent("$message").also {
-                    it.color = ChatColor.WHITE
-                }
-            )
-        })
+        player.spigot().sendMessage(
+            TextComponent()
+                .add("Success") { it.color = ChatColor.GREEN }
+                .add(" » ") { it.color = ChatColor.GOLD }
+                .add(message) { it.color = ChatColor.WHITE }
+        )
     }
 
     fun info(message: String) {
-        player.spigot().sendMessage(TextComponent().also {
-            it.addExtra(
-                TextComponent("Info").also {
-                    it.color = ChatColor.GRAY
-                }
-            )
-            it.addExtra(
-                TextComponent(" » ").also {
-                    it.color = ChatColor.GOLD
-                }
-            )
-            it.addExtra(
-                TextComponent("$message").also {
-                    it.color = ChatColor.WHITE
-                }
-            )
-        })
+        player.spigot().sendMessage(
+            TextComponent()
+                .add("Info") { it.color = ChatColor.GRAY }
+                .add(" » ") { it.color = ChatColor.GOLD }
+                .add(message) { it.color = ChatColor.WHITE }
+        )
     }
 }
 

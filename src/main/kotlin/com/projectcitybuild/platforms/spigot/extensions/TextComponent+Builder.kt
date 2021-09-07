@@ -1,10 +1,11 @@
 package com.projectcitybuild.platforms.spigot.extensions
 
 import net.md_5.bungee.api.chat.BaseComponent
-import net.md_5.bungee.api.chat.ClickEvent
 import net.md_5.bungee.api.chat.TextComponent
 
-fun TextComponent.add(component: BaseComponent, config: ((BaseComponent) -> Unit)? = null): TextComponent {
+fun TextComponent.add(component: BaseComponent?, config: ((BaseComponent) -> Unit)? = null): TextComponent {
+    if (component == null) return this
+
     this.addExtra(
         component.also {
             config?.invoke(it)
@@ -24,4 +25,9 @@ fun TextComponent.add(message: String, config: ((TextComponent) -> Unit)? = null
 
 fun TextComponent.add(number: Int, config: ((TextComponent) -> Unit)? = null): TextComponent {
     return add(number.toString(), config)
+}
+
+fun TextComponent.add(collection: Array<out BaseComponent>): TextComponent {
+    collection.forEach { this.addExtra(it) }
+    return this
 }

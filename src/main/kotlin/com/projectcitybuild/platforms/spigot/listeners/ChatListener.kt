@@ -6,6 +6,7 @@ import com.projectcitybuild.core.entities.PluginConfig
 import com.projectcitybuild.core.utilities.PlayerStore
 import com.projectcitybuild.platforms.spigot.environment.PermissionsGroup
 import com.projectcitybuild.platforms.spigot.environment.PermissionsManager
+import com.projectcitybuild.platforms.spigot.extensions.add
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.chat.ComponentBuilder
 import net.md_5.bungee.api.chat.HoverEvent
@@ -48,7 +49,7 @@ class ChatListener(
         if (sendingPlayer?.isMuted == true) {
             event.isCancelled = true
             event.player.sendMessage("You cannot chat while muted")
-            logger.info("${event.player.displayName} tried to talk while muted")
+            logger.info("${event.player.displayName} tried to talk while muted: ${event.message}")
             return
         }
 
@@ -88,8 +89,9 @@ class ChatListener(
         }
 
         val groupTC = TextComponent()
+
         if (highestDonor != null) {
-            var hoverName = config.get(path = "groups.appearance.${highestDonor.second.name}.hover_name") as? String
+            val hoverName = config.get(path = "groups.appearance.${highestDonor.second.name}.hover_name") as? String
             var displayName = config.get(path = "groups.appearance.${highestDonor.second.name}.display_name") as? String
             if (displayName.isNullOrBlank()) {
                 displayName = highestDonor.second.getDisplayName(permissionsManager)
@@ -104,7 +106,7 @@ class ChatListener(
                     }
         }
         if (highestTrust != null) {
-            var hoverName = config.get(path = "groups.appearance.${highestTrust.second.name}.hover_name") as? String
+            val hoverName = config.get(path = "groups.appearance.${highestTrust.second.name}.hover_name") as? String
             var displayName = config.get(path = "groups.appearance.${highestTrust.second.name}.display_name") as? String
             if (displayName.isNullOrBlank()) {
                 displayName = highestTrust.second.getDisplayName(permissionsManager)
@@ -119,7 +121,7 @@ class ChatListener(
                 }
         }
         if (highestBuild != null) {
-            var hoverName = config.get(path = "groups.appearance.${highestBuild.second.name}.hover_name") as? String
+            val hoverName = config.get(path = "groups.appearance.${highestBuild.second.name}.hover_name") as? String
             var displayName = config.get(path = "groups.appearance.${highestBuild.second.name}.display_name") as? String
             if (displayName.isNullOrBlank()) {
                 displayName = highestBuild.second.getDisplayName(permissionsManager)
@@ -134,27 +136,14 @@ class ChatListener(
                 }
         }
 
-        val messageTC = TextComponent.fromLegacyText(event.message)
-
-        val whitespaceResetTC = TextComponent(" ")
-        whitespaceResetTC.color = ChatColor.RESET
-
-        val colonTC = TextComponent(": ")
-        colonTC.color = ChatColor.RESET
-
-        // Dynamic text from other plugins (eg. LuckyPerms) contains legacy color codes
-        val prefixTC = TextComponent.fromLegacyText(lpUser.prefixes())
-        val suffixTC = TextComponent.fromLegacyText(lpUser.suffixes())
-        val displayNameTC = TextComponent.fromLegacyText(event.player.displayName)
-
         val textComponent = TextComponent()
-        prefixTC.forEach { c -> textComponent.addExtra(c) }
-        textComponent.addExtra(groupTC)
-        textComponent.addExtra(whitespaceResetTC)
-        displayNameTC.forEach { c -> textComponent.addExtra(c)}
-        suffixTC.forEach { c -> textComponent.addExtra(c) }
-        textComponent.addExtra(colonTC)
-        messageTC.forEach { c -> textComponent.addExtra(c) }
+            .add(TextComponent.fromLegacyText(lpUser.prefixes()))
+            .add(groupTC)
+            .add(" ") { it.color = ChatColor.RESET }
+            .add(TextComponent.fromLegacyText(event.player.displayName))
+            .add(TextComponent.fromLegacyText(lpUser.suffixes()))
+            .add(": ") { it.color = ChatColor.RESET }
+            .add(TextComponent.fromLegacyText(event.message))
 
         event.isCancelled = true
 
