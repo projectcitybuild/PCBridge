@@ -9,6 +9,7 @@ import com.projectcitybuild.core.entities.CommandInput
 import com.projectcitybuild.core.entities.Failure
 import com.projectcitybuild.core.entities.Success
 import com.projectcitybuild.core.network.APIClient
+import com.projectcitybuild.platforms.spigot.environment.send
 import com.projectcitybuild.platforms.spigot.extensions.getOfflinePlayer
 import org.bukkit.ChatColor
 import org.bukkit.entity.Player
@@ -49,16 +50,17 @@ class BanCommand(
 
         when (result) {
             is Failure -> {
-                val message = when (result.reason) {
-                    is CreateBanAction.FailReason.HTTPError -> "Error: Bad response received from the ban server. Please contact an admin"
-                    is CreateBanAction.FailReason.NetworkError -> "Error: Failed to contact auth server. Please contact an admin"
-                    is CreateBanAction.FailReason.PlayerAlreadyBanned -> "$targetPlayerName is already banned"
-                }
-                input.sender.sendMessage(message)
+                input.sender.send().error(
+                    when (result.reason) {
+                        is CreateBanAction.FailReason.HTTPError -> "Bad response received from the ban server. Please contact an admin"
+                        is CreateBanAction.FailReason.NetworkError -> "Failed to contact auth server. Please contact an admin"
+                        is CreateBanAction.FailReason.PlayerAlreadyBanned -> "$targetPlayerName is already banned"
+                    }
+                )
             }
             is Success -> {
                 input.sender.server.broadcast(
-                    "${ChatColor.GRAY}${input.args.first()} has been banned by ${input.sender.name}: ${reason ?: "No reason given"}",
+                    "${ChatColor.GRAY}${input.args.first()} has been banned by ${input.sender.name}: ${reason?.isNotEmpty() ?: "No reason given"}",
                     "*"
                 )
                 val player = input.sender.server.onlinePlayers.firstOrNull { player ->

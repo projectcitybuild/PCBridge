@@ -9,6 +9,7 @@ import com.projectcitybuild.core.entities.CommandInput
 import com.projectcitybuild.core.entities.Failure
 import com.projectcitybuild.core.entities.Success
 import com.projectcitybuild.core.network.APIClient
+import com.projectcitybuild.platforms.spigot.environment.send
 import com.projectcitybuild.platforms.spigot.extensions.getOfflinePlayer
 import org.bukkit.ChatColor
 import java.text.SimpleDateFormat
@@ -29,15 +30,13 @@ class CheckBanCommand(
 
         val targetPlayerName = input.args.first()
 
-        input.sender.sendMessage("${ChatColor.GRAY}Searching for active bans for $targetPlayerName...")
-
         val uuid = input.sender.server.getOfflinePlayer(
             name = targetPlayerName,
             apiRequestFactory = apiRequestFactory,
             apiClient = apiClient
         )
         if (uuid == null) {
-            input.sender.sendMessage("Error: Failed to retrieve UUID of given player")
+            input.sender.send().error("Failed to retrieve UUID of given player")
             return CommandResult.EXECUTED
         }
 
@@ -46,7 +45,7 @@ class CheckBanCommand(
             is Success -> {
                 val ban = currentBan.value
                 if (ban == null) {
-                    input.sender.sendMessage("$targetPlayerName is not currently banned")
+                    input.sender.send().info("$targetPlayerName is not currently banned")
                 } else {
                     val banDate = ban.createdAt?.let {
                         val date = Date(it * 1000)
@@ -59,21 +58,22 @@ class CheckBanCommand(
                         format.format(date)
                     } ?: "Never"
 
-                    input.sender.sendMessage("""
-                            #$targetPlayerName is currently banned.
-                            #---
-                            #Reason: ${ban.reason}
-                            #Date: $banDate
-                            #Expires: $expiryDate
+                    input.sender.send().info("""
+                            #${ChatColor.RED}$targetPlayerName is currently banned.
+                            #${ChatColor.GRAY}---
+                            #${ChatColor.GRAY}Reason: ${ChatColor.WHITE}${ban.reason}
+                            #${ChatColor.GRAY}Date: ${ChatColor.WHITE}$banDate
+                            #${ChatColor.GRAY}Expires: ${ChatColor.WHITE}$expiryDate
                         """.trimMargin("#"))
                 }
             }
             is Failure -> {
-                when (currentBan.reason) {
-                    is CheckBanStatusAction.FailReason.HTTPError -> {
-                        input.sender.sendMessage("Error: Bad response received from the ban server. Please contact an admin")
+                input.sender.send().error(
+                    when (currentBan.reason) {
+                        is CheckBanStatusAction.FailReason.HTTPError -> "Bad response received from the ban server. Please contact an admin"
+                        is CheckBanStatusAction.FailReason.NetworkError -> "Failed to connect to auth server. Please try again later"
                     }
-                }
+                )
             }
         }
         return CommandResult.EXECUTED

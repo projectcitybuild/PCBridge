@@ -9,7 +9,7 @@ import com.projectcitybuild.core.entities.Success
 import com.projectcitybuild.core.network.APIClient
 import com.projectcitybuild.core.network.APIResult
 import com.projectcitybuild.modules.ranks.SyncPlayerGroupAction
-import net.md_5.bungee.api.ChatColor
+import com.projectcitybuild.platforms.spigot.environment.send
 import org.bukkit.entity.Player
 
 class SyncCommand(
@@ -28,35 +28,35 @@ class SyncCommand(
         }
 
         if (!input.hasArguments) {
-            return beginSyncFlow(input.sender)
+            return generateVerificationURL(input.sender)
         }
         if (input.args.size == 1 && input.args[0] == "finish") {
-            return endSyncFlow(input.sender)
+            return syncGroups(input.sender)
         }
         return CommandResult.INVALID_INPUT
     }
 
-    private suspend fun beginSyncFlow(sender: Player): CommandResult {
+    private suspend fun generateVerificationURL(player: Player): CommandResult {
         val authApi = apiRequestFactory.pcb.authApi
-        val response = apiClient.execute { authApi.getVerificationUrl(uuid = sender.uniqueId.toString()) }
+        val response = apiClient.execute { authApi.getVerificationUrl(uuid = player.uniqueId.toString()) }
 
         when (response) {
             is APIResult.HTTPError -> {
                 val error = response.error
                 if (error?.id == "already_authenticated") {
-                    sender.sendMessage("Error: You have already linked your account")
+                    syncGroups(player)
                 } else {
-                    sender.sendMessage("Error: Failed to fetch verification URL: ${error?.detail}")
+                    player.send().error("Failed to generate verification URL")
                 }
             }
             is APIResult.NetworkError -> {
-                sender.sendMessage("Error: Failed to contact auth server. Please try again later")
+                player.send().error("Failed to contact auth server. Please try again later")
             }
             is APIResult.Success -> {
                 if (response.value.data == null) {
-                    sender.sendMessage("Error: Failed to fetch verification URL")
+                    player.send().error("Failed to generate verification URL")
                 } else {
-                    sender.sendMessage("To link your account, please click the link and login if required:§9 ${response.value.data?.url}")
+                    player.sendMessage("To link your account, please click the link and login if required:§9 ${response.value.data?.url}")
                 }
             }
         }
@@ -64,17 +64,17 @@ class SyncCommand(
         return CommandResult.EXECUTED
     }
 
-    private suspend fun endSyncFlow(player: Player): CommandResult {
+    private suspend fun syncGroups(player: Player): CommandResult {
         val result = syncPlayerGroupAction.execute(player.uniqueId)
 
         when (result) {
-            is Success -> player.sendMessage("${ChatColor.GREEN}Account successfully linked. Your rank will be automatically synchronized with the PCB network")
+            is Success -> player.send().success("Account linked! Your rank will be automatically synchronized with the PCB network")
             is Failure -> {
                 when (result.reason) {
                     is SyncPlayerGroupAction.FailReason.AccountNotLinked ->
-                        player.sendMessage("${ChatColor.RED}Sync failed. Did you finish registering your account?")
+                        player.send().error("Sync failed. Did you finish registering your account?")
 
-                    else -> player.sendMessage("${ChatColor.RED}Failed to contact auth server. Please contact staff")
+                    else -> player.send().error("Failed to contact auth server. Please contact staff")
                 }
             }
         }

@@ -26,14 +26,22 @@ class SpigotPlatform: JavaPlugin() {
     private var commandDelegate: SpigotCommandDelegate? = null
     private var listenerDelegate: SpigotListenerDelegate? = null
 
-    private var _apiRequestFactory: APIRequestFactory? = null
-    private val apiRequestFactory: APIRequestFactory
-        get() {
-            if (_apiRequestFactory == null) {
-                _apiRequestFactory = createAPIProvider()
-            }
-            return _apiRequestFactory!!
-        }
+    private val apiRequestFactory: APIRequestFactory by lazy {
+        val isLoggingEnabled = spigotConfig.get(PluginConfig.API.IS_LOGGING_ENABLED)
+
+        APIRequestFactory(
+            pcb = PCBClient(
+                authToken = spigotConfig.get(PluginConfig.API.KEY) as? String
+                    ?: throw Exception("Could not cast auth token to String"),
+                baseUrl = spigotConfig.get(PluginConfig.API.BASE_URL) as? String
+                    ?: throw Exception("Could not cast base url to String"),
+                withLogging = isLoggingEnabled
+            ),
+            mojang = MojangClient(
+                withLogging = isLoggingEnabled
+            )
+        )
+    }
 
     private val syncPlayerGroupAction: SyncPlayerGroupAction by lazy {
         SyncPlayerGroupAction(
@@ -86,7 +94,7 @@ class SpigotPlatform: JavaPlugin() {
                 MaintenanceCommand(),
                 SyncCommand(apiRequestFactory, apiClient, syncPlayerGroupAction),
                 SyncOtherCommand(syncPlayerGroupAction),
-                BoxCommand(apiRequestFactory, apiClient, spigotLogger)
+                BoxCommand(apiRequestFactory, apiClient, spigotConfig, spigotLogger)
         )
         .forEach { command -> delegate.register(command) }
     }
@@ -97,7 +105,8 @@ class SpigotPlatform: JavaPlugin() {
                 ChatListener(spigotConfig, playerStore, permissionsManager!!, spigotLogger),
                 MaintenanceConnectListener(spigotConfig),
                 SyncRankLoginListener(syncPlayerGroupAction),
-                AvailableBoxListener(apiRequestFactory, apiClient)
+                AvailableBoxListener(apiRequestFactory, apiClient),
+                DonorPerkConnectionListener(permissionsManager!!, spigotConfig, apiRequestFactory, apiClient, spigotLogger)
         )
         .forEach { listener -> delegate.register(listener) }
     }
@@ -110,6 +119,11 @@ class SpigotPlatform: JavaPlugin() {
         config.addDefault(PluginConfig.GROUPS.TRUST_PRIORITY)
         config.addDefault(PluginConfig.GROUPS.BUILD_PRIORITY)
         config.addDefault(PluginConfig.GROUPS.DONOR_PRIORITY)
+        config.addDefault(PluginConfig.DONORS.GIVE_BOX_COMMAND)
+
+        config.addDefault("donors.tiers.copper.permission_group_name", "copper-tier")
+        config.addDefault("donors.tiers.iron.permission_group_name", "iron-tier")
+        config.addDefault("donors.tiers.diamond.permission_group_name", "diamond-tier")
 
         config.addDefault("groups.appearance.admin.display_name", "§4[Staff]")
         config.addDefault("groups.appearance.admin.hover_name", "Administrator")
@@ -131,21 +145,5 @@ class SpigotPlatform: JavaPlugin() {
 
         config.options().copyDefaults(true)
         saveConfig()
-    }
-
-    private fun createAPIProvider(): APIRequestFactory {
-        val isLoggingEnabled = spigotConfig.get(PluginConfig.API.IS_LOGGING_ENABLED)
-
-        val pcbClient = PCBClient(
-                authToken = spigotConfig.get(PluginConfig.API.KEY) as? String
-                        ?: throw Exception("Could not cast auth token to String"),
-                baseUrl = spigotConfig.get(PluginConfig.API.BASE_URL) as? String
-                        ?: throw Exception("Could not cast base url to String"),
-                withLogging = isLoggingEnabled
-        )
-        val mojangClient = MojangClient(
-                withLogging = isLoggingEnabled
-        )
-        return APIRequestFactory(pcb = pcbClient, mojang = mojangClient)
     }
 }

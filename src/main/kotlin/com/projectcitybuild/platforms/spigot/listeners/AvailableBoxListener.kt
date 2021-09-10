@@ -3,7 +3,11 @@ package com.projectcitybuild.platforms.spigot.listeners
 import com.projectcitybuild.core.network.APIClient
 import com.projectcitybuild.core.network.APIRequestFactory
 import com.projectcitybuild.core.network.APIResult
-import org.bukkit.ChatColor
+import com.projectcitybuild.platforms.spigot.extensions.add
+import net.md_5.bungee.api.ChatColor
+import net.md_5.bungee.api.chat.ClickEvent
+import net.md_5.bungee.api.chat.HoverEvent
+import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
@@ -23,19 +27,25 @@ class AvailableBoxListener(
             is APIResult.HTTPError -> return
             is APIResult.NetworkError -> return
             is APIResult.Success -> {
-                val data = response.value.data
-                if (data == null) return
+                val data = response.value.data ?: return
 
                 if (data.redeemableBoxes == null) return
 
                 val redeemableBoxes = data.redeemableBoxes.sumOf { it.quantity }
 
-                val message = if (redeemableBoxes == 1) {
-                    "${ChatColor.GRAY}You have 1 box that can be redeemed today. Use ${ChatColor.BOLD}/box redeem"
-                } else {
-                    "${ChatColor.GRAY}You have ${redeemableBoxes} boxes that can be redeemed today. Use ${ChatColor.BOLD}/box redeem"
-                }
-                event.player.sendMessage(message)
+                event.player.spigot().sendMessage(
+                    TextComponent()
+                        .add("You have ") { it.color = ChatColor.GRAY }
+                        .add(redeemableBoxes) { it.color = ChatColor.GREEN }
+                        .add(" " + if (redeemableBoxes == 1) "box" else "boxes") { it.color = ChatColor.GRAY }
+                        .add(" that can be redeemed today. Use ") { it.color = ChatColor.GRAY }
+                        .add( "/box redeem") {
+                            it.isBold = true
+                            it.color = ChatColor.GREEN
+                            it.clickEvent = ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/box redeem")
+                            it.hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT, arrayOf(TextComponent("Click to type this command")))
+                        }
+                )
             }
         }
     }

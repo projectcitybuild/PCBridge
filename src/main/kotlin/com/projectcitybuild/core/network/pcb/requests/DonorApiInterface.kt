@@ -8,7 +8,7 @@ interface DonorApiInterface {
     @GET("minecraft/{uuid}/donation-tiers")
     suspend fun getDonationTier(
         @Path(value = "uuid") uuid: String
-    ) : ApiResponse<DonationPerk>
+    ) : ApiResponse<Array<DonationPerk>>
 
     @GET("minecraft/{uuid}/boxes")
     suspend fun getAvailableBoxes(
