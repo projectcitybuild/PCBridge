@@ -105,7 +105,8 @@ class SpigotPlatform: JavaPlugin() {
                 ChatListener(spigotConfig, playerStore, permissionsManager!!, spigotLogger),
                 MaintenanceConnectListener(spigotConfig),
                 SyncRankLoginListener(syncPlayerGroupAction),
-                AvailableBoxListener(apiRequestFactory, apiClient)
+                AvailableBoxListener(apiRequestFactory, apiClient),
+                DonorPerkConnectionListener(permissionsManager!!, spigotConfig, apiRequestFactory, apiClient, spigotLogger)
         )
         .forEach { listener -> delegate.register(listener) }
     }
@@ -119,6 +120,10 @@ class SpigotPlatform: JavaPlugin() {
         config.addDefault(PluginConfig.GROUPS.BUILD_PRIORITY)
         config.addDefault(PluginConfig.GROUPS.DONOR_PRIORITY)
         config.addDefault(PluginConfig.DONORS.GIVE_BOX_COMMAND)
+
+        config.addDefault("donors.tiers.copper.permission_group_name", "copper-tier")
+        config.addDefault("donors.tiers.iron.permission_group_name", "iron-tier")
+        config.addDefault("donors.tiers.diamond.permission_group_name", "diamond-tier")
 
         config.addDefault("groups.appearance.admin.display_name", "§4[Staff]")
         config.addDefault("groups.appearance.admin.hover_name", "Administrator")

@@ -10,7 +10,6 @@ import com.projectcitybuild.core.network.APIClient
 import com.projectcitybuild.core.network.APIResult
 import com.projectcitybuild.modules.ranks.SyncPlayerGroupAction
 import com.projectcitybuild.platforms.spigot.environment.send
-import net.md_5.bungee.api.ChatColor
 import org.bukkit.entity.Player
 
 class SyncCommand(
