@@ -1,6 +1,5 @@
 package com.projectcitybuild.tests.integration.bans
 
-import com.projectcitybuild.core.entities.Success
 import com.projectcitybuild.modules.bans.CreateBanAction
 import com.projectcitybuild.tests.mocks.makeNetworkClients
 import com.projectcitybuild.tests.mocks.withJSONResource
@@ -17,19 +16,19 @@ import java.util.*
 
 class CreateBanActionTests {
 
-    private lateinit var mockWebServer: MockWebServer
-
-    @Before
-    fun setup() {
-        mockWebServer = MockWebServer()
-        mockWebServer.start()
-    }
-
-    @After
-    fun tearDown() {
-        mockWebServer.shutdown()
-    }
-
+//    private lateinit var mockWebServer: MockWebServer
+//
+//    @Before
+//    fun setup() {
+//        mockWebServer = MockWebServer()
+//        mockWebServer.start()
+//    }
+//
+//    @After
+//    fun tearDown() {
+//        mockWebServer.shutdown()
+//    }
+//
 //    @Test
 //    fun `ban response returns success`() {
 //        val response = MockResponse().withJSONResource("api_ban_status_ban_response.json")
@@ -42,7 +41,7 @@ class CreateBanActionTests {
 //                staffId = UUID.randomUUID(),
 //                reason = "test_reason"
 //        )
-//        assertThat(result, instanceOf(Success(Unit)))
+//        assertThat(result, instanceOf(CreateBanAction.Result.SUCCESS::class.java))
 //    }
 //
 //    @Test

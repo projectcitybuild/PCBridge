@@ -27,5 +27,4 @@ class PlayerStore {
     fun clear() {
         store.clear()
     }
-
 }

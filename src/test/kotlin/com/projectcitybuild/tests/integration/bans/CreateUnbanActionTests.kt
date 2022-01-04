@@ -15,8 +15,8 @@ import org.junit.Before
 import org.junit.Test
 import java.util.*
 
-//class CreateUnbanActionTests {
-//
+class CreateUnbanActionTests {
+
 //    private lateinit var mockWebServer: MockWebServer
 //
 //    @Before
@@ -74,4 +74,4 @@ import java.util.*
 //        }
 //        assertEquals(result.reason, CreateUnbanAction.Failure.PLAYER_NOT_BANNED)
 //    }
-//}
+}

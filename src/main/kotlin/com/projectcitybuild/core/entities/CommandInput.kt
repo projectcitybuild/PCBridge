@@ -1,7 +1,12 @@
 package com.projectcitybuild.core.entities
 
-data class CommandInput<Player>(
-        val sender: Player,
-        val args: List<String>,
+import org.bukkit.command.CommandSender
+
+data class CommandInput(
+        val sender: CommandSender,
+        val args: Array<out String>,
         val isConsole: Boolean
-)
+) {
+
+    var hasArguments: Boolean = !args.isEmpty()
+}

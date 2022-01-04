@@ -1,10 +1,12 @@
 package com.projectcitybuild.modules.bans
 
-import com.projectcitybuild.core.entities.Result
 import com.projectcitybuild.core.entities.Failure
+import com.projectcitybuild.core.entities.models.ApiError
+import com.projectcitybuild.core.entities.Result
 import com.projectcitybuild.core.entities.Success
 import com.projectcitybuild.core.network.APIClient
 import com.projectcitybuild.core.network.APIRequestFactory
+import com.projectcitybuild.core.network.APIResult
 import java.util.*
 
 class CreateBanAction(
@@ -12,46 +14,34 @@ class CreateBanAction(
         private val apiClient: APIClient
 ) {
     sealed class FailReason {
-        class PLAYER_ALREADY_BANNED: FailReason()
-        class API_ERROR(val message: String): FailReason()
-        class UNHANDLED: FailReason()
+        class HTTPError(error: ApiError?): FailReason()
+        object NetworkError: FailReason()
+        object PlayerAlreadyBanned: FailReason()
     }
 
-    fun execute(
-            playerId: UUID,
-            playerName: String,
-            staffId: UUID?,
-            reason: String?,
-            completion: (Result<Unit, FailReason>) -> Unit
-    ) {
+    suspend fun execute(playerId: UUID, playerName: String, staffId: UUID?, reason: String?): Result<Unit, FailReason> {
         val banApi = apiRequestFactory.pcb.banApi
-        val request = banApi.storeBan(
+        val response = apiClient.execute {
+            banApi.storeBan(
                 playerId = playerId.toString(),
                 playerIdType = "minecraft_uuid",
                 playerAlias = playerName,
                 staffId = staffId.toString(),
                 staffIdType = "minecraft_uuid",
-                reason = if (reason.isNullOrEmpty()) null else reason,
+                reason = if (reason != null && reason.isNotEmpty()) reason else null,
                 expiresAt = null,
                 isGlobalBan = 1
-        )
-        apiClient.execute(request).startAndSubscribe { result ->
-            when (result) {
-                is Success -> completion(Success(Unit))
-
-                is Failure -> {
-                    val responseBody = result.reason.responseBody
-                    if (responseBody != null) {
-                        val reason = when (responseBody.id) {
-                            "player_already_banned" -> FailReason.PLAYER_ALREADY_BANNED()
-                            else -> FailReason.UNHANDLED()
-                        }
-                        completion(Failure(reason))
-                    } else {
-                        completion(Failure(FailReason.API_ERROR(result.reason.message)))
-                    }
+            )
+        }
+        return when(response) {
+            is APIResult.HTTPError -> {
+                if (response.error?.id == "player_already_banned") {
+                    return Failure(FailReason.PlayerAlreadyBanned)
                 }
+                return Failure(FailReason.HTTPError(response.error))
             }
+            is APIResult.NetworkError -> Failure(FailReason.NetworkError)
+            is APIResult.Success -> Success(Unit)
         }
     }
 }
