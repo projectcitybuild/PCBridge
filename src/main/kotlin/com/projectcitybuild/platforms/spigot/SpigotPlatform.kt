@@ -90,28 +90,28 @@ class SpigotPlatform: JavaPlugin() {
     }
 
     private fun registerCommands(delegate: SpigotCommandDelegate) {
-        arrayOf(
-                BanCommand(apiRequestFactory, apiClient),
-                UnbanCommand( apiRequestFactory, apiClient),
-                CheckBanCommand(scheduler, apiRequestFactory, apiClient, checkBanStatusAction),
-                MuteCommand(playerStore),
-                UnmuteCommand(playerStore),
-                SyncCommand(apiRequestFactory, apiClient, syncPlayerGroupAction),
-                SyncOtherCommand(syncPlayerGroupAction),
-        )
-        .forEach { command -> delegate.register(command) }
+//        arrayOf(
+//                BanCommand(apiRequestFactory, apiClient),
+//                UnbanCommand( apiRequestFactory, apiClient),
+//                CheckBanCommand(scheduler, apiRequestFactory, apiClient, checkBanStatusAction),
+//                MuteCommand(playerStore),
+//                UnmuteCommand(playerStore),
+//                SyncCommand(apiRequestFactory, apiClient, syncPlayerGroupAction),
+//                SyncOtherCommand(syncPlayerGroupAction),
+//        )
+//        .forEach { command -> delegate.register(command) }
     }
 
     private fun registerListeners(delegate: SpigotListenerDelegate) {
-        arrayOf(
-                BanConnectionListener(apiRequestFactory, apiClient),
-                ChatListener(spigotConfig, playerStore, permissionsManager!!, spigotLogger),
-                MaintenanceConnectListener(spigotConfig),
-                SyncRankLoginListener(syncPlayerGroupAction),
-                AvailableBoxListener(apiRequestFactory, apiClient),
-                DonorPerkConnectionListener(permissionsManager!!, spigotConfig, apiRequestFactory, apiClient, spigotLogger)
-        )
-        .forEach { listener -> delegate.register(listener) }
+//        arrayOf(
+//                BanConnectionListener(apiRequestFactory, apiClient),
+//                ChatListener(spigotConfig, playerStore, permissionsManager!!, spigotLogger),
+//                MaintenanceConnectListener(spigotConfig),
+//                SyncRankLoginListener(syncPlayerGroupAction),
+//                AvailableBoxListener(apiRequestFactory, apiClient),
+//                DonorPerkConnectionListener(permissionsManager!!, spigotConfig, apiRequestFactory, apiClient, spigotLogger)
+//        )
+//        .forEach { listener -> delegate.register(listener) }
     }
 
     private fun createDefaultConfig() {

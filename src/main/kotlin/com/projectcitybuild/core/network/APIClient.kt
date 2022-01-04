@@ -1,6 +1,5 @@
 package com.projectcitybuild.core.network
 
-import com.github.shynixn.mccoroutine.minecraftDispatcher
 import com.google.gson.Gson
 import com.projectcitybuild.core.entities.models.ApiError
 import kotlinx.coroutines.withContext

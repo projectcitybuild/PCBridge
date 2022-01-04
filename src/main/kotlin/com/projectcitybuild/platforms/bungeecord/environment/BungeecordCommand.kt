@@ -10,6 +10,8 @@ data class BungeecordCommandInput(
 ) {
     val isConsoleSender = sender is ProxiedPlayer
     val player = sender as? ProxiedPlayer
+
+    var hasArguments: Boolean = args.isNotEmpty()
 }
 
 interface BungeecordCommand {
