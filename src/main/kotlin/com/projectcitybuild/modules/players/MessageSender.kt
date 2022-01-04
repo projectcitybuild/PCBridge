@@ -11,8 +11,7 @@ class MessageSender(
     fun error(message: String) {
         receiver.sendMessage(
             TextComponent()
-                .add("Error") { it.color = ChatColor.RED }
-                .add(" » ") { it.color = ChatColor.GOLD }
+                .add("▐ Error: ") { it.color = ChatColor.RED }
                 .add(message) { it.color = ChatColor.WHITE }
         )
     }
@@ -20,18 +19,25 @@ class MessageSender(
     fun success(message: String) {
         receiver.sendMessage(
             TextComponent()
-                .add("Success") { it.color = ChatColor.GREEN }
-                .add(" » ") { it.color = ChatColor.GOLD }
+                .add("▐ ") { it.color = ChatColor.GREEN }
                 .add(message) { it.color = ChatColor.WHITE }
         )
     }
 
-    fun info(message: String) {
-        receiver.sendMessage(
-            TextComponent()
-                .add("Info") { it.color = ChatColor.GRAY }
-                .add(" » ") { it.color = ChatColor.GOLD }
+    fun info(message: String, isMultiLine: Boolean = false) {
+        val messagesByLine = if (isMultiLine) message.split("\n") else listOf(message)
+
+        val tc = TextComponent()
+        messagesByLine.forEachIndexed { index, message ->
+            tc
+                .add("▐ ") { it.color = ChatColor.GRAY }
                 .add(message) { it.color = ChatColor.WHITE }
-        )
+
+            if (index < messagesByLine.count()) {
+                tc.add("\n")
+            }
+        }
+
+        receiver.sendMessage(tc)
     }
 }

@@ -4,10 +4,8 @@ import com.projectcitybuild.core.contracts.LoggerProvider
 import com.projectcitybuild.core.entities.CommandResult
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
-import net.md_5.bungee.api.ChatColor
+import com.projectcitybuild.platforms.spigot.send
 import net.md_5.bungee.api.CommandSender
-import net.md_5.bungee.api.chat.TextComponent
-import net.md_5.bungee.api.connection.ProxiedPlayer
 import net.md_5.bungee.api.plugin.Command
 import net.md_5.bungee.api.plugin.Plugin
 
@@ -39,9 +37,7 @@ class BungeecordCommandDelegate constructor(
                         CommandResult.INVALID_INPUT -> false
                     }
                 } catch (error: Exception) {
-                    sender?.sendMessage(TextComponent("An internal error occurred performing your command").also {
-                        it.color = ChatColor.RED
-                    })
+                    sender?.send()?.error(error.message ?: "An internal error occurred performing your command")
                     error.localizedMessage.let { message -> logger.fatal(message) }
                     error.printStackTrace()
                     true

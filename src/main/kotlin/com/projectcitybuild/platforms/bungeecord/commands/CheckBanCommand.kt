@@ -29,7 +29,7 @@ class CheckBanCommand(
         async {
             val targetPlayerUUID = playerUUIDLookup.request(targetPlayerName)
             if (targetPlayerUUID == null) {
-                input.sender.send().error("Could not find UUID for $targetPlayerName")
+                input.sender.send().error("Could not find UUID for $targetPlayerName. This player likely doesn't exist")
                 return@async
             }
 
@@ -57,7 +57,7 @@ class CheckBanCommand(
                             #${ChatColor.GRAY}Reason: ${ChatColor.WHITE}${ban.reason}
                             #${ChatColor.GRAY}Date: ${ChatColor.WHITE}$banDate
                             #${ChatColor.GRAY}Expires: ${ChatColor.WHITE}$expiryDate
-                        """.trimMargin("#"))
+                        """.trimMargin("#"), isMultiLine = true)
                     }
                 }
                 is Failure -> {
