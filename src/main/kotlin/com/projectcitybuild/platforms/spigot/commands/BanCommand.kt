@@ -9,8 +9,8 @@ import com.projectcitybuild.core.entities.CommandInput
 import com.projectcitybuild.core.entities.Failure
 import com.projectcitybuild.core.entities.Success
 import com.projectcitybuild.core.network.APIClient
-import com.projectcitybuild.platforms.spigot.environment.send
 import com.projectcitybuild.platforms.spigot.extensions.getOfflinePlayer
+import com.projectcitybuild.platforms.spigot.send
 import org.bukkit.ChatColor
 import org.bukkit.entity.Player
 

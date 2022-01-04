@@ -6,8 +6,8 @@ import com.projectcitybuild.core.entities.CommandInput
 import com.projectcitybuild.core.entities.Failure
 import com.projectcitybuild.core.entities.Success
 import com.projectcitybuild.modules.ranks.SyncPlayerGroupAction
-import com.projectcitybuild.platforms.spigot.environment.send
 import com.projectcitybuild.platforms.spigot.extensions.getOnlinePlayer
+import com.projectcitybuild.platforms.spigot.send
 import net.md_5.bungee.api.ChatColor
 
 class SyncOtherCommand(

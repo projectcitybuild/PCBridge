@@ -9,7 +9,7 @@ import com.projectcitybuild.core.entities.Success
 import com.projectcitybuild.core.network.APIClient
 import com.projectcitybuild.core.network.APIResult
 import com.projectcitybuild.modules.ranks.SyncPlayerGroupAction
-import com.projectcitybuild.platforms.spigot.environment.send
+import com.projectcitybuild.platforms.spigot.send
 import org.bukkit.entity.Player
 
 class SyncCommand(

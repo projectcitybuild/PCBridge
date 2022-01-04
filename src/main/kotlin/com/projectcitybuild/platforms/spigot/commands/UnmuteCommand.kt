@@ -5,7 +5,7 @@ import com.projectcitybuild.platforms.spigot.extensions.getOnlinePlayer
 import com.projectcitybuild.core.contracts.Commandable
 import com.projectcitybuild.core.entities.CommandInput
 import com.projectcitybuild.core.utilities.PlayerStore
-import com.projectcitybuild.platforms.spigot.environment.send
+import com.projectcitybuild.platforms.spigot.send
 
 class UnmuteCommand(
         private val playerStore: PlayerStore
