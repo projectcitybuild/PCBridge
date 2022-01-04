@@ -85,8 +85,6 @@ class SpigotPlatform: JavaPlugin() {
 
     private fun registerCommands(delegate: SpigotCommandDelegate) {
         arrayOf(
-//                MuteCommand(playerStore),
-//                UnmuteCommand(playerStore),
                 SyncCommand(apiRequestFactory, apiClient, syncPlayerGroupAction),
                 SyncOtherCommand(syncPlayerGroupAction),
         )
@@ -95,7 +93,6 @@ class SpigotPlatform: JavaPlugin() {
 
     private fun registerListeners(delegate: SpigotListenerDelegate) {
         arrayOf(
-//                BanConnectionListener(apiRequestFactory, apiClient),
                 ChatListener(spigotConfig, playerStore, permissionsManager!!, spigotLogger),
         )
         .forEach { listener -> delegate.register(listener) }

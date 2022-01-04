@@ -126,7 +126,12 @@ class BungeecordPlatform: Plugin() {
 
     private fun registerListeners(delegate: BungeecordListenerDelegate) {
         arrayOf(
-            BanConnectionListener(apiRequestFactory, apiClient),
+            BanConnectionListener(
+                checkBanStatusAction = CheckBanStatusAction(
+                    apiRequestFactory = apiRequestFactory,
+                    apiClient = apiClient
+                )
+            ),
             SyncRankLoginListener(
                 syncPlayerGroupAction = SyncPlayerGroupAction(
                     permissionsManager = permissionsManager!!,
