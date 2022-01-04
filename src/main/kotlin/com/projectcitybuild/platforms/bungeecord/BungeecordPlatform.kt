@@ -6,11 +6,11 @@ import com.projectcitybuild.core.network.APIRequestFactory
 import com.projectcitybuild.core.network.mojang.client.MojangClient
 import com.projectcitybuild.core.network.pcb.client.PCBClient
 import com.projectcitybuild.modules.bans.CheckBanStatusAction
+import com.projectcitybuild.modules.bans.CreateBanAction
 import com.projectcitybuild.modules.players.GetMojangPlayerAction
 import com.projectcitybuild.modules.players.PlayerUUIDLookup
 import com.projectcitybuild.platforms.bungeecord.commands.BanCommand
 import com.projectcitybuild.platforms.bungeecord.commands.CheckBanCommand
-import com.projectcitybuild.platforms.bungeecord.commands.MaintenanceCommand
 import com.projectcitybuild.platforms.bungeecord.commands.UnbanCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordConfig
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordLogger
@@ -78,7 +78,20 @@ class BungeecordPlatform: Plugin() {
 
     private fun registerCommands(delegate: BungeecordCommandDelegate) {
         arrayOf(
-            BanCommand(proxy, scheduler, apiRequestFactory, apiClient, bungeecordLogger),
+            BanCommand(
+                proxy,
+                PlayerUUIDLookup(
+                    proxy,
+                    GetMojangPlayerAction(
+                        apiRequestFactory,
+                        apiClient
+                    )
+                ),
+                CreateBanAction(
+                    apiRequestFactory,
+                    apiClient
+                )
+            ),
             UnbanCommand(proxy, scheduler, apiRequestFactory, apiClient, bungeecordLogger),
             CheckBanCommand(
                 PlayerUUIDLookup(
@@ -93,7 +106,6 @@ class BungeecordPlatform: Plugin() {
                     apiClient
                 )
             ),
-            MaintenanceCommand(config, timer, proxy, bungeecordLogger),
         )
         .forEach { command -> delegate.register(command) }
     }

@@ -3,6 +3,7 @@ package com.projectcitybuild.core.utilities
 import com.projectcitybuild.core.entities.Player
 import java.util.*
 
+@Deprecated("Will be deleted")
 class PlayerStore {
     interface PlayerStoreDelegate {
         fun onStoreUpdate(player: Player)

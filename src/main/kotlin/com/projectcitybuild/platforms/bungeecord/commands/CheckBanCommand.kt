@@ -33,10 +33,10 @@ class CheckBanCommand(
                 return@async
             }
 
-            val currentBan = checkBanStatusAction.execute(playerId = targetPlayerUUID)
-            when (currentBan) {
+            val result = checkBanStatusAction.execute(playerId = targetPlayerUUID)
+            when (result) {
                 is Success -> {
-                    val ban = currentBan.value
+                    val ban = result.value
                     if (ban == null) {
                         input.sender.send().info("$targetPlayerName is not currently banned")
                     } else {
@@ -62,7 +62,7 @@ class CheckBanCommand(
                 }
                 is Failure -> {
                     input.sender.send().error(
-                        when (currentBan.reason) {
+                        when (result.reason) {
                             is CheckBanStatusAction.FailReason.HTTPError -> "Bad response received from the ban server. Please contact an admin"
                             is CheckBanStatusAction.FailReason.NetworkError -> "Failed to connect to auth server. Please try again later"
                         }
