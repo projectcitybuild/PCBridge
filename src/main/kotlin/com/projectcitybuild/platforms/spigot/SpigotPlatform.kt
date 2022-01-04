@@ -7,7 +7,6 @@ import com.projectcitybuild.core.network.pcb.client.PCBClient
 import com.projectcitybuild.core.entities.PluginConfig
 import com.projectcitybuild.core.network.APIClient
 import com.projectcitybuild.core.utilities.PlayerStore
-import com.projectcitybuild.modules.bans.CheckBanStatusAction
 import com.projectcitybuild.modules.ranks.SyncPlayerGroupAction
 import com.projectcitybuild.platforms.spigot.commands.SyncCommand
 import com.projectcitybuild.platforms.spigot.commands.SyncOtherCommand
@@ -20,7 +19,6 @@ class SpigotPlatform: JavaPlugin() {
 
     private val spigotLogger = SpigotLogger(logger = this.logger)
     private val spigotConfig = SpigotConfig(config = this.config)
-    private val scheduler = SpigotScheduler(plugin = this)
     private val apiClient = APIClient(getCoroutineContext = {
         // To prevent Coroutines being created before the plugin is ready
         this.minecraftDispatcher
@@ -56,10 +54,6 @@ class SpigotPlatform: JavaPlugin() {
                 spigotConfig,
                 spigotLogger
         )
-    }
-
-    private val checkBanStatusAction: CheckBanStatusAction by lazy {
-        CheckBanStatusAction(apiRequestFactory, apiClient)
     }
 
     override fun onEnable() {
@@ -103,7 +97,6 @@ class SpigotPlatform: JavaPlugin() {
         arrayOf(
 //                BanConnectionListener(apiRequestFactory, apiClient),
                 ChatListener(spigotConfig, playerStore, permissionsManager!!, spigotLogger),
-//                SyncRankLoginListener(syncPlayerGroupAction),
         )
         .forEach { listener -> delegate.register(listener) }
     }

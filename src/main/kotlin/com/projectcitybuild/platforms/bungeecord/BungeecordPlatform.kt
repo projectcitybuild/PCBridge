@@ -1,5 +1,7 @@
 package com.projectcitybuild.platforms.bungeecord
 
+import com.projectcitybuild.core.contracts.ConfigProvider
+import com.projectcitybuild.core.contracts.LoggerProvider
 import com.projectcitybuild.core.entities.PluginConfig
 import com.projectcitybuild.core.network.APIClient
 import com.projectcitybuild.core.network.APIRequestFactory
@@ -10,16 +12,16 @@ import com.projectcitybuild.modules.bans.CreateBanAction
 import com.projectcitybuild.modules.bans.CreateUnbanAction
 import com.projectcitybuild.modules.players.GetMojangPlayerAction
 import com.projectcitybuild.modules.players.PlayerUUIDLookup
+import com.projectcitybuild.modules.ranks.SyncPlayerGroupAction
 import com.projectcitybuild.platforms.bungeecord.commands.BanCommand
 import com.projectcitybuild.platforms.bungeecord.commands.CheckBanCommand
 import com.projectcitybuild.platforms.bungeecord.commands.UnbanCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordConfig
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordLogger
-import com.projectcitybuild.platforms.bungeecord.environment.BungeecordScheduler
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordTimer
 import com.projectcitybuild.platforms.bungeecord.listeners.BanConnectionListener
 import com.projectcitybuild.platforms.bungeecord.listeners.SyncRankLoginListener
-import com.projectcitybuild.platforms.bungeecord.permissions.PermissionsManager
+import com.projectcitybuild.platforms.spigot.environment.PermissionsManager
 import kotlinx.coroutines.Dispatchers
 import net.md_5.bungee.api.plugin.Plugin
 import net.md_5.bungee.config.ConfigurationProvider
@@ -29,7 +31,6 @@ import java.io.File
 class BungeecordPlatform: Plugin() {
 
     private val bungeecordLogger = BungeecordLogger(logger = this.logger)
-    private val scheduler = BungeecordScheduler(plugin = this)
     private val config = BungeecordConfig(plugin = this)
     private val apiClient = APIClient(getCoroutineContext = {
         Dispatchers.IO
@@ -126,7 +127,15 @@ class BungeecordPlatform: Plugin() {
     private fun registerListeners(delegate: BungeecordListenerDelegate) {
         arrayOf(
             BanConnectionListener(apiRequestFactory, apiClient),
-            SyncRankLoginListener(apiRequestFactory, apiClient, scheduler, permissionsManager!!, bungeecordLogger),
+            SyncRankLoginListener(
+                syncPlayerGroupAction = SyncPlayerGroupAction(
+                    permissionsManager = permissionsManager!!,
+                    apiRequestFactory = apiRequestFactory,
+                    apiClient = apiClient,
+                    config = config,
+                    logger = bungeecordLogger
+                )
+            ),
         )
         .forEach { listener -> delegate.register(listener) }
     }
