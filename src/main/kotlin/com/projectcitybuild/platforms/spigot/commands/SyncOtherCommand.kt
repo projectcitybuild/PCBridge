@@ -1,12 +1,11 @@
 package com.projectcitybuild.platforms.spigot.commands
 
-import com.projectcitybuild.core.entities.CommandResult
+import com.projectcitybuild.entities.CommandResult
 import com.projectcitybuild.core.contracts.Commandable
-import com.projectcitybuild.core.entities.CommandInput
-import com.projectcitybuild.core.entities.Failure
-import com.projectcitybuild.core.entities.Success
+import com.projectcitybuild.entities.CommandInput
+import com.projectcitybuild.entities.Failure
+import com.projectcitybuild.entities.Success
 import com.projectcitybuild.modules.ranks.SyncPlayerGroupAction
-import com.projectcitybuild.platforms.spigot.extensions.getOnlinePlayer
 import com.projectcitybuild.platforms.spigot.send
 
 class SyncOtherCommand(
@@ -22,7 +21,7 @@ class SyncOtherCommand(
         }
 
         val playerName = input.args.first()
-        val player = input.sender.server.getOnlinePlayer(playerName)
+        val player = input.sender.server.onlinePlayers.first { it.name.lowercase() == playerName.lowercase() }
         if (player == null) {
             input.sender.send().error("$playerName is not online")
             return CommandResult.EXECUTED

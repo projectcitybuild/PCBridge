@@ -1,9 +1,9 @@
 package com.projectcitybuild.modules.bans
 
-import com.projectcitybuild.core.entities.Failure
-import com.projectcitybuild.core.entities.Success
-import com.projectcitybuild.core.entities.Result
-import com.projectcitybuild.core.entities.models.ApiError
+import com.projectcitybuild.entities.Failure
+import com.projectcitybuild.entities.Success
+import com.projectcitybuild.entities.Result
+import com.projectcitybuild.entities.models.ApiError
 import com.projectcitybuild.core.network.APIClient
 import com.projectcitybuild.core.network.APIRequestFactory
 import com.projectcitybuild.core.network.APIResult

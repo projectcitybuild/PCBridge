@@ -1,8 +1,8 @@
 package com.projectcitybuild.platforms.bungeecord.commands
 
-import com.projectcitybuild.core.entities.CommandResult
-import com.projectcitybuild.core.entities.Failure
-import com.projectcitybuild.core.entities.Success
+import com.projectcitybuild.entities.CommandResult
+import com.projectcitybuild.entities.Failure
+import com.projectcitybuild.entities.Success
 import com.projectcitybuild.core.extensions.joinWithWhitespaces
 import com.projectcitybuild.modules.bans.CreateBanAction
 import com.projectcitybuild.modules.players.PlayerUUIDLookup

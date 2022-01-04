@@ -1,11 +1,11 @@
 package com.projectcitybuild.platforms.spigot.commands
 
 import com.projectcitybuild.core.network.APIRequestFactory
-import com.projectcitybuild.core.entities.CommandResult
+import com.projectcitybuild.entities.CommandResult
 import com.projectcitybuild.core.contracts.Commandable
-import com.projectcitybuild.core.entities.CommandInput
-import com.projectcitybuild.core.entities.Failure
-import com.projectcitybuild.core.entities.Success
+import com.projectcitybuild.entities.CommandInput
+import com.projectcitybuild.entities.Failure
+import com.projectcitybuild.entities.Success
 import com.projectcitybuild.core.network.APIClient
 import com.projectcitybuild.core.network.APIResult
 import com.projectcitybuild.modules.ranks.SyncPlayerGroupAction

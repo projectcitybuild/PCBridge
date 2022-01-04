@@ -1,7 +1,7 @@
 package com.projectcitybuild.platforms.bungeecord
 
 import com.projectcitybuild.core.contracts.LoggerProvider
-import com.projectcitybuild.core.entities.CommandResult
+import com.projectcitybuild.entities.CommandResult
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
 import com.projectcitybuild.platforms.spigot.send

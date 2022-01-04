@@ -3,8 +3,8 @@ package com.projectcitybuild.platforms.spigot
 import com.github.shynixn.mccoroutine.SuspendingCommandExecutor
 import com.github.shynixn.mccoroutine.setSuspendingExecutor
 import com.projectcitybuild.core.contracts.*
-import com.projectcitybuild.core.entities.CommandInput
-import com.projectcitybuild.core.entities.CommandResult
+import com.projectcitybuild.entities.CommandInput
+import com.projectcitybuild.entities.CommandResult
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player

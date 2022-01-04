@@ -1,6 +1,6 @@
 package com.projectcitybuild.modules.players
 
-import com.projectcitybuild.core.entities.Success
+import com.projectcitybuild.entities.Success
 import com.projectcitybuild.core.extensions.toDashFormattedUUID
 import net.md_5.bungee.api.ProxyServer
 import java.util.*

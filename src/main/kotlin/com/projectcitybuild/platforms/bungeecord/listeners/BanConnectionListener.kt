@@ -1,6 +1,6 @@
 package com.projectcitybuild.platforms.bungeecord.listeners
 
-import com.projectcitybuild.core.entities.Success
+import com.projectcitybuild.entities.Success
 import com.projectcitybuild.modules.bans.CheckBanStatusAction
 import com.projectcitybuild.platforms.spigot.extensions.add
 import kotlinx.coroutines.runBlocking

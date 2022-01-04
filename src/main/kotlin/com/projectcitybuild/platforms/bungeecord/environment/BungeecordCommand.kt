@@ -1,6 +1,6 @@
 package com.projectcitybuild.platforms.bungeecord.environment
 
-import com.projectcitybuild.core.entities.CommandResult
+import com.projectcitybuild.entities.CommandResult
 import net.md_5.bungee.api.CommandSender
 import net.md_5.bungee.api.connection.ProxiedPlayer
 

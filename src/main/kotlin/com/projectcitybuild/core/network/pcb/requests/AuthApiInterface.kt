@@ -1,8 +1,8 @@
 package com.projectcitybuild.core.network.pcb.requests
 
-import com.projectcitybuild.core.entities.models.ApiResponse
-import com.projectcitybuild.core.entities.models.AuthPlayerGroups
-import com.projectcitybuild.core.entities.models.AuthURL
+import com.projectcitybuild.entities.models.ApiResponse
+import com.projectcitybuild.entities.models.AuthPlayerGroups
+import com.projectcitybuild.entities.models.AuthURL
 import retrofit2.http.*
 
 interface AuthApiInterface {

@@ -1,4 +1,4 @@
-package com.projectcitybuild.core.entities.models
+package com.projectcitybuild.entities.models
 
 import com.google.gson.annotations.SerializedName
 

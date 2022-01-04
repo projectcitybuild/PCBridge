@@ -1,6 +1,6 @@
-package com.projectcitybuild.core.entities
+package com.projectcitybuild.entities
 
-import com.projectcitybuild.core.entities.models.ApiError
+import com.projectcitybuild.entities.models.ApiError
 
 data class APIClientError(
         val body: ApiError?,

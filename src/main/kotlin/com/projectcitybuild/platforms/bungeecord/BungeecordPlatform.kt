@@ -1,12 +1,11 @@
 package com.projectcitybuild.platforms.bungeecord
 
-import com.projectcitybuild.core.contracts.ConfigProvider
-import com.projectcitybuild.core.contracts.LoggerProvider
-import com.projectcitybuild.core.entities.PluginConfig
+import com.projectcitybuild.entities.PluginConfig
 import com.projectcitybuild.core.network.APIClient
 import com.projectcitybuild.core.network.APIRequestFactory
 import com.projectcitybuild.core.network.mojang.client.MojangClient
 import com.projectcitybuild.core.network.pcb.client.PCBClient
+import com.projectcitybuild.entities.Channel
 import com.projectcitybuild.modules.bans.CheckBanStatusAction
 import com.projectcitybuild.modules.bans.CreateBanAction
 import com.projectcitybuild.modules.bans.CreateUnbanAction
@@ -20,6 +19,7 @@ import com.projectcitybuild.platforms.bungeecord.environment.BungeecordConfig
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordLogger
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordTimer
 import com.projectcitybuild.platforms.bungeecord.listeners.BanConnectionListener
+import com.projectcitybuild.platforms.bungeecord.listeners.IncomingChatListener
 import com.projectcitybuild.platforms.bungeecord.listeners.SyncRankLoginListener
 import com.projectcitybuild.platforms.spigot.environment.PermissionsManager
 import kotlinx.coroutines.Dispatchers
@@ -57,6 +57,8 @@ class BungeecordPlatform: Plugin() {
     override fun onEnable() {
         createDefaultConfig()
 
+        proxy.registerChannel(Channel.BUNGEECORD)
+
         permissionsManager = PermissionsManager()
 
         val commandDelegate = BungeecordCommandDelegate(plugin = this, logger = bungeecordLogger)
@@ -69,6 +71,8 @@ class BungeecordPlatform: Plugin() {
     }
 
     override fun onDisable() {
+        proxy.unregisterChannel(Channel.BUNGEECORD)
+
         listenerDelegate?.unregisterAll()
         timer.cancelAll()
 
@@ -141,6 +145,7 @@ class BungeecordPlatform: Plugin() {
                     logger = bungeecordLogger
                 )
             ),
+            IncomingChatListener(proxy = proxy)
         )
         .forEach { listener -> delegate.register(listener) }
     }
@@ -169,7 +174,6 @@ class BungeecordPlatform: Plugin() {
 
             val config = configProvider.load(file)
 
-            config.set(PluginConfig.SETTINGS.MAINTENANCE_MODE.key, false)
             config.set(PluginConfig.API.KEY.key, "")
             config.set(PluginConfig.API.BASE_URL.key, "")
             config.set(PluginConfig.API.IS_LOGGING_ENABLED.key, false)

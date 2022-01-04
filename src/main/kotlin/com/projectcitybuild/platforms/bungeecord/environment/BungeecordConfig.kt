@@ -1,7 +1,7 @@
 package com.projectcitybuild.platforms.bungeecord.environment
 
 import com.projectcitybuild.core.contracts.ConfigProvider
-import com.projectcitybuild.core.entities.PluginConfig
+import com.projectcitybuild.entities.PluginConfig
 import net.md_5.bungee.api.plugin.Plugin
 import net.md_5.bungee.config.ConfigurationProvider
 import net.md_5.bungee.config.YamlConfiguration

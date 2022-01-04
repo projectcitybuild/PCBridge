@@ -1,4 +1,4 @@
-package com.projectcitybuild.core.entities.models;
+package com.projectcitybuild.entities.models;
 
 data class ApiError(
         val id: String,

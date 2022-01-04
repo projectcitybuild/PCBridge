@@ -1,6 +1,6 @@
 package com.projectcitybuild.core.network.mojang.requests
 
-import com.projectcitybuild.core.entities.models.MojangPlayer
+import com.projectcitybuild.entities.models.MojangPlayer
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query

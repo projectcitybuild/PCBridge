@@ -1,9 +1,9 @@
 package com.projectcitybuild.platforms.bungeecord.commands
 
 import com.projectcitybuild.modules.bans.CheckBanStatusAction
-import com.projectcitybuild.core.entities.CommandResult
-import com.projectcitybuild.core.entities.Failure
-import com.projectcitybuild.core.entities.Success
+import com.projectcitybuild.entities.CommandResult
+import com.projectcitybuild.entities.Failure
+import com.projectcitybuild.entities.Success
 import com.projectcitybuild.modules.players.PlayerUUIDLookup
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput

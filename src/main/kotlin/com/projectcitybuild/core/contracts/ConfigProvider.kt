@@ -1,6 +1,6 @@
 package com.projectcitybuild.core.contracts
 
-import com.projectcitybuild.core.entities.PluginConfig
+import com.projectcitybuild.entities.PluginConfig
 
 interface ConfigProvider {
 

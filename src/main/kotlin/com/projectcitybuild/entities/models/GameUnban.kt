@@ -1,4 +1,4 @@
-package com.projectcitybuild.core.entities.models
+package com.projectcitybuild.entities.models
 
 data class GameUnban(
     val id: Int,

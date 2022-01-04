@@ -2,12 +2,12 @@ package com.projectcitybuild.modules.ranks
 
 import com.projectcitybuild.core.contracts.ConfigProvider
 import com.projectcitybuild.core.contracts.LoggerProvider
-import com.projectcitybuild.core.entities.Failure
-import com.projectcitybuild.core.entities.PluginConfig
-import com.projectcitybuild.core.entities.Success
-import com.projectcitybuild.core.entities.Result
-import com.projectcitybuild.core.entities.models.ApiError
-import com.projectcitybuild.core.entities.models.Group
+import com.projectcitybuild.entities.Failure
+import com.projectcitybuild.entities.PluginConfig
+import com.projectcitybuild.entities.Success
+import com.projectcitybuild.entities.Result
+import com.projectcitybuild.entities.models.ApiError
+import com.projectcitybuild.entities.models.Group
 import com.projectcitybuild.core.network.APIClient
 import com.projectcitybuild.core.network.APIRequestFactory
 import com.projectcitybuild.core.network.APIResult

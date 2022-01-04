@@ -1,4 +1,4 @@
-package com.projectcitybuild.core.entities
+package com.projectcitybuild.entities
 
 import org.bukkit.command.CommandSender
 

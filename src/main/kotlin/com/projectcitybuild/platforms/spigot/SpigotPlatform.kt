@@ -4,9 +4,9 @@ import com.github.shynixn.mccoroutine.minecraftDispatcher
 import com.projectcitybuild.core.network.APIRequestFactory
 import com.projectcitybuild.core.network.mojang.client.MojangClient
 import com.projectcitybuild.core.network.pcb.client.PCBClient
-import com.projectcitybuild.core.entities.PluginConfig
+import com.projectcitybuild.entities.PluginConfig
 import com.projectcitybuild.core.network.APIClient
-import com.projectcitybuild.core.utilities.PlayerStore
+import com.projectcitybuild.entities.Channel
 import com.projectcitybuild.modules.ranks.SyncPlayerGroupAction
 import com.projectcitybuild.platforms.spigot.commands.SyncCommand
 import com.projectcitybuild.platforms.spigot.commands.SyncOtherCommand
@@ -23,8 +23,6 @@ class SpigotPlatform: JavaPlugin() {
         // To prevent Coroutines being created before the plugin is ready
         this.minecraftDispatcher
     })
-    private val playerStore = PlayerStore()
-    private var playerStoreWrapper: SpigotPlayerStore? = null
     private var permissionsManager: PermissionsManager? = null
     private var commandDelegate: SpigotCommandDelegate? = null
     private var listenerDelegate: SpigotListenerDelegate? = null
@@ -59,7 +57,8 @@ class SpigotPlatform: JavaPlugin() {
     override fun onEnable() {
         createDefaultConfig()
 
-        playerStoreWrapper = SpigotPlayerStore(plugin = this, store = playerStore)
+        server.messenger.registerOutgoingPluginChannel(this, Channel.BUNGEECORD)
+
         permissionsManager = PermissionsManager()
 
         val commandDelegate = SpigotCommandDelegate(plugin = this, logger = spigotLogger)
@@ -74,6 +73,8 @@ class SpigotPlatform: JavaPlugin() {
     }
 
     override fun onDisable() {
+        server.messenger.unregisterOutgoingPluginChannel(this)
+
         listenerDelegate?.unregisterAll()
 
         commandDelegate = null
@@ -93,24 +94,18 @@ class SpigotPlatform: JavaPlugin() {
 
     private fun registerListeners(delegate: SpigotListenerDelegate) {
         arrayOf(
-                ChatListener(spigotConfig, playerStore, permissionsManager!!, spigotLogger),
+                ChatListener(plugin = this)
         )
         .forEach { listener -> delegate.register(listener) }
     }
 
     private fun createDefaultConfig() {
-        config.addDefault(PluginConfig.SETTINGS.MAINTENANCE_MODE)
         config.addDefault(PluginConfig.API.KEY)
         config.addDefault(PluginConfig.API.BASE_URL)
         config.addDefault(PluginConfig.GROUPS.GUEST)
         config.addDefault(PluginConfig.GROUPS.TRUST_PRIORITY)
         config.addDefault(PluginConfig.GROUPS.BUILD_PRIORITY)
         config.addDefault(PluginConfig.GROUPS.DONOR_PRIORITY)
-        config.addDefault(PluginConfig.DONORS.GIVE_BOX_COMMAND)
-
-        config.addDefault("donors.tiers.copper.permission_group_name", "copper-tier")
-        config.addDefault("donors.tiers.iron.permission_group_name", "iron-tier")
-        config.addDefault("donors.tiers.diamond.permission_group_name", "diamond-tier")
 
         config.addDefault("groups.appearance.admin.display_name", "§4[Staff]")
         config.addDefault("groups.appearance.admin.hover_name", "Administrator")

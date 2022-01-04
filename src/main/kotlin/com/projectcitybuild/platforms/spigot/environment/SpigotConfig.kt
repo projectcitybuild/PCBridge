@@ -1,7 +1,7 @@
 package com.projectcitybuild.platforms.spigot.environment
 
 import com.projectcitybuild.core.contracts.ConfigProvider
-import com.projectcitybuild.core.entities.PluginConfig
+import com.projectcitybuild.entities.PluginConfig
 import org.bukkit.configuration.file.FileConfiguration
 
 class SpigotConfig(private val config: FileConfiguration): ConfigProvider {

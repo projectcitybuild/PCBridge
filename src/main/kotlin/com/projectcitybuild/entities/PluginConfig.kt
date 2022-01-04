@@ -1,4 +1,4 @@
-package com.projectcitybuild.core.entities
+package com.projectcitybuild.entities
 
 sealed class PluginConfig {
 
@@ -68,26 +68,6 @@ sealed class PluginConfig {
                         "donator",
                         "legacy-donator"
                     )
-                )
-        }
-    }
-
-    sealed class DONORS {
-        companion object {
-            val GIVE_BOX_COMMAND: Pair<String>
-                get() = Pair(
-                    key = "donors.give_box_command",
-                    defaultValue = "gmysteryboxes give %name %quantity"
-                )
-        }
-    }
-
-    sealed class SETTINGS {
-        companion object {
-            val MAINTENANCE_MODE: Pair<Boolean>
-                get() = Pair(
-                    key = "settings.maintenance_mode",
-                    defaultValue = false
                 )
         }
     }
