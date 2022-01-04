@@ -54,9 +54,9 @@ class CheckBanCommand(
                         input.sender.send().info("""
                             #${ChatColor.RED}$targetPlayerName is currently banned.
                             #${ChatColor.GRAY}---
-                            #${ChatColor.GRAY}Reason: ${ChatColor.WHITE}${ban.reason}
-                            #${ChatColor.GRAY}Date: ${ChatColor.WHITE}$banDate
-                            #${ChatColor.GRAY}Expires: ${ChatColor.WHITE}$expiryDate
+                            #${ChatColor.GRAY}Reason » ${ChatColor.WHITE}${ban.reason}
+                            #${ChatColor.GRAY}Date » ${ChatColor.WHITE}$banDate
+                            #${ChatColor.GRAY}Expires » ${ChatColor.WHITE}$expiryDate
                         """.trimMargin("#"), isMultiLine = true)
                     }
                 }

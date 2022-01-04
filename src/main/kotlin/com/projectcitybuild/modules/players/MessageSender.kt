@@ -25,7 +25,13 @@ class MessageSender(
     }
 
     fun info(message: String, isMultiLine: Boolean = false) {
-        val messagesByLine = if (isMultiLine) message.split("\n") else listOf(message)
+        val messagesByLineBreak = if (isMultiLine) message.split("\n") else listOf(message)
+
+        // Ensure that strings that wrap onto the next line also have the
+        // symbols at the start
+        val maxLineLength = 53
+        val startSymbolLength = 3
+        val messagesByLine = messagesByLineBreak.flatMap { it.chunked(maxLineLength - startSymbolLength) }
 
         val tc = TextComponent()
         messagesByLine.forEachIndexed { index, message ->
