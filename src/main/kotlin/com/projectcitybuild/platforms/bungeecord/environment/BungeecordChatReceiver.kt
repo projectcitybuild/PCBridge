@@ -1,7 +1,7 @@
 package com.projectcitybuild.platforms.spigot
 
 import com.projectcitybuild.core.contracts.ChatMessageReceiver
-import com.projectcitybuild.modules.chat.MessageSender
+import com.projectcitybuild.modules.players.MessageSender
 import net.md_5.bungee.api.CommandSender
 import net.md_5.bungee.api.chat.BaseComponent
 

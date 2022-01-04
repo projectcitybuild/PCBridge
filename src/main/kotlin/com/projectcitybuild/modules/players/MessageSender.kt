@@ -1,4 +1,4 @@
-package com.projectcitybuild.modules.chat
+package com.projectcitybuild.modules.players
 
 import com.projectcitybuild.core.contracts.ChatMessageReceiver
 import com.projectcitybuild.platforms.spigot.extensions.add

@@ -1,28 +1,20 @@
 package com.projectcitybuild.platforms.bungeecord.commands
 
 import com.projectcitybuild.modules.bans.CheckBanStatusAction
-import com.projectcitybuild.core.network.APIRequestFactory
 import com.projectcitybuild.core.entities.CommandResult
 import com.projectcitybuild.core.entities.Failure
 import com.projectcitybuild.core.entities.Success
-import com.projectcitybuild.core.extensions.toDashFormattedUUID
-import com.projectcitybuild.core.network.APIClient
-import com.projectcitybuild.modules.chat.MessageSender
-import com.projectcitybuild.modules.players.GetMojangPlayerAction
+import com.projectcitybuild.modules.players.PlayerUUIDLookup
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
 import com.projectcitybuild.platforms.bungeecord.extensions.async
 import com.projectcitybuild.platforms.spigot.send
 import net.md_5.bungee.api.ChatColor
-import net.md_5.bungee.api.ProxyServer
-import net.md_5.bungee.api.chat.TextComponent
 import java.text.SimpleDateFormat
 import java.util.*
 
 class CheckBanCommand(
-    private val proxyServer: ProxyServer,
-    private val apiRequestFactory: APIRequestFactory,
-    private val apiClient: APIClient,
+    private val playerUUIDLookup: PlayerUUIDLookup,
     private val checkBanStatusAction: CheckBanStatusAction
 ): BungeecordCommand {
 
@@ -35,20 +27,9 @@ class CheckBanCommand(
         val targetPlayerName = input.args.first()
 
         async {
-            var targetPlayerUUID = proxyServer.players
-                .firstOrNull { it.name.lowercase() == targetPlayerName.lowercase() }
-                ?.uniqueId
-
+            val targetPlayerUUID = playerUUIDLookup.request(targetPlayerName)
             if (targetPlayerUUID == null) {
-                val result = GetMojangPlayerAction(apiRequestFactory, apiClient).execute(playerName = targetPlayerName)
-                targetPlayerUUID = when (result) {
-                    is Success -> UUID.fromString(result.value.uuid.toDashFormattedUUID())
-                    else -> null
-                }
-            }
-
-            if (targetPlayerUUID == null) {
-                input.sender.sendMessage(TextComponent("Could not find UUID for $targetPlayerName"))
+                input.sender.send().error("Could not find UUID for $targetPlayerName")
                 return@async
             }
 

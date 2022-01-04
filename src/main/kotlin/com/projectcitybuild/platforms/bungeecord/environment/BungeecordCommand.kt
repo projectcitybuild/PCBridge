@@ -26,5 +26,5 @@ interface BungeecordCommand {
     // Permission node required to execute the command
     val permission: String
 
-    fun execute(input: BungeecordCommandInput): CommandResult
+    fun execute(input: BungeecordCommandInput) : CommandResult
 }
