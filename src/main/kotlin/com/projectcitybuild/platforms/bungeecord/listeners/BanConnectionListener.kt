@@ -1,9 +1,8 @@
 package com.projectcitybuild.platforms.bungeecord.listeners
 
 import com.projectcitybuild.core.entities.Success
-import com.projectcitybuild.core.network.APIClient
-import com.projectcitybuild.core.network.APIRequestFactory
 import com.projectcitybuild.modules.bans.CheckBanStatusAction
+import com.projectcitybuild.platforms.spigot.extensions.add
 import kotlinx.coroutines.runBlocking
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.chat.TextComponent
@@ -25,28 +24,18 @@ class BanConnectionListener(
 
             if (result is Success && result.value != null) {
                 val ban = result.value
-                val textComponent = TextComponent().apply {
-                    this.addExtra(TextComponent("You are currently banned.\n\n").apply {
-                        this.color = ChatColor.RED
-                        this.isBold = true
-                    })
-                    this.addExtra(TextComponent("Reason: ").apply {
-                        this.color = ChatColor.GRAY
-                    })
-                    this.addExtra(TextComponent((ban.reason ?: "No reason provided") + "\n").apply {
-                        this.color = ChatColor.WHITE
-                    })
-                    this.addExtra(TextComponent("Expires: ").apply {
-                        this.color = ChatColor.GRAY
-                    })
-                    this.addExtra(TextComponent(ban.expiresAt?.toString() ?: "Never" + "\n\n").apply {
-                        this.color = ChatColor.WHITE
-                    })
-                    this.addExtra(TextComponent("Appeal @ https://projectcitybuild.com").apply {
-                        this.color = ChatColor.AQUA
-                    })
-                }
-                event.setCancelReason(textComponent)
+
+                event.setCancelReason(TextComponent()
+                    .add("You are currently banned.\n\n") {
+                        it.color = ChatColor.RED
+                        it.isBold = true
+                    }
+                    .add("Reason: ") { it.color = ChatColor.GRAY }
+                    .add((ban.reason ?: "No reason provided") + "\n") { it.color = ChatColor.WHITE }
+                    .add("Expires: ") { it.color = ChatColor.GRAY }
+                    .add(ban.expiresAt?.toString() ?: ("Never" + "\n\n")) { it.color = ChatColor.WHITE }
+                    .add("Appeal @ https://projectcitybuild.com") { it.color = ChatColor.AQUA }
+                )
                 event.isCancelled = true
             }
         }
