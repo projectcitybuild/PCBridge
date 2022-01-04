@@ -1,6 +1,5 @@
 package com.projectcitybuild.platforms.spigot.environment
 
-import com.projectcitybuild.platforms.spigot.extensions.makeModel
 import com.projectcitybuild.core.utilities.PlayerStore
 import com.projectcitybuild.core.entities.Player
 import org.bukkit.configuration.file.YamlConfiguration
@@ -21,8 +20,8 @@ class SpigotPlayerStore(val plugin: JavaPlugin, val store: PlayerStore): Listene
 
     @EventHandler
     fun playerJoined(event: PlayerJoinEvent) {
-        val player = event.player.makeModel()
-        store.put(event.player.uniqueId, player)
+//        val player = event.player.makeModel()
+//        store.put(event.player.uniqueId, player)
     }
 
     @EventHandler

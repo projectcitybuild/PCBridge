@@ -20,6 +20,17 @@ class BungeecordConfig(private val plugin: Plugin): ConfigProvider {
         return config.get(key.key) as T // FIXME
     }
 
+    override fun get(path: String): Any? {
+        // FIXME: stop IO thrashing
+        val file = File(plugin.dataFolder, "config.yml")
+
+        val config = ConfigurationProvider
+            .getProvider(YamlConfiguration::class.java)
+            .load(file)
+
+        return config.get(path) // FIXME
+    }
+
     override fun <T> set(key: PluginConfig.Pair<T>, value: T) {
         // FIXME: stop IO thrashing
         val file = File(plugin.dataFolder, "config.yml")

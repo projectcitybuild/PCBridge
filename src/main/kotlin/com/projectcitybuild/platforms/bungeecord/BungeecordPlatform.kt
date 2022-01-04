@@ -17,6 +17,7 @@ import com.projectcitybuild.platforms.bungeecord.listeners.BanConnectionListener
 import com.projectcitybuild.platforms.bungeecord.listeners.MaintenanceConnectionListener
 import com.projectcitybuild.platforms.bungeecord.listeners.SyncRankLoginListener
 import com.projectcitybuild.platforms.bungeecord.permissions.PermissionsManager
+import kotlinx.coroutines.Dispatchers
 import net.md_5.bungee.api.plugin.Plugin
 import net.md_5.bungee.config.ConfigurationProvider
 import net.md_5.bungee.config.YamlConfiguration
@@ -27,7 +28,9 @@ class BungeecordPlatform: Plugin() {
     private val bungeecordLogger = BungeecordLogger(logger = this.logger)
     private val scheduler = BungeecordScheduler(plugin = this)
     private val config = BungeecordConfig(plugin = this)
-    private val apiClient = APIClient(bungeecordLogger, scheduler)
+    private val apiClient = APIClient(getCoroutineContext = {
+        Dispatchers.IO
+    })
     private val timer = BungeecordTimer(this, proxy)
     private var commandDelegate: BungeecordCommandDelegate? = null
     private var listenerDelegate: BungeecordListenerDelegate? = null

@@ -1,5 +1,6 @@
 package com.projectcitybuild.platforms.spigot
 
+import com.github.shynixn.mccoroutine.minecraftDispatcher
 import com.projectcitybuild.core.network.APIRequestFactory
 import com.projectcitybuild.core.network.mojang.client.MojangClient
 import com.projectcitybuild.core.network.pcb.client.PCBClient
@@ -19,7 +20,11 @@ class SpigotPlatform: JavaPlugin() {
     private val spigotLogger = SpigotLogger(logger = this.logger)
     private val spigotConfig = SpigotConfig(config = this.config)
     private val scheduler = SpigotScheduler(plugin = this)
-    private val apiClient = APIClient(plugin = this, logger = spigotLogger)
+    private val apiClient = APIClient(getCoroutineContext = {
+        // Fetch instead of injecting, to prevent Coroutines being created
+        // before the plugin is ready
+        this.minecraftDispatcher
+    })
     private val playerStore = PlayerStore()
     private var playerStoreWrapper: SpigotPlayerStore? = null
     private var permissionsManager: PermissionsManager? = null
@@ -91,10 +96,8 @@ class SpigotPlatform: JavaPlugin() {
                 CheckBanCommand(scheduler, apiRequestFactory, apiClient, checkBanStatusAction),
                 MuteCommand(playerStore),
                 UnmuteCommand(playerStore),
-                MaintenanceCommand(),
                 SyncCommand(apiRequestFactory, apiClient, syncPlayerGroupAction),
                 SyncOtherCommand(syncPlayerGroupAction),
-                BoxCommand(apiRequestFactory, apiClient, spigotConfig, spigotLogger)
         )
         .forEach { command -> delegate.register(command) }
     }

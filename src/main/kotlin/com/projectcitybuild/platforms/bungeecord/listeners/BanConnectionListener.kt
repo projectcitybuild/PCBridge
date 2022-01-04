@@ -18,34 +18,34 @@ class BanConnectionListener(
 
     @EventHandler(priority = EventPriority.HIGHEST)
     fun onPreLoginEvent(event: LoginEvent) {
-        val action = CheckBanStatusAction(apiRequestFactory, apiClient)
-        val result = action.executeSynchronously(playerId = event.connection.uniqueId)
-
-        if (result is Success && result.value != null) {
-            val ban = result.value
-            val textComponent = TextComponent().apply {
-                this.addExtra(TextComponent("You are currently banned.\n\n").apply {
-                    this.color = ChatColor.RED
-                    this.isBold = true
-                })
-                this.addExtra(TextComponent("Reason: ").apply {
-                    this.color = ChatColor.GRAY
-                })
-                this.addExtra(TextComponent((ban.reason ?: "No reason provided") + "\n").apply {
-                    this.color = ChatColor.WHITE
-                })
-                this.addExtra(TextComponent("Expires: ").apply {
-                    this.color = ChatColor.GRAY
-                })
-                this.addExtra(TextComponent(ban.expiresAt?.toString() ?: "Never" + "\n\n").apply {
-                    this.color = ChatColor.WHITE
-                })
-                this.addExtra(TextComponent("Appeal @ https://projectcitybuild.com").apply {
-                    this.color = ChatColor.AQUA
-                })
-            }
-            event.setCancelReason(textComponent)
-            event.isCancelled = true
-        }
+//        val action = CheckBanStatusAction(apiRequestFactory, apiClient)
+//        val result = action.executeSynchronously(playerId = event.connection.uniqueId)
+//
+//        if (result is Success && result.value != null) {
+//            val ban = result.value
+//            val textComponent = TextComponent().apply {
+//                this.addExtra(TextComponent("You are currently banned.\n\n").apply {
+//                    this.color = ChatColor.RED
+//                    this.isBold = true
+//                })
+//                this.addExtra(TextComponent("Reason: ").apply {
+//                    this.color = ChatColor.GRAY
+//                })
+//                this.addExtra(TextComponent((ban.reason ?: "No reason provided") + "\n").apply {
+//                    this.color = ChatColor.WHITE
+//                })
+//                this.addExtra(TextComponent("Expires: ").apply {
+//                    this.color = ChatColor.GRAY
+//                })
+//                this.addExtra(TextComponent(ban.expiresAt?.toString() ?: "Never" + "\n\n").apply {
+//                    this.color = ChatColor.WHITE
+//                })
+//                this.addExtra(TextComponent("Appeal @ https://projectcitybuild.com").apply {
+//                    this.color = ChatColor.AQUA
+//                })
+//            }
+//            event.setCancelReason(textComponent)
+//            event.isCancelled = true
+//        }
     }
 }
