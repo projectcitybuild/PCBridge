@@ -7,6 +7,7 @@ import com.projectcitybuild.core.network.mojang.client.MojangClient
 import com.projectcitybuild.core.network.pcb.client.PCBClient
 import com.projectcitybuild.modules.bans.CheckBanStatusAction
 import com.projectcitybuild.modules.bans.CreateBanAction
+import com.projectcitybuild.modules.bans.CreateUnbanAction
 import com.projectcitybuild.modules.players.GetMojangPlayerAction
 import com.projectcitybuild.modules.players.PlayerUUIDLookup
 import com.projectcitybuild.platforms.bungeecord.commands.BanCommand
@@ -17,7 +18,6 @@ import com.projectcitybuild.platforms.bungeecord.environment.BungeecordLogger
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordScheduler
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordTimer
 import com.projectcitybuild.platforms.bungeecord.listeners.BanConnectionListener
-import com.projectcitybuild.platforms.bungeecord.listeners.MaintenanceConnectionListener
 import com.projectcitybuild.platforms.bungeecord.listeners.SyncRankLoginListener
 import com.projectcitybuild.platforms.bungeecord.permissions.PermissionsManager
 import kotlinx.coroutines.Dispatchers
@@ -42,14 +42,14 @@ class BungeecordPlatform: Plugin() {
     private val apiRequestFactory: APIRequestFactory by lazy {
         val isLoggingEnabled = config.get(PluginConfig.API.IS_LOGGING_ENABLED)
         APIRequestFactory(
-                pcb = PCBClient(
-                        authToken = config.get(PluginConfig.API.KEY),
-                        baseUrl = config.get(PluginConfig.API.BASE_URL),
-                        withLogging = isLoggingEnabled
-                ),
-                mojang = MojangClient(
-                        withLogging = isLoggingEnabled
-                )
+            pcb = PCBClient(
+                    authToken = config.get(PluginConfig.API.KEY),
+                    baseUrl = config.get(PluginConfig.API.BASE_URL),
+                    withLogging = isLoggingEnabled
+            ),
+            mojang = MojangClient(
+                    withLogging = isLoggingEnabled
+            )
         )
     }
 
@@ -79,29 +79,42 @@ class BungeecordPlatform: Plugin() {
     private fun registerCommands(delegate: BungeecordCommandDelegate) {
         arrayOf(
             BanCommand(
-                proxy,
-                PlayerUUIDLookup(
+                proxyServer = proxy,
+                playerUUIDLookup = PlayerUUIDLookup(
                     proxy,
                     GetMojangPlayerAction(
                         apiRequestFactory,
                         apiClient
                     )
                 ),
-                CreateBanAction(
+                createBanAction = CreateBanAction(
                     apiRequestFactory,
                     apiClient
                 )
             ),
-            UnbanCommand(proxy, scheduler, apiRequestFactory, apiClient, bungeecordLogger),
-            CheckBanCommand(
-                PlayerUUIDLookup(
+            UnbanCommand(
+                proxyServer = proxy,
+                playerUUIDLookup = PlayerUUIDLookup(
                     proxy,
                     GetMojangPlayerAction(
                         apiRequestFactory,
                         apiClient
                     )
                 ),
-                CheckBanStatusAction(
+                unbanAction = CreateUnbanAction(
+                    apiRequestFactory,
+                    apiClient
+                )
+            ),
+            CheckBanCommand(
+                playerUUIDLookup = PlayerUUIDLookup(
+                    proxyServer = proxy,
+                    getMojangPlayerAction = GetMojangPlayerAction(
+                        apiRequestFactory,
+                        apiClient
+                    )
+                ),
+                checkBanStatusAction = CheckBanStatusAction(
                     apiRequestFactory,
                     apiClient
                 )
@@ -114,7 +127,6 @@ class BungeecordPlatform: Plugin() {
         arrayOf(
             BanConnectionListener(apiRequestFactory, apiClient),
             SyncRankLoginListener(apiRequestFactory, apiClient, scheduler, permissionsManager!!, bungeecordLogger),
-            MaintenanceConnectionListener(config, permissionsManager!!),
         )
         .forEach { listener -> delegate.register(listener) }
     }

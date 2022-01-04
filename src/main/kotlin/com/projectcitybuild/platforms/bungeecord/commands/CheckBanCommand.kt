@@ -35,6 +35,14 @@ class CheckBanCommand(
 
             val result = checkBanStatusAction.execute(playerId = targetPlayerUUID)
             when (result) {
+                is Failure -> {
+                    input.sender.send().error(
+                        when (result.reason) {
+                            is CheckBanStatusAction.FailReason.HTTPError -> "Bad response received from the ban server. Please contact an admin"
+                            is CheckBanStatusAction.FailReason.NetworkError -> "Failed to connect to auth server. Please try again later"
+                        }
+                    )
+                }
                 is Success -> {
                     val ban = result.value
                     if (ban == null) {
@@ -59,14 +67,6 @@ class CheckBanCommand(
                             #${ChatColor.GRAY}Expires » ${ChatColor.WHITE}$expiryDate
                         """.trimMargin("#"), isMultiLine = true)
                     }
-                }
-                is Failure -> {
-                    input.sender.send().error(
-                        when (result.reason) {
-                            is CheckBanStatusAction.FailReason.HTTPError -> "Bad response received from the ban server. Please contact an admin"
-                            is CheckBanStatusAction.FailReason.NetworkError -> "Failed to connect to auth server. Please try again later"
-                        }
-                    )
                 }
             }
         }

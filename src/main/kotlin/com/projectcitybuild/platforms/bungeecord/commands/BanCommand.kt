@@ -44,15 +44,13 @@ class BanCommand(
                 reason = reason
             )
             when (result) {
-                is Failure -> {
-                    input.sender.send().error(
-                        when (result.reason) {
-                            is CreateBanAction.FailReason.HTTPError -> "Bad response received from the ban server. Please contact an admin"
-                            is CreateBanAction.FailReason.NetworkError -> "Failed to contact auth server. Please contact an admin"
-                            is CreateBanAction.FailReason.PlayerAlreadyBanned -> "$targetPlayerName is already banned"
-                        }
-                    )
-                }
+                is Failure -> input.sender.send().error(
+                    when (result.reason) {
+                        is CreateBanAction.FailReason.HTTPError -> "Bad response received from the ban server. Please contact an admin"
+                        is CreateBanAction.FailReason.NetworkError -> "Failed to contact auth server. Please contact an admin"
+                        is CreateBanAction.FailReason.PlayerAlreadyBanned -> "$targetPlayerName is already banned"
+                    }
+                )
                 is Success -> {
                     proxyServer.broadcast(
                         TextComponent("${ChatColor.GRAY}${input.args.first()} has been banned by ${input.sender.name}: ${reason?.isNotEmpty() ?: "No reason given"}")
