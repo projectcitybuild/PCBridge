@@ -9,7 +9,6 @@ import java.util.concurrent.TimeUnit
 class BungeecordScheduler(private val plugin: Plugin): SchedulerProvider {
 
     override fun <T> async(task: ((T) -> Unit) -> Unit): AsyncTask<T> {
-        // Bukkit/Spigot performs Asynchronous units of work via their internal Scheduler
         return AsyncTask<T> { resolve ->
             val runnable = Runnable {
                 task { result -> resolve(result) }

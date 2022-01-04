@@ -9,7 +9,8 @@ import com.projectcitybuild.core.network.APIClient
 import com.projectcitybuild.core.utilities.PlayerStore
 import com.projectcitybuild.modules.bans.CheckBanStatusAction
 import com.projectcitybuild.modules.ranks.SyncPlayerGroupAction
-import com.projectcitybuild.platforms.spigot.commands.*
+import com.projectcitybuild.platforms.spigot.commands.SyncCommand
+import com.projectcitybuild.platforms.spigot.commands.SyncOtherCommand
 import com.projectcitybuild.platforms.spigot.environment.*
 import com.projectcitybuild.platforms.spigot.listeners.*
 import com.projectcitybuild.platforms.spigot.extensions.addDefault
@@ -21,8 +22,7 @@ class SpigotPlatform: JavaPlugin() {
     private val spigotConfig = SpigotConfig(config = this.config)
     private val scheduler = SpigotScheduler(plugin = this)
     private val apiClient = APIClient(getCoroutineContext = {
-        // Fetch instead of injecting, to prevent Coroutines being created
-        // before the plugin is ready
+        // To prevent Coroutines being created before the plugin is ready
         this.minecraftDispatcher
     })
     private val playerStore = PlayerStore()
@@ -90,28 +90,22 @@ class SpigotPlatform: JavaPlugin() {
     }
 
     private fun registerCommands(delegate: SpigotCommandDelegate) {
-//        arrayOf(
-//                BanCommand(apiRequestFactory, apiClient),
-//                UnbanCommand( apiRequestFactory, apiClient),
-//                CheckBanCommand(scheduler, apiRequestFactory, apiClient, checkBanStatusAction),
+        arrayOf(
 //                MuteCommand(playerStore),
 //                UnmuteCommand(playerStore),
-//                SyncCommand(apiRequestFactory, apiClient, syncPlayerGroupAction),
-//                SyncOtherCommand(syncPlayerGroupAction),
-//        )
-//        .forEach { command -> delegate.register(command) }
+                SyncCommand(apiRequestFactory, apiClient, syncPlayerGroupAction),
+                SyncOtherCommand(syncPlayerGroupAction),
+        )
+        .forEach { command -> delegate.register(command) }
     }
 
     private fun registerListeners(delegate: SpigotListenerDelegate) {
-//        arrayOf(
+        arrayOf(
 //                BanConnectionListener(apiRequestFactory, apiClient),
-//                ChatListener(spigotConfig, playerStore, permissionsManager!!, spigotLogger),
-//                MaintenanceConnectListener(spigotConfig),
+                ChatListener(spigotConfig, playerStore, permissionsManager!!, spigotLogger),
 //                SyncRankLoginListener(syncPlayerGroupAction),
-//                AvailableBoxListener(apiRequestFactory, apiClient),
-//                DonorPerkConnectionListener(permissionsManager!!, spigotConfig, apiRequestFactory, apiClient, spigotLogger)
-//        )
-//        .forEach { listener -> delegate.register(listener) }
+        )
+        .forEach { listener -> delegate.register(listener) }
     }
 
     private fun createDefaultConfig() {

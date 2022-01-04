@@ -13,9 +13,9 @@ import com.projectcitybuild.platforms.spigot.send
 import org.bukkit.entity.Player
 
 class SyncCommand(
-        private val apiRequestFactory: APIRequestFactory,
-        private val apiClient: APIClient,
-        private val syncPlayerGroupAction: SyncPlayerGroupAction
+    private val apiRequestFactory: APIRequestFactory,
+    private val apiClient: APIClient,
+    private val syncPlayerGroupAction: SyncPlayerGroupAction
 ): Commandable {
 
     override val label: String = "sync"
@@ -23,7 +23,7 @@ class SyncCommand(
 
     override suspend fun execute(input: CommandInput): CommandResult {
         if (input.sender !is Player) {
-            input.sender.sendMessage("Console cannot use this command")
+            input.sender.send().error("Console cannot use this command")
             return CommandResult.EXECUTED
         }
 
@@ -49,9 +49,9 @@ class SyncCommand(
                     player.send().error("Failed to generate verification URL")
                 }
             }
-            is APIResult.NetworkError -> {
+            is APIResult.NetworkError ->
                 player.send().error("Failed to contact auth server. Please try again later")
-            }
+
             is APIResult.Success -> {
                 if (response.value.data == null) {
                     player.send().error("Failed to generate verification URL")
@@ -66,9 +66,10 @@ class SyncCommand(
 
     private suspend fun syncGroups(player: Player): CommandResult {
         val result = syncPlayerGroupAction.execute(player.uniqueId)
-
         when (result) {
-            is Success -> player.send().success("Account linked! Your rank will be automatically synchronized with the PCB network")
+            is Success ->
+                player.send().success("Account linked! Your rank will be automatically synchronized with the PCB network")
+
             is Failure -> {
                 when (result.reason) {
                     is SyncPlayerGroupAction.FailReason.AccountNotLinked ->
