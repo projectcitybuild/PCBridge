@@ -10,7 +10,6 @@ import com.projectcitybuild.platforms.spigot.send
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.ProxyServer
 import net.md_5.bungee.api.chat.TextComponent
-import org.bukkit.command.Command
 
 class BanCommand(
     private val proxyServer: ProxyServer,
@@ -50,7 +49,7 @@ class BanCommand(
             proxyServer.players
                 .first { it.name.lowercase() == targetPlayerName.lowercase() || it.uniqueId == targetPlayerUUID }
                 ?.disconnect(
-                    TextComponent("You have been banned").also { it.color = ChatColor.RED }
+                    TextComponent("You have been banned.\nAppeal @ projectcitybuild.com").also { it.color = ChatColor.RED }
                 )
 
         }.onFailure { throwable ->
