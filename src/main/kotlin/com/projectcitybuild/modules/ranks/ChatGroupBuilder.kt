@@ -1,13 +1,6 @@
 package com.projectcitybuild.modules.ranks
 
-import com.projectcitybuild.platforms.spigot.environment.PermissionsGroup
 import com.projectcitybuild.platforms.spigot.environment.PermissionsManager
-import com.projectcitybuild.platforms.spigot.extensions.add
-import net.md_5.bungee.api.ChatColor
-import net.md_5.bungee.api.chat.ComponentBuilder
-import net.md_5.bungee.api.chat.HoverEvent
-import net.md_5.bungee.api.chat.TextComponent
-import java.util.*
 import kotlin.collections.ArrayList
 
 class ChatGroupBuilder(

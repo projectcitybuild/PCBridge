@@ -10,9 +10,7 @@ import com.projectcitybuild.modules.bans.BanRepository
 import com.projectcitybuild.modules.players.GetMojangPlayerAction
 import com.projectcitybuild.modules.players.PlayerUUIDLookup
 import com.projectcitybuild.modules.ranks.SyncPlayerGroupAction
-import com.projectcitybuild.platforms.bungeecord.commands.BanCommand
-import com.projectcitybuild.platforms.bungeecord.commands.CheckBanCommand
-import com.projectcitybuild.platforms.bungeecord.commands.UnbanCommand
+import com.projectcitybuild.platforms.bungeecord.commands.*
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordConfig
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordLogger
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordTimer
@@ -123,8 +121,29 @@ class BungeecordPlatform: Plugin() {
                     apiClient
                 )
             ),
+            SyncCommand(
+                apiRequestFactory,
+                apiClient,
+                SyncPlayerGroupAction(
+                    permissionsManager!!,
+                    apiRequestFactory,
+                    apiClient,
+                    config,
+                    bungeecordLogger
+                )
+            ),
+            SyncOtherCommand(
+                proxyServer = proxy,
+                syncPlayerGroupAction = SyncPlayerGroupAction(
+                    permissionsManager!!,
+                    apiRequestFactory,
+                    apiClient,
+                    config,
+                    bungeecordLogger
+                )
+            )
         )
-        .forEach { command -> delegate.register(command) }
+        .forEach { delegate.register(it) }
     }
 
     private fun registerListeners(delegate: BungeecordListenerDelegate) {
@@ -148,7 +167,7 @@ class BungeecordPlatform: Plugin() {
             IncomingChatListener(proxy = proxy),
             IncomingStaffChatListener(proxy = proxy)
         )
-        .forEach { listener -> delegate.register(listener) }
+        .forEach { delegate.register(it) }
     }
 
     private fun createDefaultConfig() {

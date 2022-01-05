@@ -18,6 +18,9 @@ class ACommand(
     override val permission: String = "pcbridge.chat.staff_channel.send"
 
     override suspend fun execute(input: CommandInput): CommandResult {
+        if (input.args.isEmpty())
+            return CommandResult.INVALID_INPUT
+
         val message = input.args.joinWithWhitespaces(1 until input.args.size)
 
         val out = ByteStreams.newDataOutput()

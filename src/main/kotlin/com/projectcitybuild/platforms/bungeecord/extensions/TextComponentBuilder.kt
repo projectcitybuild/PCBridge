@@ -1,4 +1,4 @@
-package com.projectcitybuild.platforms.spigot.extensions
+package com.projectcitybuild.platforms.bungeecord.extensions
 
 import net.md_5.bungee.api.chat.BaseComponent
 import net.md_5.bungee.api.chat.TextComponent

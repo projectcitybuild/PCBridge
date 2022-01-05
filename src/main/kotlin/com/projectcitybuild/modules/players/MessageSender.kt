@@ -1,7 +1,7 @@
 package com.projectcitybuild.modules.players
 
 import com.projectcitybuild.core.contracts.ChatMessageReceiver
-import com.projectcitybuild.platforms.spigot.extensions.add
+import com.projectcitybuild.platforms.bungeecord.extensions.add
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.chat.TextComponent
 

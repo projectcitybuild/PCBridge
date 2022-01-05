@@ -1,10 +1,8 @@
 package com.projectcitybuild.platforms.bungeecord.listeners
 
 import com.projectcitybuild.core.contracts.LoggerProvider
-import com.projectcitybuild.entities.Success
-import com.projectcitybuild.entities.models.GameBan
 import com.projectcitybuild.modules.bans.BanRepository
-import com.projectcitybuild.platforms.spigot.extensions.add
+import com.projectcitybuild.platforms.bungeecord.extensions.add
 import kotlinx.coroutines.runBlocking
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.chat.TextComponent

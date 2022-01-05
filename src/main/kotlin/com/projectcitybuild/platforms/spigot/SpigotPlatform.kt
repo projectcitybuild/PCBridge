@@ -7,13 +7,12 @@ import com.projectcitybuild.core.network.pcb.client.PCBClient
 import com.projectcitybuild.entities.PluginConfig
 import com.projectcitybuild.core.network.APIClient
 import com.projectcitybuild.entities.Channel
-import com.projectcitybuild.modules.ranks.SyncPlayerGroupAction
 import com.projectcitybuild.platforms.spigot.commands.ACommand
-import com.projectcitybuild.platforms.spigot.commands.SyncCommand
-import com.projectcitybuild.platforms.spigot.commands.SyncOtherCommand
-import com.projectcitybuild.platforms.spigot.environment.*
-import com.projectcitybuild.platforms.spigot.listeners.*
+import com.projectcitybuild.platforms.spigot.environment.PermissionsManager
+import com.projectcitybuild.platforms.spigot.environment.SpigotConfig
+import com.projectcitybuild.platforms.spigot.environment.SpigotLogger
 import com.projectcitybuild.platforms.spigot.extensions.addDefault
+import com.projectcitybuild.platforms.spigot.listeners.ChatListener
 import org.bukkit.plugin.java.JavaPlugin
 
 class SpigotPlatform: JavaPlugin() {
@@ -42,16 +41,6 @@ class SpigotPlatform: JavaPlugin() {
             mojang = MojangClient(
                 withLogging = isLoggingEnabled
             )
-        )
-    }
-
-    private val syncPlayerGroupAction: SyncPlayerGroupAction by lazy {
-        SyncPlayerGroupAction(
-                permissionsManager!!,
-                apiRequestFactory,
-                apiClient,
-                spigotConfig,
-                spigotLogger
         )
     }
 
@@ -87,9 +76,7 @@ class SpigotPlatform: JavaPlugin() {
 
     private fun registerCommands(delegate: SpigotCommandDelegate) {
         arrayOf(
-            ACommand(plugin = this),
-            SyncCommand(apiRequestFactory, apiClient, syncPlayerGroupAction),
-            SyncOtherCommand(syncPlayerGroupAction),
+            ACommand(plugin = this)
         )
         .forEach { command -> delegate.register(command) }
     }

@@ -1,39 +1,44 @@
-package com.projectcitybuild.platforms.spigot.commands
+package com.projectcitybuild.platforms.bungeecord.commands
 
 import com.projectcitybuild.core.network.APIRequestFactory
 import com.projectcitybuild.entities.CommandResult
-import com.projectcitybuild.core.contracts.Commandable
 import com.projectcitybuild.entities.CommandInput
 import com.projectcitybuild.core.network.APIClient
 import com.projectcitybuild.modules.ranks.SyncPlayerGroupAction
-import com.projectcitybuild.platforms.spigot.send
-import org.bukkit.entity.Player
+import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
+import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
+import net.md_5.bungee.api.connection.ProxiedPlayer
 
 class SyncCommand(
     private val apiRequestFactory: APIRequestFactory,
     private val apiClient: APIClient,
     private val syncPlayerGroupAction: SyncPlayerGroupAction
-): Commandable {
+): BungeecordCommand {
 
     override val label: String = "sync"
     override val permission: String = "pcbridge.sync.login"
 
-    override suspend fun execute(input: CommandInput): CommandResult {
-        if (input.sender !is Player) {
+    override fun validate(input: BungeecordCommandInput) : CommandResult {
+        if (input.isConsoleSender) {
             input.sender.send().error("Console cannot use this command")
             return CommandResult.EXECUTED
         }
-
-        if (!input.hasArguments) {
-            return generateVerificationURL(input.sender)
-        }
-        if (input.args.size == 1 && input.args[0] == "finish") {
-            return syncGroups(input.sender)
+        if (input.args.size == 1 && input.args.first() == "finish") {
+            return CommandResult.EXECUTED
         }
         return CommandResult.INVALID_INPUT
     }
 
-    private suspend fun generateVerificationURL(player: Player): CommandResult {
+    override suspend fun execute(input: BungeecordCommandInput) {
+        if (!input.hasArguments) {
+            generateVerificationURL(input.sender as ProxiedPlayer)
+        }
+        if (input.args.size == 1 && input.args.first() == "finish") {
+            syncGroups(input.sender as ProxiedPlayer)
+        }
+    }
+
+    private suspend fun generateVerificationURL(player: ProxiedPlayer) {
         try {
             val authApi = apiRequestFactory.pcb.authApi
             val response = apiClient.execute { authApi.getVerificationUrl(uuid = player.uniqueId.toString()) }
@@ -50,18 +55,13 @@ class SyncCommand(
             } else {
                 player.send().error("Failed to generate verification URL: ${throwable.errorBody?.detail}")
             }
-            return CommandResult.EXECUTED
 
         } catch (throwable: Throwable) {
             player.send().error(throwable.message ?: "An unknown error occurred")
-            return CommandResult.EXECUTED
         }
-
-
-        return CommandResult.EXECUTED
     }
 
-    private suspend fun syncGroups(player: Player): CommandResult {
+    private suspend fun syncGroups(player: ProxiedPlayer) {
         runCatching {
             syncPlayerGroupAction.execute(player.uniqueId)
         }.onFailure { throwable ->
@@ -71,11 +71,8 @@ class SyncCommand(
                 else
                     throwable.message ?: "An unknown error occurred"
             )
-            return CommandResult.EXECUTED
+            return
         }
-
         player.send().success("Account linked! Your rank will be automatically synchronized with the PCB network")
-
-        return CommandResult.EXECUTED
     }
 }

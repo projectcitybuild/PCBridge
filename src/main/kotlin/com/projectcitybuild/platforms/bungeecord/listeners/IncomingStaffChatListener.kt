@@ -3,6 +3,8 @@ package com.projectcitybuild.platforms.bungeecord.listeners
 import com.google.common.io.ByteStreams
 import com.projectcitybuild.entities.Channel
 import com.projectcitybuild.entities.SubChannel
+import com.projectcitybuild.platforms.bungeecord.extensions.add
+import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.ProxyServer
 import net.md_5.bungee.api.chat.TextComponent
 import net.md_5.bungee.api.connection.ProxiedPlayer
@@ -25,11 +27,22 @@ class IncomingStaffChatListener(
             return
 
         val player = event.receiver as ProxiedPlayer
+        if (!player.hasPermission("pcbridge.chat.staff_channel.send"))
+            return
+
         val message = stream.readUTF()
 
         proxy.players.forEach { player ->
             if (player.hasPermission("pcbridge.chat.staff_channel.receive"))
-                player.sendMessage(TextComponent(message))
+                player.sendMessage(
+                    TextComponent()
+                        .add("Staff") { it.color = ChatColor.YELLOW }
+                        .add(" » ") { it.color = ChatColor.GRAY }
+                        .add(message) {
+                            it.color = ChatColor.YELLOW
+                            it.isItalic = true
+                        }
+                )
         }
     }
 }
