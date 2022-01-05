@@ -4,6 +4,7 @@ import com.projectcitybuild.entities.CommandResult
 import com.projectcitybuild.modules.ranks.SyncPlayerGroupAction
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
+import com.projectcitybuild.platforms.bungeecord.send
 import net.md_5.bungee.api.ProxyServer
 
 class SyncOtherCommand(

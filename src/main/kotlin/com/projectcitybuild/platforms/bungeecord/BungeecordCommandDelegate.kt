@@ -4,7 +4,8 @@ import com.projectcitybuild.core.contracts.LoggerProvider
 import com.projectcitybuild.entities.CommandResult
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
-import com.projectcitybuild.platforms.spigot.send
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import net.md_5.bungee.api.CommandSender
@@ -39,7 +40,9 @@ class BungeecordCommandDelegate constructor(
                     CommandResult.INVALID_INPUT -> false
                     CommandResult.EXECUTED -> {
                         runCatching {
-                            GlobalScope.launch { command.execute(input) }
+                            CoroutineScope(Dispatchers.IO).launch {
+                                command.execute(input)
+                            }
                         }.onFailure { throwable ->
                             sender.send().error(throwable.message ?: "An internal error occurred performing your command")
                             throwable.message?.let { logger.fatal(it) }

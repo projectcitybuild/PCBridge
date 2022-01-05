@@ -7,7 +7,7 @@ import com.projectcitybuild.core.network.mojang.client.MojangClient
 import com.projectcitybuild.core.network.pcb.client.PCBClient
 import com.projectcitybuild.entities.Channel
 import com.projectcitybuild.modules.bans.BanRepository
-import com.projectcitybuild.modules.players.GetMojangPlayerAction
+import com.projectcitybuild.modules.players.MojangPlayerRepository
 import com.projectcitybuild.modules.players.PlayerUUIDLookup
 import com.projectcitybuild.modules.ranks.SyncPlayerGroupAction
 import com.projectcitybuild.platforms.bungeecord.commands.*
@@ -82,7 +82,7 @@ class BungeecordPlatform: Plugin() {
                 proxyServer = proxy,
                 playerUUIDLookup = PlayerUUIDLookup(
                     proxy,
-                    GetMojangPlayerAction(
+                    MojangPlayerRepository(
                         apiRequestFactory,
                         apiClient
                     )
@@ -96,7 +96,7 @@ class BungeecordPlatform: Plugin() {
                 proxyServer = proxy,
                 playerUUIDLookup = PlayerUUIDLookup(
                     proxy,
-                    GetMojangPlayerAction(
+                    MojangPlayerRepository(
                         apiRequestFactory,
                         apiClient
                     )
@@ -109,7 +109,7 @@ class BungeecordPlatform: Plugin() {
             CheckBanCommand(
                 playerUUIDLookup = PlayerUUIDLookup(
                     proxyServer = proxy,
-                    getMojangPlayerAction = GetMojangPlayerAction(
+                    getMojangPlayerAction = MojangPlayerRepository(
                         apiRequestFactory,
                         apiClient
                     )

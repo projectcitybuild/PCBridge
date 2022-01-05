@@ -6,14 +6,14 @@ import java.util.*
 
 class PlayerUUIDLookup(
     private val proxyServer: ProxyServer,
-    private val getMojangPlayerAction: GetMojangPlayerAction
+    private val getMojangPlayerAction: MojangPlayerRepository
 ) {
     suspend fun request(playerName: String): UUID? {
         val onlinePlayer = proxyServer.players
             .firstOrNull { it.name.lowercase() == playerName.lowercase() }
 
         if (onlinePlayer == null) {
-            val mojangPlayer = getMojangPlayerAction.execute(playerName = playerName)
+            val mojangPlayer = getMojangPlayerAction.get(playerName = playerName)
             return UUID.fromString(mojangPlayer.uuid.toDashFormattedUUID())
         }
         return onlinePlayer.uniqueId

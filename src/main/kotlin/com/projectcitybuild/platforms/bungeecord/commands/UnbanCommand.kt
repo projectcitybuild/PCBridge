@@ -5,7 +5,7 @@ import com.projectcitybuild.modules.bans.BanRepository
 import com.projectcitybuild.modules.players.PlayerUUIDLookup
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
-import com.projectcitybuild.platforms.spigot.send
+import com.projectcitybuild.platforms.bungeecord.send
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.ProxyServer
 import net.md_5.bungee.api.chat.TextComponent

@@ -1,4 +1,4 @@
-package com.projectcitybuild.platforms.spigot
+package com.projectcitybuild.platforms.bungeecord
 
 import com.projectcitybuild.core.contracts.ChatMessageReceiver
 import com.projectcitybuild.modules.players.MessageSender

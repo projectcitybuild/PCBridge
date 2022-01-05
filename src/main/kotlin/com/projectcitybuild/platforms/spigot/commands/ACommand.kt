@@ -22,6 +22,7 @@ class ACommand(
             return CommandResult.INVALID_INPUT
 
         val message = input.args.joinWithWhitespaces(1 until input.args.size)
+            ?: return CommandResult.INVALID_INPUT
 
         val out = ByteStreams.newDataOutput()
         out.writeUTF(SubChannel.STAFF_CHAT)
