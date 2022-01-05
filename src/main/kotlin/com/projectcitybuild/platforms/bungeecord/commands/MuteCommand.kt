@@ -15,7 +15,7 @@ class MuteCommand(
     override val permission = "pcbridge.chat.mute"
 
     override fun validate(input: BungeecordCommandInput): CommandResult {
-        if (!input.hasArguments)
+        if (input.args.isEmpty())
             return CommandResult.INVALID_INPUT
 
         return CommandResult.EXECUTED

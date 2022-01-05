@@ -19,7 +19,7 @@ class CheckBanCommand(
     override val permission = "pcbridge.ban.checkban"
 
     override fun validate(input: BungeecordCommandInput): CommandResult {
-        if (!input.hasArguments)
+        if (input.args.isEmpty())
             return CommandResult.INVALID_INPUT
 
         return CommandResult.EXECUTED

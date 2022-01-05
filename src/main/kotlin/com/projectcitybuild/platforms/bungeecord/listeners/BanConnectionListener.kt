@@ -17,7 +17,7 @@ class BanConnectionListener(
 ) : Listener {
 
     // This event is actually asynchronous, so despite the naming
-    // this should be blocking
+    // this should not be blocking
     @EventHandler(priority = EventPriority.HIGHEST)
     fun onPreLoginEvent(event: LoginEvent) = runBlocking {
         runCatching {

@@ -21,7 +21,7 @@ class BanCommand(
     override val permission = "pcbridge.ban.ban"
 
     override fun validate(input: BungeecordCommandInput): CommandResult {
-        if (!input.hasArguments)
+        if (input.args.isEmpty())
             return CommandResult.INVALID_INPUT
 
         return CommandResult.EXECUTED
@@ -46,6 +46,7 @@ class BanCommand(
             proxyServer.broadcast(
                 TextComponent("${ChatColor.GRAY}${input.args.first()} has been banned by ${input.sender.name}: ${reason?.isNotEmpty() ?: "No reason given"}")
             )
+
             proxyServer.players
                 .first { it.name.lowercase() == targetPlayerName.lowercase() || it.uniqueId == targetPlayerUUID }
                 ?.disconnect(

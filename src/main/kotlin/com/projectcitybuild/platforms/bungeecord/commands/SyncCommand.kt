@@ -30,7 +30,7 @@ class SyncCommand(
     }
 
     override suspend fun execute(input: BungeecordCommandInput) {
-        if (!input.hasArguments) {
+        if (input.args.isEmpty()) {
             generateVerificationURL(input.sender as ProxiedPlayer)
         }
         if (input.args.size == 1 && input.args.first() == "finish") {

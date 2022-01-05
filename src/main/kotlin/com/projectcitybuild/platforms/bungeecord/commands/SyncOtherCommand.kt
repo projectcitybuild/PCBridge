@@ -16,7 +16,7 @@ class SyncOtherCommand(
     override val permission: String = "pcbridge.sync.other"
 
     override fun validate(input: BungeecordCommandInput) : CommandResult {
-        if (!input.hasArguments || input.args.size > 1) {
+        if (input.args.isEmpty() || input.args.size > 1) {
             return CommandResult.INVALID_INPUT
         }
         return CommandResult.EXECUTED

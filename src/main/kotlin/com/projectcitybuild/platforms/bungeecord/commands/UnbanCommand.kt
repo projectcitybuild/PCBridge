@@ -20,7 +20,7 @@ class UnbanCommand(
     override val permission: String = "pcbridge.ban.unban"
 
     override fun validate(input: BungeecordCommandInput) : CommandResult {
-        if (!input.hasArguments)
+        if (input.args.isEmpty())
             return CommandResult.INVALID_INPUT
 
         return CommandResult.EXECUTED
