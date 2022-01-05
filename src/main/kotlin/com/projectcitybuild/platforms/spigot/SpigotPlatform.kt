@@ -8,6 +8,7 @@ import com.projectcitybuild.entities.PluginConfig
 import com.projectcitybuild.core.network.APIClient
 import com.projectcitybuild.entities.Channel
 import com.projectcitybuild.modules.ranks.SyncPlayerGroupAction
+import com.projectcitybuild.platforms.spigot.commands.ACommand
 import com.projectcitybuild.platforms.spigot.commands.SyncCommand
 import com.projectcitybuild.platforms.spigot.commands.SyncOtherCommand
 import com.projectcitybuild.platforms.spigot.environment.*
@@ -86,15 +87,16 @@ class SpigotPlatform: JavaPlugin() {
 
     private fun registerCommands(delegate: SpigotCommandDelegate) {
         arrayOf(
-                SyncCommand(apiRequestFactory, apiClient, syncPlayerGroupAction),
-                SyncOtherCommand(syncPlayerGroupAction),
+            ACommand(plugin = this),
+            SyncCommand(apiRequestFactory, apiClient, syncPlayerGroupAction),
+            SyncOtherCommand(syncPlayerGroupAction),
         )
         .forEach { command -> delegate.register(command) }
     }
 
     private fun registerListeners(delegate: SpigotListenerDelegate) {
         arrayOf(
-                ChatListener(plugin = this)
+            ChatListener(plugin = this)
         )
         .forEach { listener -> delegate.register(listener) }
     }

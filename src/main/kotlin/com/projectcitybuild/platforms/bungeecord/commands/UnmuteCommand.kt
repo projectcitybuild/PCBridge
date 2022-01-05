@@ -1,4 +1,4 @@
-package com.projectcitybuild.platforms.spigot.commands
+package com.projectcitybuild.platforms.bungeecord.commands
 
 import com.projectcitybuild.entities.CommandResult
 import com.projectcitybuild.core.contracts.Commandable

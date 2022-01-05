@@ -23,7 +23,7 @@ class SpigotCommandDelegate constructor(
                     return try {
                         val input = CommandInput(
                                 sender = sender,
-                                args = args,
+                                args = args.toList(),
                                 isConsole = sender !is Player
                         )
                         when (wrappedCommand.execute(input)) {

@@ -18,6 +18,7 @@ import com.projectcitybuild.platforms.bungeecord.environment.BungeecordLogger
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordTimer
 import com.projectcitybuild.platforms.bungeecord.listeners.BanConnectionListener
 import com.projectcitybuild.platforms.bungeecord.listeners.IncomingChatListener
+import com.projectcitybuild.platforms.bungeecord.listeners.IncomingStaffChatListener
 import com.projectcitybuild.platforms.bungeecord.listeners.SyncRankLoginListener
 import com.projectcitybuild.platforms.spigot.environment.PermissionsManager
 import kotlinx.coroutines.Dispatchers
@@ -144,7 +145,8 @@ class BungeecordPlatform: Plugin() {
                     logger = bungeecordLogger
                 )
             ),
-            IncomingChatListener(proxy = proxy)
+            IncomingChatListener(proxy = proxy),
+            IncomingStaffChatListener(proxy = proxy)
         )
         .forEach { listener -> delegate.register(listener) }
     }

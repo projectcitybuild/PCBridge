@@ -4,9 +4,9 @@ import org.bukkit.command.CommandSender
 
 data class CommandInput(
         val sender: CommandSender,
-        val args: Array<out String>,
+        val args: List<String>,
         val isConsole: Boolean
 ) {
 
-    var hasArguments: Boolean = !args.isEmpty()
+    var hasArguments: Boolean = args.isNotEmpty()
 }

@@ -1,26 +1,38 @@
-package com.projectcitybuild.platforms.spigot.commands
+package com.projectcitybuild.platforms.bungeecord.commands
 
 import com.projectcitybuild.entities.CommandResult
-import com.projectcitybuild.core.contracts.Commandable
-import com.projectcitybuild.entities.CommandInput
+import com.projectcitybuild.modules.playercache.PlayerCache
+import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
+import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
+import net.md_5.bungee.api.ProxyServer
 
 class MuteCommand(
-//        private val playerStore: PlayerStore
-): Commandable {
+    private val proxyServer: ProxyServer,
+    private val playerCache: PlayerCache
+): BungeecordCommand {
 
     override val label = "mute"
     override val permission = "pcbridge.chat.mute"
 
-    override suspend fun execute(input: CommandInput): CommandResult {
-//        if (!input.hasArguments) return CommandResult.INVALID_INPUT
-//
+    override fun validate(input: BungeecordCommandInput): CommandResult {
+        if (!input.hasArguments)
+            return CommandResult.INVALID_INPUT
+
+        return CommandResult.EXECUTED
+    }
+
+    override suspend fun execute(input: BungeecordCommandInput) {
 //        val targetPlayerName = input.args.first()
-//        val targetPlayer = input.sender.server?.getOnlinePlayer(name = targetPlayerName)
+//        val targetPlayer = proxyServer.players
+//            .first { it.name.lowercase() == targetPlayerName.lowercase() }
+//
 //        if (targetPlayer == null) {
 //            input.sender.send().error("Player $targetPlayerName not found")
-//            return CommandResult.INVALID_INPUT
+//            return
 //        }
-//
+
+//        playerCache.get(targetPlayer.uniqueId)
+
 //        val player = playerStore.get(targetPlayer.uniqueId)
 //            ?: throw Exception("Player $targetPlayerName missing from cache")
 //
@@ -35,6 +47,5 @@ class MuteCommand(
 //        input.sender.send().success("${targetPlayer.name} has been muted")
 //        targetPlayer.sendMessage("You have been muted by ${input.sender.name}")
 //
-        return CommandResult.EXECUTED
     }
 }
