@@ -1,7 +1,7 @@
 package com.projectcitybuild.platforms.bungeecord.commands
 
 import com.projectcitybuild.entities.CommandResult
-import com.projectcitybuild.modules.players.PlayerRepository
+import com.projectcitybuild.modules.playerconfig.PlayerConfigRepository
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
 import com.projectcitybuild.platforms.bungeecord.send
@@ -9,7 +9,7 @@ import net.md_5.bungee.api.ProxyServer
 
 class UnmuteCommand(
     private val proxyServer: ProxyServer,
-    private val playerRepository: PlayerRepository
+    private val playerRepository: PlayerConfigRepository
 ): BungeecordCommand {
 
     override val label: String = "unmute"

@@ -7,7 +7,9 @@ import com.projectcitybuild.core.network.mojang.client.MojangClient
 import com.projectcitybuild.core.network.pcb.client.PCBClient
 import com.projectcitybuild.entities.Channel
 import com.projectcitybuild.modules.bans.BanRepository
+import com.projectcitybuild.modules.playerconfig.PlayerConfigCache
 import com.projectcitybuild.modules.players.MojangPlayerRepository
+import com.projectcitybuild.modules.playerconfig.PlayerConfigRepository
 import com.projectcitybuild.modules.players.PlayerUUIDLookup
 import com.projectcitybuild.modules.ranks.SyncPlayerGroupAction
 import com.projectcitybuild.platforms.bungeecord.commands.*
@@ -162,7 +164,12 @@ class BungeecordPlatform: Plugin() {
                     logger = bungeecordLogger
                 )
             ),
-            IncomingChatListener(proxy = proxy),
+            IncomingChatListener(
+                proxy = proxy,
+                playerRepository = PlayerConfigRepository(
+                    cache = PlayerConfigCache()
+                )
+            ),
             IncomingStaffChatListener(proxy = proxy)
         )
         .forEach { delegate.register(it) }

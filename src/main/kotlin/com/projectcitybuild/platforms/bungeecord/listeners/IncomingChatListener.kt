@@ -3,7 +3,7 @@ package com.projectcitybuild.platforms.bungeecord.listeners
 import com.google.common.io.ByteStreams
 import com.projectcitybuild.entities.Channel
 import com.projectcitybuild.entities.SubChannel
-import com.projectcitybuild.modules.players.PlayerRepository
+import com.projectcitybuild.modules.playerconfig.PlayerConfigRepository
 import com.projectcitybuild.platforms.bungeecord.send
 import net.md_5.bungee.api.ProxyServer
 import net.md_5.bungee.api.chat.TextComponent
@@ -14,7 +14,7 @@ import net.md_5.bungee.event.EventHandler
 
 class IncomingChatListener(
     private val proxy: ProxyServer,
-    private val playerRepository: PlayerRepository
+    private val playerConfigRepository: PlayerConfigRepository
 ): Listener {
 
     @EventHandler
@@ -29,8 +29,8 @@ class IncomingChatListener(
 
         val sender = event.receiver
         if (sender is ProxiedPlayer) {
-            val cachedPlayer = playerRepository.get(sender.uniqueId)
-            if (cachedPlayer.isMuted) {
+            val playerConfig = playerConfigRepository.get(sender.uniqueId)
+            if (playerConfig.isMuted) {
                 sender.send().error("You cannot talk while muted")
                 return
             }
