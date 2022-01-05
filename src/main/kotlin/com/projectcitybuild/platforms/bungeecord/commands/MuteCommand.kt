@@ -2,13 +2,15 @@ package com.projectcitybuild.platforms.bungeecord.commands
 
 import com.projectcitybuild.entities.CommandResult
 import com.projectcitybuild.modules.playercache.PlayerCache
+import com.projectcitybuild.modules.players.PlayerRepository
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
+import com.projectcitybuild.platforms.bungeecord.send
 import net.md_5.bungee.api.ProxyServer
 
 class MuteCommand(
     private val proxyServer: ProxyServer,
-    private val playerCache: PlayerCache
+    private val playerRepository: PlayerRepository
 ): BungeecordCommand {
 
     override val label = "mute"
@@ -22,30 +24,21 @@ class MuteCommand(
     }
 
     override suspend fun execute(input: BungeecordCommandInput) {
-//        val targetPlayerName = input.args.first()
-//        val targetPlayer = proxyServer.players
-//            .first { it.name.lowercase() == targetPlayerName.lowercase() }
-//
-//        if (targetPlayer == null) {
-//            input.sender.send().error("Player $targetPlayerName not found")
-//            return
-//        }
+        val targetPlayerName = input.args.first()
+        val targetPlayer = proxyServer.players
+            .first { it.name.lowercase() == targetPlayerName.lowercase() }
 
-//        playerCache.get(targetPlayer.uniqueId)
+        if (targetPlayer == null) {
+            input.sender.send().error("Player $targetPlayerName not found")
+            return
+        }
 
-//        val player = playerStore.get(targetPlayer.uniqueId)
-//            ?: throw Exception("Player $targetPlayerName missing from cache")
-//
-//        if (player.isMuted) {
-//            input.sender.send().error("$targetPlayerName is already muted")
-//            return CommandResult.INVALID_INPUT
-//        }
-//
-//        player.isMuted = true
-//        playerStore.put(player.uuid, player)
-//
-//        input.sender.send().success("${targetPlayer.name} has been muted")
-//        targetPlayer.sendMessage("You have been muted by ${input.sender.name}")
-//
+        val player = playerRepository.get(targetPlayer.uniqueId).also {
+            it.isMuted = true
+        }
+        playerRepository.save(player)
+
+        input.sender.send().success("${targetPlayer.name} has been muted")
+        targetPlayer.send().info("You have been muted by ${input.sender.name}")
     }
 }
