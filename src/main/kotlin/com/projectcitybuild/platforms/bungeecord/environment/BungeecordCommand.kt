@@ -26,6 +26,7 @@ interface BungeecordCommand {
     // Permission node required to execute the command
     val permission: String
 
-    suspend fun execute(input: BungeecordCommandInput) : CommandResult
-    abstract fun launch(function: () -> Unit?)
+    fun validate(input: BungeecordCommandInput) : CommandResult
+
+    suspend fun execute(input: BungeecordCommandInput)
 }

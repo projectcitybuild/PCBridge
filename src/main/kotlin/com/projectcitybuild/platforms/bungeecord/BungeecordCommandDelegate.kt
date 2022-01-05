@@ -17,35 +17,36 @@ class BungeecordCommandDelegate constructor(
 ) {
     private class CommandProxy(
         alias: String,
-        private val handler: (CommandSender?, Array<out String>?) -> Boolean
+        private val execute: (CommandSender?, List<String>) -> Boolean
     ) : Command(alias) {
         override fun execute(sender: CommandSender?, args: Array<out String>?) {
-            handler(sender, args)
+            val argsList = args?.toList() ?: emptyList()
+            execute(sender, argsList)
         }
     }
 
     fun register(command: BungeecordCommand) {
         command.aliases.plus(command.label).forEach { alias ->
             plugin.proxy.pluginManager.registerCommand(plugin, CommandProxy(alias) { sender, args ->
-                runCatching {
-                    if (sender == null) throw Exception("Attempted to execute command with a null CommandSender")
+                if (sender == null)
+                    throw Exception("Attempted to execute command with a null CommandSender")
 
-                    val input = BungeecordCommandInput(
-                        sender = sender,
-                        args = args?.toList() ?: emptyList()
-                    )
-                    GlobalScope.launch {
-                        val result = command.execute(input)
-                        when (result) {
-                            CommandResult.EXECUTED -> true
-                            CommandResult.INVALID_INPUT -> false
+                val input = BungeecordCommandInput(
+                    sender = sender,
+                    args = args
+                )
+                when (command.validate(input)) {
+                    CommandResult.INVALID_INPUT -> false
+                    CommandResult.EXECUTED -> {
+                        runCatching {
+                            GlobalScope.launch { command.execute(input) }
+                        }.onFailure { throwable ->
+                            sender?.send()?.error(throwable.message ?: "An internal error occurred performing your command")
+                            throwable.message?.let { logger.fatal(it) }
+                            throwable.printStackTrace()
                         }
+                        true
                     }
-                }.onFailure { error ->
-                    sender?.send()?.error(error.message ?: "An internal error occurred performing your command")
-                    error.localizedMessage.let { message -> logger.fatal(message) }
-                    error.printStackTrace()
-                    true
                 }
             })
 

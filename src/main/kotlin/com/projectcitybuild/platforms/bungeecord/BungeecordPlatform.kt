@@ -132,7 +132,8 @@ class BungeecordPlatform: Plugin() {
                 banRepository = BanRepository(
                     apiRequestFactory,
                     apiClient
-                )
+                ),
+                logger = bungeecordLogger
             ),
             SyncRankLoginListener(
                 syncPlayerGroupAction = SyncPlayerGroupAction(
