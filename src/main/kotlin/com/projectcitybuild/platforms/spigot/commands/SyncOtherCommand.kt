@@ -21,28 +21,30 @@ class SyncOtherCommand(
         }
 
         val playerName = input.args.first()
-        val player = input.sender.server.onlinePlayers.first { it.name.lowercase() == playerName.lowercase() }
+        val player = input.sender.server.onlinePlayers
+            .first { it.name.lowercase() == playerName.lowercase() }
+
         if (player == null) {
             input.sender.send().error("$playerName is not online")
             return CommandResult.EXECUTED
         }
 
-        val result = syncPlayerGroupAction.execute(player.uniqueId)
-
-        when (result) {
-            is Success -> {
-                input.sender.send().success("$playerName has been synchronized")
-                player.send().success("Your account groups have been synchronized")
-            }
-            is Failure -> input.sender.send().error(
-                when (result.reason) {
-                    is SyncPlayerGroupAction.FailReason.AccountNotLinked -> "Sync failed: Player does not have a linked PCB account"
-                    is SyncPlayerGroupAction.FailReason.NetworkError -> "Failed to contact auth server. Please try again later"
-                    is SyncPlayerGroupAction.FailReason.HTTPError -> "Sync failed. Please contact an admin"
-                    is SyncPlayerGroupAction.FailReason.PermissionUserNotFound -> "Permission user not found. Check that the user exists in the Permission plugin"
+        runCatching {
+            syncPlayerGroupAction.execute(player.uniqueId)
+        }.onFailure { throwable ->
+            player.send().error(
+                when (throwable) {
+                    is SyncPlayerGroupAction.AccountNotLinkedException -> "Sync failed: Player does not have a linked PCB account"
+                    is SyncPlayerGroupAction.PermissionUserNotFoundException -> "Permission user not found. Check that the user exists in the Permission plugin"
+                    else -> throwable.message ?: "An unknown error occurred"
                 }
             )
+            return CommandResult.EXECUTED
         }
+
+        input.sender.send().success("$playerName has been synchronized")
+        player.send().success("Your account groups have been synchronized")
+
         return CommandResult.EXECUTED
     }
 }

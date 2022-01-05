@@ -4,10 +4,7 @@ import com.projectcitybuild.core.network.APIRequestFactory
 import com.projectcitybuild.entities.CommandResult
 import com.projectcitybuild.core.contracts.Commandable
 import com.projectcitybuild.entities.CommandInput
-import com.projectcitybuild.entities.Failure
-import com.projectcitybuild.entities.Success
 import com.projectcitybuild.core.network.APIClient
-import com.projectcitybuild.core.network.APIResult
 import com.projectcitybuild.modules.ranks.SyncPlayerGroupAction
 import com.projectcitybuild.platforms.spigot.send
 import org.bukkit.entity.Player
@@ -37,48 +34,48 @@ class SyncCommand(
     }
 
     private suspend fun generateVerificationURL(player: Player): CommandResult {
-        val authApi = apiRequestFactory.pcb.authApi
-        val response = apiClient.execute { authApi.getVerificationUrl(uuid = player.uniqueId.toString()) }
+        try {
+            val authApi = apiRequestFactory.pcb.authApi
+            val response = apiClient.execute { authApi.getVerificationUrl(uuid = player.uniqueId.toString()) }
 
-        when (response) {
-            is APIResult.HTTPError -> {
-                val error = response.error
-                if (error?.id == "already_authenticated") {
-                    syncGroups(player)
-                } else {
-                    player.send().error("Failed to generate verification URL")
-                }
+            if (response.data == null) {
+                player.send().error("Failed to generate verification URL: No URL received from server")
+            } else {
+                player.sendMessage("To link your account, please click the link and login if required:§9 ${response.data.url}")
             }
-            is APIResult.NetworkError ->
-                player.send().error("Failed to contact auth server. Please try again later")
 
-            is APIResult.Success -> {
-                if (response.value.data == null) {
-                    player.send().error("Failed to generate verification URL")
-                } else {
-                    player.sendMessage("To link your account, please click the link and login if required:§9 ${response.value.data?.url}")
-                }
+        } catch (throwable: APIClient.HTTPError) {
+            if (throwable.errorBody?.id == "already_authenticated") {
+                syncGroups(player)
+            } else {
+                player.send().error("Failed to generate verification URL: ${throwable.errorBody?.detail}")
             }
+            return CommandResult.EXECUTED
+
+        } catch (throwable: Throwable) {
+            player.send().error(throwable.message ?: "An unknown error occurred")
+            return CommandResult.EXECUTED
         }
+
 
         return CommandResult.EXECUTED
     }
 
     private suspend fun syncGroups(player: Player): CommandResult {
-        val result = syncPlayerGroupAction.execute(player.uniqueId)
-        when (result) {
-            is Success ->
-                player.send().success("Account linked! Your rank will be automatically synchronized with the PCB network")
-
-            is Failure -> {
-                when (result.reason) {
-                    is SyncPlayerGroupAction.FailReason.AccountNotLinked ->
-                        player.send().error("Sync failed. Did you finish registering your account?")
-
-                    else -> player.send().error("Failed to contact auth server. Please contact staff")
-                }
-            }
+        runCatching {
+            syncPlayerGroupAction.execute(player.uniqueId)
+        }.onFailure { throwable ->
+            player.send().error(
+                if (throwable is SyncPlayerGroupAction.AccountNotLinkedException)
+                    "Sync failed. Did you finish registering your account?"
+                else
+                    throwable.message ?: "An unknown error occurred"
+            )
+            return CommandResult.EXECUTED
         }
+
+        player.send().success("Account linked! Your rank will be automatically synchronized with the PCB network")
+
         return CommandResult.EXECUTED
     }
 }
