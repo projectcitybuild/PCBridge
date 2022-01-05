@@ -27,11 +27,9 @@ import java.io.File
 
 class BungeecordPlatform: Plugin() {
 
-    private val bungeecordLogger = BungeecordLogger(logger = this.logger)
+    private val bungeecordLogger = BungeecordLogger(logger)
     private val config = BungeecordConfig(plugin = this)
-    private val apiClient = APIClient(getCoroutineContext = {
-        Dispatchers.IO
-    })
+    private val apiClient = APIClient { Dispatchers.IO }
     private val timer = BungeecordTimer(this, proxy)
     private var commandDelegate: BungeecordCommandDelegate? = null
     private var listenerDelegate: BungeecordListenerDelegate? = null
