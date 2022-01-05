@@ -6,9 +6,7 @@ import com.projectcitybuild.core.network.APIRequestFactory
 import com.projectcitybuild.core.network.mojang.client.MojangClient
 import com.projectcitybuild.core.network.pcb.client.PCBClient
 import com.projectcitybuild.entities.Channel
-import com.projectcitybuild.modules.bans.CheckBanStatusAction
-import com.projectcitybuild.modules.bans.CreateBanAction
-import com.projectcitybuild.modules.bans.CreateUnbanAction
+import com.projectcitybuild.modules.bans.BanRepository
 import com.projectcitybuild.modules.players.GetMojangPlayerAction
 import com.projectcitybuild.modules.players.PlayerUUIDLookup
 import com.projectcitybuild.modules.ranks.SyncPlayerGroupAction
@@ -92,7 +90,7 @@ class BungeecordPlatform: Plugin() {
                         apiClient
                     )
                 ),
-                createBanAction = CreateBanAction(
+                banRepository = BanRepository(
                     apiRequestFactory,
                     apiClient
                 )
@@ -106,7 +104,7 @@ class BungeecordPlatform: Plugin() {
                         apiClient
                     )
                 ),
-                unbanAction = CreateUnbanAction(
+                banRepository = BanRepository(
                     apiRequestFactory,
                     apiClient
                 )
@@ -119,7 +117,7 @@ class BungeecordPlatform: Plugin() {
                         apiClient
                     )
                 ),
-                checkBanStatusAction = CheckBanStatusAction(
+                banRepository = BanRepository(
                     apiRequestFactory,
                     apiClient
                 )
@@ -131,9 +129,9 @@ class BungeecordPlatform: Plugin() {
     private fun registerListeners(delegate: BungeecordListenerDelegate) {
         arrayOf(
             BanConnectionListener(
-                checkBanStatusAction = CheckBanStatusAction(
-                    apiRequestFactory = apiRequestFactory,
-                    apiClient = apiClient
+                banRepository = BanRepository(
+                    apiRequestFactory,
+                    apiClient
                 )
             ),
             SyncRankLoginListener(

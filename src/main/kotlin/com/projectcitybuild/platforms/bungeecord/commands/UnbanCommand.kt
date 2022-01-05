@@ -3,7 +3,7 @@ package com.projectcitybuild.platforms.bungeecord.commands
 import com.projectcitybuild.entities.CommandResult
 import com.projectcitybuild.entities.Failure
 import com.projectcitybuild.entities.Success
-import com.projectcitybuild.modules.bans.CreateUnbanAction
+import com.projectcitybuild.modules.bans.BanRepository
 import com.projectcitybuild.modules.players.PlayerUUIDLookup
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
@@ -16,7 +16,7 @@ import net.md_5.bungee.api.chat.TextComponent
 class UnbanCommand(
     private val proxyServer: ProxyServer,
     private val playerUUIDLookup: PlayerUUIDLookup,
-    private val unbanAction: CreateUnbanAction
+    private val banRepository: BanRepository
 ): BungeecordCommand {
 
     override val label: String = "unban"
@@ -36,22 +36,22 @@ class UnbanCommand(
                 return@async
             }
 
-            val result = unbanAction.execute(
-                playerId = targetPlayerUUID,
-                staffId = staffPlayer?.uniqueId
-            )
-            when (result) {
-                is Failure -> input.sender.send().error(
-                    when (result.reason) {
-                        is CreateUnbanAction.FailReason.PlayerNotBanned -> "$targetPlayerName is not currently banned"
-                        is CreateUnbanAction.FailReason.HTTPError -> "Bad request sent to the ban server. Please contact an admin"
-                        is CreateUnbanAction.FailReason.NetworkError -> "Failed to contact auth server. Please contact an admin"
-                    }
+            try {
+                banRepository.unban(
+                    targetPlayerUUID = targetPlayerUUID,
+                    staffId = staffPlayer?.uniqueId
                 )
-                is Success -> proxyServer.broadcast(
-                    TextComponent("${input.args.first()} has been unbanned").also { it.color = ChatColor.GRAY }
-                )
+            } catch (throwable: BanRepository.PlayerNotBannedException) {
+                input.sender.send().error("$targetPlayerName is not currently banned")
+                return@async
+            } catch (throwable: Throwable) {
+                input.sender.send().error("$targetPlayerName is not currently banned")
+                return@async
             }
+
+            proxyServer.broadcast(
+                TextComponent("${input.args.first()} has been unbanned").also { it.color = ChatColor.GRAY }
+            )
         }
 
         return CommandResult.EXECUTED

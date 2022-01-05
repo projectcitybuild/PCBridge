@@ -4,7 +4,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-fun Any.async(block: suspend (CoroutineScope) -> Unit) {
+fun async(block: suspend (CoroutineScope) -> Unit) {
 
     // Calling Bungeecord APIs are supposedly thread-safe, so there isn't actually a concept
     // of "main" thread like Spigot (which schedules things on ticks).

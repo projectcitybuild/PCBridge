@@ -7,40 +7,40 @@ import retrofit2.HttpException
 import java.io.IOException
 import kotlin.coroutines.CoroutineContext
 
-sealed class APIResult<out T> {
-    data class Success<out T>(val value: T): APIResult<T>()
-    data class HTTPError(val code: Int? = null, val error: ApiError? = null): APIResult<Nothing>()
-    object NetworkError: APIResult<Nothing>()
-}
-
 class APIClient(
     private val getCoroutineContext: () -> CoroutineContext
 ) {
     data class ErrorBody(val error: ApiError)
 
-    suspend fun <T> execute(apiCall: suspend () -> T): APIResult<T> {
+    class HTTPError(val errorBody: ApiError?): Exception(
+            message = if (errorBody != null) "Bad response received from the ban server: ${errorBody.detail}"
+                      else "Bad response received from the ban server (no error given)",
+            cause = errorBody
+    )
+    class NetworkError: Exception(
+            message = "Failed to contact PCB auth server"
+    )
+
+    suspend fun <T> execute(apiCall: suspend () -> T): T {
         return withContext(getCoroutineContext()) {
             try {
-                APIResult.Success(apiCall.invoke())
+                apiCall.invoke()
+            } catch (_: IOException) {
+                throw NetworkError()
+            } catch (throwable: HttpException) {
+                val code = throwable.code()
+                throw HTTPError(errorBody = convertErrorBody(throwable, code))
             } catch (throwable: Throwable) {
-                when (throwable) {
-                    is IOException -> APIResult.NetworkError
-                    is HttpException -> {
-                        val code = throwable.code()
-                        val errorResponse = convertErrorBody(throwable)
-                        APIResult.HTTPError(code, errorResponse)
-                    }
-                    else -> {
-                        APIResult.HTTPError(null, null)
-                    }
-                }
+                throw throwable
             }
         }
     }
 
-    private fun convertErrorBody(throwable: HttpException): ApiError? {
+    private fun convertErrorBody(throwable: HttpException, code: Int): ApiError? {
         throwable.response()?.errorBody()?.string().let {
-            return Gson().fromJson(it, ErrorBody::class.java).error
+            val errorBody = Gson().fromJson(it, ErrorBody::class.java).error
+            errorBody.status = code
+            return errorBody
         }
     }
 }
