@@ -41,7 +41,7 @@ class BungeecordCommandDelegate constructor(
                         runCatching {
                             GlobalScope.launch { command.execute(input) }
                         }.onFailure { throwable ->
-                            sender?.send()?.error(throwable.message ?: "An internal error occurred performing your command")
+                            sender.send().error(throwable.message ?: "An internal error occurred performing your command")
                             throwable.message?.let { logger.fatal(it) }
                             throwable.printStackTrace()
                         }

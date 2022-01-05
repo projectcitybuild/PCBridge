@@ -48,7 +48,7 @@ class CheckBanCommand(
         if (ban == null) {
             input.sender.send().info("$targetPlayerName is not currently banned")
         } else {
-            val banDate = ban.createdAt?.let {
+            val banDate = ban.createdAt.let {
                 val date = Date(it * 1000)
                 val format = SimpleDateFormat("yyyy/MM/dd HH:mm")
                 format.format(date)

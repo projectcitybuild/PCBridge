@@ -2,7 +2,7 @@
 
 ![CI](https://github.com/projectcitybuild/PCBridge/workflows/CI/badge.svg?branch=master)
 
-A Spigot/Paper plugin to bridge [Project City Build](https://projectcitybuild.com) and its Minecraft servers
+A BungeeCord + Spigot/Paper plugin to bridge [Project City Build](https://projectcitybuild.com) and its Minecraft servers
 
 ## Project Structure
 PCBridge is designed to be modular - allowing it to be simultaneously built for Spigot, Bungee, or whatever is the latest server software.
@@ -24,10 +24,9 @@ A command (represented by `Commandable`) is an event where the user types in a c
 ## Commands:
 * `/ban <name> [reason]` - Bans a player from the PCB game network
 * `/unban <name>` - Unbans a player
-* `/status <name>` - Checks the ban status of a player
+* `/checkban <name>` - Checks the ban status of a player
 * `/mute <name>` - Prevents a player from sending chat messages
 * `/unmute <name>` - Removes a player's mute
-* `/maintenance [on|off]` - Puts the server into Maintenance Mode; no non-staff player can join while active
 
 ## Using on Server
 PCBridge relies on [LuckPerms](https://www.spigotmc.org/resources/luckperms-an-advanced-permissions-plugin.28140/) for managing ranks.

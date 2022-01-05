@@ -34,10 +34,10 @@ class MessageSender(
         val messagesByLine = messagesByLineBreak.flatMap { it.chunked(maxLineLength - startSymbolLength) }
 
         val tc = TextComponent()
-        messagesByLine.forEachIndexed { index, message ->
+        messagesByLine.forEachIndexed { index, string ->
             tc
                 .add("▐ ") { it.color = ChatColor.GRAY }
-                .add(message) { it.color = ChatColor.WHITE }
+                .add(string) { it.color = ChatColor.WHITE }
 
             if (index < messagesByLine.count()) {
                 tc.add("\n")
