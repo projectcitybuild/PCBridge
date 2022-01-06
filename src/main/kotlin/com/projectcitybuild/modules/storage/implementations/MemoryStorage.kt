@@ -1,4 +1,6 @@
-package com.projectcitybuild.modules.storage
+package com.projectcitybuild.modules.storage.implementations
+
+import com.projectcitybuild.modules.storage.Storage
 
 class MemoryStorage<T>: Storage<T> {
     private val storage = HashMap<String, T>()

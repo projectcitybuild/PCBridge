@@ -5,6 +5,9 @@ import com.projectcitybuild.entities.Channel
 import com.projectcitybuild.entities.SubChannel
 import com.projectcitybuild.modules.playerconfig.PlayerConfigRepository
 import com.projectcitybuild.platforms.bungeecord.send
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import net.md_5.bungee.api.ProxyServer
 import net.md_5.bungee.api.chat.TextComponent
 import net.md_5.bungee.api.connection.ProxiedPlayer
@@ -27,19 +30,21 @@ class IncomingChatListener(
         if (subChannel != SubChannel.GLOBAL_CHAT)
             return
 
-        val sender = event.receiver
-        if (sender is ProxiedPlayer) {
-            val playerConfig = playerConfigRepository.get(sender.uniqueId)
-            if (playerConfig.isMuted) {
-                sender.send().error("You cannot talk while muted")
-                return
+        CoroutineScope(Dispatchers.IO).launch {
+            val sender = event.receiver
+            if (sender is ProxiedPlayer) {
+                val playerConfig = playerConfigRepository.get(sender.uniqueId)
+                if (playerConfig.isMuted) {
+                    sender.send().error("You cannot talk while muted")
+                    return@launch
+                }
             }
-        }
 
-        val message = stream.readUTF()
+            val message = stream.readUTF()
 
-        proxy.players.forEach {
-            it.sendMessage(TextComponent(message))
+            proxy.players.forEach {
+                it.sendMessage(TextComponent(message))
+            }
         }
     }
 }
