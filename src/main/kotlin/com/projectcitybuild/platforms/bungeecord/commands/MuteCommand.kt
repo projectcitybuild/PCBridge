@@ -9,7 +9,7 @@ import net.md_5.bungee.api.ProxyServer
 
 class MuteCommand(
     private val proxyServer: ProxyServer,
-    private val playerRepository: PlayerConfigRepository
+    private val playerConfigRepository: PlayerConfigRepository
 ): BungeecordCommand {
 
     override val label = "mute"
@@ -32,10 +32,10 @@ class MuteCommand(
             return
         }
 
-        val player = playerRepository.get(targetPlayer.uniqueId).also {
+        val player = playerConfigRepository.get(targetPlayer.uniqueId).also {
             it.isMuted = true
         }
-        playerRepository.save(player)
+        playerConfigRepository.save(player)
 
         input.sender.send().success("${targetPlayer.name} has been muted")
         targetPlayer.send().info("You have been muted by ${input.sender.name}")

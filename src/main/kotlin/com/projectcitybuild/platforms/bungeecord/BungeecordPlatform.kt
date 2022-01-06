@@ -6,12 +6,14 @@ import com.projectcitybuild.core.network.APIRequestFactory
 import com.projectcitybuild.core.network.mojang.client.MojangClient
 import com.projectcitybuild.core.network.pcb.client.PCBClient
 import com.projectcitybuild.entities.Channel
+import com.projectcitybuild.entities.PlayerConfig
 import com.projectcitybuild.modules.bans.BanRepository
 import com.projectcitybuild.modules.playerconfig.PlayerConfigCache
 import com.projectcitybuild.modules.players.MojangPlayerRepository
 import com.projectcitybuild.modules.playerconfig.PlayerConfigRepository
 import com.projectcitybuild.modules.players.PlayerUUIDLookup
 import com.projectcitybuild.modules.ranks.SyncPlayerGroupAction
+import com.projectcitybuild.modules.storage.FileStorage
 import com.projectcitybuild.platforms.bungeecord.commands.*
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordConfig
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordLogger
@@ -51,6 +53,46 @@ class BungeecordPlatform: Plugin() {
         )
     }
 
+    private val playerUUIDLookup: PlayerUUIDLookup by lazy {
+        PlayerUUIDLookup(
+            proxy,
+            mojangPlayerRepository
+        )
+    }
+
+    private val mojangPlayerRepository: MojangPlayerRepository by lazy {
+        MojangPlayerRepository(
+            apiRequestFactory,
+            apiClient
+        )
+    }
+
+    private val playerConfigRepository: PlayerConfigRepository by lazy {
+        PlayerConfigRepository(
+            playerConfigCache,
+            FileStorage()
+        )
+    }
+
+    private val banRepository: BanRepository by lazy {
+        BanRepository(
+            apiRequestFactory,
+            apiClient
+        )
+    }
+
+    private val syncPlayerGroupAction: SyncPlayerGroupAction by lazy {
+        SyncPlayerGroupAction(
+            permissionsManager!!,
+            apiRequestFactory,
+            apiClient,
+            config,
+            bungeecordLogger
+        )
+    }
+
+    private val playerConfigCache = PlayerConfigCache()
+
     override fun onEnable() {
         createDefaultConfig()
 
@@ -76,101 +118,29 @@ class BungeecordPlatform: Plugin() {
         permissionsManager = null
         commandDelegate = null
         listenerDelegate = null
+
+        playerConfigCache.flush()
     }
 
     private fun registerCommands(delegate: BungeecordCommandDelegate) {
         arrayOf(
-            BanCommand(
-                proxyServer = proxy,
-                playerUUIDLookup = PlayerUUIDLookup(
-                    proxy,
-                    MojangPlayerRepository(
-                        apiRequestFactory,
-                        apiClient
-                    )
-                ),
-                banRepository = BanRepository(
-                    apiRequestFactory,
-                    apiClient
-                )
-            ),
-            UnbanCommand(
-                proxyServer = proxy,
-                playerUUIDLookup = PlayerUUIDLookup(
-                    proxy,
-                    MojangPlayerRepository(
-                        apiRequestFactory,
-                        apiClient
-                    )
-                ),
-                banRepository = BanRepository(
-                    apiRequestFactory,
-                    apiClient
-                )
-            ),
-            CheckBanCommand(
-                playerUUIDLookup = PlayerUUIDLookup(
-                    proxyServer = proxy,
-                    getMojangPlayerAction = MojangPlayerRepository(
-                        apiRequestFactory,
-                        apiClient
-                    )
-                ),
-                banRepository = BanRepository(
-                    apiRequestFactory,
-                    apiClient
-                )
-            ),
-            SyncCommand(
-                apiRequestFactory,
-                apiClient,
-                SyncPlayerGroupAction(
-                    permissionsManager!!,
-                    apiRequestFactory,
-                    apiClient,
-                    config,
-                    bungeecordLogger
-                )
-            ),
-            SyncOtherCommand(
-                proxyServer = proxy,
-                syncPlayerGroupAction = SyncPlayerGroupAction(
-                    permissionsManager!!,
-                    apiRequestFactory,
-                    apiClient,
-                    config,
-                    bungeecordLogger
-                )
-            )
+            BanCommand(proxy, playerUUIDLookup, banRepository),
+            UnbanCommand(proxy, playerUUIDLookup, banRepository),
+            CheckBanCommand(playerUUIDLookup, banRepository),
+            SyncCommand(apiRequestFactory, apiClient, syncPlayerGroupAction),
+            SyncOtherCommand(proxy, syncPlayerGroupAction),
+            MuteCommand(proxy, playerConfigRepository),
+            UnmuteCommand(proxy, playerConfigRepository),
         )
         .forEach { delegate.register(it) }
     }
 
     private fun registerListeners(delegate: BungeecordListenerDelegate) {
         arrayOf(
-            BanConnectionListener(
-                banRepository = BanRepository(
-                    apiRequestFactory,
-                    apiClient
-                ),
-                logger = bungeecordLogger
-            ),
-            SyncRankLoginListener(
-                syncPlayerGroupAction = SyncPlayerGroupAction(
-                    permissionsManager = permissionsManager!!,
-                    apiRequestFactory = apiRequestFactory,
-                    apiClient = apiClient,
-                    config = config,
-                    logger = bungeecordLogger
-                )
-            ),
-            IncomingChatListener(
-                proxy = proxy,
-                playerRepository = PlayerConfigRepository(
-                    cache = PlayerConfigCache()
-                )
-            ),
-            IncomingStaffChatListener(proxy = proxy)
+            BanConnectionListener(banRepository, bungeecordLogger),
+            SyncRankLoginListener(syncPlayerGroupAction),
+            IncomingChatListener(proxy, playerConfigRepository),
+            IncomingStaffChatListener(proxy)
         )
         .forEach { delegate.register(it) }
     }

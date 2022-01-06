@@ -9,7 +9,7 @@ import net.md_5.bungee.api.ProxyServer
 
 class UnmuteCommand(
     private val proxyServer: ProxyServer,
-    private val playerRepository: PlayerConfigRepository
+    private val playerConfigRepository: PlayerConfigRepository
 ): BungeecordCommand {
 
     override val label: String = "unmute"
@@ -32,10 +32,10 @@ class UnmuteCommand(
             return
         }
 
-        val player = playerRepository.get(targetPlayer.uniqueId).also {
+        val player = playerConfigRepository.get(targetPlayer.uniqueId).also {
             it.isMuted = false
         }
-        playerRepository.save(player)
+        playerConfigRepository.save(player)
 
         input.sender.send().success("${targetPlayer.name} has been unmuted")
         targetPlayer.send().info("You have been unmuted by ${input.sender.name}")
