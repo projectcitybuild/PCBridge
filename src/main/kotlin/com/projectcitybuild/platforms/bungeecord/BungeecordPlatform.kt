@@ -6,14 +6,13 @@ import com.projectcitybuild.core.network.APIRequestFactory
 import com.projectcitybuild.core.network.mojang.client.MojangClient
 import com.projectcitybuild.core.network.pcb.client.PCBClient
 import com.projectcitybuild.entities.Channel
-import com.projectcitybuild.entities.PlayerConfig
 import com.projectcitybuild.modules.bans.BanRepository
 import com.projectcitybuild.modules.playerconfig.PlayerConfigCache
 import com.projectcitybuild.modules.players.MojangPlayerRepository
 import com.projectcitybuild.modules.playerconfig.PlayerConfigRepository
 import com.projectcitybuild.modules.players.PlayerUUIDLookup
 import com.projectcitybuild.modules.ranks.SyncPlayerGroupAction
-import com.projectcitybuild.modules.storage.implementations.FileStorage
+import com.projectcitybuild.modules.storage.implementations.PlayerConfigFileStorage
 import com.projectcitybuild.platforms.bungeecord.commands.*
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordConfig
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordLogger
@@ -28,7 +27,6 @@ import net.md_5.bungee.api.plugin.Plugin
 import net.md_5.bungee.config.ConfigurationProvider
 import net.md_5.bungee.config.YamlConfiguration
 import java.io.File
-import java.util.*
 
 class BungeecordPlatform: Plugin() {
 
@@ -71,21 +69,8 @@ class BungeecordPlatform: Plugin() {
     private val playerConfigRepository: PlayerConfigRepository by lazy {
         PlayerConfigRepository(
             playerConfigCache,
-            FileStorage(
+            PlayerConfigFileStorage(
                 folderPath = dataFolder.resolve("players"),
-                encode = { config, playerConfig ->
-                    config.set("uuid", playerConfig.uuid)
-                    config.set("is_muted", playerConfig.isMuted)
-                },
-                decode = { config ->
-                    PlayerConfig(
-                        uuid = config.get("uuid") as UUID,
-                        isMuted = config.get("is_muted") as Boolean,
-                        chatPrefix = "",
-                        chatSuffix = "",
-                        chatGroups = "",
-                    )
-                }
             )
         )
     }

@@ -8,8 +8,9 @@ buildscript {
 }
 
 plugins {
-    id 'org.jetbrains.kotlin.jvm' version '1.5.20'
+    id 'org.jetbrains.kotlin.jvm' version '1.6.10'
     id 'com.github.johnrengelman.shadow' version '7.0.0'
+    id 'org.jetbrains.kotlin.plugin.serialization' version '1.6.10'
 }
 
 group 'com.projectcitybuild'
@@ -45,6 +46,8 @@ dependencies {
     implementation 'com.github.shynixn.mccoroutine:mccoroutine-bukkit-core:1.5.0'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.1'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.5.1'
+    implementation 'com.google.code.gson:gson:2.7'
+    implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2'
 
     // Spigot
     compileOnly 'org.spigotmc:spigot-api:1.12.2-R0.1-SNAPSHOT'
