@@ -1,6 +1,7 @@
 package com.projectcitybuild.modules.storage
 
 import kotlinx.serialization.KSerializer
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.encoding.Decoder
@@ -18,3 +19,9 @@ object UUIDSerializer : KSerializer<UUID> {
         encoder.encodeString(value.toString())
     }
 }
+
+@Serializable
+data class SerializableUUID(
+    @Serializable(with = UUIDSerializer::class)
+    val unwrapped: UUID
+)

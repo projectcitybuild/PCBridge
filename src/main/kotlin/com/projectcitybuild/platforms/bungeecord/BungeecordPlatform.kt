@@ -12,7 +12,7 @@ import com.projectcitybuild.modules.players.MojangPlayerRepository
 import com.projectcitybuild.modules.playerconfig.PlayerConfigRepository
 import com.projectcitybuild.modules.players.PlayerUUIDLookup
 import com.projectcitybuild.modules.ranks.SyncPlayerGroupAction
-import com.projectcitybuild.modules.storage.implementations.PlayerConfigFileStorage
+import com.projectcitybuild.modules.playerconfig.PlayerConfigFileStorage
 import com.projectcitybuild.platforms.bungeecord.commands.*
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordConfig
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordLogger
@@ -132,6 +132,8 @@ class BungeecordPlatform: Plugin() {
             SyncOtherCommand(proxy, syncPlayerGroupAction),
             MuteCommand(proxy, playerConfigRepository),
             UnmuteCommand(proxy, playerConfigRepository),
+            IgnoreCommand(playerUUIDLookup, playerConfigRepository),
+            UnignoreCommand(playerUUIDLookup, playerConfigRepository),
         )
         .forEach { delegate.register(it) }
     }

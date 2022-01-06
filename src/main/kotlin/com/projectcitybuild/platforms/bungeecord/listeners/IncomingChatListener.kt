@@ -31,18 +31,24 @@ class IncomingChatListener(
             return
 
         CoroutineScope(Dispatchers.IO).launch {
+            var recipients = proxy.players
+
             val sender = event.receiver
             if (sender is ProxiedPlayer) {
-                val playerConfig = playerConfigRepository.get(sender.uniqueId)
-                if (playerConfig.isMuted) {
+                val senderConfig = playerConfigRepository.get(sender.uniqueId)
+                if (senderConfig.isMuted) {
                     sender.send().error("You cannot talk while muted")
                     return@launch
+                }
+                recipients = recipients.filter { recipient ->
+                    val recipientConfig = playerConfigRepository.get(recipient.uniqueId)
+                    !recipientConfig.unwrappedChatIgnoreList.contains(sender.uniqueId)
                 }
             }
 
             val message = stream.readUTF()
 
-            proxy.players.forEach {
+            recipients.forEach {
                 it.sendMessage(TextComponent(message))
             }
         }

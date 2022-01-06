@@ -1,11 +1,10 @@
-package com.projectcitybuild.modules.storage.implementations
+package com.projectcitybuild.modules.playerconfig
 
 import com.projectcitybuild.entities.PlayerConfig
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.io.File
-import java.io.FileOutputStream
 
 class PlayerConfigFileStorage(
     private val folderPath: File
