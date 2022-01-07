@@ -1,6 +1,7 @@
 package com.projectcitybuild.modules.players
 
 import com.projectcitybuild.core.contracts.ChatMessageReceiver
+import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.extensions.add
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.chat.TextComponent
@@ -45,5 +46,14 @@ class MessageSender(
         }
 
         receiver.sendMessage(tc)
+    }
+
+    fun invalidCommandInput(command: BungeecordCommand) {
+        receiver.sendMessage(
+            TextComponent(command.usageHelp).also {
+                it.color = ChatColor.GRAY
+                it.isItalic = true
+            }
+        )
     }
 }

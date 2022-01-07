@@ -1,6 +1,5 @@
 package com.projectcitybuild.platforms.bungeecord.environment
 
-import com.projectcitybuild.entities.CommandResult
 import net.md_5.bungee.api.CommandSender
 import net.md_5.bungee.api.connection.ProxiedPlayer
 
@@ -24,7 +23,8 @@ interface BungeecordCommand {
     // Permission node required to execute the command
     val permission: String
 
-    fun validate(input: BungeecordCommandInput) : CommandResult
+    // Message shown to the user if the command input was invalid
+    val usageHelp: String
 
     suspend fun execute(input: BungeecordCommandInput)
 }

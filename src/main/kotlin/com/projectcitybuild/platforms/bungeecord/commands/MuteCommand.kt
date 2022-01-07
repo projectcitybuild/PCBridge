@@ -1,6 +1,5 @@
 package com.projectcitybuild.platforms.bungeecord.commands
 
-import com.projectcitybuild.entities.CommandResult
 import com.projectcitybuild.modules.playerconfig.PlayerConfigRepository
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
@@ -14,15 +13,14 @@ class MuteCommand(
 
     override val label = "mute"
     override val permission = "pcbridge.chat.mute"
-
-    override fun validate(input: BungeecordCommandInput): CommandResult {
-        if (input.args.isEmpty())
-            return CommandResult.INVALID_INPUT
-
-        return CommandResult.EXECUTED
-    }
+    override val usageHelp = "/mute <name>"
 
     override suspend fun execute(input: BungeecordCommandInput) {
+        if (input.args.size != 1) {
+            input.sender.send().invalidCommandInput(this)
+            return
+        }
+
         val targetPlayerName = input.args.first()
         val targetPlayer = proxyServer.players
             .first { it.name.lowercase() == targetPlayerName.lowercase() }

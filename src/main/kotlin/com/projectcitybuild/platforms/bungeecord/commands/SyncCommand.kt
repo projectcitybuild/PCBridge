@@ -1,7 +1,6 @@
 package com.projectcitybuild.platforms.bungeecord.commands
 
 import com.projectcitybuild.core.network.APIRequestFactory
-import com.projectcitybuild.entities.CommandResult
 import com.projectcitybuild.core.network.APIClient
 import com.projectcitybuild.modules.ranks.SyncPlayerGroupService
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
@@ -17,24 +16,21 @@ class SyncCommand(
 
     override val label: String = "sync"
     override val permission: String = "pcbridge.sync.login"
-
-    override fun validate(input: BungeecordCommandInput) : CommandResult {
-        if (input.isConsoleSender) {
-            input.sender.send().error("Console cannot use this command")
-            return CommandResult.EXECUTED
-        }
-        if (input.args.size == 1 && input.args.first() == "finish") {
-            return CommandResult.EXECUTED
-        }
-        return CommandResult.INVALID_INPUT
-    }
+    override val usageHelp = "/sync [finish]"
 
     override suspend fun execute(input: BungeecordCommandInput) {
+        if (input.isConsoleSender) {
+            input.sender.send().error("Console cannot use this command")
+            return
+        }
         if (input.args.isEmpty()) {
             generateVerificationURL(input.sender as ProxiedPlayer)
         }
-        if (input.args.size == 1 && input.args.first() == "finish") {
+        else if (input.args.size == 1 && input.args.first() == "finish") {
             syncGroups(input.sender as ProxiedPlayer)
+        }
+        else {
+            input.sender.send().invalidCommandInput(this)
         }
     }
 

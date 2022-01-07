@@ -1,6 +1,5 @@
 package com.projectcitybuild.platforms.bungeecord.commands
 
-import com.projectcitybuild.entities.CommandResult
 import com.projectcitybuild.modules.bans.BanRepository
 import com.projectcitybuild.modules.players.PlayerUUIDLookupService
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
@@ -18,15 +17,14 @@ class UnbanCommand(
 
     override val label: String = "unban"
     override val permission: String = "pcbridge.ban.unban"
-
-    override fun validate(input: BungeecordCommandInput) : CommandResult {
-        if (input.args.isEmpty())
-            return CommandResult.INVALID_INPUT
-
-        return CommandResult.EXECUTED
-    }
+    override val usageHelp = "/unban <name>"
 
     override suspend fun execute(input: BungeecordCommandInput) {
+        if (input.args.size != 1) {
+            input.sender.send().invalidCommandInput(this)
+            return
+        }
+
         val targetPlayerName = input.args.first()
         val staffPlayer = if (input.isConsoleSender) null else input.player
 

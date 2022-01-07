@@ -1,7 +1,6 @@
 package com.projectcitybuild.platforms.bungeecord
 
 import com.projectcitybuild.core.contracts.LoggerProvider
-import com.projectcitybuild.entities.CommandResult
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
 import kotlinx.coroutines.CoroutineScope
@@ -35,21 +34,16 @@ class BungeecordCommandDelegate constructor(
                     sender = sender,
                     args = args
                 )
-                when (command.validate(input)) {
-                    CommandResult.INVALID_INPUT -> false
-                    CommandResult.EXECUTED -> {
-                        runCatching {
-                            CoroutineScope(Dispatchers.IO).launch {
-                                command.execute(input)
-                            }
-                        }.onFailure { throwable ->
-                            sender.send().error(throwable.message ?: "An internal error occurred performing your command")
-                            throwable.message?.let { logger.fatal(it) }
-                            throwable.printStackTrace()
-                        }
-                        true
+                runCatching {
+                    CoroutineScope(Dispatchers.IO).launch {
+                        command.execute(input)
                     }
+                }.onFailure { throwable ->
+                    sender.send().error(throwable.message ?: "An internal error occurred performing your command")
+                    throwable.message?.let { logger.fatal(it) }
+                    throwable.printStackTrace()
                 }
+                true
             })
 
             // FIXME

@@ -1,6 +1,5 @@
 package com.projectcitybuild.platforms.bungeecord.commands
 
-import com.projectcitybuild.entities.CommandResult
 import com.projectcitybuild.modules.playerconfig.PlayerConfigRepository
 import com.projectcitybuild.modules.players.PlayerUUIDLookupService
 import com.projectcitybuild.modules.storage.SerializableUUID
@@ -15,15 +14,14 @@ class IgnoreCommand(
 
     override val label = "ignore"
     override val permission = "pcbridge.chat.ignore"
-
-    override fun validate(input: BungeecordCommandInput): CommandResult {
-        if (input.args.isEmpty() || input.args.size > 1)
-            return CommandResult.INVALID_INPUT
-
-        return CommandResult.EXECUTED
-    }
+    override val usageHelp = "/ignore <name>"
 
     override suspend fun execute(input: BungeecordCommandInput) {
+        if (input.args.size != 1) {
+            input.sender.send().invalidCommandInput(this)
+            return
+        }
+
         val targetPlayerName = input.args.first()
 
         if (input.player == null) {

@@ -1,7 +1,6 @@
 package com.projectcitybuild.platforms.spigot.commands
 
 import com.google.common.io.ByteStreams
-import com.projectcitybuild.entities.CommandResult
 import com.projectcitybuild.core.contracts.Commandable
 import com.projectcitybuild.core.extensions.joinWithWhitespaces
 import com.projectcitybuild.entities.Channel

@@ -1,6 +1,5 @@
 package com.projectcitybuild.platforms.bungeecord.commands
 
-import com.projectcitybuild.entities.CommandResult
 import com.projectcitybuild.modules.playerconfig.PlayerConfigRepository
 import com.projectcitybuild.modules.players.PlayerUUIDLookupService
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
@@ -14,15 +13,14 @@ class UnignoreCommand(
 
     override val label = "unignore"
     override val permission = "pcbridge.chat.ignore"
-
-    override fun validate(input: BungeecordCommandInput): CommandResult {
-        if (input.args.isEmpty() || input.args.size > 1)
-            return CommandResult.INVALID_INPUT
-
-        return CommandResult.EXECUTED
-    }
+    override val usageHelp = "/unignore <name>"
 
     override suspend fun execute(input: BungeecordCommandInput) {
+        if (input.args.size != 1) {
+            input.sender.send().invalidCommandInput(this)
+            return
+        }
+
         val targetPlayerName = input.args.first()
 
         if (input.player == null) {
