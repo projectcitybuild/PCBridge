@@ -6,7 +6,7 @@ import java.util.*
 
 class PlayerConfigRepository(
     private val cache: PlayerConfigCache,
-    private val storage: PlayerConfigFileStorage
+    private val storage: Storage<PlayerConfig>
 ) {
     suspend fun get(uuid: UUID) : PlayerConfig {
         val cachedPlayer = cache.get(uuid)
@@ -26,7 +26,7 @@ class PlayerConfigRepository(
     }
 
     suspend fun save(player: PlayerConfig) {
-        cache.put(player.uuid, player)
+        cache.put(player.uuid.unwrapped, player)
         storage.save(player.uuid.toString(), player)
     }
 }

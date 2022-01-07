@@ -8,10 +8,12 @@ import com.projectcitybuild.entities.PluginConfig
 import com.projectcitybuild.core.network.APIClient
 import com.projectcitybuild.entities.Channel
 import com.projectcitybuild.platforms.spigot.commands.ACommand
+import com.projectcitybuild.platforms.spigot.commands.AFKCommand
 import com.projectcitybuild.platforms.spigot.environment.PermissionsManager
 import com.projectcitybuild.platforms.spigot.environment.SpigotConfig
 import com.projectcitybuild.platforms.spigot.environment.SpigotLogger
 import com.projectcitybuild.platforms.spigot.extensions.addDefault
+import com.projectcitybuild.platforms.spigot.listeners.AFKListener
 import com.projectcitybuild.platforms.spigot.listeners.ChatListener
 import org.bukkit.plugin.java.JavaPlugin
 
@@ -44,11 +46,14 @@ class SpigotPlatform: JavaPlugin() {
         )
     }
 
+    private var sessionCache: SessionCache? = null
+
     override fun onEnable() {
         createDefaultConfig()
 
         server.messenger.registerOutgoingPluginChannel(this, Channel.BUNGEECORD)
 
+        sessionCache = SessionCache()
         permissionsManager = PermissionsManager()
 
         val commandDelegate = SpigotCommandDelegate(plugin = this, logger = spigotLogger)
@@ -65,6 +70,7 @@ class SpigotPlatform: JavaPlugin() {
     override fun onDisable() {
         server.messenger.unregisterOutgoingPluginChannel(this)
 
+        sessionCache = null
         listenerDelegate?.unregisterAll()
 
         commandDelegate = null
@@ -76,14 +82,16 @@ class SpigotPlatform: JavaPlugin() {
 
     private fun registerCommands(delegate: SpigotCommandDelegate) {
         arrayOf(
-            ACommand(plugin = this)
+            ACommand(plugin = this),
+            AFKCommand(plugin = this, sessionCache = sessionCache!!),
         )
         .forEach { command -> delegate.register(command) }
     }
 
     private fun registerListeners(delegate: SpigotListenerDelegate) {
         arrayOf(
-            ChatListener(plugin = this)
+            ChatListener(plugin = this),
+            AFKListener(plugin = this, sessionCache = sessionCache!!)
         )
         .forEach { listener -> delegate.register(listener) }
     }

@@ -12,5 +12,6 @@ sealed class SubChannel {
     companion object {
         val GLOBAL_CHAT = "pcbridge:sub:global-chat"
         val STAFF_CHAT = "pcbridge:sub:staff-chat"
+        val AFK = "pcbridge:sub:afk"
     }
 }

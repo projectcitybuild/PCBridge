@@ -23,3 +23,8 @@ interface Commandable {
 
     suspend fun execute(input: CommandInput): CommandResult
 }
+
+enum class CommandResult {
+    INVALID_INPUT,
+    EXECUTED,
+}

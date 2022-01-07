@@ -7,12 +7,13 @@ import com.projectcitybuild.core.network.mojang.client.MojangClient
 import com.projectcitybuild.core.network.pcb.client.PCBClient
 import com.projectcitybuild.entities.Channel
 import com.projectcitybuild.modules.bans.BanRepository
+import com.projectcitybuild.modules.playerconfig.JSONFileStorage
 import com.projectcitybuild.modules.playerconfig.PlayerConfigCache
 import com.projectcitybuild.modules.players.MojangPlayerRepository
 import com.projectcitybuild.modules.playerconfig.PlayerConfigRepository
 import com.projectcitybuild.modules.players.PlayerUUIDLookupService
 import com.projectcitybuild.modules.ranks.SyncPlayerGroupService
-import com.projectcitybuild.modules.playerconfig.PlayerConfigFileStorage
+import com.projectcitybuild.platforms.spigot.SessionCache
 import com.projectcitybuild.platforms.bungeecord.commands.*
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordConfig
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordLogger
@@ -23,6 +24,7 @@ import com.projectcitybuild.platforms.bungeecord.listeners.IncomingStaffChatList
 import com.projectcitybuild.platforms.bungeecord.listeners.SyncRankLoginListener
 import com.projectcitybuild.platforms.spigot.environment.PermissionsManager
 import kotlinx.coroutines.Dispatchers
+import kotlinx.serialization.json.JsonTransformingSerializer
 import net.md_5.bungee.api.plugin.Plugin
 import net.md_5.bungee.config.ConfigurationProvider
 import net.md_5.bungee.config.YamlConfiguration
@@ -69,8 +71,9 @@ class BungeecordPlatform: Plugin() {
     private val playerConfigRepository: PlayerConfigRepository by lazy {
         PlayerConfigRepository(
             playerConfigCache,
-            PlayerConfigFileStorage(
+            JSONFileStorage(
                 folderPath = dataFolder.resolve("players"),
+                serializer = JsonTransformingSerializer()
             )
         )
     }
@@ -134,6 +137,7 @@ class BungeecordPlatform: Plugin() {
             UnmuteCommand(proxy, playerConfigRepository),
             IgnoreCommand(playerUUIDLookupService, playerConfigRepository),
             UnignoreCommand(playerUUIDLookupService, playerConfigRepository),
+            WhisperCommand(proxy),
         )
         .forEach { delegate.register(it) }
     }
