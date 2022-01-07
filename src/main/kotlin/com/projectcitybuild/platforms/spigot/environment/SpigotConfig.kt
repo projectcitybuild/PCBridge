@@ -6,11 +6,11 @@ import org.bukkit.configuration.file.FileConfiguration
 
 class SpigotConfig(private val config: FileConfiguration): ConfigProvider {
 
-    override fun <T> get(key: PluginConfig.Pair<T>): T {
+    override fun <T> get(key: PluginConfig.ConfigPath<T>): T {
         return config.get(key.key) as T
     }
 
-    override fun <T> set(key: PluginConfig.Pair<T>, value: T) {
+    override fun <T> set(key: PluginConfig.ConfigPath<T>, value: T) {
         return config.set(key.key, value)
     }
 

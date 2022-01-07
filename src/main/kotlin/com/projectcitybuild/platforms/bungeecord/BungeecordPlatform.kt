@@ -99,6 +99,7 @@ class BungeecordPlatform: Plugin() {
     private var sessionCache: SessionCache? = null
 
     override fun onEnable() {
+        config.load()
         createDefaultConfig()
 
         proxy.registerChannel(Channel.BUNGEECORD)
@@ -122,11 +123,10 @@ class BungeecordPlatform: Plugin() {
         listenerDelegate?.unregisterAll()
         timer.cancelAll()
 
-        sessionCache = null
-
         permissionsManager = null
         commandDelegate = null
         listenerDelegate = null
+        sessionCache = null
 
         playerConfigCache.flush()
     }
@@ -160,34 +160,12 @@ class BungeecordPlatform: Plugin() {
     }
 
     private fun createDefaultConfig() {
-        if (!dataFolder.exists()) {
-            dataFolder.mkdir()
-        }
-        val file = File(dataFolder, "config.yml")
-
-        if (!file.exists()) {
-            // FIXME
-//            try {
-//                getResourceAsStream("config.yml").use { `in` ->
-//                    val out = FileOutputStream(file)
-//                    ByteStreams.copy(in, out)
-//                }
-//            } catch (e: IOException) {
-//                e.printStackTrace()
-//            }
-        }
-
-        if (!file.exists()) {
-            val configProvider = ConfigurationProvider
-                    .getProvider(YamlConfiguration::class.java)
-
-            val config = configProvider.load(file)
-
-            config.set(PluginConfig.API.KEY.key, "")
-            config.set(PluginConfig.API.BASE_URL.key, "")
-            config.set(PluginConfig.API.IS_LOGGING_ENABLED.key, false)
-
-            configProvider.save(config, file)
-        }
+        config.addDefaults(
+            arrayOf(
+                PluginConfig.API_KEY,
+                PluginConfig.API_BASE_URL,
+                PluginConfig.API_IS_LOGGING_ENABLED,
+            )
+        )
     }
 }

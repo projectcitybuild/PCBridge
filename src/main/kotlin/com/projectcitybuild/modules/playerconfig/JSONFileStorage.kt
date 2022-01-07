@@ -17,7 +17,6 @@ class JSONFileStorage<T>(
         if (!file.exists()) {
             return null
         }
-
         val json = file.readLines().toString()
         return Json.decodeFromString(serializer, json)
     }
@@ -28,12 +27,11 @@ class JSONFileStorage<T>(
         if (!file.exists()) {
             runCatching {
                 file.createNewFile()
-            }.onFailure { throwable ->
-                throwable.printStackTrace()
+            }.onFailure { e ->
+                e.printStackTrace()
                 return
             }
         }
-
         val json = Json.encodeToString(serializer, value)
         file.writeText(json)
     }

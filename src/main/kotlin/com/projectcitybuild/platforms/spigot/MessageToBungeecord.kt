@@ -12,14 +12,8 @@ class MessageToBungeecord(
     private val plugin: Plugin,
     private val sender: Player,
     private val subChannel: String,
-    vararg params: Any
+    private val params: Array<out Any> = emptyArray()
 ) {
-    private val params: Array<out Any>
-
-    init {
-        this.params = params
-    }
-
     fun send() {
         try {
             ByteArrayOutputStream().use { b ->

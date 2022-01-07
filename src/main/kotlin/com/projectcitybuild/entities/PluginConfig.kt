@@ -2,73 +2,37 @@ package com.projectcitybuild.entities
 
 sealed class PluginConfig {
 
-    open class Pair<T>(val key: String, val defaultValue: T)
+    data class ConfigPath<T>(val key: String, val defaultValue: T)
 
-    sealed class API {
-        companion object {
-            val KEY: Pair<String>
-                get() = Pair(
-                    key = "api.key",
-                    defaultValue = "FILL_THIS_IN"
-                )
-
-            val BASE_URL: Pair<String>
-                get() = Pair(
-                    key = "api.base_url",
-                    defaultValue = "https://projectcitybuild.com/api/"
-                )
-
-            val IS_LOGGING_ENABLED: Pair<Boolean>
-                get() = Pair(
-                    key = "api.is_logging_enabled",
-                    defaultValue = false
-                )
+    companion object Keys {
+        private infix fun <T> String.defaultTo(defaultValue: T): ConfigPath<T> {
+            return ConfigPath(this, defaultValue)
         }
-    }
 
-    sealed class GROUPS {
+        val API_KEY = "api.key" defaultTo "FILL_THIS_IN"
+        val API_BASE_URL = "api.base_url" defaultTo "https://projectcitybuild.com/api/"
+        val API_IS_LOGGING_ENABLED = "api.is_logging_enabled" defaultTo false
 
-        companion object {
-            val GUEST: Pair<String>
-                get() = Pair(
-                        key = "groups.guest",
-                        defaultValue = "guest"
-                )
-
-            val BUILD_PRIORITY: Pair<ArrayList<String>>
-                get() = Pair(
-                    key = "groups.build_priority",
-                    defaultValue = arrayListOf(
-                        "architect",
-                        "engineer",
-                        "planner",
-                        "builder",
-                        "intern"
-                    )
-                )
-
-            val TRUST_PRIORITY: Pair<ArrayList<String>>
-                get() = Pair(
-                    key = "groups.trust_priority",
-                    defaultValue = arrayListOf(
-                        "admin",
-                        "sop",
-                        "op",
-                        "moderator",
-                        "trusted+",
-                        "trusted",
-                        "member"
-                    )
-                )
-
-            val DONOR_PRIORITY: Pair<ArrayList<String>>
-                get() = Pair(
-                    key = "groups.donor_priority",
-                    defaultValue = arrayListOf(
-                        "donator",
-                        "legacy-donator"
-                    )
-                )
-        }
+        val GROUPS_GUEST = "groups.guest" defaultTo "guest"
+        val GROUPS_BUILD_PRIORITY = "groups.build_priority" defaultTo arrayListOf(
+            "architect",
+            "engineer",
+            "planner",
+            "builder",
+            "intern",
+        )
+        val GROUPS_TRUST_PRIORITY = "groups.trust_priority" defaultTo arrayListOf(
+            "admin",
+            "sop",
+            "op",
+            "moderator",
+            "trusted+",
+            "trusted",
+            "member",
+        )
+        val GROUPS_DONOR_PRIORITY = "groups.donor_priority" defaultTo arrayListOf(
+            "donator",
+            "legacy-donator",
+        )
     }
 }
