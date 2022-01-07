@@ -1,7 +1,7 @@
 package com.projectcitybuild.core.network
 
 import com.google.gson.Gson
-import com.projectcitybuild.entities.models.ApiError
+import com.projectcitybuild.entities.responses.ApiError
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 import java.io.IOException

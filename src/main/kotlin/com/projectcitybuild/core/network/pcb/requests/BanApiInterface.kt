@@ -1,6 +1,6 @@
 package com.projectcitybuild.core.network.pcb.requests
 
-import com.projectcitybuild.entities.models.*
+import com.projectcitybuild.entities.responses.*
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.POST

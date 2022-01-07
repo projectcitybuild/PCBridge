@@ -1,7 +1,7 @@
 package com.projectcitybuild.modules.players
 
 import com.projectcitybuild.core.network.APIRequestFactory
-import com.projectcitybuild.entities.models.MojangPlayer
+import com.projectcitybuild.entities.responses.MojangPlayer
 import com.projectcitybuild.core.network.APIClient
 
 class MojangPlayerRepository(

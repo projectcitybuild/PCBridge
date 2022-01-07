@@ -1,7 +1,7 @@
 package com.projectcitybuild.platforms.bungeecord.commands
 
 import com.projectcitybuild.entities.CommandResult
-import com.projectcitybuild.modules.ranks.SyncPlayerGroupAction
+import com.projectcitybuild.modules.ranks.SyncPlayerGroupService
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
 import com.projectcitybuild.platforms.bungeecord.send
@@ -9,7 +9,7 @@ import net.md_5.bungee.api.ProxyServer
 
 class SyncOtherCommand(
     private val proxyServer: ProxyServer,
-    private val syncPlayerGroupAction: SyncPlayerGroupAction
+    private val syncPlayerGroupService: SyncPlayerGroupService
 ): BungeecordCommand {
 
     override val label: String = "syncother"
@@ -33,12 +33,12 @@ class SyncOtherCommand(
         }
 
         runCatching {
-            syncPlayerGroupAction.execute(player.uniqueId)
+            syncPlayerGroupService.execute(player.uniqueId)
         }.onFailure { throwable ->
             player.send().error(
                 when (throwable) {
-                    is SyncPlayerGroupAction.AccountNotLinkedException -> "Sync failed: Player does not have a linked PCB account"
-                    is SyncPlayerGroupAction.PermissionUserNotFoundException -> "Permission user not found. Check that the user exists in the Permission plugin"
+                    is SyncPlayerGroupService.AccountNotLinkedException -> "Sync failed: Player does not have a linked PCB account"
+                    is SyncPlayerGroupService.PermissionUserNotFoundException -> "Permission user not found. Check that the user exists in the Permission plugin"
                     else -> throwable.message ?: "An unknown error occurred"
                 }
             )

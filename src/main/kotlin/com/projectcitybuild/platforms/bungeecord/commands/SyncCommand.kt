@@ -3,7 +3,7 @@ package com.projectcitybuild.platforms.bungeecord.commands
 import com.projectcitybuild.core.network.APIRequestFactory
 import com.projectcitybuild.entities.CommandResult
 import com.projectcitybuild.core.network.APIClient
-import com.projectcitybuild.modules.ranks.SyncPlayerGroupAction
+import com.projectcitybuild.modules.ranks.SyncPlayerGroupService
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
 import com.projectcitybuild.platforms.bungeecord.send
@@ -12,7 +12,7 @@ import net.md_5.bungee.api.connection.ProxiedPlayer
 class SyncCommand(
     private val apiRequestFactory: APIRequestFactory,
     private val apiClient: APIClient,
-    private val syncPlayerGroupAction: SyncPlayerGroupAction
+    private val syncPlayerGroupService: SyncPlayerGroupService
 ): BungeecordCommand {
 
     override val label: String = "sync"
@@ -63,10 +63,10 @@ class SyncCommand(
 
     private suspend fun syncGroups(player: ProxiedPlayer) {
         runCatching {
-            syncPlayerGroupAction.execute(player.uniqueId)
+            syncPlayerGroupService.execute(player.uniqueId)
         }.onFailure { throwable ->
             player.send().error(
-                if (throwable is SyncPlayerGroupAction.AccountNotLinkedException)
+                if (throwable is SyncPlayerGroupService.AccountNotLinkedException)
                     "Sync failed. Did you finish registering your account?"
                 else
                     throwable.message ?: "An unknown error occurred"

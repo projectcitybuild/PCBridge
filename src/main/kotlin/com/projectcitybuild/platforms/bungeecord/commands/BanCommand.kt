@@ -3,7 +3,7 @@ package com.projectcitybuild.platforms.bungeecord.commands
 import com.projectcitybuild.entities.CommandResult
 import com.projectcitybuild.core.extensions.joinWithWhitespaces
 import com.projectcitybuild.modules.bans.BanRepository
-import com.projectcitybuild.modules.players.PlayerUUIDLookup
+import com.projectcitybuild.modules.players.PlayerUUIDLookupService
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
 import com.projectcitybuild.platforms.bungeecord.send
@@ -13,7 +13,7 @@ import net.md_5.bungee.api.chat.TextComponent
 
 class BanCommand(
     private val proxyServer: ProxyServer,
-    private val playerUUIDLookup: PlayerUUIDLookup,
+    private val playerUUIDLookupService: PlayerUUIDLookupService,
     private val banRepository: BanRepository
 ): BungeecordCommand {
 
@@ -33,7 +33,7 @@ class BanCommand(
         val targetPlayerName = input.args.first()
 
         runCatching {
-            val targetPlayerUUID = playerUUIDLookup.request(targetPlayerName)
+            val targetPlayerUUID = playerUUIDLookupService.request(targetPlayerName)
                 ?: throw Exception("Could not find UUID for $targetPlayerName. This player likely doesn't exist")
 
             banRepository.ban(

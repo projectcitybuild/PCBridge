@@ -2,14 +2,13 @@ package com.projectcitybuild.platforms.bungeecord.commands
 
 import com.projectcitybuild.entities.CommandResult
 import com.projectcitybuild.modules.playerconfig.PlayerConfigRepository
-import com.projectcitybuild.modules.players.PlayerUUIDLookup
-import com.projectcitybuild.modules.storage.SerializableUUID
+import com.projectcitybuild.modules.players.PlayerUUIDLookupService
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
 import com.projectcitybuild.platforms.bungeecord.send
 
 class UnignoreCommand(
-    private val playerUUIDLookup: PlayerUUIDLookup,
+    private val playerUUIDLookupService: PlayerUUIDLookupService,
     private val playerConfigRepository: PlayerConfigRepository
 ): BungeecordCommand {
 
@@ -32,7 +31,7 @@ class UnignoreCommand(
         }
 
         runCatching {
-            val targetPlayerUUID = playerUUIDLookup.request(targetPlayerName)
+            val targetPlayerUUID = playerUUIDLookupService.request(targetPlayerName)
                 ?: throw Exception("Could not find UUID for $targetPlayerName. This player likely doesn't exist")
 
             val playerConfig = playerConfigRepository.get(input.player.uniqueId)

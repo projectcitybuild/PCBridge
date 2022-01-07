@@ -3,13 +3,13 @@ package com.projectcitybuild.modules.ranks
 import com.projectcitybuild.core.contracts.ConfigProvider
 import com.projectcitybuild.core.contracts.LoggerProvider
 import com.projectcitybuild.entities.PluginConfig
-import com.projectcitybuild.entities.models.Group
+import com.projectcitybuild.entities.responses.Group
 import com.projectcitybuild.core.network.APIClient
 import com.projectcitybuild.core.network.APIRequestFactory
 import com.projectcitybuild.platforms.spigot.environment.PermissionsManager
 import java.util.*
 
-class SyncPlayerGroupAction(
+class SyncPlayerGroupService(
         private val permissionsManager: PermissionsManager,
         private val apiRequestFactory: APIRequestFactory,
         private val apiClient: APIClient,

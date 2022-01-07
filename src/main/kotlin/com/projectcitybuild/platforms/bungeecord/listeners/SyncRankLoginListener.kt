@@ -1,6 +1,6 @@
 package com.projectcitybuild.platforms.bungeecord.listeners
 
-import com.projectcitybuild.modules.ranks.SyncPlayerGroupAction
+import com.projectcitybuild.modules.ranks.SyncPlayerGroupService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -10,13 +10,13 @@ import net.md_5.bungee.event.EventHandler
 import net.md_5.bungee.event.EventPriority
 
 class SyncRankLoginListener(
-    private val syncPlayerGroupAction: SyncPlayerGroupAction
+    private val syncPlayerGroupService: SyncPlayerGroupService
 ): Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     fun onPlayerJoin(event: PostLoginEvent) {
         CoroutineScope(Dispatchers.IO).launch {
-            syncPlayerGroupAction.execute(event.player.uniqueId)
+            syncPlayerGroupService.execute(event.player.uniqueId)
         }
     }
 }

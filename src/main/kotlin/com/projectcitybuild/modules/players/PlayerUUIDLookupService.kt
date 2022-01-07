@@ -4,7 +4,7 @@ import com.projectcitybuild.core.extensions.toDashFormattedUUID
 import net.md_5.bungee.api.ProxyServer
 import java.util.*
 
-class PlayerUUIDLookup(
+class PlayerUUIDLookupService(
     private val proxyServer: ProxyServer,
     private val getMojangPlayerAction: MojangPlayerRepository
 ) {

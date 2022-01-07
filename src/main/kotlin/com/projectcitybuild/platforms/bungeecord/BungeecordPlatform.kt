@@ -10,8 +10,8 @@ import com.projectcitybuild.modules.bans.BanRepository
 import com.projectcitybuild.modules.playerconfig.PlayerConfigCache
 import com.projectcitybuild.modules.players.MojangPlayerRepository
 import com.projectcitybuild.modules.playerconfig.PlayerConfigRepository
-import com.projectcitybuild.modules.players.PlayerUUIDLookup
-import com.projectcitybuild.modules.ranks.SyncPlayerGroupAction
+import com.projectcitybuild.modules.players.PlayerUUIDLookupService
+import com.projectcitybuild.modules.ranks.SyncPlayerGroupService
 import com.projectcitybuild.modules.playerconfig.PlayerConfigFileStorage
 import com.projectcitybuild.platforms.bungeecord.commands.*
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordConfig
@@ -33,7 +33,7 @@ class BungeecordPlatform: Plugin() {
     private val bungeecordLogger = BungeecordLogger(logger)
     private val config = BungeecordConfig(plugin = this)
     private val apiClient = APIClient { Dispatchers.IO }
-    private val timer = BungeecordTimer(this, proxy)
+    private val timer = BungeecordTimer(plugin = this, proxy)
     private var commandDelegate: BungeecordCommandDelegate? = null
     private var listenerDelegate: BungeecordListenerDelegate? = null
     private var permissionsManager: PermissionsManager? = null
@@ -52,8 +52,8 @@ class BungeecordPlatform: Plugin() {
         )
     }
 
-    private val playerUUIDLookup: PlayerUUIDLookup by lazy {
-        PlayerUUIDLookup(
+    private val playerUUIDLookupService: PlayerUUIDLookupService by lazy {
+        PlayerUUIDLookupService(
             proxy,
             mojangPlayerRepository
         )
@@ -82,8 +82,8 @@ class BungeecordPlatform: Plugin() {
         )
     }
 
-    private val syncPlayerGroupAction: SyncPlayerGroupAction by lazy {
-        SyncPlayerGroupAction(
+    private val syncPlayerGroupService: SyncPlayerGroupService by lazy {
+        SyncPlayerGroupService(
             permissionsManager!!,
             apiRequestFactory,
             apiClient,
@@ -125,15 +125,15 @@ class BungeecordPlatform: Plugin() {
 
     private fun registerCommands(delegate: BungeecordCommandDelegate) {
         arrayOf(
-            BanCommand(proxy, playerUUIDLookup, banRepository),
-            UnbanCommand(proxy, playerUUIDLookup, banRepository),
-            CheckBanCommand(playerUUIDLookup, banRepository),
-            SyncCommand(apiRequestFactory, apiClient, syncPlayerGroupAction),
-            SyncOtherCommand(proxy, syncPlayerGroupAction),
+            BanCommand(proxy, playerUUIDLookupService, banRepository),
+            UnbanCommand(proxy, playerUUIDLookupService, banRepository),
+            CheckBanCommand(playerUUIDLookupService, banRepository),
+            SyncCommand(apiRequestFactory, apiClient, syncPlayerGroupService),
+            SyncOtherCommand(proxy, syncPlayerGroupService),
             MuteCommand(proxy, playerConfigRepository),
             UnmuteCommand(proxy, playerConfigRepository),
-            IgnoreCommand(playerUUIDLookup, playerConfigRepository),
-            UnignoreCommand(playerUUIDLookup, playerConfigRepository),
+            IgnoreCommand(playerUUIDLookupService, playerConfigRepository),
+            UnignoreCommand(playerUUIDLookupService, playerConfigRepository),
         )
         .forEach { delegate.register(it) }
     }
@@ -141,9 +141,9 @@ class BungeecordPlatform: Plugin() {
     private fun registerListeners(delegate: BungeecordListenerDelegate) {
         arrayOf(
             BanConnectionListener(banRepository, bungeecordLogger),
-            SyncRankLoginListener(syncPlayerGroupAction),
+            SyncRankLoginListener(syncPlayerGroupService),
             IncomingChatListener(proxy, playerConfigRepository),
-            IncomingStaffChatListener(proxy)
+            IncomingStaffChatListener(proxy),
         )
         .forEach { delegate.register(it) }
     }
