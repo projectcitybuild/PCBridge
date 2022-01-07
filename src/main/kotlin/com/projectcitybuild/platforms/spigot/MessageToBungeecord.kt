@@ -1,6 +1,7 @@
 package com.projectcitybuild.platforms.spigot
 
 import com.projectcitybuild.entities.Channel
+import com.projectcitybuild.entities.SubChannel
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
 import java.io.ByteArrayOutputStream
@@ -8,18 +9,14 @@ import java.io.DataOutputStream
 import java.io.IOException
 
 class MessageToBungeecord(
-    plugin: Plugin,
-    sender: Player,
+    private val plugin: Plugin,
+    private val sender: Player,
+    private val subChannel: String,
     vararg params: Any
 ) {
-    private val plugin: Plugin
-    private val sender: Player
     private val params: Array<out Any>
 
     init {
-        // Secondary init because `vararg` cannot be made private
-        this.plugin = plugin
-        this.sender = sender
         this.params = params
     }
 
@@ -27,6 +24,8 @@ class MessageToBungeecord(
         try {
             ByteArrayOutputStream().use { b ->
                 DataOutputStream(b).use { out ->
+                    out.writeUTF(subChannel)
+
                     for (param in params) {
                         when (param) {
                             is String -> out.writeUTF(param)

@@ -1,6 +1,8 @@
 package com.projectcitybuild.platforms.spigot.listeners
 
-import com.projectcitybuild.platforms.spigot.SessionCache
+import com.projectcitybuild.entities.SubChannel
+import com.projectcitybuild.modules.sessioncache.SessionCache
+import com.projectcitybuild.platforms.spigot.MessageToBungeecord
 import net.md_5.bungee.api.ChatColor
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -15,58 +17,55 @@ import org.bukkit.event.player.PlayerMoveEvent
 import org.bukkit.plugin.Plugin
 
 class AFKListener(
-    private val plugin: Plugin,
-    private val sessionCache: SessionCache
+    private val plugin: Plugin
 ): Listener {
 
     @EventHandler
     fun onBlockBreak(event: BlockBreakEvent) {
-        toggleOffAFKIfNeeded(event.player)
+        toggleOffAFKIfNeeded(event.player, true)
     }
 
     @EventHandler
     fun onBlockPlace(event: BlockPlaceEvent) {
-        toggleOffAFKIfNeeded(event.player)
+        toggleOffAFKIfNeeded(event.player, true)
     }
 
     @EventHandler
     fun onPlayerInteract(event: PlayerInteractEvent) {
-        toggleOffAFKIfNeeded(event.player)
+        toggleOffAFKIfNeeded(event.player, true)
     }
 
     @EventHandler
     fun onCommand(event: PlayerCommandPreprocessEvent) {
         if (!event.message.startsWith("/afk")) {
-            toggleOffAFKIfNeeded(event.player)
+            toggleOffAFKIfNeeded(event.player, true)
         }
     }
 
     @EventHandler
     fun onAttack(event: EntityDamageByEntityEvent) {
         if (event.damager is Player) {
-            toggleOffAFKIfNeeded(event.damager as Player)
+            toggleOffAFKIfNeeded(event.damager as Player, true)
         }
     }
 
     @EventHandler
     fun onMove(event: PlayerMoveEvent) {
-        toggleOffAFKIfNeeded(event.player)
+        toggleOffAFKIfNeeded(event.player, true)
     }
 
     @EventHandler
     fun onChat(event: AsyncPlayerChatEvent) {
-        toggleOffAFKIfNeeded(event.player)
+        toggleOffAFKIfNeeded(event.player, true)
     }
 
     @EventHandler
     fun onQuit(event: AsyncPlayerChatEvent) {
-        sessionCache.afkPlayerList.remove(event.player.uniqueId)
+        toggleOffAFKIfNeeded(event.player, false)
     }
 
-    private fun toggleOffAFKIfNeeded(player: Player) {
-        if (sessionCache.afkPlayerList.contains(player.uniqueId)) {
-            sessionCache.afkPlayerList.remove(player.uniqueId)
-            plugin.server.broadcastMessage("${ChatColor.GRAY}${player.displayName} is no longer AFK")
-        }
+    private fun toggleOffAFKIfNeeded(player: Player, broadcastToPlayers: Boolean) {
+        MessageToBungeecord(plugin, player, SubChannel.AFK_END, broadcastToPlayers)
+            .send()
     }
 }

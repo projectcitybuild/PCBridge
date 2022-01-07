@@ -13,14 +13,14 @@ import com.projectcitybuild.modules.players.MojangPlayerRepository
 import com.projectcitybuild.modules.playerconfig.PlayerConfigRepository
 import com.projectcitybuild.modules.players.PlayerUUIDLookupService
 import com.projectcitybuild.modules.ranks.SyncPlayerGroupService
-import com.projectcitybuild.platforms.spigot.SessionCache
+import com.projectcitybuild.modules.sessioncache.SessionCache
 import com.projectcitybuild.platforms.bungeecord.commands.*
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordConfig
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordLogger
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordTimer
 import com.projectcitybuild.platforms.bungeecord.listeners.BanConnectionListener
+import com.projectcitybuild.platforms.bungeecord.listeners.IncomingAFKEndListener
 import com.projectcitybuild.platforms.bungeecord.listeners.IncomingChatListener
-import com.projectcitybuild.platforms.bungeecord.listeners.IncomingStaffChatListener
 import com.projectcitybuild.platforms.bungeecord.listeners.SyncRankLoginListener
 import com.projectcitybuild.platforms.spigot.environment.PermissionsManager
 import kotlinx.coroutines.Dispatchers
@@ -96,11 +96,14 @@ class BungeecordPlatform: Plugin() {
     }
 
     private val playerConfigCache = PlayerConfigCache()
+    private var sessionCache: SessionCache? = null
 
     override fun onEnable() {
         createDefaultConfig()
 
         proxy.registerChannel(Channel.BUNGEECORD)
+
+        sessionCache = SessionCache()
 
         permissionsManager = PermissionsManager()
 
@@ -118,6 +121,8 @@ class BungeecordPlatform: Plugin() {
 
         listenerDelegate?.unregisterAll()
         timer.cancelAll()
+
+        sessionCache = null
 
         permissionsManager = null
         commandDelegate = null
@@ -138,6 +143,8 @@ class BungeecordPlatform: Plugin() {
             IgnoreCommand(playerUUIDLookupService, playerConfigRepository),
             UnignoreCommand(playerUUIDLookupService, playerConfigRepository),
             WhisperCommand(proxy),
+            ACommand(proxy),
+            AFKCommand(proxy, sessionCache!!),
         )
         .forEach { delegate.register(it) }
     }
@@ -147,7 +154,7 @@ class BungeecordPlatform: Plugin() {
             BanConnectionListener(banRepository, bungeecordLogger),
             SyncRankLoginListener(syncPlayerGroupService),
             IncomingChatListener(proxy, playerConfigRepository),
-            IncomingStaffChatListener(proxy),
+            IncomingAFKEndListener(proxy, sessionCache!!)
         )
         .forEach { delegate.register(it) }
     }
