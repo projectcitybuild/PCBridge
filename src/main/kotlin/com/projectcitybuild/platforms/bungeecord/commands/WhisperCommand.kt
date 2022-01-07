@@ -24,7 +24,7 @@ class WhisperCommand(
         val targetPlayerName = input.args.first()
 
         val targetPlayer = proxyServer.players
-            .first { it.name.lowercase() == targetPlayerName.lowercase() }
+            .firstOrNull { it.name.lowercase() == targetPlayerName.lowercase() }
 
         if (targetPlayer == null) {
             input.sender.send().error("Player not found")
@@ -32,11 +32,11 @@ class WhisperCommand(
         }
 
         val message = input.args.joinWithWhitespaces(1 until input.args.size)
-        targetPlayer.sendMessage(
-            TextComponent("(DM) ${input.player?.displayName ?: "CONSOLE"} > $message").also {
-                it.color = ChatColor.GRAY
-                it.isItalic = true
-            }
-        )
+        val tc = TextComponent("(DM) ${input.player?.displayName ?: "CONSOLE"} > $message").also {
+            it.color = ChatColor.GRAY
+            it.isItalic = true
+        }
+        targetPlayer.sendMessage(tc)
+        input.sender.sendMessage(tc)
     }
 }

@@ -14,8 +14,9 @@ class ACommand(
 ): BungeecordCommand {
 
     override val label: String = "a"
-    override val permission = "pcbridge.chat.staff_channel.send"
+    override val permission = "pcbridge.chat.staff_channel"
     override val usageHelp = "/a <message>"
+
     override suspend fun execute(input: BungeecordCommandInput) {
         if (input.args.isEmpty()) {
             input.sender.send().invalidCommandInput(this)
@@ -29,10 +30,10 @@ class ACommand(
         }
 
         proxyServer.players.forEach { player ->
-            if (player.hasPermission("pcbridge.chat.staff_channel.receive"))
+            if (player.hasPermission("pcbridge.chat.staff_channel"))
                 player.sendMessage(
                     TextComponent()
-                        .add("Staff") { it.color = ChatColor.YELLOW }
+                        .add("(Staff)") { it.color = ChatColor.YELLOW }
                         .add(" » ") { it.color = ChatColor.GRAY }
                         .add(message) {
                             it.color = ChatColor.YELLOW

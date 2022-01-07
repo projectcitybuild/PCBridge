@@ -1,9 +1,7 @@
 package com.projectcitybuild.platforms.spigot.listeners
 
 import com.projectcitybuild.entities.SubChannel
-import com.projectcitybuild.modules.sessioncache.SessionCache
 import com.projectcitybuild.platforms.spigot.MessageToBungeecord
-import net.md_5.bungee.api.ChatColor
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -65,7 +63,7 @@ class AFKListener(
     }
 
     private fun toggleOffAFKIfNeeded(player: Player, broadcastToPlayers: Boolean) {
-        MessageToBungeecord(plugin, player, SubChannel.AFK_END, broadcastToPlayers)
+        MessageToBungeecord(plugin, player, SubChannel.AFK_END, arrayOf(broadcastToPlayers))
             .send()
     }
 }

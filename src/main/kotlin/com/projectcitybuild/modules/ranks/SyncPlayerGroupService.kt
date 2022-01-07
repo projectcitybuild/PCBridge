@@ -41,7 +41,7 @@ class SyncPlayerGroupService(
         user.removeAllGroups()
 
         if (groups.isEmpty()) {
-            val guestGroupName = config.get(PluginConfig.GROUPS.GUEST)
+            val guestGroupName = config.get(PluginConfig.GROUPS_GUEST)
             val guestGroup = permissionsManager.getGroup(guestGroupName)
             user.addGroup(guestGroup)
             permissionsManager.saveChanges(user)

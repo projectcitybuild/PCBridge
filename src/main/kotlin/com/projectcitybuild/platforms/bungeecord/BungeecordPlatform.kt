@@ -9,6 +9,7 @@ import com.projectcitybuild.entities.Channel
 import com.projectcitybuild.modules.bans.BanRepository
 import com.projectcitybuild.modules.playerconfig.JSONFileStorage
 import com.projectcitybuild.modules.playerconfig.PlayerConfigCache
+import com.projectcitybuild.modules.playerconfig.PlayerConfigFileStorage
 import com.projectcitybuild.modules.players.MojangPlayerRepository
 import com.projectcitybuild.modules.playerconfig.PlayerConfigRepository
 import com.projectcitybuild.modules.players.PlayerUUIDLookupService
@@ -26,9 +27,6 @@ import com.projectcitybuild.platforms.spigot.environment.PermissionsManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.serialization.json.JsonTransformingSerializer
 import net.md_5.bungee.api.plugin.Plugin
-import net.md_5.bungee.config.ConfigurationProvider
-import net.md_5.bungee.config.YamlConfiguration
-import java.io.File
 
 class BungeecordPlatform: Plugin() {
 
@@ -41,11 +39,11 @@ class BungeecordPlatform: Plugin() {
     private var permissionsManager: PermissionsManager? = null
 
     private val apiRequestFactory: APIRequestFactory by lazy {
-        val isLoggingEnabled = config.get(PluginConfig.API.IS_LOGGING_ENABLED)
+        val isLoggingEnabled = config.get(PluginConfig.API_IS_LOGGING_ENABLED)
         APIRequestFactory(
             pcb = PCBClient(
-                authToken = config.get(PluginConfig.API.KEY),
-                baseUrl = config.get(PluginConfig.API.BASE_URL),
+                authToken = config.get(PluginConfig.API_KEY),
+                baseUrl = config.get(PluginConfig.API_BASE_URL),
                 withLogging = isLoggingEnabled
             ),
             mojang = MojangClient(
@@ -71,9 +69,8 @@ class BungeecordPlatform: Plugin() {
     private val playerConfigRepository: PlayerConfigRepository by lazy {
         PlayerConfigRepository(
             playerConfigCache,
-            JSONFileStorage(
-                folderPath = dataFolder.resolve("players"),
-                serializer = JsonTransformingSerializer()
+            PlayerConfigFileStorage(
+                folderPath = dataFolder.resolve("players")
             )
         )
     }
@@ -161,11 +158,9 @@ class BungeecordPlatform: Plugin() {
 
     private fun createDefaultConfig() {
         config.addDefaults(
-            arrayOf(
-                PluginConfig.API_KEY,
-                PluginConfig.API_BASE_URL,
-                PluginConfig.API_IS_LOGGING_ENABLED,
-            )
+            PluginConfig.API_KEY,
+            PluginConfig.API_BASE_URL,
+            PluginConfig.API_IS_LOGGING_ENABLED,
         )
     }
 }

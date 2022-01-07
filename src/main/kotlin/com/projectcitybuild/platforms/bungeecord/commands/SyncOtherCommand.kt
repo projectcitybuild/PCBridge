@@ -23,7 +23,7 @@ class SyncOtherCommand(
 
         val playerName = input.args.first()
         val player = proxyServer.players
-            .first { it.name.lowercase() == playerName.lowercase() }
+            .firstOrNull { it.name.lowercase() == playerName.lowercase() }
 
         if (player == null) {
             input.sender.send().error("$playerName is not online")
@@ -40,6 +40,7 @@ class SyncOtherCommand(
                     else -> throwable.message ?: "An unknown error occurred"
                 }
             )
+            return
         }
 
         input.sender.send().success("$playerName has been synchronized")

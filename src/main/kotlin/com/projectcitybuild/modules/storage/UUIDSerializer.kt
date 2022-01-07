@@ -24,4 +24,8 @@ object UUIDSerializer : KSerializer<UUID> {
 data class SerializableUUID(
     @Serializable(with = UUIDSerializer::class)
     val unwrapped: UUID
-)
+) {
+    override fun toString(): String {
+        return unwrapped.toString()
+    }
+}

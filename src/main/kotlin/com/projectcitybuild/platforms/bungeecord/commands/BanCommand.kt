@@ -46,7 +46,7 @@ class BanCommand(
             )
 
             proxyServer.players
-                .first { it.name.lowercase() == targetPlayerName.lowercase() || it.uniqueId == targetPlayerUUID }
+                .firstOrNull { it.name.lowercase() == targetPlayerName.lowercase() || it.uniqueId == targetPlayerUUID }
                 ?.disconnect(
                     TextComponent("You have been banned.\nAppeal @ projectcitybuild.com").also { it.color = ChatColor.RED }
                 )

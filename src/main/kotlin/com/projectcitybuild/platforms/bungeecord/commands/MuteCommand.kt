@@ -23,7 +23,7 @@ class MuteCommand(
 
         val targetPlayerName = input.args.first()
         val targetPlayer = proxyServer.players
-            .first { it.name.lowercase() == targetPlayerName.lowercase() }
+            .firstOrNull { it.name.lowercase() == targetPlayerName.lowercase() }
 
         if (targetPlayer == null) {
             input.sender.send().error("Player $targetPlayerName not found")

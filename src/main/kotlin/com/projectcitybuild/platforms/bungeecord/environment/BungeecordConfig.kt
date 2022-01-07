@@ -51,7 +51,7 @@ class BungeecordConfig(
         }
     }
 
-    fun <T> addDefaults(vararg keys: PluginConfig.ConfigPath<T>) {
+    fun addDefaults(vararg keys: PluginConfig.ConfigPath<*>) {
         val config = config ?: throw Exception("Attempted to read config file without loading it")
 
         keys.forEach { key ->

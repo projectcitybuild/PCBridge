@@ -1,12 +1,11 @@
 package com.projectcitybuild.modules.playerconfig
 
 import com.projectcitybuild.entities.PlayerConfig
-import com.projectcitybuild.modules.storage.Storage
 import java.util.*
 
 class PlayerConfigRepository(
     private val cache: PlayerConfigCache,
-    private val storage: Storage<PlayerConfig>
+    private val storage: PlayerConfigFileStorage
 ) {
     suspend fun get(uuid: UUID) : PlayerConfig {
         val cachedPlayer = cache.get(uuid)
