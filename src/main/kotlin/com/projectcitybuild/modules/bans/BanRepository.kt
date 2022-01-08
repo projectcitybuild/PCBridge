@@ -32,11 +32,11 @@ class BanRepository(
                     isGlobalBan = 1
                 )
             }
-        } catch (throwable: APIClient.HTTPError) {
-            if (throwable.errorBody?.id == "player_already_banned") {
+        } catch (e: APIClient.HTTPError) {
+            if (e.errorBody?.id == "player_already_banned") {
                 throw PlayerAlreadyBannedException()
             }
-            throw throwable
+            throw e
         }
     }
 
@@ -51,11 +51,11 @@ class BanRepository(
                     staffIdType = "minecraft_uuid"
                 )
             }
-        } catch (throwable: APIClient.HTTPError) {
-            if (throwable.errorBody?.id == "player_not_banned") {
+        } catch (e: APIClient.HTTPError) {
+            if (e.errorBody?.id == "player_not_banned") {
                 throw PlayerNotBannedException()
             }
-            throw throwable
+            throw e
         }
     }
 

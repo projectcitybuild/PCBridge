@@ -28,17 +28,17 @@ class APIClient(
                 apiCall.invoke()
             } catch (_: IOException) {
                 throw NetworkError()
-            } catch (throwable: HttpException) {
-                val code = throwable.code()
-                throw HTTPError(errorBody = convertErrorBody(throwable, code))
-            } catch (throwable: Throwable) {
-                throw throwable
+            } catch (e: HttpException) {
+                val code = e.code()
+                throw HTTPError(errorBody = convertErrorBody(e, code))
+            } catch (e: Exception) {
+                throw e
             }
         }
     }
 
-    private fun convertErrorBody(throwable: HttpException, code: Int): ApiError? {
-        throwable.response()?.errorBody()?.string().let {
+    private fun convertErrorBody(e: HttpException, code: Int): ApiError? {
+        e.response()?.errorBody()?.string().let {
             val errorBody = Gson().fromJson(it, ErrorBody::class.java).error
             errorBody.status = code
             return errorBody

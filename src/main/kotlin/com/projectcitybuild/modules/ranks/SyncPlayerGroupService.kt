@@ -23,11 +23,11 @@ class SyncPlayerGroupService(
         val response = try {
             val authAPI = apiRequestFactory.pcb.authApi
             apiClient.execute { authAPI.getUserGroups(uuid = playerUUID.toString()) }
-        } catch (throwable: APIClient.HTTPError) {
-            if (throwable.errorBody?.id == "account_not_linked") {
+        } catch (e: APIClient.HTTPError) {
+            if (e.errorBody?.id == "account_not_linked") {
                 throw AccountNotLinkedException()
             }
-            throw throwable
+            throw e
         }
 
         var groups: List<Group> = response.data?.groups ?: listOf()

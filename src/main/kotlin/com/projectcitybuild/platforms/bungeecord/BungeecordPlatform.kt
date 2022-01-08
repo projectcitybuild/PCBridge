@@ -7,7 +7,7 @@ import com.projectcitybuild.core.network.mojang.client.MojangClient
 import com.projectcitybuild.core.network.pcb.client.PCBClient
 import com.projectcitybuild.entities.Channel
 import com.projectcitybuild.modules.bans.BanRepository
-import com.projectcitybuild.modules.playerconfig.JSONFileStorage
+import com.projectcitybuild.modules.chat.ChatGroupFormatBuilder
 import com.projectcitybuild.modules.playerconfig.PlayerConfigCache
 import com.projectcitybuild.modules.playerconfig.PlayerConfigFileStorage
 import com.projectcitybuild.modules.players.MojangPlayerRepository
@@ -25,7 +25,6 @@ import com.projectcitybuild.platforms.bungeecord.listeners.IncomingChatListener
 import com.projectcitybuild.platforms.bungeecord.listeners.SyncRankLoginListener
 import com.projectcitybuild.platforms.spigot.environment.PermissionsManager
 import kotlinx.coroutines.Dispatchers
-import kotlinx.serialization.json.JsonTransformingSerializer
 import net.md_5.bungee.api.plugin.Plugin
 
 class BungeecordPlatform: Plugin() {
@@ -92,6 +91,13 @@ class BungeecordPlatform: Plugin() {
         )
     }
 
+    private val chatGroupFormatBuilder: ChatGroupFormatBuilder by lazy {
+        ChatGroupFormatBuilder(
+            permissionsManager!!,
+            config
+        )
+    }
+
     private val playerConfigCache = PlayerConfigCache()
     private var sessionCache: SessionCache? = null
 
@@ -150,7 +156,7 @@ class BungeecordPlatform: Plugin() {
         arrayOf(
             BanConnectionListener(banRepository, bungeecordLogger),
             SyncRankLoginListener(syncPlayerGroupService),
-            IncomingChatListener(proxy, playerConfigRepository),
+            IncomingChatListener(proxy, playerConfigRepository, chatGroupFormatBuilder),
             IncomingAFKEndListener(proxy, sessionCache!!)
         )
         .forEach { delegate.register(it) }

@@ -28,4 +28,8 @@ class PlayerConfigRepository(
         cache.put(player.uuid.unwrapped, player)
         storage.save(player.uuid.toString(), player)
     }
+
+    suspend fun saveAll() {
+
+    }
 }
