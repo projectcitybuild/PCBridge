@@ -4,6 +4,7 @@ import com.projectcitybuild.entities.SubChannel
 import com.projectcitybuild.platforms.spigot.MessageToBungeecord
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
+import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.block.BlockPlaceEvent
@@ -18,52 +19,52 @@ class AFKListener(
     private val plugin: Plugin
 ): Listener {
 
-    @EventHandler
-    fun onBlockBreak(event: BlockBreakEvent) {
-        toggleOffAFKIfNeeded(event.player, true)
-    }
-
-    @EventHandler
-    fun onBlockPlace(event: BlockPlaceEvent) {
-        toggleOffAFKIfNeeded(event.player, true)
-    }
-
-    @EventHandler
-    fun onPlayerInteract(event: PlayerInteractEvent) {
-        toggleOffAFKIfNeeded(event.player, true)
-    }
-
-    @EventHandler
-    fun onCommand(event: PlayerCommandPreprocessEvent) {
-        if (!event.message.startsWith("/afk")) {
-            toggleOffAFKIfNeeded(event.player, true)
-        }
-    }
-
-    @EventHandler
-    fun onAttack(event: EntityDamageByEntityEvent) {
-        if (event.damager is Player) {
-            toggleOffAFKIfNeeded(event.damager as Player, true)
-        }
-    }
-
-    @EventHandler
-    fun onMove(event: PlayerMoveEvent) {
-        toggleOffAFKIfNeeded(event.player, true)
-    }
-
-    @EventHandler
-    fun onChat(event: AsyncPlayerChatEvent) {
-        toggleOffAFKIfNeeded(event.player, true)
-    }
-
-    @EventHandler
-    fun onQuit(event: AsyncPlayerChatEvent) {
-        toggleOffAFKIfNeeded(event.player, false)
-    }
-
-    private fun toggleOffAFKIfNeeded(player: Player, broadcastToPlayers: Boolean) {
-        MessageToBungeecord(plugin, player, SubChannel.AFK_END, arrayOf(broadcastToPlayers))
-            .send()
-    }
+//    @EventHandler(priority = EventPriority.LOW)
+//    fun onBlockBreak(event: BlockBreakEvent) {
+//        toggleOffAFKIfNeeded(event.player, true)
+//    }
+//
+//    @EventHandler(priority = EventPriority.LOW)
+//    fun onBlockPlace(event: BlockPlaceEvent) {
+//        toggleOffAFKIfNeeded(event.player, true)
+//    }
+//
+//    @EventHandler(priority = EventPriority.LOW)
+//    fun onPlayerInteract(event: PlayerInteractEvent) {
+//        toggleOffAFKIfNeeded(event.player, true)
+//    }
+//
+//    @EventHandler(priority = EventPriority.LOW)
+//    fun onCommand(event: PlayerCommandPreprocessEvent) {
+//        if (!event.message.startsWith("/afk")) {
+//            toggleOffAFKIfNeeded(event.player, true)
+//        }
+//    }
+//
+//    @EventHandler(priority = EventPriority.LOW)
+//    fun onAttack(event: EntityDamageByEntityEvent) {
+//        if (event.damager is Player) {
+//            toggleOffAFKIfNeeded(event.entity as Player, true)
+//        }
+//    }
+//
+//    @EventHandler(priority = EventPriority.LOW)
+//    fun onMove(event: PlayerMoveEvent) {
+//        toggleOffAFKIfNeeded(event.player, true)
+//    }
+//
+//    @EventHandler(priority = EventPriority.LOW)
+//    fun onChat(event: AsyncPlayerChatEvent) {
+//        toggleOffAFKIfNeeded(event.player, true)
+//    }
+//
+//    @EventHandler(priority = EventPriority.LOW)
+//    fun onQuit(event: AsyncPlayerChatEvent) {
+//        toggleOffAFKIfNeeded(event.player, false)
+//    }
+//
+//    private fun toggleOffAFKIfNeeded(player: Player, broadcastToPlayers: Boolean) {
+//        MessageToBungeecord(plugin, player, SubChannel.AFK_END, arrayOf(broadcastToPlayers))
+//            .send()
+//    }
 }

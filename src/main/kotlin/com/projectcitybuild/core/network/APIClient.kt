@@ -14,8 +14,7 @@ class APIClient(
 
     class HTTPError(val errorBody: ApiError?) : Exception(
         if (errorBody != null) "Bad response received from the ban server: ${errorBody.detail}"
-        else "Bad response received from the ban server (no error given)",
-        errorBody
+        else "Bad response received from the ban server (no error given)"
     )
 
     class NetworkError : Exception(
@@ -23,7 +22,7 @@ class APIClient(
     )
 
     suspend fun <T> execute(apiCall: suspend () -> T): T {
-        return withContext(getCoroutineContext()) {
+       return withContext(getCoroutineContext()) {
             try {
                 apiCall.invoke()
             } catch (_: IOException) {

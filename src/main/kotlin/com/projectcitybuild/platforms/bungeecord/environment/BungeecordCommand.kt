@@ -7,7 +7,7 @@ data class BungeecordCommandInput(
     val sender: CommandSender,
     val args: List<String>
 ) {
-    val isConsoleSender = sender is ProxiedPlayer
+    val isConsoleSender = sender !is ProxiedPlayer
     val player = sender as? ProxiedPlayer
 }
 

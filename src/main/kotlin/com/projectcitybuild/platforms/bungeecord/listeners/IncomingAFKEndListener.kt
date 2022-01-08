@@ -32,8 +32,9 @@ class IncomingAFKEndListener(
         if (sessionCache.afkPlayerList.contains(player.uniqueId)) {
             sessionCache.afkPlayerList.remove(player.uniqueId)
 
-            val broadcastToPlayers = stream.readBoolean()
-            if (broadcastToPlayers) {
+            val shouldBroadcastToPlayers = stream.readBoolean()
+            println(shouldBroadcastToPlayers)
+            if (shouldBroadcastToPlayers) {
                 proxy.broadcast(
                     TextComponent("${player.displayName} is no longer AFK").also {
                         it.color = ChatColor.GRAY

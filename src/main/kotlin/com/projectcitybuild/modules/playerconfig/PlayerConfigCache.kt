@@ -21,8 +21,4 @@ class PlayerConfigCache {
     fun flush() {
         cache.clear()
     }
-
-    fun keys(): Set<UUID> {
-        return cache.keys
-    }
 }

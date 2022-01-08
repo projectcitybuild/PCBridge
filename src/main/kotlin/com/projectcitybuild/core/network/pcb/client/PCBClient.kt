@@ -13,7 +13,7 @@ class PCBClient(
     private val baseUrl: String,
     withLogging: Boolean
 ) {
-    val instance: Retrofit = build(withLogging)
+    private val instance: Retrofit = build(withLogging)
 
     val banApi: BanApiInterface = instance.create(BanApiInterface::class.java)
     val authApi: AuthApiInterface = instance.create(AuthApiInterface::class.java)

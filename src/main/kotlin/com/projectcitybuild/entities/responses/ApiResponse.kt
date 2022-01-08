@@ -1,6 +1,6 @@
 package com.projectcitybuild.entities.responses
 
-data class ApiResponse<out Model>(
-        val data: Model?,
-        val error: ApiError?
+data class ApiResponse<out T>(
+    val data: T?,
+    val error: ApiError?
 )

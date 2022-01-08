@@ -40,19 +40,11 @@ class IncomingChatListener(
             val message = stream.readUTF()
             val sender = event.receiver
             val player = sender as? ProxiedPlayer
-
-            if (player == null) {
-                recipients.forEach {
-                    it.sendMessage(
-                        TextComponent("(Console) $message")
-                    )
-                }
-                return@launch
-            }
+                ?: return@launch
 
             val senderConfig = playerConfigRepository.get(sender.uniqueId)
             if (senderConfig.isMuted) {
-                sender.send().error("You cannot talk while muted")
+                player.send().error("You cannot talk while muted")
                 return@launch
             }
             recipients = recipients.filter { recipient ->

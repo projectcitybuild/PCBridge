@@ -1,12 +1,9 @@
 package com.projectcitybuild.platforms.spigot
 
+import com.google.common.io.ByteStreams
 import com.projectcitybuild.entities.Channel
-import com.projectcitybuild.entities.SubChannel
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
-import java.io.ByteArrayOutputStream
-import java.io.DataOutputStream
-import java.io.IOException
 
 class MessageToBungeecord(
     private val plugin: Plugin,
@@ -15,31 +12,24 @@ class MessageToBungeecord(
     private val params: Array<out Any> = emptyArray()
 ) {
     fun send() {
-        try {
-            ByteArrayOutputStream().use { b ->
-                DataOutputStream(b).use { out ->
-                    out.writeUTF(subChannel)
+        val out = ByteStreams.newDataOutput()
+        out.writeUTF(subChannel)
 
-                    for (param in params) {
-                        when (param) {
-                            is String -> out.writeUTF(param)
-                            is Int -> out.writeInt(param)
-                            is Double -> out.writeDouble(param)
-                            is Float -> out.writeFloat(param)
-                            is Boolean -> out.writeBoolean(param)
-                            is Short -> out.writeShort(param.toInt())
-                            is Long -> out.writeLong(param)
-                            is Byte -> out.writeByte(param.toInt())
-                            is Char -> out.writeChar(param.code)
-                        }
-                    }
-                    plugin.server.scheduler.runTaskAsynchronously(plugin) {
-                        sender.sendPluginMessage(plugin, Channel.BUNGEECORD, b.toByteArray())
-                    }
-                }
+        for (param in params) {
+            when (param) {
+                is String -> out.writeUTF(param)
+                is Int -> out.writeInt(param)
+                is Double -> out.writeDouble(param)
+                is Float -> out.writeFloat(param)
+                is Boolean -> out.writeBoolean(param)
+                is Short -> out.writeShort(param.toInt())
+                is Long -> out.writeLong(param)
+                is Byte -> out.writeByte(param.toInt())
+                is Char -> out.writeChar(param.code)
             }
-        } catch (e: IOException) {
-            e.printStackTrace()
         }
+//        plugin.server.scheduler.runTaskAsynchronously(plugin) {
+            sender.sendPluginMessage(plugin, Channel.BUNGEECORD, out.toByteArray())
+//        }
     }
 }

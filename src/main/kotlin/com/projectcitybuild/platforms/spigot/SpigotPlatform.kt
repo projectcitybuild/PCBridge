@@ -10,7 +10,6 @@ import com.projectcitybuild.entities.Channel
 import com.projectcitybuild.platforms.spigot.environment.PermissionsManager
 import com.projectcitybuild.platforms.spigot.environment.SpigotConfig
 import com.projectcitybuild.platforms.spigot.environment.SpigotLogger
-import com.projectcitybuild.platforms.spigot.extensions.addDefault
 import com.projectcitybuild.platforms.spigot.listeners.AFKListener
 import com.projectcitybuild.platforms.spigot.listeners.ChatListener
 import org.bukkit.plugin.java.JavaPlugin

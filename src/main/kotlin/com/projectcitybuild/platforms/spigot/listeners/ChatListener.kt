@@ -9,7 +9,6 @@ import org.bukkit.event.Listener
 import org.bukkit.event.player.AsyncPlayerChatEvent
 import org.bukkit.plugin.Plugin
 
-
 class ChatListener(
     private val plugin: Plugin
 ): Listener {

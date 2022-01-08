@@ -7,7 +7,7 @@ import com.projectcitybuild.modules.sessioncache.SessionCache
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.ProxyServer
 import net.md_5.bungee.api.chat.TextComponent
-import org.bukkit.entity.Player
+import net.md_5.bungee.api.connection.ProxiedPlayer
 
 class AFKCommand(
     private val proxyServer: ProxyServer,
@@ -28,8 +28,16 @@ class AFKCommand(
             return
         }
 
-        val player = input.sender as Player
+        val player = input.sender as ProxiedPlayer
         if (sessionCache.afkPlayerList.contains(player.uniqueId)) {
+            sessionCache.afkPlayerList.remove(player.uniqueId)
+            proxyServer.broadcast(
+                TextComponent("${player.displayName} is no longer AFK").also {
+                    it.color = ChatColor.GRAY
+                    it.isItalic = true
+                }
+            )
+        } else {
             sessionCache.afkPlayerList.add(player.uniqueId)
             proxyServer.broadcast(
                 TextComponent("${player.displayName} is now AFK").also {
@@ -37,12 +45,6 @@ class AFKCommand(
                     it.isItalic = true
                 }
             )
-        } else {
-            sessionCache.afkPlayerList.remove(player.uniqueId)
-            TextComponent("${player.displayName} is no longer AFK").also {
-                it.color = ChatColor.GRAY
-                it.isItalic = true
-            }
         }
     }
 }

@@ -5,4 +5,4 @@ data class ApiError(
         val title: String,
         val detail: String,
         var status: Int
-): Throwable(message = detail)
+)

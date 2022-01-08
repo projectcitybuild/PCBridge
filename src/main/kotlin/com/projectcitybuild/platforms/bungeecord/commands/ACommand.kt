@@ -1,6 +1,5 @@
 package com.projectcitybuild.platforms.bungeecord.commands
 
-import com.projectcitybuild.core.extensions.joinWithWhitespaces
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
 import com.projectcitybuild.platforms.bungeecord.extensions.add
@@ -23,7 +22,7 @@ class ACommand(
             return
         }
 
-        val message = input.args.joinWithWhitespaces(1 until input.args.size)
+        val message = input.args.joinToString()
         if (message == null || message.isEmpty()) {
             input.sender.send().invalidCommandInput(this)
             return
