@@ -1,8 +1,9 @@
 package com.projectcitybuild.modules.playerconfig
 
 import com.projectcitybuild.entities.PlayerConfig
-import com.projectcitybuild.modules.storage.Storage
-import kotlinx.serialization.KSerializer
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -19,19 +20,24 @@ class PlayerConfigFileStorage(
         if (!file.exists()) {
             return null
         }
-        val json = file.readLines().toString()
-        return Json.decodeFromString(string = json)
+        val json = file.readLines().joinToString()
+        if (json.isEmpty())
+            return null
+
+        return Json.decodeFromString<PlayerConfig>(string = json)
     }
 
     suspend fun save(key: String, value: PlayerConfig) {
         val file = File(folderPath, fileName(key))
         if (!folderPath.exists()) folderPath.mkdir()
         if (!file.exists()) {
-            runCatching {
-                file.createNewFile()
-            }.onFailure { e ->
-                e.printStackTrace()
-                return
+            CoroutineScope(Dispatchers.IO).launch {
+                runCatching {
+                    file.createNewFile()
+                }.onFailure { e ->
+                    e.printStackTrace()
+                    return@launch
+                }
             }
         }
         val json = Json.encodeToString(value = value)
