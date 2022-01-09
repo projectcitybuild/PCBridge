@@ -28,7 +28,7 @@ class ACommand(
             if (player.hasPermission("pcbridge.chat.staff_channel"))
                 player.sendMessage(
                     TextComponent()
-                        .add("(Staff)") { it.color = ChatColor.YELLOW }
+                        .add("(Staff) ${player.displayName}") { it.color = ChatColor.YELLOW }
                         .add(" » ") { it.color = ChatColor.GRAY }
                         .add(message) {
                             it.color = ChatColor.YELLOW

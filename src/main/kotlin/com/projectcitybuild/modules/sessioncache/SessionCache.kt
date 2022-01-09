@@ -1,6 +1,7 @@
 package com.projectcitybuild.modules.sessioncache
 
 import org.bukkit.Location
+import org.bukkit.entity.Entity
 import java.util.*
 
 class SessionCache {
@@ -10,4 +11,5 @@ class SessionCache {
 
 sealed class PendingJoinAction {
     class TeleportToLocation(val location: Location): PendingJoinAction()
+    class TeleportToPlayer(val targetUUID: UUID): PendingJoinAction()
 }

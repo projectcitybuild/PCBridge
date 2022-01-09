@@ -3,6 +3,7 @@ package com.projectcitybuild.platforms.spigot.listeners
 import com.projectcitybuild.core.contracts.LoggerProvider
 import com.projectcitybuild.modules.sessioncache.PendingJoinAction
 import com.projectcitybuild.modules.sessioncache.SessionCache
+import com.projectcitybuild.platforms.spigot.environment.send
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
@@ -31,8 +32,16 @@ class PendingJoinActionListener(
                 is PendingJoinAction.TeleportToLocation -> {
                     event.player.teleport(pendingAction.location, PlayerTeleportEvent.TeleportCause.COMMAND)
                 }
+                is PendingJoinAction.TeleportToPlayer -> {
+                    val targetPlayer = plugin.server.getPlayer(pendingAction.targetUUID)
+                    if (targetPlayer == null) {
+                        event.player.send().error("Could not find target player for teleport")
+                        return@scheduleSyncDelayedTask
+                    }
+                    event.player.teleport(targetPlayer)
+                }
             }
-        }, 3)
+        }, 1)
 
         sessionCache.pendingJoinActions.remove(event.player.uniqueId)
     }

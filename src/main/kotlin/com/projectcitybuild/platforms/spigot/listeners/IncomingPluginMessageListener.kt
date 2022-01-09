@@ -7,6 +7,7 @@ import com.projectcitybuild.entities.Channel
 import com.projectcitybuild.entities.SubChannel
 import com.projectcitybuild.modules.sessioncache.PendingJoinAction
 import com.projectcitybuild.modules.sessioncache.SessionCache
+import com.projectcitybuild.platforms.spigot.environment.send
 import org.bukkit.Location
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerTeleportEvent
@@ -29,6 +30,9 @@ class IncomingPluginMessageListener(
         when (subChannel) {
             SubChannel.WARP_IMMEDIATELY,
             SubChannel.WARP_AWAIT_JOIN -> onWarp(stream, subChannel)
+
+            SubChannel.TP_IMMEDIATELY,
+            SubChannel.TP_AWAIT_JOIN -> onTeleport(stream, subChannel)
         }
     }
 
@@ -63,6 +67,36 @@ class IncomingPluginMessageListener(
                 logger.debug("Queuing warp for $playerUUID to $location")
 
                 sessionCache.pendingJoinActions[playerUUID] = PendingJoinAction.TeleportToLocation(location)
+            }
+        }
+    }
+
+    private fun onTeleport(stream: ByteArrayDataInput, subChannel: String) {
+        val teleportingPlayerUUID = UUID.fromString(stream.readUTF())
+        val teleportTargetPlayerUUID = UUID.fromString(stream.readUTF())
+
+        when (subChannel) {
+            SubChannel.TP_IMMEDIATELY -> {
+                val teleportingPlayer = plugin.server.getPlayer(teleportingPlayerUUID)
+                if (teleportingPlayer == null) {
+                    logger.warning("Attempted to teleport, but could not find the command sender")
+                    return
+                }
+
+                val teleportTargetPlayer = plugin.server.getPlayer(teleportTargetPlayerUUID)
+                if (teleportTargetPlayer == null) {
+                    teleportingPlayer.send().error("Could not find target player. Did they disconnect?")
+                    return
+                }
+
+                teleportingPlayer.teleport(teleportTargetPlayer)
+                teleportingPlayer.send().success("Teleported to ${teleportTargetPlayer.name}")
+            }
+
+            SubChannel.TP_AWAIT_JOIN -> {
+                logger.debug("Queuing teleport for $teleportingPlayerUUID to location of $teleportTargetPlayerUUID")
+
+                sessionCache.pendingJoinActions[teleportingPlayerUUID] = PendingJoinAction.TeleportToPlayer(teleportTargetPlayerUUID)
             }
         }
     }

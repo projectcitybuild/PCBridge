@@ -157,6 +157,7 @@ class BungeecordPlatform: Plugin() {
             MuteCommand(proxy, playerConfigRepository),
             SyncCommand(apiRequestFactory, apiClient, syncPlayerGroupService),
             SyncOtherCommand(proxy, syncPlayerGroupService),
+            TPCommand(proxy),
             UnbanCommand(proxy, playerUUIDLookupService, banRepository),
             UnignoreCommand(playerUUIDLookupService, playerConfigRepository),
             UnmuteCommand(proxy, playerConfigRepository),
