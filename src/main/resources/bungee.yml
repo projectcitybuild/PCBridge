@@ -4,3 +4,59 @@ version: 3.0.0
 author: _andy
 
 softDepends: ["LuckPerms"]
+
+commands:
+  a:
+    description: "Sends a message to all staff currently online"
+    usage: "/a"
+  afk:
+    description: "Toggles AFK mode"
+    usage: "/afk"
+  ban:
+    description: "Bans a player from connecting to the server"
+    usage: "/ban <name> [reason]"
+  checkban:
+    description: "Checks whether a player is currently banned from the server"
+    usage: "/checkban <name>"
+  delwarp:
+    description: "Deletes a warp"
+    usage: "/delwarp <name>"
+  hub:
+    description: "Teleports to the Hub server"
+    usage: "/hub"
+  ignore:
+    description: "Hides any chat from a player and prevents them direct messaging you"
+    usage: "/ignore <name>"
+  mute:
+    description: "Prevents a player from talking in chat"
+    usage: "/mute <name>"
+  sync:
+    description: "Syncs your rank with the website"
+    usage: "/sync [finish]"
+  syncother:
+    description: "Syncs a given player's rank with the website"
+    usage: "/syncother <name>"
+  tp:
+    description: "Teleports to a given player"
+    usage: "/tp <name>"
+  tphere:
+    description: "Teleports a given player to your location"
+    usage: "/tphere <name>"
+  unban:
+    description: "Allows a banned player to connect to the server"
+    usage: "/unban <name>"
+  unignore:
+    description: "Unignores a player and allows them to direct message you"
+    usage: "/unignore"
+  unmute:
+    description: "Allows a muted player to talk in chat again"
+    usage: "/unmute"
+  warp:
+    description: "Teleports to a pre-defined location"
+    usage: "/warp <name>"
+  warps:
+    description: "Gets a list of all warps available"
+    usage: "/warps"
+  whisper:
+    description: "Direct messages a player"
+    usage: "/whisper <name> <message>"
