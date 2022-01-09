@@ -30,6 +30,11 @@ class BungeecordCommandDelegate constructor(
                 if (sender == null)
                     throw Exception("Attempted to execute command with a null CommandSender")
 
+                if (!sender.hasPermission(command.permission)) {
+                    sender.send().error("You do not have the required permission to use this command")
+                    return@CommandProxy true
+                }
+
                 val input = BungeecordCommandInput(
                     sender = sender,
                     args = args
@@ -45,9 +50,6 @@ class BungeecordCommandDelegate constructor(
                 }
                 true
             })
-
-            // FIXME
-//            plugin.getCommand(alias)?.permission = command.permission
         }
     }
 }
