@@ -9,7 +9,7 @@ import net.md_5.bungee.api.ProxyServer
 import net.md_5.bungee.api.chat.TextComponent
 
 class WhisperCommand(
-    private val proxyServer: ProxyServer
+    private val proxyServer: ProxyServer,
 ): BungeecordCommand {
 
     override val label = "whisper"
@@ -31,6 +31,8 @@ class WhisperCommand(
             return
         }
 
+        // TODO: check if on ignore list
+
         val message = input.args.joinWithWhitespaces(1 until input.args.size)
         val tc = TextComponent("(DM) ${input.player?.displayName ?: "CONSOLE"} > $message").also {
             it.color = ChatColor.GRAY
@@ -38,5 +40,7 @@ class WhisperCommand(
         }
         targetPlayer.sendMessage(tc)
         input.sender.sendMessage(tc)
+
+        // TODO: send message as [sender->receiver] message
     }
 }
