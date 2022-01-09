@@ -5,5 +5,9 @@ import java.util.*
 
 class SessionCache {
     val afkPlayerList: MutableList<UUID> = mutableListOf()
-    val pendingWarps = HashMap<UUID, Location>()
+    val pendingJoinActions = HashMap<UUID, PendingJoinAction>()
+}
+
+sealed class PendingJoinAction {
+    class TeleportToLocation(val location: Location): PendingJoinAction()
 }

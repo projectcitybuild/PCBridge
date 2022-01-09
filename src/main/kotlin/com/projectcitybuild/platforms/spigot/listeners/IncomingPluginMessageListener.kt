@@ -5,6 +5,7 @@ import com.google.common.io.ByteStreams
 import com.projectcitybuild.core.contracts.LoggerProvider
 import com.projectcitybuild.entities.Channel
 import com.projectcitybuild.entities.SubChannel
+import com.projectcitybuild.modules.sessioncache.PendingJoinAction
 import com.projectcitybuild.modules.sessioncache.SessionCache
 import org.bukkit.Location
 import org.bukkit.entity.Player
@@ -49,19 +50,19 @@ class IncomingPluginMessageListener(
 
         when (subChannel) {
             SubChannel.WARP_IMMEDIATELY -> {
-                logger.debug("Immediately warping ${playerUUID.toString()} to ${location.toString()}")
+                logger.debug("Immediately warping $playerUUID to $location")
 
                 val player = plugin.server.getPlayer(playerUUID)
                 if (player == null) {
-                    logger.warning("Attempted to warp, but could not find player matching UUID [${playerUUID.toString()}]")
+                    logger.warning("Attempted to warp, but could not find player matching UUID [$playerUUID]")
                     return
                 }
                 player.teleport(location, PlayerTeleportEvent.TeleportCause.COMMAND)
             }
             SubChannel.WARP_AWAIT_JOIN -> {
-                logger.debug("Queuing warp for ${playerUUID.toString()} to ${location.toString()}")
+                logger.debug("Queuing warp for $playerUUID to $location")
 
-                sessionCache.pendingWarps[playerUUID] = location
+                sessionCache.pendingJoinActions[playerUUID] = PendingJoinAction.TeleportToLocation(location)
             }
         }
     }

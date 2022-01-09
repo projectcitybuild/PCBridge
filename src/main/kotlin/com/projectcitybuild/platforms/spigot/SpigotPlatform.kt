@@ -17,7 +17,7 @@ import com.projectcitybuild.platforms.spigot.environment.SpigotScheduler
 import com.projectcitybuild.platforms.spigot.listeners.AFKListener
 import com.projectcitybuild.platforms.spigot.listeners.ChatListener
 import com.projectcitybuild.platforms.spigot.listeners.IncomingPluginMessageListener
-import com.projectcitybuild.platforms.spigot.listeners.PendingWarpConnectListener
+import com.projectcitybuild.platforms.spigot.listeners.PendingJoinActionListener
 import org.bukkit.plugin.java.JavaPlugin
 
 class SpigotPlatform: JavaPlugin() {
@@ -102,7 +102,7 @@ class SpigotPlatform: JavaPlugin() {
         arrayOf(
             ChatListener(plugin = this),
             AFKListener(plugin = this),
-            PendingWarpConnectListener(this, sessionCache!!, spigotLogger),
+            PendingJoinActionListener(this, sessionCache!!, spigotLogger),
         )
         .forEach { listener -> delegate.register(listener) }
     }
