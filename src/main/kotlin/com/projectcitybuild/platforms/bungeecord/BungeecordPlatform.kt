@@ -15,14 +15,12 @@ import com.projectcitybuild.modules.playerconfig.PlayerConfigRepository
 import com.projectcitybuild.modules.players.PlayerUUIDLookupService
 import com.projectcitybuild.modules.ranks.SyncPlayerGroupService
 import com.projectcitybuild.modules.sessioncache.SessionCache
+import com.projectcitybuild.modules.storage.WarpFileStorage
 import com.projectcitybuild.platforms.bungeecord.commands.*
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordConfig
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordLogger
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordTimer
-import com.projectcitybuild.platforms.bungeecord.listeners.BanConnectionListener
-import com.projectcitybuild.platforms.bungeecord.listeners.IncomingAFKEndListener
-import com.projectcitybuild.platforms.bungeecord.listeners.IncomingChatListener
-import com.projectcitybuild.platforms.bungeecord.listeners.SyncRankLoginListener
+import com.projectcitybuild.platforms.bungeecord.listeners.*
 import com.projectcitybuild.platforms.spigot.environment.PermissionsManager
 import kotlinx.coroutines.Dispatchers
 import net.md_5.bungee.api.plugin.Plugin
@@ -71,6 +69,12 @@ class BungeecordPlatform: Plugin() {
             PlayerConfigFileStorage(
                 folderPath = dataFolder.resolve("players")
             )
+        )
+    }
+
+    private val warpStorage: WarpFileStorage by lazy {
+        WarpFileStorage(
+            folderPath = dataFolder.resolve("warps")
         )
     }
 
@@ -157,7 +161,8 @@ class BungeecordPlatform: Plugin() {
             BanConnectionListener(banRepository, bungeecordLogger),
             SyncRankLoginListener(syncPlayerGroupService),
             IncomingChatListener(proxy, playerConfigRepository, chatGroupFormatBuilder),
-            IncomingAFKEndListener(proxy, sessionCache!!)
+            IncomingAFKEndListener(proxy, sessionCache!!),
+            IncomingSetWarpListener(proxy, warpStorage)
         )
         .forEach { delegate.register(it) }
     }

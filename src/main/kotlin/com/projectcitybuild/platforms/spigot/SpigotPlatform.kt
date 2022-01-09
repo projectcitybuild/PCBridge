@@ -7,6 +7,7 @@ import com.projectcitybuild.core.network.pcb.client.PCBClient
 import com.projectcitybuild.entities.PluginConfig
 import com.projectcitybuild.core.network.APIClient
 import com.projectcitybuild.entities.Channel
+import com.projectcitybuild.platforms.spigot.commands.SetWarpCommand
 import com.projectcitybuild.platforms.spigot.environment.PermissionsManager
 import com.projectcitybuild.platforms.spigot.environment.SpigotConfig
 import com.projectcitybuild.platforms.spigot.environment.SpigotLogger
@@ -72,9 +73,10 @@ class SpigotPlatform: JavaPlugin() {
     }
 
     private fun registerCommands(delegate: SpigotCommandDelegate) {
-//        arrayOf(
-//        )
-//        .forEach { command -> delegate.register(command) }
+        arrayOf(
+            SetWarpCommand(plugin = this),
+        )
+        .forEach { command -> delegate.register(command) }
     }
 
     private fun registerListeners(delegate: SpigotListenerDelegate) {

@@ -23,10 +23,6 @@ class ACommand(
         }
 
         val message = input.args.joinToString()
-        if (message == null || message.isEmpty()) {
-            input.sender.send().invalidCommandInput(this)
-            return
-        }
 
         proxyServer.players.forEach { player ->
             if (player.hasPermission("pcbridge.chat.staff_channel"))
