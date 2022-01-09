@@ -15,3 +15,7 @@ commands:
     description: "Creates a warp at the current position and direction"
     permission: "pcbridge.warp.create"
     usage: "/setwarp <name>"
+  sethub:
+    description: "Sets the destination of the /hub command at the current position and direction"
+    permission: "pcbridge.hub.set"
+    usage: "/sethub"

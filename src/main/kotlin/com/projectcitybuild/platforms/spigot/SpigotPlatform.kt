@@ -8,6 +8,7 @@ import com.projectcitybuild.entities.PluginConfig
 import com.projectcitybuild.core.network.APIClient
 import com.projectcitybuild.entities.Channel
 import com.projectcitybuild.modules.sessioncache.SessionCache
+import com.projectcitybuild.platforms.spigot.commands.SetHubCommand
 import com.projectcitybuild.platforms.spigot.commands.SetWarpCommand
 import com.projectcitybuild.platforms.spigot.environment.PermissionsManager
 import com.projectcitybuild.platforms.spigot.environment.SpigotConfig
@@ -91,6 +92,7 @@ class SpigotPlatform: JavaPlugin() {
 
     private fun registerCommands(delegate: SpigotCommandDelegate) {
         arrayOf(
+            SetHubCommand(plugin = this),
             SetWarpCommand(plugin = this),
         )
         .forEach { command -> delegate.register(command) }
@@ -112,24 +114,6 @@ class SpigotPlatform: JavaPlugin() {
 //        config.addDefault(PluginConfig.GROUPS.TRUST_PRIORITY)
 //        config.addDefault(PluginConfig.GROUPS.BUILD_PRIORITY)
 //        config.addDefault(PluginConfig.GROUPS.DONOR_PRIORITY)
-//
-//        config.addDefault("groups.appearance.admin.display_name", "§4[Staff]")
-//        config.addDefault("groups.appearance.admin.hover_name", "Administrator")
-//        config.addDefault("groups.appearance.sop.display_name", "§c[Staff]")
-//        config.addDefault("groups.appearance.sop.hover_name", "Senior Operator")
-//        config.addDefault("groups.appearance.op.display_name", "§6[Staff]")
-//        config.addDefault("groups.appearance.op.hover_name", "Operator")
-//        config.addDefault("groups.appearance.moderator.display_name", "§e[Staff]")
-//        config.addDefault("groups.appearance.moderator.hover_name", "Moderator")
-//
-//        config.addDefault("groups.appearance.trusted+.hover_name", "Trusted+")
-//        config.addDefault("groups.appearance.trusted.hover_name", "Trusted")
-//        config.addDefault("groups.appearance.donator.hover_name", "Donor")
-//        config.addDefault("groups.appearance.architect.hover_name", "Architect")
-//        config.addDefault("groups.appearance.engineer.hover_name", "Engineer")
-//        config.addDefault("groups.appearance.planner.hover_name", "Planner")
-//        config.addDefault("groups.appearance.builder.hover_name", "Builder")
-//        config.addDefault("groups.appearance.intern.hover_name", "Intern")
 
         config.options().copyDefaults(true)
         saveConfig()

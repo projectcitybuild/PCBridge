@@ -8,5 +8,6 @@ sealed class SubChannel {
         const val SET_WARP = "pcbridge:sub:set-warp"
         const val WARP_AWAIT_JOIN = "pcbridge:sub:warp-await"
         const val WARP_IMMEDIATELY = "pcbridge:sub:warp-immediately"
+        const val SET_HUB = "pcbridge:sub:set-hub"
     }
 }
