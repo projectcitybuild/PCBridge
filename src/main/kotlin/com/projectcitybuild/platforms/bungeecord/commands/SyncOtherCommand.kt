@@ -4,6 +4,7 @@ import com.projectcitybuild.modules.ranks.SyncPlayerGroupService
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
 import com.projectcitybuild.platforms.bungeecord.send
+import net.md_5.bungee.api.CommandSender
 import net.md_5.bungee.api.ProxyServer
 
 class SyncOtherCommand(
@@ -45,5 +46,12 @@ class SyncOtherCommand(
 
         input.sender.send().success("$playerName has been synchronized")
         player.send().success("Your account groups have been synchronized")
+    }
+
+    override fun onTabComplete(sender: CommandSender?, args: List<String>): Iterable<String>? {
+        return when {
+            args.isEmpty() -> proxyServer.players.map { it.name }
+            else -> null
+        }
     }
 }

@@ -6,8 +6,11 @@ import com.projectcitybuild.modules.storage.SerializableUUID
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
 import com.projectcitybuild.platforms.bungeecord.send
+import net.md_5.bungee.api.CommandSender
+import net.md_5.bungee.api.ProxyServer
 
 class IgnoreCommand(
+    private val proxyServer: ProxyServer,
     private val playerUUIDLookupService: PlayerUUIDLookupService,
     private val playerConfigRepository: PlayerConfigRepository
 ): BungeecordCommand {
@@ -46,6 +49,13 @@ class IgnoreCommand(
 
         }.onFailure { throwable ->
             input.sender.send().error(throwable.message ?: "An unknown error occurred")
+        }
+    }
+
+    override fun onTabComplete(sender: CommandSender?, args: List<String>): Iterable<String>? {
+        return when {
+            args.isEmpty() -> proxyServer.players.map { it.name }
+            else -> null
         }
     }
 }

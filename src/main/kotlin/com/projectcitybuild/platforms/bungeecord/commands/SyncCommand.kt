@@ -6,6 +6,7 @@ import com.projectcitybuild.modules.ranks.SyncPlayerGroupService
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
 import com.projectcitybuild.platforms.bungeecord.send
+import net.md_5.bungee.api.CommandSender
 import net.md_5.bungee.api.connection.ProxiedPlayer
 
 class SyncCommand(
@@ -70,5 +71,12 @@ class SyncCommand(
             return
         }
         player.send().success("Account linked! Your rank will be automatically synchronized with the PCB network")
+    }
+
+    override fun onTabComplete(sender: CommandSender?, args: List<String>): Iterable<String>? {
+        return when {
+            args.isEmpty() -> listOf("finish")
+            else -> null
+        }
     }
 }

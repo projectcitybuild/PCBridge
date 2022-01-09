@@ -4,6 +4,7 @@ import com.projectcitybuild.modules.storage.WarpFileStorage
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
 import com.projectcitybuild.platforms.bungeecord.send
+import net.md_5.bungee.api.CommandSender
 
 class DelWarpCommand(
     private val warpFileStorage: WarpFileStorage
@@ -29,5 +30,12 @@ class DelWarpCommand(
         // TODO: Add confirmation
         warpFileStorage.delete(warpName)
         input.sender.send().success("Warp $warpName deleted")
+    }
+
+    override fun onTabComplete(sender: CommandSender?, args: List<String>): Iterable<String>? {
+        return when {
+            args.isEmpty() -> warpFileStorage.keys()
+            else -> null
+        }
     }
 }

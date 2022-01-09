@@ -4,6 +4,7 @@ import com.projectcitybuild.modules.playerconfig.PlayerConfigRepository
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
 import com.projectcitybuild.platforms.bungeecord.send
+import net.md_5.bungee.api.CommandSender
 import net.md_5.bungee.api.ProxyServer
 
 class MuteCommand(
@@ -37,5 +38,12 @@ class MuteCommand(
 
         input.sender.send().success("${targetPlayer.name} has been muted")
         targetPlayer.send().info("You have been muted by ${input.sender.name}")
+    }
+
+    override fun onTabComplete(sender: CommandSender?, args: List<String>): Iterable<String>? {
+        return when {
+            args.isEmpty() -> proxyServer.players.map { it.name }
+            else -> null
+        }
     }
 }

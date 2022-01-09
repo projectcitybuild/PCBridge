@@ -27,4 +27,5 @@ interface BungeecordCommand {
     val usageHelp: String
 
     suspend fun execute(input: BungeecordCommandInput)
+    fun onTabComplete(sender: CommandSender?, args: List<String>): Iterable<String>?
 }

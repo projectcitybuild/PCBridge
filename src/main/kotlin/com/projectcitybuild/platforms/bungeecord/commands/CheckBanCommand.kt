@@ -6,10 +6,13 @@ import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
 import com.projectcitybuild.platforms.bungeecord.send
 import net.md_5.bungee.api.ChatColor
+import net.md_5.bungee.api.CommandSender
+import net.md_5.bungee.api.ProxyServer
 import java.text.SimpleDateFormat
 import java.util.*
 
 class CheckBanCommand(
+    private val proxyServer: ProxyServer,
     private val playerUUIDLookupService: PlayerUUIDLookupService,
     private val banRepository: BanRepository
 ) : BungeecordCommand {
@@ -67,6 +70,13 @@ class CheckBanCommand(
                         """.trimMargin("#"),
                 isMultiLine = true
             )
+        }
+    }
+
+    override fun onTabComplete(sender: CommandSender?, args: List<String>): Iterable<String>? {
+        return when {
+            args.isEmpty() -> proxyServer.players.map { it.name }
+            else -> null
         }
     }
 }

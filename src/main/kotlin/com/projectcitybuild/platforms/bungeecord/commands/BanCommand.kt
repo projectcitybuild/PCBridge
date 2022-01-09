@@ -7,6 +7,7 @@ import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
 import com.projectcitybuild.platforms.bungeecord.send
 import net.md_5.bungee.api.ChatColor
+import net.md_5.bungee.api.CommandSender
 import net.md_5.bungee.api.ProxyServer
 import net.md_5.bungee.api.chat.TextComponent
 
@@ -58,6 +59,13 @@ class BanCommand(
                 else
                     throwable.message ?: "An unknown error occurred"
             )
+        }
+    }
+
+    override fun onTabComplete(sender: CommandSender?, args: List<String>): Iterable<String>? {
+        return when {
+            args.isEmpty() -> proxyServer.players.map { it.name }
+            else -> null
         }
     }
 }

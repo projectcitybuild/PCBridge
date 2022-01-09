@@ -6,6 +6,7 @@ import com.projectcitybuild.platforms.bungeecord.MessageToSpigot
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
 import com.projectcitybuild.platforms.bungeecord.send
+import net.md_5.bungee.api.CommandSender
 import net.md_5.bungee.api.ProxyServer
 
 class HubCommand(
@@ -61,5 +62,9 @@ class HubCommand(
         if (!isWarpOnSameServer) {
             input.player.connect(targetServer)
         }
+    }
+
+    override fun onTabComplete(sender: CommandSender?, args: List<String>): Iterable<String>? {
+        return null
     }
 }

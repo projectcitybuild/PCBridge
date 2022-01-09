@@ -4,6 +4,7 @@ import com.projectcitybuild.modules.playerconfig.PlayerConfigRepository
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
 import com.projectcitybuild.platforms.bungeecord.send
+import net.md_5.bungee.api.CommandSender
 import net.md_5.bungee.api.ProxyServer
 
 class UnmuteCommand(
@@ -37,5 +38,12 @@ class UnmuteCommand(
 
         input.sender.send().success("${targetPlayer.name} has been unmuted")
         targetPlayer.send().info("You have been unmuted by ${input.sender.name}")
+    }
+
+    override fun onTabComplete(sender: CommandSender?, args: List<String>): Iterable<String>? {
+        return when {
+            args.isEmpty() -> proxyServer.players.map { it.name }
+            else -> null
+        }
     }
 }

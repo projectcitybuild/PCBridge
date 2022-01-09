@@ -5,6 +5,7 @@ import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandIn
 import com.projectcitybuild.platforms.bungeecord.extensions.add
 import com.projectcitybuild.platforms.bungeecord.send
 import net.md_5.bungee.api.ChatColor
+import net.md_5.bungee.api.CommandSender
 import net.md_5.bungee.api.ProxyServer
 import net.md_5.bungee.api.chat.TextComponent
 
@@ -36,5 +37,9 @@ class ACommand(
                         }
                 )
         }
+    }
+
+    override fun onTabComplete(sender: CommandSender?, args: List<String>): Iterable<String>? {
+        return null
     }
 }
