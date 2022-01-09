@@ -10,3 +10,8 @@ libraries:
   - com.github.shynixn.mccoroutine:mccoroutine-bukkit-api:1.5.0
   - com.github.shynixn.mccoroutine:mccoroutine-bukkit-core:1.5.0
 
+commands:
+  setwarp:
+    description: "Creates a warp at the current position and direction"
+    permission: "pcbridge.warp.create"
+    usage: "/setwarp <name>"

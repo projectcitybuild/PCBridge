@@ -7,18 +7,23 @@ import com.projectcitybuild.core.network.pcb.client.PCBClient
 import com.projectcitybuild.entities.PluginConfig
 import com.projectcitybuild.core.network.APIClient
 import com.projectcitybuild.entities.Channel
+import com.projectcitybuild.modules.sessioncache.SessionCache
 import com.projectcitybuild.platforms.spigot.commands.SetWarpCommand
 import com.projectcitybuild.platforms.spigot.environment.PermissionsManager
 import com.projectcitybuild.platforms.spigot.environment.SpigotConfig
 import com.projectcitybuild.platforms.spigot.environment.SpigotLogger
+import com.projectcitybuild.platforms.spigot.environment.SpigotScheduler
 import com.projectcitybuild.platforms.spigot.listeners.AFKListener
 import com.projectcitybuild.platforms.spigot.listeners.ChatListener
+import com.projectcitybuild.platforms.spigot.listeners.IncomingPluginMessageListener
+import com.projectcitybuild.platforms.spigot.listeners.PendingWarpConnectListener
 import org.bukkit.plugin.java.JavaPlugin
 
 class SpigotPlatform: JavaPlugin() {
 
     private val spigotLogger = SpigotLogger(logger = this.logger)
     private val spigotConfig = SpigotConfig(config = this.config)
+    private val scheduler = SpigotScheduler(plugin = this)
     private val apiClient = APIClient(getCoroutineContext = {
         // To prevent Coroutines being created before the plugin is ready
         this.minecraftDispatcher
@@ -42,10 +47,19 @@ class SpigotPlatform: JavaPlugin() {
         )
     }
 
+    private var sessionCache: SessionCache? = null
+
     override fun onEnable() {
         createDefaultConfig()
 
+        sessionCache = SessionCache()
+
         server.messenger.registerOutgoingPluginChannel(this, Channel.BUNGEECORD)
+        server.messenger.registerIncomingPluginChannel(this, Channel.BUNGEECORD, IncomingPluginMessageListener(
+            plugin = this,
+            sessionCache = sessionCache!!,
+            logger = spigotLogger,
+        ))
 
         permissionsManager = PermissionsManager()
 
@@ -62,6 +76,9 @@ class SpigotPlatform: JavaPlugin() {
 
     override fun onDisable() {
         server.messenger.unregisterOutgoingPluginChannel(this)
+        server.messenger.unregisterIncomingPluginChannel(this)
+
+        sessionCache = null
 
         listenerDelegate?.unregisterAll()
 
@@ -82,7 +99,8 @@ class SpigotPlatform: JavaPlugin() {
     private fun registerListeners(delegate: SpigotListenerDelegate) {
         arrayOf(
             ChatListener(plugin = this),
-            AFKListener(plugin = this)
+            AFKListener(plugin = this),
+            PendingWarpConnectListener(this, sessionCache!!, spigotLogger),
         )
         .forEach { listener -> delegate.register(listener) }
     }

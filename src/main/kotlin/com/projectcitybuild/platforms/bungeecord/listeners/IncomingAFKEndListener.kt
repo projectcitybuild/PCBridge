@@ -27,7 +27,7 @@ class IncomingAFKEndListener(
         if (subChannel != SubChannel.AFK_END)
             return
 
-        val player = event.sender as? ProxiedPlayer ?: return
+        val player = event.receiver as? ProxiedPlayer ?: return
 
         if (sessionCache.afkPlayerList.contains(player.uniqueId)) {
             sessionCache.afkPlayerList.remove(player.uniqueId)

@@ -28,13 +28,16 @@ class IncomingSetWarpListener(
         val stream = ByteStreams.newDataInput(event.data)
         val subChannel = stream.readUTF()
 
+        println(subChannel)
+        println(event.sender)
+
         if (subChannel != SubChannel.SET_WARP)
             return
 
-        if (event.sender !is ProxiedPlayer)
+        if (event.receiver !is ProxiedPlayer)
             return
 
-        val player = event.sender as ProxiedPlayer
+        val player = event.receiver as ProxiedPlayer
         val serverName = player.server.info.name
 
         val warpName = stream.readUTF()

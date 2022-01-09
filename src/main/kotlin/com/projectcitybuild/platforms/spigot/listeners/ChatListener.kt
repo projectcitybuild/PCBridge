@@ -1,8 +1,7 @@
 package com.projectcitybuild.platforms.spigot.listeners
 
-import com.google.common.io.ByteStreams
-import com.projectcitybuild.entities.Channel
 import com.projectcitybuild.entities.SubChannel
+import com.projectcitybuild.platforms.spigot.MessageToBungeecord
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
@@ -15,11 +14,12 @@ class ChatListener(
 
     @EventHandler(priority = EventPriority.HIGHEST)
     fun onAsyncPlayerChatEvent(event: AsyncPlayerChatEvent) {
-        val out = ByteStreams.newDataOutput()
-        out.writeUTF(SubChannel.GLOBAL_CHAT)
-        out.writeUTF(event.message)
-
-        event.player.sendPluginMessage(plugin, Channel.BUNGEECORD, out.toByteArray())
+        MessageToBungeecord(
+            plugin,
+            event.player,
+            SubChannel.GLOBAL_CHAT,
+            arrayOf(event.message)
+        ).send()
 
         // Super unsafe, but no other option as cancelling the event (as per the
         // normal way) will interfere with a lot of other plugins

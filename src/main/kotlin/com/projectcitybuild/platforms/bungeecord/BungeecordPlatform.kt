@@ -72,7 +72,7 @@ class BungeecordPlatform: Plugin() {
         )
     }
 
-    private val warpStorage: WarpFileStorage by lazy {
+    private val warpFileStorage: WarpFileStorage by lazy {
         WarpFileStorage(
             folderPath = dataFolder.resolve("warps")
         )
@@ -152,6 +152,8 @@ class BungeecordPlatform: Plugin() {
             WhisperCommand(proxy),
             ACommand(proxy),
             AFKCommand(proxy, sessionCache!!),
+            DelWarpCommand(warpFileStorage),
+            WarpCommand(proxy, warpFileStorage),
         )
         .forEach { delegate.register(it) }
     }
@@ -162,7 +164,7 @@ class BungeecordPlatform: Plugin() {
             SyncRankLoginListener(syncPlayerGroupService),
             IncomingChatListener(proxy, playerConfigRepository, chatGroupFormatBuilder),
             IncomingAFKEndListener(proxy, sessionCache!!),
-            IncomingSetWarpListener(proxy, warpStorage)
+            IncomingSetWarpListener(warpFileStorage),
         )
         .forEach { delegate.register(it) }
     }

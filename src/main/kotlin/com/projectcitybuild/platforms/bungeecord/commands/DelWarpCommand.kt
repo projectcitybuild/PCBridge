@@ -4,7 +4,6 @@ import com.projectcitybuild.modules.storage.WarpFileStorage
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
 import com.projectcitybuild.platforms.bungeecord.send
-import net.md_5.bungee.api.ProxyServer
 
 class DelWarpCommand(
     private val warpFileStorage: WarpFileStorage
