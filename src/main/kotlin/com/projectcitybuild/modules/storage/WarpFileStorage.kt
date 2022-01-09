@@ -53,4 +53,11 @@ class WarpFileStorage(
         val file = File(folderPath, fileName(key))
         return file.exists()
     }
+
+    fun keys(): List<String> {
+        return folderPath
+            .listFiles { file -> file.extension == "json" }
+            ?.map { it.nameWithoutExtension }
+            ?: emptyList()
+    }
 }

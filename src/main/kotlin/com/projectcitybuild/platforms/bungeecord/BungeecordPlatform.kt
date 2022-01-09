@@ -156,10 +156,12 @@ class BungeecordPlatform: Plugin() {
             SyncCommand(apiRequestFactory, apiClient, syncPlayerGroupService),
             SyncOtherCommand(proxy, syncPlayerGroupService),
             TPCommand(proxy),
+            TPHereCommand(proxy),
             UnbanCommand(proxy, playerUUIDLookupService, banRepository),
             UnignoreCommand(playerUUIDLookupService, playerConfigRepository),
             UnmuteCommand(proxy, playerConfigRepository),
             WarpCommand(proxy, warpFileStorage),
+            WarpsCommand(warpFileStorage),
             WhisperCommand(proxy, playerConfigRepository),
         )
         .forEach { delegate.register(it) }

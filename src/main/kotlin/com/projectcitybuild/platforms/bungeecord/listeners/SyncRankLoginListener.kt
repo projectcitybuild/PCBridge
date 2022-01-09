@@ -16,7 +16,11 @@ class SyncRankLoginListener(
     @EventHandler(priority = EventPriority.HIGHEST)
     fun onPlayerJoin(event: PostLoginEvent) {
         CoroutineScope(Dispatchers.IO).launch {
-            syncPlayerGroupService.execute(event.player.uniqueId)
+            try {
+                syncPlayerGroupService.execute(event.player.uniqueId)
+            } catch (e: SyncPlayerGroupService.AccountNotLinkedException) {
+                // Do nothing
+            }
         }
     }
 }
