@@ -122,13 +122,11 @@ class BungeecordPlatform: Plugin() {
 
         permissionsManager = PermissionsManager()
 
-        val commandDelegate = BungeecordCommandDelegate(plugin = this, logger = bungeecordLogger)
-        registerCommands(commandDelegate)
-        this.commandDelegate = commandDelegate
+        this.commandDelegate = BungeecordCommandDelegate(plugin = this, logger = bungeecordLogger)
+            .also { registerCommands(it) }
 
-        val listenerDelegate = BungeecordListenerDelegate(plugin = this, logger = bungeecordLogger)
-        registerListeners(listenerDelegate)
-        this.listenerDelegate = listenerDelegate
+        this.listenerDelegate = BungeecordListenerDelegate(plugin = this, logger = bungeecordLogger)
+            .also { registerListeners(it) }
     }
 
     override fun onDisable() {
@@ -162,7 +160,7 @@ class BungeecordPlatform: Plugin() {
             UnignoreCommand(playerUUIDLookupService, playerConfigRepository),
             UnmuteCommand(proxy, playerConfigRepository),
             WarpCommand(proxy, warpFileStorage),
-            WhisperCommand(proxy),
+            WhisperCommand(proxy, playerConfigRepository),
         )
         .forEach { delegate.register(it) }
     }

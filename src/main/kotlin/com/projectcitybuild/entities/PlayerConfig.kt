@@ -11,7 +11,7 @@ data class PlayerConfig(
     var chatPrefix: String,
     var chatSuffix: String,
     var chatGroups: String,
-    val chatIgnoreList: MutableList<SerializableUUID>
+    val chatIgnoreList: MutableSet<SerializableUUID>
 ) {
     val unwrappedChatIgnoreList
         get() = chatIgnoreList.map { it.unwrapped }
@@ -23,7 +23,7 @@ data class PlayerConfig(
             chatSuffix = "",
             chatPrefix = "",
             chatGroups = "",
-            chatIgnoreList = mutableListOf()
+            chatIgnoreList = mutableSetOf()
         )
     }
 }
