@@ -8,4 +8,6 @@ interface ConfigProvider {
     fun <T> set(key: PluginConfig.ConfigPath<T>, value: T)
 
     fun get(path: String): Any?
+
+    fun addDefaults(vararg keys: PluginConfig.ConfigPath<*>)
 }

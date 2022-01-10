@@ -51,16 +51,6 @@ class BungeecordConfig(
         }
     }
 
-    fun addDefaults(vararg keys: PluginConfig.ConfigPath<*>) {
-        val config = config ?: throw Exception("Attempted to read config file without loading it")
-
-        keys.forEach { key ->
-            if (config.get(key.key) == null)
-                config.set(key.key, key.defaultValue)
-        }
-        save()
-    }
-
     fun save() {
         ConfigurationProvider
             .getProvider(YamlConfiguration::class.java)
@@ -82,6 +72,16 @@ class BungeecordConfig(
         val config = config ?: throw Exception("Attempted to read config file without loading it")
 
         config.set(key.key, value)
+        save()
+    }
+
+    override fun addDefaults(vararg keys: PluginConfig.ConfigPath<*>) {
+        val config = config ?: throw Exception("Attempted to read config file without loading it")
+
+        keys.forEach { key ->
+            if (config.get(key.key) == null)
+                config.set(key.key, key.defaultValue)
+        }
         save()
     }
 }

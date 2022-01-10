@@ -21,8 +21,8 @@ import org.bukkit.plugin.java.JavaPlugin
 
 class SpigotPlatform: JavaPlugin() {
 
-    private val spigotLogger = SpigotLogger(logger = this.logger)
-    private val spigotConfig = SpigotConfig(config = this.config)
+    private val spigotLogger = SpigotLogger(logger = logger)
+    private val spigotConfig = SpigotConfig(plugin = this, config = config)
     private val scheduler = SpigotScheduler(plugin = this)
     private val apiClient = APIClient(getCoroutineContext = {
         // To prevent Coroutines being created before the plugin is ready
@@ -59,14 +59,13 @@ class SpigotPlatform: JavaPlugin() {
             plugin = this,
             sessionCache = sessionCache!!,
             logger = spigotLogger,
-        )
-        )
+        ))
 
         permissionsManager = PermissionsManager()
 
-        commandRegistry = SpigotCommandRegistry(plugin = this, logger = spigotLogger)
+        commandRegistry = SpigotCommandRegistry(plugin = this, spigotLogger)
 
-        val listenerRegistry = SpigotListenerRegistry(plugin = this, logger = spigotLogger)
+        val listenerRegistry = SpigotListenerRegistry(plugin = this, spigotLogger)
         registerListeners(delegate = listenerRegistry)
         this.listenerRegistry = listenerRegistry
 
@@ -105,14 +104,10 @@ class SpigotPlatform: JavaPlugin() {
     }
 
     private fun createDefaultConfig() {
-//        config.addDefault(PluginConfig.API.KEY)
-//        config.addDefault(PluginConfig.API.BASE_URL)
-//        config.addDefault(PluginConfig.GROUPS.GUEST)
-//        config.addDefault(PluginConfig.GROUPS.TRUST_PRIORITY)
-//        config.addDefault(PluginConfig.GROUPS.BUILD_PRIORITY)
-//        config.addDefault(PluginConfig.GROUPS.DONOR_PRIORITY)
-
-        config.options().copyDefaults(true)
-        saveConfig()
+        spigotConfig.addDefaults(
+            PluginConfig.API_KEY,
+            PluginConfig.API_BASE_URL,
+            PluginConfig.API_IS_LOGGING_ENABLED,
+        )
     }
 }
