@@ -1,19 +1,19 @@
-package com.projectcitybuild.platforms.spigot.environment
+package com.projectcitybuild.modules.scheduler.implementations
 
-import com.projectcitybuild.core.contracts.SchedulerProvider
 import com.projectcitybuild.core.utilities.AsyncTask
 import com.projectcitybuild.core.utilities.Cancellable
-import org.bukkit.plugin.java.JavaPlugin
+import com.projectcitybuild.modules.scheduler.SchedulerProvider
+import net.md_5.bungee.api.plugin.Plugin
+import java.util.concurrent.TimeUnit
 
-class SpigotScheduler(private val plugin: JavaPlugin): SchedulerProvider {
+class BungeecordScheduler(private val plugin: Plugin): SchedulerProvider {
 
     override fun <T> async(task: ((T) -> Unit) -> Unit): AsyncTask<T> {
-        // Bukkit/Spigot performs Asynchronous units of work via their internal Scheduler
         return AsyncTask<T> { resolve ->
             val runnable = Runnable {
                 task { result -> resolve(result) }
             }
-            val bukkitTask = plugin.server?.scheduler?.runTaskAsynchronously(plugin, runnable)
+            val bukkitTask = plugin.proxy?.scheduler?.runAsync(plugin, runnable)
 
             Cancellable {
                 bukkitTask?.cancel()
@@ -23,6 +23,6 @@ class SpigotScheduler(private val plugin: JavaPlugin): SchedulerProvider {
 
     override fun sync(task: () -> Unit) {
         val runnable = Runnable { task() }
-        plugin.server?.scheduler?.scheduleSyncDelayedTask(plugin, runnable)
+        plugin.proxy?.scheduler?.schedule(plugin, runnable, 0, TimeUnit.NANOSECONDS)
     }
 }

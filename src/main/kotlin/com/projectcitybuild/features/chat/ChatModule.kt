@@ -6,7 +6,6 @@ import com.projectcitybuild.features.chat.commands.*
 import com.projectcitybuild.features.chat.listeners.ChatListener
 import com.projectcitybuild.features.chat.listeners.IncomingChatListener
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
-import com.projectcitybuild.old_modules.chat.ChatGroupFormatBuilder
 import com.projectcitybuild.old_modules.playerconfig.PlayerConfigRepository
 import com.projectcitybuild.old_modules.players.PlayerUUIDLookupService
 import net.md_5.bungee.api.ProxyServer

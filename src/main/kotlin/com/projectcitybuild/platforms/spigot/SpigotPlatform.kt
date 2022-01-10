@@ -1,11 +1,11 @@
 package com.projectcitybuild.platforms.spigot
 
 import com.github.shynixn.mccoroutine.minecraftDispatcher
-import com.projectcitybuild.core.network.APIRequestFactory
-import com.projectcitybuild.core.network.mojang.client.MojangClient
-import com.projectcitybuild.core.network.pcb.client.PCBClient
+import com.projectcitybuild.modules.network.APIRequestFactory
+import com.projectcitybuild.modules.network.mojang.client.MojangClient
+import com.projectcitybuild.modules.network.pcb.client.PCBClient
 import com.projectcitybuild.entities.PluginConfig
-import com.projectcitybuild.core.network.APIClient
+import com.projectcitybuild.modules.network.APIClient
 import com.projectcitybuild.entities.Channel
 import com.projectcitybuild.features.hub.HubModule
 import com.projectcitybuild.features.warps.WarpModule
@@ -16,7 +16,10 @@ import com.projectcitybuild.platforms.spigot.environment.*
 import com.projectcitybuild.features.afk.listeners.AFKListener
 import com.projectcitybuild.features.chat.ChatModule
 import com.projectcitybuild.features.chat.listeners.ChatListener
+import com.projectcitybuild.modules.config.implementations.SpigotConfig
+import com.projectcitybuild.modules.logger.implementations.SpigotLogger
 import com.projectcitybuild.modules.permissions.PermissionsManager
+import com.projectcitybuild.modules.scheduler.implementations.SpigotScheduler
 import com.projectcitybuild.platforms.spigot.listeners.IncomingPluginMessageListener
 import com.projectcitybuild.platforms.spigot.listeners.PendingJoinActionListener
 import org.bukkit.plugin.java.JavaPlugin

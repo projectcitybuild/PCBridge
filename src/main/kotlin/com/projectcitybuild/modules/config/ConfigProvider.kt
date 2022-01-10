@@ -1,4 +1,4 @@
-package com.projectcitybuild.core.contracts
+package com.projectcitybuild.modules.config
 
 import com.projectcitybuild.entities.PluginConfig
 

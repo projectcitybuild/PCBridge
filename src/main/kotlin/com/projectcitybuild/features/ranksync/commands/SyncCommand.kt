@@ -1,7 +1,7 @@
 package com.projectcitybuild.features.ranksync.commands
 
-import com.projectcitybuild.core.network.APIRequestFactory
-import com.projectcitybuild.core.network.APIClient
+import com.projectcitybuild.modules.network.APIRequestFactory
+import com.projectcitybuild.modules.network.APIClient
 import com.projectcitybuild.features.ranksync.SyncPlayerGroupService
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput

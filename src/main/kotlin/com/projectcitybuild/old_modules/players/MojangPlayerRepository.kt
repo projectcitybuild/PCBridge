@@ -1,8 +1,8 @@
 package com.projectcitybuild.old_modules.players
 
-import com.projectcitybuild.core.network.APIRequestFactory
+import com.projectcitybuild.modules.network.APIRequestFactory
 import com.projectcitybuild.entities.responses.MojangPlayer
-import com.projectcitybuild.core.network.APIClient
+import com.projectcitybuild.modules.network.APIClient
 
 class MojangPlayerRepository(
         private val apiRequestFactory: APIRequestFactory,

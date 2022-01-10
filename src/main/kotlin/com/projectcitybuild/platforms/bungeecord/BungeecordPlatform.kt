@@ -1,10 +1,10 @@
 package com.projectcitybuild.platforms.bungeecord
 
 import com.projectcitybuild.entities.PluginConfig
-import com.projectcitybuild.core.network.APIClient
-import com.projectcitybuild.core.network.APIRequestFactory
-import com.projectcitybuild.core.network.mojang.client.MojangClient
-import com.projectcitybuild.core.network.pcb.client.PCBClient
+import com.projectcitybuild.modules.network.APIClient
+import com.projectcitybuild.modules.network.APIRequestFactory
+import com.projectcitybuild.modules.network.mojang.client.MojangClient
+import com.projectcitybuild.modules.network.pcb.client.PCBClient
 import com.projectcitybuild.entities.Channel
 import com.projectcitybuild.features.bans.BanModule
 import com.projectcitybuild.features.chat.ChatModule
@@ -16,13 +16,16 @@ import com.projectcitybuild.features.warps.WarpModule
 import com.projectcitybuild.features.hub.listeners.IncomingSetHubListener
 import com.projectcitybuild.modules.permissions.PermissionsManager
 import com.projectcitybuild.features.bans.repositories.BanRepository
-import com.projectcitybuild.old_modules.chat.ChatGroupFormatBuilder
+import com.projectcitybuild.features.chat.ChatGroupFormatBuilder
 import com.projectcitybuild.old_modules.playerconfig.PlayerConfigCache
 import com.projectcitybuild.old_modules.playerconfig.PlayerConfigFileStorage
 import com.projectcitybuild.old_modules.players.MojangPlayerRepository
 import com.projectcitybuild.old_modules.playerconfig.PlayerConfigRepository
 import com.projectcitybuild.old_modules.players.PlayerUUIDLookupService
 import com.projectcitybuild.features.ranksync.SyncPlayerGroupService
+import com.projectcitybuild.modules.config.implementations.BungeecordConfig
+import com.projectcitybuild.modules.logger.implementations.BungeecordLogger
+import com.projectcitybuild.platforms.bungeecord.environment.BungeecordTimer
 import com.projectcitybuild.modules.sessioncache.SessionCache
 import com.projectcitybuild.old_modules.storage.HubFileStorage
 import com.projectcitybuild.old_modules.storage.WarpFileStorage

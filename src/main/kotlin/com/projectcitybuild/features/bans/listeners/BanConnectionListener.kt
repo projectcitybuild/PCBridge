@@ -1,6 +1,6 @@
 package com.projectcitybuild.features.bans.listeners
 
-import com.projectcitybuild.core.contracts.LoggerProvider
+import com.projectcitybuild.modules.logger.LoggerProvider
 import com.projectcitybuild.features.bans.repositories.BanRepository
 import com.projectcitybuild.platforms.bungeecord.extensions.add
 import kotlinx.coroutines.runBlocking

@@ -1,6 +1,6 @@
-package com.projectcitybuild.old_modules.chat
+package com.projectcitybuild.features.chat
 
-import com.projectcitybuild.core.contracts.ConfigProvider
+import com.projectcitybuild.modules.config.ConfigProvider
 import com.projectcitybuild.entities.PluginConfig
 import com.projectcitybuild.modules.permissions.PermissionsGroup
 import com.projectcitybuild.modules.permissions.PermissionsManager

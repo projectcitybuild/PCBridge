@@ -1,4 +1,4 @@
-package com.projectcitybuild.core.network.mojang.requests
+package com.projectcitybuild.modules.network.mojang.requests
 
 import com.projectcitybuild.entities.responses.MojangPlayer
 import retrofit2.http.GET

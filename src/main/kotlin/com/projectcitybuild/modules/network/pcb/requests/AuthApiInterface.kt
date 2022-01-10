@@ -1,4 +1,4 @@
-package com.projectcitybuild.core.network.pcb.requests
+package com.projectcitybuild.modules.network.pcb.requests
 
 import com.projectcitybuild.entities.responses.ApiResponse
 import com.projectcitybuild.entities.responses.AuthPlayerGroups

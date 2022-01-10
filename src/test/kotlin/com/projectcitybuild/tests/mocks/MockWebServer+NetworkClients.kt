@@ -1,8 +1,8 @@
 package com.projectcitybuild.tests.mocks
 
-import com.projectcitybuild.core.network.APIRequestFactory
-import com.projectcitybuild.core.network.mojang.client.MojangClient
-import com.projectcitybuild.core.network.pcb.client.PCBClient
+import com.projectcitybuild.modules.network.APIRequestFactory
+import com.projectcitybuild.modules.network.mojang.client.MojangClient
+import com.projectcitybuild.modules.network.pcb.client.PCBClient
 import okhttp3.mockwebserver.MockWebServer
 
 fun MockWebServer.makeNetworkClients(): APIRequestFactory {

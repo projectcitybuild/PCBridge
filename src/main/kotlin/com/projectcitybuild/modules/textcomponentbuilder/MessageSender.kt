@@ -1,6 +1,5 @@
 package com.projectcitybuild.modules.textcomponentbuilder
 
-import com.projectcitybuild.core.contracts.ChatMessageReceiver
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.extensions.add
 import net.md_5.bungee.api.ChatColor

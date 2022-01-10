@@ -1,16 +1,16 @@
-package com.projectcitybuild.platforms.bungeecord.environment
+package com.projectcitybuild.modules.logger.implementations
 
-import com.projectcitybuild.core.contracts.LoggerProvider
+import com.projectcitybuild.modules.logger.LoggerProvider
 import java.util.logging.Logger
 
-class BungeecordLogger(private val logger: Logger): LoggerProvider {
+class SpigotLogger(private val logger: Logger): LoggerProvider {
 
     override fun verbose(message: String) {
-        logger.finest(message)
+        logger.info(message) // spigot doesn't log FINEST level properly
     }
 
     override fun debug(message: String) {
-        logger.fine(message)
+        logger.info(message) // spigot doesn't log FINE level properly
     }
 
     override fun info(message: String) {

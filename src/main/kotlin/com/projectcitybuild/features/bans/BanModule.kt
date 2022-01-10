@@ -1,7 +1,7 @@
 package com.projectcitybuild.features.bans
 
 import com.projectcitybuild.core.contracts.BungeecordFeatureModule
-import com.projectcitybuild.core.contracts.LoggerProvider
+import com.projectcitybuild.modules.logger.LoggerProvider
 import com.projectcitybuild.features.bans.commands.BanCommand
 import com.projectcitybuild.features.bans.commands.CheckBanCommand
 import com.projectcitybuild.features.bans.commands.UnbanCommand

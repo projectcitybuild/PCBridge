@@ -1,7 +1,7 @@
 package com.projectcitybuild.platforms.spigot.environment
 
 import com.github.shynixn.mccoroutine.registerSuspendingEvents
-import com.projectcitybuild.core.contracts.LoggerProvider
+import com.projectcitybuild.modules.logger.LoggerProvider
 import org.bukkit.event.HandlerList
 import org.bukkit.event.Listener
 import org.bukkit.plugin.java.JavaPlugin

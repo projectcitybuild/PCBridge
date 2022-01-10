@@ -3,7 +3,7 @@ package com.projectcitybuild.features.chat.listeners
 import com.google.common.io.ByteStreams
 import com.projectcitybuild.entities.Channel
 import com.projectcitybuild.entities.SubChannel
-import com.projectcitybuild.old_modules.chat.ChatGroupFormatBuilder
+import com.projectcitybuild.features.chat.ChatGroupFormatBuilder
 import com.projectcitybuild.old_modules.playerconfig.PlayerConfigRepository
 import com.projectcitybuild.platforms.bungeecord.extensions.add
 import com.projectcitybuild.modules.textcomponentbuilder.send

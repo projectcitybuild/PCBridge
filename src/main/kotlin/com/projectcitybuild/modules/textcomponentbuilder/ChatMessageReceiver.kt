@@ -1,4 +1,4 @@
-package com.projectcitybuild.core.contracts
+package com.projectcitybuild.modules.textcomponentbuilder
 
 import net.md_5.bungee.api.chat.BaseComponent
 

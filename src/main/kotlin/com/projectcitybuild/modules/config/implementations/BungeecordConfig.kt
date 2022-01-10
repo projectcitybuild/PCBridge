@@ -1,8 +1,8 @@
-package com.projectcitybuild.platforms.bungeecord.environment
+package com.projectcitybuild.modules.config.implementations
 
 import com.google.common.io.ByteStreams
-import com.projectcitybuild.core.contracts.ConfigProvider
 import com.projectcitybuild.entities.PluginConfig
+import com.projectcitybuild.modules.config.ConfigProvider
 import net.md_5.bungee.api.plugin.Plugin
 import net.md_5.bungee.config.Configuration
 import net.md_5.bungee.config.ConfigurationProvider

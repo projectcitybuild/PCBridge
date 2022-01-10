@@ -2,7 +2,7 @@ package com.projectcitybuild.platforms.spigot.listeners
 
 import com.google.common.io.ByteArrayDataInput
 import com.google.common.io.ByteStreams
-import com.projectcitybuild.core.contracts.LoggerProvider
+import com.projectcitybuild.modules.logger.LoggerProvider
 import com.projectcitybuild.entities.Channel
 import com.projectcitybuild.entities.SubChannel
 import com.projectcitybuild.modules.textcomponentbuilder.send

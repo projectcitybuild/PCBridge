@@ -1,6 +1,6 @@
 package com.projectcitybuild.platforms.bungeecord.environment
 
-import com.projectcitybuild.core.contracts.LoggerProvider
+import com.projectcitybuild.modules.logger.LoggerProvider
 import net.md_5.bungee.api.plugin.Listener
 import net.md_5.bungee.api.plugin.Plugin
 import org.bukkit.event.HandlerList

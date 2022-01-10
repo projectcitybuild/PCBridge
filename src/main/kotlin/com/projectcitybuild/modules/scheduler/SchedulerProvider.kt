@@ -1,4 +1,4 @@
-package com.projectcitybuild.core.contracts
+package com.projectcitybuild.modules.scheduler
 
 import com.projectcitybuild.core.utilities.AsyncTask
 
