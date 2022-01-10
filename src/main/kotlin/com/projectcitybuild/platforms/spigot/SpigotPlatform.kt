@@ -14,7 +14,7 @@ import com.projectcitybuild.platforms.spigot.environment.*
 import com.projectcitybuild.features.chat.ChatModule
 import com.projectcitybuild.features.joinmessage.JoinMessageModule
 import com.projectcitybuild.features.teleporting.TeleportModule
-import com.projectcitybuild.modules.channels.SpigotMessageListener
+import com.projectcitybuild.modules.channels.spigot.SpigotMessageListener
 import com.projectcitybuild.modules.config.implementations.SpigotConfig
 import com.projectcitybuild.modules.logger.implementations.SpigotLogger
 import com.projectcitybuild.modules.permissions.PermissionsManager
@@ -77,7 +77,7 @@ class SpigotPlatform: JavaPlugin() {
         .forEach { module ->
             module.spigotCommands.forEach { commandRegistry?.register(it) }
             module.spigotListeners.forEach { listenerRegistry?.register(it) }
-            module.spigotSubChannelListeners.forEach { pluginMessageListener.register(it.key, it.value) }
+            module.spigotSubChannelListeners.forEach { pluginMessageListener.register(it) }
         }
 
         listenerRegistry?.register(

@@ -1,9 +1,9 @@
-package com.projectcitybuild.features.warps.listeners
+package com.projectcitybuild.features.warps.subchannels
 
-import com.google.common.io.ByteStreams
-import com.projectcitybuild.entities.Channel
+import com.google.common.io.ByteArrayDataInput
 import com.projectcitybuild.entities.SubChannel
 import com.projectcitybuild.entities.Warp
+import com.projectcitybuild.modules.channels.bungeecord.BungeecordSubChannelListener
 import com.projectcitybuild.old_modules.storage.SerializableDate
 import com.projectcitybuild.old_modules.storage.SerializableUUID
 import com.projectcitybuild.old_modules.storage.WarpFileStorage
@@ -11,31 +11,21 @@ import com.projectcitybuild.modules.textcomponentbuilder.send
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import net.md_5.bungee.api.connection.Connection
 import net.md_5.bungee.api.connection.ProxiedPlayer
-import net.md_5.bungee.api.event.PluginMessageEvent
-import net.md_5.bungee.api.plugin.Listener
-import net.md_5.bungee.event.EventHandler
 import java.util.*
 
 class IncomingSetWarpListener(
     private val warpStorage: WarpFileStorage
-): Listener {
+): BungeecordSubChannelListener {
 
-    @EventHandler
-    fun onPluginMessageReceived(event: PluginMessageEvent) {
-        if (event.tag != Channel.BUNGEECORD) return
+    override val subChannel = SubChannel.SET_WARP
 
-        val stream = ByteStreams.newDataInput(event.data)
-        val subChannel = stream.readUTF()
-
-        if (subChannel != SubChannel.SET_WARP)
+    override fun onBungeecordReceivedMessage(receiver: Connection, sender: Connection, stream: ByteArrayDataInput) {
+        if (receiver !is ProxiedPlayer)
             return
 
-        if (event.receiver !is ProxiedPlayer)
-            return
-
-        val player = event.receiver as ProxiedPlayer
-        val serverName = player.server.info.name
+        val serverName = receiver.server.info.name
 
         val warpName = stream.readUTF()
         val worldName = stream.readUTF()
@@ -46,14 +36,14 @@ class IncomingSetWarpListener(
         val yaw = stream.readFloat()
 
         if (warpStorage.exists(warpName)) {
-            player.send().error("A warp for $warpName already exists")
+            receiver.send().error("A warp for $warpName already exists")
             return
         }
 
         val warp = Warp(
             serverName,
             worldName,
-            SerializableUUID(player.uniqueId),
+            SerializableUUID(receiver.uniqueId),
             x,
             y,
             z,
@@ -63,7 +53,7 @@ class IncomingSetWarpListener(
         )
         CoroutineScope(Dispatchers.IO).launch {
             warpStorage.save(warpName, warp)
-            player.send().success("Created warp for $warpName")
+            receiver.send().success("Created warp for $warpName")
         }
     }
 }

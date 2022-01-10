@@ -4,12 +4,12 @@ import com.projectcitybuild.core.contracts.BungeecordFeatureModule
 import com.projectcitybuild.core.contracts.SpigotFeatureModule
 import com.projectcitybuild.features.hub.commands.HubCommand
 import com.projectcitybuild.features.hub.commands.SetHubCommand
-import com.projectcitybuild.features.hub.listeners.IncomingSetHubListener
+import com.projectcitybuild.features.hub.subchannels.IncomingSetHubListener
+import com.projectcitybuild.modules.channels.bungeecord.BungeecordSubChannelListener
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.old_modules.storage.HubFileStorage
 import com.projectcitybuild.platforms.spigot.environment.SpigotCommand
 import net.md_5.bungee.api.ProxyServer
-import net.md_5.bungee.api.plugin.Listener
 import org.bukkit.plugin.Plugin
 
 class HubModule {
@@ -22,7 +22,7 @@ class HubModule {
             HubCommand(proxyServer, hubFileStorage),
         )
 
-        override val bungeecordListeners: Array<Listener> = arrayOf(
+        override val bungeecordSubChannelListeners: Array<BungeecordSubChannelListener> = arrayOf(
             IncomingSetHubListener(hubFileStorage),
         )
     }

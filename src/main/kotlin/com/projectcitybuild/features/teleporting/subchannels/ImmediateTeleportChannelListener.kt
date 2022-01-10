@@ -1,7 +1,8 @@
 package com.projectcitybuild.features.teleporting.subchannels
 
 import com.google.common.io.ByteArrayDataInput
-import com.projectcitybuild.modules.channels.SubChannelListener
+import com.projectcitybuild.entities.SubChannel
+import com.projectcitybuild.modules.channels.spigot.SpigotSubChannelListener
 import com.projectcitybuild.modules.logger.LoggerProvider
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import org.bukkit.entity.Player
@@ -11,9 +12,11 @@ import java.util.*
 class ImmediateTeleportChannelListener(
     private val plugin: Plugin,
     private val logger: LoggerProvider
-): SubChannelListener {
+): SpigotSubChannelListener {
 
-    override fun onSpigotMessageReceived(player: Player?, stream: ByteArrayDataInput) {
+    override val subChannel = SubChannel.TP_IMMEDIATELY
+
+    override fun onSpigotReceivedMessage(player: Player?, stream: ByteArrayDataInput) {
         val teleportingPlayerUUID = UUID.fromString(stream.readUTF())
         val teleportTargetPlayerUUID = UUID.fromString(stream.readUTF())
 
