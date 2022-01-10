@@ -12,6 +12,7 @@ import com.projectcitybuild.features.warps.WarpModule
 import com.projectcitybuild.modules.sessioncache.SpigotSessionCache
 import com.projectcitybuild.platforms.spigot.environment.*
 import com.projectcitybuild.features.chat.ChatModule
+import com.projectcitybuild.features.joinmessage.JoinMessageModule
 import com.projectcitybuild.features.teleporting.TeleportModule
 import com.projectcitybuild.modules.channels.SpigotMessageListener
 import com.projectcitybuild.modules.config.implementations.SpigotConfig
@@ -69,6 +70,7 @@ class SpigotPlatform: JavaPlugin() {
         arrayOf(
             ChatModule.Spigot(plugin = this),
             HubModule.Spigot(plugin = this),
+            JoinMessageModule.Spigot(),
             TeleportModule.Spigot(plugin = this, spigotLogger, spigotSessionCache!!),
             WarpModule.Spigot(plugin = this, spigotLogger, spigotSessionCache!!),
         )
