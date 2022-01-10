@@ -1,4 +1,4 @@
-package com.projectcitybuild.platforms.spigot.listeners
+package com.projectcitybuild.platforms.spigot
 
 import com.google.common.io.ByteArrayDataInput
 import com.google.common.io.ByteStreams

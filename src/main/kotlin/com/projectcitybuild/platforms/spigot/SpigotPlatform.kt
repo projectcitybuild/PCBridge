@@ -10,17 +10,12 @@ import com.projectcitybuild.entities.Channel
 import com.projectcitybuild.features.hub.HubModule
 import com.projectcitybuild.features.warps.WarpModule
 import com.projectcitybuild.modules.sessioncache.SessionCache
-import com.projectcitybuild.features.hub.commands.SetHubCommand
-import com.projectcitybuild.features.warps.commands.SetWarpCommand
 import com.projectcitybuild.platforms.spigot.environment.*
-import com.projectcitybuild.features.afk.listeners.AFKListener
 import com.projectcitybuild.features.chat.ChatModule
-import com.projectcitybuild.features.chat.listeners.ChatListener
 import com.projectcitybuild.modules.config.implementations.SpigotConfig
 import com.projectcitybuild.modules.logger.implementations.SpigotLogger
 import com.projectcitybuild.modules.permissions.PermissionsManager
 import com.projectcitybuild.modules.scheduler.implementations.SpigotScheduler
-import com.projectcitybuild.platforms.spigot.listeners.IncomingPluginMessageListener
 import com.projectcitybuild.platforms.spigot.listeners.PendingJoinActionListener
 import org.bukkit.plugin.java.JavaPlugin
 
@@ -64,17 +59,16 @@ class SpigotPlatform: JavaPlugin() {
             plugin = this,
             sessionCache = sessionCache!!,
             logger = spigotLogger,
-        ))
+        )
+        )
 
         permissionsManager = PermissionsManager()
 
-        val commandDelegate = SpigotCommandRegistry(plugin = this, logger = spigotLogger)
-        registerCommands(delegate = commandDelegate)
-        this.commandRegistry = commandDelegate
+        commandRegistry = SpigotCommandRegistry(plugin = this, logger = spigotLogger)
 
-        val listenerDelegate = SpigotListenerRegistry(plugin = this, logger = spigotLogger)
-        registerListeners(delegate = listenerDelegate)
-        this.listenerRegistry = listenerDelegate
+        val listenerRegistry = SpigotListenerRegistry(plugin = this, logger = spigotLogger)
+        registerListeners(delegate = listenerRegistry)
+        this.listenerRegistry = listenerRegistry
 
         arrayOf(
             ChatModule.Spigot(plugin = this),
@@ -103,18 +97,8 @@ class SpigotPlatform: JavaPlugin() {
         logger.info("PCBridge disabled")
     }
 
-    private fun registerCommands(delegate: SpigotCommandRegistry) {
-        arrayOf(
-            SetHubCommand(plugin = this),
-            SetWarpCommand(plugin = this),
-        )
-        .forEach { command -> delegate.register(command) }
-    }
-
     private fun registerListeners(delegate: SpigotListenerRegistry) {
         arrayOf(
-            ChatListener(plugin = this),
-            AFKListener(plugin = this),
             PendingJoinActionListener(this, sessionCache!!, spigotLogger),
         )
         .forEach { listener -> delegate.register(listener) }
