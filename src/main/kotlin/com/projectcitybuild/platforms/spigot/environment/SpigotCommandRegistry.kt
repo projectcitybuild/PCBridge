@@ -13,11 +13,11 @@ class SpigotCommandRegistry constructor(
         private val plugin: JavaPlugin,
         private val logger: LoggerProvider
 ) {
-    fun register(command: Commandable) {
+    fun register(command: SpigotCommand) {
         val aliases = command.aliases.plus(command.label)
 
         aliases.forEach { alias ->
-            class BridgedCommand(private val wrappedCommand: Commandable): SuspendingCommandExecutor {
+            class BridgedCommand(private val wrappedCommand: SpigotCommand): SuspendingCommandExecutor {
                 override suspend fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
                     return try {
                         val input = CommandInput(

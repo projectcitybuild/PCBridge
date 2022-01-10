@@ -1,4 +1,4 @@
-package com.projectcitybuild.core.contracts
+package com.projectcitybuild.platforms.spigot.environment
 
 import com.projectcitybuild.entities.CommandInput
 
@@ -9,7 +9,7 @@ import com.projectcitybuild.entities.CommandInput
  * For example, performing a player ban would be handled by
  * BanCommand inheriting from Commandable
  */
-interface Commandable {
+interface SpigotCommand {
 
     // String used to execute the command in-game (eg. "ban", "unban")
     val label: String

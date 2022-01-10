@@ -1,17 +1,17 @@
 package com.projectcitybuild.features.hub.commands
 
-import com.projectcitybuild.core.contracts.CommandResult
-import com.projectcitybuild.core.contracts.Commandable
 import com.projectcitybuild.entities.CommandInput
 import com.projectcitybuild.entities.SubChannel
 import com.projectcitybuild.platforms.spigot.MessageToBungeecord
+import com.projectcitybuild.platforms.spigot.environment.CommandResult
+import com.projectcitybuild.platforms.spigot.environment.SpigotCommand
 import com.projectcitybuild.platforms.spigot.environment.send
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
 
 class SetHubCommand(
     private val plugin: Plugin
-): Commandable {
+): SpigotCommand {
 
     override val label: String = "sethub"
     override val permission = "pcbridge.hub.set"
