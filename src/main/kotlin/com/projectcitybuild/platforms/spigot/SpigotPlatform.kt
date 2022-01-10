@@ -7,15 +7,15 @@ import com.projectcitybuild.core.network.pcb.client.PCBClient
 import com.projectcitybuild.entities.PluginConfig
 import com.projectcitybuild.core.network.APIClient
 import com.projectcitybuild.entities.Channel
-import com.projectcitybuild.modules.sessioncache.SessionCache
-import com.projectcitybuild.platforms.spigot.commands.SetHubCommand
-import com.projectcitybuild.platforms.spigot.commands.SetWarpCommand
-import com.projectcitybuild.platforms.spigot.environment.PermissionsManager
-import com.projectcitybuild.platforms.spigot.environment.SpigotConfig
-import com.projectcitybuild.platforms.spigot.environment.SpigotLogger
-import com.projectcitybuild.platforms.spigot.environment.SpigotScheduler
-import com.projectcitybuild.platforms.spigot.listeners.AFKListener
-import com.projectcitybuild.platforms.spigot.listeners.ChatListener
+import com.projectcitybuild.features.hub.HubModule
+import com.projectcitybuild.features.warps.WarpModule
+import com.projectcitybuild.old_modules.sessioncache.SessionCache
+import com.projectcitybuild.features.hub.commands.SetHubCommand
+import com.projectcitybuild.features.warps.commands.SetWarpCommand
+import com.projectcitybuild.platforms.spigot.environment.*
+import com.projectcitybuild.features.afk.listeners.AFKListener
+import com.projectcitybuild.features.chat.ChatModule
+import com.projectcitybuild.features.chat.listeners.ChatListener
 import com.projectcitybuild.platforms.spigot.listeners.IncomingPluginMessageListener
 import com.projectcitybuild.platforms.spigot.listeners.PendingJoinActionListener
 import org.bukkit.plugin.java.JavaPlugin
@@ -30,8 +30,8 @@ class SpigotPlatform: JavaPlugin() {
         this.minecraftDispatcher
     })
     private var permissionsManager: PermissionsManager? = null
-    private var commandDelegate: SpigotCommandDelegate? = null
-    private var listenerDelegate: SpigotListenerDelegate? = null
+    private var commandRegistry: SpigotCommandRegistry? = null
+    private var listenerRegistry: SpigotListenerRegistry? = null
 
     private val apiRequestFactory: APIRequestFactory by lazy {
         val isLoggingEnabled = spigotConfig.get(PluginConfig.API_IS_LOGGING_ENABLED)
@@ -64,13 +64,22 @@ class SpigotPlatform: JavaPlugin() {
 
         permissionsManager = PermissionsManager()
 
-        val commandDelegate = SpigotCommandDelegate(plugin = this, logger = spigotLogger)
+        val commandDelegate = SpigotCommandRegistry(plugin = this, logger = spigotLogger)
         registerCommands(delegate = commandDelegate)
-        this.commandDelegate = commandDelegate
+        this.commandRegistry = commandDelegate
 
-        val listenerDelegate = SpigotListenerDelegate(plugin = this, logger = spigotLogger)
+        val listenerDelegate = SpigotListenerRegistry(plugin = this, logger = spigotLogger)
         registerListeners(delegate = listenerDelegate)
-        this.listenerDelegate = listenerDelegate
+        this.listenerRegistry = listenerDelegate
+
+        arrayOf(
+            ChatModule.Spigot(plugin = this),
+            HubModule.Spigot(plugin = this),
+            WarpModule.Spigot(plugin = this),
+        ).forEach { module ->
+            module.spigotCommands.forEach { commandRegistry?.register(it) }
+            module.spigotListeners.forEach { listenerRegistry?.register(it) }
+        }
 
         logger.info("PCBridge ready")
     }
@@ -81,16 +90,16 @@ class SpigotPlatform: JavaPlugin() {
 
         sessionCache = null
 
-        listenerDelegate?.unregisterAll()
+        listenerRegistry?.unregisterAll()
 
-        commandDelegate = null
-        listenerDelegate = null
+        commandRegistry = null
+        listenerRegistry = null
         permissionsManager = null
 
         logger.info("PCBridge disabled")
     }
 
-    private fun registerCommands(delegate: SpigotCommandDelegate) {
+    private fun registerCommands(delegate: SpigotCommandRegistry) {
         arrayOf(
             SetHubCommand(plugin = this),
             SetWarpCommand(plugin = this),
@@ -98,7 +107,7 @@ class SpigotPlatform: JavaPlugin() {
         .forEach { command -> delegate.register(command) }
     }
 
-    private fun registerListeners(delegate: SpigotListenerDelegate) {
+    private fun registerListeners(delegate: SpigotListenerRegistry) {
         arrayOf(
             ChatListener(plugin = this),
             AFKListener(plugin = this),

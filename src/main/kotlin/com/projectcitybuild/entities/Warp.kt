@@ -1,7 +1,7 @@
 package com.projectcitybuild.entities
 
-import com.projectcitybuild.modules.storage.SerializableDate
-import com.projectcitybuild.modules.storage.SerializableUUID
+import com.projectcitybuild.old_modules.storage.SerializableDate
+import com.projectcitybuild.old_modules.storage.SerializableUUID
 import kotlinx.serialization.Serializable
 
 @Serializable

@@ -6,22 +6,26 @@ import com.projectcitybuild.core.network.APIRequestFactory
 import com.projectcitybuild.core.network.mojang.client.MojangClient
 import com.projectcitybuild.core.network.pcb.client.PCBClient
 import com.projectcitybuild.entities.Channel
-import com.projectcitybuild.modules.bans.BanRepository
-import com.projectcitybuild.modules.chat.ChatGroupFormatBuilder
-import com.projectcitybuild.modules.playerconfig.PlayerConfigCache
-import com.projectcitybuild.modules.playerconfig.PlayerConfigFileStorage
-import com.projectcitybuild.modules.players.MojangPlayerRepository
-import com.projectcitybuild.modules.playerconfig.PlayerConfigRepository
-import com.projectcitybuild.modules.players.PlayerUUIDLookupService
-import com.projectcitybuild.modules.ranks.SyncPlayerGroupService
-import com.projectcitybuild.modules.sessioncache.SessionCache
-import com.projectcitybuild.modules.storage.HubFileStorage
-import com.projectcitybuild.modules.storage.WarpFileStorage
-import com.projectcitybuild.platforms.bungeecord.commands.*
-import com.projectcitybuild.platforms.bungeecord.environment.BungeecordConfig
-import com.projectcitybuild.platforms.bungeecord.environment.BungeecordLogger
-import com.projectcitybuild.platforms.bungeecord.environment.BungeecordTimer
-import com.projectcitybuild.platforms.bungeecord.listeners.*
+import com.projectcitybuild.features.bans.BanModule
+import com.projectcitybuild.features.chat.ChatModule
+import com.projectcitybuild.features.hub.HubModule
+import com.projectcitybuild.features.hub.commands.HubCommand
+import com.projectcitybuild.features.ranksync.RankSyncModule
+import com.projectcitybuild.features.teleporting.TeleportModule
+import com.projectcitybuild.features.warps.WarpModule
+import com.projectcitybuild.features.hub.listeners.IncomingSetHubListener
+import com.projectcitybuild.old_modules.bans.BanRepository
+import com.projectcitybuild.old_modules.chat.ChatGroupFormatBuilder
+import com.projectcitybuild.old_modules.playerconfig.PlayerConfigCache
+import com.projectcitybuild.old_modules.playerconfig.PlayerConfigFileStorage
+import com.projectcitybuild.old_modules.players.MojangPlayerRepository
+import com.projectcitybuild.old_modules.playerconfig.PlayerConfigRepository
+import com.projectcitybuild.old_modules.players.PlayerUUIDLookupService
+import com.projectcitybuild.old_modules.ranks.SyncPlayerGroupService
+import com.projectcitybuild.old_modules.sessioncache.SessionCache
+import com.projectcitybuild.old_modules.storage.HubFileStorage
+import com.projectcitybuild.old_modules.storage.WarpFileStorage
+import com.projectcitybuild.platforms.bungeecord.environment.*
 import com.projectcitybuild.platforms.spigot.environment.PermissionsManager
 import kotlinx.coroutines.Dispatchers
 import net.md_5.bungee.api.plugin.Plugin
@@ -32,8 +36,8 @@ class BungeecordPlatform: Plugin() {
     private val config = BungeecordConfig(plugin = this)
     private val apiClient = APIClient { Dispatchers.IO }
     private val timer = BungeecordTimer(plugin = this, proxy)
-    private var commandDelegate: BungeecordCommandDelegate? = null
-    private var listenerDelegate: BungeecordListenerDelegate? = null
+    private var commandRegistry: BungeecordCommandRegistry? = null
+    private var listenerRegistry: BungeecordListenerRegistry? = null
     private var permissionsManager: PermissionsManager? = null
 
     private val apiRequestFactory: APIRequestFactory by lazy {
@@ -122,60 +126,49 @@ class BungeecordPlatform: Plugin() {
 
         permissionsManager = PermissionsManager()
 
-        this.commandDelegate = BungeecordCommandDelegate(plugin = this, logger = bungeecordLogger)
+        commandRegistry = BungeecordCommandRegistry(plugin = this, logger = bungeecordLogger)
             .also { registerCommands(it) }
 
-        this.listenerDelegate = BungeecordListenerDelegate(plugin = this, logger = bungeecordLogger)
+        listenerRegistry = BungeecordListenerRegistry(plugin = this, logger = bungeecordLogger)
             .also { registerListeners(it) }
+
+        arrayOf(
+            BanModule(proxy, playerUUIDLookupService, banRepository, bungeecordLogger),
+            ChatModule.Bungeecord(proxy, playerUUIDLookupService, playerConfigRepository, chatGroupFormatBuilder),
+            HubModule.Bungeecord(proxy, hubFileStorage),
+            RankSyncModule(proxy, apiRequestFactory, apiClient, syncPlayerGroupService),
+            TeleportModule(proxy, playerConfigRepository),
+            WarpModule.Bungeecord(proxy, warpFileStorage),
+        ).forEach { module ->
+            module.bungeecordCommands.forEach { commandRegistry?.register(it) }
+            module.bungeecordListeners.forEach { listenerRegistry?.register(it) }
+        }
     }
 
     override fun onDisable() {
         proxy.unregisterChannel(Channel.BUNGEECORD)
 
-        listenerDelegate?.unregisterAll()
+        listenerRegistry?.unregisterAll()
         timer.cancelAll()
 
         permissionsManager = null
-        commandDelegate = null
-        listenerDelegate = null
+        commandRegistry = null
+        listenerRegistry = null
         sessionCache = null
 
         playerConfigCache.flush()
     }
 
-    private fun registerCommands(delegate: BungeecordCommandDelegate) {
+    private fun registerCommands(delegate: BungeecordCommandRegistry) {
         arrayOf(
-            ACommand(proxy),
-            AFKCommand(proxy, sessionCache!!),
-            BanCommand(proxy, playerUUIDLookupService, banRepository),
-            CheckBanCommand(proxy, playerUUIDLookupService, banRepository),
-            DelWarpCommand(warpFileStorage),
             HubCommand(proxy, hubFileStorage),
-            IgnoreCommand(proxy, playerUUIDLookupService, playerConfigRepository),
-            MuteCommand(proxy, playerConfigRepository),
-            SyncCommand(apiRequestFactory, apiClient, syncPlayerGroupService),
-            SyncOtherCommand(proxy, syncPlayerGroupService),
-            TPCommand(proxy, playerConfigRepository),
-            TPOCommand(proxy),
-            TPHereCommand(proxy),
-            UnbanCommand(proxy, playerUUIDLookupService, banRepository),
-            UnignoreCommand(proxy, playerUUIDLookupService, playerConfigRepository),
-            UnmuteCommand(proxy, playerConfigRepository),
-            WarpCommand(proxy, warpFileStorage),
-            WarpsCommand(warpFileStorage),
-            WhisperCommand(proxy, playerConfigRepository),
         )
         .forEach { delegate.register(it) }
     }
 
-    private fun registerListeners(delegate: BungeecordListenerDelegate) {
+    private fun registerListeners(delegate: BungeecordListenerRegistry) {
         arrayOf(
-            BanConnectionListener(banRepository, bungeecordLogger),
-            IncomingAFKEndListener(proxy, sessionCache!!),
-            IncomingChatListener(proxy, playerConfigRepository, chatGroupFormatBuilder),
             IncomingSetHubListener(hubFileStorage),
-            IncomingSetWarpListener(warpFileStorage),
-            SyncRankLoginListener(syncPlayerGroupService),
         )
         .forEach { delegate.register(it) }
     }

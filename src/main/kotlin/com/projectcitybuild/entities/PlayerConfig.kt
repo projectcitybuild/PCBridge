@@ -1,6 +1,6 @@
 package com.projectcitybuild.entities
 
-import com.projectcitybuild.modules.storage.SerializableUUID
+import com.projectcitybuild.old_modules.storage.SerializableUUID
 import kotlinx.serialization.Serializable
 import java.util.*
 
