@@ -1,7 +1,7 @@
 package com.projectcitybuild.features.bans.commands
 
 import com.projectcitybuild.features.bans.repositories.BanRepository
-import com.projectcitybuild.old_modules.players.PlayerUUIDLookupService
+import com.projectcitybuild.modules.playeruuid.PlayerUUIDRepository
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
 import com.projectcitybuild.modules.textcomponentbuilder.send
@@ -13,7 +13,7 @@ import java.util.*
 
 class CheckBanCommand(
     private val proxyServer: ProxyServer,
-    private val playerUUIDLookupService: PlayerUUIDLookupService,
+    private val playerUUIDRepository: PlayerUUIDRepository,
     private val banRepository: BanRepository
 ) : BungeecordCommand {
 
@@ -30,7 +30,7 @@ class CheckBanCommand(
         val targetPlayerName = input.args.first()
 
         val result = runCatching {
-            val targetPlayerUUID = playerUUIDLookupService.request(targetPlayerName)
+            val targetPlayerUUID = playerUUIDRepository.request(targetPlayerName)
                 ?: throw Exception("Could not find UUID for $targetPlayerName. This player likely doesn't exist")
 
             banRepository.get(targetPlayerUUID = targetPlayerUUID)

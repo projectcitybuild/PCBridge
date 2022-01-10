@@ -19,9 +19,9 @@ import com.projectcitybuild.features.bans.repositories.BanRepository
 import com.projectcitybuild.features.chat.ChatGroupFormatBuilder
 import com.projectcitybuild.old_modules.playerconfig.PlayerConfigCache
 import com.projectcitybuild.old_modules.playerconfig.PlayerConfigFileStorage
-import com.projectcitybuild.old_modules.players.MojangPlayerRepository
+import com.projectcitybuild.modules.playeruuid.MojangPlayerRepository
 import com.projectcitybuild.old_modules.playerconfig.PlayerConfigRepository
-import com.projectcitybuild.old_modules.players.PlayerUUIDLookupService
+import com.projectcitybuild.modules.playeruuid.PlayerUUIDRepository
 import com.projectcitybuild.features.ranksync.SyncPlayerGroupService
 import com.projectcitybuild.modules.config.implementations.BungeecordConfig
 import com.projectcitybuild.modules.logger.implementations.BungeecordLogger
@@ -57,8 +57,8 @@ class BungeecordPlatform: Plugin() {
         )
     }
 
-    private val playerUUIDLookupService: PlayerUUIDLookupService by lazy {
-        PlayerUUIDLookupService(
+    private val playerUUIDRepository: PlayerUUIDRepository by lazy {
+        PlayerUUIDRepository(
             proxy,
             mojangPlayerRepository
         )
@@ -136,8 +136,8 @@ class BungeecordPlatform: Plugin() {
             .also { registerListeners(it) }
 
         arrayOf(
-            BanModule(proxy, playerUUIDLookupService, banRepository, bungeecordLogger),
-            ChatModule.Bungeecord(proxy, playerUUIDLookupService, playerConfigRepository, chatGroupFormatBuilder),
+            BanModule(proxy, playerUUIDRepository, banRepository, bungeecordLogger),
+            ChatModule.Bungeecord(proxy, playerUUIDRepository, playerConfigRepository, chatGroupFormatBuilder),
             HubModule.Bungeecord(proxy, hubFileStorage),
             RankSyncModule(proxy, apiRequestFactory, apiClient, syncPlayerGroupService),
             TeleportModule(proxy, playerConfigRepository),

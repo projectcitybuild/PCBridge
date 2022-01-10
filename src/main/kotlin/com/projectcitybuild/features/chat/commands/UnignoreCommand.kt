@@ -1,7 +1,7 @@
 package com.projectcitybuild.features.chat.commands
 
 import com.projectcitybuild.old_modules.playerconfig.PlayerConfigRepository
-import com.projectcitybuild.old_modules.players.PlayerUUIDLookupService
+import com.projectcitybuild.modules.playeruuid.PlayerUUIDRepository
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
 import com.projectcitybuild.modules.textcomponentbuilder.send
@@ -10,7 +10,7 @@ import net.md_5.bungee.api.ProxyServer
 
 class UnignoreCommand(
     private val proxyServer: ProxyServer,
-    private val playerUUIDLookupService: PlayerUUIDLookupService,
+    private val playerUUIDRepository: PlayerUUIDRepository,
     private val playerConfigRepository: PlayerConfigRepository
 ): BungeecordCommand {
 
@@ -32,7 +32,7 @@ class UnignoreCommand(
         }
 
         runCatching {
-            val targetPlayerUUID = playerUUIDLookupService.request(targetPlayerName)
+            val targetPlayerUUID = playerUUIDRepository.request(targetPlayerName)
                 ?: throw Exception("Could not find UUID for $targetPlayerName. This player likely doesn't exist")
 
             val playerConfig = playerConfigRepository.get(input.player.uniqueId)

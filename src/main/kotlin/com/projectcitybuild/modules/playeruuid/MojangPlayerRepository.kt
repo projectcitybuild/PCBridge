@@ -1,4 +1,4 @@
-package com.projectcitybuild.old_modules.players
+package com.projectcitybuild.modules.playeruuid
 
 import com.projectcitybuild.modules.network.APIRequestFactory
 import com.projectcitybuild.entities.responses.MojangPlayer

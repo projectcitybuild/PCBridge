@@ -1,7 +1,7 @@
 package com.projectcitybuild.features.bans.commands
 
 import com.projectcitybuild.features.bans.repositories.BanRepository
-import com.projectcitybuild.old_modules.players.PlayerUUIDLookupService
+import com.projectcitybuild.modules.playeruuid.PlayerUUIDRepository
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
 import com.projectcitybuild.modules.textcomponentbuilder.send
@@ -12,7 +12,7 @@ import net.md_5.bungee.api.chat.TextComponent
 
 class UnbanCommand(
     private val proxyServer: ProxyServer,
-    private val playerUUIDLookupService: PlayerUUIDLookupService,
+    private val playerUUIDRepository: PlayerUUIDRepository,
     private val banRepository: BanRepository
 ) : BungeecordCommand {
 
@@ -30,7 +30,7 @@ class UnbanCommand(
         val staffPlayer = if (input.isConsoleSender) null else input.player
 
         runCatching {
-            val targetPlayerUUID = playerUUIDLookupService.request(targetPlayerName)
+            val targetPlayerUUID = playerUUIDRepository.request(targetPlayerName)
                 ?: throw Exception("Could not find UUID for $targetPlayerName. This player likely doesn't exist")
 
             banRepository.unban(
