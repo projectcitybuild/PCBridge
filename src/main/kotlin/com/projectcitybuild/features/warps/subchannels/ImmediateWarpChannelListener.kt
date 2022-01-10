@@ -1,7 +1,7 @@
 package com.projectcitybuild.features.warps.subchannels
 
 import com.google.common.io.ByteArrayDataInput
-import com.projectcitybuild.modules.channel.SubChannelListener
+import com.projectcitybuild.modules.channels.SubChannelListener
 import com.projectcitybuild.modules.logger.LoggerProvider
 import org.bukkit.Location
 import org.bukkit.entity.Player

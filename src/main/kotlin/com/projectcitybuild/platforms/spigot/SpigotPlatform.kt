@@ -9,11 +9,11 @@ import com.projectcitybuild.modules.network.APIClient
 import com.projectcitybuild.entities.Channel
 import com.projectcitybuild.features.hub.HubModule
 import com.projectcitybuild.features.warps.WarpModule
-import com.projectcitybuild.modules.sessioncache.SessionCache
+import com.projectcitybuild.modules.sessioncache.SpigotSessionCache
 import com.projectcitybuild.platforms.spigot.environment.*
 import com.projectcitybuild.features.chat.ChatModule
 import com.projectcitybuild.features.teleporting.TeleportModule
-import com.projectcitybuild.modules.channel.SpigotMessageListener
+import com.projectcitybuild.modules.channels.SpigotMessageListener
 import com.projectcitybuild.modules.config.implementations.SpigotConfig
 import com.projectcitybuild.modules.logger.implementations.SpigotLogger
 import com.projectcitybuild.modules.permissions.PermissionsManager
@@ -49,12 +49,12 @@ class SpigotPlatform: JavaPlugin() {
         )
     }
 
-    private var sessionCache: SessionCache? = null
+    private var spigotSessionCache: SpigotSessionCache? = null
 
     override fun onEnable() {
         createDefaultConfig()
 
-        sessionCache = SessionCache()
+        spigotSessionCache = SpigotSessionCache()
 
         val pluginMessageListener = SpigotMessageListener(spigotLogger)
 
@@ -69,8 +69,8 @@ class SpigotPlatform: JavaPlugin() {
         arrayOf(
             ChatModule.Spigot(plugin = this),
             HubModule.Spigot(plugin = this),
-            TeleportModule.Spigot(plugin = this, spigotLogger, sessionCache!!),
-            WarpModule.Spigot(plugin = this, spigotLogger, sessionCache!!),
+            TeleportModule.Spigot(plugin = this, spigotLogger, spigotSessionCache!!),
+            WarpModule.Spigot(plugin = this, spigotLogger, spigotSessionCache!!),
         )
         .forEach { module ->
             module.spigotCommands.forEach { commandRegistry?.register(it) }
@@ -79,7 +79,7 @@ class SpigotPlatform: JavaPlugin() {
         }
 
         listenerRegistry?.register(
-            PendingJoinActionListener(sessionCache!!, spigotLogger)
+            PendingJoinActionListener(spigotSessionCache!!, spigotLogger)
         )
 
         logger.info("PCBridge ready")
@@ -91,7 +91,7 @@ class SpigotPlatform: JavaPlugin() {
 
         listenerRegistry?.unregisterAll()
 
-        sessionCache = null
+        spigotSessionCache = null
         commandRegistry = null
         listenerRegistry = null
         permissionsManager = null

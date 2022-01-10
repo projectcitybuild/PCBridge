@@ -1,9 +1,9 @@
 package com.projectcitybuild.features.warps.subchannels
 
 import com.google.common.io.ByteArrayDataInput
-import com.projectcitybuild.modules.channel.SubChannelListener
+import com.projectcitybuild.modules.channels.SubChannelListener
 import com.projectcitybuild.modules.logger.LoggerProvider
-import com.projectcitybuild.modules.sessioncache.SessionCache
+import com.projectcitybuild.modules.sessioncache.SpigotSessionCache
 import org.bukkit.Location
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
@@ -12,7 +12,7 @@ import java.util.*
 class AwaitJoinWarpChannelListener(
     private val plugin: Plugin,
     private val logger: LoggerProvider,
-    private val sessionCache: SessionCache
+    private val spigotSessionCache: SpigotSessionCache
 ): SubChannelListener {
 
     override fun onSpigotMessageReceived(player: Player?, stream: ByteArrayDataInput) {
@@ -33,7 +33,7 @@ class AwaitJoinWarpChannelListener(
 
         logger.debug("Queuing warp for $playerUUID to $location")
 
-        sessionCache.pendingJoinActions[playerUUID] = { _, event ->
+        spigotSessionCache.pendingJoinActions[playerUUID] = { _, event ->
             event.spawnLocation = location
         }
     }

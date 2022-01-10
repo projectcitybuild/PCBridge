@@ -1,9 +1,8 @@
 package com.projectcitybuild.features.teleporting.subchannels
 
 import com.google.common.io.ByteArrayDataInput
-import com.projectcitybuild.modules.channel.SubChannelListener
+import com.projectcitybuild.modules.channels.SubChannelListener
 import com.projectcitybuild.modules.logger.LoggerProvider
-import com.projectcitybuild.modules.sessioncache.SessionCache
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
@@ -31,6 +30,6 @@ class ImmediateTeleportChannelListener(
         }
 
         teleportingPlayer.teleport(teleportTargetPlayer)
-        teleportingPlayer.send().success("Teleported to ${teleportTargetPlayer.name}")
+        teleportingPlayer.send().action("Teleported to ${teleportTargetPlayer.name}")
     }
 }

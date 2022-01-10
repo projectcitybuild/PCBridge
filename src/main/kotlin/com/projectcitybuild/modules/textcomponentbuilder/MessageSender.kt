@@ -47,6 +47,15 @@ class MessageSender(
         receiver.sendMessage(tc)
     }
 
+    fun action(message: String) {
+        receiver.sendMessage(
+            TextComponent(message).also {
+                it.color = ChatColor.GRAY
+                it.isItalic = true
+            }
+        )
+    }
+
     fun invalidCommandInput(command: BungeecordCommand) {
         receiver.sendMessage(
             TextComponent(command.usageHelp).also {

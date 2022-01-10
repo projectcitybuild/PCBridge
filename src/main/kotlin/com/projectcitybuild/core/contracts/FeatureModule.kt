@@ -1,6 +1,6 @@
 package com.projectcitybuild.core.contracts
 
-import com.projectcitybuild.modules.channel.SubChannelListener
+import com.projectcitybuild.modules.channels.SubChannelListener
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.spigot.environment.SpigotCommand
 import org.bukkit.event.Listener as SpigotListener

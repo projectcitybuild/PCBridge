@@ -3,7 +3,7 @@ package com.projectcitybuild.features.afk.listeners
 import com.google.common.io.ByteStreams
 import com.projectcitybuild.entities.Channel
 import com.projectcitybuild.entities.SubChannel
-import com.projectcitybuild.modules.sessioncache.SessionCache
+import com.projectcitybuild.modules.sessioncache.SpigotSessionCache
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.ProxyServer
 import net.md_5.bungee.api.chat.TextComponent
@@ -14,7 +14,7 @@ import net.md_5.bungee.event.EventHandler
 
 class IncomingAFKEndListener(
     private val proxy: ProxyServer,
-    private val sessionCache: SessionCache
+    private val spigotSessionCache: SpigotSessionCache
 ): Listener {
 
     @EventHandler
@@ -29,8 +29,8 @@ class IncomingAFKEndListener(
 
         val player = event.receiver as? ProxiedPlayer ?: return
 
-        if (sessionCache.afkPlayerList.contains(player.uniqueId)) {
-            sessionCache.afkPlayerList.remove(player.uniqueId)
+        if (spigotSessionCache.afkPlayerList.contains(player.uniqueId)) {
+            spigotSessionCache.afkPlayerList.remove(player.uniqueId)
 
             val shouldBroadcastToPlayers = stream.readBoolean()
             println(shouldBroadcastToPlayers)

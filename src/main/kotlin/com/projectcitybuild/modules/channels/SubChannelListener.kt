@@ -1,4 +1,4 @@
-package com.projectcitybuild.modules.channel
+package com.projectcitybuild.modules.channels
 
 import com.google.common.io.ByteArrayDataInput
 import org.bukkit.entity.Player

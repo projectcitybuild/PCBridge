@@ -26,7 +26,7 @@ import com.projectcitybuild.features.ranksync.SyncPlayerGroupService
 import com.projectcitybuild.modules.config.implementations.BungeecordConfig
 import com.projectcitybuild.modules.logger.implementations.BungeecordLogger
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordTimer
-import com.projectcitybuild.modules.sessioncache.SessionCache
+import com.projectcitybuild.modules.sessioncache.SpigotSessionCache
 import com.projectcitybuild.old_modules.storage.HubFileStorage
 import com.projectcitybuild.old_modules.storage.WarpFileStorage
 import com.projectcitybuild.platforms.bungeecord.environment.*
@@ -117,7 +117,7 @@ class BungeecordPlatform: Plugin() {
     }
 
     private val playerConfigCache = PlayerConfigCache()
-    private var sessionCache: SessionCache? = null
+    private var spigotSessionCache: SpigotSessionCache? = null
 
     override fun onEnable() {
         config.load()
@@ -125,7 +125,7 @@ class BungeecordPlatform: Plugin() {
 
         proxy.registerChannel(Channel.BUNGEECORD)
 
-        sessionCache = SessionCache()
+        spigotSessionCache = SpigotSessionCache()
 
         permissionsManager = PermissionsManager()
 
@@ -157,7 +157,7 @@ class BungeecordPlatform: Plugin() {
         permissionsManager = null
         commandRegistry = null
         listenerRegistry = null
-        sessionCache = null
+        spigotSessionCache = null
 
         playerConfigCache.flush()
     }

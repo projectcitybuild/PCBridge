@@ -23,13 +23,14 @@ class ACommand(
             return
         }
 
-        val message = input.args.joinToString()
+        val message = input.args.joinToString(separator = " ")
+        val senderName = input.player?.displayName ?: "CONSOLE"
 
         proxyServer.players.forEach { player ->
             if (player.hasPermission("pcbridge.chat.staff_channel"))
                 player.sendMessage(
                     TextComponent()
-                        .add("(Staff) ${player.displayName}") { it.color = ChatColor.YELLOW }
+                        .add("(Staff) $senderName") { it.color = ChatColor.YELLOW }
                         .add(" » ") { it.color = ChatColor.GRAY }
                         .add(message) {
                             it.color = ChatColor.YELLOW
