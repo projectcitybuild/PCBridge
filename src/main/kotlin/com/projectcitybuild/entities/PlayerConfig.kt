@@ -7,11 +7,12 @@ import java.util.*
 @Serializable
 data class PlayerConfig(
     val uuid: SerializableUUID,
-    var isMuted: Boolean,
-    var chatPrefix: String,
-    var chatSuffix: String,
-    var chatGroups: String,
-    val chatIgnoreList: MutableSet<SerializableUUID>
+    var isMuted: Boolean = false,
+    val isAllowingTPs: Boolean = true,
+    var chatPrefix: String = "",
+    var chatSuffix: String = "",
+    var chatGroups: String = "",
+    val chatIgnoreList: MutableSet<SerializableUUID> = mutableSetOf()
 ) {
     val unwrappedChatIgnoreList
         get() = chatIgnoreList.map { it.unwrapped }

@@ -7,9 +7,8 @@ import com.projectcitybuild.platforms.spigot.environment.send
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
-import org.bukkit.event.player.PlayerJoinEvent
-import org.bukkit.event.player.PlayerTeleportEvent
 import org.bukkit.plugin.Plugin
+import org.spigotmc.event.player.PlayerSpawnLocationEvent
 
 class PendingJoinActionListener(
     private val plugin: Plugin,
@@ -17,8 +16,8 @@ class PendingJoinActionListener(
     private val logger: LoggerProvider
 ): Listener {
 
-    @EventHandler(priority = EventPriority.HIGH)
-    fun onPlayerJoin(event: PlayerJoinEvent) {
+    @EventHandler(priority = EventPriority.HIGHEST)
+    fun onPlayerJoin(event: PlayerSpawnLocationEvent) {
         val pendingAction = sessionCache.pendingJoinActions[event.player.uniqueId]
 
         if (pendingAction == null) {
@@ -26,22 +25,19 @@ class PendingJoinActionListener(
             return
         }
 
-        // Delay required to allow time for Player Object to be spawned
-        event.player.server.scheduler.scheduleSyncDelayedTask(plugin, {
-            when (pendingAction) {
-                is PendingJoinAction.TeleportToLocation -> {
-                    event.player.teleport(pendingAction.location, PlayerTeleportEvent.TeleportCause.COMMAND)
-                }
-                is PendingJoinAction.TeleportToPlayer -> {
-                    val targetPlayer = plugin.server.getPlayer(pendingAction.targetUUID)
-                    if (targetPlayer == null) {
-                        event.player.send().error("Could not find target player for teleport")
-                        return@scheduleSyncDelayedTask
-                    }
-                    event.player.teleport(targetPlayer)
-                }
+        when (pendingAction) {
+            is PendingJoinAction.TeleportToLocation -> {
+                event.spawnLocation = pendingAction.location
             }
-        }, 1)
+            is PendingJoinAction.TeleportToPlayer -> {
+                val targetPlayer = plugin.server.getPlayer(pendingAction.targetUUID)
+                if (targetPlayer == null) {
+                    event.player.send().error("Could not find target player for teleport")
+                    return
+                }
+                event.spawnLocation = targetPlayer.location
+            }
+        }
 
         sessionCache.pendingJoinActions.remove(event.player.uniqueId)
     }

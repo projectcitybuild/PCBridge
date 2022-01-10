@@ -9,14 +9,13 @@ import com.projectcitybuild.platforms.bungeecord.send
 import net.md_5.bungee.api.CommandSender
 import net.md_5.bungee.api.ProxyServer
 
-class TPCommand(
-    private val proxyServer: ProxyServer,
-    private val playerConfigRepository: PlayerConfigRepository
+class TPOCommand(
+    private val proxyServer: ProxyServer
 ): BungeecordCommand {
 
-    override val label: String = "tp"
-    override val permission = "pcbridge.tp.use"
-    override val usageHelp = "/tp <name>"
+    override val label: String = "tpo"
+    override val permission = "pcbridge.tp.override"
+    override val usageHelp = "/tpo <name>"
 
     override suspend fun execute(input: BungeecordCommandInput) {
         if (input.player == null) {
@@ -32,12 +31,6 @@ class TPCommand(
         val targetPlayer = proxyServer.players.firstOrNull { it.name.lowercase() == targetPlayerName.lowercase() }
         if (targetPlayer == null) {
             input.sender.send().error("Player $targetPlayerName not found")
-            return
-        }
-
-        val targetPlayerConfig = playerConfigRepository.get(targetPlayer.uniqueId)
-        if (!targetPlayerConfig.isAllowingTPs) {
-            input.sender.send().error("$targetPlayerName is disallowing teleports")
             return
         }
 
