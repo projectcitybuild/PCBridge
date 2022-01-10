@@ -1,40 +1,46 @@
 package com.projectcitybuild.platforms.spigot
 
-import com.projectcitybuild.core.network.APIRequestFactory
-import com.projectcitybuild.core.network.mojang.client.MojangClient
-import com.projectcitybuild.core.network.pcb.client.PCBClient
-import com.projectcitybuild.core.entities.PluginConfig
-import com.projectcitybuild.core.network.APIClient
-import com.projectcitybuild.core.utilities.PlayerStore
-import com.projectcitybuild.modules.bans.CheckBanStatusAction
-import com.projectcitybuild.modules.ranks.SyncPlayerGroupAction
-import com.projectcitybuild.platforms.spigot.commands.*
+import com.github.shynixn.mccoroutine.minecraftDispatcher
+import com.projectcitybuild.modules.network.APIRequestFactory
+import com.projectcitybuild.modules.network.mojang.client.MojangClient
+import com.projectcitybuild.modules.network.pcb.client.PCBClient
+import com.projectcitybuild.entities.PluginConfig
+import com.projectcitybuild.modules.network.APIClient
+import com.projectcitybuild.entities.Channel
+import com.projectcitybuild.features.hub.HubModule
+import com.projectcitybuild.features.warps.WarpModule
+import com.projectcitybuild.modules.sessioncache.SpigotSessionCache
 import com.projectcitybuild.platforms.spigot.environment.*
-import com.projectcitybuild.platforms.spigot.listeners.*
-import com.projectcitybuild.platforms.spigot.extensions.addDefault
+import com.projectcitybuild.features.chat.ChatModule
+import com.projectcitybuild.features.teleporting.TeleportModule
+import com.projectcitybuild.modules.channels.SpigotMessageListener
+import com.projectcitybuild.modules.config.implementations.SpigotConfig
+import com.projectcitybuild.modules.logger.implementations.SpigotLogger
+import com.projectcitybuild.modules.permissions.PermissionsManager
+import com.projectcitybuild.modules.scheduler.implementations.SpigotScheduler
+import com.projectcitybuild.platforms.spigot.listeners.PendingJoinActionListener
 import org.bukkit.plugin.java.JavaPlugin
 
 class SpigotPlatform: JavaPlugin() {
 
-    private val spigotLogger = SpigotLogger(logger = this.logger)
-    private val spigotConfig = SpigotConfig(config = this.config)
+    private val spigotLogger = SpigotLogger(logger = logger)
+    private val spigotConfig = SpigotConfig(plugin = this, config = config)
     private val scheduler = SpigotScheduler(plugin = this)
-    private val apiClient = APIClient(plugin = this, logger = spigotLogger)
-    private val playerStore = PlayerStore()
-    private var playerStoreWrapper: SpigotPlayerStore? = null
+    private val apiClient = APIClient(getCoroutineContext = {
+        // To prevent Coroutines being created before the plugin is ready
+        this.minecraftDispatcher
+    })
     private var permissionsManager: PermissionsManager? = null
-    private var commandDelegate: SpigotCommandDelegate? = null
-    private var listenerDelegate: SpigotListenerDelegate? = null
+    private var commandRegistry: SpigotCommandRegistry? = null
+    private var listenerRegistry: SpigotListenerRegistry? = null
 
     private val apiRequestFactory: APIRequestFactory by lazy {
-        val isLoggingEnabled = spigotConfig.get(PluginConfig.API.IS_LOGGING_ENABLED)
+        val isLoggingEnabled = spigotConfig.get(PluginConfig.API_IS_LOGGING_ENABLED)
 
         APIRequestFactory(
             pcb = PCBClient(
-                authToken = spigotConfig.get(PluginConfig.API.KEY) as? String
-                    ?: throw Exception("Could not cast auth token to String"),
-                baseUrl = spigotConfig.get(PluginConfig.API.BASE_URL) as? String
-                    ?: throw Exception("Could not cast base url to String"),
+                authToken = spigotConfig.get(PluginConfig.API_KEY),
+                baseUrl = spigotConfig.get(PluginConfig.API_BASE_URL),
                 withLogging = isLoggingEnabled
             ),
             mojang = MojangClient(
@@ -43,107 +49,61 @@ class SpigotPlatform: JavaPlugin() {
         )
     }
 
-    private val syncPlayerGroupAction: SyncPlayerGroupAction by lazy {
-        SyncPlayerGroupAction(
-                permissionsManager!!,
-                apiRequestFactory,
-                apiClient,
-                spigotConfig,
-                spigotLogger
-        )
-    }
-
-    private val checkBanStatusAction: CheckBanStatusAction by lazy {
-        CheckBanStatusAction(apiRequestFactory, apiClient)
-    }
+    private var spigotSessionCache: SpigotSessionCache? = null
 
     override fun onEnable() {
         createDefaultConfig()
 
-        playerStoreWrapper = SpigotPlayerStore(plugin = this, store = playerStore)
+        spigotSessionCache = SpigotSessionCache()
+
+        val pluginMessageListener = SpigotMessageListener(spigotLogger)
+
+        server.messenger.registerOutgoingPluginChannel(this, Channel.BUNGEECORD)
+        server.messenger.registerIncomingPluginChannel(this, Channel.BUNGEECORD, pluginMessageListener)
+
         permissionsManager = PermissionsManager()
 
-        val commandDelegate = SpigotCommandDelegate(plugin = this, logger = spigotLogger)
-        registerCommands(delegate = commandDelegate)
-        this.commandDelegate = commandDelegate
+        commandRegistry = SpigotCommandRegistry(plugin = this, spigotLogger)
+        listenerRegistry = SpigotListenerRegistry(plugin = this, spigotLogger)
 
-        val listenerDelegate = SpigotListenerDelegate(plugin = this, logger = spigotLogger)
-        registerListeners(delegate = listenerDelegate)
-        this.listenerDelegate = listenerDelegate
+        arrayOf(
+            ChatModule.Spigot(plugin = this),
+            HubModule.Spigot(plugin = this),
+            TeleportModule.Spigot(plugin = this, spigotLogger, spigotSessionCache!!),
+            WarpModule.Spigot(plugin = this, spigotLogger, spigotSessionCache!!),
+        )
+        .forEach { module ->
+            module.spigotCommands.forEach { commandRegistry?.register(it) }
+            module.spigotListeners.forEach { listenerRegistry?.register(it) }
+            module.spigotSubChannelListeners.forEach { pluginMessageListener.register(it.key, it.value) }
+        }
+
+        listenerRegistry?.register(
+            PendingJoinActionListener(spigotSessionCache!!, spigotLogger)
+        )
 
         logger.info("PCBridge ready")
     }
 
     override fun onDisable() {
-        listenerDelegate?.unregisterAll()
+        server.messenger.unregisterOutgoingPluginChannel(this)
+        server.messenger.unregisterIncomingPluginChannel(this)
 
-        commandDelegate = null
-        listenerDelegate = null
+        listenerRegistry?.unregisterAll()
+
+        spigotSessionCache = null
+        commandRegistry = null
+        listenerRegistry = null
         permissionsManager = null
 
         logger.info("PCBridge disabled")
     }
 
-    private fun registerCommands(delegate: SpigotCommandDelegate) {
-        arrayOf(
-                BanCommand(apiRequestFactory, apiClient),
-                UnbanCommand( apiRequestFactory, apiClient),
-                CheckBanCommand(scheduler, apiRequestFactory, apiClient, checkBanStatusAction),
-                MuteCommand(playerStore),
-                UnmuteCommand(playerStore),
-                MaintenanceCommand(),
-                SyncCommand(apiRequestFactory, apiClient, syncPlayerGroupAction),
-                SyncOtherCommand(syncPlayerGroupAction),
-                BoxCommand(apiRequestFactory, apiClient, spigotConfig, spigotLogger)
-        )
-        .forEach { command -> delegate.register(command) }
-    }
-
-    private fun registerListeners(delegate: SpigotListenerDelegate) {
-        arrayOf(
-                BanConnectionListener(apiRequestFactory, apiClient),
-                ChatListener(spigotConfig, playerStore, permissionsManager!!, spigotLogger),
-                MaintenanceConnectListener(spigotConfig),
-                SyncRankLoginListener(syncPlayerGroupAction),
-                AvailableBoxListener(apiRequestFactory, apiClient),
-                DonorPerkConnectionListener(permissionsManager!!, spigotConfig, apiRequestFactory, apiClient, spigotLogger)
-        )
-        .forEach { listener -> delegate.register(listener) }
-    }
-
     private fun createDefaultConfig() {
-        config.addDefault(PluginConfig.SETTINGS.MAINTENANCE_MODE)
-        config.addDefault(PluginConfig.API.KEY)
-        config.addDefault(PluginConfig.API.BASE_URL)
-        config.addDefault(PluginConfig.GROUPS.GUEST)
-        config.addDefault(PluginConfig.GROUPS.TRUST_PRIORITY)
-        config.addDefault(PluginConfig.GROUPS.BUILD_PRIORITY)
-        config.addDefault(PluginConfig.GROUPS.DONOR_PRIORITY)
-        config.addDefault(PluginConfig.DONORS.GIVE_BOX_COMMAND)
-
-        config.addDefault("donors.tiers.copper.permission_group_name", "copper-tier")
-        config.addDefault("donors.tiers.iron.permission_group_name", "iron-tier")
-        config.addDefault("donors.tiers.diamond.permission_group_name", "diamond-tier")
-
-        config.addDefault("groups.appearance.admin.display_name", "§4[Staff]")
-        config.addDefault("groups.appearance.admin.hover_name", "Administrator")
-        config.addDefault("groups.appearance.sop.display_name", "§c[Staff]")
-        config.addDefault("groups.appearance.sop.hover_name", "Senior Operator")
-        config.addDefault("groups.appearance.op.display_name", "§6[Staff]")
-        config.addDefault("groups.appearance.op.hover_name", "Operator")
-        config.addDefault("groups.appearance.moderator.display_name", "§e[Staff]")
-        config.addDefault("groups.appearance.moderator.hover_name", "Moderator")
-
-        config.addDefault("groups.appearance.trusted+.hover_name", "Trusted+")
-        config.addDefault("groups.appearance.trusted.hover_name", "Trusted")
-        config.addDefault("groups.appearance.donator.hover_name", "Donor")
-        config.addDefault("groups.appearance.architect.hover_name", "Architect")
-        config.addDefault("groups.appearance.engineer.hover_name", "Engineer")
-        config.addDefault("groups.appearance.planner.hover_name", "Planner")
-        config.addDefault("groups.appearance.builder.hover_name", "Builder")
-        config.addDefault("groups.appearance.intern.hover_name", "Intern")
-
-        config.options().copyDefaults(true)
-        saveConfig()
+        spigotConfig.addDefaults(
+            PluginConfig.API_KEY,
+            PluginConfig.API_BASE_URL,
+            PluginConfig.API_IS_LOGGING_ENABLED,
+        )
     }
 }

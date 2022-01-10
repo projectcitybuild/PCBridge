@@ -1,27 +1,32 @@
-group 'com.projectcitybuild'
-version '3.0.0'
-
-wrapper {
-    gradleVersion = '7.0'
-    distributionUrl = distributionUrl.replace("bin", "all")
-}
-
 buildscript {
-    ext.kotlin_version = '1.5.30'
+    ext.kotlin_version = '1.6.10'
 
     repositories {
         mavenCentral()
-        jcenter()
-    }
-
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath 'com.github.jengelman.gradle.plugins:shadow:5.1.0'
+        gradlePluginPortal()
     }
 }
 
+plugins {
+    id 'org.jetbrains.kotlin.jvm' version '1.6.10'
+    id 'com.github.johnrengelman.shadow' version '7.0.0'
+    id 'org.jetbrains.kotlin.plugin.serialization' version '1.6.10'
+}
+
+group 'com.projectcitybuild'
+version '3.0.0'
+
 apply plugin: 'kotlin'
 apply plugin: 'com.github.johnrengelman.shadow'
+
+build {
+    dependsOn shadowJar
+}
+
+wrapper {
+    gradleVersion = '7.1.1'
+    distributionUrl = distributionUrl.replace("bin", "all")
+}
 
 repositories {
     mavenCentral()
@@ -33,36 +38,31 @@ repositories {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-    compileOnly 'org.spigotmc:spigot-api:1.12.2-R0.1-SNAPSHOT'
     compileOnly 'net.luckperms:api:5.3'
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
-    implementation 'com.squareup.okhttp3:logging-interceptor:4.9.1'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.9.3'
     implementation 'com.github.shynixn.mccoroutine:mccoroutine-bukkit-api:1.5.0'
     implementation 'com.github.shynixn.mccoroutine:mccoroutine-bukkit-core:1.5.0'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.1'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.5.1'
-    testImplementation 'junit:junit:4.13'
-    testImplementation 'org.mockito:mockito-core:2.+'
-    testImplementation 'com.squareup.okhttp3:mockwebserver:3.5.0'
+    implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2'
+
+    // Spigot
+    compileOnly 'org.spigotmc:spigot-api:1.12.2-R0.1-SNAPSHOT'
+
+    // Bungeecord
+    compileOnly 'net.md-5:bungeecord-api:1.16-R0.4'
+}
+
+shadowJar {
+    destinationDirectory = file 'build/release'
 }
 
 compileKotlin {
-    kotlinOptions.jvmTarget = "16"
+    kotlinOptions.jvmTarget = "1.8"
 }
 
 compileTestKotlin {
-    kotlinOptions.jvmTarget = "16"
+    kotlinOptions.jvmTarget = "1.8"
 }
-
-//test {
-//    useJUnit()
-//
-//    filter {
-//        includeTestsMatching "com.projectcitybuild.tests.*"
-//    }
-//
-//    maxHeapSize = '1G'
-//}
-
-build.dependsOn shadowJar
