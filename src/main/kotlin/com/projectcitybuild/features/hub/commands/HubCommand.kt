@@ -1,5 +1,6 @@
 package com.projectcitybuild.features.hub.commands
 
+import com.projectcitybuild.core.InvalidCommandArgumentsException
 import com.projectcitybuild.entities.SubChannel
 import com.projectcitybuild.old_modules.storage.HubFileStorage
 import com.projectcitybuild.platforms.bungeecord.MessageToSpigot
@@ -20,8 +21,7 @@ class HubCommand(
 
     override suspend fun execute(input: BungeecordCommandInput) {
         if (input.args.isNotEmpty()) {
-            input.sender.send().invalidCommandInput(this)
-            return
+            throw InvalidCommandArgumentsException()
         }
         if (input.player == null) {
             input.sender.send().error("Console cannot use this command")

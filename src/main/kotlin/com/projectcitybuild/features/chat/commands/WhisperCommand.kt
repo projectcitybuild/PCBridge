@@ -1,5 +1,6 @@
 package com.projectcitybuild.features.chat.commands
 
+import com.projectcitybuild.core.InvalidCommandArgumentsException
 import com.projectcitybuild.core.extensions.joinWithWhitespaces
 import com.projectcitybuild.modules.sessioncache.BungeecordSessionCache
 import com.projectcitybuild.old_modules.playerconfig.PlayerConfigRepository
@@ -24,8 +25,7 @@ class WhisperCommand(
 
     override suspend fun execute(input: BungeecordCommandInput) {
         if (input.args.isEmpty()) {
-            input.sender.send().invalidCommandInput(this)
-            return
+            throw InvalidCommandArgumentsException()
         }
         val targetPlayerName = input.args.first()
 

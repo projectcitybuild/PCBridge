@@ -1,5 +1,6 @@
 package com.projectcitybuild.features.teleporting.commands
 
+import com.projectcitybuild.core.InvalidCommandArgumentsException
 import com.projectcitybuild.old_modules.playerconfig.PlayerConfigRepository
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
@@ -25,8 +26,7 @@ class TPToggleCommand(
             input.args.size != 1
                     || input.args.first().lowercase() != "off"
                     || input.args.first().lowercase() != "on" -> {
-                input.sender.send().invalidCommandInput(this)
-                return
+                throw InvalidCommandArgumentsException()
             }
         }
 

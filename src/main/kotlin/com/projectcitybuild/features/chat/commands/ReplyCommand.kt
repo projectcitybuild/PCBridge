@@ -1,5 +1,6 @@
 package com.projectcitybuild.features.chat.commands
 
+import com.projectcitybuild.core.InvalidCommandArgumentsException
 import com.projectcitybuild.core.extensions.joinWithWhitespaces
 import com.projectcitybuild.modules.sessioncache.BungeecordSessionCache
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
@@ -28,8 +29,7 @@ class ReplyCommand(
             return
         }
         if (input.args.isEmpty()) {
-            input.sender.send().invalidCommandInput(this)
-            return
+            throw InvalidCommandArgumentsException()
         }
 
         val playerWhoLastWhispered = sessionCache.lastWhispered[input.player.uniqueId]

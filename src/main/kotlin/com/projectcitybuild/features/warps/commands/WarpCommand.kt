@@ -1,5 +1,6 @@
 package com.projectcitybuild.features.warps.commands
 
+import com.projectcitybuild.core.InvalidCommandArgumentsException
 import com.projectcitybuild.entities.SubChannel
 import com.projectcitybuild.old_modules.storage.WarpFileStorage
 import com.projectcitybuild.platforms.bungeecord.MessageToSpigot
@@ -20,8 +21,7 @@ class WarpCommand(
 
     override suspend fun execute(input: BungeecordCommandInput) {
         if (input.args.size != 1) {
-            input.sender.send().invalidCommandInput(this)
-            return
+            throw InvalidCommandArgumentsException()
         }
         if (input.player == null) {
             input.sender.send().error("Console cannot use this command")

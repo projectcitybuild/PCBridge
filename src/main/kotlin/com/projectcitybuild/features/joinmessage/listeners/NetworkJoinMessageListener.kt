@@ -42,6 +42,7 @@ class NetworkJoinMessageListener(
 
     @EventHandler
     fun onServerSwitchEvent(event: ServerSwitchEvent) {
+        // Joining the network also sends a ServerSwitchEvent
         if (event.from == null) return
 
         proxyServer.broadcast(

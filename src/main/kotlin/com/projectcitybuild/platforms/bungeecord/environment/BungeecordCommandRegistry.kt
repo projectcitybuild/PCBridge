@@ -1,11 +1,14 @@
 package com.projectcitybuild.platforms.bungeecord.environment
 
+import com.projectcitybuild.core.InvalidCommandArgumentsException
 import com.projectcitybuild.modules.logger.LoggerProvider
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.CommandSender
+import net.md_5.bungee.api.chat.TextComponent
 import net.md_5.bungee.api.plugin.Command
 import net.md_5.bungee.api.plugin.Plugin
 import net.md_5.bungee.api.plugin.TabExecutor
@@ -56,9 +59,18 @@ class BungeecordCommandRegistry constructor(
                             command.execute(input)
                         }
                     }.onFailure { throwable ->
-                        sender.send().error(throwable.message ?: "An internal error occurred performing your command")
-                        throwable.message?.let { logger.fatal(it) }
-                        throwable.printStackTrace()
+                        if (throwable is InvalidCommandArgumentsException) {
+                            sender.sendMessage(
+                                TextComponent(command.usageHelp).also {
+                                    it.color = ChatColor.GRAY
+                                    it.isItalic = true
+                                }
+                            )
+                        } else {
+                            sender.send().error(throwable.message ?: "An internal error occurred performing your command")
+                            throwable.message?.let { logger.fatal(it) }
+                            throwable.printStackTrace()
+                        }
                     }
                     true
                 },

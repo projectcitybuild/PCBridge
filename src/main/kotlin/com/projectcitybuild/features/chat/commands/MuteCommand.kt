@@ -1,5 +1,6 @@
 package com.projectcitybuild.features.chat.commands
 
+import com.projectcitybuild.core.InvalidCommandArgumentsException
 import com.projectcitybuild.old_modules.playerconfig.PlayerConfigRepository
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
@@ -18,8 +19,7 @@ class MuteCommand(
 
     override suspend fun execute(input: BungeecordCommandInput) {
         if (input.args.size != 1) {
-            input.sender.send().invalidCommandInput(this)
-            return
+            throw InvalidCommandArgumentsException()
         }
 
         val targetPlayerName = input.args.first()
