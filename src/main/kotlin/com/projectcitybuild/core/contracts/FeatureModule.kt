@@ -1,10 +1,10 @@
 package com.projectcitybuild.core.contracts
 
+import com.projectcitybuild.core.BungeecordListener
+import com.projectcitybuild.core.SpigotListener
 import com.projectcitybuild.modules.channels.SubChannelListener
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.spigot.environment.SpigotCommand
-import org.bukkit.event.Listener as SpigotListener
-import net.md_5.bungee.api.plugin.Listener as BungeecordListener
 
 interface BungeecordFeatureModule {
 

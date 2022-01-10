@@ -1,5 +1,6 @@
 package com.projectcitybuild.features.afk.listeners
 
+import com.projectcitybuild.core.SpigotListener
 import com.projectcitybuild.entities.SubChannel
 import com.projectcitybuild.platforms.spigot.MessageToBungeecord
 import org.bukkit.entity.Player
@@ -17,7 +18,7 @@ import org.bukkit.plugin.Plugin
 
 class AFKListener(
     private val plugin: Plugin
-): Listener {
+): SpigotListener {
 
 //    @EventHandler(priority = EventPriority.LOW)
 //    fun onBlockBreak(event: BlockBreakEvent) {

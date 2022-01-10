@@ -1,5 +1,6 @@
 package com.projectcitybuild.features.joinmessage.listeners
 
+import com.projectcitybuild.core.BungeecordListener
 import com.projectcitybuild.platforms.bungeecord.extensions.add
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.ProxyServer
@@ -7,12 +8,11 @@ import net.md_5.bungee.api.chat.TextComponent
 import net.md_5.bungee.api.event.PlayerDisconnectEvent
 import net.md_5.bungee.api.event.PostLoginEvent
 import net.md_5.bungee.api.event.ServerSwitchEvent
-import net.md_5.bungee.api.plugin.Listener
 import net.md_5.bungee.event.EventHandler
 
 class NetworkJoinMessageListener(
     private val proxyServer: ProxyServer
-): Listener {
+): BungeecordListener {
 
     @EventHandler
     fun onPostLoginEvent(event: PostLoginEvent) {
