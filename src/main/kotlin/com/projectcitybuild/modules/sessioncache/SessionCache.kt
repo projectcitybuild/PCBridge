@@ -1,4 +1,4 @@
-package com.projectcitybuild.old_modules.sessioncache
+package com.projectcitybuild.modules.sessioncache
 
 import org.bukkit.Location
 import java.util.*

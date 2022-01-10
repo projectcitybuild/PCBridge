@@ -1,7 +1,7 @@
 package com.projectcitybuild.platforms.bungeecord.environment
 
 import com.projectcitybuild.core.contracts.LoggerProvider
-import com.projectcitybuild.platforms.bungeecord.send
+import com.projectcitybuild.modules.textcomponentbuilder.send
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

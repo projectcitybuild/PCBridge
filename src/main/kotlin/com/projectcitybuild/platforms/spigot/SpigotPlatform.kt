@@ -9,13 +9,14 @@ import com.projectcitybuild.core.network.APIClient
 import com.projectcitybuild.entities.Channel
 import com.projectcitybuild.features.hub.HubModule
 import com.projectcitybuild.features.warps.WarpModule
-import com.projectcitybuild.old_modules.sessioncache.SessionCache
+import com.projectcitybuild.modules.sessioncache.SessionCache
 import com.projectcitybuild.features.hub.commands.SetHubCommand
 import com.projectcitybuild.features.warps.commands.SetWarpCommand
 import com.projectcitybuild.platforms.spigot.environment.*
 import com.projectcitybuild.features.afk.listeners.AFKListener
 import com.projectcitybuild.features.chat.ChatModule
 import com.projectcitybuild.features.chat.listeners.ChatListener
+import com.projectcitybuild.modules.permissions.PermissionsManager
 import com.projectcitybuild.platforms.spigot.listeners.IncomingPluginMessageListener
 import com.projectcitybuild.platforms.spigot.listeners.PendingJoinActionListener
 import org.bukkit.plugin.java.JavaPlugin

@@ -4,7 +4,7 @@ import com.projectcitybuild.core.extensions.joinWithWhitespaces
 import com.projectcitybuild.old_modules.playerconfig.PlayerConfigRepository
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
-import com.projectcitybuild.platforms.bungeecord.send
+import com.projectcitybuild.modules.textcomponentbuilder.send
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.CommandSender
 import net.md_5.bungee.api.ProxyServer

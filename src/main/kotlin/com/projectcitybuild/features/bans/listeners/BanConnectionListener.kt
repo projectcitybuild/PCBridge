@@ -1,7 +1,7 @@
 package com.projectcitybuild.features.bans.listeners
 
 import com.projectcitybuild.core.contracts.LoggerProvider
-import com.projectcitybuild.old_modules.bans.BanRepository
+import com.projectcitybuild.features.bans.repositories.BanRepository
 import com.projectcitybuild.platforms.bungeecord.extensions.add
 import kotlinx.coroutines.runBlocking
 import net.md_5.bungee.api.ChatColor

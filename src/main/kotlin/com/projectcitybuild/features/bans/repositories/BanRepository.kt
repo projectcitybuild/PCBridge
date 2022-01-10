@@ -1,4 +1,4 @@
-package com.projectcitybuild.old_modules.bans
+package com.projectcitybuild.features.bans.repositories
 
 import com.projectcitybuild.core.network.APIClient
 import com.projectcitybuild.core.network.APIRequestFactory

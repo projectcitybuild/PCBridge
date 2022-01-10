@@ -1,4 +1,4 @@
-package com.projectcitybuild.platforms.spigot.environment
+package com.projectcitybuild.modules.permissions
 
 import net.luckperms.api.LuckPerms
 import net.luckperms.api.LuckPermsProvider

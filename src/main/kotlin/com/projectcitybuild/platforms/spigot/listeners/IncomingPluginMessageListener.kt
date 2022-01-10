@@ -5,9 +5,9 @@ import com.google.common.io.ByteStreams
 import com.projectcitybuild.core.contracts.LoggerProvider
 import com.projectcitybuild.entities.Channel
 import com.projectcitybuild.entities.SubChannel
-import com.projectcitybuild.old_modules.sessioncache.PendingJoinAction
-import com.projectcitybuild.old_modules.sessioncache.SessionCache
-import com.projectcitybuild.platforms.spigot.environment.send
+import com.projectcitybuild.modules.textcomponentbuilder.send
+import com.projectcitybuild.modules.sessioncache.PendingJoinAction
+import com.projectcitybuild.modules.sessioncache.SessionCache
 import org.bukkit.Location
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerTeleportEvent

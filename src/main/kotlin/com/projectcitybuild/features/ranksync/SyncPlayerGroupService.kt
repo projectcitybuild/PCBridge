@@ -1,4 +1,4 @@
-package com.projectcitybuild.old_modules.ranks
+package com.projectcitybuild.features.ranksync
 
 import com.projectcitybuild.core.contracts.ConfigProvider
 import com.projectcitybuild.core.contracts.LoggerProvider
@@ -6,15 +6,15 @@ import com.projectcitybuild.entities.PluginConfig
 import com.projectcitybuild.entities.responses.Group
 import com.projectcitybuild.core.network.APIClient
 import com.projectcitybuild.core.network.APIRequestFactory
-import com.projectcitybuild.platforms.spigot.environment.PermissionsManager
+import com.projectcitybuild.modules.permissions.PermissionsManager
 import java.util.*
 
 class SyncPlayerGroupService(
-        private val permissionsManager: PermissionsManager,
-        private val apiRequestFactory: APIRequestFactory,
-        private val apiClient: APIClient,
-        private val config: ConfigProvider,
-        private val logger: LoggerProvider
+    private val permissionsManager: PermissionsManager,
+    private val apiRequestFactory: APIRequestFactory,
+    private val apiClient: APIClient,
+    private val config: ConfigProvider,
+    private val logger: LoggerProvider
 ) {
     class AccountNotLinkedException: Exception()
     class PermissionUserNotFoundException: Exception()

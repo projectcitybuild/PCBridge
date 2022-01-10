@@ -7,7 +7,7 @@ import com.projectcitybuild.entities.Warp
 import com.projectcitybuild.old_modules.storage.SerializableDate
 import com.projectcitybuild.old_modules.storage.SerializableUUID
 import com.projectcitybuild.old_modules.storage.WarpFileStorage
-import com.projectcitybuild.platforms.bungeecord.send
+import com.projectcitybuild.modules.textcomponentbuilder.send
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

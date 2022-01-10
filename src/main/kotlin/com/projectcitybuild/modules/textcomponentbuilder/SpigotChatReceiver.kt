@@ -1,7 +1,6 @@
-package com.projectcitybuild.platforms.spigot.environment
+package com.projectcitybuild.modules.textcomponentbuilder
 
 import com.projectcitybuild.core.contracts.ChatMessageReceiver
-import com.projectcitybuild.old_modules.players.MessageSender
 import net.md_5.bungee.api.chat.BaseComponent
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player

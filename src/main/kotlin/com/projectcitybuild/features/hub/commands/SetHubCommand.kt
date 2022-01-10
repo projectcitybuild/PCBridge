@@ -2,10 +2,10 @@ package com.projectcitybuild.features.hub.commands
 
 import com.projectcitybuild.entities.CommandInput
 import com.projectcitybuild.entities.SubChannel
+import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.platforms.spigot.MessageToBungeecord
 import com.projectcitybuild.platforms.spigot.environment.CommandResult
 import com.projectcitybuild.platforms.spigot.environment.SpigotCommand
-import com.projectcitybuild.platforms.spigot.environment.send
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
 

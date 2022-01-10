@@ -1,6 +1,6 @@
 package com.projectcitybuild.features.ranksync.listeners
 
-import com.projectcitybuild.old_modules.ranks.SyncPlayerGroupService
+import com.projectcitybuild.features.ranksync.SyncPlayerGroupService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

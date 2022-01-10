@@ -1,9 +1,9 @@
 package com.projectcitybuild.features.ranksync.commands
 
-import com.projectcitybuild.old_modules.ranks.SyncPlayerGroupService
+import com.projectcitybuild.features.ranksync.SyncPlayerGroupService
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
-import com.projectcitybuild.platforms.bungeecord.send
+import com.projectcitybuild.modules.textcomponentbuilder.send
 import net.md_5.bungee.api.CommandSender
 import net.md_5.bungee.api.ProxyServer
 

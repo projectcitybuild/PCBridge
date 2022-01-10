@@ -3,7 +3,7 @@ package com.projectcitybuild.features.afk.listeners
 import com.google.common.io.ByteStreams
 import com.projectcitybuild.entities.Channel
 import com.projectcitybuild.entities.SubChannel
-import com.projectcitybuild.old_modules.sessioncache.SessionCache
+import com.projectcitybuild.modules.sessioncache.SessionCache
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.ProxyServer
 import net.md_5.bungee.api.chat.TextComponent

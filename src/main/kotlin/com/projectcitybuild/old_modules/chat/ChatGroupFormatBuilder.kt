@@ -2,8 +2,8 @@ package com.projectcitybuild.old_modules.chat
 
 import com.projectcitybuild.core.contracts.ConfigProvider
 import com.projectcitybuild.entities.PluginConfig
-import com.projectcitybuild.platforms.spigot.environment.PermissionsGroup
-import com.projectcitybuild.platforms.spigot.environment.PermissionsManager
+import com.projectcitybuild.modules.permissions.PermissionsGroup
+import com.projectcitybuild.modules.permissions.PermissionsManager
 import net.md_5.bungee.api.chat.BaseComponent
 import net.md_5.bungee.api.chat.ComponentBuilder
 import net.md_5.bungee.api.chat.HoverEvent

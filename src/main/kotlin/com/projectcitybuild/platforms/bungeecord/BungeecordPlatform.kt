@@ -14,19 +14,19 @@ import com.projectcitybuild.features.ranksync.RankSyncModule
 import com.projectcitybuild.features.teleporting.TeleportModule
 import com.projectcitybuild.features.warps.WarpModule
 import com.projectcitybuild.features.hub.listeners.IncomingSetHubListener
-import com.projectcitybuild.old_modules.bans.BanRepository
+import com.projectcitybuild.modules.permissions.PermissionsManager
+import com.projectcitybuild.features.bans.repositories.BanRepository
 import com.projectcitybuild.old_modules.chat.ChatGroupFormatBuilder
 import com.projectcitybuild.old_modules.playerconfig.PlayerConfigCache
 import com.projectcitybuild.old_modules.playerconfig.PlayerConfigFileStorage
 import com.projectcitybuild.old_modules.players.MojangPlayerRepository
 import com.projectcitybuild.old_modules.playerconfig.PlayerConfigRepository
 import com.projectcitybuild.old_modules.players.PlayerUUIDLookupService
-import com.projectcitybuild.old_modules.ranks.SyncPlayerGroupService
-import com.projectcitybuild.old_modules.sessioncache.SessionCache
+import com.projectcitybuild.features.ranksync.SyncPlayerGroupService
+import com.projectcitybuild.modules.sessioncache.SessionCache
 import com.projectcitybuild.old_modules.storage.HubFileStorage
 import com.projectcitybuild.old_modules.storage.WarpFileStorage
 import com.projectcitybuild.platforms.bungeecord.environment.*
-import com.projectcitybuild.platforms.spigot.environment.PermissionsManager
 import kotlinx.coroutines.Dispatchers
 import net.md_5.bungee.api.plugin.Plugin
 

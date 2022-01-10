@@ -3,7 +3,7 @@ package com.projectcitybuild.features.chat.commands
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
 import com.projectcitybuild.platforms.bungeecord.extensions.add
-import com.projectcitybuild.platforms.bungeecord.send
+import com.projectcitybuild.modules.textcomponentbuilder.send
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.CommandSender
 import net.md_5.bungee.api.ProxyServer

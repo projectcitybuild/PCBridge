@@ -1,4 +1,4 @@
-package com.projectcitybuild.old_modules.players
+package com.projectcitybuild.modules.textcomponentbuilder
 
 import com.projectcitybuild.core.contracts.ChatMessageReceiver
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand

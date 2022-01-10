@@ -1,9 +1,9 @@
 package com.projectcitybuild.platforms.spigot.listeners
 
 import com.projectcitybuild.core.contracts.LoggerProvider
-import com.projectcitybuild.old_modules.sessioncache.PendingJoinAction
-import com.projectcitybuild.old_modules.sessioncache.SessionCache
-import com.projectcitybuild.platforms.spigot.environment.send
+import com.projectcitybuild.modules.textcomponentbuilder.send
+import com.projectcitybuild.modules.sessioncache.PendingJoinAction
+import com.projectcitybuild.modules.sessioncache.SessionCache
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
