@@ -1,5 +1,6 @@
 package com.projectcitybuild.features.bans.commands
 
+import com.projectcitybuild.core.InvalidCommandArgumentsException
 import com.projectcitybuild.core.extensions.joinWithWhitespaces
 import com.projectcitybuild.features.bans.repositories.BanRepository
 import com.projectcitybuild.modules.textcomponentbuilder.send
@@ -23,8 +24,7 @@ class BanCommand(
 
     override suspend fun execute(input: BungeecordCommandInput) {
         if (input.args.isEmpty()) {
-            input.sender.send().invalidCommandInput(this)
-            return
+            throw InvalidCommandArgumentsException()
         }
 
         val staffPlayer = if (input.isConsoleSender) null else input.player

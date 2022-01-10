@@ -1,5 +1,6 @@
 package com.projectcitybuild.features.chat.commands
 
+import com.projectcitybuild.core.InvalidCommandArgumentsException
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
 import com.projectcitybuild.platforms.bungeecord.extensions.add
@@ -19,8 +20,7 @@ class ACommand(
 
     override suspend fun execute(input: BungeecordCommandInput) {
         if (input.args.isEmpty()) {
-            input.sender.send().invalidCommandInput(this)
-            return
+            throw InvalidCommandArgumentsException()
         }
 
         val message = input.args.joinToString(separator = " ")

@@ -19,10 +19,8 @@ interface SpigotCommand {
     // Permission node required to execute the command
     val permission: String
 
-    suspend fun execute(input: SpigotCommandInput): CommandResult
-}
+    // Message shown to the user if the command input was invalid
+    val usageHelp: String
 
-enum class CommandResult {
-    INVALID_INPUT,
-    EXECUTED,
+    suspend fun execute(input: SpigotCommandInput)
 }

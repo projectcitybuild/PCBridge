@@ -1,16 +1,16 @@
 package com.projectcitybuild.features.chat.listeners
 
+import com.projectcitybuild.core.SpigotListener
 import com.projectcitybuild.entities.SubChannel
 import com.projectcitybuild.platforms.spigot.MessageToBungeecord
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
-import org.bukkit.event.Listener
 import org.bukkit.event.player.AsyncPlayerChatEvent
 import org.bukkit.plugin.Plugin
 
 class ChatListener(
     private val plugin: Plugin
-): Listener {
+): SpigotListener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     fun onAsyncPlayerChatEvent(event: AsyncPlayerChatEvent) {

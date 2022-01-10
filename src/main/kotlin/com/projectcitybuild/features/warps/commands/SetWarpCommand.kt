@@ -1,10 +1,10 @@
 package com.projectcitybuild.features.warps.commands
 
+import com.projectcitybuild.core.InvalidCommandArgumentsException
 import com.projectcitybuild.platforms.spigot.environment.SpigotCommandInput
 import com.projectcitybuild.entities.SubChannel
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.platforms.spigot.MessageToBungeecord
-import com.projectcitybuild.platforms.spigot.environment.CommandResult
 import com.projectcitybuild.platforms.spigot.environment.SpigotCommand
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
@@ -13,17 +13,18 @@ class SetWarpCommand(
     private val plugin: Plugin
 ): SpigotCommand {
 
-    override val label: String = "setwarp"
+    override val label = "setwarp"
     override val permission = "pcbridge.warp.create"
+    override val usageHelp = "/setwarp <name>"
 
-    override suspend fun execute(input: SpigotCommandInput): CommandResult {
+    override suspend fun execute(input: SpigotCommandInput) {
         if (input.args.size != 1) {
-            return CommandResult.INVALID_INPUT
+            throw InvalidCommandArgumentsException()
         }
         val player = input.sender as? Player
         if (player == null) {
             input.sender.send().error("Console cannot use this command")
-            return CommandResult.EXECUTED
+            return
         }
 
         val warpName = input.args.first()
@@ -42,7 +43,5 @@ class SetWarpCommand(
                 player.location.yaw,
             )
         ).send()
-
-        return CommandResult.EXECUTED
     }
 }

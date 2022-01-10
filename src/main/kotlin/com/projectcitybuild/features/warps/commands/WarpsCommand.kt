@@ -1,5 +1,6 @@
 package com.projectcitybuild.features.warps.commands
 
+import com.projectcitybuild.core.InvalidCommandArgumentsException
 import com.projectcitybuild.old_modules.storage.WarpFileStorage
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
@@ -19,8 +20,7 @@ class WarpsCommand(
 
     override suspend fun execute(input: BungeecordCommandInput) {
         if (input.args.size > 1) {
-            input.sender.send().invalidCommandInput(this)
-            return
+            throw InvalidCommandArgumentsException()
         }
 
         var page = input.args.firstOrNull()?.toInt() ?: 1
@@ -33,9 +33,11 @@ class WarpsCommand(
         }
         val warpList = availableWarps.chunked(warpsPerPage)[max(page - 1, 0)]
 
+        val pageDisplay = if (warpPages > 1) "${ChatColor.GRAY}(Page $page/$warpPages)" else ""
+
         input.sender.send().info(
             """
-            #${ChatColor.BOLD}Warps ${ChatColor.GRAY}(Page $page/$warpPages)${ChatColor.RESET}
+            #${ChatColor.BOLD}Warps $pageDisplay${ChatColor.RESET}
             #---
             #${warpList.joinToString(separator = ", ")}
             """.trimMargin("#"), isMultiLine = true

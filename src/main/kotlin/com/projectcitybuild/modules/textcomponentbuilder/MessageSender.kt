@@ -1,6 +1,5 @@
 package com.projectcitybuild.modules.textcomponentbuilder
 
-import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.extensions.add
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.chat.TextComponent
@@ -50,15 +49,6 @@ class MessageSender(
     fun action(message: String) {
         receiver.sendMessage(
             TextComponent(message).also {
-                it.color = ChatColor.GRAY
-                it.isItalic = true
-            }
-        )
-    }
-
-    fun invalidCommandInput(command: BungeecordCommand) {
-        receiver.sendMessage(
-            TextComponent(command.usageHelp).also {
                 it.color = ChatColor.GRAY
                 it.isItalic = true
             }

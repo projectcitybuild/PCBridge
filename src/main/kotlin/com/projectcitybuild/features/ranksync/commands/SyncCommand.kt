@@ -1,5 +1,6 @@
 package com.projectcitybuild.features.ranksync.commands
 
+import com.projectcitybuild.core.InvalidCommandArgumentsException
 import com.projectcitybuild.modules.network.APIRequestFactory
 import com.projectcitybuild.modules.network.APIClient
 import com.projectcitybuild.features.ranksync.SyncPlayerGroupService
@@ -31,7 +32,7 @@ class SyncCommand(
             syncGroups(input.sender as ProxiedPlayer)
         }
         else {
-            input.sender.send().invalidCommandInput(this)
+            throw InvalidCommandArgumentsException()
         }
     }
 

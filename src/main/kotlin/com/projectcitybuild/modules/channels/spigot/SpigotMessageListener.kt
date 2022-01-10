@@ -1,4 +1,4 @@
-package com.projectcitybuild.modules.channels
+package com.projectcitybuild.modules.channels.spigot
 
 import com.google.common.io.ByteStreams
 import com.projectcitybuild.entities.Channel
@@ -10,10 +10,10 @@ class SpigotMessageListener(
     private val logger: LoggerProvider
 ): PluginMessageListener {
 
-    private val listeners = HashMap<String, SubChannelListener>()
+    private val listeners = HashMap<String, SpigotSubChannelListener>()
 
-    fun register(subChannel: String, listener: SubChannelListener) {
-        listeners[subChannel] = listener
+    fun register(listener: SpigotSubChannelListener) {
+        listeners[listener.subChannel] = listener
     }
 
     override fun onPluginMessageReceived(channel: String?, player: Player?, message: ByteArray?) {
@@ -28,6 +28,6 @@ class SpigotMessageListener(
             return
         }
 
-        listener.onSpigotMessageReceived(player, stream)
+        listener.onSpigotReceivedMessage(player, stream)
     }
 }

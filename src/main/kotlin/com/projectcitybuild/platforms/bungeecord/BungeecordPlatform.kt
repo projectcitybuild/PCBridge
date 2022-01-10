@@ -9,11 +9,9 @@ import com.projectcitybuild.entities.Channel
 import com.projectcitybuild.features.bans.BanModule
 import com.projectcitybuild.features.chat.ChatModule
 import com.projectcitybuild.features.hub.HubModule
-import com.projectcitybuild.features.hub.commands.HubCommand
 import com.projectcitybuild.features.ranksync.RankSyncModule
 import com.projectcitybuild.features.teleporting.TeleportModule
 import com.projectcitybuild.features.warps.WarpModule
-import com.projectcitybuild.features.hub.listeners.IncomingSetHubListener
 import com.projectcitybuild.modules.permissions.PermissionsManager
 import com.projectcitybuild.features.bans.repositories.BanRepository
 import com.projectcitybuild.features.chat.ChatGroupFormatBuilder
@@ -24,11 +22,11 @@ import com.projectcitybuild.modules.playeruuid.MojangPlayerRepository
 import com.projectcitybuild.old_modules.playerconfig.PlayerConfigRepository
 import com.projectcitybuild.modules.playeruuid.PlayerUUIDRepository
 import com.projectcitybuild.features.ranksync.SyncPlayerGroupService
+import com.projectcitybuild.modules.channels.bungeecord.BungeecordMessageListener
 import com.projectcitybuild.modules.config.implementations.BungeecordConfig
 import com.projectcitybuild.modules.logger.implementations.BungeecordLogger
 import com.projectcitybuild.modules.sessioncache.BungeecordSessionCache
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordTimer
-import com.projectcitybuild.modules.sessioncache.SpigotSessionCache
 import com.projectcitybuild.old_modules.storage.HubFileStorage
 import com.projectcitybuild.old_modules.storage.WarpFileStorage
 import com.projectcitybuild.platforms.bungeecord.environment.*
@@ -128,14 +126,12 @@ class BungeecordPlatform: Plugin() {
         proxy.registerChannel(Channel.BUNGEECORD)
 
         sessionCache = BungeecordSessionCache()
-
         permissionsManager = PermissionsManager()
+        commandRegistry = BungeecordCommandRegistry(plugin = this, bungeecordLogger)
+        listenerRegistry = BungeecordListenerRegistry(plugin = this, bungeecordLogger)
 
-        commandRegistry = BungeecordCommandRegistry(plugin = this, logger = bungeecordLogger)
-            .also { registerCommands(it) }
-
-        listenerRegistry = BungeecordListenerRegistry(plugin = this, logger = bungeecordLogger)
-            .also { registerListeners(it) }
+        val subChannelListener = BungeecordMessageListener(bungeecordLogger)
+        listenerRegistry?.register(subChannelListener)
 
         arrayOf(
             BanModule(proxy, playerUUIDRepository, banRepository, bungeecordLogger),
@@ -148,6 +144,7 @@ class BungeecordPlatform: Plugin() {
         ).forEach { module ->
             module.bungeecordCommands.forEach { commandRegistry?.register(it) }
             module.bungeecordListeners.forEach { listenerRegistry?.register(it) }
+            module.bungeecordSubChannelListeners.forEach { subChannelListener.register(it) }
         }
     }
 
@@ -163,20 +160,6 @@ class BungeecordPlatform: Plugin() {
         sessionCache = null
 
         playerConfigCache.flush()
-    }
-
-    private fun registerCommands(delegate: BungeecordCommandRegistry) {
-        arrayOf(
-            HubCommand(proxy, hubFileStorage),
-        )
-        .forEach { delegate.register(it) }
-    }
-
-    private fun registerListeners(delegate: BungeecordListenerRegistry) {
-        arrayOf(
-            IncomingSetHubListener(hubFileStorage),
-        )
-        .forEach { delegate.register(it) }
     }
 
     private fun createDefaultConfig() {

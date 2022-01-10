@@ -1,11 +1,11 @@
 package com.projectcitybuild.features.joinmessage.listeners
 
+import com.projectcitybuild.core.SpigotListener
 import org.bukkit.event.EventHandler
-import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
 
-class SupressJoinMessageListener: Listener {
+class SupressJoinMessageListener: SpigotListener {
 
     @EventHandler
     fun onPlayerJoin(event: PlayerJoinEvent) {

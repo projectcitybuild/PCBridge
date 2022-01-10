@@ -1,5 +1,6 @@
 package com.projectcitybuild.features.bans.commands
 
+import com.projectcitybuild.core.InvalidCommandArgumentsException
 import com.projectcitybuild.features.bans.repositories.BanRepository
 import com.projectcitybuild.modules.playeruuid.PlayerUUIDRepository
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
@@ -22,8 +23,7 @@ class UnbanCommand(
 
     override suspend fun execute(input: BungeecordCommandInput) {
         if (input.args.size != 1) {
-            input.sender.send().invalidCommandInput(this)
-            return
+            throw InvalidCommandArgumentsException()
         }
 
         val targetPlayerName = input.args.first()

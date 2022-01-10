@@ -1,9 +1,9 @@
-package com.projectcitybuild.features.chat.listeners
+package com.projectcitybuild.features.chat.subchannels
 
-import com.google.common.io.ByteStreams
-import com.projectcitybuild.entities.Channel
+import com.google.common.io.ByteArrayDataInput
 import com.projectcitybuild.entities.SubChannel
 import com.projectcitybuild.features.chat.ChatGroupFormatBuilder
+import com.projectcitybuild.modules.channels.bungeecord.BungeecordSubChannelListener
 import com.projectcitybuild.old_modules.playerconfig.PlayerConfigRepository
 import com.projectcitybuild.platforms.bungeecord.extensions.add
 import com.projectcitybuild.modules.textcomponentbuilder.send
@@ -13,49 +13,39 @@ import kotlinx.coroutines.launch
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.ProxyServer
 import net.md_5.bungee.api.chat.TextComponent
+import net.md_5.bungee.api.connection.Connection
 import net.md_5.bungee.api.connection.ProxiedPlayer
-import net.md_5.bungee.api.event.PluginMessageEvent
-import net.md_5.bungee.api.plugin.Listener
-import net.md_5.bungee.event.EventHandler
 
-class IncomingChatListener(
+class IncomingChatChannelListener(
     private val proxy: ProxyServer,
     private val playerConfigRepository: PlayerConfigRepository,
     private val chatGroupFormatBuilder: ChatGroupFormatBuilder
-): Listener {
+): BungeecordSubChannelListener {
 
-    @EventHandler
-    fun onPluginMessageReceived(event: PluginMessageEvent) {
-        if (event.tag != Channel.BUNGEECORD) return
+    override val subChannel = SubChannel.GLOBAL_CHAT
 
-        val stream = ByteStreams.newDataInput(event.data)
-        val subChannel = stream.readUTF()
+    override fun onBungeecordReceivedMessage(receiver: Connection, sender: Connection, stream: ByteArrayDataInput) {
+        val message = stream.readUTF()
+        val senderDisplayName = stream.readUTF()
 
-        if (subChannel != SubChannel.GLOBAL_CHAT)
-            return
+        val player = receiver as? ProxiedPlayer
+            ?: return
 
         CoroutineScope(Dispatchers.IO).launch {
             var recipients = proxy.players
 
-            val message = stream.readUTF()
-            val senderDisplayName = stream.readUTF()
-
-            val sender = event.receiver
-            val player = sender as? ProxiedPlayer
-                ?: return@launch
-
-            val senderConfig = playerConfigRepository.get(sender.uniqueId)
+            val senderConfig = playerConfigRepository.get(player.uniqueId)
             if (senderConfig.isMuted) {
                 player.send().error("You cannot talk while muted")
                 return@launch
             }
             recipients = recipients.filter { recipient ->
                 val recipientConfig = playerConfigRepository.get(recipient.uniqueId)
-                !recipientConfig.unwrappedChatIgnoreList.contains(sender.uniqueId)
+                !recipientConfig.unwrappedChatIgnoreList.contains(player.uniqueId)
             }
 
             // TODO: stop IO thrashing and cache all this instead
-            val format = chatGroupFormatBuilder.format(sender)
+            val format = chatGroupFormatBuilder.format(player)
 
             val tc = TextComponent()
                 .add(format.prefix)

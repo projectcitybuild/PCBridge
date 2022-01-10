@@ -1,5 +1,6 @@
 package com.projectcitybuild.features.afk.commands
 
+import com.projectcitybuild.core.InvalidCommandArgumentsException
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
 import com.projectcitybuild.modules.textcomponentbuilder.send
@@ -21,8 +22,7 @@ class AFKCommand(
 
     override suspend fun execute(input: BungeecordCommandInput) {
         if (input.args.isNotEmpty()) {
-            input.sender.send().invalidCommandInput(this)
-            return
+            throw InvalidCommandArgumentsException()
         }
         if (input.isConsoleSender) {
             input.sender.send().error("Console cannot use this command")

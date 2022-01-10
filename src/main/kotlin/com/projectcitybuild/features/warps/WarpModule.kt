@@ -8,16 +8,16 @@ import com.projectcitybuild.features.warps.commands.DelWarpCommand
 import com.projectcitybuild.features.warps.commands.SetWarpCommand
 import com.projectcitybuild.features.warps.commands.WarpCommand
 import com.projectcitybuild.features.warps.commands.WarpsCommand
-import com.projectcitybuild.features.warps.listeners.IncomingSetWarpListener
+import com.projectcitybuild.features.warps.subchannels.IncomingSetWarpListener
 import com.projectcitybuild.features.warps.subchannels.AwaitJoinWarpChannelListener
 import com.projectcitybuild.features.warps.subchannels.ImmediateWarpChannelListener
-import com.projectcitybuild.modules.channels.SubChannelListener
+import com.projectcitybuild.modules.channels.bungeecord.BungeecordSubChannelListener
+import com.projectcitybuild.modules.channels.spigot.SpigotSubChannelListener
 import com.projectcitybuild.modules.logger.LoggerProvider
 import com.projectcitybuild.modules.sessioncache.SpigotSessionCache
 import com.projectcitybuild.old_modules.storage.WarpFileStorage
 import com.projectcitybuild.platforms.spigot.environment.SpigotCommand
 import net.md_5.bungee.api.ProxyServer
-import net.md_5.bungee.api.plugin.Listener
 import org.bukkit.plugin.Plugin
 
 class WarpModule {
@@ -32,7 +32,7 @@ class WarpModule {
             WarpsCommand(warpFileStorage),
         )
 
-        override val bungeecordListeners: Array<Listener> = arrayOf(
+        override val bungeecordSubChannelListeners: Array<BungeecordSubChannelListener> = arrayOf(
             IncomingSetWarpListener(warpFileStorage),
         )
     }
@@ -46,9 +46,9 @@ class WarpModule {
             SetWarpCommand(plugin),
         )
 
-        override val spigotSubChannelListeners: HashMap<String, SubChannelListener> = hashMapOf(
-            Pair(SubChannel.WARP_AWAIT_JOIN, AwaitJoinWarpChannelListener(plugin, logger, spigotSessionCache)),
-            Pair(SubChannel.WARP_IMMEDIATELY, ImmediateWarpChannelListener(plugin, logger)),
+        override val spigotSubChannelListeners: Array<SpigotSubChannelListener> = arrayOf(
+            AwaitJoinWarpChannelListener(plugin, logger, spigotSessionCache),
+            ImmediateWarpChannelListener(plugin, logger),
         )
     }
 }

@@ -1,5 +1,6 @@
 package com.projectcitybuild.features.bans.listeners
 
+import com.projectcitybuild.core.BungeecordListener
 import com.projectcitybuild.modules.logger.LoggerProvider
 import com.projectcitybuild.features.bans.repositories.BanRepository
 import com.projectcitybuild.platforms.bungeecord.extensions.add
@@ -7,14 +8,13 @@ import kotlinx.coroutines.runBlocking
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.chat.TextComponent
 import net.md_5.bungee.api.event.LoginEvent
-import net.md_5.bungee.api.plugin.Listener
 import net.md_5.bungee.event.EventHandler
 import net.md_5.bungee.event.EventPriority
 
 class BanConnectionListener(
     private val banRepository: BanRepository,
     private val logger: LoggerProvider
-) : Listener {
+) : BungeecordListener {
 
     // This event is actually asynchronous, so despite the naming
     // this should not be blocking

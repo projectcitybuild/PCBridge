@@ -1,5 +1,6 @@
 package com.projectcitybuild.features.chat.commands
 
+import com.projectcitybuild.core.InvalidCommandArgumentsException
 import com.projectcitybuild.old_modules.playerconfig.PlayerConfigRepository
 import com.projectcitybuild.modules.playeruuid.PlayerUUIDRepository
 import com.projectcitybuild.old_modules.storage.SerializableUUID
@@ -21,8 +22,7 @@ class IgnoreCommand(
 
     override suspend fun execute(input: BungeecordCommandInput) {
         if (input.args.size != 1) {
-            input.sender.send().invalidCommandInput(this)
-            return
+            throw InvalidCommandArgumentsException()
         }
 
         val targetPlayerName = input.args.first()

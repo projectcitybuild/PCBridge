@@ -1,6 +1,7 @@
 package com.projectcitybuild.features.afk.listeners
 
 import com.google.common.io.ByteStreams
+import com.projectcitybuild.core.SpigotListener
 import com.projectcitybuild.entities.Channel
 import com.projectcitybuild.entities.SubChannel
 import com.projectcitybuild.modules.sessioncache.SpigotSessionCache
@@ -9,13 +10,12 @@ import net.md_5.bungee.api.ProxyServer
 import net.md_5.bungee.api.chat.TextComponent
 import net.md_5.bungee.api.connection.ProxiedPlayer
 import net.md_5.bungee.api.event.PluginMessageEvent
-import net.md_5.bungee.api.plugin.Listener
 import net.md_5.bungee.event.EventHandler
 
 class IncomingAFKEndListener(
     private val proxy: ProxyServer,
     private val spigotSessionCache: SpigotSessionCache
-): Listener {
+): SpigotListener {
 
     @EventHandler
     fun onPluginMessageReceived(event: PluginMessageEvent) {

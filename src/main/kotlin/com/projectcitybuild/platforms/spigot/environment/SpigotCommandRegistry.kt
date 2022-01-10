@@ -2,7 +2,10 @@ package com.projectcitybuild.platforms.spigot.environment
 
 import com.github.shynixn.mccoroutine.SuspendingCommandExecutor
 import com.github.shynixn.mccoroutine.setSuspendingExecutor
+import com.projectcitybuild.core.InvalidCommandArgumentsException
 import com.projectcitybuild.modules.logger.LoggerProvider
+import net.md_5.bungee.api.ChatColor
+import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
@@ -12,8 +15,8 @@ class SpigotCommandRegistry constructor(
         private val plugin: JavaPlugin,
         private val logger: LoggerProvider
 ) {
-    fun register(command: SpigotCommand) {
-        val aliases = command.aliases.plus(command.label)
+    fun register(spigotCommand: SpigotCommand) {
+        val aliases = spigotCommand.aliases.plus(spigotCommand.label)
 
         aliases.forEach { alias ->
             class BridgedCommand(private val wrappedCommand: SpigotCommand): SuspendingCommandExecutor {
@@ -24,10 +27,17 @@ class SpigotCommandRegistry constructor(
                                 args = args.toList(),
                                 isConsole = sender !is Player
                         )
-                        when (wrappedCommand.execute(input)) {
-                            CommandResult.EXECUTED -> true
-                            CommandResult.INVALID_INPUT -> false
-                        }
+                        wrappedCommand.execute(input)
+                        true
+                    }
+                    catch (error: InvalidCommandArgumentsException) {
+                        sender.spigot().sendMessage(
+                            TextComponent(spigotCommand.usageHelp).also {
+                                it.color = ChatColor.GRAY
+                                it.isItalic = true
+                            }
+                        )
+                        true
                     }
                     catch (error: Exception) {
                         sender.sendMessage("An internal error occurred performing your command")
@@ -38,8 +48,8 @@ class SpigotCommandRegistry constructor(
                 }
             }
             plugin.getCommand(alias).let {
-                it.setSuspendingExecutor(BridgedCommand(command))
-                it.permission = command.permission
+                it.setSuspendingExecutor(BridgedCommand(spigotCommand))
+                it.permission = spigotCommand.permission
             }
         }
     }

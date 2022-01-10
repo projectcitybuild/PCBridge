@@ -1,5 +1,6 @@
 package com.projectcitybuild.features.teleporting.commands
 
+import com.projectcitybuild.core.InvalidCommandArgumentsException
 import com.projectcitybuild.entities.SubChannel
 import com.projectcitybuild.platforms.bungeecord.MessageToSpigot
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
@@ -22,8 +23,7 @@ class TPOCommand(
             return
         }
         if (input.args.size != 1) {
-            input.sender.send().invalidCommandInput(this)
-            return
+            throw InvalidCommandArgumentsException()
         }
 
         val targetPlayerName = input.args.first()

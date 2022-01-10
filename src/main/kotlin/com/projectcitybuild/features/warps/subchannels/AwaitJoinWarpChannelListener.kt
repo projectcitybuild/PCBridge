@@ -1,7 +1,8 @@
 package com.projectcitybuild.features.warps.subchannels
 
 import com.google.common.io.ByteArrayDataInput
-import com.projectcitybuild.modules.channels.SubChannelListener
+import com.projectcitybuild.entities.SubChannel
+import com.projectcitybuild.modules.channels.spigot.SpigotSubChannelListener
 import com.projectcitybuild.modules.logger.LoggerProvider
 import com.projectcitybuild.modules.sessioncache.SpigotSessionCache
 import org.bukkit.Location
@@ -13,9 +14,11 @@ class AwaitJoinWarpChannelListener(
     private val plugin: Plugin,
     private val logger: LoggerProvider,
     private val spigotSessionCache: SpigotSessionCache
-): SubChannelListener {
+): SpigotSubChannelListener {
 
-    override fun onSpigotMessageReceived(player: Player?, stream: ByteArrayDataInput) {
+    override val subChannel = SubChannel.WARP_AWAIT_JOIN
+
+    override fun onSpigotReceivedMessage(player: Player?, stream: ByteArrayDataInput) {
         val playerUUID = UUID.fromString(stream.readUTF())
         val worldName = stream.readUTF()
         val x = stream.readDouble()

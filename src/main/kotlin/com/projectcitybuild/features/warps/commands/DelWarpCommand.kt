@@ -1,5 +1,6 @@
 package com.projectcitybuild.features.warps.commands
 
+import com.projectcitybuild.core.InvalidCommandArgumentsException
 import com.projectcitybuild.old_modules.storage.WarpFileStorage
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
@@ -16,8 +17,7 @@ class DelWarpCommand(
 
     override suspend fun execute(input: BungeecordCommandInput) {
         if (input.args.size != 1) {
-            input.sender.send().invalidCommandInput(this)
-            return
+            throw InvalidCommandArgumentsException()
         }
 
         val warpName = input.args.first()
