@@ -36,10 +36,15 @@ class IgnoreCommand(
             val targetPlayerUUID = playerUUIDRepository.request(targetPlayerName)
                 ?: throw Exception("Could not find UUID for $targetPlayerName. This player likely doesn't exist")
 
+            if (input.player.uniqueId == targetPlayerUUID) {
+                input.player.send().error("You cannot ignore yourself")
+                return
+            }
+
             val playerConfig = playerConfigRepository.get(input.player.uniqueId)
             if (playerConfig.unwrappedChatIgnoreList.contains(targetPlayerUUID)) {
                 input.player.send().error("$targetPlayerName is already on your ignore list")
-                return@runCatching
+                return
             }
 
             playerConfig.chatIgnoreList.add(SerializableUUID(targetPlayerUUID))
