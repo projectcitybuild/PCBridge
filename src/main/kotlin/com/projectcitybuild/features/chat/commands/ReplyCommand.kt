@@ -19,7 +19,7 @@ class ReplyCommand(
 
     override val label = "reply"
     override val aliases = arrayOf("r")
-    override val permission = "pcbridge.chat.reply"
+    override val permission = "pcbridge.chat.whisper"
     override val usageHelp = "/reply <message>"
 
     override suspend fun execute(input: BungeecordCommandInput) {

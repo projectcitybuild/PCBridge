@@ -17,6 +17,7 @@ import com.projectcitybuild.features.hub.listeners.IncomingSetHubListener
 import com.projectcitybuild.modules.permissions.PermissionsManager
 import com.projectcitybuild.features.bans.repositories.BanRepository
 import com.projectcitybuild.features.chat.ChatGroupFormatBuilder
+import com.projectcitybuild.features.joinmessage.JoinMessageModule
 import com.projectcitybuild.old_modules.playerconfig.PlayerConfigCache
 import com.projectcitybuild.old_modules.playerconfig.PlayerConfigFileStorage
 import com.projectcitybuild.modules.playeruuid.MojangPlayerRepository
@@ -140,6 +141,7 @@ class BungeecordPlatform: Plugin() {
             BanModule(proxy, playerUUIDRepository, banRepository, bungeecordLogger),
             ChatModule.Bungeecord(proxy, playerUUIDRepository, playerConfigRepository, chatGroupFormatBuilder, sessionCache!!),
             HubModule.Bungeecord(proxy, hubFileStorage),
+            JoinMessageModule.Bungee(proxy),
             RankSyncModule(proxy, apiRequestFactory, apiClient, syncPlayerGroupService),
             TeleportModule.Bungeecord(proxy, playerConfigRepository),
             WarpModule.Bungeecord(proxy, warpFileStorage),
