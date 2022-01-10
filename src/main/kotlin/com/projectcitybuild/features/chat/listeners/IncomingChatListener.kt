@@ -38,6 +38,8 @@ class IncomingChatListener(
             var recipients = proxy.players
 
             val message = stream.readUTF()
+            val senderDisplayName = stream.readUTF()
+
             val sender = event.receiver
             val player = sender as? ProxiedPlayer
                 ?: return@launch
@@ -59,7 +61,7 @@ class IncomingChatListener(
                 .add(format.prefix)
                 .add(format.groups)
                 .add(" ") { it.color = ChatColor.RESET }
-                .add(TextComponent.fromLegacyText(sender.displayName))
+                .add(TextComponent.fromLegacyText(senderDisplayName))
                 .add(format.suffix)
                 .add(": ") { it.color = ChatColor.RESET }
                 .add(TextComponent.fromLegacyText(message))

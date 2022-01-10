@@ -18,7 +18,10 @@ class ChatListener(
             plugin,
             event.player,
             SubChannel.GLOBAL_CHAT,
-            arrayOf(event.message)
+            arrayOf(
+                event.message,
+                event.player.displayName,
+            )
         ).send()
 
         // Super unsafe, but no other option as cancelling the event (as per the
