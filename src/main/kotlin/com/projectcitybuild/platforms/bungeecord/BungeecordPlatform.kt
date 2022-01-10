@@ -25,6 +25,7 @@ import com.projectcitybuild.modules.playeruuid.PlayerUUIDRepository
 import com.projectcitybuild.features.ranksync.SyncPlayerGroupService
 import com.projectcitybuild.modules.config.implementations.BungeecordConfig
 import com.projectcitybuild.modules.logger.implementations.BungeecordLogger
+import com.projectcitybuild.modules.sessioncache.BungeecordSessionCache
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordTimer
 import com.projectcitybuild.modules.sessioncache.SpigotSessionCache
 import com.projectcitybuild.old_modules.storage.HubFileStorage
@@ -117,7 +118,7 @@ class BungeecordPlatform: Plugin() {
     }
 
     private val playerConfigCache = PlayerConfigCache()
-    private var spigotSessionCache: SpigotSessionCache? = null
+    private var sessionCache: BungeecordSessionCache? = null
 
     override fun onEnable() {
         config.load()
@@ -125,7 +126,7 @@ class BungeecordPlatform: Plugin() {
 
         proxy.registerChannel(Channel.BUNGEECORD)
 
-        spigotSessionCache = SpigotSessionCache()
+        sessionCache = BungeecordSessionCache()
 
         permissionsManager = PermissionsManager()
 
@@ -137,7 +138,7 @@ class BungeecordPlatform: Plugin() {
 
         arrayOf(
             BanModule(proxy, playerUUIDRepository, banRepository, bungeecordLogger),
-            ChatModule.Bungeecord(proxy, playerUUIDRepository, playerConfigRepository, chatGroupFormatBuilder),
+            ChatModule.Bungeecord(proxy, playerUUIDRepository, playerConfigRepository, chatGroupFormatBuilder, sessionCache!!),
             HubModule.Bungeecord(proxy, hubFileStorage),
             RankSyncModule(proxy, apiRequestFactory, apiClient, syncPlayerGroupService),
             TeleportModule.Bungeecord(proxy, playerConfigRepository),
@@ -157,7 +158,7 @@ class BungeecordPlatform: Plugin() {
         permissionsManager = null
         commandRegistry = null
         listenerRegistry = null
-        spigotSessionCache = null
+        sessionCache = null
 
         playerConfigCache.flush()
     }

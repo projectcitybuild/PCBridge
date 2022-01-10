@@ -30,6 +30,9 @@ commands:
   mute:
     description: "Prevents a player from talking in chat"
     usage: "/mute <name>"
+  reply:
+    description: "Replies to the last whisper you received"
+    usage: "/reply <message>"
   sync:
     description: "Syncs your rank with the website"
     usage: "/sync [finish]"
