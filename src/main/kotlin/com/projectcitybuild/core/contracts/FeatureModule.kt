@@ -1,5 +1,6 @@
 package com.projectcitybuild.core.contracts
 
+import com.projectcitybuild.modules.channel.SubChannelListener
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.spigot.environment.SpigotCommand
 import org.bukkit.event.Listener as SpigotListener
@@ -21,4 +22,7 @@ interface SpigotFeatureModule {
 
     val spigotListeners: Array<SpigotListener>
         get() = emptyArray()
+
+    val spigotSubChannelListeners: HashMap<String, SubChannelListener>
+        get() = HashMap()
 }

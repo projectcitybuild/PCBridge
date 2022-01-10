@@ -12,6 +12,8 @@ import com.projectcitybuild.features.warps.WarpModule
 import com.projectcitybuild.modules.sessioncache.SessionCache
 import com.projectcitybuild.platforms.spigot.environment.*
 import com.projectcitybuild.features.chat.ChatModule
+import com.projectcitybuild.features.teleporting.TeleportModule
+import com.projectcitybuild.modules.channel.SpigotMessageListener
 import com.projectcitybuild.modules.config.implementations.SpigotConfig
 import com.projectcitybuild.modules.logger.implementations.SpigotLogger
 import com.projectcitybuild.modules.permissions.PermissionsManager
@@ -54,29 +56,31 @@ class SpigotPlatform: JavaPlugin() {
 
         sessionCache = SessionCache()
 
+        val pluginMessageListener = SpigotMessageListener(spigotLogger)
+
         server.messenger.registerOutgoingPluginChannel(this, Channel.BUNGEECORD)
-        server.messenger.registerIncomingPluginChannel(this, Channel.BUNGEECORD, IncomingPluginMessageListener(
-            plugin = this,
-            sessionCache = sessionCache!!,
-            logger = spigotLogger,
-        ))
+        server.messenger.registerIncomingPluginChannel(this, Channel.BUNGEECORD, pluginMessageListener)
 
         permissionsManager = PermissionsManager()
 
         commandRegistry = SpigotCommandRegistry(plugin = this, spigotLogger)
-
-        val listenerRegistry = SpigotListenerRegistry(plugin = this, spigotLogger)
-        registerListeners(delegate = listenerRegistry)
-        this.listenerRegistry = listenerRegistry
+        listenerRegistry = SpigotListenerRegistry(plugin = this, spigotLogger)
 
         arrayOf(
             ChatModule.Spigot(plugin = this),
             HubModule.Spigot(plugin = this),
-            WarpModule.Spigot(plugin = this),
-        ).forEach { module ->
+            TeleportModule.Spigot(plugin = this, spigotLogger, sessionCache!!),
+            WarpModule.Spigot(plugin = this, spigotLogger, sessionCache!!),
+        )
+        .forEach { module ->
             module.spigotCommands.forEach { commandRegistry?.register(it) }
             module.spigotListeners.forEach { listenerRegistry?.register(it) }
+            module.spigotSubChannelListeners.forEach { pluginMessageListener.register(it.key, it.value) }
         }
+
+        listenerRegistry?.register(
+            PendingJoinActionListener(sessionCache!!, spigotLogger)
+        )
 
         logger.info("PCBridge ready")
     }
@@ -85,22 +89,14 @@ class SpigotPlatform: JavaPlugin() {
         server.messenger.unregisterOutgoingPluginChannel(this)
         server.messenger.unregisterIncomingPluginChannel(this)
 
-        sessionCache = null
-
         listenerRegistry?.unregisterAll()
 
+        sessionCache = null
         commandRegistry = null
         listenerRegistry = null
         permissionsManager = null
 
         logger.info("PCBridge disabled")
-    }
-
-    private fun registerListeners(delegate: SpigotListenerRegistry) {
-        arrayOf(
-            PendingJoinActionListener(sessionCache!!, spigotLogger),
-        )
-        .forEach { listener -> delegate.register(listener) }
     }
 
     private fun createDefaultConfig() {

@@ -140,7 +140,7 @@ class BungeecordPlatform: Plugin() {
             ChatModule.Bungeecord(proxy, playerUUIDRepository, playerConfigRepository, chatGroupFormatBuilder),
             HubModule.Bungeecord(proxy, hubFileStorage),
             RankSyncModule(proxy, apiRequestFactory, apiClient, syncPlayerGroupService),
-            TeleportModule(proxy, playerConfigRepository),
+            TeleportModule.Bungeecord(proxy, playerConfigRepository),
             WarpModule.Bungeecord(proxy, warpFileStorage),
         ).forEach { module ->
             module.bungeecordCommands.forEach { commandRegistry?.register(it) }
