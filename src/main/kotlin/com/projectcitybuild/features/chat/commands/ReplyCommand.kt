@@ -50,10 +50,10 @@ class ReplyCommand(
             return
         }
 
-        val message = input.args.joinWithWhitespaces(1 until input.args.size)
+        val message = input.args.joinToString(separator = " ")
         val senderName = input.player?.displayName ?: "CONSOLE"
 
-        val tc = TextComponent(" [$senderName -> ${targetPlayer.name}] > $message").also {
+        val tc = TextComponent(" [$senderName -> ${targetPlayer.name}] $message").also {
             it.color = ChatColor.GRAY
             it.isItalic = true
         }

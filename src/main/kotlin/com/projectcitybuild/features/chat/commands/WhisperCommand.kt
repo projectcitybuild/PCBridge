@@ -37,6 +37,11 @@ class WhisperCommand(
             return
         }
 
+        if (targetPlayer == input.player) {
+            input.sender.send().error("You cannot directly message yourself")
+            return
+        }
+
         if (input.player != null) {
             val targetPlayerConfig = playerConfigRepository.get(input.player.uniqueId)
             if (targetPlayerConfig.unwrappedChatIgnoreList.contains(input.player.uniqueId)) {
@@ -45,10 +50,10 @@ class WhisperCommand(
             }
         }
 
-        val message = input.args.joinToString(separator = " ")
+        val message = input.args.joinWithWhitespaces(1 until input.args.size)
         val senderName = input.player?.displayName ?: "CONSOLE"
 
-        val tc = TextComponent(" [$senderName -> ${targetPlayer.name}] > $message").also {
+        val tc = TextComponent(" [$senderName -> ${targetPlayer.name}] $message").also {
             it.color = ChatColor.GRAY
             it.isItalic = true
         }
