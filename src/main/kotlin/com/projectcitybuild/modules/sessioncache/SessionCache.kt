@@ -1,14 +1,10 @@
 package com.projectcitybuild.modules.sessioncache
 
-import org.bukkit.Location
+import org.bukkit.entity.Player
+import org.spigotmc.event.player.PlayerSpawnLocationEvent
 import java.util.*
 
 class SessionCache {
     val afkPlayerList: MutableList<UUID> = mutableListOf()
-    val pendingJoinActions = HashMap<UUID, PendingJoinAction>()
-}
-
-sealed class PendingJoinAction {
-    class TeleportToLocation(val location: Location): PendingJoinAction()
-    class TeleportToPlayer(val targetUUID: UUID): PendingJoinAction()
+    val pendingJoinActions = HashMap<UUID, (Player, PlayerSpawnLocationEvent) -> Unit>()
 }

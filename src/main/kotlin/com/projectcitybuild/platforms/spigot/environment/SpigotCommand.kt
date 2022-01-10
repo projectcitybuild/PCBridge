@@ -1,7 +1,5 @@
 package com.projectcitybuild.platforms.spigot.environment
 
-import com.projectcitybuild.entities.CommandInput
-
 /**
  * Represents a Command that a user can use to perform
  * some kind of action.
@@ -21,7 +19,7 @@ interface SpigotCommand {
     // Permission node required to execute the command
     val permission: String
 
-    suspend fun execute(input: CommandInput): CommandResult
+    suspend fun execute(input: SpigotCommandInput): CommandResult
 }
 
 enum class CommandResult {

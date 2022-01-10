@@ -1,6 +1,6 @@
 package com.projectcitybuild.features.hub.commands
 
-import com.projectcitybuild.entities.CommandInput
+import com.projectcitybuild.platforms.spigot.environment.SpigotCommandInput
 import com.projectcitybuild.entities.SubChannel
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.platforms.spigot.MessageToBungeecord
@@ -16,7 +16,7 @@ class SetHubCommand(
     override val label: String = "sethub"
     override val permission = "pcbridge.hub.set"
 
-    override suspend fun execute(input: CommandInput): CommandResult {
+    override suspend fun execute(input: SpigotCommandInput): CommandResult {
         if (input.args.isNotEmpty()) {
             return CommandResult.INVALID_INPUT
         }

@@ -1,6 +1,6 @@
 package com.projectcitybuild.features.warps.commands
 
-import com.projectcitybuild.entities.CommandInput
+import com.projectcitybuild.platforms.spigot.environment.SpigotCommandInput
 import com.projectcitybuild.entities.SubChannel
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.platforms.spigot.MessageToBungeecord
@@ -16,7 +16,7 @@ class SetWarpCommand(
     override val label: String = "setwarp"
     override val permission = "pcbridge.warp.create"
 
-    override suspend fun execute(input: CommandInput): CommandResult {
+    override suspend fun execute(input: SpigotCommandInput): CommandResult {
         if (input.args.size != 1) {
             return CommandResult.INVALID_INPUT
         }

@@ -6,7 +6,6 @@ import com.projectcitybuild.modules.logger.LoggerProvider
 import com.projectcitybuild.entities.Channel
 import com.projectcitybuild.entities.SubChannel
 import com.projectcitybuild.modules.textcomponentbuilder.send
-import com.projectcitybuild.modules.sessioncache.PendingJoinAction
 import com.projectcitybuild.modules.sessioncache.SessionCache
 import org.bukkit.Location
 import org.bukkit.entity.Player
@@ -66,7 +65,9 @@ class IncomingPluginMessageListener(
             SubChannel.WARP_AWAIT_JOIN -> {
                 logger.debug("Queuing warp for $playerUUID to $location")
 
-                sessionCache.pendingJoinActions[playerUUID] = PendingJoinAction.TeleportToLocation(location)
+                sessionCache.pendingJoinActions[playerUUID] = { _, event ->
+                    event.spawnLocation = location
+                }
             }
         }
     }
@@ -96,7 +97,14 @@ class IncomingPluginMessageListener(
             SubChannel.TP_AWAIT_JOIN -> {
                 logger.debug("Queuing teleport for $teleportingPlayerUUID to location of $teleportTargetPlayerUUID")
 
-                sessionCache.pendingJoinActions[teleportingPlayerUUID] = PendingJoinAction.TeleportToPlayer(teleportTargetPlayerUUID)
+                sessionCache.pendingJoinActions[teleportingPlayerUUID] = { _, event ->
+                    val targetPlayer = plugin.server.getPlayer(teleportTargetPlayerUUID)
+                    if (targetPlayer == null) {
+                        event.player.send().error("Could not find target player for teleport")
+                    } else {
+                        event.spawnLocation = targetPlayer.location
+                    }
+                }
             }
         }
     }

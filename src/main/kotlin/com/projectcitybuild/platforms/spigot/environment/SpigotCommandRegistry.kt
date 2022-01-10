@@ -2,7 +2,6 @@ package com.projectcitybuild.platforms.spigot.environment
 
 import com.github.shynixn.mccoroutine.SuspendingCommandExecutor
 import com.github.shynixn.mccoroutine.setSuspendingExecutor
-import com.projectcitybuild.entities.CommandInput
 import com.projectcitybuild.modules.logger.LoggerProvider
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
@@ -20,7 +19,7 @@ class SpigotCommandRegistry constructor(
             class BridgedCommand(private val wrappedCommand: SpigotCommand): SuspendingCommandExecutor {
                 override suspend fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
                     return try {
-                        val input = CommandInput(
+                        val input = SpigotCommandInput(
                                 sender = sender,
                                 args = args.toList(),
                                 isConsole = sender !is Player

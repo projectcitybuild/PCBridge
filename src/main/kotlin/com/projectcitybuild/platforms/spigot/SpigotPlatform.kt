@@ -98,7 +98,7 @@ class SpigotPlatform: JavaPlugin() {
 
     private fun registerListeners(delegate: SpigotListenerRegistry) {
         arrayOf(
-            PendingJoinActionListener(this, sessionCache!!, spigotLogger),
+            PendingJoinActionListener(sessionCache!!, spigotLogger),
         )
         .forEach { listener -> delegate.register(listener) }
     }

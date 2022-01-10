@@ -1,17 +1,13 @@
 package com.projectcitybuild.platforms.spigot.listeners
 
 import com.projectcitybuild.modules.logger.LoggerProvider
-import com.projectcitybuild.modules.textcomponentbuilder.send
-import com.projectcitybuild.modules.sessioncache.PendingJoinAction
 import com.projectcitybuild.modules.sessioncache.SessionCache
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
-import org.bukkit.plugin.Plugin
 import org.spigotmc.event.player.PlayerSpawnLocationEvent
 
 class PendingJoinActionListener(
-    private val plugin: Plugin,
     private val sessionCache: SessionCache,
     private val logger: LoggerProvider
 ): Listener {
@@ -22,23 +18,9 @@ class PendingJoinActionListener(
 
         if (pendingAction == null) {
             logger.debug("No pending action for this player")
-            return
+        } else {
+            pendingAction(event.player, event)
+            sessionCache.pendingJoinActions.remove(event.player.uniqueId)
         }
-
-        when (pendingAction) {
-            is PendingJoinAction.TeleportToLocation -> {
-                event.spawnLocation = pendingAction.location
-            }
-            is PendingJoinAction.TeleportToPlayer -> {
-                val targetPlayer = plugin.server.getPlayer(pendingAction.targetUUID)
-                if (targetPlayer == null) {
-                    event.player.send().error("Could not find target player for teleport")
-                    return
-                }
-                event.spawnLocation = targetPlayer.location
-            }
-        }
-
-        sessionCache.pendingJoinActions.remove(event.player.uniqueId)
     }
 }
