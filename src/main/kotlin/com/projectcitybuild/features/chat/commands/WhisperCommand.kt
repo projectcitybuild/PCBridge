@@ -2,6 +2,7 @@ package com.projectcitybuild.features.chat.commands
 
 import com.projectcitybuild.core.InvalidCommandArgumentsException
 import com.projectcitybuild.core.extensions.joinWithWhitespaces
+import com.projectcitybuild.modules.nameguesser.NameGuesser
 import com.projectcitybuild.modules.sessioncache.BungeecordSessionCache
 import com.projectcitybuild.old_modules.playerconfig.PlayerConfigRepository
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
@@ -15,7 +16,8 @@ import net.md_5.bungee.api.chat.TextComponent
 class WhisperCommand(
     private val proxyServer: ProxyServer,
     private val playerConfigRepository: PlayerConfigRepository,
-    private val sessionCache: BungeecordSessionCache
+    private val sessionCache: BungeecordSessionCache,
+    private val nameGuesser: NameGuesser
 ): BungeecordCommand {
 
     override val label = "whisper"
@@ -29,8 +31,7 @@ class WhisperCommand(
         }
         val targetPlayerName = input.args.first()
 
-        val targetPlayer = proxyServer.players
-            .firstOrNull { it.name.lowercase() == targetPlayerName.lowercase() }
+        val targetPlayer = nameGuesser.guessClosest(targetPlayerName, proxyServer.players) { it.name }
 
         if (targetPlayer == null) {
             input.sender.send().error("Player not found")

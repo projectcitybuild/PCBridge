@@ -2,6 +2,7 @@ package com.projectcitybuild.features.warps.commands
 
 import com.projectcitybuild.core.InvalidCommandArgumentsException
 import com.projectcitybuild.entities.SubChannel
+import com.projectcitybuild.modules.nameguesser.NameGuesser
 import com.projectcitybuild.old_modules.storage.WarpFileStorage
 import com.projectcitybuild.platforms.bungeecord.MessageToSpigot
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
@@ -12,7 +13,8 @@ import net.md_5.bungee.api.ProxyServer
 
 class WarpCommand(
     private val proxyServer: ProxyServer,
-    private val warpFileStorage: WarpFileStorage
+    private val warpFileStorage: WarpFileStorage,
+    private val nameGuesser: NameGuesser
 ): BungeecordCommand {
 
     override val label: String = "warp"
@@ -28,12 +30,16 @@ class WarpCommand(
             return
         }
 
-        val warpName = input.args.first()
-        val warp = warpFileStorage.load(warpName)
-        if (warp == null) {
+        val availableWarpNames = warpFileStorage.keys()
+
+        val targetWarpName = input.args.first()
+        val warpName = nameGuesser.guessClosest(targetWarpName, availableWarpNames)
+        if (warpName == null) {
             input.sender.send().error("Warp $warpName does not exist")
             return
         }
+
+        val warp = warpFileStorage.load(warpName)!!
 
         val targetServer = proxyServer.servers[warp.serverName]
         if (targetServer == null) {

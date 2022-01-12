@@ -25,6 +25,7 @@ import com.projectcitybuild.features.ranksync.SyncPlayerGroupService
 import com.projectcitybuild.modules.channels.bungeecord.BungeecordMessageListener
 import com.projectcitybuild.modules.config.implementations.BungeecordConfig
 import com.projectcitybuild.modules.logger.implementations.BungeecordLogger
+import com.projectcitybuild.modules.nameguesser.NameGuesser
 import com.projectcitybuild.modules.sessioncache.BungeecordSessionCache
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordTimer
 import com.projectcitybuild.old_modules.storage.HubFileStorage
@@ -134,13 +135,44 @@ class BungeecordPlatform: Plugin() {
         listenerRegistry?.register(subChannelListener)
 
         arrayOf(
-            BanModule(proxy, playerUUIDRepository, banRepository, bungeecordLogger),
-            ChatModule.Bungeecord(proxy, playerUUIDRepository, playerConfigRepository, chatGroupFormatBuilder, sessionCache!!),
-            HubModule.Bungeecord(proxy, hubFileStorage),
-            JoinMessageModule.Bungee(proxy),
-            RankSyncModule(proxy, apiRequestFactory, apiClient, syncPlayerGroupService),
-            TeleportModule.Bungeecord(proxy, playerConfigRepository),
-            WarpModule.Bungeecord(proxy, warpFileStorage),
+            BanModule(
+                proxy,
+                playerUUIDRepository,
+                banRepository,
+                bungeecordLogger
+            ),
+            ChatModule.Bungeecord(
+                proxy,
+                playerUUIDRepository,
+                playerConfigRepository,
+                chatGroupFormatBuilder,
+                sessionCache!!,
+                NameGuesser()
+            ),
+            HubModule.Bungeecord(
+                proxy,
+                hubFileStorage
+            ),
+            JoinMessageModule.Bungee(
+                proxy
+            ),
+            RankSyncModule(
+                proxy,
+                apiRequestFactory,
+                apiClient,
+                syncPlayerGroupService,
+                NameGuesser()
+            ),
+            TeleportModule.Bungeecord(
+                proxy,
+                playerConfigRepository,
+                NameGuesser()
+            ),
+            WarpModule.Bungeecord(
+                proxy,
+                warpFileStorage,
+                NameGuesser()
+            ),
         ).forEach { module ->
             module.bungeecordCommands.forEach { commandRegistry?.register(it) }
             module.bungeecordListeners.forEach { listenerRegistry?.register(it) }

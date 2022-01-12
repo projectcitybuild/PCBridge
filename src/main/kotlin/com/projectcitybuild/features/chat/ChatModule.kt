@@ -6,6 +6,7 @@ import com.projectcitybuild.features.chat.commands.*
 import com.projectcitybuild.features.chat.listeners.ChatListener
 import com.projectcitybuild.features.chat.subchannels.IncomingChatChannelListener
 import com.projectcitybuild.modules.channels.bungeecord.BungeecordSubChannelListener
+import com.projectcitybuild.modules.nameguesser.NameGuesser
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.old_modules.playerconfig.PlayerConfigRepository
 import com.projectcitybuild.modules.playeruuid.PlayerUUIDRepository
@@ -21,7 +22,8 @@ class ChatModule {
         playerUUIDRepository: PlayerUUIDRepository,
         playerConfigRepository: PlayerConfigRepository,
         chatGroupFormatBuilder: ChatGroupFormatBuilder,
-        sessionCache: BungeecordSessionCache
+        sessionCache: BungeecordSessionCache,
+        nameGuesser: NameGuesser
     ): BungeecordFeatureModule {
 
         override val bungeecordCommands: Array<BungeecordCommand> = arrayOf(
@@ -31,7 +33,7 @@ class ChatModule {
             ReplyCommand(proxyServer, playerConfigRepository, sessionCache),
             UnignoreCommand(proxyServer, playerUUIDRepository, playerConfigRepository),
             UnmuteCommand(proxyServer, playerConfigRepository),
-            WhisperCommand(proxyServer, playerConfigRepository, sessionCache),
+            WhisperCommand(proxyServer, playerConfigRepository, sessionCache, nameGuesser),
         )
 
         override val bungeecordSubChannelListeners: Array<BungeecordSubChannelListener> = arrayOf(
