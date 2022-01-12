@@ -8,6 +8,7 @@ import com.projectcitybuild.old_modules.playerconfig.PlayerConfigRepository
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
 import com.projectcitybuild.modules.textcomponentbuilder.send
+import com.projectcitybuild.platforms.bungeecord.extensions.add
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.CommandSender
 import net.md_5.bungee.api.ProxyServer
@@ -54,10 +55,18 @@ class WhisperCommand(
         val message = input.args.joinWithWhitespaces(1 until input.args.size)
         val senderName = input.player?.displayName ?: "CONSOLE"
 
-        val tc = TextComponent(" [$senderName -> ${targetPlayer.name}] $message").also {
-            it.color = ChatColor.GRAY
-            it.isItalic = true
-        }
+        val tc = TextComponent()
+            .add(" [$senderName -> ${targetPlayer.name}] ") {
+                it.color = ChatColor.GRAY
+                it.isItalic = true
+            }
+            .add(TextComponent.fromLegacyText(message).also { charTC ->
+                charTC.forEach {
+                    it.color = ChatColor.GRAY
+                    it.isItalic = true
+                }
+            })
+
         targetPlayer.sendMessage(tc)
         input.sender.sendMessage(tc)
 

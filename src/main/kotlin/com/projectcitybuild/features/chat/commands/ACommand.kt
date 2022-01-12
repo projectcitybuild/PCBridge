@@ -32,10 +32,7 @@ class ACommand(
                     TextComponent()
                         .add("(Staff) $senderName") { it.color = ChatColor.YELLOW }
                         .add(" » ") { it.color = ChatColor.GRAY }
-                        .add(message) {
-                            it.color = ChatColor.YELLOW
-                            it.isItalic = true
-                        }
+                        .add(TextComponent.fromLegacyText(message))
                 )
         }
     }
