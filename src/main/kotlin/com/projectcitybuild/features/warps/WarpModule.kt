@@ -13,6 +13,7 @@ import com.projectcitybuild.features.warps.subchannels.AwaitJoinWarpChannelListe
 import com.projectcitybuild.features.warps.subchannels.ImmediateWarpChannelListener
 import com.projectcitybuild.modules.channels.bungeecord.BungeecordSubChannelListener
 import com.projectcitybuild.modules.channels.spigot.SpigotSubChannelListener
+import com.projectcitybuild.modules.config.ConfigProvider
 import com.projectcitybuild.modules.logger.LoggerProvider
 import com.projectcitybuild.modules.nameguesser.NameGuesser
 import com.projectcitybuild.modules.sessioncache.SpigotSessionCache
@@ -26,12 +27,13 @@ class WarpModule {
     class Bungeecord(
         proxyServer: ProxyServer,
         warpFileStorage: WarpFileStorage,
-        nameGuesser: NameGuesser
+        nameGuesser: NameGuesser,
+        config: ConfigProvider
     ): BungeecordFeatureModule {
         override val bungeecordCommands: Array<BungeecordCommand> = arrayOf(
             DelWarpCommand(warpFileStorage),
             WarpCommand(proxyServer, warpFileStorage, nameGuesser),
-            WarpsCommand(warpFileStorage),
+            WarpsCommand(warpFileStorage, config),
         )
 
         override val bungeecordSubChannelListeners: Array<BungeecordSubChannelListener> = arrayOf(
