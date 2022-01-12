@@ -39,7 +39,7 @@ class WarpsCommand(
         page = min(page, totalWarpPages)
 
         val warpList = availableWarps
-            .sortedDescending()
+            .sorted()
             .chunked(warpsPerPage)[max(page - 1, 0)]
 
         val clickableWarps = warpList.map { name ->

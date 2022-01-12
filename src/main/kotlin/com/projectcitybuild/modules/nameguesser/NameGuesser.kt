@@ -23,7 +23,7 @@ class NameGuesser {
         }
 
         val closestMatchingString = partialMatches
-            .sortedDescending()
+            .sorted()
             .firstOrNull()
             ?: return null
 
