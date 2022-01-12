@@ -13,6 +13,8 @@ sealed class PluginConfig {
         val API_BASE_URL = "api.base_url" defaultTo "https://projectcitybuild.com/api/"
         val API_IS_LOGGING_ENABLED = "api.is_logging_enabled" defaultTo false
 
+        val WARPS_PER_PAGE = "warps.warps_per_page" defaultTo 15
+
         val GROUPS_GUEST = "groups.guest" defaultTo "guest"
         val GROUPS_BUILD_PRIORITY = "groups.build_priority" defaultTo arrayListOf(
             "architect",

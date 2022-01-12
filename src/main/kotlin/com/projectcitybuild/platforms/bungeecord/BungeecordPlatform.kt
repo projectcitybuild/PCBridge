@@ -171,7 +171,8 @@ class BungeecordPlatform: Plugin() {
             WarpModule.Bungeecord(
                 proxy,
                 warpFileStorage,
-                NameGuesser()
+                NameGuesser(),
+                config
             ),
         ).forEach { module ->
             module.bungeecordCommands.forEach { commandRegistry?.register(it) }
@@ -199,6 +200,7 @@ class BungeecordPlatform: Plugin() {
             PluginConfig.API_KEY,
             PluginConfig.API_BASE_URL,
             PluginConfig.API_IS_LOGGING_ENABLED,
+            PluginConfig.WARPS_PER_PAGE,
         )
 
         // TODO

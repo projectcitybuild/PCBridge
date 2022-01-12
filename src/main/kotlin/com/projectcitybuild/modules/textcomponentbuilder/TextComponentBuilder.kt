@@ -23,6 +23,12 @@ fun TextComponent.add(message: String, config: ((TextComponent) -> Unit)? = null
     return this
 }
 
+fun TextComponent.addIf(condition: Boolean, message: String, config: ((TextComponent) -> Unit)? = null): TextComponent {
+    if (!condition) return this
+    add(message, config)
+    return this
+}
+
 fun TextComponent.add(number: Int, config: ((TextComponent) -> Unit)? = null): TextComponent {
     return add(number.toString(), config)
 }
