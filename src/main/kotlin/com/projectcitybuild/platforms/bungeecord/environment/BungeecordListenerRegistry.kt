@@ -3,7 +3,6 @@ package com.projectcitybuild.platforms.bungeecord.environment
 import com.projectcitybuild.modules.logger.LoggerProvider
 import net.md_5.bungee.api.plugin.Listener
 import net.md_5.bungee.api.plugin.Plugin
-import org.bukkit.event.HandlerList
 
 class BungeecordListenerRegistry constructor(
         private val plugin: Plugin,
@@ -19,7 +18,7 @@ class BungeecordListenerRegistry constructor(
     }
 
     fun unregisterAll() {
-        HandlerList.unregisterAll()
+        plugin.proxy.pluginManager?.unregisterListeners(plugin)
         logger.verbose("Unregistered all listeners")
     }
 }

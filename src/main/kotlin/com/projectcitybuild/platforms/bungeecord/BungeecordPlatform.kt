@@ -136,6 +136,7 @@ class BungeecordPlatform: Plugin() {
 
         arrayOf(
             BanModule(
+                plugin = this,
                 proxy,
                 playerUUIDRepository,
                 banRepository,

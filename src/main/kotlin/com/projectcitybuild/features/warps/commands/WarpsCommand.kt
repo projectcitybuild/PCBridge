@@ -12,7 +12,9 @@ import com.projectcitybuild.platforms.bungeecord.extensions.addIf
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.CommandSender
 import net.md_5.bungee.api.chat.ClickEvent
+import net.md_5.bungee.api.chat.HoverEvent
 import net.md_5.bungee.api.chat.TextComponent
+import net.md_5.bungee.api.chat.hover.content.Text
 import kotlin.math.ceil
 import kotlin.math.max
 import kotlin.math.min
@@ -45,6 +47,7 @@ class WarpsCommand(
         val clickableWarps = warpList.map { name ->
             TextComponent(name).also {
                 it.clickEvent = ClickEvent(ClickEvent.Action.RUN_COMMAND, "/warp $name")
+                it.hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT, Text("/warp $name"))
                 it.isUnderlined = true
             }
         }
