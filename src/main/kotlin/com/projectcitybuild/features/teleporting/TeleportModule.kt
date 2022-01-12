@@ -11,6 +11,7 @@ import com.projectcitybuild.features.teleporting.subchannels.AwaitJoinTeleportCh
 import com.projectcitybuild.features.teleporting.subchannels.ImmediateTeleportChannelListener
 import com.projectcitybuild.modules.channels.spigot.SpigotSubChannelListener
 import com.projectcitybuild.modules.logger.LoggerProvider
+import com.projectcitybuild.modules.nameguesser.NameGuesser
 import com.projectcitybuild.modules.sessioncache.SpigotSessionCache
 import com.projectcitybuild.old_modules.playerconfig.PlayerConfigRepository
 import net.md_5.bungee.api.ProxyServer
@@ -20,13 +21,14 @@ class TeleportModule {
 
     class Bungeecord(
         proxyServer: ProxyServer,
-        playerConfigRepository: PlayerConfigRepository
+        playerConfigRepository: PlayerConfigRepository,
+        nameGuesser: NameGuesser
     ): BungeecordFeatureModule {
         override val bungeecordCommands: Array<BungeecordCommand> = arrayOf(
-            TPCommand(proxyServer, playerConfigRepository),
-            TPHereCommand(proxyServer),
-            TPOCommand(proxyServer),
-            TPToggleCommand(proxyServer, playerConfigRepository),
+            TPCommand(proxyServer, playerConfigRepository, nameGuesser),
+            TPHereCommand(proxyServer, nameGuesser),
+            TPOCommand(proxyServer, nameGuesser),
+//            TPToggleCommand(proxyServer, playerConfigRepository),
         )
     }
 

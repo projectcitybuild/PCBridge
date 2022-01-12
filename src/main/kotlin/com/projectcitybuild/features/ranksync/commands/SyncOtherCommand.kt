@@ -2,6 +2,7 @@ package com.projectcitybuild.features.ranksync.commands
 
 import com.projectcitybuild.core.InvalidCommandArgumentsException
 import com.projectcitybuild.features.ranksync.SyncPlayerGroupService
+import com.projectcitybuild.modules.nameguesser.NameGuesser
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
 import com.projectcitybuild.modules.textcomponentbuilder.send
@@ -10,7 +11,8 @@ import net.md_5.bungee.api.ProxyServer
 
 class SyncOtherCommand(
     private val proxyServer: ProxyServer,
-    private val syncPlayerGroupService: SyncPlayerGroupService
+    private val syncPlayerGroupService: SyncPlayerGroupService,
+    private val nameGuesser: NameGuesser
 ): BungeecordCommand {
 
     override val label: String = "syncother"
@@ -22,19 +24,18 @@ class SyncOtherCommand(
             throw InvalidCommandArgumentsException()
         }
 
-        val playerName = input.args.first()
-        val player = proxyServer.players
-            .firstOrNull { it.name.lowercase() == playerName.lowercase() }
+        val targetPlayerName = input.args.first()
+        val targetPlayer = nameGuesser.guessClosest(targetPlayerName, proxyServer.players) { it.name }
 
-        if (player == null) {
-            input.sender.send().error("$playerName is not online")
+        if (targetPlayer == null) {
+            input.sender.send().error("$targetPlayerName is not online")
             return
         }
 
         runCatching {
-            syncPlayerGroupService.execute(player.uniqueId)
+            syncPlayerGroupService.execute(targetPlayer.uniqueId)
         }.onFailure { throwable ->
-            player.send().error(
+            targetPlayer.send().error(
                 when (throwable) {
                     is SyncPlayerGroupService.AccountNotLinkedException -> "Sync failed: Player does not have a linked PCB account"
                     is SyncPlayerGroupService.PermissionUserNotFoundException -> "Permission user not found. Check that the user exists in the Permission plugin"
@@ -44,8 +45,8 @@ class SyncOtherCommand(
             return
         }
 
-        input.sender.send().success("$playerName has been synchronized")
-        player.send().success("Your account groups have been synchronized")
+        input.sender.send().success("$targetPlayerName has been synchronized")
+        targetPlayer.send().success("Your account groups have been synchronized")
     }
 
     override fun onTabComplete(sender: CommandSender?, args: List<String>): Iterable<String>? {

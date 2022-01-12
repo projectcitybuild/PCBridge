@@ -2,6 +2,7 @@ package com.projectcitybuild.features.teleporting.commands
 
 import com.projectcitybuild.core.InvalidCommandArgumentsException
 import com.projectcitybuild.entities.SubChannel
+import com.projectcitybuild.modules.nameguesser.NameGuesser
 import com.projectcitybuild.old_modules.playerconfig.PlayerConfigRepository
 import com.projectcitybuild.platforms.bungeecord.MessageToSpigot
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
@@ -12,7 +13,8 @@ import net.md_5.bungee.api.ProxyServer
 
 class TPCommand(
     private val proxyServer: ProxyServer,
-    private val playerConfigRepository: PlayerConfigRepository
+    private val playerConfigRepository: PlayerConfigRepository,
+    private val nameGuesser: NameGuesser
 ): BungeecordCommand {
 
     override val label: String = "tp"
@@ -29,7 +31,7 @@ class TPCommand(
         }
 
         val targetPlayerName = input.args.first()
-        val targetPlayer = proxyServer.players.firstOrNull { it.name.lowercase() == targetPlayerName.lowercase() }
+        val targetPlayer = nameGuesser.guessClosest(targetPlayerName, proxyServer.players) { it.name }
         if (targetPlayer == null) {
             input.sender.send().error("Player $targetPlayerName not found")
             return
