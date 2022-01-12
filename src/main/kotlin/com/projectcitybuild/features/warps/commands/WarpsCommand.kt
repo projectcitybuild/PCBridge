@@ -59,7 +59,9 @@ class WarpsCommand(
 
         val tc = TextComponent()
             .add("Warps") { it.isBold = true }
-            .addIf(totalWarpPages > 1, " (Page $page/$totalWarpPages)") { it.color = ChatColor.GRAY }
+            .addIf(totalWarpPages > 1, " ($page/$totalWarpPages)") {
+                it.color = ChatColor.GRAY
+            }
             .add("\n---\n")
             .add(clickableWarpList)
 

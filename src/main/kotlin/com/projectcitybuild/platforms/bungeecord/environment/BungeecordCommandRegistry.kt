@@ -54,22 +54,22 @@ class BungeecordCommandRegistry constructor(
                         sender = sender,
                         args = args
                     )
-                    runCatching {
-                        CoroutineScope(Dispatchers.IO).launch {
+                    CoroutineScope(Dispatchers.IO).launch {
+                        runCatching {
                             command.execute(input)
-                        }
-                    }.onFailure { throwable ->
-                        if (throwable is InvalidCommandArgumentsException) {
-                            sender.sendMessage(
-                                TextComponent(command.usageHelp).also {
-                                    it.color = ChatColor.GRAY
-                                    it.isItalic = true
-                                }
-                            )
-                        } else {
-                            sender.send().error(throwable.message ?: "An internal error occurred performing your command")
-                            throwable.message?.let { logger.fatal(it) }
-                            throwable.printStackTrace()
+                        }.onFailure { throwable ->
+                            if (throwable is InvalidCommandArgumentsException) {
+                                sender.sendMessage(
+                                    TextComponent(command.usageHelp).also {
+                                        it.color = ChatColor.GRAY
+                                        it.isItalic = true
+                                    }
+                                )
+                            } else {
+                                sender.send().error(throwable.message ?: "An internal error occurred performing your command")
+                                throwable.message?.let { logger.fatal(it) }
+                                throwable.printStackTrace()
+                            }
                         }
                     }
                     true

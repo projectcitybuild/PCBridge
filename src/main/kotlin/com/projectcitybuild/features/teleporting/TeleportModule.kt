@@ -28,7 +28,7 @@ class TeleportModule {
             TPCommand(proxyServer, playerConfigRepository, nameGuesser),
             TPHereCommand(proxyServer, nameGuesser),
             TPOCommand(proxyServer, nameGuesser),
-//            TPToggleCommand(proxyServer, playerConfigRepository),
+            TPToggleCommand(playerConfigRepository),
         )
     }
 
