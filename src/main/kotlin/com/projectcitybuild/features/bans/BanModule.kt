@@ -11,8 +11,10 @@ import com.projectcitybuild.features.bans.listeners.BanConnectionListener
 import com.projectcitybuild.features.bans.repositories.BanRepository
 import net.md_5.bungee.api.ProxyServer
 import net.md_5.bungee.api.plugin.Listener
+import net.md_5.bungee.api.plugin.Plugin
 
 class BanModule(
+    plugin: Plugin,
     proxyServer: ProxyServer,
     playerUUIDRepository: PlayerUUIDRepository,
     banRepository: BanRepository,
@@ -26,6 +28,6 @@ class BanModule(
     )
 
     override val bungeecordListeners: Array<Listener> = arrayOf(
-        BanConnectionListener(banRepository, logger)
+        BanConnectionListener(plugin, banRepository, logger)
     )
 }
