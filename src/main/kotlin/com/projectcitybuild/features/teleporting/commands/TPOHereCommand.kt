@@ -10,14 +10,14 @@ import com.projectcitybuild.modules.textcomponentbuilder.send
 import net.md_5.bungee.api.CommandSender
 import net.md_5.bungee.api.ProxyServer
 
-class TPOCommand(
+class TPOHereCommand(
     private val proxyServer: ProxyServer,
     private val nameGuesser: NameGuesser
 ): BungeecordCommand {
 
-    override val label: String = "tpo"
-    override val permission = "pcbridge.tpo.use"
-    override val usageHelp = "/tpo <name>"
+    override val label: String = "tphere"
+    override val permission = "pcbridge.tpo.here"
+    override val usageHelp = "/tpohere <name>"
 
     override suspend fun execute(input: BungeecordCommandInput) {
         if (input.player == null) {
@@ -46,13 +46,13 @@ class TPOCommand(
             targetServer.info,
             subChannel,
             arrayOf(
+                targetPlayer.uniqueId.toString(),
                 input.player.uniqueId.toString(),
-                targetPlayer.uniqueId.toString()
             )
         ).send()
 
         if (!isTargetPlayerOnSameServer) {
-            input.player.connect(targetServer.info)
+            targetPlayer.connect(input.player.server.info)
         }
     }
 

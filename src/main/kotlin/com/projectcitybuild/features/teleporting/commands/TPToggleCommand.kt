@@ -6,53 +6,53 @@ import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import net.md_5.bungee.api.CommandSender
-import net.md_5.bungee.api.ProxyServer
 
 class TPToggleCommand(
-    private val proxyServer: ProxyServer,
     private val playerConfigRepository: PlayerConfigRepository
 ): BungeecordCommand {
 
     override val label = "tptoggle"
     override val permission = "pcbridge.tp.toggle"
-    override val usageHelp = "/tptoggle <off|on>"
+    override val usageHelp = "/tptoggle [on|off]"
 
     override suspend fun execute(input: BungeecordCommandInput) {
-        when {
-            input.player == null -> {
-                input.sender.send().error("Console cannot use this command")
-                return
-            }
-            input.args.size != 1
-                    || input.args.first().lowercase() != "off"
-                    || input.args.first().lowercase() != "on" -> {
-                throw InvalidCommandArgumentsException()
-            }
-        }
-
-        val toggleOn = input.args.first()
-
-        val targetPlayerName = input.args.first()
-        val targetPlayer = proxyServer.players
-            .firstOrNull { it.name.lowercase() == targetPlayerName.lowercase() }
-
-        if (targetPlayer == null) {
-            input.sender.send().error("Player $targetPlayerName not found")
+        if (input.player == null) {
+            input.sender.send().error("Console cannot use this command")
             return
         }
 
-        val player = playerConfigRepository.get(targetPlayer.uniqueId).also {
-            it.isMuted = true
+        val desiredState = input.args.firstOrNull()?.lowercase()
+        if (input.args.size == 1 && (desiredState != "off" && desiredState != "on")) {
+            throw InvalidCommandArgumentsException()
         }
-        playerConfigRepository.save(player)
 
-        input.sender.send().success("${targetPlayer.name} has been muted")
-        targetPlayer.send().info("You have been muted by ${input.sender.name}")
+        val playerConfig = playerConfigRepository.get(input.player.uniqueId)
+
+        // Either use the given toggle value, or reverse the current saved value
+        val willToggleOn = if (input.args.size == 1) desiredState == "on" else !playerConfig.isAllowingTPs
+
+        when {
+            willToggleOn && playerConfig.isAllowingTPs
+                -> input.sender.send().error("Already allowing teleports")
+
+            !willToggleOn && !playerConfig.isAllowingTPs
+                -> input.sender.send().error("Already disallowing teleports")
+
+            else -> {
+                playerConfig.isAllowingTPs = willToggleOn
+                playerConfigRepository.save(playerConfig)
+
+                input.sender.send().success(
+                    if (willToggleOn) "Players can now teleport to or summon you"
+                    else "Players can no longer teleport to or summon you"
+                )
+            }
+        }
     }
 
     override fun onTabComplete(sender: CommandSender?, args: List<String>): Iterable<String>? {
         return when {
-            args.isEmpty() -> proxyServer.players.map { it.name }
+            args.isEmpty() -> listOf("on", "off")
             else -> null
         }
     }

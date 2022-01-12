@@ -8,7 +8,7 @@ import java.util.*
 data class PlayerConfig(
     val uuid: SerializableUUID,
     var isMuted: Boolean = false,
-    val isAllowingTPs: Boolean = true,
+    var isAllowingTPs: Boolean = true,
     var chatPrefix: String = "",
     var chatSuffix: String = "",
     var chatGroups: String = "",

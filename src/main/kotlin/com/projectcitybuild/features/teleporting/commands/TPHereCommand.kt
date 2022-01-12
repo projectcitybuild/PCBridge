@@ -7,11 +7,13 @@ import com.projectcitybuild.platforms.bungeecord.MessageToSpigot
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
 import com.projectcitybuild.modules.textcomponentbuilder.send
+import com.projectcitybuild.old_modules.playerconfig.PlayerConfigRepository
 import net.md_5.bungee.api.CommandSender
 import net.md_5.bungee.api.ProxyServer
 
 class TPHereCommand(
     private val proxyServer: ProxyServer,
+    private val playerConfigRepository: PlayerConfigRepository,
     private val nameGuesser: NameGuesser
 ): BungeecordCommand {
 
@@ -32,6 +34,12 @@ class TPHereCommand(
         val targetPlayer = nameGuesser.guessClosest(targetPlayerName, proxyServer.players) { it.name }
         if (targetPlayer == null) {
             input.sender.send().error("Player $targetPlayerName not found")
+            return
+        }
+
+        val targetPlayerConfig = playerConfigRepository.get(targetPlayer.uniqueId)
+        if (!targetPlayerConfig.isAllowingTPs) {
+            input.sender.send().error("$targetPlayerName is disallowing teleports")
             return
         }
 

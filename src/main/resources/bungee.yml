@@ -42,9 +42,15 @@ commands:
   tp:
     description: "Teleports to a given player"
     usage: "/tp <name>"
+  tpo:
+    description: "Teleports to a given player regardless of whether they allow teleports"
+    usage: "/tpo <name>"
   tphere:
-    description: "Teleports a given player to your location"
+    description: "Summons a given player to your location"
     usage: "/tphere <name>"
+  tpohere:
+    description: "Summons a given player to your location regardless of whether they allow teleports"
+    usage: "/tpo <name>"
   unban:
     description: "Allows a banned player to connect to the server"
     usage: "/unban <name>"
