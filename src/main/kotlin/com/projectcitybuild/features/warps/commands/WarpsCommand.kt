@@ -9,6 +9,7 @@ import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.CommandSender
 import kotlin.math.ceil
 import kotlin.math.max
+import kotlin.math.min
 
 class WarpsCommand(
     private val warpFileStorage: WarpFileStorage
@@ -28,10 +29,11 @@ class WarpsCommand(
         val availableWarps = warpFileStorage.keys()
         val warpPages = ceil((availableWarps.size / warpsPerPage).toDouble()).toInt()
 
-        if (page > warpPages) {
-            page = warpPages
-        }
-        val warpList = availableWarps.chunked(warpsPerPage)[max(page - 1, 0)]
+        page = min(page, warpPages)
+
+        val warpList = availableWarps
+            .sortedDescending()
+            .chunked(warpsPerPage)[max(page - 1, 0)]
 
         val pageDisplay = if (warpPages > 1) "${ChatColor.GRAY}(Page $page/$warpPages)" else ""
 
