@@ -4,8 +4,8 @@ import com.google.common.io.ByteArrayDataInput
 import com.projectcitybuild.entities.SubChannel
 import com.projectcitybuild.entities.Warp
 import com.projectcitybuild.modules.channels.bungeecord.BungeecordSubChannelListener
-import com.projectcitybuild.old_modules.storage.serializers.SerializableDate
-import com.projectcitybuild.old_modules.storage.serializers.SerializableUUID
+import com.projectcitybuild.entities.serializables.SerializableDate
+import com.projectcitybuild.entities.serializables.SerializableUUID
 import com.projectcitybuild.old_modules.storage.WarpFileStorage
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import kotlinx.coroutines.CoroutineScope

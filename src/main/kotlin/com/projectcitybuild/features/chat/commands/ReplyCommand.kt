@@ -62,8 +62,4 @@ class ReplyCommand(
 
         sessionCache.lastWhispered[targetPlayer.uniqueId] = input.player.uniqueId
     }
-
-    override fun onTabComplete(sender: CommandSender?, args: List<String>): Iterable<String>? {
-        return null
-    }
 }

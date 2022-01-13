@@ -70,8 +70,4 @@ class WarpsCommand(
 
         input.sender.sendMessage(tc)
     }
-
-    override fun onTabComplete(sender: CommandSender?, args: List<String>): Iterable<String>? {
-        return null
-    }
 }

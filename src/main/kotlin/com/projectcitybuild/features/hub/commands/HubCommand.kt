@@ -63,8 +63,4 @@ class HubCommand(
             input.player.connect(targetServer)
         }
     }
-
-    override fun onTabComplete(sender: CommandSender?, args: List<String>): Iterable<String>? {
-        return null
-    }
 }
