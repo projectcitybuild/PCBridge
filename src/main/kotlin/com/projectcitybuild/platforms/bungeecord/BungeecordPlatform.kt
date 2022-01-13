@@ -24,6 +24,7 @@ import com.projectcitybuild.modules.playeruuid.PlayerUUIDRepository
 import com.projectcitybuild.features.ranksync.SyncPlayerGroupService
 import com.projectcitybuild.modules.channels.bungeecord.BungeecordMessageListener
 import com.projectcitybuild.modules.config.implementations.BungeecordConfig
+import com.projectcitybuild.modules.database.DataSource
 import com.projectcitybuild.modules.logger.implementations.BungeecordLogger
 import com.projectcitybuild.modules.nameguesser.NameGuesser
 import com.projectcitybuild.modules.sessioncache.BungeecordSessionCache
@@ -55,6 +56,17 @@ class BungeecordPlatform: Plugin() {
             mojang = MojangClient(
                 withLogging = isLoggingEnabled
             )
+        )
+    }
+
+    private val dataSource: DataSource by lazy {
+        DataSource(
+            logger = bungeecordLogger,
+            hostName = config.get(PluginConfig.DB_HOSTNAME),
+            port = config.get(PluginConfig.DB_PORT),
+            databaseName = config.get(PluginConfig.DB_NAME),
+            databaseUsername = config.get(PluginConfig.DB_USERNAME),
+            databasePassword = config.get(PluginConfig.DB_PASSWORD)
         )
     }
 
@@ -123,6 +135,8 @@ class BungeecordPlatform: Plugin() {
     override fun onEnable() {
         config.load()
         createDefaultConfig()
+
+        dataSource.connect()
 
         proxy.registerChannel(Channel.BUNGEECORD)
 
@@ -194,6 +208,8 @@ class BungeecordPlatform: Plugin() {
         sessionCache = null
 
         playerConfigCache.flush()
+
+        dataSource.close()
     }
 
     private fun createDefaultConfig() {
@@ -202,6 +218,11 @@ class BungeecordPlatform: Plugin() {
             PluginConfig.API_BASE_URL,
             PluginConfig.API_IS_LOGGING_ENABLED,
             PluginConfig.WARPS_PER_PAGE,
+            PluginConfig.DB_HOSTNAME,
+            PluginConfig.DB_PORT,
+            PluginConfig.DB_NAME,
+            PluginConfig.DB_USERNAME,
+            PluginConfig.DB_PASSWORD,
         )
 
         // TODO

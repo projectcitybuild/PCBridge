@@ -13,6 +13,12 @@ sealed class PluginConfig {
         val API_BASE_URL = "api.base_url" defaultTo "https://projectcitybuild.com/api/"
         val API_IS_LOGGING_ENABLED = "api.is_logging_enabled" defaultTo false
 
+        val DB_HOSTNAME = "database.hostname" defaultTo "127.0.0.1"
+        val DB_PORT = "database.port" defaultTo 3306
+        val DB_NAME = "database.name" defaultTo "pcbridge"
+        val DB_USERNAME = "database.username" defaultTo "username"
+        val DB_PASSWORD = "database.password" defaultTo "password"
+
         val WARPS_PER_PAGE = "warps.warps_per_page" defaultTo 15
 
         val GROUPS_GUEST = "groups.guest" defaultTo "guest"
