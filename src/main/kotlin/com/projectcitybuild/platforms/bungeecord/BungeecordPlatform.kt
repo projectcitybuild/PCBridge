@@ -61,12 +61,14 @@ class BungeecordPlatform: Plugin() {
 
     private val dataSource: DataSource by lazy {
         DataSource(
+            this,
             logger = bungeecordLogger,
             hostName = config.get(PluginConfig.DB_HOSTNAME),
             port = config.get(PluginConfig.DB_PORT),
             databaseName = config.get(PluginConfig.DB_NAME),
             databaseUsername = config.get(PluginConfig.DB_USERNAME),
-            databasePassword = config.get(PluginConfig.DB_PASSWORD)
+            databasePassword = config.get(PluginConfig.DB_PASSWORD),
+            shouldRunMigrations = true
         )
     }
 

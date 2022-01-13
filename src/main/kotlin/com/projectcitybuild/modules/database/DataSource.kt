@@ -4,14 +4,17 @@ import com.projectcitybuild.entities.migrations.Migration
 import com.projectcitybuild.modules.logger.LoggerProvider
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
+import net.md_5.bungee.api.plugin.Plugin
 
 class DataSource(
+    private val plugin: Plugin,
     private val logger: LoggerProvider,
     private val hostName: String,
     private val port: Int = 3306,
     private val databaseName: String,
     private val databaseUsername: String,
     private val databasePassword: String,
+    private val shouldRunMigrations: Boolean,
 ) {
     class DatabaseNotFoundException: Exception()
     class UndeterminedMigrationVersion: Exception()
@@ -36,7 +39,7 @@ class DataSource(
         }
 
         val version = getVersion()
-        Migration.executeIfNecessary(dataSource, logger, currentVersion = version)
+        Migration.executeIfNecessary(dataSource, logger, plugin, currentVersion = version)
     }
 
     fun close() {

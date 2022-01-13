@@ -48,4 +48,11 @@ class PlayerConfigFileStorage(
         val file = File(folderPath, fileName(key))
         file.delete()
     }
+
+    fun keys(): List<String> {
+        return folderPath
+            .listFiles { file -> file.extension == "json" }
+            ?.map { it.nameWithoutExtension }
+            ?: emptyList()
+    }
 }
