@@ -5,6 +5,7 @@ import com.projectcitybuild.modules.logger.LoggerProvider
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import net.md_5.bungee.api.plugin.Plugin
+import java.sql.Connection
 
 class DataSource(
     private val plugin: Plugin,
@@ -37,9 +38,10 @@ class DataSource(
         if (!hasDatabase(databaseName)) {
             throw DatabaseNotFoundException()
         }
-
-        val version = getVersion()
-        Migration.executeIfNecessary(dataSource, logger, plugin, currentVersion = version)
+        if (shouldRunMigrations) {
+            val version = getVersion()
+            Migration.executeIfNecessary(dataSource, logger, plugin, currentVersion = version)
+        }
     }
 
     fun close() {
@@ -47,6 +49,8 @@ class DataSource(
 
         dataSource.connection.close()
     }
+
+    fun connection(): Connection = dataSource.connection
 
     private fun getVersion(): Int {
         var version = 0

@@ -22,6 +22,7 @@ import com.projectcitybuild.modules.playeruuid.MojangPlayerRepository
 import com.projectcitybuild.old_modules.playerconfig.PlayerConfigRepository
 import com.projectcitybuild.modules.playeruuid.PlayerUUIDRepository
 import com.projectcitybuild.features.ranksync.SyncPlayerGroupService
+import com.projectcitybuild.features.warps.repositories.WarpRepository
 import com.projectcitybuild.modules.channels.bungeecord.BungeecordMessageListener
 import com.projectcitybuild.modules.config.implementations.BungeecordConfig
 import com.projectcitybuild.modules.database.DataSource
@@ -114,6 +115,10 @@ class BungeecordPlatform: Plugin() {
         )
     }
 
+    private val warpRepository: WarpRepository by lazy {
+        WarpRepository(dataSource)
+    }
+
     private val syncPlayerGroupService: SyncPlayerGroupService by lazy {
         SyncPlayerGroupService(
             permissionsManager!!,
@@ -187,7 +192,7 @@ class BungeecordPlatform: Plugin() {
             ),
             WarpModule.Bungeecord(
                 proxy,
-                warpFileStorage,
+                warpRepository,
                 NameGuesser(),
                 config
             ),

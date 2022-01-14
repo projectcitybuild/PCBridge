@@ -2,8 +2,8 @@ package com.projectcitybuild.features.warps.commands
 
 import com.projectcitybuild.core.InvalidCommandArgumentsException
 import com.projectcitybuild.entities.SubChannel
+import com.projectcitybuild.features.warps.repositories.WarpRepository
 import com.projectcitybuild.modules.nameguesser.NameGuesser
-import com.projectcitybuild.old_modules.storage.WarpFileStorage
 import com.projectcitybuild.platforms.bungeecord.MessageToSpigot
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
@@ -13,7 +13,7 @@ import net.md_5.bungee.api.ProxyServer
 
 class WarpCommand(
     private val proxyServer: ProxyServer,
-    private val warpFileStorage: WarpFileStorage,
+    private val warpRepository: WarpRepository,
     private val nameGuesser: NameGuesser
 ): BungeecordCommand {
 
@@ -30,7 +30,8 @@ class WarpCommand(
             return
         }
 
-        val availableWarpNames = warpFileStorage.keys()
+        val availableWarps = warpRepository.all()
+        val availableWarpNames = availableWarps.map { it.name }
 
         val targetWarpName = input.args.first()
         val warpName = nameGuesser.guessClosest(targetWarpName, availableWarpNames)
@@ -39,7 +40,7 @@ class WarpCommand(
             return
         }
 
-        val warp = warpFileStorage.load(warpName)!!
+        val warp = availableWarps.first { it.name == warpName }
 
         val targetServer = proxyServer.servers[warp.serverName]
         if (targetServer == null) {
@@ -73,7 +74,7 @@ class WarpCommand(
 
     override fun onTabComplete(sender: CommandSender?, args: List<String>): Iterable<String>? {
         return when {
-            args.isEmpty() -> warpFileStorage.keys()
+            args.isEmpty() -> warpRepository.all().map { it.name }
             else -> null
         }
     }

@@ -2,7 +2,7 @@ package com.projectcitybuild.features.hub.subchannels
 
 import com.google.common.io.ByteArrayDataInput
 import com.projectcitybuild.entities.SubChannel
-import com.projectcitybuild.entities.Warp
+import com.projectcitybuild.entities.LegacyWarp
 import com.projectcitybuild.modules.channels.bungeecord.BungeecordSubChannelListener
 import com.projectcitybuild.old_modules.storage.HubFileStorage
 import com.projectcitybuild.entities.serializables.SerializableDate
@@ -34,7 +34,7 @@ class IncomingSetHubListener(
         val pitch = stream.readFloat()
         val yaw = stream.readFloat()
 
-        val warp = Warp(
+        val warp = LegacyWarp(
             serverName,
             worldName,
             SerializableUUID(receiver.uniqueId),

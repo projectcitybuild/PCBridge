@@ -1,14 +1,20 @@
 package com.projectcitybuild.entities
 
-import com.projectcitybuild.entities.serializables.SerializableDate
-import com.projectcitybuild.entities.serializables.SerializableLocation
-import kotlinx.serialization.Serializable
+import java.sql.Date
+import java.util.*
 
-@Serializable
 data class TeleportRecord(
-    val location: SerializableLocation,
-    val date: SerializableDate,
-    val reason: TeleportReason,
+    val id: Int,
+    val playerUUID: UUID,
+    val teleportReason: TeleportReason,
+    val serverName: String,
+    val worldName: String,
+    val x: Double,
+    val y: Double,
+    val z: Double,
+    val pitch: Float,
+    val yaw: Float,
+    val createdAt: Date,
 )
 
 enum class TeleportReason {

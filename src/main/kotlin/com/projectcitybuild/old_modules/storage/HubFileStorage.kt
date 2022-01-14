@@ -1,6 +1,6 @@
 package com.projectcitybuild.old_modules.storage
 
-import com.projectcitybuild.entities.Warp
+import com.projectcitybuild.entities.LegacyWarp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -14,7 +14,7 @@ class HubFileStorage(
 ) {
     private val fileName = "hub.json"
 
-    suspend fun load(): Warp? {
+    suspend fun load(): LegacyWarp? {
         val file = File(folderPath, fileName)
         if (!folderPath.exists()) folderPath.mkdir()
         if (!file.exists()) {
@@ -24,10 +24,10 @@ class HubFileStorage(
         if (json.isEmpty())
             return null
 
-        return Json.decodeFromString<Warp>(string = json)
+        return Json.decodeFromString<LegacyWarp>(string = json)
     }
 
-    suspend fun save(value: Warp) {
+    suspend fun save(value: LegacyWarp) {
         val file = File(folderPath, fileName)
         if (!folderPath.exists()) folderPath.mkdir()
         if (!file.exists()) {

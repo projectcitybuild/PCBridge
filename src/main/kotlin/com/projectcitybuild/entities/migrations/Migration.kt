@@ -1,7 +1,5 @@
 package com.projectcitybuild.entities.migrations
 
-import com.projectcitybuild.entities.serializables.SerializableDate
-import com.projectcitybuild.entities.serializables.SerializableUUID
 import com.projectcitybuild.modules.logger.LoggerProvider
 import com.projectcitybuild.old_modules.playerconfig.PlayerConfigFileStorage
 import com.projectcitybuild.old_modules.storage.WarpFileStorage
@@ -101,10 +99,7 @@ object Migration {
 	                |   `pitch` FLOAT NOT NULL DEFAULT 0,
 	                |   `yaw` FLOAT NOT NULL DEFAULT 0,
 	                |   `created_at` DATETIME NOT NULL,
-	                |   `player_id` BIGINT UNSIGNED NOT NULL,
-	                |   PRIMARY KEY (`name`) USING BTREE,
-                    |   INDEX (`player_id`),
-                    |   FOREIGN KEY (`player_id`) REFERENCES `players`(`id`)
+	                |   PRIMARY KEY (`name`) USING BTREE
                     |);
                     """
                     .trimMargin("|")
@@ -118,15 +113,8 @@ object Migration {
                     plugin.logger.info("Migrating warps/$fileName.json to database")
                     val warp = warpStorage.load(fileName)!!
 
-                    val playerStatement = connection.prepareStatement("SELECT `id` FROM players WHERE `uuid`=(?);")
-                    playerStatement.setString(1, warp.playerUUID.unwrapped.toString())
-                    val result = playerStatement.executeQuery()
-                    result.next()
-                    val playerId = result.getString(1)
-                    result.close()
-
                     val statement = connection.prepareStatement(
-                        "INSERT INTO `warps` VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"
+                        "INSERT INTO `warps` VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?);"
                     ).apply {
                         setString(1, fileName)
                         setString(2, warp.serverName)
@@ -137,11 +125,34 @@ object Migration {
                         setFloat(7, warp.pitch)
                         setFloat(8, warp.yaw)
                         setDate(9, Date(warp.createdAt.unwrapped.time))
-                        setString(10, playerId)
                     }
                     statement.executeUpdate()
                 }
             }
+
+            connection
+                .prepareStatement(
+                    """
+                    |CREATE TABLE teleport_history (
+                    |   `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+	                |   `player_id` BIGINT UNSIGNED NOT NULL,
+	                |   `tp_reason` VARCHAR(50) NOT NULL,
+	                |   `server_name` VARCHAR(50) NOT NULL,
+	                |   `world_name` VARCHAR(50) NOT NULL,
+	                |   `x` DOUBLE NOT NULL DEFAULT 0,
+	                |   `y` DOUBLE NOT NULL DEFAULT 0,
+	                |   `z` DOUBLE NOT NULL DEFAULT 0,
+	                |   `pitch` FLOAT NOT NULL DEFAULT 0,
+	                |   `yaw` FLOAT NOT NULL DEFAULT 0,
+	                |   `created_at` DATETIME NOT NULL,
+	                |   PRIMARY KEY (`id`),
+	                |   CONSTRAINT `teleport_history_player_id` FOREIGN KEY (`player_id`) REFERENCES `players` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION
+                    |);
+                    """
+                    .trimMargin("|")
+                    .replace("\n", "")
+                )
+                .executeUpdate()
         },
     )
 

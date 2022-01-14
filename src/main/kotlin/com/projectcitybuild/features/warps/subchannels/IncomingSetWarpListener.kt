@@ -4,19 +4,17 @@ import com.google.common.io.ByteArrayDataInput
 import com.projectcitybuild.entities.SubChannel
 import com.projectcitybuild.entities.Warp
 import com.projectcitybuild.modules.channels.bungeecord.BungeecordSubChannelListener
-import com.projectcitybuild.entities.serializables.SerializableDate
-import com.projectcitybuild.entities.serializables.SerializableUUID
-import com.projectcitybuild.old_modules.storage.WarpFileStorage
+import com.projectcitybuild.features.warps.repositories.WarpRepository
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import net.md_5.bungee.api.connection.Connection
 import net.md_5.bungee.api.connection.ProxiedPlayer
-import java.util.*
+import java.sql.Date
 
 class IncomingSetWarpListener(
-    private val warpStorage: WarpFileStorage
+    private val warpRepository: WarpRepository
 ): BungeecordSubChannelListener {
 
     override val subChannel = SubChannel.SET_WARP
@@ -35,24 +33,24 @@ class IncomingSetWarpListener(
         val pitch = stream.readFloat()
         val yaw = stream.readFloat()
 
-        if (warpStorage.exists(warpName)) {
+        if (warpRepository.exists(warpName)) {
             receiver.send().error("A warp for $warpName already exists")
             return
         }
 
         val warp = Warp(
+            warpName,
             serverName,
             worldName,
-            SerializableUUID(receiver.uniqueId),
             x,
             y,
             z,
             pitch,
             yaw,
-            SerializableDate(Date())
+            Date(System.currentTimeMillis())
         )
         CoroutineScope(Dispatchers.IO).launch {
-            warpStorage.save(warpName, warp)
+            warpRepository.add(warp)
             receiver.send().success("Created warp for $warpName")
         }
     }

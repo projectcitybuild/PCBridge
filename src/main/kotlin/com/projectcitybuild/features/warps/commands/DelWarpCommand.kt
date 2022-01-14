@@ -1,14 +1,14 @@
 package com.projectcitybuild.features.warps.commands
 
 import com.projectcitybuild.core.InvalidCommandArgumentsException
-import com.projectcitybuild.old_modules.storage.WarpFileStorage
+import com.projectcitybuild.features.warps.repositories.WarpRepository
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import net.md_5.bungee.api.CommandSender
 
 class DelWarpCommand(
-    private val warpFileStorage: WarpFileStorage
+    private val warpRepository: WarpRepository
 ): BungeecordCommand {
 
     override val label: String = "delwarp"
@@ -22,19 +22,19 @@ class DelWarpCommand(
 
         val warpName = input.args.first()
 
-        if (!warpFileStorage.exists(warpName)) {
+        if (!warpRepository.exists(warpName)) {
             input.sender.send().error("Warp $warpName does not exist")
             return
         }
 
         // TODO: Add confirmation
-        warpFileStorage.delete(warpName)
+        warpRepository.delete(warpName)
         input.sender.send().success("Warp $warpName deleted")
     }
 
     override fun onTabComplete(sender: CommandSender?, args: List<String>): Iterable<String>? {
         return when {
-            args.isEmpty() -> warpFileStorage.keys()
+            args.isEmpty() -> warpRepository.all().map { it.name }
             else -> null
         }
     }
