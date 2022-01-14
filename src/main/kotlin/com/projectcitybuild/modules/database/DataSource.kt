@@ -50,7 +50,9 @@ class DataSource(
         dataSource.connection.close()
     }
 
-    fun connection(): Connection = dataSource.connection
+    fun connection(): Connection {
+        return dataSource.connection
+    }
 
     private fun getVersion(): Int {
         var version = 0

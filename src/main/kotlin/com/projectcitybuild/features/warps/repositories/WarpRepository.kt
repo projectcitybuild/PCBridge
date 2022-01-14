@@ -4,16 +4,25 @@ import com.projectcitybuild.entities.Warp
 import com.projectcitybuild.modules.database.DataSource
 
 class WarpRepository(
-    private val dataSource: DataSource
+    private val dataSource: DataSource,
 ) {
+    private var cache: List<Warp>? = null
+
     fun exists(name: String): Boolean {
         return first(name) != null
     }
 
     fun first(name: String): Warp? {
+        val cache = cache
+        if (cache != null) {
+            return cache.first { it.name == name }
+        }
+
         val statement = dataSource.connection().prepareStatement(
             "SELECT * FROM `warps` WHERE `name`='?'"
-        )
+        ).apply {
+            setString(1, name)
+        }
         val resultSet = statement.executeQuery()
         if (resultSet.next()) {
             return Warp(
@@ -28,18 +37,24 @@ class WarpRepository(
                 createdAt = resultSet.getDate(9),
             )
         }
+
         resultSet.close()
         return null
     }
 
     fun all(): List<Warp> {
+        val cache = cache
+        if (cache != null) {
+            return cache.sortedBy { it.name }
+        }
+
         val statement = dataSource.connection().prepareStatement(
             "SELECT * FROM `warps` ORDER BY `name` ASC"
         )
         val resultSet = statement.executeQuery()
         val warps = mutableListOf<Warp>()
         while (resultSet.next()) {
-            warps.add(Warp(
+            val warp = Warp(
                 name = resultSet.getString(1),
                 serverName = resultSet.getString(2),
                 worldName = resultSet.getString(3),
@@ -49,13 +64,19 @@ class WarpRepository(
                 pitch = resultSet.getFloat(7),
                 yaw = resultSet.getFloat(8),
                 createdAt = resultSet.getDate(9),
-            ))
+            )
+            warps.add(warp)
         }
         resultSet.close()
+
+        this.cache = warps
+
         return warps
     }
 
     fun add(warp: Warp) {
+        cache = null
+
         dataSource.connection().prepareStatement(
             "INSERT INTO `warps` VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
         ).apply {
@@ -74,6 +95,8 @@ class WarpRepository(
     }
 
     fun delete(name: String) {
+        cache = null
+
         dataSource.connection().prepareStatement(
             "DELETE FROM `warps` WHERE `name`='?'"
         ).apply {
