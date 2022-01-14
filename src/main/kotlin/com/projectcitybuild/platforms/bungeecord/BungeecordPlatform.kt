@@ -16,10 +16,7 @@ import com.projectcitybuild.modules.permissions.PermissionsManager
 import com.projectcitybuild.features.bans.repositories.BanRepository
 import com.projectcitybuild.features.chat.ChatGroupFormatBuilder
 import com.projectcitybuild.features.joinmessage.JoinMessageModule
-import com.projectcitybuild.old_modules.playerconfig.LegacyPlayerConfigCache
-import com.projectcitybuild.old_modules.playerconfig.PlayerConfigFileStorage
 import com.projectcitybuild.modules.playeruuid.MojangPlayerRepository
-import com.projectcitybuild.old_modules.playerconfig.LegacyPlayerConfigRepository
 import com.projectcitybuild.modules.playeruuid.PlayerUUIDRepository
 import com.projectcitybuild.features.ranksync.SyncPlayerGroupService
 import com.projectcitybuild.features.warps.repositories.WarpRepository

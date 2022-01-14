@@ -23,11 +23,11 @@ class PlayerConfigRepository(
         var serializedPlayer: PlayerConfig? = null
         if (resultSet.next()) {
             serializedPlayer = PlayerConfig(
-                uuid = UUID.fromString(resultSet.getString(1)),
-                isMuted = resultSet.getBoolean(2),
-                isAllowingTPs = resultSet.getBoolean(3),
+                uuid = UUID.fromString(resultSet.getString(2)),
+                isMuted = resultSet.getBoolean(3),
+                isAllowingTPs = resultSet.getBoolean(4),
                 chatIgnoreList = mutableSetOf(), // TODO,
-                firstSeen = resultSet.getDate(4)
+                firstSeen = resultSet.getDate(5)
             )
             cache.put(uuid, serializedPlayer)
         }

@@ -153,6 +153,22 @@ object Migration {
                     .replace("\n", "")
                 )
                 .executeUpdate()
+
+            connection
+                .prepareStatement(
+                    """
+                    |CREATE TABLE chat_ignores (
+                    |   `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+                    |   `player_id` BIGINT UNSIGNED NOT NULL,
+                    |   `ignored_uuid` VARCHAR(50) NOT NULL,
+                    |   PRIMARY KEY (`id`),
+                    |   CONSTRAINT `chat_ignores_player_id` FOREIGN KEY (`player_id`) REFERENCES `players` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION
+                    |);
+                    """
+                    .trimMargin("|")
+                    .replace("\n", "")
+                )
+                .executeUpdate()
         },
     )
 
