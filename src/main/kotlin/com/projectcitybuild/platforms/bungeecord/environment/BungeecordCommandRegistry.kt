@@ -29,8 +29,7 @@ class BungeecordCommandRegistry constructor(
         }
 
         override fun onTabComplete(sender: CommandSender?, args: Array<out String>?): MutableIterable<String> {
-             // The command name is given as arg[0] for some reason
-            val improvedArgs = args?.drop(1) ?: emptyList()
+            var improvedArgs = args?.filter { it.isNotEmpty() } ?: emptyList()
 
             val list = tabComplete(sender, improvedArgs) ?: emptyList()
             return list.toMutableList()

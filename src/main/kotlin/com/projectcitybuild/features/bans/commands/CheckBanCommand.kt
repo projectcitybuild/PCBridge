@@ -76,6 +76,7 @@ class CheckBanCommand(
     override fun onTabComplete(sender: CommandSender?, args: List<String>): Iterable<String>? {
         return when {
             args.isEmpty() -> proxyServer.players.map { it.name }
+            args.size == 1 -> proxyServer.players.map { it.name }.filter { it.startsWith(args.first()) }
             else -> null
         }
     }
