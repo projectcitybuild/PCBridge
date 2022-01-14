@@ -9,8 +9,6 @@ interface MojangApiInterface {
 
     @GET("users/profiles/minecraft/{username}")
     suspend fun getMojangPlayer(
-            @Path("username") playerName: String,
-            @Query("at") timestamp: Long? = null
+            @Path("username") playerName: String, @Query("at") timestamp: Long? = null
     ) : MojangPlayer?
-
 }

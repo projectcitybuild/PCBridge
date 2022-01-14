@@ -53,12 +53,11 @@ class BanCommand(
                 )
 
         }.onFailure { throwable ->
-            input.sender.send().error(
-                when (throwable) {
-                    is BanRepository.PlayerAlreadyBannedException -> "$targetPlayerName is already banned"
-                    else -> throwable.message ?: "An unknown error occurred"
-                }
-            )
+            if (throwable is BanRepository.PlayerAlreadyBannedException) {
+                input.sender.send().error("$targetPlayerName is already banned")
+            } else {
+                throw throwable
+            }
         }
     }
 
