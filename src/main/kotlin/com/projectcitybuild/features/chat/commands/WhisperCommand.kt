@@ -3,8 +3,8 @@ package com.projectcitybuild.features.chat.commands
 import com.projectcitybuild.core.InvalidCommandArgumentsException
 import com.projectcitybuild.core.extensions.joinWithWhitespaces
 import com.projectcitybuild.modules.nameguesser.NameGuesser
+import com.projectcitybuild.modules.playerconfig.PlayerConfigRepository
 import com.projectcitybuild.modules.sessioncache.BungeecordSessionCache
-import com.projectcitybuild.old_modules.playerconfig.PlayerConfigRepository
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
 import com.projectcitybuild.modules.textcomponentbuilder.send
@@ -46,7 +46,7 @@ class WhisperCommand(
 
         if (input.player != null) {
             val targetPlayerConfig = playerConfigRepository.get(input.player.uniqueId)
-            if (targetPlayerConfig.unwrappedChatIgnoreList.contains(input.player.uniqueId)) {
+            if (targetPlayerConfig.chatIgnoreList.contains(input.player.uniqueId)) {
                 input.sender.send().error("Cannot send. You are being ignored by $targetPlayerName")
                 return
             }

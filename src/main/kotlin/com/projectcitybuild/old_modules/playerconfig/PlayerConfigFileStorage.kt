@@ -1,6 +1,6 @@
 package com.projectcitybuild.old_modules.playerconfig
 
-import com.projectcitybuild.entities.PlayerConfig
+import com.projectcitybuild.entities.LegacyPlayerConfig
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -14,7 +14,7 @@ class PlayerConfigFileStorage(
 ) {
     private fun fileName(key: String) : String = "$key.json"
 
-    suspend fun load(key: String): PlayerConfig? {
+    suspend fun load(key: String): LegacyPlayerConfig? {
         val file = File(folderPath, fileName(key))
         if (!folderPath.exists()) folderPath.mkdir()
         if (!file.exists()) {
@@ -24,10 +24,10 @@ class PlayerConfigFileStorage(
         if (json.isEmpty())
             return null
 
-        return Json.decodeFromString<PlayerConfig>(string = json)
+        return Json.decodeFromString<LegacyPlayerConfig>(string = json)
     }
 
-    suspend fun save(key: String, value: PlayerConfig) {
+    suspend fun save(key: String, value: LegacyPlayerConfig) {
         val file = File(folderPath, fileName(key))
         if (!folderPath.exists()) folderPath.mkdir()
         if (!file.exists()) {

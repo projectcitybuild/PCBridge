@@ -7,8 +7,8 @@ import com.projectcitybuild.features.chat.listeners.ChatListener
 import com.projectcitybuild.features.chat.subchannels.IncomingChatChannelListener
 import com.projectcitybuild.modules.channels.bungeecord.BungeecordSubChannelListener
 import com.projectcitybuild.modules.nameguesser.NameGuesser
+import com.projectcitybuild.modules.playerconfig.PlayerConfigRepository
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
-import com.projectcitybuild.old_modules.playerconfig.PlayerConfigRepository
 import com.projectcitybuild.modules.playeruuid.PlayerUUIDRepository
 import com.projectcitybuild.modules.sessioncache.BungeecordSessionCache
 import net.md_5.bungee.api.ProxyServer

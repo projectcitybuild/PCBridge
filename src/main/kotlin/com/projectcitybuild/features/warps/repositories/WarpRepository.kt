@@ -15,11 +15,11 @@ class WarpRepository(
     fun first(name: String): Warp? {
         val cache = cache
         if (cache != null) {
-            return cache.first { it.name == name }
+            return cache.firstOrNull { it.name == name }
         }
 
         val statement = dataSource.connection().prepareStatement(
-            "SELECT * FROM `warps` WHERE `name`='?'"
+            "SELECT * FROM `warps` WHERE `name`=(?)"
         ).apply {
             setString(1, name)
         }

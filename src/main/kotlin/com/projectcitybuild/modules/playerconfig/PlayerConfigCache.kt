@@ -1,4 +1,4 @@
-package com.projectcitybuild.old_modules.playerconfig
+package com.projectcitybuild.modules.playerconfig
 
 import com.projectcitybuild.entities.PlayerConfig
 import java.util.*

@@ -16,10 +16,10 @@ import com.projectcitybuild.modules.permissions.PermissionsManager
 import com.projectcitybuild.features.bans.repositories.BanRepository
 import com.projectcitybuild.features.chat.ChatGroupFormatBuilder
 import com.projectcitybuild.features.joinmessage.JoinMessageModule
-import com.projectcitybuild.old_modules.playerconfig.PlayerConfigCache
+import com.projectcitybuild.old_modules.playerconfig.LegacyPlayerConfigCache
 import com.projectcitybuild.old_modules.playerconfig.PlayerConfigFileStorage
 import com.projectcitybuild.modules.playeruuid.MojangPlayerRepository
-import com.projectcitybuild.old_modules.playerconfig.PlayerConfigRepository
+import com.projectcitybuild.old_modules.playerconfig.LegacyPlayerConfigRepository
 import com.projectcitybuild.modules.playeruuid.PlayerUUIDRepository
 import com.projectcitybuild.features.ranksync.SyncPlayerGroupService
 import com.projectcitybuild.features.warps.repositories.WarpRepository
@@ -28,6 +28,8 @@ import com.projectcitybuild.modules.config.implementations.BungeecordConfig
 import com.projectcitybuild.modules.database.DataSource
 import com.projectcitybuild.modules.logger.implementations.BungeecordLogger
 import com.projectcitybuild.modules.nameguesser.NameGuesser
+import com.projectcitybuild.modules.playerconfig.PlayerConfigCache
+import com.projectcitybuild.modules.playerconfig.PlayerConfigRepository
 import com.projectcitybuild.modules.sessioncache.BungeecordSessionCache
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordTimer
 import com.projectcitybuild.old_modules.storage.HubFileStorage
@@ -90,9 +92,7 @@ class BungeecordPlatform: Plugin() {
     private val playerConfigRepository: PlayerConfigRepository by lazy {
         PlayerConfigRepository(
             playerConfigCache,
-            PlayerConfigFileStorage(
-                folderPath = dataFolder.resolve("players")
-            )
+            dataSource,
         )
     }
 

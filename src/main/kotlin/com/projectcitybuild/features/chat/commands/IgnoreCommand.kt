@@ -1,9 +1,8 @@
 package com.projectcitybuild.features.chat.commands
 
 import com.projectcitybuild.core.InvalidCommandArgumentsException
-import com.projectcitybuild.old_modules.playerconfig.PlayerConfigRepository
 import com.projectcitybuild.modules.playeruuid.PlayerUUIDRepository
-import com.projectcitybuild.entities.serializables.SerializableUUID
+import com.projectcitybuild.modules.playerconfig.PlayerConfigRepository
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
 import com.projectcitybuild.modules.textcomponentbuilder.send
@@ -42,15 +41,15 @@ class IgnoreCommand(
             }
 
             val playerConfig = playerConfigRepository.get(input.player.uniqueId)
-            if (playerConfig.unwrappedChatIgnoreList.contains(targetPlayerUUID)) {
+            if (playerConfig.chatIgnoreList.contains(targetPlayerUUID)) {
                 input.player.send().error("$targetPlayerName is already on your ignore list")
                 return
             }
 
-            playerConfig.chatIgnoreList.add(SerializableUUID(targetPlayerUUID))
+            playerConfig.chatIgnoreList.add(targetPlayerUUID)
             playerConfigRepository.save(playerConfig)
 
-            input.sender.send().success("You are now ignoring chat from ${targetPlayerName}")
+            input.sender.send().success("You are now ignoring chat from $targetPlayerName")
 
         }.onFailure { throwable ->
             input.sender.send().error(throwable.message ?: "An unknown error occurred")

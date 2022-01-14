@@ -4,7 +4,7 @@ import com.google.common.io.ByteArrayDataInput
 import com.projectcitybuild.entities.SubChannel
 import com.projectcitybuild.features.chat.ChatGroupFormatBuilder
 import com.projectcitybuild.modules.channels.bungeecord.BungeecordSubChannelListener
-import com.projectcitybuild.old_modules.playerconfig.PlayerConfigRepository
+import com.projectcitybuild.modules.playerconfig.PlayerConfigRepository
 import com.projectcitybuild.platforms.bungeecord.extensions.add
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import kotlinx.coroutines.CoroutineScope
@@ -41,7 +41,7 @@ class IncomingChatChannelListener(
             }
             recipients = recipients.filter { recipient ->
                 val recipientConfig = playerConfigRepository.get(recipient.uniqueId)
-                !recipientConfig.unwrappedChatIgnoreList.contains(player.uniqueId)
+                !recipientConfig.chatIgnoreList.contains(player.uniqueId)
             }
 
             // TODO: stop IO thrashing and cache all this instead
