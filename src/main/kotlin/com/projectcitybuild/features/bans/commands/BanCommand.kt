@@ -65,7 +65,7 @@ class BanCommand(
     override fun onTabComplete(sender: CommandSender?, args: List<String>): Iterable<String>? {
         return when {
             args.isEmpty() -> proxyServer.players.map { it.name }
-            args.size == 1 -> proxyServer.players.map { it.name }.filter { it.startsWith(args.first()) }
+            args.size == 1 -> proxyServer.players.map { it.name }.filter { it.lowercase().startsWith(args.first()) }
             else -> null
         }
     }
