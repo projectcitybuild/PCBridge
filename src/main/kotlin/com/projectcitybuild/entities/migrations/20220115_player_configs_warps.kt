@@ -112,9 +112,11 @@ class `20220115_player_configs_warps`: DatabaseMigration {
                     |CREATE TABLE chat_ignores (
                     |   `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
                     |   `player_id` BIGINT UNSIGNED NOT NULL,
-                    |   `ignored_uuid` VARCHAR(50) NOT NULL,
+                    |   `ignored_player_id` BIGINT UNSIGNED NOT NULL,
+	                |   `created_at` DATETIME NOT NULL,
                     |   PRIMARY KEY (`id`),
-                    |   CONSTRAINT `chat_ignores_player_id` FOREIGN KEY (`player_id`) REFERENCES `players` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION
+                    |   CONSTRAINT `chat_ignores_player_id` FOREIGN KEY (`player_id`) REFERENCES `players` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION,
+                    |   CONSTRAINT `chat_ignores_ignored_player_id` FOREIGN KEY (`ignored_player_id`) REFERENCES `players` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION
                     |);
                     """
                 .trimMargin("|")

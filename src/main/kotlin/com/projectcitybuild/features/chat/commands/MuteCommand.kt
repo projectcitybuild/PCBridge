@@ -32,9 +32,10 @@ class MuteCommand(
             return
         }
 
-        val player = playerConfigRepository.get(targetPlayer.uniqueId).also {
-            it.isMuted = true
-        }
+        val player = playerConfigRepository
+            .get(targetPlayer.uniqueId)
+            .also { it.isMuted = true }
+
         playerConfigRepository.save(player)
 
         input.sender.send().success("${targetPlayer.name} has been muted")
