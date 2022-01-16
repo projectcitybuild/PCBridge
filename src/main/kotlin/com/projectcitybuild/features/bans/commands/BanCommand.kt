@@ -3,8 +3,8 @@ package com.projectcitybuild.features.bans.commands
 import com.projectcitybuild.core.InvalidCommandArgumentsException
 import com.projectcitybuild.core.extensions.joinWithWhitespaces
 import com.projectcitybuild.features.bans.repositories.BanRepository
-import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.modules.playeruuid.PlayerUUIDRepository
+import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
 import net.md_5.bungee.api.ChatColor

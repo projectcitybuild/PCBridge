@@ -1,11 +1,11 @@
 package com.projectcitybuild.features.warps.commands
 
 import com.projectcitybuild.core.InvalidCommandArgumentsException
-import com.projectcitybuild.platforms.spigot.environment.SpigotCommandInput
 import com.projectcitybuild.entities.SubChannel
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.platforms.spigot.MessageToBungeecord
 import com.projectcitybuild.platforms.spigot.environment.SpigotCommand
+import com.projectcitybuild.platforms.spigot.environment.SpigotCommandInput
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
 import javax.inject.Inject

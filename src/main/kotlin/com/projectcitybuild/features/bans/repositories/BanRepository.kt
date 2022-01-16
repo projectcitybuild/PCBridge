@@ -1,8 +1,8 @@
 package com.projectcitybuild.features.bans.repositories
 
+import com.projectcitybuild.entities.responses.GameBan
 import com.projectcitybuild.modules.network.APIClient
 import com.projectcitybuild.modules.network.APIRequestFactory
-import com.projectcitybuild.entities.responses.GameBan
 import java.util.*
 import javax.inject.Inject
 

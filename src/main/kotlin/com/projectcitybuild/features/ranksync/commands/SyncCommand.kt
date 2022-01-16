@@ -1,12 +1,12 @@
 package com.projectcitybuild.features.ranksync.commands
 
 import com.projectcitybuild.core.InvalidCommandArgumentsException
-import com.projectcitybuild.modules.network.APIRequestFactory
-import com.projectcitybuild.modules.network.APIClient
 import com.projectcitybuild.features.ranksync.SyncPlayerGroupService
+import com.projectcitybuild.modules.network.APIClient
+import com.projectcitybuild.modules.network.APIRequestFactory
+import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
-import com.projectcitybuild.modules.textcomponentbuilder.send
 import net.md_5.bungee.api.CommandSender
 import net.md_5.bungee.api.connection.ProxiedPlayer
 import javax.inject.Inject

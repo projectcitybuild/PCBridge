@@ -1,27 +1,17 @@
 package com.projectcitybuild.platforms.spigot
 
 import com.github.shynixn.mccoroutine.minecraftDispatcher
-import com.projectcitybuild.modules.network.APIRequestFactory
-import com.projectcitybuild.modules.network.mojang.client.MojangClient
-import com.projectcitybuild.modules.network.pcb.client.PCBClient
-import com.projectcitybuild.entities.PluginConfig
-import com.projectcitybuild.modules.network.APIClient
 import com.projectcitybuild.entities.Channel
-import com.projectcitybuild.features.hub.HubModule
-import com.projectcitybuild.features.warps.WarpModule
-import com.projectcitybuild.modules.sessioncache.SpigotSessionCache
-import com.projectcitybuild.platforms.spigot.environment.*
-import com.projectcitybuild.features.chat.ChatModule
-import com.projectcitybuild.features.joinmessage.JoinMessageModule
-import com.projectcitybuild.features.teleporting.TeleportModule
+import com.projectcitybuild.entities.PluginConfig
 import com.projectcitybuild.modules.channels.spigot.SpigotMessageListener
 import com.projectcitybuild.modules.config.implementations.SpigotConfig
 import com.projectcitybuild.modules.logger.implementations.SpigotLogger
+import com.projectcitybuild.modules.network.APIClient
 import com.projectcitybuild.modules.permissions.PermissionsManager
-import com.projectcitybuild.modules.scheduler.implementations.SpigotScheduler
-import com.projectcitybuild.platforms.spigot.listeners.PendingJoinActionListener
+import com.projectcitybuild.modules.sessioncache.SpigotSessionCache
+import com.projectcitybuild.platforms.spigot.environment.SpigotCommandRegistry
+import com.projectcitybuild.platforms.spigot.environment.SpigotListenerRegistry
 import org.bukkit.plugin.java.JavaPlugin
-import kotlin.math.log
 
 class SpigotPlatform: JavaPlugin() {
 

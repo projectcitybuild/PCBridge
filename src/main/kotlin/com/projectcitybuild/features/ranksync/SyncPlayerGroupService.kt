@@ -1,9 +1,9 @@
 package com.projectcitybuild.features.ranksync
 
-import com.projectcitybuild.modules.config.ConfigProvider
-import com.projectcitybuild.modules.logger.LoggerProvider
 import com.projectcitybuild.entities.PluginConfig
 import com.projectcitybuild.entities.responses.Group
+import com.projectcitybuild.modules.config.ConfigProvider
+import com.projectcitybuild.modules.logger.LoggerProvider
 import com.projectcitybuild.modules.network.APIClient
 import com.projectcitybuild.modules.network.APIRequestFactory
 import com.projectcitybuild.modules.permissions.PermissionsManager

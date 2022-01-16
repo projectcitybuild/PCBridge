@@ -1,6 +1,8 @@
 package com.projectcitybuild.modules.network.pcb.requests
 
-import com.projectcitybuild.entities.responses.*
+import com.projectcitybuild.entities.responses.ApiResponse
+import com.projectcitybuild.entities.responses.GameBan
+import com.projectcitybuild.entities.responses.GameUnban
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.POST

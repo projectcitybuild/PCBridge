@@ -1,8 +1,8 @@
 package com.projectcitybuild.features.bans.listeners
 
 import com.projectcitybuild.core.BungeecordListener
-import com.projectcitybuild.modules.logger.LoggerProvider
 import com.projectcitybuild.features.bans.repositories.BanRepository
+import com.projectcitybuild.modules.logger.LoggerProvider
 import com.projectcitybuild.platforms.bungeecord.extensions.add
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

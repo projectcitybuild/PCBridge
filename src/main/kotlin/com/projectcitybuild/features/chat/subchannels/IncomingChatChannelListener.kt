@@ -6,8 +6,8 @@ import com.projectcitybuild.features.chat.ChatGroupFormatBuilder
 import com.projectcitybuild.features.chat.repositories.ChatIgnoreRepository
 import com.projectcitybuild.modules.channels.bungeecord.BungeecordSubChannelListener
 import com.projectcitybuild.modules.playerconfig.PlayerConfigRepository
-import com.projectcitybuild.platforms.bungeecord.extensions.add
 import com.projectcitybuild.modules.textcomponentbuilder.send
+import com.projectcitybuild.platforms.bungeecord.extensions.add
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

@@ -3,8 +3,9 @@ package com.projectcitybuild.platforms.bungeecord.environment
 import com.projectcitybuild.modules.logger.LoggerProvider
 import net.md_5.bungee.api.plugin.Listener
 import net.md_5.bungee.api.plugin.Plugin
+import javax.inject.Inject
 
-class BungeecordListenerRegistry constructor(
+class BungeecordListenerRegistry @Inject constructor(
         private val plugin: Plugin,
         private val logger: LoggerProvider
 ) {
