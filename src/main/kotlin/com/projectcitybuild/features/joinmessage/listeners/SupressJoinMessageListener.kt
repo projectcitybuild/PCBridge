@@ -4,8 +4,9 @@ import com.projectcitybuild.core.SpigotListener
 import org.bukkit.event.EventHandler
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
+import javax.inject.Inject
 
-class SupressJoinMessageListener: SpigotListener {
+class SupressJoinMessageListener @Inject constructor(): SpigotListener {
 
     @EventHandler
     fun onPlayerJoin(event: PlayerJoinEvent) {

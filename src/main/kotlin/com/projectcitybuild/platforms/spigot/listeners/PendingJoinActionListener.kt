@@ -6,8 +6,9 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.spigotmc.event.player.PlayerSpawnLocationEvent
+import javax.inject.Inject
 
-class PendingJoinActionListener(
+class PendingJoinActionListener @Inject constructor(
     private val spigotSessionCache: SpigotSessionCache,
     private val logger: LoggerProvider
 ): Listener {

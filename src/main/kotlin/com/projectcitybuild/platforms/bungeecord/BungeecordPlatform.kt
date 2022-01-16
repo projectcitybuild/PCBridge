@@ -2,64 +2,40 @@ package com.projectcitybuild.platforms.bungeecord
 
 import com.projectcitybuild.entities.PluginConfig
 import com.projectcitybuild.modules.network.APIClient
-import com.projectcitybuild.modules.network.APIRequestFactory
-import com.projectcitybuild.modules.network.mojang.client.MojangClient
-import com.projectcitybuild.modules.network.pcb.client.PCBClient
 import com.projectcitybuild.entities.Channel
 import com.projectcitybuild.modules.permissions.PermissionsManager
 import com.projectcitybuild.modules.channels.bungeecord.BungeecordMessageListener
 import com.projectcitybuild.modules.config.implementations.BungeecordConfig
 import com.projectcitybuild.modules.database.DataSource
 import com.projectcitybuild.modules.logger.implementations.BungeecordLogger
+import com.projectcitybuild.modules.playerconfig.PlayerConfigCache
 import com.projectcitybuild.modules.sessioncache.BungeecordSessionCache
+import com.projectcitybuild.old_modules.storage.HubFileStorage
 import com.projectcitybuild.platforms.bungeecord.environment.*
 import kotlinx.coroutines.Dispatchers
 import net.md_5.bungee.api.plugin.Plugin
-import javax.inject.Inject
 
 class BungeecordPlatform: Plugin() {
     private var commandRegistry: BungeecordCommandRegistry? = null
     private var listenerRegistry: BungeecordListenerRegistry? = null
-
-//    private val hubFileStorage: HubFileStorage by lazy {
-//        HubFileStorage(
-//            folderPath = dataFolder
-//        )
-//    }
+    private var dataSource: DataSource? = null
+    private var permissionsManager: PermissionsManager? = null
+    private var sessionCache: BungeecordSessionCache? = null
+    private var playerConfigCache: PlayerConfigCache? = null
 
     override fun onEnable() {
+        proxy.registerChannel(Channel.BUNGEECORD)
+
         val component = DaggerBungeecordComponent.builder()
+            .plugin(this)
             .proxyServer(proxy)
             .config(BungeecordConfig(dataFolder))
             .logger(BungeecordLogger(logger))
             .apiClient(APIClient { Dispatchers.IO })
-            .apiRequestFactory(APIRequestFactory(
-                pcb = PCBClient(
-                    authToken = config.get(PluginConfig.API_KEY),
-                    baseUrl = config.get(PluginConfig.API_BASE_URL),
-                    withLogging = config.get(PluginConfig.API_IS_LOGGING_ENABLED)
-                ),
-                mojang = MojangClient(
-                    withLogging = config.get(PluginConfig.API_IS_LOGGING_ENABLED)
-                )
-            ))
-            .dataSource(DataSource(
-                this,
-                logger = bungeecordLogger,
-                hostName = config.get(PluginConfig.DB_HOSTNAME),
-                port = config.get(PluginConfig.DB_PORT),
-                databaseName = config.get(PluginConfig.DB_NAME),
-                username = config.get(PluginConfig.DB_USERNAME),
-                password = config.get(PluginConfig.DB_PASSWORD),
-                shouldRunMigrations = true
-            ))
+            .hubFileStorage(HubFileStorage(dataFolder))
             .build()
 
-        val config = component.config()
-
-
-
-        config.load(
+        component.config().load(
             PluginConfig.API_KEY,
             PluginConfig.API_BASE_URL,
             PluginConfig.API_IS_LOGGING_ENABLED,
@@ -89,12 +65,11 @@ class BungeecordPlatform: Plugin() {
 //        config.addDefault("groups.appearance.intern.hover_name", "Intern")
         )
 
-        dataSource.connect()
+        dataSource = component.dataSource().also { it?.connect() }
+        sessionCache = component.sessionCache()
+        permissionsManager = component.permissionsManager()
+        playerConfigCache = component.playerConfigCache()
 
-        proxy.registerChannel(Channel.BUNGEECORD)
-
-        sessionCache = BungeecordSessionCache()
-        permissionsManager = PermissionsManager()
         commandRegistry = BungeecordCommandRegistry(plugin = this, component.logger())
         listenerRegistry = BungeecordListenerRegistry(plugin = this, component.logger())
 
@@ -120,15 +95,15 @@ class BungeecordPlatform: Plugin() {
     override fun onDisable() {
         proxy.unregisterChannel(Channel.BUNGEECORD)
 
+        playerConfigCache?.flush()
+        dataSource?.close()
         listenerRegistry?.unregisterAll()
 
         permissionsManager = null
         commandRegistry = null
         listenerRegistry = null
         sessionCache = null
-
-        playerConfigCache.flush()
-
-        dataSource.close()
+        dataSource = null
+        playerConfigCache = null
     }
 }

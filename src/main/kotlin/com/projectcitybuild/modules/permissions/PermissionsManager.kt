@@ -9,9 +9,10 @@ import net.luckperms.api.node.NodeType
 import net.luckperms.api.node.types.InheritanceNode
 import java.util.*
 import java.util.stream.Collectors
+import javax.inject.Inject
 
 @Reusable
-class PermissionsManager {
+class PermissionsManager @Inject constructor() {
 
     val plugin = getPermissionPlugin()
 
