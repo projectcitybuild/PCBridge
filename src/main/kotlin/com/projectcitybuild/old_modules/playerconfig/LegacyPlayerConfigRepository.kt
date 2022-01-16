@@ -1,13 +1,13 @@
 package com.projectcitybuild.old_modules.playerconfig
 
-import com.projectcitybuild.entities.PlayerConfig
+import com.projectcitybuild.entities.LegacyPlayerConfig
 import java.util.*
 
-class PlayerConfigRepository(
-    private val cache: PlayerConfigCache,
+class LegacyPlayerConfigRepository(
+    private val cache: LegacyPlayerConfigCache,
     private val storage: PlayerConfigFileStorage
 ) {
-    suspend fun get(uuid: UUID) : PlayerConfig {
+    suspend fun get(uuid: UUID) : LegacyPlayerConfig {
         val cachedPlayer = cache.get(uuid)
         if (cachedPlayer != null) {
             return cachedPlayer
@@ -19,12 +19,12 @@ class PlayerConfigRepository(
             return serializedPlayer
         }
 
-        val newCachedPlayer = PlayerConfig.default(uuid)
+        val newCachedPlayer = LegacyPlayerConfig.default(uuid)
         save(newCachedPlayer)
         return newCachedPlayer
     }
 
-    suspend fun save(player: PlayerConfig) {
+    suspend fun save(player: LegacyPlayerConfig) {
         cache.put(player.uuid.unwrapped, player)
         storage.save(player.uuid.toString(), player)
     }

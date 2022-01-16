@@ -3,8 +3,9 @@ package com.projectcitybuild.features.chat.subchannels
 import com.google.common.io.ByteArrayDataInput
 import com.projectcitybuild.entities.SubChannel
 import com.projectcitybuild.features.chat.ChatGroupFormatBuilder
+import com.projectcitybuild.features.chat.repositories.ChatIgnoreRepository
 import com.projectcitybuild.modules.channels.bungeecord.BungeecordSubChannelListener
-import com.projectcitybuild.old_modules.playerconfig.PlayerConfigRepository
+import com.projectcitybuild.modules.playerconfig.PlayerConfigRepository
 import com.projectcitybuild.platforms.bungeecord.extensions.add
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import kotlinx.coroutines.CoroutineScope
@@ -19,6 +20,7 @@ import net.md_5.bungee.api.connection.ProxiedPlayer
 class IncomingChatChannelListener(
     private val proxy: ProxyServer,
     private val playerConfigRepository: PlayerConfigRepository,
+    private val chatIgnoreRepository: ChatIgnoreRepository,
     private val chatGroupFormatBuilder: ChatGroupFormatBuilder
 ): BungeecordSubChannelListener {
 
@@ -32,17 +34,21 @@ class IncomingChatChannelListener(
             ?: return
 
         CoroutineScope(Dispatchers.IO).launch {
-            var recipients = proxy.players
-
-            val senderConfig = playerConfigRepository.get(player.uniqueId)
+            val senderConfig = playerConfigRepository.get(player.uniqueId)!!
             if (senderConfig.isMuted) {
                 player.send().error("You cannot talk while muted")
                 return@launch
             }
-            recipients = recipients.filter { recipient ->
-                val recipientConfig = playerConfigRepository.get(recipient.uniqueId)
-                !recipientConfig.unwrappedChatIgnoreList.contains(player.uniqueId)
-            }
+
+            val ignorers = chatIgnoreRepository.ignorerIds(senderConfig.id)
+            val recipients =
+                if (ignorers.isEmpty()) { proxy.players }
+                else {
+                    proxy.players.filter { recipient ->
+                        val recipientConfig = playerConfigRepository.get(recipient.uniqueId)
+                        !ignorers.contains(recipientConfig!!.id)
+                    }
+                }
 
             // TODO: stop IO thrashing and cache all this instead
             val format = chatGroupFormatBuilder.format(player)

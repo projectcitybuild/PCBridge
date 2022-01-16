@@ -3,11 +3,11 @@ package com.projectcitybuild.features.teleporting.commands
 import com.projectcitybuild.core.InvalidCommandArgumentsException
 import com.projectcitybuild.entities.SubChannel
 import com.projectcitybuild.modules.nameguesser.NameGuesser
+import com.projectcitybuild.modules.playerconfig.PlayerConfigRepository
 import com.projectcitybuild.platforms.bungeecord.MessageToSpigot
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
 import com.projectcitybuild.modules.textcomponentbuilder.send
-import com.projectcitybuild.old_modules.playerconfig.PlayerConfigRepository
 import net.md_5.bungee.api.CommandSender
 import net.md_5.bungee.api.ProxyServer
 
@@ -37,7 +37,7 @@ class TPHereCommand(
             return
         }
 
-        val targetPlayerConfig = playerConfigRepository.get(targetPlayer.uniqueId)
+        val targetPlayerConfig = playerConfigRepository.get(targetPlayer.uniqueId)!!
         if (!targetPlayerConfig.isAllowingTPs) {
             input.sender.send().error("$targetPlayerName is disallowing teleports")
             return
@@ -67,6 +67,7 @@ class TPHereCommand(
     override fun onTabComplete(sender: CommandSender?, args: List<String>): Iterable<String>? {
         return when {
             args.isEmpty() -> proxyServer.players.map { it.name }
+            args.size == 1 -> proxyServer.players.map { it.name }.filter { it.lowercase().startsWith(args.first()) }
             else -> null
         }
     }

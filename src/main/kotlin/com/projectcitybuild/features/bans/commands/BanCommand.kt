@@ -53,18 +53,18 @@ class BanCommand(
                 )
 
         }.onFailure { throwable ->
-            input.sender.send().error(
-                when (throwable) {
-                    is BanRepository.PlayerAlreadyBannedException -> "$targetPlayerName is already banned"
-                    else -> throwable.message ?: "An unknown error occurred"
-                }
-            )
+            if (throwable is BanRepository.PlayerAlreadyBannedException) {
+                input.sender.send().error("$targetPlayerName is already banned")
+            } else {
+                throw throwable
+            }
         }
     }
 
     override fun onTabComplete(sender: CommandSender?, args: List<String>): Iterable<String>? {
         return when {
             args.isEmpty() -> proxyServer.players.map { it.name }
+            args.size == 1 -> proxyServer.players.map { it.name }.filter { it.lowercase().startsWith(args.first()) }
             else -> null
         }
     }

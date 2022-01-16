@@ -2,15 +2,13 @@ package com.projectcitybuild.features.warps.commands
 
 import com.projectcitybuild.core.InvalidCommandArgumentsException
 import com.projectcitybuild.entities.PluginConfig
+import com.projectcitybuild.features.warps.repositories.WarpRepository
 import com.projectcitybuild.modules.config.ConfigProvider
-import com.projectcitybuild.old_modules.storage.WarpFileStorage
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
-import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.platforms.bungeecord.extensions.add
 import com.projectcitybuild.platforms.bungeecord.extensions.addIf
 import net.md_5.bungee.api.ChatColor
-import net.md_5.bungee.api.CommandSender
 import net.md_5.bungee.api.chat.ClickEvent
 import net.md_5.bungee.api.chat.HoverEvent
 import net.md_5.bungee.api.chat.TextComponent
@@ -20,7 +18,7 @@ import kotlin.math.max
 import kotlin.math.min
 
 class WarpsCommand(
-    private val warpFileStorage: WarpFileStorage,
+    private val warpRepository: WarpRepository,
     private val config: ConfigProvider
 ): BungeecordCommand {
 
@@ -35,7 +33,7 @@ class WarpsCommand(
 
         var page = input.args.firstOrNull()?.toInt() ?: 1
         val warpsPerPage = config.get(PluginConfig.WARPS_PER_PAGE)
-        val availableWarps = warpFileStorage.keys()
+        val availableWarps = warpRepository.all().map { it.name }
         val totalWarpPages = ceil((availableWarps.size / warpsPerPage).toDouble()).toInt()
 
         page = min(page, totalWarpPages)
@@ -69,9 +67,5 @@ class WarpsCommand(
             .add(clickableWarpList)
 
         input.sender.sendMessage(tc)
-    }
-
-    override fun onTabComplete(sender: CommandSender?, args: List<String>): Iterable<String>? {
-        return null
     }
 }

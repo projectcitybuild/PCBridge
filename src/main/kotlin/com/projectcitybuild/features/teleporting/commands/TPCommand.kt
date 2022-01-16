@@ -3,7 +3,7 @@ package com.projectcitybuild.features.teleporting.commands
 import com.projectcitybuild.core.InvalidCommandArgumentsException
 import com.projectcitybuild.entities.SubChannel
 import com.projectcitybuild.modules.nameguesser.NameGuesser
-import com.projectcitybuild.old_modules.playerconfig.PlayerConfigRepository
+import com.projectcitybuild.modules.playerconfig.PlayerConfigRepository
 import com.projectcitybuild.platforms.bungeecord.MessageToSpigot
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
@@ -37,7 +37,7 @@ class TPCommand(
             return
         }
 
-        val targetPlayerConfig = playerConfigRepository.get(targetPlayer.uniqueId)
+        val targetPlayerConfig = playerConfigRepository.get(targetPlayer.uniqueId)!!
         if (!targetPlayerConfig.isAllowingTPs) {
             input.sender.send().error("$targetPlayerName is disallowing teleports")
             return
@@ -67,6 +67,7 @@ class TPCommand(
     override fun onTabComplete(sender: CommandSender?, args: List<String>): Iterable<String>? {
         return when {
             args.isEmpty() -> proxyServer.players.map { it.name }
+            args.size == 1 -> proxyServer.players.map { it.name }.filter { it.lowercase().startsWith(args.first()) }
             else -> null
         }
     }

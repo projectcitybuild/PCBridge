@@ -5,6 +5,5 @@ import org.spigotmc.event.player.PlayerSpawnLocationEvent
 import java.util.*
 
 class SpigotSessionCache {
-    val afkPlayerList: MutableList<UUID> = mutableListOf()
     val pendingJoinActions = HashMap<UUID, (Player, PlayerSpawnLocationEvent) -> Unit>()
 }

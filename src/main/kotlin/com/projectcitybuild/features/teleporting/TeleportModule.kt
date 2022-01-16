@@ -9,8 +9,8 @@ import com.projectcitybuild.features.teleporting.subchannels.ImmediateTeleportCh
 import com.projectcitybuild.modules.channels.spigot.SpigotSubChannelListener
 import com.projectcitybuild.modules.logger.LoggerProvider
 import com.projectcitybuild.modules.nameguesser.NameGuesser
+import com.projectcitybuild.modules.playerconfig.PlayerConfigRepository
 import com.projectcitybuild.modules.sessioncache.SpigotSessionCache
-import com.projectcitybuild.old_modules.playerconfig.PlayerConfigRepository
 import net.md_5.bungee.api.ProxyServer
 import org.bukkit.plugin.Plugin
 

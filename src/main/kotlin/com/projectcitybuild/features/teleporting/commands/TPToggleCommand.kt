@@ -1,7 +1,7 @@
 package com.projectcitybuild.features.teleporting.commands
 
 import com.projectcitybuild.core.InvalidCommandArgumentsException
-import com.projectcitybuild.old_modules.playerconfig.PlayerConfigRepository
+import com.projectcitybuild.modules.playerconfig.PlayerConfigRepository
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
 import com.projectcitybuild.modules.textcomponentbuilder.send
@@ -26,7 +26,7 @@ class TPToggleCommand(
             throw InvalidCommandArgumentsException()
         }
 
-        val playerConfig = playerConfigRepository.get(input.player.uniqueId)
+        val playerConfig = playerConfigRepository.get(input.player.uniqueId)!!
 
         // Either use the given toggle value, or reverse the current saved value
         val willToggleOn = if (input.args.size == 1) desiredState == "on" else !playerConfig.isAllowingTPs

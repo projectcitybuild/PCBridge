@@ -1,20 +1,20 @@
 package com.projectcitybuild.features.chat.commands
 
 import com.projectcitybuild.core.InvalidCommandArgumentsException
-import com.projectcitybuild.core.extensions.joinWithWhitespaces
+import com.projectcitybuild.features.chat.repositories.ChatIgnoreRepository
+import com.projectcitybuild.modules.playerconfig.PlayerConfigRepository
 import com.projectcitybuild.modules.sessioncache.BungeecordSessionCache
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
 import com.projectcitybuild.modules.textcomponentbuilder.send
-import com.projectcitybuild.old_modules.playerconfig.PlayerConfigRepository
 import net.md_5.bungee.api.ChatColor
-import net.md_5.bungee.api.CommandSender
 import net.md_5.bungee.api.ProxyServer
 import net.md_5.bungee.api.chat.TextComponent
 
 class ReplyCommand(
     private val proxyServer: ProxyServer,
     private val playerConfigRepository: PlayerConfigRepository,
+    private val chatIgnoreRepository: ChatIgnoreRepository,
     private val sessionCache: BungeecordSessionCache
 ): BungeecordCommand {
 
@@ -40,12 +40,14 @@ class ReplyCommand(
 
         val targetPlayer = proxyServer.getPlayer(playerWhoLastWhispered)
         if (targetPlayer == null) {
-            input.sender.send().error("Player not found")
+            sessionCache.lastWhispered.remove(input.player.uniqueId)
+            input.sender.send().error("Player not online")
             return
         }
 
-        val targetPlayerConfig = playerConfigRepository.get(input.player.uniqueId)
-        if (targetPlayerConfig.unwrappedChatIgnoreList.contains(input.player.uniqueId)) {
+        val playerConfig = playerConfigRepository.get(input.player.uniqueId)
+        val targetPlayerConfig = playerConfigRepository.get(targetPlayer.uniqueId)
+        if (chatIgnoreRepository.isIgnored(playerConfig!!.id, targetPlayerConfig!!.id)) {
             input.sender.send().error("Cannot send. You are being ignored by ${targetPlayer.name}")
             return
         }
@@ -61,9 +63,5 @@ class ReplyCommand(
         input.sender.sendMessage(tc)
 
         sessionCache.lastWhispered[targetPlayer.uniqueId] = input.player.uniqueId
-    }
-
-    override fun onTabComplete(sender: CommandSender?, args: List<String>): Iterable<String>? {
-        return null
     }
 }

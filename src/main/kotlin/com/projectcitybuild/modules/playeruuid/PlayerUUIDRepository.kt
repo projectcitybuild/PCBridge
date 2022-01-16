@@ -6,16 +6,20 @@ import java.util.*
 
 class PlayerUUIDRepository(
     private val proxyServer: ProxyServer,
-    private val getMojangPlayerAction: MojangPlayerRepository
+    private val mojangPlayerRepository: MojangPlayerRepository
 ) {
     suspend fun request(playerName: String): UUID? {
         val onlinePlayer = proxyServer.players
             .firstOrNull { it.name.lowercase() == playerName.lowercase() }
 
-        if (onlinePlayer == null) {
-            val mojangPlayer = getMojangPlayerAction.get(playerName = playerName)
-            return UUID.fromString(mojangPlayer.uuid.toDashFormattedUUID())
+        if (onlinePlayer != null) {
+            return onlinePlayer.uniqueId
         }
-        return onlinePlayer.uniqueId
+        return try {
+            val mojangPlayer = mojangPlayerRepository.get(playerName = playerName)
+            UUID.fromString(mojangPlayer.uuid.toDashFormattedUUID())
+        } catch (e: MojangPlayerRepository.PlayerNotFoundException) {
+            null
+        }
     }
 }

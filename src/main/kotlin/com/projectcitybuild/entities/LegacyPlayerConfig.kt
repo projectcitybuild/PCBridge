@@ -1,11 +1,12 @@
 package com.projectcitybuild.entities
 
-import com.projectcitybuild.old_modules.storage.serializers.SerializableUUID
+import com.projectcitybuild.entities.serializables.SerializableUUID
 import kotlinx.serialization.Serializable
+import java.sql.Date
 import java.util.*
 
 @Serializable
-data class PlayerConfig(
+data class LegacyPlayerConfig(
     val uuid: SerializableUUID,
     var isMuted: Boolean = false,
     var isAllowingTPs: Boolean = true,
@@ -18,13 +19,18 @@ data class PlayerConfig(
         get() = chatIgnoreList.map { it.unwrapped }
 
     companion object {
-        fun default(uuid: UUID) : PlayerConfig = PlayerConfig(
+        fun default(uuid: UUID) : LegacyPlayerConfig = LegacyPlayerConfig(
             uuid = SerializableUUID(uuid),
             isMuted = false,
-            chatSuffix = "",
-            chatPrefix = "",
-            chatGroups = "",
             chatIgnoreList = mutableSetOf()
         )
     }
 }
+
+data class PlayerConfig(
+    val id: Long,
+    val uuid: UUID,
+    var isMuted: Boolean,
+    var isAllowingTPs: Boolean,
+    val firstSeen: Date
+)

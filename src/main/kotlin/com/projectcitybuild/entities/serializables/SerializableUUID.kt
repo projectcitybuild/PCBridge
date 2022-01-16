@@ -1,4 +1,4 @@
-package com.projectcitybuild.old_modules.storage.serializers
+package com.projectcitybuild.entities.serializables
 
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable

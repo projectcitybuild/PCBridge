@@ -1,4 +1,4 @@
-package com.projectcitybuild.old_modules.playerconfig
+package com.projectcitybuild.modules.playerconfig
 
 import com.projectcitybuild.entities.PlayerConfig
 import java.util.*
@@ -16,6 +16,10 @@ class PlayerConfigCache {
 
     fun put(uuid: UUID, player: PlayerConfig) {
         cache[uuid] = player
+    }
+
+    fun remove(uuid: UUID) {
+        cache.remove(uuid)
     }
 
     fun flush() {

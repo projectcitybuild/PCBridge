@@ -8,6 +8,7 @@ import com.projectcitybuild.features.warps.commands.DelWarpCommand
 import com.projectcitybuild.features.warps.commands.SetWarpCommand
 import com.projectcitybuild.features.warps.commands.WarpCommand
 import com.projectcitybuild.features.warps.commands.WarpsCommand
+import com.projectcitybuild.features.warps.repositories.WarpRepository
 import com.projectcitybuild.features.warps.subchannels.IncomingSetWarpListener
 import com.projectcitybuild.features.warps.subchannels.AwaitJoinWarpChannelListener
 import com.projectcitybuild.features.warps.subchannels.ImmediateWarpChannelListener
@@ -17,7 +18,6 @@ import com.projectcitybuild.modules.config.ConfigProvider
 import com.projectcitybuild.modules.logger.LoggerProvider
 import com.projectcitybuild.modules.nameguesser.NameGuesser
 import com.projectcitybuild.modules.sessioncache.SpigotSessionCache
-import com.projectcitybuild.old_modules.storage.WarpFileStorage
 import com.projectcitybuild.platforms.spigot.environment.SpigotCommand
 import net.md_5.bungee.api.ProxyServer
 import org.bukkit.plugin.Plugin
@@ -26,18 +26,18 @@ class WarpModule {
 
     class Bungeecord(
         proxyServer: ProxyServer,
-        warpFileStorage: WarpFileStorage,
+        warpRepository: WarpRepository,
         nameGuesser: NameGuesser,
         config: ConfigProvider
     ): BungeecordFeatureModule {
         override val bungeecordCommands: Array<BungeecordCommand> = arrayOf(
-            DelWarpCommand(warpFileStorage),
-            WarpCommand(proxyServer, warpFileStorage, nameGuesser),
-            WarpsCommand(warpFileStorage, config),
+            DelWarpCommand(warpRepository),
+            WarpCommand(proxyServer, warpRepository, nameGuesser),
+            WarpsCommand(warpRepository, config),
         )
 
         override val bungeecordSubChannelListeners: Array<BungeecordSubChannelListener> = arrayOf(
-            IncomingSetWarpListener(warpFileStorage),
+            IncomingSetWarpListener(warpRepository),
         )
     }
 

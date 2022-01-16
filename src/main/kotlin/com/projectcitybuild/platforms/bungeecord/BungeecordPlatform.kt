@@ -15,21 +15,23 @@ import com.projectcitybuild.features.warps.WarpModule
 import com.projectcitybuild.modules.permissions.PermissionsManager
 import com.projectcitybuild.features.bans.repositories.BanRepository
 import com.projectcitybuild.features.chat.ChatGroupFormatBuilder
+import com.projectcitybuild.features.chat.repositories.ChatIgnoreRepository
 import com.projectcitybuild.features.joinmessage.JoinMessageModule
-import com.projectcitybuild.old_modules.playerconfig.PlayerConfigCache
-import com.projectcitybuild.old_modules.playerconfig.PlayerConfigFileStorage
+import com.projectcitybuild.features.playercache.PlayerCacheModule
 import com.projectcitybuild.modules.playeruuid.MojangPlayerRepository
-import com.projectcitybuild.old_modules.playerconfig.PlayerConfigRepository
 import com.projectcitybuild.modules.playeruuid.PlayerUUIDRepository
 import com.projectcitybuild.features.ranksync.SyncPlayerGroupService
+import com.projectcitybuild.features.warps.repositories.WarpRepository
 import com.projectcitybuild.modules.channels.bungeecord.BungeecordMessageListener
 import com.projectcitybuild.modules.config.implementations.BungeecordConfig
+import com.projectcitybuild.modules.database.DataSource
 import com.projectcitybuild.modules.logger.implementations.BungeecordLogger
 import com.projectcitybuild.modules.nameguesser.NameGuesser
+import com.projectcitybuild.modules.playerconfig.PlayerConfigCache
+import com.projectcitybuild.modules.playerconfig.PlayerConfigRepository
 import com.projectcitybuild.modules.sessioncache.BungeecordSessionCache
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordTimer
 import com.projectcitybuild.old_modules.storage.HubFileStorage
-import com.projectcitybuild.old_modules.storage.WarpFileStorage
 import com.projectcitybuild.platforms.bungeecord.environment.*
 import kotlinx.coroutines.Dispatchers
 import net.md_5.bungee.api.plugin.Plugin
@@ -58,6 +60,19 @@ class BungeecordPlatform: Plugin() {
         )
     }
 
+    private val dataSource: DataSource by lazy {
+        DataSource(
+            this,
+            logger = bungeecordLogger,
+            hostName = config.get(PluginConfig.DB_HOSTNAME),
+            port = config.get(PluginConfig.DB_PORT),
+            databaseName = config.get(PluginConfig.DB_NAME),
+            username = config.get(PluginConfig.DB_USERNAME),
+            password = config.get(PluginConfig.DB_PASSWORD),
+            shouldRunMigrations = true
+        )
+    }
+
     private val playerUUIDRepository: PlayerUUIDRepository by lazy {
         PlayerUUIDRepository(
             proxy,
@@ -75,16 +90,12 @@ class BungeecordPlatform: Plugin() {
     private val playerConfigRepository: PlayerConfigRepository by lazy {
         PlayerConfigRepository(
             playerConfigCache,
-            PlayerConfigFileStorage(
-                folderPath = dataFolder.resolve("players")
-            )
+            dataSource,
         )
     }
 
-    private val warpFileStorage: WarpFileStorage by lazy {
-        WarpFileStorage(
-            folderPath = dataFolder.resolve("warps")
-        )
+    private val chatIgnoreRepository: ChatIgnoreRepository by lazy {
+        ChatIgnoreRepository(dataSource)
     }
 
     private val hubFileStorage: HubFileStorage by lazy {
@@ -98,6 +109,10 @@ class BungeecordPlatform: Plugin() {
             apiRequestFactory,
             apiClient
         )
+    }
+
+    private val warpRepository: WarpRepository by lazy {
+        WarpRepository(dataSource)
     }
 
     private val syncPlayerGroupService: SyncPlayerGroupService by lazy {
@@ -124,6 +139,8 @@ class BungeecordPlatform: Plugin() {
         config.load()
         createDefaultConfig()
 
+        dataSource.connect()
+
         proxy.registerChannel(Channel.BUNGEECORD)
 
         sessionCache = BungeecordSessionCache()
@@ -146,6 +163,7 @@ class BungeecordPlatform: Plugin() {
                 proxy,
                 playerUUIDRepository,
                 playerConfigRepository,
+                chatIgnoreRepository,
                 chatGroupFormatBuilder,
                 sessionCache!!,
                 NameGuesser()
@@ -156,6 +174,10 @@ class BungeecordPlatform: Plugin() {
             ),
             JoinMessageModule.Bungee(
                 proxy
+            ),
+            PlayerCacheModule(
+                playerConfigCache,
+                playerConfigRepository
             ),
             RankSyncModule(
                 proxy,
@@ -171,7 +193,7 @@ class BungeecordPlatform: Plugin() {
             ),
             WarpModule.Bungeecord(
                 proxy,
-                warpFileStorage,
+                warpRepository,
                 NameGuesser(),
                 config
             ),
@@ -194,6 +216,8 @@ class BungeecordPlatform: Plugin() {
         sessionCache = null
 
         playerConfigCache.flush()
+
+        dataSource.close()
     }
 
     private fun createDefaultConfig() {
@@ -202,6 +226,11 @@ class BungeecordPlatform: Plugin() {
             PluginConfig.API_BASE_URL,
             PluginConfig.API_IS_LOGGING_ENABLED,
             PluginConfig.WARPS_PER_PAGE,
+            PluginConfig.DB_HOSTNAME,
+            PluginConfig.DB_PORT,
+            PluginConfig.DB_NAME,
+            PluginConfig.DB_USERNAME,
+            PluginConfig.DB_PASSWORD,
         )
 
         // TODO
