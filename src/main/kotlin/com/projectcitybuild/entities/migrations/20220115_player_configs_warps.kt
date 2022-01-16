@@ -1,9 +1,9 @@
 package com.projectcitybuild.entities.migrations
 
+import co.aikar.idb.HikariPooledDatabase
 import com.projectcitybuild.modules.database.DatabaseMigration
 import com.projectcitybuild.old_modules.playerconfig.PlayerConfigFileStorage
 import com.projectcitybuild.old_modules.storage.WarpFileStorage
-import com.zaxxer.hikari.HikariDataSource
 import kotlinx.coroutines.runBlocking
 import net.md_5.bungee.api.plugin.Plugin
 import java.sql.Date
@@ -11,12 +11,9 @@ import java.sql.Date
 class `20220115_player_configs_warps`: DatabaseMigration {
     override val description = "Add player configs and warps"
 
-    override fun execute(dataSource: HikariDataSource, plugin: Plugin) {
-        val connection = dataSource.connection
-
-        connection
-            .prepareStatement(
-                """
+    override fun execute(database: HikariPooledDatabase, plugin: Plugin) {
+        database.executeUpdate(
+            """
                     |CREATE TABLE players (
                     |   `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
                     |   `uuid` VARCHAR(50) NOT NULL,
@@ -27,10 +24,9 @@ class `20220115_player_configs_warps`: DatabaseMigration {
                     |   INDEX  (`uuid`)
                     |);
                     """
-                    .trimMargin("|")
-                    .replace("\n", "")
-            )
-            .executeUpdate()
+                .trimMargin("|")
+                .replace("\n", "")
+        )
 
         // TODO: remove all this later
         val configStorage = PlayerConfigFileStorage(plugin.dataFolder.resolve("players"))
@@ -39,21 +35,18 @@ class `20220115_player_configs_warps`: DatabaseMigration {
                 plugin.logger.info("Migrating player/$fileName.json to database")
                 val config = configStorage.load(fileName)!!
 
-                val statement = connection.prepareStatement(
-                    "INSERT INTO `players` VALUES(NULL, ?, ?, ?, ?);"
-                ).apply {
-                    setString(1, config.uuid.unwrapped.toString())
-                    setBoolean(2, config.isMuted)
-                    setBoolean(3, config.isAllowingTPs)
-                    setDate(4, Date(System.currentTimeMillis()))
-                }
-                statement.executeUpdate()
+                database.executeInsert(
+                    "INSERT INTO `players` VALUES(NULL, ?, ?, ?, ?);",
+                    config.uuid.unwrapped.toString(),
+                    config.isMuted,
+                    config.isAllowingTPs,
+                    Date(System.currentTimeMillis()),
+                )
             }
         }
 
-        connection
-            .prepareStatement(
-                """
+        database.executeUpdate(
+            """
                     |CREATE TABLE warps (
                     |   `name` VARCHAR(50) NOT NULL,
 	                |   `server_name` VARCHAR(50) NOT NULL,
@@ -67,10 +60,9 @@ class `20220115_player_configs_warps`: DatabaseMigration {
 	                |   PRIMARY KEY (`name`) USING BTREE
                     |);
                     """
-                    .trimMargin("|")
-                    .replace("\n", "")
-            )
-            .executeUpdate()
+                .trimMargin("|")
+                .replace("\n", "")
+        )
 
         val warpStorage = WarpFileStorage(plugin.dataFolder.resolve("warps"))
         runBlocking {
@@ -78,26 +70,23 @@ class `20220115_player_configs_warps`: DatabaseMigration {
                 plugin.logger.info("Migrating warps/$fileName.json to database")
                 val warp = warpStorage.load(fileName)!!
 
-                val statement = connection.prepareStatement(
-                    "INSERT INTO `warps` VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?);"
-                ).apply {
-                    setString(1, fileName)
-                    setString(2, warp.serverName)
-                    setString(3, warp.worldName)
-                    setDouble(4, warp.x)
-                    setDouble(5, warp.y)
-                    setDouble(6, warp.z)
-                    setFloat(7, warp.pitch)
-                    setFloat(8, warp.yaw)
-                    setDate(9, Date(warp.createdAt.unwrapped.time))
-                }
-                statement.executeUpdate()
+                database.executeInsert(
+                    "INSERT INTO `warps` VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?);",
+                    fileName,
+                    warp.serverName,
+                    warp.worldName,
+                    warp.x,
+                    warp.y,
+                    warp.z,
+                    warp.pitch,
+                    warp.yaw,
+                    Date(warp.createdAt.unwrapped.time),
+                )
             }
         }
 
-        connection
-            .prepareStatement(
-                """
+        database.executeUpdate(
+            """
                     |CREATE TABLE teleport_history (
                     |   `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
 	                |   `player_id` BIGINT UNSIGNED NOT NULL,
@@ -114,14 +103,12 @@ class `20220115_player_configs_warps`: DatabaseMigration {
 	                |   CONSTRAINT `teleport_history_player_id` FOREIGN KEY (`player_id`) REFERENCES `players` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION
                     |);
                     """
-                    .trimMargin("|")
-                    .replace("\n", "")
-            )
-            .executeUpdate()
+                .trimMargin("|")
+                .replace("\n", "")
+        )
 
-        connection
-            .prepareStatement(
-                """
+        database.executeUpdate(
+            """
                     |CREATE TABLE chat_ignores (
                     |   `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
                     |   `player_id` BIGINT UNSIGNED NOT NULL,
@@ -130,9 +117,8 @@ class `20220115_player_configs_warps`: DatabaseMigration {
                     |   CONSTRAINT `chat_ignores_player_id` FOREIGN KEY (`player_id`) REFERENCES `players` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION
                     |);
                     """
-                    .trimMargin("|")
-                    .replace("\n", "")
-            )
-            .executeUpdate()
+                .trimMargin("|")
+                .replace("\n", "")
+        )
     }
 }

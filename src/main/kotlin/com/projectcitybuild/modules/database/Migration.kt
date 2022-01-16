@@ -1,8 +1,8 @@
 package com.projectcitybuild.modules.database
 
+import co.aikar.idb.HikariPooledDatabase
 import com.projectcitybuild.entities.migrations.*
 import com.projectcitybuild.modules.logger.LoggerProvider
-import com.zaxxer.hikari.HikariDataSource
 import net.md_5.bungee.api.plugin.Plugin
 
 object Migration {
@@ -13,7 +13,7 @@ object Migration {
     )
 
     fun executeIfNecessary(
-        dataSource: HikariDataSource,
+        database: HikariPooledDatabase,
         logger: LoggerProvider,
         plugin: Plugin, // temporary
         currentVersion: Int
@@ -26,21 +26,16 @@ object Migration {
         while (version < totalMigrations) {
             val migration = migrations[version]
             logger.info("Running migration ${version + 1}: ${migration.description}")
-            migration.execute(dataSource, plugin)
+            migration.execute(database, plugin)
             version++
         }
 
         if (currentVersion != totalMigrations) {
-            updateVersion(dataSource, version)
+            updateVersion(database, version)
         }
     }
 
-    private fun updateVersion(dataSource: HikariDataSource, newVersion: Int) {
-        val statement = dataSource.connection.prepareStatement(
-            "UPDATE meta SET `version`=?"
-        ).apply {
-            setInt(1, newVersion)
-        }
-        statement.executeUpdate()
+    private fun updateVersion(database: HikariPooledDatabase, newVersion: Int) {
+        database.executeUpdate("UPDATE meta SET `version`=?", newVersion)
     }
 }

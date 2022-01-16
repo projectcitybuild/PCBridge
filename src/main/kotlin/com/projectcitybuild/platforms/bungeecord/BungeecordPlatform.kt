@@ -30,7 +30,6 @@ import com.projectcitybuild.modules.playerconfig.PlayerConfigRepository
 import com.projectcitybuild.modules.sessioncache.BungeecordSessionCache
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordTimer
 import com.projectcitybuild.old_modules.storage.HubFileStorage
-import com.projectcitybuild.old_modules.storage.WarpFileStorage
 import com.projectcitybuild.platforms.bungeecord.environment.*
 import kotlinx.coroutines.Dispatchers
 import net.md_5.bungee.api.plugin.Plugin
@@ -66,8 +65,8 @@ class BungeecordPlatform: Plugin() {
             hostName = config.get(PluginConfig.DB_HOSTNAME),
             port = config.get(PluginConfig.DB_PORT),
             databaseName = config.get(PluginConfig.DB_NAME),
-            databaseUsername = config.get(PluginConfig.DB_USERNAME),
-            databasePassword = config.get(PluginConfig.DB_PASSWORD),
+            username = config.get(PluginConfig.DB_USERNAME),
+            password = config.get(PluginConfig.DB_PASSWORD),
             shouldRunMigrations = true
         )
     }
@@ -90,12 +89,6 @@ class BungeecordPlatform: Plugin() {
         PlayerConfigRepository(
             playerConfigCache,
             dataSource,
-        )
-    }
-
-    private val warpFileStorage: WarpFileStorage by lazy {
-        WarpFileStorage(
-            folderPath = dataFolder.resolve("warps")
         )
     }
 
