@@ -17,6 +17,7 @@ import com.projectcitybuild.features.bans.repositories.BanRepository
 import com.projectcitybuild.features.chat.ChatGroupFormatBuilder
 import com.projectcitybuild.features.chat.repositories.ChatIgnoreRepository
 import com.projectcitybuild.features.joinmessage.JoinMessageModule
+import com.projectcitybuild.features.playercache.PlayerCacheModule
 import com.projectcitybuild.modules.playeruuid.MojangPlayerRepository
 import com.projectcitybuild.modules.playeruuid.PlayerUUIDRepository
 import com.projectcitybuild.features.ranksync.SyncPlayerGroupService
@@ -173,6 +174,10 @@ class BungeecordPlatform: Plugin() {
             ),
             JoinMessageModule.Bungee(
                 proxy
+            ),
+            PlayerCacheModule(
+                playerConfigCache,
+                playerConfigRepository
             ),
             RankSyncModule(
                 proxy,

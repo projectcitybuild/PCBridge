@@ -18,6 +18,10 @@ class PlayerConfigCache {
         cache[uuid] = player
     }
 
+    fun remove(uuid: UUID) {
+        cache.remove(uuid)
+    }
+
     fun flush() {
         cache.clear()
     }
