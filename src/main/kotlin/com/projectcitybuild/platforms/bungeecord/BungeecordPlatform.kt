@@ -45,24 +45,22 @@ class BungeecordPlatform: Plugin() {
             PluginConfig.DB_NAME,
             PluginConfig.DB_USERNAME,
             PluginConfig.DB_PASSWORD,
-            // TODO
-//        config.addDefault("groups.appearance.admin.display_name", "§4[Staff]")
-//        config.addDefault("groups.appearance.admin.hover_name", "Administrator")
-//        config.addDefault("groups.appearance.sop.display_name", "§c[Staff]")
-//        config.addDefault("groups.appearance.sop.hover_name", "Senior Operator")
-//        config.addDefault("groups.appearance.op.display_name", "§6[Staff]")
-//        config.addDefault("groups.appearance.op.hover_name", "Operator")
-//        config.addDefault("groups.appearance.moderator.display_name", "§e[Staff]")
-//        config.addDefault("groups.appearance.moderator.hover_name", "Moderator")
-//
-//        config.addDefault("groups.appearance.trusted+.hover_name", "Trusted+")
-//        config.addDefault("groups.appearance.trusted.hover_name", "Trusted")
-//        config.addDefault("groups.appearance.donator.hover_name", "Donor")
-//        config.addDefault("groups.appearance.architect.hover_name", "Architect")
-//        config.addDefault("groups.appearance.engineer.hover_name", "Engineer")
-//        config.addDefault("groups.appearance.planner.hover_name", "Planner")
-//        config.addDefault("groups.appearance.builder.hover_name", "Builder")
-//        config.addDefault("groups.appearance.intern.hover_name", "Intern")
+            PluginConfig.GROUPS_APPEARANCE_ADMIN_DISPLAY_NAME,
+            PluginConfig.GROUPS_APPEARANCE_ADMIN_HOVER_NAME,
+            PluginConfig.GROUPS_APPEARANCE_SOP_DISPLAY_NAME,
+            PluginConfig.GROUPS_APPEARANCE_SOP_HOVER_NAME,
+            PluginConfig.GROUPS_APPEARANCE_OP_DISPLAY_NAME,
+            PluginConfig.GROUPS_APPEARANCE_OP_HOVER_NAME,
+            PluginConfig.GROUPS_APPEARANCE_MODERATOR_DISPLAY_NAME,
+            PluginConfig.GROUPS_APPEARANCE_MODERATOR_HOVER_NAME,
+            PluginConfig.GROUPS_APPEARANCE_TRUSTEDPLUS_HOVER_NAME,
+            PluginConfig.GROUPS_APPEARANCE_TRUSTED_HOVER_NAME,
+            PluginConfig.GROUPS_APPEARANCE_DONOR_HOVER_NAME,
+            PluginConfig.GROUPS_APPEARANCE_ARCHITECT_HOVER_NAME,
+            PluginConfig.GROUPS_APPEARANCE_ENGINEER_HOVER_NAME,
+            PluginConfig.GROUPS_APPEARANCE_PLANNER_HOVER_NAME,
+            PluginConfig.GROUPS_APPEARANCE_BUILDER_HOVER_NAME,
+            PluginConfig.GROUPS_APPEARANCE_INTERN_HOVER_NAME,
         )
 
         dataSource = component.dataSource().also { it.connect() }
