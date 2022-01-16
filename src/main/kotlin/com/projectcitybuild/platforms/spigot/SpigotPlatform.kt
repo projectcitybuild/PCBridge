@@ -21,70 +21,54 @@ import com.projectcitybuild.modules.permissions.PermissionsManager
 import com.projectcitybuild.modules.scheduler.implementations.SpigotScheduler
 import com.projectcitybuild.platforms.spigot.listeners.PendingJoinActionListener
 import org.bukkit.plugin.java.JavaPlugin
+import kotlin.math.log
 
 class SpigotPlatform: JavaPlugin() {
 
-    private val spigotLogger = SpigotLogger(logger = logger)
-    private val spigotConfig = SpigotConfig(plugin = this, config = config)
-    private val scheduler = SpigotScheduler(plugin = this)
-    private val apiClient = APIClient(getCoroutineContext = {
-        // To prevent Coroutines being created before the plugin is ready
-        this.minecraftDispatcher
-    })
-    private var permissionsManager: PermissionsManager? = null
     private var commandRegistry: SpigotCommandRegistry? = null
     private var listenerRegistry: SpigotListenerRegistry? = null
-
-    private val apiRequestFactory: APIRequestFactory by lazy {
-        val isLoggingEnabled = spigotConfig.get(PluginConfig.API_IS_LOGGING_ENABLED)
-
-        APIRequestFactory(
-            pcb = PCBClient(
-                authToken = spigotConfig.get(PluginConfig.API_KEY),
-                baseUrl = spigotConfig.get(PluginConfig.API_BASE_URL),
-                withLogging = isLoggingEnabled
-            ),
-            mojang = MojangClient(
-                withLogging = isLoggingEnabled
-            )
-        )
-    }
-
+    private var permissionsManager: PermissionsManager? = null
     private var spigotSessionCache: SpigotSessionCache? = null
 
     override fun onEnable() {
-        createDefaultConfig()
+        val component = DaggerSpigotComponent.builder()
+            .plugin(this)
+            .config(SpigotConfig(plugin = this, config = config))
+            .logger(SpigotLogger(logger = logger))
+            .apiClient(APIClient { this.minecraftDispatcher })
+            .build()
 
-        spigotSessionCache = SpigotSessionCache()
+        component.config().load(
+            PluginConfig.API_KEY,
+            PluginConfig.API_BASE_URL,
+            PluginConfig.API_IS_LOGGING_ENABLED,
+        )
 
-        val pluginMessageListener = SpigotMessageListener(spigotLogger)
+        spigotSessionCache = component.sessionCache()
+        permissionsManager = component.permissionsManager()
 
+        val logger = component.logger()
+        val pluginMessageListener = SpigotMessageListener(logger)
         server.messenger.registerOutgoingPluginChannel(this, Channel.BUNGEECORD)
         server.messenger.registerIncomingPluginChannel(this, Channel.BUNGEECORD, pluginMessageListener)
 
-        permissionsManager = PermissionsManager()
-
-        commandRegistry = SpigotCommandRegistry(plugin = this, spigotLogger)
-        listenerRegistry = SpigotListenerRegistry(plugin = this, spigotLogger)
+        commandRegistry = SpigotCommandRegistry(plugin = this, logger)
+        listenerRegistry = SpigotListenerRegistry(plugin = this, logger).also {
+            it.register(component.pendingJoinActionListener())
+        }
 
         arrayOf(
-            ChatModule.Spigot(plugin = this),
-            HubModule.Spigot(plugin = this),
-            JoinMessageModule.Spigot(),
-            TeleportModule.Spigot(plugin = this, spigotLogger, spigotSessionCache!!),
-            WarpModule.Spigot(plugin = this, spigotLogger, spigotSessionCache!!),
+            component.chatModule(),
+            component.hubModule(),
+            component.joinMessageModule(),
+            component.teleportModule(),
+            component.warpModule(),
         )
         .forEach { module ->
             module.spigotCommands.forEach { commandRegistry?.register(it) }
             module.spigotListeners.forEach { listenerRegistry?.register(it) }
             module.spigotSubChannelListeners.forEach { pluginMessageListener.register(it) }
         }
-
-        listenerRegistry?.register(
-            PendingJoinActionListener(spigotSessionCache!!, spigotLogger)
-        )
-
-        logger.info("PCBridge ready")
     }
 
     override fun onDisable() {
@@ -97,15 +81,5 @@ class SpigotPlatform: JavaPlugin() {
         commandRegistry = null
         listenerRegistry = null
         permissionsManager = null
-
-        logger.info("PCBridge disabled")
-    }
-
-    private fun createDefaultConfig() {
-        spigotConfig.addDefaults(
-            PluginConfig.API_KEY,
-            PluginConfig.API_BASE_URL,
-            PluginConfig.API_IS_LOGGING_ENABLED,
-        )
     }
 }

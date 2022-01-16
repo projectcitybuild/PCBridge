@@ -1,6 +1,8 @@
 package com.projectcitybuild.modules.nameguesser
 
-class NameGuesser {
+import javax.inject.Inject
+
+class NameGuesser @Inject constructor() {
     fun guessClosest(string: String, collection: Collection<String>): String? {
         return guessClosest(string, collection) { it }
     }

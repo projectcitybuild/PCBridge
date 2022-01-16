@@ -12,8 +12,9 @@ import kotlinx.coroutines.launch
 import net.md_5.bungee.api.connection.Connection
 import net.md_5.bungee.api.connection.ProxiedPlayer
 import java.sql.Date
+import javax.inject.Inject
 
-class IncomingSetWarpListener(
+class IncomingSetWarpListener @Inject constructor(
     private val warpRepository: WarpRepository
 ): BungeecordSubChannelListener {
 

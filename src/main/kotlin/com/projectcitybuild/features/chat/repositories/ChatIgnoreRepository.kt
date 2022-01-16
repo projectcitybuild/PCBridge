@@ -2,8 +2,9 @@ package com.projectcitybuild.features.chat.repositories
 
 import com.projectcitybuild.modules.database.DataSource
 import java.sql.Date
+import javax.inject.Inject
 
-class ChatIgnoreRepository(
+class ChatIgnoreRepository @Inject constructor(
     private val dataSource: DataSource
 ) {
     fun isIgnored(playerConfigId: Long, ignoredPlayerConfigId: Long): Boolean {

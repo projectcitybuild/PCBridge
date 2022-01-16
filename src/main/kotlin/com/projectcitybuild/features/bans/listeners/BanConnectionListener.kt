@@ -13,8 +13,9 @@ import net.md_5.bungee.api.event.LoginEvent
 import net.md_5.bungee.api.plugin.Plugin
 import net.md_5.bungee.event.EventHandler
 import net.md_5.bungee.event.EventPriority
+import javax.inject.Inject
 
-class BanConnectionListener(
+class BanConnectionListener @Inject constructor(
     private val plugin: Plugin,
     private val banRepository: BanRepository,
     private val logger: LoggerProvider

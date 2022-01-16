@@ -7,37 +7,33 @@ import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.features.teleporting.subchannels.AwaitJoinTeleportChannelListener
 import com.projectcitybuild.features.teleporting.subchannels.ImmediateTeleportChannelListener
 import com.projectcitybuild.modules.channels.spigot.SpigotSubChannelListener
-import com.projectcitybuild.modules.logger.LoggerProvider
-import com.projectcitybuild.modules.nameguesser.NameGuesser
-import com.projectcitybuild.modules.playerconfig.PlayerConfigRepository
-import com.projectcitybuild.modules.sessioncache.SpigotSessionCache
-import net.md_5.bungee.api.ProxyServer
-import org.bukkit.plugin.Plugin
+import javax.inject.Inject
 
 class TeleportModule {
 
-    class Bungeecord(
-        proxyServer: ProxyServer,
-        playerConfigRepository: PlayerConfigRepository,
-        nameGuesser: NameGuesser
+    class Bungeecord @Inject constructor(
+        tpCommand: TPCommand,
+        tpHereCommand: TPHereCommand,
+        tpoCommand: TPOCommand,
+        tpoHereCommand: TPOHereCommand,
+        tpToggleCommand: TPHereCommand,
     ): BungeecordFeatureModule {
         override val bungeecordCommands: Array<BungeecordCommand> = arrayOf(
-            TPCommand(proxyServer, playerConfigRepository, nameGuesser),
-            TPHereCommand(proxyServer, playerConfigRepository, nameGuesser),
-            TPOCommand(proxyServer, nameGuesser),
-            TPOHereCommand(proxyServer, nameGuesser),
-            TPToggleCommand(playerConfigRepository),
+            tpCommand,
+            tpHereCommand,
+            tpoCommand,
+            tpoHereCommand,
+            tpToggleCommand,
         )
     }
 
-    class Spigot(
-        plugin: Plugin,
-        logger: LoggerProvider,
-        spigotSessionCache: SpigotSessionCache
+    class Spigot @Inject constructor(
+        awaitJoinTeleportChannelListener: AwaitJoinTeleportChannelListener,
+        immediateTeleportChannelListener: ImmediateTeleportChannelListener,
     ): SpigotFeatureModule {
         override val spigotSubChannelListeners: Array<SpigotSubChannelListener> = arrayOf(
-            AwaitJoinTeleportChannelListener(plugin, logger, spigotSessionCache),
-            ImmediateTeleportChannelListener(plugin, logger),
+            awaitJoinTeleportChannelListener,
+            immediateTeleportChannelListener,
         )
     }
 }

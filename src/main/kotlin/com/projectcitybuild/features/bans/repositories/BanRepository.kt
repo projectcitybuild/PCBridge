@@ -4,8 +4,9 @@ import com.projectcitybuild.modules.network.APIClient
 import com.projectcitybuild.modules.network.APIRequestFactory
 import com.projectcitybuild.entities.responses.GameBan
 import java.util.*
+import javax.inject.Inject
 
-class BanRepository(
+class BanRepository @Inject constructor(
     private val apiRequestFactory: APIRequestFactory,
     private val apiClient: APIClient
 ) {

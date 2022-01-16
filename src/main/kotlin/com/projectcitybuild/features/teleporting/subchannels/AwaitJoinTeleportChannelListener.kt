@@ -9,8 +9,9 @@ import com.projectcitybuild.modules.textcomponentbuilder.send
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
 import java.util.*
+import javax.inject.Inject
 
-class AwaitJoinTeleportChannelListener(
+class AwaitJoinTeleportChannelListener @Inject constructor(
     private val plugin: Plugin,
     private val logger: LoggerProvider,
     private val spigotSessionCache: SpigotSessionCache

@@ -6,8 +6,9 @@ import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import net.md_5.bungee.api.CommandSender
+import javax.inject.Inject
 
-class TPToggleCommand(
+class TPToggleCommand @Inject constructor(
     private val playerConfigRepository: PlayerConfigRepository
 ): BungeecordCommand {
 

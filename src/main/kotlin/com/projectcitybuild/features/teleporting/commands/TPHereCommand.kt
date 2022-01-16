@@ -10,8 +10,9 @@ import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandIn
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import net.md_5.bungee.api.CommandSender
 import net.md_5.bungee.api.ProxyServer
+import javax.inject.Inject
 
-class TPHereCommand(
+class TPHereCommand @Inject constructor(
     private val proxyServer: ProxyServer,
     private val playerConfigRepository: PlayerConfigRepository,
     private val nameGuesser: NameGuesser

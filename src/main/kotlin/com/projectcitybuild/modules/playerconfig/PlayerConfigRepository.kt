@@ -4,8 +4,9 @@ import com.projectcitybuild.entities.PlayerConfig
 import com.projectcitybuild.modules.database.DataSource
 import java.sql.Date
 import java.util.*
+import javax.inject.Inject
 
-class PlayerConfigRepository(
+class PlayerConfigRepository @Inject constructor(
     private val cache: PlayerConfigCache,
     private val dataSource: DataSource
 ) {

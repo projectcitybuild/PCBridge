@@ -9,8 +9,9 @@ import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandIn
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import net.md_5.bungee.api.CommandSender
 import net.md_5.bungee.api.connection.ProxiedPlayer
+import javax.inject.Inject
 
-class SyncCommand(
+class SyncCommand @Inject constructor(
     private val apiRequestFactory: APIRequestFactory,
     private val apiClient: APIClient,
     private val syncPlayerGroupService: SyncPlayerGroupService

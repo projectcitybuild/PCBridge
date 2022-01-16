@@ -8,8 +8,9 @@ import com.projectcitybuild.platforms.spigot.MessageToBungeecord
 import com.projectcitybuild.platforms.spigot.environment.SpigotCommand
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
+import javax.inject.Inject
 
-class SetWarpCommand(
+class SetWarpCommand @Inject constructor(
     private val plugin: Plugin
 ): SpigotCommand {
 

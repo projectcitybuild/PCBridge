@@ -3,8 +3,9 @@ package com.projectcitybuild.modules.playeruuid
 import com.projectcitybuild.core.extensions.toDashFormattedUUID
 import net.md_5.bungee.api.ProxyServer
 import java.util.*
+import javax.inject.Inject
 
-class PlayerUUIDRepository(
+class PlayerUUIDRepository @Inject constructor(
     private val proxyServer: ProxyServer,
     private val mojangPlayerRepository: MojangPlayerRepository
 ) {

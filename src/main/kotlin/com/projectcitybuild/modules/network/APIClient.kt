@@ -2,11 +2,13 @@ package com.projectcitybuild.modules.network
 
 import com.google.gson.Gson
 import com.projectcitybuild.entities.responses.ApiError
+import dagger.Reusable
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 import java.io.IOException
 import kotlin.coroutines.CoroutineContext
 
+@Reusable
 class APIClient(
     private val getCoroutineContext: () -> CoroutineContext
 ) {

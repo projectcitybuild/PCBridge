@@ -10,21 +10,20 @@ import com.projectcitybuild.features.ranksync.listeners.SyncRankLoginListener
 import com.projectcitybuild.modules.nameguesser.NameGuesser
 import net.md_5.bungee.api.ProxyServer
 import net.md_5.bungee.api.plugin.Listener
+import javax.inject.Inject
 
-class RankSyncModule(
-    proxyServer: ProxyServer,
-    apiRequestFactory: APIRequestFactory,
-    apiClient: APIClient,
-    syncPlayerGroupService: SyncPlayerGroupService,
-    nameGuesser: NameGuesser
+class RankSyncModule @Inject constructor(
+    syncCommand: SyncCommand,
+    syncOtherCommand: SyncOtherCommand,
+    syncRankLoginListener: SyncRankLoginListener,
 ): BungeecordFeatureModule {
 
     override val bungeecordCommands: Array<BungeecordCommand> = arrayOf(
-        SyncCommand(apiRequestFactory, apiClient, syncPlayerGroupService),
-        SyncOtherCommand(proxyServer, syncPlayerGroupService, nameGuesser),
+        syncCommand,
+        syncOtherCommand,
     )
 
     override val bungeecordListeners: Array<Listener> = arrayOf(
-        SyncRankLoginListener(syncPlayerGroupService),
+        syncRankLoginListener,
     )
 }

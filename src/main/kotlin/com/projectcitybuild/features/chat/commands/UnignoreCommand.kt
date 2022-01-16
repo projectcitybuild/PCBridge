@@ -12,8 +12,9 @@ import com.projectcitybuild.modules.textcomponentbuilder.send
 import net.md_5.bungee.api.CommandSender
 import net.md_5.bungee.api.ProxyServer
 import java.util.*
+import javax.inject.Inject
 
-class UnignoreCommand(
+class UnignoreCommand @Inject constructor(
     private val proxyServer: ProxyServer,
     private val playerUUIDRepository: PlayerUUIDRepository,
     private val playerConfigRepository: PlayerConfigRepository,

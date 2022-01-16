@@ -3,7 +3,6 @@ package com.projectcitybuild.modules.config.implementations
 import com.google.common.io.ByteStreams
 import com.projectcitybuild.entities.PluginConfig
 import com.projectcitybuild.modules.config.ConfigProvider
-import net.md_5.bungee.api.plugin.Plugin
 import net.md_5.bungee.config.Configuration
 import net.md_5.bungee.config.ConfigurationProvider
 import net.md_5.bungee.config.YamlConfiguration
@@ -12,27 +11,46 @@ import java.io.FileOutputStream
 import java.io.IOException
 
 class BungeecordConfig(
-    private val plugin: Plugin
+    private val dataFolder: File
 ): ConfigProvider {
 
     private var config: Configuration? = null
-    private fun getFile(): File = File(plugin.dataFolder, "config.yml")
+    private fun getFile(): File = File(dataFolder, "config.yml")
 
-    fun load() {
+    @Suppress("UNCHECKED_CAST")
+    override fun <T> get(key: PluginConfig.ConfigPath<T>): T {
+        val config = config ?: throw Exception("Attempted to read config file without loading it")
+        return config.get(key.key) as? T ?: key.defaultValue
+    }
+
+    override fun get(path: String): Any? {
+        val config = config ?: throw Exception("Attempted to read config file without loading it")
+        return config.get(path)
+    }
+
+    override fun <T> set(key: PluginConfig.ConfigPath<T>, value: T) {
+        val config = config ?: throw Exception("Attempted to read config file without loading it")
+
+        config.set(key.key, value)
+        save()
+    }
+
+    override fun load(vararg keys: PluginConfig.ConfigPath<*>) {
         config = null
 
         val file = getFile()
-
         createIfNeeded(file)
 
-        try {
-            config = ConfigurationProvider
-                .getProvider(YamlConfiguration::class.java)
-                .load(file)
-
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+        config = ConfigurationProvider
+            .getProvider(YamlConfiguration::class.java)
+            .load(file)
+            .also { config ->
+                keys.forEach { key ->
+                    if (config.get(key.key) == null)
+                        config.set(key.key, key.defaultValue)
+                }
+                save()
+            }
     }
 
     private fun createIfNeeded(file: File) {
@@ -55,33 +73,5 @@ class BungeecordConfig(
         ConfigurationProvider
             .getProvider(YamlConfiguration::class.java)
             .save(config, getFile())
-    }
-
-    @Suppress("UNCHECKED_CAST")
-    override fun <T> get(key: PluginConfig.ConfigPath<T>): T {
-        val config = config ?: throw Exception("Attempted to read config file without loading it")
-        return config.get(key.key) as? T ?: key.defaultValue
-    }
-
-    override fun get(path: String): Any? {
-        val config = config ?: throw Exception("Attempted to read config file without loading it")
-        return config.get(path)
-    }
-
-    override fun <T> set(key: PluginConfig.ConfigPath<T>, value: T) {
-        val config = config ?: throw Exception("Attempted to read config file without loading it")
-
-        config.set(key.key, value)
-        save()
-    }
-
-    override fun addDefaults(vararg keys: PluginConfig.ConfigPath<*>) {
-        val config = config ?: throw Exception("Attempted to read config file without loading it")
-
-        keys.forEach { key ->
-            if (config.get(key.key) == null)
-                config.set(key.key, key.defaultValue)
-        }
-        save()
     }
 }

@@ -7,8 +7,9 @@ import com.projectcitybuild.platforms.bungeecord.extensions.add
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.ProxyServer
 import net.md_5.bungee.api.chat.TextComponent
+import javax.inject.Inject
 
-class ACommand(
+class ACommand @Inject constructor(
     private val proxyServer: ProxyServer
 ): BungeecordCommand {
 

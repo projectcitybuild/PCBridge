@@ -8,8 +8,9 @@ import kotlinx.coroutines.launch
 import net.md_5.bungee.api.event.PostLoginEvent
 import net.md_5.bungee.event.EventHandler
 import net.md_5.bungee.event.EventPriority
+import javax.inject.Inject
 
-class SyncRankLoginListener(
+class SyncRankLoginListener @Inject constructor(
     private val syncPlayerGroupService: SyncPlayerGroupService
 ): BungeecordListener {
 
