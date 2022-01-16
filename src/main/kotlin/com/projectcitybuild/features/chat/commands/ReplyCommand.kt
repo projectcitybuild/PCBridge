@@ -54,7 +54,7 @@ class ReplyCommand @Inject constructor(
         }
 
         val message = input.args.joinToString(separator = " ")
-        val senderName = input.player?.displayName ?: "CONSOLE"
+        val senderName = input.player.displayName
 
         val tc = TextComponent(" [$senderName -> ${targetPlayer.name}] $message").also {
             it.color = ChatColor.GRAY

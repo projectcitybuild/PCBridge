@@ -8,6 +8,7 @@ import net.md_5.bungee.api.chat.BaseComponent
 import net.md_5.bungee.api.chat.ComponentBuilder
 import net.md_5.bungee.api.chat.HoverEvent
 import net.md_5.bungee.api.chat.TextComponent
+import net.md_5.bungee.api.chat.hover.content.Text
 import net.md_5.bungee.api.connection.ProxiedPlayer
 import javax.inject.Inject
 
@@ -72,7 +73,7 @@ class ChatGroupFormatBuilder @Inject constructor(
                     .fromLegacyText(displayName)
                     .forEach { c ->
                         if (hoverName.isNullOrBlank()) return@forEach
-                        val hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT, ComponentBuilder(hoverName).create())
+                        val hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT, Text(hoverName))
                         c.hoverEvent = hoverEvent
                         groupTC.addExtra(c)
                     }
@@ -87,7 +88,7 @@ class ChatGroupFormatBuilder @Inject constructor(
                 .fromLegacyText(displayName)
                 .forEach { c ->
                     if (hoverName.isNullOrBlank()) return@forEach
-                    val hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT, ComponentBuilder(hoverName).create())
+                    val hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT, Text(hoverName))
                     c.hoverEvent = hoverEvent
                     groupTC.addExtra(c)
                 }
@@ -102,7 +103,7 @@ class ChatGroupFormatBuilder @Inject constructor(
                 .fromLegacyText(displayName)
                 .forEach { c ->
                     if (hoverName.isNullOrBlank()) return@forEach
-                    val hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT, ComponentBuilder(hoverName).create())
+                    val hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT, Text(hoverName))
                     c.hoverEvent = hoverEvent
                     groupTC.addExtra(c)
                 }
