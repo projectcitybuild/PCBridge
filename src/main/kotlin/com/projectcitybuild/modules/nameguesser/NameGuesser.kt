@@ -1,7 +1,5 @@
 package com.projectcitybuild.modules.nameguesser
 
-import net.md_5.bungee.api.ProxyServer
-
 class NameGuesser {
     fun guessClosest(string: String, collection: Collection<String>): String? {
         return guessClosest(string, collection) { it }

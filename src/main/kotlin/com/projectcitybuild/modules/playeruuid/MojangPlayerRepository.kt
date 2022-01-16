@@ -10,13 +10,26 @@ class MojangPlayerRepository(
 ) {
     class PlayerNotFoundException: Exception()
 
+    // TODO: cache with expiry time
+    private val cache = HashMap<String, MojangPlayer>()
+
     suspend fun get(playerName: String, at: Long? = null): MojangPlayer {
+        val cacheHit = cache[playerName]
+        if (cacheHit != null) {
+            return cacheHit
+        }
+
         val mojangApi = apiRequestFactory.mojang.mojangApi
 
         return apiClient.execute {
             try {
-                mojangApi.getMojangPlayer(playerName, timestamp = at)
-                    ?: throw PlayerNotFoundException()
+                val player = mojangApi.getMojangPlayer(playerName, timestamp = at)
+                if (player == null) {
+                    throw PlayerNotFoundException()
+                }
+                cache[playerName] = player
+                player
+
             } catch (e: KotlinNullPointerException) {
                 // Hacky workaround to catch 204 HTTP errors (username not found)
                 throw PlayerNotFoundException()
