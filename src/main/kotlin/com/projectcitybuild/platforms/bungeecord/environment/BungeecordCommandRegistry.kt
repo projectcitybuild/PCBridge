@@ -12,8 +12,9 @@ import net.md_5.bungee.api.chat.TextComponent
 import net.md_5.bungee.api.plugin.Command
 import net.md_5.bungee.api.plugin.Plugin
 import net.md_5.bungee.api.plugin.TabExecutor
+import javax.inject.Inject
 
-class BungeecordCommandRegistry constructor(
+class BungeecordCommandRegistry @Inject constructor(
     private val plugin: Plugin,
     private val logger: LoggerProvider
 ) {

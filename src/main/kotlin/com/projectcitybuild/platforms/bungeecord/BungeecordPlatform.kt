@@ -67,12 +67,10 @@ class BungeecordPlatform: Plugin() {
         sessionCache = component.sessionCache()
         permissionsManager = component.permissionsManager()
         playerConfigCache = component.playerConfigCache()
+        commandRegistry = component.commandRegistry()
+        listenerRegistry = component.listenerRegistry()
 
-        val logger = component.logger()
-        commandRegistry = BungeecordCommandRegistry(plugin = this, logger)
-        listenerRegistry = BungeecordListenerRegistry(plugin = this, logger)
-
-        val subChannelListener = BungeecordMessageListener(logger)
+        val subChannelListener = BungeecordMessageListener(component.logger())
         listenerRegistry?.register(subChannelListener)
 
         component.modules().forEach { module ->

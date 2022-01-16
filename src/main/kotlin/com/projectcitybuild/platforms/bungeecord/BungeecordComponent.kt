@@ -12,6 +12,8 @@ import com.projectcitybuild.modules.permissions.PermissionsManager
 import com.projectcitybuild.modules.playerconfig.PlayerConfigCache
 import com.projectcitybuild.modules.sessioncache.BungeecordSessionCache
 import com.projectcitybuild.old_modules.storage.HubFileStorage
+import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandRegistry
+import com.projectcitybuild.platforms.bungeecord.environment.BungeecordListenerRegistry
 import dagger.BindsInstance
 import dagger.Component
 import net.md_5.bungee.api.ProxyServer
@@ -23,10 +25,11 @@ import net.md_5.bungee.api.plugin.Plugin
     DataSourceProvider::class,
 ])
 interface BungeecordComponent {
-
     fun config(): ConfigProvider
     fun logger(): LoggerProvider
     fun dataSource(): DataSource
+    fun commandRegistry(): BungeecordCommandRegistry
+    fun listenerRegistry(): BungeecordListenerRegistry
     fun sessionCache(): BungeecordSessionCache
     fun permissionsManager(): PermissionsManager
     fun playerConfigCache(): PlayerConfigCache
