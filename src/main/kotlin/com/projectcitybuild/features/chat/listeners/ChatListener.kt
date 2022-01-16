@@ -7,8 +7,9 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.player.AsyncPlayerChatEvent
 import org.bukkit.plugin.Plugin
+import javax.inject.Inject
 
-class ChatListener(
+class ChatListener @Inject constructor(
     private val plugin: Plugin
 ): SpigotListener {
 

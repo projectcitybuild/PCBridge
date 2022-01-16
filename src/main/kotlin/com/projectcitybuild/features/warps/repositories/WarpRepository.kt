@@ -2,8 +2,11 @@ package com.projectcitybuild.features.warps.repositories
 
 import com.projectcitybuild.entities.Warp
 import com.projectcitybuild.modules.database.DataSource
+import dagger.Reusable
+import javax.inject.Inject
 
-class WarpRepository(
+@Reusable
+class WarpRepository @Inject constructor(
     private val dataSource: DataSource,
 ) {
     private var cache: List<Warp>? = null

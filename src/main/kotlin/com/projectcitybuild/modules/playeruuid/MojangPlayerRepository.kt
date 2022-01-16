@@ -3,8 +3,9 @@ package com.projectcitybuild.modules.playeruuid
 import com.projectcitybuild.modules.network.APIRequestFactory
 import com.projectcitybuild.entities.responses.MojangPlayer
 import com.projectcitybuild.modules.network.APIClient
+import javax.inject.Inject
 
-class MojangPlayerRepository(
+class MojangPlayerRepository @Inject constructor(
         private val apiRequestFactory: APIRequestFactory,
         private val apiClient: APIClient
 ) {

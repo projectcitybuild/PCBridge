@@ -7,8 +7,9 @@ import net.md_5.bungee.api.event.PlayerDisconnectEvent
 import net.md_5.bungee.api.event.PostLoginEvent
 import net.md_5.bungee.event.EventHandler
 import java.sql.Date
+import javax.inject.Inject
 
-class PlayerCacheListener(
+class PlayerCacheListener @Inject constructor(
     private val playerCache: PlayerConfigCache,
     private val playerConfigRepository: PlayerConfigRepository,
 ): BungeecordListener {

@@ -9,8 +9,9 @@ import org.bukkit.Location
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
 import java.util.*
+import javax.inject.Inject
 
-class AwaitJoinWarpChannelListener(
+class AwaitJoinWarpChannelListener @Inject constructor(
     private val plugin: Plugin,
     private val logger: LoggerProvider,
     private val spigotSessionCache: SpigotSessionCache

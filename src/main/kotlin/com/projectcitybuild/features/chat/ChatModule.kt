@@ -14,38 +14,43 @@ import com.projectcitybuild.modules.playeruuid.PlayerUUIDRepository
 import com.projectcitybuild.modules.sessioncache.BungeecordSessionCache
 import net.md_5.bungee.api.ProxyServer
 import org.bukkit.plugin.Plugin
+import javax.inject.Inject
 import org.bukkit.event.Listener as SpigotListener
 
 class ChatModule {
 
-    class Bungeecord(
-        proxyServer: ProxyServer,
-        playerUUIDRepository: PlayerUUIDRepository,
-        playerConfigRepository: PlayerConfigRepository,
-        chatIgnoreRepository: ChatIgnoreRepository,
-        chatGroupFormatBuilder: ChatGroupFormatBuilder,
-        sessionCache: BungeecordSessionCache,
-        nameGuesser: NameGuesser
+    class Bungeecord @Inject constructor(
+        aCommand: ACommand,
+        ignoreCommand: IgnoreCommand,
+        muteCommand: MuteCommand,
+        replyCommand: IgnoreCommand,
+        unignoreCommand: UnignoreCommand,
+        unmuteCommand: UnmuteCommand,
+        whisperCommand: WhisperCommand,
+        incomingChatChannelListener: IncomingChatChannelListener,
     ): BungeecordFeatureModule {
 
         override val bungeecordCommands: Array<BungeecordCommand> = arrayOf(
-            ACommand(proxyServer),
-            IgnoreCommand(proxyServer, playerConfigRepository, chatIgnoreRepository, nameGuesser),
-            MuteCommand(proxyServer, playerConfigRepository, nameGuesser),
-            ReplyCommand(proxyServer, playerConfigRepository, chatIgnoreRepository, sessionCache),
-            UnignoreCommand(proxyServer, playerUUIDRepository, playerConfigRepository, chatIgnoreRepository, nameGuesser),
-            UnmuteCommand(proxyServer, playerConfigRepository, nameGuesser),
-            WhisperCommand(proxyServer, playerConfigRepository, chatIgnoreRepository, sessionCache, nameGuesser),
+            aCommand,
+            ignoreCommand,
+            muteCommand,
+            replyCommand,
+            unignoreCommand,
+            unmuteCommand,
+            whisperCommand,
         )
 
         override val bungeecordSubChannelListeners: Array<BungeecordSubChannelListener> = arrayOf(
-            IncomingChatChannelListener(proxyServer, playerConfigRepository, chatIgnoreRepository, chatGroupFormatBuilder)
+            incomingChatChannelListener,
         )
     }
 
-    class Spigot(plugin: Plugin): SpigotFeatureModule {
+    class Spigot @Inject constructor(
+        chatListener: ChatListener
+    ): SpigotFeatureModule {
+
         override val spigotListeners: Array<SpigotListener> = arrayOf(
-            ChatListener(plugin),
+            chatListener,
         )
     }
 }

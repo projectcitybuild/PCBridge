@@ -6,222 +6,60 @@ import com.projectcitybuild.modules.network.APIRequestFactory
 import com.projectcitybuild.modules.network.mojang.client.MojangClient
 import com.projectcitybuild.modules.network.pcb.client.PCBClient
 import com.projectcitybuild.entities.Channel
-import com.projectcitybuild.features.bans.BanModule
-import com.projectcitybuild.features.chat.ChatModule
-import com.projectcitybuild.features.hub.HubModule
-import com.projectcitybuild.features.ranksync.RankSyncModule
-import com.projectcitybuild.features.teleporting.TeleportModule
-import com.projectcitybuild.features.warps.WarpModule
 import com.projectcitybuild.modules.permissions.PermissionsManager
-import com.projectcitybuild.features.bans.repositories.BanRepository
-import com.projectcitybuild.features.chat.ChatGroupFormatBuilder
-import com.projectcitybuild.features.chat.repositories.ChatIgnoreRepository
-import com.projectcitybuild.features.joinmessage.JoinMessageModule
-import com.projectcitybuild.features.playercache.PlayerCacheModule
-import com.projectcitybuild.modules.playeruuid.MojangPlayerRepository
-import com.projectcitybuild.modules.playeruuid.PlayerUUIDRepository
-import com.projectcitybuild.features.ranksync.SyncPlayerGroupService
-import com.projectcitybuild.features.warps.repositories.WarpRepository
 import com.projectcitybuild.modules.channels.bungeecord.BungeecordMessageListener
 import com.projectcitybuild.modules.config.implementations.BungeecordConfig
 import com.projectcitybuild.modules.database.DataSource
 import com.projectcitybuild.modules.logger.implementations.BungeecordLogger
-import com.projectcitybuild.modules.nameguesser.NameGuesser
-import com.projectcitybuild.modules.playerconfig.PlayerConfigCache
-import com.projectcitybuild.modules.playerconfig.PlayerConfigRepository
 import com.projectcitybuild.modules.sessioncache.BungeecordSessionCache
-import com.projectcitybuild.platforms.bungeecord.environment.BungeecordTimer
-import com.projectcitybuild.old_modules.storage.HubFileStorage
 import com.projectcitybuild.platforms.bungeecord.environment.*
 import kotlinx.coroutines.Dispatchers
 import net.md_5.bungee.api.plugin.Plugin
+import javax.inject.Inject
 
 class BungeecordPlatform: Plugin() {
-
-    private val bungeecordLogger = BungeecordLogger(logger)
-    private val config = BungeecordConfig(plugin = this)
-    private val apiClient = APIClient { Dispatchers.IO }
-    private val timer = BungeecordTimer(plugin = this, proxy)
     private var commandRegistry: BungeecordCommandRegistry? = null
     private var listenerRegistry: BungeecordListenerRegistry? = null
-    private var permissionsManager: PermissionsManager? = null
 
-    private val apiRequestFactory: APIRequestFactory by lazy {
-        val isLoggingEnabled = config.get(PluginConfig.API_IS_LOGGING_ENABLED)
-        APIRequestFactory(
-            pcb = PCBClient(
-                authToken = config.get(PluginConfig.API_KEY),
-                baseUrl = config.get(PluginConfig.API_BASE_URL),
-                withLogging = isLoggingEnabled
-            ),
-            mojang = MojangClient(
-                withLogging = isLoggingEnabled
-            )
-        )
-    }
-
-    private val dataSource: DataSource by lazy {
-        DataSource(
-            this,
-            logger = bungeecordLogger,
-            hostName = config.get(PluginConfig.DB_HOSTNAME),
-            port = config.get(PluginConfig.DB_PORT),
-            databaseName = config.get(PluginConfig.DB_NAME),
-            username = config.get(PluginConfig.DB_USERNAME),
-            password = config.get(PluginConfig.DB_PASSWORD),
-            shouldRunMigrations = true
-        )
-    }
-
-    private val playerUUIDRepository: PlayerUUIDRepository by lazy {
-        PlayerUUIDRepository(
-            proxy,
-            mojangPlayerRepository
-        )
-    }
-
-    private val mojangPlayerRepository: MojangPlayerRepository by lazy {
-        MojangPlayerRepository(
-            apiRequestFactory,
-            apiClient
-        )
-    }
-
-    private val playerConfigRepository: PlayerConfigRepository by lazy {
-        PlayerConfigRepository(
-            playerConfigCache,
-            dataSource,
-        )
-    }
-
-    private val chatIgnoreRepository: ChatIgnoreRepository by lazy {
-        ChatIgnoreRepository(dataSource)
-    }
-
-    private val hubFileStorage: HubFileStorage by lazy {
-        HubFileStorage(
-            folderPath = dataFolder
-        )
-    }
-
-    private val banRepository: BanRepository by lazy {
-        BanRepository(
-            apiRequestFactory,
-            apiClient
-        )
-    }
-
-    private val warpRepository: WarpRepository by lazy {
-        WarpRepository(dataSource)
-    }
-
-    private val syncPlayerGroupService: SyncPlayerGroupService by lazy {
-        SyncPlayerGroupService(
-            permissionsManager!!,
-            apiRequestFactory,
-            apiClient,
-            config,
-            bungeecordLogger
-        )
-    }
-
-    private val chatGroupFormatBuilder: ChatGroupFormatBuilder by lazy {
-        ChatGroupFormatBuilder(
-            permissionsManager!!,
-            config
-        )
-    }
-
-    private val playerConfigCache = PlayerConfigCache()
-    private var sessionCache: BungeecordSessionCache? = null
+//    private val hubFileStorage: HubFileStorage by lazy {
+//        HubFileStorage(
+//            folderPath = dataFolder
+//        )
+//    }
 
     override fun onEnable() {
-        config.load()
-        createDefaultConfig()
+        val component = DaggerBungeecordComponent.builder()
+            .proxyServer(proxy)
+            .config(BungeecordConfig(dataFolder))
+            .logger(BungeecordLogger(logger))
+            .apiClient(APIClient { Dispatchers.IO })
+            .apiRequestFactory(APIRequestFactory(
+                pcb = PCBClient(
+                    authToken = config.get(PluginConfig.API_KEY),
+                    baseUrl = config.get(PluginConfig.API_BASE_URL),
+                    withLogging = config.get(PluginConfig.API_IS_LOGGING_ENABLED)
+                ),
+                mojang = MojangClient(
+                    withLogging = config.get(PluginConfig.API_IS_LOGGING_ENABLED)
+                )
+            ))
+            .dataSource(DataSource(
+                this,
+                logger = bungeecordLogger,
+                hostName = config.get(PluginConfig.DB_HOSTNAME),
+                port = config.get(PluginConfig.DB_PORT),
+                databaseName = config.get(PluginConfig.DB_NAME),
+                username = config.get(PluginConfig.DB_USERNAME),
+                password = config.get(PluginConfig.DB_PASSWORD),
+                shouldRunMigrations = true
+            ))
+            .build()
 
-        dataSource.connect()
+        val config = component.config()
 
-        proxy.registerChannel(Channel.BUNGEECORD)
 
-        sessionCache = BungeecordSessionCache()
-        permissionsManager = PermissionsManager()
-        commandRegistry = BungeecordCommandRegistry(plugin = this, bungeecordLogger)
-        listenerRegistry = BungeecordListenerRegistry(plugin = this, bungeecordLogger)
 
-        val subChannelListener = BungeecordMessageListener(bungeecordLogger)
-        listenerRegistry?.register(subChannelListener)
-
-        arrayOf(
-            BanModule(
-                plugin = this,
-                proxy,
-                playerUUIDRepository,
-                banRepository,
-                bungeecordLogger
-            ),
-            ChatModule.Bungeecord(
-                proxy,
-                playerUUIDRepository,
-                playerConfigRepository,
-                chatIgnoreRepository,
-                chatGroupFormatBuilder,
-                sessionCache!!,
-                NameGuesser()
-            ),
-            HubModule.Bungeecord(
-                proxy,
-                hubFileStorage
-            ),
-            JoinMessageModule.Bungee(
-                proxy
-            ),
-            PlayerCacheModule(
-                playerConfigCache,
-                playerConfigRepository
-            ),
-            RankSyncModule(
-                proxy,
-                apiRequestFactory,
-                apiClient,
-                syncPlayerGroupService,
-                NameGuesser()
-            ),
-            TeleportModule.Bungeecord(
-                proxy,
-                playerConfigRepository,
-                NameGuesser()
-            ),
-            WarpModule.Bungeecord(
-                proxy,
-                warpRepository,
-                NameGuesser(),
-                config
-            ),
-        ).forEach { module ->
-            module.bungeecordCommands.forEach { commandRegistry?.register(it) }
-            module.bungeecordListeners.forEach { listenerRegistry?.register(it) }
-            module.bungeecordSubChannelListeners.forEach { subChannelListener.register(it) }
-        }
-    }
-
-    override fun onDisable() {
-        proxy.unregisterChannel(Channel.BUNGEECORD)
-
-        listenerRegistry?.unregisterAll()
-        timer.cancelAll()
-
-        permissionsManager = null
-        commandRegistry = null
-        listenerRegistry = null
-        sessionCache = null
-
-        playerConfigCache.flush()
-
-        dataSource.close()
-    }
-
-    private fun createDefaultConfig() {
-        config.addDefaults(
+        config.load(
             PluginConfig.API_KEY,
             PluginConfig.API_BASE_URL,
             PluginConfig.API_IS_LOGGING_ENABLED,
@@ -231,9 +69,7 @@ class BungeecordPlatform: Plugin() {
             PluginConfig.DB_NAME,
             PluginConfig.DB_USERNAME,
             PluginConfig.DB_PASSWORD,
-        )
-
-        // TODO
+            // TODO
 //        config.addDefault("groups.appearance.admin.display_name", "§4[Staff]")
 //        config.addDefault("groups.appearance.admin.hover_name", "Administrator")
 //        config.addDefault("groups.appearance.sop.display_name", "§c[Staff]")
@@ -251,5 +87,48 @@ class BungeecordPlatform: Plugin() {
 //        config.addDefault("groups.appearance.planner.hover_name", "Planner")
 //        config.addDefault("groups.appearance.builder.hover_name", "Builder")
 //        config.addDefault("groups.appearance.intern.hover_name", "Intern")
+        )
+
+        dataSource.connect()
+
+        proxy.registerChannel(Channel.BUNGEECORD)
+
+        sessionCache = BungeecordSessionCache()
+        permissionsManager = PermissionsManager()
+        commandRegistry = BungeecordCommandRegistry(plugin = this, component.logger())
+        listenerRegistry = BungeecordListenerRegistry(plugin = this, component.logger())
+
+        val subChannelListener = BungeecordMessageListener(component.logger())
+        listenerRegistry?.register(subChannelListener)
+
+        arrayOf(
+            component.banModule(),
+            component.chatModule(),
+            component.hubModule(),
+            component.joinMessageModule(),
+            component.playerCacheModule(),
+            component.rankSyncModule(),
+            component.teleportModule(),
+            component.warpModule(),
+        ).forEach { module ->
+            module.bungeecordCommands.forEach { commandRegistry?.register(it) }
+            module.bungeecordListeners.forEach { listenerRegistry?.register(it) }
+            module.bungeecordSubChannelListeners.forEach { subChannelListener.register(it) }
+        }
+    }
+
+    override fun onDisable() {
+        proxy.unregisterChannel(Channel.BUNGEECORD)
+
+        listenerRegistry?.unregisterAll()
+
+        permissionsManager = null
+        commandRegistry = null
+        listenerRegistry = null
+        sessionCache = null
+
+        playerConfigCache.flush()
+
+        dataSource.close()
     }
 }

@@ -6,8 +6,9 @@ import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import net.md_5.bungee.api.CommandSender
+import javax.inject.Inject
 
-class DelWarpCommand(
+class DelWarpCommand @Inject constructor(
     private val warpRepository: WarpRepository
 ): BungeecordCommand {
 

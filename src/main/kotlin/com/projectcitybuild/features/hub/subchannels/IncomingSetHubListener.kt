@@ -14,8 +14,9 @@ import kotlinx.coroutines.launch
 import net.md_5.bungee.api.connection.Connection
 import net.md_5.bungee.api.connection.ProxiedPlayer
 import java.util.*
+import javax.inject.Inject
 
-class IncomingSetHubListener(
+class IncomingSetHubListener @Inject constructor(
     private val hubStorage: HubFileStorage
 ): BungeecordSubChannelListener {
 

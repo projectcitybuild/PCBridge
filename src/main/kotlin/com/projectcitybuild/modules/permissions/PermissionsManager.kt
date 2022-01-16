@@ -1,5 +1,6 @@
 package com.projectcitybuild.modules.permissions
 
+import dagger.Reusable
 import net.luckperms.api.LuckPerms
 import net.luckperms.api.LuckPermsProvider
 import net.luckperms.api.model.user.User
@@ -9,6 +10,7 @@ import net.luckperms.api.node.types.InheritanceNode
 import java.util.*
 import java.util.stream.Collectors
 
+@Reusable
 class PermissionsManager {
 
     val plugin = getPermissionPlugin()

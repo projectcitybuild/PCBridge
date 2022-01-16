@@ -1,12 +1,14 @@
 package com.projectcitybuild.modules.playerconfig
 
 import com.projectcitybuild.entities.PlayerConfig
+import dagger.Reusable
 import java.util.*
 
 /**
  * A memory cache of configs for players currently online
  * on any of the connected servers
  */
+@Reusable
 class PlayerConfigCache {
     private val cache = HashMap<UUID, PlayerConfig>()
 

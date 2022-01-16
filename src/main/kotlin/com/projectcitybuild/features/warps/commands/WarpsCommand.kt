@@ -13,11 +13,12 @@ import net.md_5.bungee.api.chat.ClickEvent
 import net.md_5.bungee.api.chat.HoverEvent
 import net.md_5.bungee.api.chat.TextComponent
 import net.md_5.bungee.api.chat.hover.content.Text
+import javax.inject.Inject
 import kotlin.math.ceil
 import kotlin.math.max
 import kotlin.math.min
 
-class WarpsCommand(
+class WarpsCommand @Inject constructor(
     private val warpRepository: WarpRepository,
     private val config: ConfigProvider
 ): BungeecordCommand {

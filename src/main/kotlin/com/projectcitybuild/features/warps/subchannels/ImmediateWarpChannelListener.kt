@@ -9,8 +9,9 @@ import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerTeleportEvent
 import org.bukkit.plugin.Plugin
 import java.util.*
+import javax.inject.Inject
 
-class ImmediateWarpChannelListener(
+class ImmediateWarpChannelListener @Inject constructor(
     private val plugin: Plugin,
     private val logger: LoggerProvider
 ): SpigotSubChannelListener {

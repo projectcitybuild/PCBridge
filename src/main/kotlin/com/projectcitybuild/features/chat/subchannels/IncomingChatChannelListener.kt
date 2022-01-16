@@ -16,8 +16,9 @@ import net.md_5.bungee.api.ProxyServer
 import net.md_5.bungee.api.chat.TextComponent
 import net.md_5.bungee.api.connection.Connection
 import net.md_5.bungee.api.connection.ProxiedPlayer
+import javax.inject.Inject
 
-class IncomingChatChannelListener(
+class IncomingChatChannelListener @Inject constructor(
     private val proxy: ProxyServer,
     private val playerConfigRepository: PlayerConfigRepository,
     private val chatIgnoreRepository: ChatIgnoreRepository,

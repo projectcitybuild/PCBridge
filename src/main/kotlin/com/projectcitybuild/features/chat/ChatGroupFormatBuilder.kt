@@ -9,8 +9,9 @@ import net.md_5.bungee.api.chat.ComponentBuilder
 import net.md_5.bungee.api.chat.HoverEvent
 import net.md_5.bungee.api.chat.TextComponent
 import net.md_5.bungee.api.connection.ProxiedPlayer
+import javax.inject.Inject
 
-class ChatGroupFormatBuilder(
+class ChatGroupFormatBuilder @Inject constructor(
     private val permissionsManager: PermissionsManager,
     private val config: ConfigProvider
 ) {

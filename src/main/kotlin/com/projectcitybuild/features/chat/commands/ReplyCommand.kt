@@ -10,8 +10,9 @@ import com.projectcitybuild.modules.textcomponentbuilder.send
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.ProxyServer
 import net.md_5.bungee.api.chat.TextComponent
+import javax.inject.Inject
 
-class ReplyCommand(
+class ReplyCommand @Inject constructor(
     private val proxyServer: ProxyServer,
     private val playerConfigRepository: PlayerConfigRepository,
     private val chatIgnoreRepository: ChatIgnoreRepository,

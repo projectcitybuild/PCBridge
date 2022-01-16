@@ -11,8 +11,9 @@ import net.md_5.bungee.api.CommandSender
 import net.md_5.bungee.api.ProxyServer
 import java.text.SimpleDateFormat
 import java.util.*
+import javax.inject.Inject
 
-class CheckBanCommand(
+class CheckBanCommand @Inject constructor(
     private val proxyServer: ProxyServer,
     private val playerUUIDRepository: PlayerUUIDRepository,
     private val banRepository: BanRepository

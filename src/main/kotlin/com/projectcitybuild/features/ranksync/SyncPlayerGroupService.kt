@@ -8,8 +8,9 @@ import com.projectcitybuild.modules.network.APIClient
 import com.projectcitybuild.modules.network.APIRequestFactory
 import com.projectcitybuild.modules.permissions.PermissionsManager
 import java.util.*
+import javax.inject.Inject
 
-class SyncPlayerGroupService(
+class SyncPlayerGroupService @Inject constructor(
     private val permissionsManager: PermissionsManager,
     private val apiRequestFactory: APIRequestFactory,
     private val apiClient: APIClient,

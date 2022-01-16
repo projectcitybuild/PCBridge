@@ -10,8 +10,9 @@ import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.CommandSender
 import net.md_5.bungee.api.ProxyServer
 import net.md_5.bungee.api.chat.TextComponent
+import javax.inject.Inject
 
-class UnbanCommand(
+class UnbanCommand @Inject constructor(
     private val proxyServer: ProxyServer,
     private val playerUUIDRepository: PlayerUUIDRepository,
     private val banRepository: BanRepository

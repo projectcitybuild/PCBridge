@@ -22,7 +22,7 @@ class SpigotConfig(
         return config.get(path)
     }
 
-    override fun addDefaults(vararg keys: PluginConfig.ConfigPath<*>) {
+    override fun load(vararg keys: PluginConfig.ConfigPath<*>) {
         keys.forEach { key ->
             config.addDefault(key.key, key.defaultValue)
         }

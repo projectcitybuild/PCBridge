@@ -8,8 +8,9 @@ import com.projectcitybuild.modules.textcomponentbuilder.send
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
 import java.util.*
+import javax.inject.Inject
 
-class ImmediateTeleportChannelListener(
+class ImmediateTeleportChannelListener @Inject constructor(
     private val plugin: Plugin,
     private val logger: LoggerProvider
 ): SpigotSubChannelListener {
