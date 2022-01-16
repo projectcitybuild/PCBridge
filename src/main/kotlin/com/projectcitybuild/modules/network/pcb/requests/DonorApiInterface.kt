@@ -1,7 +1,12 @@
 package com.projectcitybuild.modules.network.pcb.requests
 
-import com.projectcitybuild.entities.responses.*
-import retrofit2.http.*
+import com.projectcitybuild.entities.responses.ApiResponse
+import com.projectcitybuild.entities.responses.AvailableLootBoxes
+import com.projectcitybuild.entities.responses.DonationPerk
+import com.projectcitybuild.entities.responses.LootBoxRedememption
+import retrofit2.http.GET
+import retrofit2.http.POST
+import retrofit2.http.Path
 
 interface DonorApiInterface {
 

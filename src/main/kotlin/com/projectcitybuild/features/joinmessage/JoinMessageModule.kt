@@ -6,8 +6,6 @@ import com.projectcitybuild.core.contracts.BungeecordFeatureModule
 import com.projectcitybuild.core.contracts.SpigotFeatureModule
 import com.projectcitybuild.features.joinmessage.listeners.NetworkJoinMessageListener
 import com.projectcitybuild.features.joinmessage.listeners.SupressJoinMessageListener
-import net.md_5.bungee.api.ProxyServer
-import net.md_5.bungee.api.plugin.Listener
 import javax.inject.Inject
 
 class JoinMessageModule {

@@ -3,9 +3,9 @@ package com.projectcitybuild.features.bans.commands
 import com.projectcitybuild.core.InvalidCommandArgumentsException
 import com.projectcitybuild.features.bans.repositories.BanRepository
 import com.projectcitybuild.modules.playeruuid.PlayerUUIDRepository
+import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
-import com.projectcitybuild.modules.textcomponentbuilder.send
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.CommandSender
 import net.md_5.bungee.api.ProxyServer

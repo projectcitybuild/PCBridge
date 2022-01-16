@@ -1,18 +1,10 @@
 package com.projectcitybuild.features.afk.listeners
 
 import com.google.common.io.ByteArrayDataInput
-import com.google.common.io.ByteStreams
-import com.projectcitybuild.core.SpigotListener
-import com.projectcitybuild.entities.Channel
 import com.projectcitybuild.entities.SubChannel
 import com.projectcitybuild.modules.channels.spigot.SpigotSubChannelListener
 import com.projectcitybuild.modules.sessioncache.SpigotSessionCache
-import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.ProxyServer
-import net.md_5.bungee.api.chat.TextComponent
-import net.md_5.bungee.api.connection.ProxiedPlayer
-import net.md_5.bungee.api.event.PluginMessageEvent
-import net.md_5.bungee.event.EventHandler
 import org.bukkit.entity.Player
 
 class IncomingAFKEndListener(

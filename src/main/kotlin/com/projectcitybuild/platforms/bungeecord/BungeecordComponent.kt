@@ -1,7 +1,6 @@
 package com.projectcitybuild.platforms.bungeecord
 
 import com.projectcitybuild.core.contracts.BungeecordFeatureModule
-import com.projectcitybuild.platforms.bungeecord.BungeecordFeatureListModule.BungeecordFeatureModules
 import com.projectcitybuild.modules.config.ConfigProvider
 import com.projectcitybuild.modules.database.DataSource
 import com.projectcitybuild.modules.database.DataSourceProvider
@@ -12,6 +11,7 @@ import com.projectcitybuild.modules.permissions.PermissionsManager
 import com.projectcitybuild.modules.playerconfig.PlayerConfigCache
 import com.projectcitybuild.modules.sessioncache.BungeecordSessionCache
 import com.projectcitybuild.old_modules.storage.HubFileStorage
+import com.projectcitybuild.platforms.bungeecord.BungeecordFeatureListModule.BungeecordFeatureModules
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandRegistry
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordListenerRegistry
 import dagger.BindsInstance

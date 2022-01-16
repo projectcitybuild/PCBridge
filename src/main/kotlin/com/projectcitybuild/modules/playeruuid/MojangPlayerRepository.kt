@@ -1,8 +1,8 @@
 package com.projectcitybuild.modules.playeruuid
 
-import com.projectcitybuild.modules.network.APIRequestFactory
 import com.projectcitybuild.entities.responses.MojangPlayer
 import com.projectcitybuild.modules.network.APIClient
+import com.projectcitybuild.modules.network.APIRequestFactory
 import javax.inject.Inject
 
 class MojangPlayerRepository @Inject constructor(
