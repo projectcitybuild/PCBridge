@@ -26,7 +26,7 @@ class TPToggleCommand(
             throw InvalidCommandArgumentsException()
         }
 
-        val playerConfig = playerConfigRepository.get(input.player.uniqueId)
+        val playerConfig = playerConfigRepository.get(input.player.uniqueId)!!
 
         // Either use the given toggle value, or reverse the current saved value
         val willToggleOn = if (input.args.size == 1) desiredState == "on" else !playerConfig.isAllowingTPs

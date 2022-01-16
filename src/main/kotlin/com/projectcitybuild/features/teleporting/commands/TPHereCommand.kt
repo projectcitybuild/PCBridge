@@ -37,7 +37,7 @@ class TPHereCommand(
             return
         }
 
-        val targetPlayerConfig = playerConfigRepository.get(targetPlayer.uniqueId)
+        val targetPlayerConfig = playerConfigRepository.get(targetPlayer.uniqueId)!!
         if (!targetPlayerConfig.isAllowingTPs) {
             input.sender.send().error("$targetPlayerName is disallowing teleports")
             return

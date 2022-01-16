@@ -1,6 +1,8 @@
 package com.projectcitybuild.features.chat.commands
 
 import com.projectcitybuild.core.InvalidCommandArgumentsException
+import com.projectcitybuild.features.chat.repositories.ChatIgnoreRepository
+import com.projectcitybuild.modules.nameguesser.NameGuesser
 import com.projectcitybuild.modules.playeruuid.PlayerUUIDRepository
 import com.projectcitybuild.modules.playerconfig.PlayerConfigRepository
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
@@ -11,8 +13,9 @@ import net.md_5.bungee.api.ProxyServer
 
 class IgnoreCommand(
     private val proxyServer: ProxyServer,
-    private val playerUUIDRepository: PlayerUUIDRepository,
-    private val playerConfigRepository: PlayerConfigRepository
+    private val playerConfigRepository: PlayerConfigRepository,
+    private val chatIgnoreRepository: ChatIgnoreRepository,
+    private val nameGuesser: NameGuesser
 ): BungeecordCommand {
 
     override val label = "ignore"
@@ -20,40 +23,36 @@ class IgnoreCommand(
     override val usageHelp = "/ignore <name>"
 
     override suspend fun execute(input: BungeecordCommandInput) {
+        if (input.player == null) {
+            input.sender.send().error("Console cannot use this command")
+            return
+        }
         if (input.args.size != 1) {
             throw InvalidCommandArgumentsException()
         }
 
         val targetPlayerName = input.args.first()
-
-        if (input.player == null) {
-            input.sender.send().error("Console cannot use this command")
+        val targetPlayer = nameGuesser.guessClosest(targetPlayerName, proxyServer.players) { it.name }
+        if (targetPlayer == null) {
+            input.player.send().error("Could not find $targetPlayerName online")
+            return
+        }
+        if (input.player == targetPlayer) {
+            input.player.send().error("You cannot ignore yourself")
             return
         }
 
-        runCatching {
-            val targetPlayerUUID = playerUUIDRepository.request(targetPlayerName)
-                ?: throw Exception("Could not find UUID for $targetPlayerName. This player likely doesn't exist")
+        val playerConfig = playerConfigRepository.get(input.player.uniqueId)
+        val targetPlayerConfig = playerConfigRepository.get(targetPlayer.uniqueId)
 
-            if (input.player.uniqueId == targetPlayerUUID) {
-                input.player.send().error("You cannot ignore yourself")
-                return
-            }
-
-            val playerConfig = playerConfigRepository.get(input.player.uniqueId)
-            if (playerConfig.chatIgnoreList.contains(targetPlayerUUID)) {
-                input.player.send().error("$targetPlayerName is already on your ignore list")
-                return
-            }
-
-            playerConfig.chatIgnoreList.add(targetPlayerUUID)
-            playerConfigRepository.save(playerConfig)
-
-            input.sender.send().success("You are now ignoring chat from $targetPlayerName")
-
-        }.onFailure { throwable ->
-            input.sender.send().error(throwable.message ?: "An unknown error occurred")
+        if (chatIgnoreRepository.isIgnored(playerConfig!!.id, targetPlayerConfig!!.id)) {
+            input.player.send().error("$targetPlayerName is already on your ignore list")
+            return
         }
+
+        chatIgnoreRepository.add(playerConfig.id, targetPlayerConfig.id)
+
+        input.sender.send().success("You are now ignoring chat and DMs from $targetPlayerName")
     }
 
     override fun onTabComplete(sender: CommandSender?, args: List<String>): Iterable<String>? {

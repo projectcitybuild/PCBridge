@@ -2,6 +2,7 @@ package com.projectcitybuild.features.chat.commands
 
 import com.projectcitybuild.core.InvalidCommandArgumentsException
 import com.projectcitybuild.core.extensions.joinWithWhitespaces
+import com.projectcitybuild.features.chat.repositories.ChatIgnoreRepository
 import com.projectcitybuild.modules.nameguesser.NameGuesser
 import com.projectcitybuild.modules.playerconfig.PlayerConfigRepository
 import com.projectcitybuild.modules.sessioncache.BungeecordSessionCache
@@ -17,6 +18,7 @@ import net.md_5.bungee.api.chat.TextComponent
 class WhisperCommand(
     private val proxyServer: ProxyServer,
     private val playerConfigRepository: PlayerConfigRepository,
+    private val chatIgnoreRepository: ChatIgnoreRepository,
     private val sessionCache: BungeecordSessionCache,
     private val nameGuesser: NameGuesser
 ): BungeecordCommand {
@@ -33,7 +35,6 @@ class WhisperCommand(
         val targetPlayerName = input.args.first()
 
         val targetPlayer = nameGuesser.guessClosest(targetPlayerName, proxyServer.players) { it.name }
-
         if (targetPlayer == null) {
             input.sender.send().error("Player not found")
             return
@@ -45,8 +46,10 @@ class WhisperCommand(
         }
 
         if (input.player != null) {
-            val targetPlayerConfig = playerConfigRepository.get(input.player.uniqueId)
-            if (targetPlayerConfig.chatIgnoreList.contains(input.player.uniqueId)) {
+            val playerConfig = playerConfigRepository.get(input.player.uniqueId)
+            val targetPlayerConfig = playerConfigRepository.get(targetPlayer.uniqueId)
+
+            if (chatIgnoreRepository.isIgnored(playerConfig!!.id, targetPlayerConfig!!.id)) {
                 input.sender.send().error("Cannot send. You are being ignored by $targetPlayerName")
                 return
             }

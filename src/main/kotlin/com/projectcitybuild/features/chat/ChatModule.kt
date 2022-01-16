@@ -4,6 +4,7 @@ import com.projectcitybuild.core.contracts.BungeecordFeatureModule
 import com.projectcitybuild.core.contracts.SpigotFeatureModule
 import com.projectcitybuild.features.chat.commands.*
 import com.projectcitybuild.features.chat.listeners.ChatListener
+import com.projectcitybuild.features.chat.repositories.ChatIgnoreRepository
 import com.projectcitybuild.features.chat.subchannels.IncomingChatChannelListener
 import com.projectcitybuild.modules.channels.bungeecord.BungeecordSubChannelListener
 import com.projectcitybuild.modules.nameguesser.NameGuesser
@@ -21,6 +22,7 @@ class ChatModule {
         proxyServer: ProxyServer,
         playerUUIDRepository: PlayerUUIDRepository,
         playerConfigRepository: PlayerConfigRepository,
+        chatIgnoreRepository: ChatIgnoreRepository,
         chatGroupFormatBuilder: ChatGroupFormatBuilder,
         sessionCache: BungeecordSessionCache,
         nameGuesser: NameGuesser
@@ -28,16 +30,16 @@ class ChatModule {
 
         override val bungeecordCommands: Array<BungeecordCommand> = arrayOf(
             ACommand(proxyServer),
-            IgnoreCommand(proxyServer, playerUUIDRepository, playerConfigRepository),
-            MuteCommand(proxyServer, playerConfigRepository),
-            ReplyCommand(proxyServer, playerConfigRepository, sessionCache),
-            UnignoreCommand(proxyServer, playerUUIDRepository, playerConfigRepository),
-            UnmuteCommand(proxyServer, playerConfigRepository),
-            WhisperCommand(proxyServer, playerConfigRepository, sessionCache, nameGuesser),
+            IgnoreCommand(proxyServer, playerConfigRepository, chatIgnoreRepository, nameGuesser),
+            MuteCommand(proxyServer, playerConfigRepository, nameGuesser),
+            ReplyCommand(proxyServer, playerConfigRepository, chatIgnoreRepository, sessionCache),
+            UnignoreCommand(proxyServer, playerUUIDRepository, playerConfigRepository, chatIgnoreRepository, nameGuesser),
+            UnmuteCommand(proxyServer, playerConfigRepository, nameGuesser),
+            WhisperCommand(proxyServer, playerConfigRepository, chatIgnoreRepository, sessionCache, nameGuesser),
         )
 
         override val bungeecordSubChannelListeners: Array<BungeecordSubChannelListener> = arrayOf(
-            IncomingChatChannelListener(proxyServer, playerConfigRepository, chatGroupFormatBuilder)
+            IncomingChatChannelListener(proxyServer, playerConfigRepository, chatIgnoreRepository, chatGroupFormatBuilder)
         )
     }
 

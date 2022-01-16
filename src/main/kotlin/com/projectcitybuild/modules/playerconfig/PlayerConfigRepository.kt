@@ -9,7 +9,7 @@ class PlayerConfigRepository(
     private val cache: PlayerConfigCache,
     private val dataSource: DataSource
 ) {
-    fun get(uuid: UUID): PlayerConfig {
+    fun get(uuid: UUID): PlayerConfig? {
         val cachedPlayer = cache.get(uuid)
         if (cachedPlayer != null) {
             return cachedPlayer
@@ -31,14 +31,7 @@ class PlayerConfigRepository(
             return deserializedPlayer
         }
 
-        val newCachedPlayer = add(
-            uuid = uuid,
-            isMuted = false,
-            isAllowingTPs = true,
-            firstSeen = Date(System.currentTimeMillis()),
-        )
-        save(newCachedPlayer)
-        return newCachedPlayer
+        return null
     }
 
     fun add(uuid: UUID, isMuted: Boolean, isAllowingTPs: Boolean, firstSeen: Date): PlayerConfig {

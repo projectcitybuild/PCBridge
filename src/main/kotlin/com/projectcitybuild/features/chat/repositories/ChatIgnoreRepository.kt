@@ -14,6 +14,12 @@ class ChatIgnoreRepository(
         ) != null
     }
 
+    fun ignorerIds(playerConfigId: Long): List<Long> {
+        return dataSource.database()
+            .getResults("SELECT player_id FROM chat_ignores WHERE ignored_player_id=(?)", playerConfigId)
+            .map { it.get("player_id") }
+    }
+
     fun add(playerConfigId: Long, ignoredPlayerConfigId: Long) {
         dataSource.database().executeInsert(
             "INSERT INTO chat_ignores VALUES (?, ?, ?)",
