@@ -8,33 +8,25 @@ class PlayerConfigRepository(
     private val cache: PlayerConfigCache,
     private val dataSource: DataSource
 ) {
-    suspend fun get(uuid: UUID): PlayerConfig {
+    fun get(uuid: UUID): PlayerConfig {
         val cachedPlayer = cache.get(uuid)
         if (cachedPlayer != null) {
             return cachedPlayer
         }
 
-        val statement = dataSource.connection().prepareStatement(
-            "SELECT * FROM players WHERE `uuid`=(?)"
-        ).apply {
-            setString(1, uuid.toString())
-        }
-        val resultSet = statement.executeQuery()
-        var serializedPlayer: PlayerConfig? = null
-        if (resultSet.next()) {
-            serializedPlayer = PlayerConfig(
-                uuid = UUID.fromString(resultSet.getString(2)),
-                isMuted = resultSet.getBoolean(3),
-                isAllowingTPs = resultSet.getBoolean(4),
-                chatIgnoreList = mutableSetOf(), // TODO,
-                firstSeen = resultSet.getDate(5)
+        val row = dataSource.database().getFirstRow(
+            "SELECT * FROM players WHERE `uuid`=(?) LIMIT 1",
+            uuid.toString()
+        )
+        if (row != null) {
+            val deserializedPlayer = PlayerConfig(
+                uuid = UUID.fromString(row.get("uuid")),
+                isMuted = row.get("is_muted"),
+                isAllowingTPs = row.get("is_allowing_tp"),
+                firstSeen = row.get("first_seen"),
             )
-            cache.put(uuid, serializedPlayer)
-        }
-        resultSet.close()
-
-        if (serializedPlayer != null) {
-            return serializedPlayer
+            cache.put(uuid, deserializedPlayer)
+            return deserializedPlayer
         }
 
         val newCachedPlayer = PlayerConfig.default(uuid)
@@ -42,17 +34,15 @@ class PlayerConfigRepository(
         return newCachedPlayer
     }
 
-    suspend fun save(player: PlayerConfig) {
+    fun save(player: PlayerConfig) {
         cache.put(player.uuid, player)
 
-        val statement = dataSource.connection().prepareStatement(
-            "INSERT INTO players VALUES (NULL, ?, ?, ?, ?)"
-        ).apply {
-            setString(1, player.uuid.toString())
-            setBoolean(2, player.isMuted)
-            setBoolean(3, player.isAllowingTPs)
-            setDate(4, player.firstSeen)
-        }
-        statement.executeUpdate()
+        dataSource.database().executeInsert(
+            "INSERT INTO players VALUES (NULL, ?, ?, ?, ?)",
+            player.uuid.toString(),
+            player.isMuted,
+            player.isAllowingTPs,
+            player.firstSeen,
+        )
     }
 }
