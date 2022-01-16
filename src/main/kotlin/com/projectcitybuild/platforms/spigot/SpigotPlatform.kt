@@ -57,14 +57,7 @@ class SpigotPlatform: JavaPlugin() {
             it.register(component.pendingJoinActionListener())
         }
 
-        arrayOf(
-            component.chatModule(),
-            component.hubModule(),
-            component.joinMessageModule(),
-            component.teleportModule(),
-            component.warpModule(),
-        )
-        .forEach { module ->
+        component.modules().forEach { module ->
             module.spigotCommands.forEach { commandRegistry?.register(it) }
             module.spigotListeners.forEach { listenerRegistry?.register(it) }
             module.spigotSubChannelListeners.forEach { pluginMessageListener.register(it) }

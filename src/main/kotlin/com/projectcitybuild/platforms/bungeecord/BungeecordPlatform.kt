@@ -65,27 +65,19 @@ class BungeecordPlatform: Plugin() {
 //        config.addDefault("groups.appearance.intern.hover_name", "Intern")
         )
 
-        dataSource = component.dataSource().also { it?.connect() }
+        dataSource = component.dataSource().also { it.connect() }
         sessionCache = component.sessionCache()
         permissionsManager = component.permissionsManager()
         playerConfigCache = component.playerConfigCache()
 
-        commandRegistry = BungeecordCommandRegistry(plugin = this, component.logger())
-        listenerRegistry = BungeecordListenerRegistry(plugin = this, component.logger())
+        val logger = component.logger()
+        commandRegistry = BungeecordCommandRegistry(plugin = this, logger)
+        listenerRegistry = BungeecordListenerRegistry(plugin = this, logger)
 
-        val subChannelListener = BungeecordMessageListener(component.logger())
+        val subChannelListener = BungeecordMessageListener(logger)
         listenerRegistry?.register(subChannelListener)
 
-        arrayOf(
-            component.banModule(),
-            component.chatModule(),
-            component.hubModule(),
-            component.joinMessageModule(),
-            component.playerCacheModule(),
-            component.rankSyncModule(),
-            component.teleportModule(),
-            component.warpModule(),
-        ).forEach { module ->
+        component.modules().forEach { module ->
             module.bungeecordCommands.forEach { commandRegistry?.register(it) }
             module.bungeecordListeners.forEach { listenerRegistry?.register(it) }
             module.bungeecordSubChannelListeners.forEach { subChannelListener.register(it) }

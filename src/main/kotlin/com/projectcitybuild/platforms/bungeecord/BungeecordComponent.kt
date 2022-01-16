@@ -1,13 +1,7 @@
 package com.projectcitybuild.platforms.bungeecord
 
-import com.projectcitybuild.features.bans.BanModule
-import com.projectcitybuild.features.chat.ChatModule
-import com.projectcitybuild.features.hub.HubModule
-import com.projectcitybuild.features.joinmessage.JoinMessageModule
-import com.projectcitybuild.features.playercache.PlayerCacheModule
-import com.projectcitybuild.features.ranksync.RankSyncModule
-import com.projectcitybuild.features.teleporting.TeleportModule
-import com.projectcitybuild.features.warps.WarpModule
+import com.projectcitybuild.core.contracts.BungeecordFeatureModule
+import com.projectcitybuild.platforms.bungeecord.BungeecordFeatureListModule.BungeecordFeatureModules
 import com.projectcitybuild.modules.config.ConfigProvider
 import com.projectcitybuild.modules.database.DataSource
 import com.projectcitybuild.modules.database.DataSourceProvider
@@ -24,6 +18,7 @@ import net.md_5.bungee.api.ProxyServer
 import net.md_5.bungee.api.plugin.Plugin
 
 @Component(modules = [
+    BungeecordFeatureListModule::class,
     NetworkModule::class,
     DataSourceProvider::class,
 ])
@@ -36,14 +31,8 @@ interface BungeecordComponent {
     fun permissionsManager(): PermissionsManager
     fun playerConfigCache(): PlayerConfigCache
 
-    fun banModule(): BanModule
-    fun chatModule(): ChatModule.Bungeecord
-    fun hubModule(): HubModule.Bungeecord
-    fun joinMessageModule(): JoinMessageModule.Bungeecord
-    fun playerCacheModule(): PlayerCacheModule
-    fun rankSyncModule(): RankSyncModule
-    fun teleportModule(): TeleportModule.Bungeecord
-    fun warpModule(): WarpModule.Bungeecord
+    @BungeecordFeatureModules
+    fun modules(): List<BungeecordFeatureModule>
 
     @Component.Builder
     interface Builder {
