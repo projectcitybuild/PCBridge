@@ -2,6 +2,7 @@ package com.projectcitybuild.modules.playerconfig
 
 import com.projectcitybuild.entities.PlayerConfig
 import com.projectcitybuild.modules.database.DataSource
+import java.sql.Date
 import java.util.*
 
 class PlayerConfigRepository(
@@ -20,6 +21,7 @@ class PlayerConfigRepository(
         )
         if (row != null) {
             val deserializedPlayer = PlayerConfig(
+                id = row.get("id"),
                 uuid = UUID.fromString(row.get("uuid")),
                 isMuted = row.get("is_muted"),
                 isAllowingTPs = row.get("is_allowing_tp"),
@@ -29,20 +31,46 @@ class PlayerConfigRepository(
             return deserializedPlayer
         }
 
-        val newCachedPlayer = PlayerConfig.default(uuid)
+        val newCachedPlayer = add(
+            uuid = uuid,
+            isMuted = false,
+            isAllowingTPs = true,
+            firstSeen = Date(System.currentTimeMillis()),
+        )
         save(newCachedPlayer)
         return newCachedPlayer
+    }
+
+    fun add(uuid: UUID, isMuted: Boolean, isAllowingTPs: Boolean, firstSeen: Date): PlayerConfig {
+        val lastInsertedId = dataSource.database().executeInsert(
+            "INSERT INTO players VALUES (NULL, ?, ?, ?, ?)",
+            uuid.toString(),
+            isMuted,
+            isAllowingTPs,
+            firstSeen,
+        )
+        val playerConfig = PlayerConfig(
+            id = lastInsertedId,
+            uuid,
+            isMuted,
+            isAllowingTPs,
+            firstSeen,
+        )
+        cache.put(uuid, playerConfig)
+
+        return playerConfig
     }
 
     fun save(player: PlayerConfig) {
         cache.put(player.uuid, player)
 
-        dataSource.database().executeInsert(
-            "INSERT INTO players VALUES (NULL, ?, ?, ?, ?)",
+        dataSource.database().executeUpdate(
+            "UPDATE players SET (`uuid`='?', `is_muted`='?', `is_allowing_tp`='?', `first_seen`='?') WHERE `id`=(?)",
             player.uuid.toString(),
             player.isMuted,
             player.isAllowingTPs,
             player.firstSeen,
+            player.id,
         )
     }
 }

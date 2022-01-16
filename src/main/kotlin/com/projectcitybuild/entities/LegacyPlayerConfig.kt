@@ -28,19 +28,9 @@ data class LegacyPlayerConfig(
 }
 
 data class PlayerConfig(
+    val id: Long,
     val uuid: UUID,
     var isMuted: Boolean,
     var isAllowingTPs: Boolean,
-    val chatIgnoreList: MutableSet<UUID> = mutableSetOf(),
     val firstSeen: Date
-) {
-    companion object {
-        fun default(uuid: UUID): PlayerConfig = PlayerConfig(
-            uuid = uuid,
-            isMuted = false,
-            isAllowingTPs = true,
-            chatIgnoreList = mutableSetOf(),
-            firstSeen = Date(System.currentTimeMillis())
-        )
-    }
-}
+)
