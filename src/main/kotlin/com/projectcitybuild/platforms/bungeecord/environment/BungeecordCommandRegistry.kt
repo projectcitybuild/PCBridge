@@ -3,6 +3,7 @@ package com.projectcitybuild.platforms.bungeecord.environment
 import com.projectcitybuild.core.InvalidCommandArgumentsException
 import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.modules.textcomponentbuilder.send
+import dagger.Reusable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -14,6 +15,7 @@ import net.md_5.bungee.api.plugin.Plugin
 import net.md_5.bungee.api.plugin.TabExecutor
 import javax.inject.Inject
 
+@Reusable
 class BungeecordCommandRegistry @Inject constructor(
     private val plugin: Plugin,
     private val logger: PlatformLogger
