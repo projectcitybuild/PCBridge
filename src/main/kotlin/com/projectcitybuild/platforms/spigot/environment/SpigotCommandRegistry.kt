@@ -10,8 +10,9 @@ import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
+import javax.inject.Inject
 
-class SpigotCommandRegistry constructor(
+class SpigotCommandRegistry @Inject constructor(
         private val plugin: JavaPlugin,
         private val logger: PlatformLogger
 ) {

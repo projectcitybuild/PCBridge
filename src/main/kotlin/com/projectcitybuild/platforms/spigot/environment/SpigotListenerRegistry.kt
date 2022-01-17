@@ -5,8 +5,9 @@ import com.projectcitybuild.modules.logger.PlatformLogger
 import org.bukkit.event.HandlerList
 import org.bukkit.event.Listener
 import org.bukkit.plugin.java.JavaPlugin
+import javax.inject.Inject
 
-class SpigotListenerRegistry constructor(
+class SpigotListenerRegistry @Inject constructor(
         private val plugin: JavaPlugin,
         private val logger: PlatformLogger
     ) {
