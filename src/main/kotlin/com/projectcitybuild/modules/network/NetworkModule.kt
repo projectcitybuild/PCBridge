@@ -1,7 +1,7 @@
 package com.projectcitybuild.modules.network
 
 import com.projectcitybuild.entities.PluginConfig
-import com.projectcitybuild.modules.config.ConfigProvider
+import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.modules.network.mojang.client.MojangClient
 import com.projectcitybuild.modules.network.pcb.client.PCBClient
 import dagger.Module
@@ -11,7 +11,7 @@ import dagger.Provides
 class NetworkModule {
 
     @Provides
-    fun provideAPIRequestFactory(config: ConfigProvider): APIRequestFactory {
+    fun provideAPIRequestFactory(config: PlatformConfig): APIRequestFactory {
         val isLoggingEnabled = config.get(PluginConfig.API_IS_LOGGING_ENABLED)
 
         return APIRequestFactory(

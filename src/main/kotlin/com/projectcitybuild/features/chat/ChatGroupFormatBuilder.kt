@@ -1,11 +1,10 @@
 package com.projectcitybuild.features.chat
 
 import com.projectcitybuild.entities.PluginConfig
-import com.projectcitybuild.modules.config.ConfigProvider
+import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.modules.permissions.PermissionsGroup
 import com.projectcitybuild.modules.permissions.PermissionsManager
 import net.md_5.bungee.api.chat.BaseComponent
-import net.md_5.bungee.api.chat.ComponentBuilder
 import net.md_5.bungee.api.chat.HoverEvent
 import net.md_5.bungee.api.chat.TextComponent
 import net.md_5.bungee.api.chat.hover.content.Text
@@ -14,7 +13,7 @@ import javax.inject.Inject
 
 class ChatGroupFormatBuilder @Inject constructor(
     private val permissionsManager: PermissionsManager,
-    private val config: ConfigProvider
+    private val config: PlatformConfig
 ) {
     data class Aggregate(
         val prefix: Array<out BaseComponent>,

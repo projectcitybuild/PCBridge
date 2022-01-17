@@ -3,7 +3,7 @@ package com.projectcitybuild.features.warps.subchannels
 import com.google.common.io.ByteArrayDataInput
 import com.projectcitybuild.entities.SubChannel
 import com.projectcitybuild.modules.channels.spigot.SpigotSubChannelListener
-import com.projectcitybuild.modules.logger.LoggerProvider
+import com.projectcitybuild.modules.logger.PlatformLogger
 import org.bukkit.Location
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerTeleportEvent
@@ -13,7 +13,7 @@ import javax.inject.Inject
 
 class ImmediateWarpChannelListener @Inject constructor(
     private val plugin: Plugin,
-    private val logger: LoggerProvider
+    private val logger: PlatformLogger
 ): SpigotSubChannelListener {
 
     override val subChannel = SubChannel.WARP_IMMEDIATELY

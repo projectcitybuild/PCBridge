@@ -6,7 +6,7 @@ import com.projectcitybuild.modules.playerconfig.PlayerConfigRepository
 import net.md_5.bungee.api.event.PlayerDisconnectEvent
 import net.md_5.bungee.api.event.PostLoginEvent
 import net.md_5.bungee.event.EventHandler
-import java.sql.Date
+import java.time.LocalDateTime
 import javax.inject.Inject
 
 class PlayerCacheListener @Inject constructor(
@@ -23,7 +23,7 @@ class PlayerCacheListener @Inject constructor(
                 uuid = uuid,
                 isMuted = false,
                 isAllowingTPs = true,
-                firstSeen = Date(System.currentTimeMillis()),
+                firstSeen = LocalDateTime.now(),
             )
         }
     }

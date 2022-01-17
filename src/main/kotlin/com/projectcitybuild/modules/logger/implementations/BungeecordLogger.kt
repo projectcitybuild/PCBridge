@@ -1,9 +1,9 @@
 package com.projectcitybuild.modules.logger.implementations
 
-import com.projectcitybuild.modules.logger.LoggerProvider
+import com.projectcitybuild.modules.logger.PlatformLogger
 import java.util.logging.Logger
 
-class BungeecordLogger(private val logger: Logger): LoggerProvider {
+class BungeecordLogger(private val logger: Logger): PlatformLogger {
 
     override fun verbose(message: String) {
         logger.finest(message)

@@ -1,19 +1,19 @@
 package com.projectcitybuild.platforms.spigot
 
 import com.projectcitybuild.core.contracts.SpigotFeatureModule
-import com.projectcitybuild.modules.config.ConfigProvider
+import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.modules.database.DataSourceProvider
-import com.projectcitybuild.modules.logger.LoggerProvider
+import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.modules.network.APIClient
 import com.projectcitybuild.modules.network.NetworkModule
-import com.projectcitybuild.modules.permissions.PermissionsManager
-import com.projectcitybuild.modules.sessioncache.SpigotSessionCache
 import com.projectcitybuild.platforms.spigot.SpigotFeatureListModule.SpigotFeatureModules
-import com.projectcitybuild.platforms.spigot.listeners.PendingJoinActionListener
 import dagger.BindsInstance
 import dagger.Component
 import org.bukkit.plugin.Plugin
+import org.bukkit.plugin.java.JavaPlugin
+import javax.inject.Singleton
 
+@Singleton
 @Component(modules = [
     SpigotFeatureListModule::class,
     NetworkModule::class,
@@ -21,15 +21,10 @@ import org.bukkit.plugin.Plugin
 ])
 interface SpigotComponent {
 
-    fun config(): ConfigProvider
-    fun logger(): LoggerProvider
-    fun sessionCache(): SpigotSessionCache
-    fun permissionsManager(): PermissionsManager
+    fun container(): SpigotPlatform.Container
 
     @SpigotFeatureModules
     fun modules(): List<SpigotFeatureModule>
-
-    fun pendingJoinActionListener(): PendingJoinActionListener
 
     @Component.Builder
     interface Builder {
@@ -37,10 +32,13 @@ interface SpigotComponent {
         fun plugin(plugin: Plugin): Builder
 
         @BindsInstance
-        fun config(config: ConfigProvider): Builder
+        fun javaPlugin(plugin: JavaPlugin): Builder
 
         @BindsInstance
-        fun logger(logger: LoggerProvider): Builder
+        fun config(config: PlatformConfig): Builder
+
+        @BindsInstance
+        fun logger(logger: PlatformLogger): Builder
 
         @BindsInstance
         fun apiClient(apiClient: APIClient): Builder

@@ -1,20 +1,22 @@
 package com.projectcitybuild.modules.database
 
 import com.projectcitybuild.entities.PluginConfig
-import com.projectcitybuild.modules.config.ConfigProvider
-import com.projectcitybuild.modules.logger.LoggerProvider
+import com.projectcitybuild.modules.config.PlatformConfig
+import com.projectcitybuild.modules.logger.PlatformLogger
 import dagger.Module
 import dagger.Provides
 import net.md_5.bungee.api.plugin.Plugin
+import javax.inject.Singleton
 
 @Module
 class DataSourceProvider {
 
     @Provides
+    @Singleton
     fun providesDataSource(
         plugin: Plugin,
-        logger: LoggerProvider,
-        config: ConfigProvider
+        logger: PlatformLogger,
+        config: PlatformConfig
     ): DataSource {
         return DataSource(
             plugin,

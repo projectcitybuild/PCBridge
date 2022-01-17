@@ -3,7 +3,7 @@ package com.projectcitybuild.features.warps.commands
 import com.projectcitybuild.core.InvalidCommandArgumentsException
 import com.projectcitybuild.entities.PluginConfig
 import com.projectcitybuild.features.warps.repositories.WarpRepository
-import com.projectcitybuild.modules.config.ConfigProvider
+import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
 import com.projectcitybuild.platforms.bungeecord.extensions.add
@@ -20,7 +20,7 @@ import kotlin.math.min
 
 class WarpsCommand @Inject constructor(
     private val warpRepository: WarpRepository,
-    private val config: ConfigProvider
+    private val config: PlatformConfig
 ): BungeecordCommand {
 
     override val label: String = "warps"

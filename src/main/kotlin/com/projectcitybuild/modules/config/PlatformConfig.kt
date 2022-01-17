@@ -2,7 +2,7 @@ package com.projectcitybuild.modules.config
 
 import com.projectcitybuild.entities.PluginConfig
 
-interface ConfigProvider {
+interface PlatformConfig {
 
     fun load(vararg keys: PluginConfig.ConfigPath<*>)
     

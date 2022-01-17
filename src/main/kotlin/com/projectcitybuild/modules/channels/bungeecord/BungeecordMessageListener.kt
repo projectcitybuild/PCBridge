@@ -3,12 +3,12 @@ package com.projectcitybuild.modules.channels.bungeecord
 import com.google.common.io.ByteStreams
 import com.projectcitybuild.core.BungeecordListener
 import com.projectcitybuild.entities.Channel
-import com.projectcitybuild.modules.logger.LoggerProvider
+import com.projectcitybuild.modules.logger.PlatformLogger
 import net.md_5.bungee.api.event.PluginMessageEvent
 import net.md_5.bungee.event.EventHandler
 
 class BungeecordMessageListener(
-    private val logger: LoggerProvider
+    private val logger: PlatformLogger
 ): BungeecordListener {
 
     private val listeners = HashMap<String, BungeecordSubChannelListener>()

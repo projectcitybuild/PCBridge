@@ -2,17 +2,19 @@ package com.projectcitybuild.modules.config.implementations
 
 import com.google.common.io.ByteStreams
 import com.projectcitybuild.entities.PluginConfig
-import com.projectcitybuild.modules.config.ConfigProvider
+import com.projectcitybuild.modules.config.PlatformConfig
 import net.md_5.bungee.config.Configuration
 import net.md_5.bungee.config.ConfigurationProvider
 import net.md_5.bungee.config.YamlConfiguration
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
+import javax.inject.Singleton
 
+@Singleton
 class BungeecordConfig(
     private val dataFolder: File
-): ConfigProvider {
+): PlatformConfig {
 
     private var config: Configuration? = null
     private fun getFile(): File = File(dataFolder, "config.yml")
@@ -49,8 +51,9 @@ class BungeecordConfig(
                     if (config.get(key.key) == null)
                         config.set(key.key, key.defaultValue)
                 }
-                save()
             }
+
+        save()
     }
 
     private fun createIfNeeded(file: File) {

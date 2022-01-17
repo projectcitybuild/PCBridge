@@ -1,6 +1,6 @@
 package com.projectcitybuild.platforms.spigot.listeners
 
-import com.projectcitybuild.modules.logger.LoggerProvider
+import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.modules.sessioncache.SpigotSessionCache
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
@@ -10,7 +10,7 @@ import javax.inject.Inject
 
 class PendingJoinActionListener @Inject constructor(
     private val spigotSessionCache: SpigotSessionCache,
-    private val logger: LoggerProvider
+    private val logger: PlatformLogger
 ): Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
