@@ -2,11 +2,11 @@ package com.projectcitybuild.modules.scheduler.implementations
 
 import com.projectcitybuild.core.utilities.AsyncTask
 import com.projectcitybuild.core.utilities.Cancellable
-import com.projectcitybuild.modules.scheduler.SchedulerProvider
+import com.projectcitybuild.modules.scheduler.PlatformScheduler
 import net.md_5.bungee.api.plugin.Plugin
 import java.util.concurrent.TimeUnit
 
-class BungeecordScheduler(private val plugin: Plugin): SchedulerProvider {
+class BungeecordScheduler(private val plugin: Plugin): PlatformScheduler {
 
     override fun <T> async(task: ((T) -> Unit) -> Unit): AsyncTask<T> {
         return AsyncTask<T> { resolve ->

@@ -40,27 +40,27 @@ class HubCommand @Inject constructor(
             return
         }
 
-        val isWarpOnSameServer = input.player.server.info.name == warp.serverName
-        val subChannel =
-            if (isWarpOnSameServer) SubChannel.WARP_IMMEDIATELY
-            else SubChannel.WARP_AWAIT_JOIN
-
-        MessageToSpigot(
-            targetServer,
-            subChannel,
-            arrayOf(
-                input.player.uniqueId.toString(),
-                warp.worldName,
-                warp.x,
-                warp.y,
-                warp.z,
-                warp.pitch,
-                warp.yaw,
-            )
-        ).send()
-
-        if (!isWarpOnSameServer) {
-            input.player.connect(targetServer)
-        }
+//        val isWarpOnSameServer = input.player.server.info.name == warp.serverName
+//        val subChannel =
+//            if (isWarpOnSameServer) SubChannel.WARP
+//            else SubChannel.WARP_AWAIT_JOIN
+//
+//        MessageToSpigot(
+//            targetServer,
+//            subChannel,
+//            arrayOf(
+//                input.player.uniqueId.toString(),
+//                warp.worldName,
+//                warp.x,
+//                warp.y,
+//                warp.z,
+//                warp.pitch,
+//                warp.yaw,
+//            )
+//        ).send()
+//
+//        if (!isWarpOnSameServer) {
+//            input.player.connect(targetServer)
+//        }
     }
 }

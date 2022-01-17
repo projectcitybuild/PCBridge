@@ -25,13 +25,25 @@ class AwaitJoinTeleportChannelListener @Inject constructor(
 
         logger.debug("Queuing teleport for $teleportingPlayerUUID to location of $teleportTargetPlayerUUID")
 
-        spigotSessionCache.pendingJoinActions[teleportingPlayerUUID] = { _, event ->
+        // Message can be delayed, so check if the player arrived before the message did
+        val existingPlayer = plugin.server.onlinePlayers.firstOrNull { it.uniqueId == teleportingPlayerUUID }
+        if (existingPlayer != null) {
             val targetPlayer = plugin.server.getPlayer(teleportTargetPlayerUUID)
             if (targetPlayer == null) {
-                event.player.send().error("Could not find target player for teleport")
+                existingPlayer.send().error("Could not find target player for teleport")
             } else {
-                event.player.send().action("Teleported to ${targetPlayer.name}")
-                event.spawnLocation = targetPlayer.location
+                existingPlayer.player.send().action("Teleported to ${targetPlayer.name}")
+                existingPlayer.teleport(targetPlayer.location)
+            }
+        } else {
+            spigotSessionCache.pendingJoinActions[teleportingPlayerUUID] = { _, event ->
+                val targetPlayer = plugin.server.getPlayer(teleportTargetPlayerUUID)
+                if (targetPlayer == null) {
+                    event.player.send().error("Could not find target player for teleport")
+                } else {
+                    event.player.send().action("Teleported to ${targetPlayer.name}")
+                    event.spawnLocation = targetPlayer.location
+                }
             }
         }
     }

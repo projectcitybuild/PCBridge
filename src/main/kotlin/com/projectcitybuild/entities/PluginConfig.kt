@@ -86,5 +86,10 @@ sealed class PluginConfig {
 
         val GROUPS_APPEARANCE_INTERN_HOVER_NAME
             = "groups.appearance.intern.hover_name" defaultTo "Intern"
+
+
+        // Spigot only
+
+        val SPIGOT_SERVER_NAME = "spigot.server_name" defaultTo "main"
     }
 }

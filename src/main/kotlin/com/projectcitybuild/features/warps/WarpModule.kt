@@ -1,12 +1,13 @@
 package com.projectcitybuild.features.warps
 
+import com.projectcitybuild.core.SpigotListener
 import com.projectcitybuild.core.contracts.BungeecordFeatureModule
 import com.projectcitybuild.core.contracts.SpigotFeatureModule
 import com.projectcitybuild.features.warps.commands.DelWarpCommand
 import com.projectcitybuild.features.warps.commands.SetWarpCommand
 import com.projectcitybuild.features.warps.commands.WarpCommand
 import com.projectcitybuild.features.warps.commands.WarpsCommand
-import com.projectcitybuild.features.warps.subchannels.AwaitJoinWarpChannelListener
+import com.projectcitybuild.features.warps.listeners.WarpOnJoinListener
 import com.projectcitybuild.features.warps.subchannels.ImmediateWarpChannelListener
 import com.projectcitybuild.features.warps.subchannels.IncomingSetWarpListener
 import com.projectcitybuild.modules.channels.bungeecord.BungeecordSubChannelListener
@@ -36,16 +37,19 @@ class WarpModule {
 
     class Spigot @Inject constructor(
         setWarpCommand: SetWarpCommand,
-        awaitJoinWarpChannelListener: AwaitJoinWarpChannelListener,
-        immediateWarpChannelListener: ImmediateWarpChannelListener,
+        awaitJoinWarpChannelListener: ImmediateWarpChannelListener,
+        warpOnJoinListener: WarpOnJoinListener,
     ): SpigotFeatureModule {
         override val spigotCommands: Array<SpigotCommand> = arrayOf(
             setWarpCommand,
         )
 
+        override val spigotListeners: Array<SpigotListener> = arrayOf(
+            warpOnJoinListener,
+        )
+
         override val spigotSubChannelListeners: Array<SpigotSubChannelListener> = arrayOf(
             awaitJoinWarpChannelListener,
-            immediateWarpChannelListener,
         )
     }
 }

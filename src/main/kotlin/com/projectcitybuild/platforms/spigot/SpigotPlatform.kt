@@ -9,6 +9,7 @@ import com.projectcitybuild.modules.config.implementations.SpigotConfig
 import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.modules.logger.implementations.SpigotLogger
 import com.projectcitybuild.modules.network.APIClient
+import com.projectcitybuild.modules.scheduler.implementations.SpigotScheduler
 import com.projectcitybuild.platforms.spigot.environment.SpigotCommandRegistry
 import com.projectcitybuild.platforms.spigot.environment.SpigotListenerRegistry
 import com.projectcitybuild.platforms.spigot.listeners.PendingJoinActionListener
@@ -23,9 +24,10 @@ class SpigotPlatform: JavaPlugin() {
     override fun onEnable() {
         val config = SpigotConfig(plugin = this, config = config).apply {
             load(
-                PluginConfig.API_KEY,
-                PluginConfig.API_BASE_URL,
-                PluginConfig.API_IS_LOGGING_ENABLED,
+//                PluginConfig.API_KEY,
+//                PluginConfig.API_BASE_URL,
+//                PluginConfig.API_IS_LOGGING_ENABLED,
+                PluginConfig.SPIGOT_SERVER_NAME,
             )
         }
 
@@ -34,6 +36,7 @@ class SpigotPlatform: JavaPlugin() {
             .javaPlugin(this)
             .config(config)
             .logger(SpigotLogger(logger = logger))
+            .scheduler(SpigotScheduler(this))
             .apiClient(APIClient { this.minecraftDispatcher })
             .build()
 
