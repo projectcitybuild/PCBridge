@@ -11,7 +11,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import net.md_5.bungee.api.connection.Connection
 import net.md_5.bungee.api.connection.ProxiedPlayer
-import java.sql.Date
+import java.time.LocalDateTime
 import javax.inject.Inject
 
 class IncomingSetWarpListener @Inject constructor(
@@ -48,7 +48,7 @@ class IncomingSetWarpListener @Inject constructor(
             z,
             pitch,
             yaw,
-            Date(System.currentTimeMillis())
+            LocalDateTime.now()
         )
         CoroutineScope(Dispatchers.IO).launch {
             warpRepository.add(warp)

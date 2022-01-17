@@ -2,7 +2,6 @@ package com.projectcitybuild.entities
 
 import com.projectcitybuild.entities.serializables.SerializableUUID
 import kotlinx.serialization.Serializable
-import java.time.LocalDateTime
 import java.util.*
 
 @Serializable
@@ -27,10 +26,3 @@ data class LegacyPlayerConfig(
     }
 }
 
-data class PlayerConfig(
-    val id: Long,
-    val uuid: UUID,
-    var isMuted: Boolean,
-    var isAllowingTPs: Boolean,
-    val firstSeen: LocalDateTime
-)
