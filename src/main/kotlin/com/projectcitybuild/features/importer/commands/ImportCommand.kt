@@ -25,7 +25,7 @@ class ImportCommand @Inject constructor(
         when {
             input.args.isEmpty() -> throw InvalidCommandArgumentsException()
             input.args.first() == "playerconfigs" -> importPlayerConfigFiles()
-            input.args.first() == "warps" -> importPlayerConfigFiles()
+            input.args.first() == "warps" -> importWarpFiles()
             else -> throw InvalidCommandArgumentsException()
         }
     }

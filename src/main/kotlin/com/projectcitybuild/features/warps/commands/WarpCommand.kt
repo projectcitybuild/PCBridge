@@ -42,7 +42,7 @@ class WarpCommand @Inject constructor(
         val targetWarpName = input.args.first()
         val warpName = nameGuesser.guessClosest(targetWarpName, availableWarpNames)
         if (warpName == null) {
-            input.sender.send().error("Warp $warpName does not exist")
+            input.sender.send().error("Warp $targetWarpName does not exist")
             return
         }
 

@@ -16,8 +16,8 @@ class QueuedWarpRepository @Inject constructor(
             "INSERT INTO `queued_warps` VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
             playerUUID.toString(),
             warp.name,
-            warp.worldName,
             warp.serverName,
+            warp.worldName,
             warp.x,
             warp.y,
             warp.z,
@@ -42,8 +42,8 @@ class QueuedWarpRepository @Inject constructor(
         if (row != null) {
             return Warp(
                 name = row.get("warp_name"),
-                worldName = row.get("world_name"),
                 serverName = row.get("server_name"),
+                worldName = row.get("world_name"),
                 x = row.get("x"),
                 y = row.get("y"),
                 z = row.get("z"),
