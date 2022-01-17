@@ -45,7 +45,7 @@ class MuteCommand @Inject constructor(
     override fun onTabComplete(sender: CommandSender?, args: List<String>): Iterable<String>? {
         return when {
             args.isEmpty() -> proxyServer.players.map { it.name }
-            args.size == 1 -> proxyServer.players.map { it.name }.filter { it.lowercase().startsWith(args.first()) }
+            args.size == 1 -> proxyServer.players.map { it.name }.filter { it.lowercase().startsWith(args.first().lowercase()) }
             else -> null
         }
     }
