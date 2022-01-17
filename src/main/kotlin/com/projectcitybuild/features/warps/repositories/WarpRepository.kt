@@ -21,7 +21,7 @@ class WarpRepository @Inject constructor(
             return cache.firstOrNull { it.name == name }
         }
         return dataSource.database()
-            .getFirstRow("SELECT * FROM `warps` WHERE `name`=(?) LIMIT 1", name)
+            .getFirstRow("SELECT * FROM `warps` WHERE `name`= ? LIMIT 1", name)
             ?.let { row ->
                 Warp(
                     name = row.get("name"),
@@ -82,6 +82,6 @@ class WarpRepository @Inject constructor(
         cache = null
 
         dataSource.database()
-            .executeUpdate("DELETE FROM `warps` WHERE `name`='?'", name)
+            .executeUpdate("DELETE FROM `warps` WHERE `name`= ?", name)
     }
 }

@@ -4,6 +4,7 @@ import com.projectcitybuild.core.InvalidCommandArgumentsException
 import com.projectcitybuild.entities.PluginConfig
 import com.projectcitybuild.features.warps.repositories.WarpRepository
 import com.projectcitybuild.modules.config.PlatformConfig
+import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
 import com.projectcitybuild.platforms.bungeecord.extensions.add
@@ -36,6 +37,11 @@ class WarpsCommand @Inject constructor(
         val warpsPerPage = config.get(PluginConfig.WARPS_PER_PAGE)
         val availableWarps = warpRepository.all().map { it.name }
         val totalWarpPages = ceil((availableWarps.size / warpsPerPage).toDouble()).toInt()
+
+        if (availableWarps.isEmpty()) {
+            input.sender.send().info("No warps available")
+            return
+        }
 
         page = min(page, totalWarpPages)
 
