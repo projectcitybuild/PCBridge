@@ -2,6 +2,8 @@ package com.projectcitybuild.features.teleporting.commands
 
 import com.projectcitybuild.core.InvalidCommandArgumentsException
 import com.projectcitybuild.entities.SubChannel
+import com.projectcitybuild.entities.Teleport
+import com.projectcitybuild.features.teleporting.repositories.QueuedTeleportRepository
 import com.projectcitybuild.modules.nameguesser.NameGuesser
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.platforms.bungeecord.MessageToSpigot
@@ -9,10 +11,13 @@ import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
 import net.md_5.bungee.api.CommandSender
 import net.md_5.bungee.api.ProxyServer
+import net.md_5.bungee.api.event.ServerConnectEvent
+import java.time.LocalDateTime
 import javax.inject.Inject
 
 class TPOHereCommand @Inject constructor(
     private val proxyServer: ProxyServer,
+    private val queuedTeleportRepository: QueuedTeleportRepository,
     private val nameGuesser: NameGuesser
 ): BungeecordCommand {
 
@@ -36,24 +41,26 @@ class TPOHereCommand @Inject constructor(
             return
         }
 
-        val targetServer = targetPlayer.server
-
+        val targetServer = targetPlayer.server.info
         val isTargetPlayerOnSameServer = input.player.server.info.name == targetPlayer.server.info.name
-        val subChannel =
-            if (isTargetPlayerOnSameServer) SubChannel.TP_IMMEDIATELY
-            else SubChannel.TP_AWAIT_JOIN
-
-        MessageToSpigot(
-            targetServer.info,
-            subChannel,
-            arrayOf(
-                targetPlayer.uniqueId.toString(),
-                input.player.uniqueId.toString(),
+        if (isTargetPlayerOnSameServer) {
+            MessageToSpigot(
+                targetServer,
+                SubChannel.TP_IMMEDIATELY,
+                arrayOf(
+                    targetPlayer.uniqueId.toString(),
+                    input.player.uniqueId.toString(),
+                )
+            ).send()
+        } else {
+            val teleport = Teleport(
+                playerUUID = input.player.uniqueId,
+                targetPlayerUUID = targetPlayer.uniqueId,
+                targetServer.name,
+                createdAt = LocalDateTime.now()
             )
-        ).send()
-
-        if (!isTargetPlayerOnSameServer) {
-            targetPlayer.connect(input.player.server.info)
+            queuedTeleportRepository.queue(teleport)
+            input.player.connect(targetServer, ServerConnectEvent.Reason.COMMAND)
         }
     }
 

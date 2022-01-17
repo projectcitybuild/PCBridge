@@ -99,5 +99,19 @@ class `20220115_player_configs_warps`: DatabaseMigration {
                 .trimMargin("|")
                 .replace("\n", "")
         )
+
+        database.executeUpdate(
+            """
+                    |CREATE TABLE queued_teleports (
+	                |   `player_uuid` VARCHAR(50) NOT NULL,
+	                |   `target_player_uuid` VARCHAR(50) NOT NULL,
+	                |   `target_server_name` VARCHAR(50) NOT NULL,
+	                |   `created_at` DATETIME NOT NULL,
+	                |   PRIMARY KEY (`player_uuid`)
+                    |);
+                    """
+                .trimMargin("|")
+                .replace("\n", "")
+        )
     }
 }

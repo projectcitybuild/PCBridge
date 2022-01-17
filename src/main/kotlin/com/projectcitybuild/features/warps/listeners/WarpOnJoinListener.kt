@@ -23,8 +23,6 @@ class WarpOnJoinListener @Inject constructor(
         val playerUUID = event.player.uniqueId
         val serverName = config.get(PluginConfig.SPIGOT_SERVER_NAME)
 
-        logger.debug("Looking up queued warp for $playerUUID")
-
         val queuedWarp = queuedWarpRepository.get(playerUUID)
         if (queuedWarp == null) {
             logger.debug("No queued warp for $playerUUID")
