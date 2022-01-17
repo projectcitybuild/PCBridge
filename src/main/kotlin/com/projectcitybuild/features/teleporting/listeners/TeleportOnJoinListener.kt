@@ -2,9 +2,11 @@ package com.projectcitybuild.features.teleporting.listeners
 
 import com.projectcitybuild.core.SpigotListener
 import com.projectcitybuild.entities.PluginConfig
+import com.projectcitybuild.entities.TeleportType
 import com.projectcitybuild.features.teleporting.repositories.QueuedTeleportRepository
 import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.modules.logger.PlatformLogger
+import com.projectcitybuild.modules.textcomponentbuilder.send
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.spigotmc.event.player.PlayerSpawnLocationEvent
@@ -40,6 +42,17 @@ class TeleportOnJoinListener @Inject constructor(
             event.spawnLocation = destinationPlayer.location
 
             logger.debug("Set player's spawn location to ${destinationPlayer.location}")
+
+            when (queuedTeleport.teleportType) {
+                TeleportType.TP -> {
+                    destinationPlayer.send().action("${event.player.name} teleported to you")
+                    event.player.send().action("Teleported to ${destinationPlayer.name}")
+                }
+                TeleportType.SUMMON -> {
+                    destinationPlayer.send().action("You summoned ${event.player.name} to you")
+                    event.player.send().action("You were summoned to ${destinationPlayer.name}")
+                }
+            }
         }
     }
 }

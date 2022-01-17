@@ -3,6 +3,7 @@ package com.projectcitybuild.features.teleporting.commands
 import com.projectcitybuild.core.InvalidCommandArgumentsException
 import com.projectcitybuild.entities.SubChannel
 import com.projectcitybuild.entities.Teleport
+import com.projectcitybuild.entities.TeleportType
 import com.projectcitybuild.features.teleporting.repositories.QueuedTeleportRepository
 import com.projectcitybuild.modules.nameguesser.NameGuesser
 import com.projectcitybuild.modules.playerconfig.PlayerConfigRepository
@@ -52,19 +53,23 @@ class TPCommand @Inject constructor(
         val targetServer = targetPlayer.server.info
         val isTargetPlayerOnSameServer = input.player.server.info.name == targetPlayer.server.info.name
         if (isTargetPlayerOnSameServer) {
+            val isSummon = false
+
             MessageToSpigot(
                 targetServer,
                 SubChannel.TP_IMMEDIATELY,
                 arrayOf(
                     input.player.uniqueId.toString(),
                     targetPlayer.uniqueId.toString(),
+                    isSummon,
                 )
             ).send()
         } else {
             val teleport = Teleport(
                 playerUUID = input.player.uniqueId,
                 targetPlayerUUID = targetPlayer.uniqueId,
-                targetServer.name,
+                targetServerName = targetServer.name,
+                teleportType = TeleportType.TP,
                 createdAt = LocalDateTime.now()
             )
             queuedTeleportRepository.queue(teleport)

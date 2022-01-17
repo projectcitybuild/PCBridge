@@ -7,5 +7,11 @@ data class Teleport(
     val playerUUID: UUID,
     val targetPlayerUUID: UUID,
     val targetServerName: String,
+    val teleportType: TeleportType,
     val createdAt: LocalDateTime,
 )
+
+enum class TeleportType {
+    TP,
+    SUMMON,
+}

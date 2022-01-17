@@ -106,6 +106,7 @@ class `20220115_player_configs_warps`: DatabaseMigration {
 	                |   `player_uuid` VARCHAR(50) NOT NULL,
 	                |   `target_player_uuid` VARCHAR(50) NOT NULL,
 	                |   `target_server_name` VARCHAR(50) NOT NULL,
+                    |   `teleport_type` VARCHAR(10) NOT NULL,   
 	                |   `created_at` DATETIME NOT NULL,
 	                |   PRIMARY KEY (`player_uuid`)
                     |);

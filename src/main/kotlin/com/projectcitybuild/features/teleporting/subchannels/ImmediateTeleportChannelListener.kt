@@ -4,6 +4,7 @@ import com.google.common.io.ByteArrayDataInput
 import com.projectcitybuild.entities.SubChannel
 import com.projectcitybuild.modules.channels.spigot.SpigotSubChannelListener
 import com.projectcitybuild.modules.logger.PlatformLogger
+import com.projectcitybuild.modules.textcomponentbuilder.send
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
 import java.util.*
@@ -34,5 +35,14 @@ class ImmediateTeleportChannelListener @Inject constructor(
         logger.debug("Immediately teleporting $targetPlayerUUID to location of $destinationPlayerUUID")
 
         targetPlayer.teleport(destinationPlayer.location)
+
+        val isSummon = stream.readBoolean()
+        if (isSummon) {
+            destinationPlayer.send().action("You summoned ${targetPlayer.name} to you")
+            targetPlayer.send().action("You were summoned to ${destinationPlayer.name}")
+        } else {
+            destinationPlayer.send().action("${targetPlayer.name} teleported to you")
+            targetPlayer.send().action("Teleported to ${destinationPlayer.name}")
+        }
     }
 }
