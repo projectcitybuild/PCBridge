@@ -2,7 +2,7 @@ package com.projectcitybuild.modules.playerconfig
 
 import com.projectcitybuild.entities.PlayerConfig
 import com.projectcitybuild.modules.database.DataSource
-import java.sql.Date
+import java.time.LocalDateTime
 import java.util.*
 import javax.inject.Inject
 
@@ -35,7 +35,7 @@ class PlayerConfigRepository @Inject constructor(
         return null
     }
 
-    fun add(uuid: UUID, isMuted: Boolean, isAllowingTPs: Boolean, firstSeen: Date): PlayerConfig {
+    fun add(uuid: UUID, isMuted: Boolean, isAllowingTPs: Boolean, firstSeen: LocalDateTime): PlayerConfig {
         val lastInsertedId = dataSource.database().executeInsert(
             "INSERT INTO players VALUES (NULL, ?, ?, ?, ?)",
             uuid.toString(),

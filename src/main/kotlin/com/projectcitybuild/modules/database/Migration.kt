@@ -2,7 +2,7 @@ package com.projectcitybuild.modules.database
 
 import co.aikar.idb.HikariPooledDatabase
 import com.projectcitybuild.entities.migrations.*
-import com.projectcitybuild.modules.logger.LoggerProvider
+import com.projectcitybuild.modules.logger.PlatformLogger
 import net.md_5.bungee.api.plugin.Plugin
 
 object Migration {
@@ -14,7 +14,7 @@ object Migration {
 
     fun executeIfNecessary(
         database: HikariPooledDatabase,
-        logger: LoggerProvider,
+        logger: PlatformLogger,
         plugin: Plugin, // temporary
         currentVersion: Int
     ) {

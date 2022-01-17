@@ -2,7 +2,7 @@ package com.projectcitybuild.features.bans.listeners
 
 import com.projectcitybuild.core.BungeecordListener
 import com.projectcitybuild.features.bans.repositories.BanRepository
-import com.projectcitybuild.modules.logger.LoggerProvider
+import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.platforms.bungeecord.extensions.add
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -18,7 +18,7 @@ import javax.inject.Inject
 class BanConnectionListener @Inject constructor(
     private val plugin: Plugin,
     private val banRepository: BanRepository,
-    private val logger: LoggerProvider
+    private val logger: PlatformLogger
 ) : BungeecordListener {
 
     @EventHandler(priority = EventPriority.HIGHEST)

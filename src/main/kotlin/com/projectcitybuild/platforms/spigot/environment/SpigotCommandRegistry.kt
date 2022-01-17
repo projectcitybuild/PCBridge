@@ -3,7 +3,7 @@ package com.projectcitybuild.platforms.spigot.environment
 import com.github.shynixn.mccoroutine.SuspendingCommandExecutor
 import com.github.shynixn.mccoroutine.setSuspendingExecutor
 import com.projectcitybuild.core.InvalidCommandArgumentsException
-import com.projectcitybuild.modules.logger.LoggerProvider
+import com.projectcitybuild.modules.logger.PlatformLogger
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.command.Command
@@ -13,7 +13,7 @@ import org.bukkit.plugin.java.JavaPlugin
 
 class SpigotCommandRegistry constructor(
         private val plugin: JavaPlugin,
-        private val logger: LoggerProvider
+        private val logger: PlatformLogger
 ) {
     fun register(spigotCommand: SpigotCommand) {
         val aliases = spigotCommand.aliases.plus(spigotCommand.label)

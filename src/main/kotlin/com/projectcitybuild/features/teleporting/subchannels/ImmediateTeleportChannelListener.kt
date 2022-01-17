@@ -3,7 +3,7 @@ package com.projectcitybuild.features.teleporting.subchannels
 import com.google.common.io.ByteArrayDataInput
 import com.projectcitybuild.entities.SubChannel
 import com.projectcitybuild.modules.channels.spigot.SpigotSubChannelListener
-import com.projectcitybuild.modules.logger.LoggerProvider
+import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
@@ -12,7 +12,7 @@ import javax.inject.Inject
 
 class ImmediateTeleportChannelListener @Inject constructor(
     private val plugin: Plugin,
-    private val logger: LoggerProvider
+    private val logger: PlatformLogger
 ): SpigotSubChannelListener {
 
     override val subChannel = SubChannel.TP_IMMEDIATELY

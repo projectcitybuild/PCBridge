@@ -1,6 +1,6 @@
 package com.projectcitybuild.modules.logger
 
-interface LoggerProvider {
+interface PlatformLogger {
 
     fun verbose(message: String)
     fun debug(message: String)

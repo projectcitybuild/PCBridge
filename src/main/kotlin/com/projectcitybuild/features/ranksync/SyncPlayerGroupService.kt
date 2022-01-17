@@ -2,8 +2,8 @@ package com.projectcitybuild.features.ranksync
 
 import com.projectcitybuild.entities.PluginConfig
 import com.projectcitybuild.entities.responses.Group
-import com.projectcitybuild.modules.config.ConfigProvider
-import com.projectcitybuild.modules.logger.LoggerProvider
+import com.projectcitybuild.modules.config.PlatformConfig
+import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.modules.network.APIClient
 import com.projectcitybuild.modules.network.APIRequestFactory
 import com.projectcitybuild.modules.permissions.PermissionsManager
@@ -14,8 +14,8 @@ class SyncPlayerGroupService @Inject constructor(
     private val permissionsManager: PermissionsManager,
     private val apiRequestFactory: APIRequestFactory,
     private val apiClient: APIClient,
-    private val config: ConfigProvider,
-    private val logger: LoggerProvider
+    private val config: PlatformConfig,
+    private val logger: PlatformLogger
 ) {
     class AccountNotLinkedException: Exception()
     class PermissionUserNotFoundException: Exception()

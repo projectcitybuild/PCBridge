@@ -3,7 +3,7 @@ package com.projectcitybuild.features.warps.subchannels
 import com.google.common.io.ByteArrayDataInput
 import com.projectcitybuild.entities.SubChannel
 import com.projectcitybuild.modules.channels.spigot.SpigotSubChannelListener
-import com.projectcitybuild.modules.logger.LoggerProvider
+import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.modules.sessioncache.SpigotSessionCache
 import org.bukkit.Location
 import org.bukkit.entity.Player
@@ -13,7 +13,7 @@ import javax.inject.Inject
 
 class AwaitJoinWarpChannelListener @Inject constructor(
     private val plugin: Plugin,
-    private val logger: LoggerProvider,
+    private val logger: PlatformLogger,
     private val spigotSessionCache: SpigotSessionCache
 ): SpigotSubChannelListener {
 

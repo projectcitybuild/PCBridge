@@ -1,14 +1,16 @@
 package com.projectcitybuild.modules.config.implementations
 
 import com.projectcitybuild.entities.PluginConfig
-import com.projectcitybuild.modules.config.ConfigProvider
+import com.projectcitybuild.modules.config.PlatformConfig
+import dagger.Reusable
 import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.plugin.Plugin
 
+@Reusable
 class SpigotConfig(
     private val plugin: Plugin,
     private val config: FileConfiguration
-): ConfigProvider {
+): PlatformConfig {
 
     override fun <T> get(key: PluginConfig.ConfigPath<T>): T {
         return config.get(key.key) as T

@@ -1,7 +1,7 @@
 package com.projectcitybuild.platforms.bungeecord.environment
 
 import com.projectcitybuild.core.InvalidCommandArgumentsException
-import com.projectcitybuild.modules.logger.LoggerProvider
+import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -16,7 +16,7 @@ import javax.inject.Inject
 
 class BungeecordCommandRegistry @Inject constructor(
     private val plugin: Plugin,
-    private val logger: LoggerProvider
+    private val logger: PlatformLogger
 ) {
     private class CommandProxy(
         alias: String,

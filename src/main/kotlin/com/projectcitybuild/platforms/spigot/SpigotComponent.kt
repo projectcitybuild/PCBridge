@@ -1,9 +1,9 @@
 package com.projectcitybuild.platforms.spigot
 
 import com.projectcitybuild.core.contracts.SpigotFeatureModule
-import com.projectcitybuild.modules.config.ConfigProvider
+import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.modules.database.DataSourceProvider
-import com.projectcitybuild.modules.logger.LoggerProvider
+import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.modules.network.APIClient
 import com.projectcitybuild.modules.network.NetworkModule
 import com.projectcitybuild.modules.permissions.PermissionsManager
@@ -21,8 +21,8 @@ import org.bukkit.plugin.Plugin
 ])
 interface SpigotComponent {
 
-    fun config(): ConfigProvider
-    fun logger(): LoggerProvider
+    fun config(): PlatformConfig
+    fun logger(): PlatformLogger
     fun sessionCache(): SpigotSessionCache
     fun permissionsManager(): PermissionsManager
 
@@ -37,10 +37,10 @@ interface SpigotComponent {
         fun plugin(plugin: Plugin): Builder
 
         @BindsInstance
-        fun config(config: ConfigProvider): Builder
+        fun config(config: PlatformConfig): Builder
 
         @BindsInstance
-        fun logger(logger: LoggerProvider): Builder
+        fun logger(logger: PlatformLogger): Builder
 
         @BindsInstance
         fun apiClient(apiClient: APIClient): Builder

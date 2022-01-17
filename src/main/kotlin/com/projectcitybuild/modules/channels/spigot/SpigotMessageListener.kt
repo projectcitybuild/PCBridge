@@ -2,12 +2,12 @@ package com.projectcitybuild.modules.channels.spigot
 
 import com.google.common.io.ByteStreams
 import com.projectcitybuild.entities.Channel
-import com.projectcitybuild.modules.logger.LoggerProvider
+import com.projectcitybuild.modules.logger.PlatformLogger
 import org.bukkit.entity.Player
 import org.bukkit.plugin.messaging.PluginMessageListener
 
 class SpigotMessageListener(
-    private val logger: LoggerProvider
+    private val logger: PlatformLogger
 ): PluginMessageListener {
 
     private val listeners = HashMap<String, SpigotSubChannelListener>()

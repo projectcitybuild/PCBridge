@@ -17,7 +17,7 @@ class `20220115_player_configs_warps`: DatabaseMigration {
                     |CREATE TABLE players (
                     |   `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
                     |   `uuid` VARCHAR(50) NOT NULL,
-                    |   `is_muted` VARCHAR(50) NOT NULL DEFAULT '0',
+                    |   `is_muted` TINYINT(1) NOT NULL DEFAULT '0',
                     |   `is_allowing_tp` TINYINT(1) NOT NULL DEFAULT '1',
                     |   `first_seen` DATETIME NOT NULL,
                     |   PRIMARY KEY `id` (`id`),
