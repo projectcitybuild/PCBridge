@@ -2,16 +2,11 @@ package com.projectcitybuild.entities.migrations
 
 import co.aikar.idb.HikariPooledDatabase
 import com.projectcitybuild.modules.database.DatabaseMigration
-import com.projectcitybuild.old_modules.playerconfig.PlayerConfigFileStorage
-import com.projectcitybuild.old_modules.storage.WarpFileStorage
-import kotlinx.coroutines.runBlocking
-import net.md_5.bungee.api.plugin.Plugin
-import java.sql.Date
 
 class `20220115_player_configs_warps`: DatabaseMigration {
     override val description = "Add player configs and warps"
 
-    override fun execute(database: HikariPooledDatabase, plugin: Plugin) {
+    override fun execute(database: HikariPooledDatabase) {
         database.executeUpdate(
             """
                     |CREATE TABLE players (
@@ -27,23 +22,6 @@ class `20220115_player_configs_warps`: DatabaseMigration {
                 .trimMargin("|")
                 .replace("\n", "")
         )
-
-        // TODO: remove all this later
-        val configStorage = PlayerConfigFileStorage(plugin.dataFolder.resolve("players"))
-        runBlocking {
-            configStorage.keys().forEach { fileName ->
-                plugin.logger.info("Migrating player/$fileName.json to database")
-                val config = configStorage.load(fileName)!!
-
-                database.executeInsert(
-                    "INSERT INTO `players` VALUES(NULL, ?, ?, ?, ?);",
-                    config.uuid.unwrapped.toString(),
-                    config.isMuted,
-                    config.isAllowingTPs,
-                    Date(System.currentTimeMillis()),
-                )
-            }
-        }
 
         database.executeUpdate(
             """
@@ -63,27 +41,6 @@ class `20220115_player_configs_warps`: DatabaseMigration {
                 .trimMargin("|")
                 .replace("\n", "")
         )
-
-        val warpStorage = WarpFileStorage(plugin.dataFolder.resolve("warps"))
-        runBlocking {
-            warpStorage.keys().forEach { fileName ->
-                plugin.logger.info("Migrating warps/$fileName.json to database")
-                val warp = warpStorage.load(fileName)!!
-
-                database.executeInsert(
-                    "INSERT INTO `warps` VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?);",
-                    fileName,
-                    warp.serverName,
-                    warp.worldName,
-                    warp.x,
-                    warp.y,
-                    warp.z,
-                    warp.pitch,
-                    warp.yaw,
-                    Date(warp.createdAt.unwrapped.time),
-                )
-            }
-        }
 
         database.executeUpdate(
             """
