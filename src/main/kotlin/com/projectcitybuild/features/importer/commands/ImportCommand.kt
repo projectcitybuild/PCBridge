@@ -2,6 +2,7 @@ package com.projectcitybuild.features.importer.commands
 
 import com.projectcitybuild.core.InvalidCommandArgumentsException
 import com.projectcitybuild.modules.database.DataSource
+import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.old_modules.playerconfig.PlayerConfigFileStorage
 import com.projectcitybuild.old_modules.storage.WarpFileStorage
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
@@ -28,6 +29,7 @@ class ImportCommand @Inject constructor(
             input.args.first() == "warps" -> importWarpFiles()
             else -> throw InvalidCommandArgumentsException()
         }
+        input.sender.send().success("Migration complete")
     }
 
     override fun onTabComplete(sender: CommandSender?, args: List<String>): Iterable<String>? {
