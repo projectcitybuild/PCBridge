@@ -1,6 +1,7 @@
 package com.projectcitybuild.features.warps.subchannels
 
 import com.google.common.io.ByteArrayDataInput
+import com.projectcitybuild.entities.CrossServerLocation
 import com.projectcitybuild.entities.SubChannel
 import com.projectcitybuild.entities.Warp
 import com.projectcitybuild.features.warps.repositories.WarpRepository
@@ -41,13 +42,15 @@ class IncomingSetWarpListener @Inject constructor(
 
         val warp = Warp(
             warpName,
-            serverName,
-            worldName,
-            x,
-            y,
-            z,
-            pitch,
-            yaw,
+            CrossServerLocation(
+                serverName,
+                worldName,
+                x,
+                y,
+                z,
+                pitch,
+                yaw,
+            ),
             LocalDateTime.now()
         )
         CoroutineScope(Dispatchers.IO).launch {

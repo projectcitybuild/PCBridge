@@ -7,18 +7,6 @@ data class TeleportRecord(
     val id: Int,
     val playerUUID: UUID,
     val teleportReason: TeleportReason,
-    val serverName: String,
-    val worldName: String,
-    val x: Double,
-    val y: Double,
-    val z: Double,
-    val pitch: Float,
-    val yaw: Float,
+    val location: CrossServerLocation,
     val createdAt: Date,
 )
-
-enum class TeleportReason {
-    TP_TO,
-    TP_SUMMONED,
-    WARPED,
-}

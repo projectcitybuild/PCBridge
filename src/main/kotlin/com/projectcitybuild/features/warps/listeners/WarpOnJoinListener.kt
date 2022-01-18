@@ -28,25 +28,25 @@ class WarpOnJoinListener @Inject constructor(
             logger.debug("No queued warp for $playerUUID")
             return
         }
-        if (queuedWarp.serverName == serverName) {
+        if (queuedWarp.location.serverName == serverName) {
             logger.debug("Found queued warp request for $playerUUID -> $queuedWarp")
 
             queuedWarpRepository.dequeue(playerUUID)
 
-            val world = event.player.server.getWorld(queuedWarp.worldName)
+            val world = event.player.server.getWorld(queuedWarp.location.worldName)
             if (world == null) {
-                logger.warning("Could not find ${queuedWarp.worldName} world to warp to")
-                event.player.send().error("Could not find ${queuedWarp.worldName} world")
+                logger.warning("Could not find ${queuedWarp.location.worldName} world to warp to")
+                event.player.send().error("Could not find ${queuedWarp.location.worldName} world")
                 return
             }
 
             val location = Location(
                 world,
-                queuedWarp.x,
-                queuedWarp.y,
-                queuedWarp.z,
-                queuedWarp.yaw,
-                queuedWarp.pitch,
+                queuedWarp.location.x,
+                queuedWarp.location.y,
+                queuedWarp.location.z,
+                queuedWarp.location.yaw,
+                queuedWarp.location.pitch,
             )
             event.spawnLocation = location
 

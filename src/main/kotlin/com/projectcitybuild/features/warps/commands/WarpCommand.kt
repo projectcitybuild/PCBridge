@@ -48,14 +48,14 @@ class WarpCommand @Inject constructor(
 
         val warp = availableWarps.first { it.name == warpName }
 
-        val targetServer = proxyServer.servers[warp.serverName]
+        val targetServer = proxyServer.servers[warp.location.serverName]
         if (targetServer == null) {
-            logger.warning("Attempted to warp to missing ${warp.serverName} server")
-            input.sender.send().error("The target server [${warp.serverName}] is either offline or invalid")
+            logger.warning("Attempted to warp to missing ${warp.location.serverName} server")
+            input.sender.send().error("The target server [${warp.location.serverName}] is either offline or invalid")
             return
         }
 
-        val isWarpOnSameServer = input.player.server.info.name == warp.serverName
+        val isWarpOnSameServer = input.player.server.info.name == warp.location.serverName
         if (isWarpOnSameServer) {
             MessageToSpigot(
                 targetServer,
@@ -63,12 +63,12 @@ class WarpCommand @Inject constructor(
                 arrayOf(
                     warpName,
                     input.player.uniqueId.toString(),
-                    warp.worldName,
-                    warp.x,
-                    warp.y,
-                    warp.z,
-                    warp.pitch,
-                    warp.yaw,
+                    warp.location.worldName,
+                    warp.location.x,
+                    warp.location.y,
+                    warp.location.z,
+                    warp.location.pitch,
+                    warp.location.yaw,
                 )
             ).send()
         } else {
