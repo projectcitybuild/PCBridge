@@ -19,6 +19,7 @@ class ImmediateWarpChannelListener @Inject constructor(
     override val subChannel = SubChannel.WARP_IMMEDIATELY
 
     override fun onSpigotReceivedMessage(player: Player?, stream: ByteArrayDataInput) {
+        val warpName = stream.readUTF()
         val playerUUID = UUID.fromString(stream.readUTF())
         val worldName = stream.readUTF()
         val x = stream.readDouble()
@@ -43,5 +44,7 @@ class ImmediateWarpChannelListener @Inject constructor(
             return
         }
         targetPlayer.teleport(location)
+
+        targetPlayer.send().action("Warped to $warpName")
     }
 }

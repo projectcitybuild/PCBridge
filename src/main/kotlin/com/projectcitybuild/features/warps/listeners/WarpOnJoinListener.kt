@@ -51,6 +51,8 @@ class WarpOnJoinListener @Inject constructor(
             event.spawnLocation = location
 
             logger.debug("Set player's spawn location to $location")
+
+            event.player.send().action("Warped to ${queuedWarp.name}")
         }
     }
 }

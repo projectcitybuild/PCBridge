@@ -61,6 +61,7 @@ class WarpCommand @Inject constructor(
                 targetServer,
                 SubChannel.WARP_IMMEDIATELY,
                 arrayOf(
+                    warpName,
                     input.player.uniqueId.toString(),
                     warp.worldName,
                     warp.x,
