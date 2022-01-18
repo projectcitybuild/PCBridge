@@ -3,7 +3,6 @@ package com.projectcitybuild.modules.database
 import co.aikar.idb.HikariPooledDatabase
 import com.projectcitybuild.entities.migrations.*
 import com.projectcitybuild.modules.logger.PlatformLogger
-import net.md_5.bungee.api.plugin.Plugin
 
 object Migration {
 
@@ -15,7 +14,6 @@ object Migration {
     fun executeIfNecessary(
         database: HikariPooledDatabase,
         logger: PlatformLogger,
-        plugin: Plugin, // temporary
         currentVersion: Int
     ) {
         var version = currentVersion
@@ -26,7 +24,7 @@ object Migration {
         while (version < totalMigrations) {
             val migration = migrations[version]
             logger.info("Running migration ${version + 1}: ${migration.description}")
-            migration.execute(database, plugin)
+            migration.execute(database)
             version++
         }
 

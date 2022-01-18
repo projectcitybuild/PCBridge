@@ -4,12 +4,10 @@ import co.aikar.idb.DatabaseOptions
 import co.aikar.idb.HikariPooledDatabase
 import co.aikar.idb.PooledDatabaseOptions
 import com.projectcitybuild.modules.logger.PlatformLogger
-import net.md_5.bungee.api.plugin.Plugin
 import javax.inject.Singleton
 
 @Singleton
 class DataSource(
-    private val plugin: Plugin,
     private val logger: PlatformLogger,
     private val hostName: String,
     private val port: Int = 3306,
@@ -35,7 +33,7 @@ class DataSource(
         }
         if (shouldRunMigrations) {
             val version = getVersion()
-            Migration.executeIfNecessary(database!!, logger, plugin, currentVersion = version)
+            Migration.executeIfNecessary(database!!, logger, currentVersion = version)
         }
     }
 

@@ -6,6 +6,7 @@ import com.projectcitybuild.modules.database.DataSourceProvider
 import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.modules.network.APIClient
 import com.projectcitybuild.modules.network.NetworkModule
+import com.projectcitybuild.modules.scheduler.PlatformScheduler
 import com.projectcitybuild.platforms.spigot.SpigotFeatureListModule.SpigotFeatureModules
 import dagger.BindsInstance
 import dagger.Component
@@ -39,6 +40,9 @@ interface SpigotComponent {
 
         @BindsInstance
         fun logger(logger: PlatformLogger): Builder
+
+        @BindsInstance
+        fun scheduler(scheduler: PlatformScheduler): Builder
 
         @BindsInstance
         fun apiClient(apiClient: APIClient): Builder

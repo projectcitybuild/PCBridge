@@ -1,10 +1,9 @@
 package com.projectcitybuild.features.teleporting.commands
 
 import com.projectcitybuild.core.InvalidCommandArgumentsException
-import com.projectcitybuild.entities.SubChannel
+import com.projectcitybuild.features.teleporting.PlayerTeleporter
 import com.projectcitybuild.modules.nameguesser.NameGuesser
 import com.projectcitybuild.modules.textcomponentbuilder.send
-import com.projectcitybuild.platforms.bungeecord.MessageToSpigot
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
 import net.md_5.bungee.api.CommandSender
@@ -13,6 +12,7 @@ import javax.inject.Inject
 
 class TPOCommand @Inject constructor(
     private val proxyServer: ProxyServer,
+    private val playerTeleporter: PlayerTeleporter,
     private val nameGuesser: NameGuesser
 ): BungeecordCommand {
 
@@ -36,31 +36,17 @@ class TPOCommand @Inject constructor(
             return
         }
 
-        val targetServer = targetPlayer.server
-
-        val isTargetPlayerOnSameServer = input.player.server.info.name == targetPlayer.server.info.name
-        val subChannel =
-            if (isTargetPlayerOnSameServer) SubChannel.TP_IMMEDIATELY
-            else SubChannel.TP_AWAIT_JOIN
-
-        MessageToSpigot(
-            targetServer.info,
-            subChannel,
-            arrayOf(
-                input.player.uniqueId.toString(),
-                targetPlayer.uniqueId.toString()
-            )
-        ).send()
-
-        if (!isTargetPlayerOnSameServer) {
-            input.player.connect(targetServer.info)
-        }
+        playerTeleporter.teleport(
+            player = input.player,
+            targetPlayer = targetPlayer,
+            shouldCheckAllowingTP = false
+        )
     }
 
     override fun onTabComplete(sender: CommandSender?, args: List<String>): Iterable<String>? {
         return when {
             args.isEmpty() -> proxyServer.players.map { it.name }
-            args.size == 1 -> proxyServer.players.map { it.name }.filter { it.lowercase().startsWith(args.first()) }
+            args.size == 1 -> proxyServer.players.map { it.name }.filter { it.lowercase().startsWith(args.first().lowercase()) }
             else -> null
         }
     }

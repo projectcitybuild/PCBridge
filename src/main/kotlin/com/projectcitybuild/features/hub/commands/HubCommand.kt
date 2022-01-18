@@ -2,17 +2,22 @@ package com.projectcitybuild.features.hub.commands
 
 import com.projectcitybuild.core.InvalidCommandArgumentsException
 import com.projectcitybuild.entities.SubChannel
+import com.projectcitybuild.entities.Warp
+import com.projectcitybuild.features.warps.repositories.QueuedWarpRepository
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.old_modules.storage.HubFileStorage
 import com.projectcitybuild.platforms.bungeecord.MessageToSpigot
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
 import net.md_5.bungee.api.ProxyServer
+import net.md_5.bungee.api.event.ServerConnectEvent
+import java.time.LocalDateTime
 import javax.inject.Inject
 
 class HubCommand @Inject constructor(
     private val proxyServer: ProxyServer,
-    private val hubFileStorage: HubFileStorage
+    private val hubFileStorage: HubFileStorage,
+    private val queuedWarpRepository: QueuedWarpRepository,
 ): BungeecordCommand {
 
     override val label: String = "hub"
@@ -28,39 +33,49 @@ class HubCommand @Inject constructor(
             return
         }
 
-        val warp = hubFileStorage.load()
-        if (warp == null) {
+        val hub = hubFileStorage.load()
+        if (hub == null) {
             input.sender.send().error("Hub has not been set")
             return
         }
 
-        val targetServer = proxyServer.servers[warp.serverName]
+        val targetServer = proxyServer.servers[hub.serverName]
         if (targetServer == null) {
             input.sender.send().error("The hub is currently offline or unavailable. Please try again later")
             return
         }
 
-        val isWarpOnSameServer = input.player.server.info.name == warp.serverName
-        val subChannel =
-            if (isWarpOnSameServer) SubChannel.WARP_IMMEDIATELY
-            else SubChannel.WARP_AWAIT_JOIN
+        val warp = Warp(
+            name = "hub",
+            serverName = hub.serverName,
+            worldName = hub.worldName,
+            x = hub.x,
+            y = hub.y,
+            z = hub.z,
+            pitch = hub.pitch,
+            yaw = hub.yaw,
+            createdAt = LocalDateTime.now(),
+        )
 
-        MessageToSpigot(
-            targetServer,
-            subChannel,
-            arrayOf(
-                input.player.uniqueId.toString(),
-                warp.worldName,
-                warp.x,
-                warp.y,
-                warp.z,
-                warp.pitch,
-                warp.yaw,
-            )
-        ).send()
-
-        if (!isWarpOnSameServer) {
-            input.player.connect(targetServer)
+        val isHubOnSameServer = input.player.server.info.name == warp.serverName
+        if (isHubOnSameServer) {
+            MessageToSpigot(
+                targetServer,
+                SubChannel.WARP_IMMEDIATELY,
+                arrayOf(
+                    "hub",
+                    input.player.uniqueId.toString(),
+                    warp.worldName,
+                    warp.x,
+                    warp.y,
+                    warp.z,
+                    warp.pitch,
+                    warp.yaw,
+                )
+            ).send()
+        } else {
+            queuedWarpRepository.queue(input.player.uniqueId, warp)
+            input.player.connect(targetServer, ServerConnectEvent.Reason.COMMAND)
         }
     }
 }

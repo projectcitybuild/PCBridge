@@ -2,7 +2,9 @@ package com.projectcitybuild.features.warps.commands
 
 import com.projectcitybuild.core.InvalidCommandArgumentsException
 import com.projectcitybuild.entities.SubChannel
+import com.projectcitybuild.features.warps.repositories.QueuedWarpRepository
 import com.projectcitybuild.features.warps.repositories.WarpRepository
+import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.modules.nameguesser.NameGuesser
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.platforms.bungeecord.MessageToSpigot
@@ -10,12 +12,15 @@ import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
 import net.md_5.bungee.api.CommandSender
 import net.md_5.bungee.api.ProxyServer
+import net.md_5.bungee.api.event.ServerConnectEvent
 import javax.inject.Inject
 
 class WarpCommand @Inject constructor(
     private val proxyServer: ProxyServer,
     private val warpRepository: WarpRepository,
-    private val nameGuesser: NameGuesser
+    private val queuedWarpRepository: QueuedWarpRepository,
+    private val nameGuesser: NameGuesser,
+    private val logger: PlatformLogger,
 ): BungeecordCommand {
 
     override val label: String = "warp"
@@ -37,7 +42,7 @@ class WarpCommand @Inject constructor(
         val targetWarpName = input.args.first()
         val warpName = nameGuesser.guessClosest(targetWarpName, availableWarpNames)
         if (warpName == null) {
-            input.sender.send().error("Warp $warpName does not exist")
+            input.sender.send().error("Warp $targetWarpName does not exist")
             return
         }
 
@@ -45,31 +50,30 @@ class WarpCommand @Inject constructor(
 
         val targetServer = proxyServer.servers[warp.serverName]
         if (targetServer == null) {
+            logger.warning("Attempted to warp to missing ${warp.serverName} server")
             input.sender.send().error("The target server [${warp.serverName}] is either offline or invalid")
             return
         }
 
         val isWarpOnSameServer = input.player.server.info.name == warp.serverName
-        val subChannel =
-            if (isWarpOnSameServer) SubChannel.WARP_IMMEDIATELY
-            else SubChannel.WARP_AWAIT_JOIN
-
-        MessageToSpigot(
-            targetServer,
-            subChannel,
-            arrayOf(
-                input.player.uniqueId.toString(),
-                warp.worldName,
-                warp.x,
-                warp.y,
-                warp.z,
-                warp.pitch,
-                warp.yaw,
-            )
-        ).send()
-
-        if (!isWarpOnSameServer) {
-            input.player.connect(targetServer)
+        if (isWarpOnSameServer) {
+            MessageToSpigot(
+                targetServer,
+                SubChannel.WARP_IMMEDIATELY,
+                arrayOf(
+                    warpName,
+                    input.player.uniqueId.toString(),
+                    warp.worldName,
+                    warp.x,
+                    warp.y,
+                    warp.z,
+                    warp.pitch,
+                    warp.yaw,
+                )
+            ).send()
+        } else {
+            queuedWarpRepository.queue(input.player.uniqueId, warp)
+            input.player.connect(targetServer, ServerConnectEvent.Reason.COMMAND)
         }
     }
 

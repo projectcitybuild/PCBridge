@@ -18,22 +18,31 @@ class ImmediateTeleportChannelListener @Inject constructor(
     override val subChannel = SubChannel.TP_IMMEDIATELY
 
     override fun onSpigotReceivedMessage(player: Player?, stream: ByteArrayDataInput) {
-        val teleportingPlayerUUID = UUID.fromString(stream.readUTF())
-        val teleportTargetPlayerUUID = UUID.fromString(stream.readUTF())
-
-        val teleportingPlayer = plugin.server.getPlayer(teleportingPlayerUUID)
-        if (teleportingPlayer == null) {
-            logger.warning("Attempted to teleport, but could not find the command sender")
+        val targetPlayerUUID = UUID.fromString(stream.readUTF())
+        val targetPlayer = plugin.server.getPlayer(targetPlayerUUID)
+        if (targetPlayer == null) {
+            logger.warning("Could not find player. Did they disconnect?")
             return
         }
 
-        val teleportTargetPlayer = plugin.server.getPlayer(teleportTargetPlayerUUID)
-        if (teleportTargetPlayer == null) {
-            teleportingPlayer.send().error("Could not find target player. Did they disconnect?")
+        val destinationPlayerUUID = UUID.fromString(stream.readUTF())
+        val destinationPlayer = plugin.server.getPlayer(destinationPlayerUUID)
+        if (destinationPlayer == null) {
+            logger.warning("Could not find destination player. Did they disconnect?")
             return
         }
 
-        teleportingPlayer.teleport(teleportTargetPlayer)
-        teleportingPlayer.send().action("Teleported to ${teleportTargetPlayer.name}")
+        logger.debug("Immediately teleporting $targetPlayerUUID to location of $destinationPlayerUUID")
+
+        targetPlayer.teleport(destinationPlayer.location)
+
+        val isSummon = stream.readBoolean()
+        if (isSummon) {
+            destinationPlayer.send().action("You summoned ${targetPlayer.name} to you")
+            targetPlayer.send().action("You were summoned to ${destinationPlayer.name}")
+        } else {
+            destinationPlayer.send().action("${targetPlayer.name} teleported to you")
+            targetPlayer.send().action("Teleported to ${destinationPlayer.name}")
+        }
     }
 }
