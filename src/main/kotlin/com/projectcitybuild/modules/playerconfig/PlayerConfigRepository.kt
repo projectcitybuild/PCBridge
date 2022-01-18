@@ -59,7 +59,7 @@ class PlayerConfigRepository @Inject constructor(
         cache.put(player.uuid, player)
 
         dataSource.database().executeUpdate(
-            "UPDATE players SET (`uuid`='?', `is_muted`='?', `is_allowing_tp`='?', `first_seen`='?') WHERE `id`=(?)",
+            "UPDATE players SET `uuid` = ?, `is_muted` = ?, `is_allowing_tp` = ?, `first_seen` = ? WHERE `id`= ?",
             player.uuid.toString(),
             player.isMuted,
             player.isAllowingTPs,
