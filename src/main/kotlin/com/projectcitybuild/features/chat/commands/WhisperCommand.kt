@@ -33,6 +33,9 @@ class WhisperCommand @Inject constructor(
         if (input.args.isEmpty()) {
             throw InvalidCommandArgumentsException()
         }
+        val message = input.args.joinWithWhitespaces(1 until input.args.size)
+            ?: throw InvalidCommandArgumentsException()
+
         val targetPlayerName = input.args.first()
 
         val targetPlayer = nameGuesser.guessClosest(targetPlayerName, proxyServer.players) { it.name }
@@ -50,17 +53,16 @@ class WhisperCommand @Inject constructor(
             val playerConfig = playerConfigRepository.get(input.player.uniqueId)
             val targetPlayerConfig = playerConfigRepository.get(targetPlayer.uniqueId)
 
-            if (chatIgnoreRepository.isIgnored(playerConfig!!.id, targetPlayerConfig!!.id)) {
+            if (chatIgnoreRepository.isIgnored(targetPlayerConfig!!.id, playerConfig!!.id)) {
                 input.sender.send().error("Cannot send. You are being ignored by $targetPlayerName")
                 return
             }
         }
 
-        val message = input.args.joinWithWhitespaces(1 until input.args.size)
         val senderName = input.player?.displayName ?: "CONSOLE"
 
         val tc = TextComponent()
-            .add(" [$senderName -> ${targetPlayer.name}] ") {
+            .add("✉ [$senderName -> ${targetPlayer.name}] ") {
                 it.color = ChatColor.GRAY
                 it.isItalic = true
             }
