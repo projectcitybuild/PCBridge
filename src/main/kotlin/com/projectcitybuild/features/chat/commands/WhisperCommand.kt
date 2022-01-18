@@ -33,6 +33,9 @@ class WhisperCommand @Inject constructor(
         if (input.args.isEmpty()) {
             throw InvalidCommandArgumentsException()
         }
+        val message = input.args.joinWithWhitespaces(1 until input.args.size)
+            ?: throw InvalidCommandArgumentsException()
+
         val targetPlayerName = input.args.first()
 
         val targetPlayer = nameGuesser.guessClosest(targetPlayerName, proxyServer.players) { it.name }
@@ -56,11 +59,10 @@ class WhisperCommand @Inject constructor(
             }
         }
 
-        val message = input.args.joinWithWhitespaces(1 until input.args.size)
         val senderName = input.player?.displayName ?: "CONSOLE"
 
         val tc = TextComponent()
-            .add(" [$senderName -> ${targetPlayer.name}] ") {
+            .add("✉ [$senderName -> ${targetPlayer.name}] ") {
                 it.color = ChatColor.GRAY
                 it.isItalic = true
             }

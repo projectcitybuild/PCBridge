@@ -48,7 +48,7 @@ class ReplyCommand @Inject constructor(
 
         val playerConfig = playerConfigRepository.get(input.player.uniqueId)
         val targetPlayerConfig = playerConfigRepository.get(targetPlayer.uniqueId)
-        if (chatIgnoreRepository.isIgnored(playerConfig!!.id, targetPlayerConfig!!.id)) {
+        if (chatIgnoreRepository.isIgnored(targetPlayerConfig!!.id, playerConfig!!.id)) {
             input.sender.send().error("Cannot send. You are being ignored by ${targetPlayer.name}")
             return
         }
@@ -56,7 +56,7 @@ class ReplyCommand @Inject constructor(
         val message = input.args.joinToString(separator = " ")
         val senderName = input.player.displayName
 
-        val tc = TextComponent(" [$senderName -> ${targetPlayer.name}] $message").also {
+        val tc = TextComponent("✉ [$senderName -> ${targetPlayer.name}] $message").also {
             it.color = ChatColor.GRAY
             it.isItalic = true
         }
