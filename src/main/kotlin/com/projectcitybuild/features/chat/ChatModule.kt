@@ -16,7 +16,7 @@ class ChatModule {
         aCommand: ACommand,
         ignoreCommand: IgnoreCommand,
         muteCommand: MuteCommand,
-        replyCommand: IgnoreCommand,
+        replyCommand: ReplyCommand,
         unignoreCommand: UnignoreCommand,
         unmuteCommand: UnmuteCommand,
         whisperCommand: WhisperCommand,

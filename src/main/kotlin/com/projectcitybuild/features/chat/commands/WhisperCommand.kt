@@ -50,7 +50,7 @@ class WhisperCommand @Inject constructor(
             val playerConfig = playerConfigRepository.get(input.player.uniqueId)
             val targetPlayerConfig = playerConfigRepository.get(targetPlayer.uniqueId)
 
-            if (chatIgnoreRepository.isIgnored(playerConfig!!.id, targetPlayerConfig!!.id)) {
+            if (chatIgnoreRepository.isIgnored(targetPlayerConfig!!.id, playerConfig!!.id)) {
                 input.sender.send().error("Cannot send. You are being ignored by $targetPlayerName")
                 return
             }
