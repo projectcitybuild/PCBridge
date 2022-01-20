@@ -2,10 +2,12 @@ package com.projectcitybuild.features.warps.listeners
 
 import com.projectcitybuild.core.SpigotListener
 import com.projectcitybuild.entities.PluginConfig
+import com.projectcitybuild.features.warps.events.PlayerWarpEvent
 import com.projectcitybuild.features.warps.repositories.QueuedWarpRepository
 import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.modules.textcomponentbuilder.send
+import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
@@ -28,31 +30,40 @@ class WarpOnJoinListener @Inject constructor(
             logger.debug("No queued warp for $playerUUID")
             return
         }
-        if (queuedWarp.location.serverName == serverName) {
-            logger.debug("Found queued warp request for $playerUUID -> $queuedWarp")
-
-            queuedWarpRepository.dequeue(playerUUID)
-
-            val world = event.player.server.getWorld(queuedWarp.location.worldName)
-            if (world == null) {
-                logger.warning("Could not find ${queuedWarp.location.worldName} world to warp to")
-                event.player.send().error("Could not find ${queuedWarp.location.worldName} world")
-                return
-            }
-
-            val location = Location(
-                world,
-                queuedWarp.location.x,
-                queuedWarp.location.y,
-                queuedWarp.location.z,
-                queuedWarp.location.yaw,
-                queuedWarp.location.pitch,
-            )
-            event.spawnLocation = location
-
-            logger.debug("Set player's spawn location to $location")
-
-            event.player.send().action("Warped to ${queuedWarp.name}")
+        if (queuedWarp.location.serverName != serverName) {
+            return
         }
+
+        logger.debug("Found queued warp request for $playerUUID -> $queuedWarp")
+
+        queuedWarpRepository.dequeue(playerUUID)
+
+        val world = event.player.server.getWorld(queuedWarp.location.worldName)
+        if (world == null) {
+            logger.warning("Could not find ${queuedWarp.location.worldName} world to warp to")
+            event.player.send().error("Could not find ${queuedWarp.location.worldName} world")
+            return
+        }
+
+        val location = Location(
+            world,
+            queuedWarp.location.x,
+            queuedWarp.location.y,
+            queuedWarp.location.z,
+            queuedWarp.location.yaw,
+            queuedWarp.location.pitch,
+        )
+        event.spawnLocation = location
+
+        logger.debug("Set player's spawn location to $location")
+
+        event.player.send().action("Warped to ${queuedWarp.name}")
+
+        Bukkit.getPluginManager().callEvent(
+            PlayerWarpEvent(
+                player = event.player,
+                warp = queuedWarp
+            )
+        )
     }
 }

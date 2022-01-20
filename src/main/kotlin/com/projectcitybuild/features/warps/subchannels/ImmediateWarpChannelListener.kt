@@ -1,18 +1,26 @@
 package com.projectcitybuild.features.warps.subchannels
 
 import com.google.common.io.ByteArrayDataInput
+import com.projectcitybuild.entities.CrossServerLocation
+import com.projectcitybuild.entities.PluginConfig
 import com.projectcitybuild.entities.SubChannel
+import com.projectcitybuild.entities.Warp
+import com.projectcitybuild.features.warps.events.PlayerWarpEvent
 import com.projectcitybuild.modules.channels.spigot.SpigotSubChannelListener
+import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.modules.textcomponentbuilder.send
+import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
+import java.time.LocalDateTime
 import java.util.*
 import javax.inject.Inject
 
 class ImmediateWarpChannelListener @Inject constructor(
     private val plugin: Plugin,
+    private val config: PlatformConfig,
     private val logger: PlatformLogger,
 ): SpigotSubChannelListener {
 
@@ -46,5 +54,19 @@ class ImmediateWarpChannelListener @Inject constructor(
         targetPlayer.teleport(location)
 
         targetPlayer.send().action("Warped to $warpName")
+
+        Bukkit.getPluginManager().callEvent(
+            PlayerWarpEvent(
+                player = targetPlayer,
+                warp = Warp(
+                    warpName,
+                    CrossServerLocation.fromLocation(
+                        serverName = config.get(PluginConfig.SPIGOT_SERVER_NAME),
+                        location
+                    ),
+                    createdAt = LocalDateTime.now() // Not needed
+                )
+            )
+        )
     }
 }
