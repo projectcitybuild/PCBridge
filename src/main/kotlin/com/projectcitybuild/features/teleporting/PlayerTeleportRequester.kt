@@ -1,7 +1,7 @@
 package com.projectcitybuild.features.teleporting
 
 import com.projectcitybuild.entities.SubChannel
-import com.projectcitybuild.entities.Teleport
+import com.projectcitybuild.entities.QueuedTeleport
 import com.projectcitybuild.entities.TeleportType
 import com.projectcitybuild.features.teleporting.repositories.QueuedTeleportRepository
 import com.projectcitybuild.modules.playerconfig.PlayerConfigRepository
@@ -12,41 +12,41 @@ import net.md_5.bungee.api.event.ServerConnectEvent
 import java.time.LocalDateTime
 import javax.inject.Inject
 
-class PlayerTeleporter @Inject constructor(
+class PlayerTeleportRequester @Inject constructor(
     private val playerConfigRepository: PlayerConfigRepository,
     private val queuedTeleportRepository: QueuedTeleportRepository,
 ) {
-    fun teleport(player: ProxiedPlayer, targetPlayer: ProxiedPlayer, shouldCheckAllowingTP: Boolean) {
+    fun teleport(player: ProxiedPlayer, destinationPlayer: ProxiedPlayer, shouldCheckAllowingTP: Boolean) {
         if (shouldCheckAllowingTP) {
-            val targetPlayerConfig = playerConfigRepository.get(targetPlayer.uniqueId)!!
+            val targetPlayerConfig = playerConfigRepository.get(destinationPlayer.uniqueId)!!
             if (!targetPlayerConfig.isAllowingTPs) {
-                player.send().error("${targetPlayer.name} is disallowing teleports")
+                player.send().error("${destinationPlayer.name} is disallowing teleports")
                 return
             }
         }
 
-        val targetServer = targetPlayer.server.info
-        val isTargetPlayerOnSameServer = player.server.info.name == targetServer.name
-        if (isTargetPlayerOnSameServer) {
+        val destinationServer = destinationPlayer.server.info
+        val isDestinationPlayerOnSameServer = player.server.info.name == destinationServer.name
+        if (isDestinationPlayerOnSameServer) {
             MessageToSpigot(
-                targetServer,
+                destinationServer,
                 SubChannel.TP_IMMEDIATELY,
                 arrayOf(
                     player.uniqueId.toString(),
-                    targetPlayer.uniqueId.toString(),
+                    destinationPlayer.uniqueId.toString(),
                 )
             ).send()
         } else {
             queuedTeleportRepository.queue(
-                Teleport(
+                QueuedTeleport(
                     playerUUID = player.uniqueId,
-                    targetPlayerUUID = targetPlayer.uniqueId,
-                    targetServerName = targetServer.name,
+                    targetPlayerUUID = destinationPlayer.uniqueId,
+                    targetServerName = destinationServer.name,
                     teleportType = TeleportType.TP,
                     createdAt = LocalDateTime.now()
                 )
             )
-            player.connect(targetServer, ServerConnectEvent.Reason.COMMAND)
+            player.connect(destinationServer, ServerConnectEvent.Reason.COMMAND)
         }
     }
 
@@ -72,7 +72,7 @@ class PlayerTeleporter @Inject constructor(
             ).send()
         } else {
             queuedTeleportRepository.queue(
-                Teleport(
+                QueuedTeleport(
                     playerUUID = summonedPlayer.uniqueId,
                     targetPlayerUUID = destinationPlayer.uniqueId,
                     targetServerName = targetServer.name,

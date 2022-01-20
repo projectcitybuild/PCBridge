@@ -9,7 +9,11 @@ import javax.inject.Inject
 class TeleportHistoryRepository @Inject constructor(
     private val dataSource: DataSource
 ) {
-    fun visit(playerUUID: UUID, location: CrossServerLocation, reason: TeleportReason) {
+    fun add(playerUUID: UUID, location: CrossServerLocation, reason: TeleportReason) {
         
+    }
+
+    fun get(playerUUID: UUID): List<TeleportReason> {
+
     }
 }

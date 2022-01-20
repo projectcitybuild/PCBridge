@@ -2,9 +2,13 @@ package com.projectcitybuild.features.teleporting.subchannels
 
 import com.google.common.io.ByteArrayDataInput
 import com.projectcitybuild.entities.SubChannel
+import com.projectcitybuild.entities.TeleportType
+import com.projectcitybuild.features.teleporting.events.PlayerSummonEvent
+import com.projectcitybuild.features.teleporting.events.PlayerTeleportEvent
 import com.projectcitybuild.modules.channels.spigot.SpigotSubChannelListener
 import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.modules.textcomponentbuilder.send
+import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
 import java.util.*
@@ -40,9 +44,24 @@ class ImmediateTeleportChannelListener @Inject constructor(
         if (isSummon) {
             destinationPlayer.send().action("You summoned ${targetPlayer.name} to you")
             targetPlayer.send().action("You were summoned to ${destinationPlayer.name}")
+
+            Bukkit.getPluginManager().callEvent(
+                PlayerSummonEvent(
+                    summonedPlayer = targetPlayer.player,
+                    destinationPlayer = destinationPlayer.player,
+                )
+            )
+
         } else {
             destinationPlayer.send().action("${targetPlayer.name} teleported to you")
             targetPlayer.send().action("Teleported to ${destinationPlayer.name}")
+
+            Bukkit.getPluginManager().callEvent(
+                PlayerTeleportEvent(
+                    player = targetPlayer.player,
+                    destinationPlayer = destinationPlayer.player,
+                )
+            )
         }
     }
 }

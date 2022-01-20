@@ -1,7 +1,7 @@
 package com.projectcitybuild.features.teleporting.commands
 
 import com.projectcitybuild.core.InvalidCommandArgumentsException
-import com.projectcitybuild.features.teleporting.PlayerTeleporter
+import com.projectcitybuild.features.teleporting.PlayerTeleportRequester
 import com.projectcitybuild.modules.nameguesser.NameGuesser
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
@@ -12,7 +12,7 @@ import javax.inject.Inject
 
 class TPOHereCommand @Inject constructor(
     private val proxyServer: ProxyServer,
-    private val playerTeleporter: PlayerTeleporter,
+    private val playerTeleportRequester: PlayerTeleportRequester,
     private val nameGuesser: NameGuesser
 ): BungeecordCommand {
 
@@ -36,7 +36,7 @@ class TPOHereCommand @Inject constructor(
             return
         }
 
-        playerTeleporter.summon(
+        playerTeleportRequester.summon(
             summonedPlayer = targetPlayer,
             destinationPlayer = input.player,
             shouldCheckAllowingTP = false
