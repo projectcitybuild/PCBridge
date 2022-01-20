@@ -1,4 +1,4 @@
-package com.projectcitybuild.entities.migrations
+package com.projectcitybuild.modules.database.migrations
 
 import co.aikar.idb.HikariPooledDatabase
 import com.projectcitybuild.modules.database.DatabaseMigration

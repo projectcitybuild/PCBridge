@@ -10,12 +10,19 @@ class PlayerSummonEvent(
     val destinationPlayer: Player,
 ): SpigotEvent() {
 
-    private val handlers = HandlerList()
+    companion object {
+        private val HANDLERS = HandlerList()
+
+        @JvmStatic
+        fun getHandlerList(): HandlerList {
+            return HANDLERS
+        }
+    }
 
     val destination: Location
         get() = destinationPlayer.location
 
     override fun getHandlers(): HandlerList {
-        return handlers
+        return HANDLERS
     }
 }

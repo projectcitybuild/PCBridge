@@ -1,6 +1,6 @@
 package com.projectcitybuild.entities
 
-import java.sql.Date
+import java.time.LocalDateTime
 import java.util.*
 
 data class TeleportRecord(
@@ -8,5 +8,6 @@ data class TeleportRecord(
     val playerUUID: UUID,
     val teleportReason: TeleportReason,
     val location: CrossServerLocation,
-    val createdAt: Date,
+    val canGoBack: Boolean,
+    val createdAt: LocalDateTime,
 )

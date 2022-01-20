@@ -44,7 +44,7 @@ class BanCommand @Inject constructor(
             )
 
             proxyServer.broadcast(
-                TextComponent("${ChatColor.GRAY}$targetPlayerName has been banned by ${input.sender.name}: ${reason?.isNotEmpty() ?: "No reason given"}")
+                TextComponent("${ChatColor.GRAY}$targetPlayerName has been banned by ${input.sender.name}: ${reason ?: "No reason given"}")
             )
 
             proxyServer.players

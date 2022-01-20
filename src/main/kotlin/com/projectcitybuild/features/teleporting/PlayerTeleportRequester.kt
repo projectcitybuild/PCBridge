@@ -34,6 +34,7 @@ class PlayerTeleportRequester @Inject constructor(
                 arrayOf(
                     player.uniqueId.toString(),
                     destinationPlayer.uniqueId.toString(),
+                    false,
                 )
             ).send()
         } else {
@@ -68,6 +69,7 @@ class PlayerTeleportRequester @Inject constructor(
                 arrayOf(
                     summonedPlayer.uniqueId.toString(),
                     destinationPlayer.uniqueId.toString(),
+                    true,
                 )
             ).send()
         } else {
