@@ -36,6 +36,11 @@ class TPOCommand @Inject constructor(
             return
         }
 
+        if (targetPlayer == input.player) {
+            input.sender.send().error("You cannot teleport to yourself")
+            return
+        }
+
         playerTeleportRequester.teleport(
             player = input.player,
             destinationPlayer = targetPlayer,

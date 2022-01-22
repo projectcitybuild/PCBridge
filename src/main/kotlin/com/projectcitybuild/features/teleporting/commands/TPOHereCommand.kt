@@ -36,6 +36,11 @@ class TPOHereCommand @Inject constructor(
             return
         }
 
+        if (targetPlayer == input.player) {
+            input.sender.send().error("You cannot summon yourself")
+            return
+        }
+
         playerTeleportRequester.summon(
             summonedPlayer = targetPlayer,
             destinationPlayer = input.player,
