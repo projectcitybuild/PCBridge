@@ -8,6 +8,7 @@ import com.projectcitybuild.features.teleporting.commands.TPHereCommand
 import com.projectcitybuild.features.teleporting.commands.TPOCommand
 import com.projectcitybuild.features.teleporting.commands.TPOHereCommand
 import com.projectcitybuild.features.teleporting.listeners.TeleportOnJoinListener
+import com.projectcitybuild.features.teleporting.subchannels.AcrossServerTeleportChannelListener
 import com.projectcitybuild.features.teleporting.subchannels.SameServerTeleportChannelListener
 import com.projectcitybuild.features.teleporting.subchannels.SwitchPlayerServerSubChannelListener
 import com.projectcitybuild.modules.channels.bungeecord.BungeecordSubChannelListener
@@ -39,6 +40,7 @@ class TeleportModule {
     }
 
     class Spigot @Inject constructor(
+        acrossServerTeleportChannelListener: AcrossServerTeleportChannelListener,
         sameServerTeleportChannelListener: SameServerTeleportChannelListener,
         teleportOnJoinListener: TeleportOnJoinListener,
     ): SpigotFeatureModule {
@@ -47,6 +49,7 @@ class TeleportModule {
         )
 
         override val spigotSubChannelListeners: Array<SpigotSubChannelListener> = arrayOf(
+            acrossServerTeleportChannelListener,
             sameServerTeleportChannelListener,
         )
     }

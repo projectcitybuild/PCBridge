@@ -31,7 +31,6 @@ class LastKnownLocationRepositoy @Inject constructor(
         } else {
             dataSource.database().executeUpdate(
                 "UPDATE last_known_locations SET server_name = ?, world_name = ?, x = ?, y = ?, z = ?, pitch = ?, yaw = ?, created_at = ? WHERE player_uuid = ?",
-                playerUUID.toString(),
                 location.serverName,
                 location.worldName,
                 location.x,
@@ -40,6 +39,7 @@ class LastKnownLocationRepositoy @Inject constructor(
                 location.pitch,
                 location.yaw,
                 LocalDateTime.now(),
+                playerUUID.toString(),
             )
         }
     }

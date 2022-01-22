@@ -47,7 +47,7 @@ class SameServerWarpChannelListener @Inject constructor(
         }
         val location = Location(world, x, y, z, yaw, pitch)
 
-        logger.debug("Immediately warping player $playerUUID to $location")
+        logger.debug("(Same server) Warping player $playerUUID to $location")
 
         val targetPlayer = plugin.server.getPlayer(playerUUID)
         if (targetPlayer == null) {
