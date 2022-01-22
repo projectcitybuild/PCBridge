@@ -1,5 +1,6 @@
 package com.projectcitybuild.features.warps.repositories
 
+import com.projectcitybuild.entities.CrossServerLocation
 import com.projectcitybuild.entities.Warp
 import com.projectcitybuild.modules.database.DataSource
 import dagger.Reusable
@@ -25,13 +26,15 @@ class WarpRepository @Inject constructor(
             ?.let { row ->
                 Warp(
                     name = row.get("name"),
-                    serverName = row.get("server_name"),
-                    worldName = row.get("world_name"),
-                    x = row.get("x"),
-                    y = row.get("y"),
-                    z = row.get("z"),
-                    pitch = row.get("pitch"),
-                    yaw = row.get("yaw"),
+                    location = CrossServerLocation(
+                        serverName = row.get("server_name"),
+                        worldName = row.get("world_name"),
+                        x = row.get("x"),
+                        y = row.get("y"),
+                        z = row.get("z"),
+                        pitch = row.get("pitch"),
+                        yaw = row.get("yaw"),
+                    ),
                     createdAt = row.get("created_at"),
                 )
             }
@@ -48,13 +51,15 @@ class WarpRepository @Inject constructor(
             .map { row ->
                 Warp(
                     name = row.get("name"),
-                    serverName = row.get("server_name"),
-                    worldName = row.get("world_name"),
-                    x = row.get("x"),
-                    y = row.get("y"),
-                    z = row.get("z"),
-                    pitch = row.get("pitch"),
-                    yaw = row.get("yaw"),
+                    location = CrossServerLocation(
+                        serverName = row.get("server_name"),
+                        worldName = row.get("world_name"),
+                        x = row.get("x"),
+                        y = row.get("y"),
+                        z = row.get("z"),
+                        pitch = row.get("pitch"),
+                        yaw = row.get("yaw"),
+                    ),
                     createdAt = row.get("created_at"),
                 )
             }
@@ -67,13 +72,13 @@ class WarpRepository @Inject constructor(
         dataSource.database().executeInsert(
             "INSERT INTO `warps` VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
             warp.name,
-            warp.serverName,
-            warp.worldName,
-            warp.x,
-            warp.y,
-            warp.z,
-            warp.pitch,
-            warp.yaw,
+            warp.location.serverName,
+            warp.location.worldName,
+            warp.location.x,
+            warp.location.y,
+            warp.location.z,
+            warp.location.pitch,
+            warp.location.yaw,
             warp.createdAt,
         )
     }

@@ -2,21 +2,23 @@ package com.projectcitybuild.features.warps.subchannels
 
 import com.google.common.io.ByteArrayDataInput
 import com.projectcitybuild.entities.SubChannel
+import com.projectcitybuild.features.warps.events.PlayerPreWarpEvent
 import com.projectcitybuild.modules.channels.spigot.SpigotSubChannelListener
 import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.modules.textcomponentbuilder.send
+import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
 import java.util.*
 import javax.inject.Inject
 
-class ImmediateWarpChannelListener @Inject constructor(
+class SameServerWarpChannelListener @Inject constructor(
     private val plugin: Plugin,
     private val logger: PlatformLogger,
 ): SpigotSubChannelListener {
 
-    override val subChannel = SubChannel.WARP_IMMEDIATELY
+    override val subChannel = SubChannel.WARP_SAME_SERVER
 
     override fun onSpigotReceivedMessage(player: Player?, stream: ByteArrayDataInput) {
         val warpName = stream.readUTF()
@@ -27,6 +29,15 @@ class ImmediateWarpChannelListener @Inject constructor(
         val z = stream.readDouble()
         val pitch = stream.readFloat()
         val yaw = stream.readFloat()
+
+        if (player == null) {
+            logger.warning("Could not find player to warp. Did they disconnect?")
+            return
+        }
+
+        Bukkit.getPluginManager().callEvent(
+            PlayerPreWarpEvent(player, player.location)
+        )
 
         val world = plugin.server.getWorld(worldName)
         if (world == null) {

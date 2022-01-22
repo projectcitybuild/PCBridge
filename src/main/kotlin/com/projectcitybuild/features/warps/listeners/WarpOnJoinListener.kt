@@ -28,31 +28,33 @@ class WarpOnJoinListener @Inject constructor(
             logger.debug("No queued warp for $playerUUID")
             return
         }
-        if (queuedWarp.serverName == serverName) {
-            logger.debug("Found queued warp request for $playerUUID -> $queuedWarp")
-
-            queuedWarpRepository.dequeue(playerUUID)
-
-            val world = event.player.server.getWorld(queuedWarp.worldName)
-            if (world == null) {
-                logger.warning("Could not find ${queuedWarp.worldName} world to warp to")
-                event.player.send().error("Could not find ${queuedWarp.worldName} world")
-                return
-            }
-
-            val location = Location(
-                world,
-                queuedWarp.x,
-                queuedWarp.y,
-                queuedWarp.z,
-                queuedWarp.yaw,
-                queuedWarp.pitch,
-            )
-            event.spawnLocation = location
-
-            logger.debug("Set player's spawn location to $location")
-
-            event.player.send().action("Warped to ${queuedWarp.name}")
+        if (queuedWarp.location.serverName != serverName) {
+            return
         }
+
+        logger.debug("Found queued warp request for $playerUUID -> $queuedWarp")
+
+        queuedWarpRepository.dequeue(playerUUID)
+
+        val world = event.player.server.getWorld(queuedWarp.location.worldName)
+        if (world == null) {
+            logger.warning("Could not find ${queuedWarp.location.worldName} world to warp to")
+            event.player.send().error("Could not find ${queuedWarp.location.worldName} world")
+            return
+        }
+
+        val location = Location(
+            world,
+            queuedWarp.location.x,
+            queuedWarp.location.y,
+            queuedWarp.location.z,
+            queuedWarp.location.yaw,
+            queuedWarp.location.pitch,
+        )
+        event.spawnLocation = location
+
+        logger.debug("Set player's spawn location to $location")
+
+        event.player.send().action("Warped to ${queuedWarp.name}")
     }
 }

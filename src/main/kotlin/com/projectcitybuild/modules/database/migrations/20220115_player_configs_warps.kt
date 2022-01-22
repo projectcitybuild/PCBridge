@@ -1,4 +1,4 @@
-package com.projectcitybuild.entities.migrations
+package com.projectcitybuild.modules.database.migrations
 
 import co.aikar.idb.HikariPooledDatabase
 import com.projectcitybuild.modules.database.DatabaseMigration
@@ -36,28 +36,6 @@ class `20220115_player_configs_warps`: DatabaseMigration {
 	                |   `yaw` FLOAT NOT NULL DEFAULT 0,
 	                |   `created_at` DATETIME NOT NULL,
 	                |   PRIMARY KEY (`name`) USING BTREE
-                    |);
-                    """
-                .trimMargin("|")
-                .replace("\n", "")
-        )
-
-        database.executeUpdate(
-            """
-                    |CREATE TABLE teleport_history (
-                    |   `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-	                |   `player_id` BIGINT UNSIGNED NOT NULL,
-	                |   `tp_reason` VARCHAR(50) NOT NULL,
-	                |   `server_name` VARCHAR(50) NOT NULL,
-	                |   `world_name` VARCHAR(50) NOT NULL,
-	                |   `x` DOUBLE NOT NULL DEFAULT 0,
-	                |   `y` DOUBLE NOT NULL DEFAULT 0,
-	                |   `z` DOUBLE NOT NULL DEFAULT 0,
-	                |   `pitch` FLOAT NOT NULL DEFAULT 0,
-	                |   `yaw` FLOAT NOT NULL DEFAULT 0,
-	                |   `created_at` DATETIME NOT NULL,
-	                |   PRIMARY KEY (`id`),
-	                |   CONSTRAINT `teleport_history_player_id` FOREIGN KEY (`player_id`) REFERENCES `players` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION
                     |);
                     """
                 .trimMargin("|")

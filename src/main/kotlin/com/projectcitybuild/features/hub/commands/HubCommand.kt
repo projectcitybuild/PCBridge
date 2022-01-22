@@ -1,6 +1,7 @@
 package com.projectcitybuild.features.hub.commands
 
 import com.projectcitybuild.core.InvalidCommandArgumentsException
+import com.projectcitybuild.entities.CrossServerLocation
 import com.projectcitybuild.entities.SubChannel
 import com.projectcitybuild.entities.Warp
 import com.projectcitybuild.features.warps.repositories.QueuedWarpRepository
@@ -47,30 +48,32 @@ class HubCommand @Inject constructor(
 
         val warp = Warp(
             name = "hub",
-            serverName = hub.serverName,
-            worldName = hub.worldName,
-            x = hub.x,
-            y = hub.y,
-            z = hub.z,
-            pitch = hub.pitch,
-            yaw = hub.yaw,
+            location = CrossServerLocation(
+                serverName = hub.serverName,
+                worldName = hub.worldName,
+                x = hub.x,
+                y = hub.y,
+                z = hub.z,
+                pitch = hub.pitch,
+                yaw = hub.yaw,
+            ),
             createdAt = LocalDateTime.now(),
         )
 
-        val isHubOnSameServer = input.player.server.info.name == warp.serverName
+        val isHubOnSameServer = input.player.server.info.name == warp.location.serverName
         if (isHubOnSameServer) {
             MessageToSpigot(
                 targetServer,
-                SubChannel.WARP_IMMEDIATELY,
+                SubChannel.WARP_SAME_SERVER,
                 arrayOf(
                     "hub",
                     input.player.uniqueId.toString(),
-                    warp.worldName,
-                    warp.x,
-                    warp.y,
-                    warp.z,
-                    warp.pitch,
-                    warp.yaw,
+                    warp.location.worldName,
+                    warp.location.x,
+                    warp.location.y,
+                    warp.location.z,
+                    warp.location.pitch,
+                    warp.location.yaw,
                 )
             ).send()
         } else {

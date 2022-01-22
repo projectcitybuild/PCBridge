@@ -28,30 +28,32 @@ class TeleportOnJoinListener @Inject constructor(
             logger.debug("No queued teleport for $playerUUID")
             return
         }
-        if (queuedTeleport.targetServerName == serverName) {
-            logger.debug("Found queued warp request for $playerUUID -> $queuedTeleport")
+        if (queuedTeleport.targetServerName != serverName) {
+            return
+        }
 
-            queuedTeleportRepository.dequeue(playerUUID)
+        logger.debug("Found queued warp request for $playerUUID -> $queuedTeleport")
 
-            val destinationPlayer = event.player.server.getPlayer(queuedTeleport.targetPlayerUUID)
-            if (destinationPlayer == null) {
-                logger.warning("Could not find destination player. Did they disconnect?")
-                return
+        queuedTeleportRepository.dequeue(playerUUID)
+
+        val destinationPlayer = event.player.server.getPlayer(queuedTeleport.targetPlayerUUID)
+        if (destinationPlayer == null) {
+            logger.warning("Could not find destination player. Did they disconnect?")
+            return
+        }
+
+        event.spawnLocation = destinationPlayer.location
+
+        logger.debug("Set player's spawn location to ${destinationPlayer.location}")
+
+        when (queuedTeleport.teleportType) {
+            TeleportType.TP -> {
+                destinationPlayer.send().action("${event.player.name} teleported to you")
+                event.player.send().action("Teleported to ${destinationPlayer.name}")
             }
-
-            event.spawnLocation = destinationPlayer.location
-
-            logger.debug("Set player's spawn location to ${destinationPlayer.location}")
-
-            when (queuedTeleport.teleportType) {
-                TeleportType.TP -> {
-                    destinationPlayer.send().action("${event.player.name} teleported to you")
-                    event.player.send().action("Teleported to ${destinationPlayer.name}")
-                }
-                TeleportType.SUMMON -> {
-                    destinationPlayer.send().action("You summoned ${event.player.name} to you")
-                    event.player.send().action("You were summoned to ${destinationPlayer.name}")
-                }
+            TeleportType.SUMMON -> {
+                destinationPlayer.send().action("You summoned ${event.player.name} to you")
+                event.player.send().action("You were summoned to ${destinationPlayer.name}")
             }
         }
     }

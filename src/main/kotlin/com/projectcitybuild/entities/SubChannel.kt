@@ -7,7 +7,9 @@ sealed class SubChannel {
         const val GLOBAL_CHAT = "pcbridge:sub:global-chat"
         const val SET_WARP = "pcbridge:sub:set-warp"
         const val SET_HUB = "pcbridge:sub:set-hub"
-        const val TP_IMMEDIATELY = "pcbridge:sub:tp-immediately"
-        const val WARP_IMMEDIATELY = "pcbridge:sub:warp-immediately"
+        const val TP_SAME_SERVER = "pcbridge:sub:tp-same-server"
+        const val TP_ACROSS_SERVER = "pcbridge:sub:tp-across-server"
+        const val WARP_SAME_SERVER = "pcbridge:sub:warp-same-server"
+        const val WARP_ACROSS_SERVER = "pcbridge:sub:warp-across-server"
     }
 }
