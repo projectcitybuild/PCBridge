@@ -30,6 +30,8 @@ class BungeecordMessageListener(
             return
         }
 
+        logger.verbose("Bungeecord received message: $subChannel")
+
         listener.onBungeecordReceivedMessage(event.receiver, event.sender, stream)
     }
 }

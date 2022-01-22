@@ -28,6 +28,8 @@ class SpigotMessageListener(
             return
         }
 
+        logger.verbose("Spigot received message: $subChannel")
+
         listener.onSpigotReceivedMessage(player, stream)
     }
 }
