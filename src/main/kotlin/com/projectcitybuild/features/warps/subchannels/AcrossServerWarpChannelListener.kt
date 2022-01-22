@@ -1,12 +1,11 @@
 package com.projectcitybuild.features.warps.subchannels
 
 import com.google.common.io.ByteArrayDataInput
-import com.google.common.io.ByteStreams
-import com.projectcitybuild.entities.Channel
 import com.projectcitybuild.entities.SubChannel
 import com.projectcitybuild.features.warps.events.PlayerPreWarpEvent
 import com.projectcitybuild.modules.channels.spigot.SpigotSubChannelListener
 import com.projectcitybuild.modules.logger.PlatformLogger
+import com.projectcitybuild.platforms.spigot.MessageToBungeecord
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
@@ -34,9 +33,14 @@ class AcrossServerWarpChannelListener @Inject constructor(
             PlayerPreWarpEvent(targetPlayer, targetPlayer.location)
         )
 
-        val out = ByteStreams.newDataOutput()
-        out.writeUTF("Connect")
-        out.writeUTF(destinationServerName)
-        targetPlayer.sendPluginMessage(plugin, Channel.BUNGEECORD, out.toByteArray())
+        MessageToBungeecord(
+            plugin,
+            targetPlayer,
+            SubChannel.SWITCH_PLAYER_SERVER,
+            arrayOf(
+                targetPlayerUUID.toString(),
+                destinationServerName,
+            )
+        ).send()
     }
 }
