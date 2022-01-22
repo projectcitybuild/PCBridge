@@ -31,7 +31,6 @@ class LastKnownLocationRepositoy @Inject constructor(
         } else {
             dataSource.database().executeUpdate(
                 "UPDATE last_known_locations SET server_name = ?, world_name = ?, x = ?, y = ?, z = ?, pitch = ?, yaw = ?, created_at = ? WHERE player_uuid = ?",
-                playerUUID.toString(),
                 location.serverName,
                 location.worldName,
                 location.x,
@@ -40,28 +39,29 @@ class LastKnownLocationRepositoy @Inject constructor(
                 location.pitch,
                 location.yaw,
                 LocalDateTime.now(),
+                playerUUID.toString(),
             )
         }
     }
 
-    fun get(playerUUID: UUID): List<LastKnownLocation> {
-        return dataSource.database().getResults(
+    fun get(playerUUID: UUID): LastKnownLocation? {
+        val row = dataSource.database().getFirstRow(
             "SELECT * FROM last_known_locations WHERE player_uuid = ? LIMIT 1",
             playerUUID.toString()
-        ).map {
-            LastKnownLocation(
-                playerUUID = UUID.fromString(it.get("player_uuid")),
-                location = CrossServerLocation(
-                    serverName = it.get("server_name"),
-                    worldName = it.get("world_name"),
-                    x = it.get("x"),
-                    y = it.get("y"),
-                    z = it.get("z"),
-                    pitch = it.get("pitch"),
-                    yaw = it.get("yaw"),
-                ),
-                createdAt = LocalDateTime.now(),
-            )
-        }
+        ) ?: return null
+
+        return LastKnownLocation(
+            playerUUID = UUID.fromString(row.get("player_uuid")),
+            location = CrossServerLocation(
+                serverName = row.get("server_name"),
+                worldName = row.get("world_name"),
+                x = row.get("x"),
+                y = row.get("y"),
+                z = row.get("z"),
+                pitch = row.get("pitch"),
+                yaw = row.get("yaw"),
+            ),
+            createdAt = LocalDateTime.now(),
+        )
     }
 }

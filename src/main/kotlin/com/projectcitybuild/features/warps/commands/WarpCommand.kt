@@ -74,7 +74,7 @@ class WarpCommand @Inject constructor(
         } else {
             queuedWarpRepository.queue(input.player.uniqueId, warp)
             MessageToSpigot(
-                targetServer,
+                input.player.server.info,
                 SubChannel.WARP_ACROSS_SERVER,
                 arrayOf(
                     input.player.uniqueId.toString(),
