@@ -36,6 +36,11 @@ class TPOHereCommand @Inject constructor(
             return
         }
 
+        if (targetPlayer == input.player) {
+            input.sender.send().error("You cannot summon yourself")
+            return
+        }
+
         playerTeleportRequester.summon(
             summonedPlayer = targetPlayer,
             destinationPlayer = input.player,
@@ -45,8 +50,15 @@ class TPOHereCommand @Inject constructor(
 
     override fun onTabComplete(sender: CommandSender?, args: List<String>): Iterable<String>? {
         return when {
-            args.isEmpty() -> proxyServer.players.map { it.name }
-            args.size == 1 -> proxyServer.players.map { it.name }.filter { it.lowercase().startsWith(args.first().lowercase()) }
+            args.isEmpty() -> proxyServer.players
+                .map { it.name }
+                .filter { it != sender?.name }
+
+            args.size == 1 -> proxyServer.players
+                .map { it.name }
+                .filter { it != sender?.name }
+                .filter { it.lowercase().startsWith(args.first().lowercase()) }
+
             else -> null
         }
     }
