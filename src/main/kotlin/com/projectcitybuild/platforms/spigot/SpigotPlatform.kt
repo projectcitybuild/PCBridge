@@ -13,7 +13,6 @@ import com.projectcitybuild.modules.network.APIClient
 import com.projectcitybuild.modules.scheduler.implementations.SpigotScheduler
 import com.projectcitybuild.platforms.spigot.environment.SpigotCommandRegistry
 import com.projectcitybuild.platforms.spigot.environment.SpigotListenerRegistry
-import com.projectcitybuild.platforms.spigot.listeners.PendingJoinActionListener
 import org.bukkit.Server
 import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
@@ -56,7 +55,6 @@ class SpigotPlatform: JavaPlugin() {
         private val logger: PlatformLogger,
         private val commandRegistry: SpigotCommandRegistry,
         private val listenerRegistry: SpigotListenerRegistry,
-        private val pendingJoinActionListener: PendingJoinActionListener,
         private val dataSource: DataSource,
     ) {
         fun onEnable(server: Server, modules: List<SpigotFeatureModule>) {
@@ -65,8 +63,6 @@ class SpigotPlatform: JavaPlugin() {
             val pluginMessageListener = SpigotMessageListener(logger)
             server.messenger.registerOutgoingPluginChannel(plugin, Channel.BUNGEECORD)
             server.messenger.registerIncomingPluginChannel(plugin, Channel.BUNGEECORD, pluginMessageListener)
-
-            listenerRegistry.register(pendingJoinActionListener)
 
             modules.forEach { module ->
                 module.spigotCommands.forEach { commandRegistry.register(it) }
