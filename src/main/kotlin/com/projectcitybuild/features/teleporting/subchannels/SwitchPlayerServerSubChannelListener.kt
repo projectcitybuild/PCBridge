@@ -7,6 +7,7 @@ import com.projectcitybuild.modules.logger.PlatformLogger
 import net.md_5.bungee.api.ProxyServer
 import net.md_5.bungee.api.connection.Connection
 import net.md_5.bungee.api.connection.ProxiedPlayer
+import java.util.*
 import javax.inject.Inject
 
 class SwitchPlayerServerSubChannelListener @Inject constructor(
@@ -20,7 +21,7 @@ class SwitchPlayerServerSubChannelListener @Inject constructor(
         if (receiver !is ProxiedPlayer)
             return
 
-        val targetPlayerUUID = stream.readUTF()
+        val targetPlayerUUID = UUID.fromString(stream.readUTF())
         val targetPlayer = proxyServer.getPlayer(targetPlayerUUID)
         if (targetPlayer == null) {
             logger.warning("Could not find proxy player $targetPlayerUUID to switch. Did they disconnect?")
