@@ -5,9 +5,9 @@ import org.bukkit.entity.Player
 import org.bukkit.event.HandlerList
 import org.bukkit.event.Event as SpigotEvent
 
-class PlayerSummonEvent(
-    val summonedPlayer: Player,
-    val destinationPlayer: Player,
+class PlayerPreTeleportEvent(
+    val player: Player,
+    val currentLocation: Location,
 ): SpigotEvent() {
 
     companion object {
@@ -18,9 +18,6 @@ class PlayerSummonEvent(
             return HANDLERS
         }
     }
-
-    val destination: Location
-        get() = destinationPlayer.location
 
     override fun getHandlers(): HandlerList {
         return HANDLERS

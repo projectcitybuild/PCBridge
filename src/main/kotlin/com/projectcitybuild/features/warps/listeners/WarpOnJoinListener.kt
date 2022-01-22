@@ -2,12 +2,10 @@ package com.projectcitybuild.features.warps.listeners
 
 import com.projectcitybuild.core.SpigotListener
 import com.projectcitybuild.entities.PluginConfig
-import com.projectcitybuild.features.warps.events.PlayerWarpEvent
 import com.projectcitybuild.features.warps.repositories.QueuedWarpRepository
 import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.modules.textcomponentbuilder.send
-import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
@@ -58,12 +56,5 @@ class WarpOnJoinListener @Inject constructor(
         logger.debug("Set player's spawn location to $location")
 
         event.player.send().action("Warped to ${queuedWarp.name}")
-
-        Bukkit.getPluginManager().callEvent(
-            PlayerWarpEvent(
-                player = event.player,
-                warp = queuedWarp
-            )
-        )
     }
 }

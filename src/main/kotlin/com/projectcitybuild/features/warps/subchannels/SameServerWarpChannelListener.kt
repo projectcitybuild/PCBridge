@@ -1,30 +1,24 @@
 package com.projectcitybuild.features.warps.subchannels
 
 import com.google.common.io.ByteArrayDataInput
-import com.projectcitybuild.entities.CrossServerLocation
-import com.projectcitybuild.entities.PluginConfig
 import com.projectcitybuild.entities.SubChannel
-import com.projectcitybuild.entities.Warp
-import com.projectcitybuild.features.warps.events.PlayerWarpEvent
+import com.projectcitybuild.features.warps.events.PlayerPreWarpEvent
 import com.projectcitybuild.modules.channels.spigot.SpigotSubChannelListener
-import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
-import java.time.LocalDateTime
 import java.util.*
 import javax.inject.Inject
 
-class ImmediateWarpChannelListener @Inject constructor(
+class SameServerWarpChannelListener @Inject constructor(
     private val plugin: Plugin,
-    private val config: PlatformConfig,
     private val logger: PlatformLogger,
 ): SpigotSubChannelListener {
 
-    override val subChannel = SubChannel.WARP_IMMEDIATELY
+    override val subChannel = SubChannel.WARP_SAME_SERVER
 
     override fun onSpigotReceivedMessage(player: Player?, stream: ByteArrayDataInput) {
         val warpName = stream.readUTF()
@@ -35,6 +29,15 @@ class ImmediateWarpChannelListener @Inject constructor(
         val z = stream.readDouble()
         val pitch = stream.readFloat()
         val yaw = stream.readFloat()
+
+        if (player == null) {
+            logger.warning("Could not find player to warp. Did they disconnect?")
+            return
+        }
+
+        Bukkit.getPluginManager().callEvent(
+            PlayerPreWarpEvent(player, player.location)
+        )
 
         val world = plugin.server.getWorld(worldName)
         if (world == null) {
@@ -54,19 +57,5 @@ class ImmediateWarpChannelListener @Inject constructor(
         targetPlayer.teleport(location)
 
         targetPlayer.send().action("Warped to $warpName")
-
-        Bukkit.getPluginManager().callEvent(
-            PlayerWarpEvent(
-                player = targetPlayer,
-                warp = Warp(
-                    warpName,
-                    CrossServerLocation.fromLocation(
-                        serverName = config.get(PluginConfig.SPIGOT_SERVER_NAME),
-                        location
-                    ),
-                    createdAt = LocalDateTime.now() // Not needed
-                )
-            )
-        )
     }
 }

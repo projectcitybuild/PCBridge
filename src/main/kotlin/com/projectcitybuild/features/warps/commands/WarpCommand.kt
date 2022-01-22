@@ -59,7 +59,7 @@ class WarpCommand @Inject constructor(
         if (isWarpOnSameServer) {
             MessageToSpigot(
                 targetServer,
-                SubChannel.WARP_IMMEDIATELY,
+                SubChannel.WARP_SAME_SERVER,
                 arrayOf(
                     warpName,
                     input.player.uniqueId.toString(),
@@ -73,7 +73,14 @@ class WarpCommand @Inject constructor(
             ).send()
         } else {
             queuedWarpRepository.queue(input.player.uniqueId, warp)
-            input.player.connect(targetServer, ServerConnectEvent.Reason.COMMAND)
+            MessageToSpigot(
+                targetServer,
+                SubChannel.WARP_ACROSS_SERVER,
+                arrayOf(
+                    input.player.uniqueId.toString(),
+                    targetServer.name,
+                )
+            ).send()
         }
     }
 

@@ -1,13 +1,13 @@
-package com.projectcitybuild.features.teleporting.events
+package com.projectcitybuild.features.warps.events
 
 import org.bukkit.Location
 import org.bukkit.entity.Player
 import org.bukkit.event.HandlerList
 import org.bukkit.event.Event as SpigotEvent
 
-class PlayerTeleportEvent(
+class PlayerPreWarpEvent(
     val player: Player,
-    val destinationPlayer: Player,
+    val currentLocation: Location,
 ): SpigotEvent() {
 
     companion object {
@@ -18,9 +18,6 @@ class PlayerTeleportEvent(
             return HANDLERS
         }
     }
-
-    val destination: Location
-        get() = destinationPlayer.location
 
     override fun getHandlers(): HandlerList {
         return HANDLERS

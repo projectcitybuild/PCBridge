@@ -30,7 +30,7 @@ class PlayerTeleportRequester @Inject constructor(
         if (isDestinationPlayerOnSameServer) {
             MessageToSpigot(
                 destinationServer,
-                SubChannel.TP_IMMEDIATELY,
+                SubChannel.TP_SAME_SERVER,
                 arrayOf(
                     player.uniqueId.toString(),
                     destinationPlayer.uniqueId.toString(),
@@ -47,7 +47,14 @@ class PlayerTeleportRequester @Inject constructor(
                     createdAt = LocalDateTime.now()
                 )
             )
-            player.connect(destinationServer, ServerConnectEvent.Reason.COMMAND)
+            MessageToSpigot(
+                player.server.info,
+                SubChannel.TP_ACROSS_SERVER,
+                arrayOf(
+                    player.uniqueId.toString(),
+                    destinationServer.name,
+                )
+            ).send()
         }
     }
 
@@ -65,7 +72,7 @@ class PlayerTeleportRequester @Inject constructor(
         if (isTargetPlayerOnSameServer) {
             MessageToSpigot(
                 targetServer,
-                SubChannel.TP_IMMEDIATELY,
+                SubChannel.TP_SAME_SERVER,
                 arrayOf(
                     summonedPlayer.uniqueId.toString(),
                     destinationPlayer.uniqueId.toString(),
@@ -82,7 +89,14 @@ class PlayerTeleportRequester @Inject constructor(
                     createdAt = LocalDateTime.now()
                 )
             )
-            summonedPlayer.connect(targetServer, ServerConnectEvent.Reason.COMMAND)
+            MessageToSpigot(
+                summonedPlayer.server.info,
+                SubChannel.TP_ACROSS_SERVER,
+                arrayOf(
+                    summonedPlayer.uniqueId.toString(),
+                    targetServer.name,
+                )
+            ).send()
         }
     }
 }

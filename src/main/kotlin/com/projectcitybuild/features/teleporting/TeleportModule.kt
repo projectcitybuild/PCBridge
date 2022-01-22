@@ -8,7 +8,7 @@ import com.projectcitybuild.features.teleporting.commands.TPHereCommand
 import com.projectcitybuild.features.teleporting.commands.TPOCommand
 import com.projectcitybuild.features.teleporting.commands.TPOHereCommand
 import com.projectcitybuild.features.teleporting.listeners.TeleportOnJoinListener
-import com.projectcitybuild.features.teleporting.subchannels.ImmediateTeleportChannelListener
+import com.projectcitybuild.features.teleporting.subchannels.SameServerTeleportChannelListener
 import com.projectcitybuild.modules.channels.spigot.SpigotSubChannelListener
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import javax.inject.Inject
@@ -32,7 +32,7 @@ class TeleportModule {
     }
 
     class Spigot @Inject constructor(
-        immediateTeleportChannelListener: ImmediateTeleportChannelListener,
+        sameServerTeleportChannelListener: SameServerTeleportChannelListener,
         teleportOnJoinListener: TeleportOnJoinListener,
     ): SpigotFeatureModule {
         override val spigotListeners: Array<SpigotListener> = arrayOf(
@@ -40,7 +40,7 @@ class TeleportModule {
         )
 
         override val spigotSubChannelListeners: Array<SpigotSubChannelListener> = arrayOf(
-            immediateTeleportChannelListener,
+            sameServerTeleportChannelListener,
         )
     }
 }

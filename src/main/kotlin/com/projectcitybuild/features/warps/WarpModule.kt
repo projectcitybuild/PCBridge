@@ -8,7 +8,8 @@ import com.projectcitybuild.features.warps.commands.SetWarpCommand
 import com.projectcitybuild.features.warps.commands.WarpCommand
 import com.projectcitybuild.features.warps.commands.WarpsCommand
 import com.projectcitybuild.features.warps.listeners.WarpOnJoinListener
-import com.projectcitybuild.features.warps.subchannels.ImmediateWarpChannelListener
+import com.projectcitybuild.features.warps.subchannels.AcrossServerWarpChannelListener
+import com.projectcitybuild.features.warps.subchannels.SameServerWarpChannelListener
 import com.projectcitybuild.features.warps.subchannels.IncomingSetWarpListener
 import com.projectcitybuild.modules.channels.bungeecord.BungeecordSubChannelListener
 import com.projectcitybuild.modules.channels.spigot.SpigotSubChannelListener
@@ -37,7 +38,8 @@ class WarpModule {
 
     class Spigot @Inject constructor(
         setWarpCommand: SetWarpCommand,
-        awaitJoinWarpChannelListener: ImmediateWarpChannelListener,
+        sameServerWarpChannelListener: SameServerWarpChannelListener,
+        acrossServerWarpChannelListener: AcrossServerWarpChannelListener,
         warpOnJoinListener: WarpOnJoinListener,
     ): SpigotFeatureModule {
         override val spigotCommands: Array<SpigotCommand> = arrayOf(
@@ -49,7 +51,8 @@ class WarpModule {
         )
 
         override val spigotSubChannelListeners: Array<SpigotSubChannelListener> = arrayOf(
-            awaitJoinWarpChannelListener,
+            acrossServerWarpChannelListener,
+            sameServerWarpChannelListener,
         )
     }
 }

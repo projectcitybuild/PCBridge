@@ -64,7 +64,7 @@ class HubCommand @Inject constructor(
         if (isHubOnSameServer) {
             MessageToSpigot(
                 targetServer,
-                SubChannel.WARP_IMMEDIATELY,
+                SubChannel.WARP_SAME_SERVER,
                 arrayOf(
                     "hub",
                     input.player.uniqueId.toString(),

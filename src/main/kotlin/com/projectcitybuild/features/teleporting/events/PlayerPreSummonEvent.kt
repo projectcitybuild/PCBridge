@@ -1,13 +1,13 @@
-package com.projectcitybuild.features.warps.events
+package com.projectcitybuild.features.teleporting.events
 
-import com.projectcitybuild.entities.Warp
+import org.bukkit.Location
 import org.bukkit.entity.Player
 import org.bukkit.event.HandlerList
 import org.bukkit.event.Event as SpigotEvent
 
-class PlayerWarpEvent(
-    val player: Player,
-    val warp: Warp,
+class PlayerPreSummonEvent(
+    val summonedPlayer: Player,
+    val currentLocation: Location,
 ): SpigotEvent() {
 
     companion object {
