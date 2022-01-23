@@ -1,21 +1,18 @@
 package com.projectcitybuild.features.bans.commands
 
 import com.projectcitybuild.core.InvalidCommandArgumentsException
-import com.projectcitybuild.features.bans.repositories.BanRepository
-import com.projectcitybuild.modules.playeruuid.PlayerUUIDRepository
+import com.projectcitybuild.core.utilities.Failure
+import com.projectcitybuild.features.bans.usecases.UnbanUseCase
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
-import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.CommandSender
 import net.md_5.bungee.api.ProxyServer
-import net.md_5.bungee.api.chat.TextComponent
 import javax.inject.Inject
 
 class UnbanCommand @Inject constructor(
     private val proxyServer: ProxyServer,
-    private val playerUUIDRepository: PlayerUUIDRepository,
-    private val banRepository: BanRepository
+    private val unbanUseCase: UnbanUseCase,
 ) : BungeecordCommand {
 
     override val label: String = "unban"
@@ -30,28 +27,15 @@ class UnbanCommand @Inject constructor(
         val targetPlayerName = input.args.first()
         val staffPlayer = if (input.isConsoleSender) null else input.player
 
-        runCatching {
-            val targetPlayerUUID = playerUUIDRepository.request(targetPlayerName)
-                ?: throw Exception("Could not find UUID for $targetPlayerName. This player likely doesn't exist")
-
-            banRepository.unban(
-                targetPlayerUUID = targetPlayerUUID,
-                staffId = staffPlayer?.uniqueId
-            )
-
-        }.onFailure { throwable ->
+        val result = unbanUseCase.unban(targetPlayerName, staffPlayer?.uniqueId)
+        if (result is Failure) {
             input.sender.send().error(
-                if (throwable is BanRepository.PlayerNotBannedException)
-                    "$targetPlayerName is not currently banned"
-                else
-                    throwable.message ?: "An unknown error occurred"
+                when (result.reason) {
+                    UnbanUseCase.FailureReason.PlayerDoesNotExist -> "Could not find UUID for $targetPlayerName. This player likely doesn't exist"
+                    UnbanUseCase.FailureReason.PlayerNotBanned -> "$targetPlayerName is not currently banned"
+                }
             )
-            return
         }
-
-        proxyServer.broadcast(
-            TextComponent("${input.args.first()} has been unbanned").also { it.color = ChatColor.GRAY }
-        )
     }
 
     override fun onTabComplete(sender: CommandSender?, args: List<String>): Iterable<String>? {

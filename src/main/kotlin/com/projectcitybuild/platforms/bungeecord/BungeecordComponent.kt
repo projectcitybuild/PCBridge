@@ -1,7 +1,7 @@
 package com.projectcitybuild.platforms.bungeecord
 
 import com.projectcitybuild.core.contracts.BungeecordFeatureModule
-import com.projectcitybuild.features.bans.usecases.BanUseCaseProvider
+import com.projectcitybuild.features.bans.BanUseCaseProvider
 import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.modules.database.DataSourceProvider
 import com.projectcitybuild.modules.logger.PlatformLogger
