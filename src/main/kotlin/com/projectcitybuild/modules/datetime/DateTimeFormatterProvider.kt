@@ -12,7 +12,7 @@ class DateTimeFormatterProvider {
 
     @Provides
     fun provideDateTimeFormatter(config: PlatformConfig): DateTimeFormatter {
-        return DateTimeFormatter(
+        return DateTimeFormatterImpl(
             locale = Locale.forLanguageTag(
                 config.get(PluginConfig.TIME_LOCALE)
             ),
