@@ -1,4 +1,4 @@
-package com.projectcitybuild.features.bans
+package com.projectcitybuild.modules.proxyadapter.broadcast
 
 import net.md_5.bungee.api.chat.TextComponent
 

@@ -6,6 +6,7 @@ import com.projectcitybuild.modules.database.DataSourceProvider
 import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.modules.network.APIClient
 import com.projectcitybuild.modules.network.NetworkModule
+import com.projectcitybuild.modules.proxyadapter.BungeecordProxyAdapterModule
 import com.projectcitybuild.old_modules.storage.HubFileStorage
 import com.projectcitybuild.platforms.bungeecord.BungeecordFeatureListModule.BungeecordFeatureModules
 import dagger.BindsInstance
@@ -19,6 +20,7 @@ import javax.inject.Singleton
     BungeecordFeatureListModule::class,
     NetworkModule::class,
     DataSourceProvider::class,
+    BungeecordProxyAdapterModule::class,
 ])
 interface BungeecordComponent {
     fun container(): BungeecordPlatform.Container
