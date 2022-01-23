@@ -5,6 +5,7 @@ import com.projectcitybuild.features.bans.repositories.BanRepository
 import com.projectcitybuild.modules.datetime.DateTimeFormatter
 import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.platforms.bungeecord.extensions.add
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -24,11 +25,14 @@ class BanConnectionListener @Inject constructor(
     private val dateTimeFormatter: DateTimeFormatter,
 ) : BungeecordListener {
 
+    // TODO: is there a way to inject this in the constructor separately from Dagger's auto-injection?
+    var dispatcher: CoroutineDispatcher = Dispatchers.IO
+
     @EventHandler(priority = EventPriority.HIGHEST)
-    fun onPreLoginEvent(event: LoginEvent) {
+    fun onLoginEvent(event: LoginEvent) {
         event.registerIntent(plugin)
 
-        CoroutineScope(Dispatchers.IO).launch {
+        CoroutineScope(dispatcher).launch {
             runCatching {
                 val ban = banRepository.get(targetPlayerUUID = event.connection.uniqueId)
                 if (ban != null) {
