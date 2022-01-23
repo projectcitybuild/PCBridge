@@ -1,20 +1,18 @@
 package com.projectcitybuild.modules.playeruuid
 
 import com.projectcitybuild.core.extensions.toDashFormattedUUID
-import net.md_5.bungee.api.ProxyServer
-import java.util.*
+import com.projectcitybuild.modules.proxyadapter.playerlist.OnlinePlayerList
+import java.util.UUID
 import javax.inject.Inject
 
-class PlayerUUIDRepository @Inject constructor(
-    private val proxyServer: ProxyServer,
+open class PlayerUUIDRepository @Inject constructor(
+    private val onlinePlayerList: OnlinePlayerList,
     private val mojangPlayerRepository: MojangPlayerRepository
 ) {
     suspend fun request(playerName: String): UUID? {
-        val onlinePlayer = proxyServer.players
-            .firstOrNull { it.name.lowercase() == playerName.lowercase() }
-
-        if (onlinePlayer != null) {
-            return onlinePlayer.uniqueId
+        val onlinePlayerUUID = onlinePlayerList.getUUID(playerName)
+        if (onlinePlayerUUID != null) {
+            return onlinePlayerUUID
         }
         return try {
             val mojangPlayer = mojangPlayerRepository.get(playerName = playerName)

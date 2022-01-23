@@ -1,4 +1,4 @@
-name: Gradle Build
+name: Release JAR
 
 on:
   push:
@@ -32,7 +32,7 @@ jobs:
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v2.2.4
         with:
-          path: build/libs/pcbridge*.jar
+          path: build/release/pcbridge*.jar
           if-no-files-found: warn
       - name: Create release
         uses: softprops/action-gh-release@v1
