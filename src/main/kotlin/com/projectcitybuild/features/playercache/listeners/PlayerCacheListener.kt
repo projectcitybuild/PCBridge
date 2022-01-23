@@ -2,6 +2,7 @@ package com.projectcitybuild.features.playercache.listeners
 
 import com.projectcitybuild.core.BungeecordListener
 import com.projectcitybuild.features.joinmessage.events.FirstTimeJoinEvent
+import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.modules.playerconfig.PlayerConfigCache
 import com.projectcitybuild.modules.playerconfig.PlayerConfigRepository
 import net.md_5.bungee.api.event.PlayerDisconnectEvent
@@ -15,6 +16,7 @@ class PlayerCacheListener @Inject constructor(
     private val plugin: Plugin,
     private val playerCache: PlayerConfigCache,
     private val playerConfigRepository: PlayerConfigRepository,
+    private val logger: PlatformLogger,
 ): BungeecordListener {
 
     @EventHandler
@@ -22,6 +24,8 @@ class PlayerCacheListener @Inject constructor(
         val uuid = event.player.uniqueId
 
         if (playerConfigRepository.get(uuid) == null) {
+            logger.debug("No player config found for $uuid. Generating new one...")
+
             plugin.proxy.pluginManager.callEvent(
                 FirstTimeJoinEvent(event.player)
             )
