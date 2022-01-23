@@ -1,12 +1,10 @@
-package com.projectcitybuild.features.bans
+package com.projectcitybuild.features.bans.usecases
 
+import com.projectcitybuild.DateTimeFormatterMock
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Success
 import com.projectcitybuild.entities.responses.GameBan
 import com.projectcitybuild.features.bans.repositories.BanRepository
-import com.projectcitybuild.features.bans.usecases.CheckBanUseCase
-import com.projectcitybuild.features.bans.usecases.CheckBanUseCaseImpl
-import com.projectcitybuild.modules.datetime.DateTimeFormatter
 import com.projectcitybuild.modules.playeruuid.PlayerUUIDRepository
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
@@ -14,7 +12,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.powermock.api.mockito.PowerMockito.`when`
 import org.powermock.api.mockito.PowerMockito.mock
-import java.time.ZoneId
 import java.util.*
 
 class CheckBanUseCaseImplTest {
@@ -29,10 +26,7 @@ class CheckBanUseCaseImplTest {
         useCase = CheckBanUseCaseImpl(
             banRepository,
             playerUUIDRepository,
-            dateTimeFormatter = DateTimeFormatter(
-                Locale.forLanguageTag("en-us"),
-                ZoneId.of("UTC")
-            )
+            DateTimeFormatterMock()
         )
     }
 
