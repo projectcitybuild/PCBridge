@@ -2,6 +2,7 @@ package com.projectcitybuild.features.bans
 
 import com.projectcitybuild.features.bans.repositories.BanRepository
 import com.projectcitybuild.features.bans.usecases.*
+import com.projectcitybuild.modules.datetime.DateTimeFormatter
 import com.projectcitybuild.modules.playeruuid.PlayerUUIDRepository
 import com.projectcitybuild.modules.proxyadapter.broadcast.MessageBroadcaster
 import com.projectcitybuild.modules.proxyadapter.kick.PlayerKicker
@@ -43,10 +44,12 @@ class BanUseCaseProvider {
     fun provideCheckBanUseCase(
         banRepository: BanRepository,
         playerUUIDRepository: PlayerUUIDRepository,
+        dateTimeFormatter: DateTimeFormatter,
     ): CheckBanUseCase {
         return CheckBanUseCaseImpl(
             banRepository,
             playerUUIDRepository,
+            dateTimeFormatter,
         )
     }
 }

@@ -2,6 +2,7 @@ package com.projectcitybuild.features.bans.listeners
 
 import com.projectcitybuild.core.BungeecordListener
 import com.projectcitybuild.features.bans.repositories.BanRepository
+import com.projectcitybuild.modules.datetime.DateTimeFormatter
 import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.platforms.bungeecord.extensions.add
 import kotlinx.coroutines.CoroutineScope
@@ -13,12 +14,14 @@ import net.md_5.bungee.api.event.LoginEvent
 import net.md_5.bungee.api.plugin.Plugin
 import net.md_5.bungee.event.EventHandler
 import net.md_5.bungee.event.EventPriority
+import java.time.format.FormatStyle
 import javax.inject.Inject
 
 class BanConnectionListener @Inject constructor(
     private val plugin: Plugin,
     private val banRepository: BanRepository,
-    private val logger: PlatformLogger
+    private val logger: PlatformLogger,
+    private val dateTimeFormatter: DateTimeFormatter,
 ) : BungeecordListener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -37,7 +40,7 @@ class BanConnectionListener @Inject constructor(
                         .add("Reason: ") { it.color = ChatColor.GRAY }
                         .add((ban.reason ?: "No reason provided") + "\n") { it.color = ChatColor.WHITE }
                         .add("Expires: ") { it.color = ChatColor.GRAY }
-                        .add(ban.expiresAt?.toString() ?: ("Never" + "\n\n")) { it.color = ChatColor.WHITE }
+                        .add((ban.expiresAt?.let { dateTimeFormatter.convert(it, FormatStyle.SHORT) } ?: "Never") + "\n\n") { it.color = ChatColor.WHITE }
                         .add("Appeal @ https://projectcitybuild.com") { it.color = ChatColor.AQUA }
                     )
                     event.isCancelled = true

@@ -21,6 +21,9 @@ sealed class PluginConfig {
 
         val WARPS_PER_PAGE = "warps.warps_per_page" defaultTo 15
 
+        val TIME_TIMEZONE = "time.timezone" defaultTo "UTC"
+        val TIME_LOCALE = "time.locale" defaultTo "en-us"
+
         val GROUPS_GUEST = "groups.guest" defaultTo "guest"
         val GROUPS_BUILD_PRIORITY = "groups.build_priority" defaultTo arrayListOf(
             "architect",

@@ -6,6 +6,7 @@ import com.projectcitybuild.entities.responses.GameBan
 import com.projectcitybuild.features.bans.repositories.BanRepository
 import com.projectcitybuild.features.bans.usecases.CheckBanUseCase
 import com.projectcitybuild.features.bans.usecases.CheckBanUseCaseImpl
+import com.projectcitybuild.modules.datetime.DateTimeFormatter
 import com.projectcitybuild.modules.playeruuid.PlayerUUIDRepository
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
@@ -13,7 +14,8 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.powermock.api.mockito.PowerMockito.`when`
 import org.powermock.api.mockito.PowerMockito.mock
-import java.util.UUID
+import java.time.ZoneId
+import java.util.*
 
 class CheckBanUseCaseImplTest {
 
@@ -27,6 +29,10 @@ class CheckBanUseCaseImplTest {
         useCase = CheckBanUseCaseImpl(
             banRepository,
             playerUUIDRepository,
+            dateTimeFormatter = DateTimeFormatter(
+                Locale.forLanguageTag("en-us"),
+                ZoneId.of("UTC")
+            )
         )
     }
 
@@ -69,7 +75,7 @@ class CheckBanUseCaseImplTest {
         val result = useCase.getBan(playerName)
         val expected = CheckBanUseCase.BanRecord(
             reason = "griefing",
-            dateOfBan = "2022/01/24 01:06",
+            dateOfBan = "Jan 23, 2022, 4:06:12 PM",
             expiryDate = "Never"
         )
 
@@ -104,8 +110,8 @@ class CheckBanUseCaseImplTest {
         val result = useCase.getBan(playerName)
         val expected = CheckBanUseCase.BanRecord(
             reason = "griefing",
-            dateOfBan = "2022/01/24 01:06",
-            expiryDate = "2022/01/25 20:06"
+            dateOfBan = "Jan 23, 2022, 4:06:12 PM",
+            expiryDate = "Jan 25, 2022, 11:06:05 AM"
         )
 
         assertEquals(Success(expected), result)
