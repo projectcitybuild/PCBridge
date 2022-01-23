@@ -1,10 +1,7 @@
 package com.projectcitybuild.features.bans
 
 import com.projectcitybuild.features.bans.repositories.BanRepository
-import com.projectcitybuild.features.bans.usecases.BanUseCase
-import com.projectcitybuild.features.bans.usecases.BanUseCaseImpl
-import com.projectcitybuild.features.bans.usecases.UnbanUseCase
-import com.projectcitybuild.features.bans.usecases.UnbanUseCaseImpl
+import com.projectcitybuild.features.bans.usecases.*
 import com.projectcitybuild.modules.playeruuid.PlayerUUIDRepository
 import com.projectcitybuild.modules.proxyadapter.broadcast.MessageBroadcaster
 import com.projectcitybuild.modules.proxyadapter.kick.PlayerKicker
@@ -39,6 +36,17 @@ class BanUseCaseProvider {
             banRepository,
             playerUUIDRepository,
             messageBroadcaster,
+        )
+    }
+
+    @Provides
+    fun provideCheckBanUseCase(
+        banRepository: BanRepository,
+        playerUUIDRepository: PlayerUUIDRepository,
+    ): CheckBanUseCase {
+        return CheckBanUseCaseImpl(
+            banRepository,
+            playerUUIDRepository,
         )
     }
 }
