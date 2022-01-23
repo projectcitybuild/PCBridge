@@ -7,6 +7,7 @@ import com.projectcitybuild.modules.proxyadapter.broadcast.MessageBroadcaster
 import com.projectcitybuild.modules.proxyadapter.kick.PlayerKicker
 import com.projectcitybuild.features.bans.repositories.BanRepository
 import com.projectcitybuild.modules.playeruuid.PlayerUUIDRepository
+import com.projectcitybuild.modules.proxyadapter.messages.TextComponentBox
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.chat.TextComponent
 import java.util.*
@@ -36,13 +37,14 @@ class BanUseCaseImpl @Inject constructor(
                 reason = reason
             )
             messageBroadcaster.broadcastToAll(
-                TextComponent("${ChatColor.GRAY}$targetPlayerName has been banned by ${bannerName}: ${reason ?: "No reason given"}")
+                TextComponentBox(
+                    TextComponent("${ChatColor.GRAY}$targetPlayerName has been banned by ${bannerName}: ${reason ?: "No reason given"}")
+                )
             )
             playerKicker.kick(
                 playerUUID = targetPlayerUUID,
-                reason = TextComponent("You have been banned.\nAppeal @ projectcitybuild.com").apply {
-                    color = ChatColor.RED
-                }
+                reason = "You have been banned.\nAppeal @ projectcitybuild.com",
+                context = PlayerKicker.KickContext.FATAL,
             )
             return Success(Unit)
         }

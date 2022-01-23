@@ -13,6 +13,7 @@ class BanRepository @Inject constructor(
     class PlayerAlreadyBannedException : Exception()
     class PlayerNotBannedException : Exception()
 
+    @Throws(PlayerAlreadyBannedException::class)
     suspend fun ban(
         targetPlayerUUID: UUID,
         targetPlayerName: String,
@@ -41,6 +42,7 @@ class BanRepository @Inject constructor(
         }
     }
 
+    @Throws(PlayerNotBannedException::class)
     suspend fun unban(targetPlayerUUID: UUID, staffId: UUID?) {
         try {
             val banApi = apiRequestFactory.pcb.banApi

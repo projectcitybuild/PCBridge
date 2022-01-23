@@ -1,7 +1,7 @@
 package com.projectcitybuild.modules.proxyadapter.broadcast
 
-import net.md_5.bungee.api.chat.TextComponent
+import com.projectcitybuild.modules.proxyadapter.messages.TextComponentBox
 
 interface MessageBroadcaster {
-    fun broadcastToAll(message: TextComponent)
+    fun broadcastToAll(message: TextComponentBox)
 }
