@@ -53,6 +53,7 @@ dependencies {
     implementation "co.aikar:idb-core:1.0.0-SNAPSHOT"
     implementation 'com.google.dagger:dagger:2.40.5'
     kapt 'com.google.dagger:dagger-compiler:2.40.5'
+    testImplementation 'org.jetbrains.kotlin:kotlin-test'
 
     // Spigot
     compileOnly 'org.spigotmc:spigot-api:1.12.2-R0.1-SNAPSHOT'
@@ -71,4 +72,8 @@ compileKotlin {
 
 compileTestKotlin {
     kotlinOptions.jvmTarget = "1.8"
+}
+
+test {
+    useJUnitPlatform()
 }
