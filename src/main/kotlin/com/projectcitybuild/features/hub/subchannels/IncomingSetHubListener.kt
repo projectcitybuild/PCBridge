@@ -1,23 +1,19 @@
 package com.projectcitybuild.features.hub.subchannels
 
 import com.google.common.io.ByteArrayDataInput
-import com.projectcitybuild.entities.LegacyWarp
+import com.projectcitybuild.entities.CrossServerLocation
 import com.projectcitybuild.entities.SubChannel
-import com.projectcitybuild.entities.serializables.SerializableDate
-import com.projectcitybuild.entities.serializables.SerializableUUID
+import com.projectcitybuild.entities.Warp
+import com.projectcitybuild.features.hub.repositories.HubRepository
 import com.projectcitybuild.modules.channels.bungeecord.BungeecordSubChannelListener
 import com.projectcitybuild.modules.textcomponentbuilder.send
-import com.projectcitybuild.old_modules.storage.HubFileStorage
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import net.md_5.bungee.api.connection.Connection
 import net.md_5.bungee.api.connection.ProxiedPlayer
-import java.util.*
+import java.time.LocalDateTime
 import javax.inject.Inject
 
 class IncomingSetHubListener @Inject constructor(
-    private val hubStorage: HubFileStorage
+    private val hubRepository: HubRepository,
 ): BungeecordSubChannelListener {
 
     override val subChannel = SubChannel.SET_HUB
@@ -27,7 +23,6 @@ class IncomingSetHubListener @Inject constructor(
             return
 
         val serverName = receiver.server.info.name
-
         val worldName = stream.readUTF()
         val x = stream.readDouble()
         val y = stream.readDouble()
@@ -35,20 +30,21 @@ class IncomingSetHubListener @Inject constructor(
         val pitch = stream.readFloat()
         val yaw = stream.readFloat()
 
-        val warp = LegacyWarp(
-            serverName,
-            worldName,
-            SerializableUUID(receiver.uniqueId),
-            x,
-            y,
-            z,
-            pitch,
-            yaw,
-            SerializableDate(Date())
+        val warp = Warp(
+            "hub",
+            CrossServerLocation(
+                serverName,
+                worldName,
+                x,
+                y,
+                z,
+                pitch,
+                yaw,
+            ),
+            LocalDateTime.now(),
         )
-        CoroutineScope(Dispatchers.IO).launch {
-            hubStorage.save(warp)
-            receiver.send().success("Destination of /hub has been set")
-        }
+        hubRepository.save(warp, receiver.uniqueId)
+
+        receiver.send().success("Destination of /hub has been set")
     }
 }
