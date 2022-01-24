@@ -1,6 +1,6 @@
-package com.projectcitybuild.old_modules.playerconfig
+package com.projectcitybuild.features.hub.storage
 
-import com.projectcitybuild.entities.LegacyPlayerConfig
+import com.projectcitybuild.entities.LegacyWarp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -9,13 +9,13 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.io.File
 
-class PlayerConfigFileStorage(
+class HubFileStorage(
     private val folderPath: File,
 ) {
-    private fun fileName(key: String) : String = "$key.json"
+    private val fileName = "hub.json"
 
-    suspend fun load(key: String): LegacyPlayerConfig? {
-        val file = File(folderPath, fileName(key))
+    fun load(): LegacyWarp? {
+        val file = File(folderPath, fileName)
         if (!folderPath.exists()) folderPath.mkdir()
         if (!file.exists()) {
             return null
@@ -24,11 +24,11 @@ class PlayerConfigFileStorage(
         if (json.isEmpty())
             return null
 
-        return Json.decodeFromString<LegacyPlayerConfig>(string = json)
+        return Json.decodeFromString<LegacyWarp>(string = json)
     }
 
-    suspend fun save(key: String, value: LegacyPlayerConfig) {
-        val file = File(folderPath, fileName(key))
+    fun save(value: LegacyWarp) {
+        val file = File(folderPath, fileName)
         if (!folderPath.exists()) folderPath.mkdir()
         if (!file.exists()) {
             CoroutineScope(Dispatchers.IO).launch {
@@ -42,17 +42,5 @@ class PlayerConfigFileStorage(
         }
         val json = Json.encodeToString(value = value)
         file.writeText(json)
-    }
-
-    suspend fun delete(key: String) {
-        val file = File(folderPath, fileName(key))
-        file.delete()
-    }
-
-    fun keys(): List<String> {
-        return folderPath
-            .listFiles { file -> file.extension == "json" }
-            ?.map { it.nameWithoutExtension }
-            ?: emptyList()
     }
 }

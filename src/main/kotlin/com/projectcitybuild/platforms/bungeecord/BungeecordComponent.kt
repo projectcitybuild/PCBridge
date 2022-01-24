@@ -9,7 +9,7 @@ import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.modules.network.APIClient
 import com.projectcitybuild.modules.network.NetworkModule
 import com.projectcitybuild.modules.proxyadapter.BungeecordProxyAdapterModule
-import com.projectcitybuild.old_modules.storage.HubFileStorage
+import com.projectcitybuild.features.hub.storage.HubFileStorage
 import com.projectcitybuild.platforms.bungeecord.BungeecordFeatureListModule.BungeecordFeatureModules
 import dagger.BindsInstance
 import dagger.Component
