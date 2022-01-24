@@ -25,7 +25,7 @@ class WhisperCommand @Inject constructor(
 ): BungeecordCommand {
 
     override val label = "whisper"
-    override val aliases = arrayOf("msg")
+    override val aliases = arrayOf("msg", "m", "w", "t", "tell", "pm")
     override val permission = "pcbridge.chat.whisper"
     override val usageHelp = "/whisper <name> <message>"
 

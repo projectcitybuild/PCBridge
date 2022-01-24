@@ -12,7 +12,6 @@ import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
 import net.md_5.bungee.api.CommandSender
 import net.md_5.bungee.api.ProxyServer
-import net.md_5.bungee.api.event.ServerConnectEvent
 import javax.inject.Inject
 
 class WarpCommand @Inject constructor(
