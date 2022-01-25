@@ -3,6 +3,7 @@ package com.projectcitybuild.platforms.spigot.environment
 import com.github.shynixn.mccoroutine.SuspendingCommandExecutor
 import com.github.shynixn.mccoroutine.setSuspendingExecutor
 import com.projectcitybuild.core.InvalidCommandArgumentsException
+import com.projectcitybuild.modules.errorreporting.ErrorReporter
 import com.projectcitybuild.modules.logger.PlatformLogger
 import dagger.Reusable
 import net.md_5.bungee.api.ChatColor
@@ -16,7 +17,8 @@ import javax.inject.Inject
 @Reusable
 class SpigotCommandRegistry @Inject constructor(
     private val plugin: JavaPlugin,
-    private val logger: PlatformLogger
+    private val logger: PlatformLogger,
+    private val errorReporter: ErrorReporter,
 ) {
     fun register(spigotCommand: SpigotCommand) {
         val aliases = spigotCommand.aliases.plus(spigotCommand.label)
@@ -49,6 +51,7 @@ class SpigotCommandRegistry @Inject constructor(
                         sender.sendMessage("An internal error occurred performing your command")
                         error.localizedMessage.let { message -> logger.fatal(message) }
                         error.printStackTrace()
+                        errorReporter.report(error)
                         true
                     }
                 }

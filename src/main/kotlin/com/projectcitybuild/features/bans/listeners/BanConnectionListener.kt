@@ -3,6 +3,7 @@ package com.projectcitybuild.features.bans.listeners
 import com.projectcitybuild.core.BungeecordListener
 import com.projectcitybuild.features.bans.repositories.BanRepository
 import com.projectcitybuild.modules.datetime.DateTimeFormatter
+import com.projectcitybuild.modules.errorreporting.ErrorReporter
 import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.platforms.bungeecord.extensions.add
 import kotlinx.coroutines.CoroutineDispatcher
@@ -23,6 +24,7 @@ class BanConnectionListener @Inject constructor(
     private val banRepository: BanRepository,
     private val logger: PlatformLogger,
     private val dateTimeFormatter: DateTimeFormatter,
+    private val errorReporter: ErrorReporter,
 ) : BungeecordListener {
 
     // TODO: is there a way to inject this in the constructor separately from Dagger's auto-injection?
@@ -53,6 +55,8 @@ class BanConnectionListener @Inject constructor(
             .onFailure { throwable ->
                 throwable.message?.let { logger.fatal(it) }
                 throwable.printStackTrace()
+
+                errorReporter.report(throwable)
 
                 // If something goes wrong, better not to let players in
                 event.setCancelReason(

@@ -1,18 +1,30 @@
 package com.projectcitybuild.modules.errorreporting.adapters
 
+import com.projectcitybuild.entities.PluginConfig
+import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.modules.errorreporting.ErrorReporter
+import com.projectcitybuild.modules.logger.PlatformLogger
+import dagger.Reusable
 import io.sentry.Sentry
 
+@Reusable
 class SentryErrorReporter(
-    private val enabled: Boolean,
-    private val dsn: String
+    private val config: PlatformConfig,
+    private val logger: PlatformLogger,
 ): ErrorReporter {
 
     override fun bootstrap() {
+        val enabled = config.get(PluginConfig.ERROR_REPORTING_SENTRY_ENABLED)
         if (!enabled) return
 
+        logger.info("Enabling error reporting")
+
         Sentry.init { options ->
-            options.dsn = dsn
+            options.dsn = config.get(PluginConfig.ERROR_REPORTING_SENTRY_DSN)
         }
+    }
+
+    override fun report(throwable: Throwable) {
+        Sentry.captureException(throwable)
     }
 }
