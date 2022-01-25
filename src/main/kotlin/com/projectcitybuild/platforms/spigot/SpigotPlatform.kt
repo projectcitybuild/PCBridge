@@ -7,6 +7,7 @@ import com.projectcitybuild.entities.PluginConfig
 import com.projectcitybuild.modules.channels.spigot.SpigotMessageListener
 import com.projectcitybuild.modules.config.implementations.SpigotConfig
 import com.projectcitybuild.modules.database.DataSource
+import com.projectcitybuild.modules.errorreporting.ErrorReporter
 import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.modules.logger.implementations.SpigotLogger
 import com.projectcitybuild.modules.network.APIClient
@@ -30,6 +31,8 @@ class SpigotPlatform: JavaPlugin() {
                 PluginConfig.DB_NAME,
                 PluginConfig.DB_USERNAME,
                 PluginConfig.DB_PASSWORD,
+                PluginConfig.ERROR_REPORTING_SENTRY_ENABLED,
+                PluginConfig.ERROR_REPORTING_SENTRY_DSN,
             )
         }
 
@@ -56,8 +59,11 @@ class SpigotPlatform: JavaPlugin() {
         private val commandRegistry: SpigotCommandRegistry,
         private val listenerRegistry: SpigotListenerRegistry,
         private val dataSource: DataSource,
+        private val errorReporter: ErrorReporter,
     ) {
         fun onEnable(server: Server, modules: List<SpigotFeatureModule>) {
+            errorReporter.bootstrap()
+
             dataSource.connect()
 
             val pluginMessageListener = SpigotMessageListener(logger)

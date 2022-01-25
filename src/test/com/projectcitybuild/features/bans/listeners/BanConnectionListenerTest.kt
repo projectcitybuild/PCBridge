@@ -3,6 +3,7 @@ package com.projectcitybuild.features.bans.listeners
 import com.projectcitybuild.DateTimeFormatterMock
 import com.projectcitybuild.GameBanMock
 import com.projectcitybuild.features.bans.repositories.BanRepository
+import com.projectcitybuild.modules.errorreporting.ErrorReporter
 import com.projectcitybuild.modules.logger.PlatformLogger
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestCoroutineScheduler
@@ -28,6 +29,7 @@ class BanConnectionListenerTest {
     private val plugin = mock(Plugin::class.java)
     private val banRepository = mock(BanRepository::class.java)
     private val logger = mock(PlatformLogger::class.java)
+    private val errorReporter = mock(ErrorReporter::class.java)
 
     @BeforeEach
     fun setUp() {
@@ -37,6 +39,7 @@ class BanConnectionListenerTest {
             banRepository,
             logger,
             DateTimeFormatterMock(),
+            errorReporter,
         ).apply {
             dispatcher = StandardTestDispatcher(scheduler)
         }

@@ -1,6 +1,7 @@
 package com.projectcitybuild.platforms.bungeecord.environment
 
 import com.projectcitybuild.core.InvalidCommandArgumentsException
+import com.projectcitybuild.modules.errorreporting.ErrorReporter
 import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import dagger.Reusable
@@ -18,7 +19,8 @@ import javax.inject.Inject
 @Reusable
 class BungeecordCommandRegistry @Inject constructor(
     private val plugin: Plugin,
-    private val logger: PlatformLogger
+    private val logger: PlatformLogger,
+    private val errorReporter: ErrorReporter,
 ) {
     private class CommandProxy(
         alias: String,
@@ -71,6 +73,8 @@ class BungeecordCommandRegistry @Inject constructor(
                                 sender.send().error(throwable.message ?: "An internal error occurred performing your command")
                                 throwable.message?.let { logger.fatal(it) }
                                 throwable.printStackTrace()
+
+                                errorReporter.report(throwable)
                             }
                         }
                     }
