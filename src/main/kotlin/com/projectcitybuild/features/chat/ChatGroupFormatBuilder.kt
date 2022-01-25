@@ -71,9 +71,9 @@ class ChatGroupFormatBuilder @Inject constructor(
             TextComponent
                     .fromLegacyText(displayName)
                     .forEach { c ->
-                        if (hoverName.isNullOrBlank()) return@forEach
-                        val hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT, Text(hoverName))
-                        c.hoverEvent = hoverEvent
+                        if (hoverName != null && hoverName.isNotEmpty()) {
+                            c.hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT, Text(hoverName))
+                        }
                         groupTC.addExtra(c)
                     }
         }
@@ -86,9 +86,9 @@ class ChatGroupFormatBuilder @Inject constructor(
             TextComponent
                 .fromLegacyText(displayName)
                 .forEach { c ->
-                    if (hoverName.isNullOrBlank()) return@forEach
-                    val hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT, Text(hoverName))
-                    c.hoverEvent = hoverEvent
+                    if (hoverName != null && hoverName.isNotEmpty()) {
+                        c.hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT, Text(hoverName))
+                    }
                     groupTC.addExtra(c)
                 }
         }
@@ -101,9 +101,9 @@ class ChatGroupFormatBuilder @Inject constructor(
             TextComponent
                 .fromLegacyText(displayName)
                 .forEach { c ->
-                    if (hoverName.isNullOrBlank()) return@forEach
-                    val hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT, Text(hoverName))
-                    c.hoverEvent = hoverEvent
+                    if (hoverName != null && hoverName.isNotEmpty()) {
+                        c.hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT, Text(hoverName))
+                    }
                     groupTC.addExtra(c)
                 }
         }
