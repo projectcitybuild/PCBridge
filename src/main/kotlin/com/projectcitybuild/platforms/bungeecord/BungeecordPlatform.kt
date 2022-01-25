@@ -12,6 +12,7 @@ import com.projectcitybuild.modules.network.APIClient
 import com.projectcitybuild.modules.playerconfig.PlayerConfigCache
 import com.projectcitybuild.modules.sessioncache.BungeecordSessionCache
 import com.projectcitybuild.features.hub.storage.HubFileStorage
+import com.projectcitybuild.modules.errorreporting.ErrorReporter
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandRegistry
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordListenerRegistry
 import kotlinx.coroutines.Dispatchers
@@ -34,6 +35,8 @@ class BungeecordPlatform: Plugin() {
                 PluginConfig.DB_NAME,
                 PluginConfig.DB_USERNAME,
                 PluginConfig.DB_PASSWORD,
+                PluginConfig.ERROR_REPORTING_SENTRY_ENABLED,
+                PluginConfig.ERROR_REPORTING_SENTRY_DSN,
                 PluginConfig.GROUPS_APPEARANCE_ADMIN_DISPLAY_NAME,
                 PluginConfig.GROUPS_APPEARANCE_ADMIN_HOVER_NAME,
                 PluginConfig.GROUPS_APPEARANCE_SOP_DISPLAY_NAME,
@@ -78,8 +81,11 @@ class BungeecordPlatform: Plugin() {
         private val commandRegistry: BungeecordCommandRegistry,
         private val listenerRegistry: BungeecordListenerRegistry,
         private val playerConfigCache: PlayerConfigCache,
+        private val errorReporter: ErrorReporter,
     ) {
         fun onEnable(modules: List<BungeecordFeatureModule>) {
+            errorReporter.bootstrap()
+
             proxyServer.registerChannel(Channel.BUNGEECORD)
 
             dataSource.connect()

@@ -3,6 +3,7 @@ package com.projectcitybuild.platforms.spigot
 import com.projectcitybuild.core.contracts.SpigotFeatureModule
 import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.modules.database.DataSourceProvider
+import com.projectcitybuild.modules.errorreporting.ErrorReporterProvider
 import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.modules.network.APIClient
 import com.projectcitybuild.modules.network.NetworkModule
@@ -16,6 +17,7 @@ import javax.inject.Singleton
 
 @Singleton
 @Component(modules = [
+    ErrorReporterProvider::class,
     SpigotFeatureListModule::class,
     NetworkModule::class,
     DataSourceProvider::class,
