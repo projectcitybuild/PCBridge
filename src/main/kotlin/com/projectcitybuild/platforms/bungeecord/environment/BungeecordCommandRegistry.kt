@@ -42,7 +42,10 @@ class BungeecordCommandRegistry @Inject constructor(
     }
 
     fun register(command: BungeecordCommand) {
-        command.aliases.plus(command.label).forEach { alias ->
+        val labels = command.aliases.plus(command.label)
+        val prefixedLabels = labels.map { "pcbridge:$it" } // Replicate Spigot's command prefixing in-case of conflicts
+
+        labels.plus(prefixedLabels).forEach { alias ->
             plugin.proxy.pluginManager.registerCommand(plugin, CommandProxy(
                 alias,
                 execute = { sender, args ->
