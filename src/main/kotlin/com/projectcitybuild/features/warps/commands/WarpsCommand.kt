@@ -60,7 +60,7 @@ class WarpsCommand @Inject constructor(
             .add("\n---\n")
             .add(clickableWarpList)
 
-        if (input.sender is Player) {
+        if (input.sender is Player.Spigot) {
             input.sender.sendMessage(tc)
         } else {
             input.sender.sendMessage(tc.toLegacyText())
