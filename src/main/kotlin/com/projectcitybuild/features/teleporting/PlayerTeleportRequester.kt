@@ -8,7 +8,6 @@ import com.projectcitybuild.modules.playerconfig.PlayerConfigRepository
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.platforms.bungeecord.MessageToSpigot
 import net.md_5.bungee.api.connection.ProxiedPlayer
-import net.md_5.bungee.api.event.ServerConnectEvent
 import java.time.LocalDateTime
 import javax.inject.Inject
 
