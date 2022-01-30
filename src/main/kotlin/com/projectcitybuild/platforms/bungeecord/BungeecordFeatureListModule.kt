@@ -34,7 +34,6 @@ class BungeecordFeatureListModule {
         rankSyncModule: RankSyncModule,
         teleportModule: TeleportModule.Bungeecord,
         teleportHistoryModule: TeleportHistoryModule.Bungeecord,
-        warpModule: WarpModule.Bungeecord,
     ): List<BungeecordFeatureModule> = listOf(
         banModule,
         chatModule,
@@ -45,6 +44,5 @@ class BungeecordFeatureListModule {
         rankSyncModule,
         teleportModule,
         teleportHistoryModule,
-        warpModule,
     )
 }
