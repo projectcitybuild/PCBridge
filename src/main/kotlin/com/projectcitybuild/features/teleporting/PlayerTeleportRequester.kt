@@ -1,14 +1,15 @@
 package com.projectcitybuild.features.teleporting
 
+import com.projectcitybuild.core.utilities.Failure
+import com.projectcitybuild.core.utilities.Result
+import com.projectcitybuild.core.utilities.Success
 import com.projectcitybuild.entities.SubChannel
 import com.projectcitybuild.entities.QueuedTeleport
 import com.projectcitybuild.entities.TeleportType
 import com.projectcitybuild.features.teleporting.repositories.QueuedTeleportRepository
 import com.projectcitybuild.modules.playerconfig.PlayerConfigRepository
-import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.platforms.bungeecord.MessageToSpigot
 import net.md_5.bungee.api.connection.ProxiedPlayer
-import net.md_5.bungee.api.event.ServerConnectEvent
 import java.time.LocalDateTime
 import javax.inject.Inject
 
@@ -16,12 +17,19 @@ class PlayerTeleportRequester @Inject constructor(
     private val playerConfigRepository: PlayerConfigRepository,
     private val queuedTeleportRepository: QueuedTeleportRepository,
 ) {
-    fun teleport(player: ProxiedPlayer, destinationPlayer: ProxiedPlayer, shouldCheckAllowingTP: Boolean) {
+    enum class FailureReason {
+        TARGET_PLAYER_DISALLOWS_TP,
+    }
+
+    fun teleport(
+        player: ProxiedPlayer,
+        destinationPlayer: ProxiedPlayer,
+        shouldCheckAllowingTP: Boolean
+    ): Result<Unit, FailureReason> {
         if (shouldCheckAllowingTP) {
             val targetPlayerConfig = playerConfigRepository.get(destinationPlayer.uniqueId)!!
             if (!targetPlayerConfig.isAllowingTPs) {
-                player.send().error("${destinationPlayer.name} is disallowing teleports")
-                return
+                return Failure(FailureReason.TARGET_PLAYER_DISALLOWS_TP)
             }
         }
 
@@ -56,14 +64,19 @@ class PlayerTeleportRequester @Inject constructor(
                 )
             ).send()
         }
+
+        return Success(Unit)
     }
 
-    fun summon(summonedPlayer: ProxiedPlayer, destinationPlayer: ProxiedPlayer, shouldCheckAllowingTP: Boolean) {
+    fun summon(
+        summonedPlayer: ProxiedPlayer,
+        destinationPlayer: ProxiedPlayer,
+        shouldCheckAllowingTP: Boolean
+    ): Result<Unit, FailureReason> {
         if (shouldCheckAllowingTP) {
             val summonedPlayerConfig = playerConfigRepository.get(summonedPlayer.uniqueId)!!
             if (!summonedPlayerConfig.isAllowingTPs) {
-                destinationPlayer.send().error("${summonedPlayer.name} is disallowing teleports")
-                return
+                return Failure(FailureReason.TARGET_PLAYER_DISALLOWS_TP)
             }
         }
 
@@ -98,5 +111,7 @@ class PlayerTeleportRequester @Inject constructor(
                 )
             ).send()
         }
+
+        return Success(Unit)
     }
 }
