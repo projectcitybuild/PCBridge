@@ -18,7 +18,7 @@ class TPToggleUseCaseImpl @Inject constructor(
         val willToggleOn = toggleOn ?: !playerConfig.isAllowingTPs
 
         if (willToggleOn == playerConfig.isAllowingTPs) {
-            when (willToggleOn) {
+            return when (willToggleOn) {
                 true -> Failure(TPToggleUseCase.FailureReason.ALREADY_TOGGLED_ON)
                 false -> Failure(TPToggleUseCase.FailureReason.ALREADY_TOGGLED_OFF)
             }
