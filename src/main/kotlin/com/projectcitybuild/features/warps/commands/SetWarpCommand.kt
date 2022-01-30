@@ -1,17 +1,21 @@
 package com.projectcitybuild.features.warps.commands
 
 import com.projectcitybuild.core.InvalidCommandArgumentsException
-import com.projectcitybuild.entities.SubChannel
+import com.projectcitybuild.entities.CrossServerLocation
+import com.projectcitybuild.entities.PluginConfig
+import com.projectcitybuild.entities.Warp
+import com.projectcitybuild.features.warps.repositories.WarpRepository
+import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.modules.textcomponentbuilder.send
-import com.projectcitybuild.platforms.spigot.MessageToBungeecord
 import com.projectcitybuild.platforms.spigot.environment.SpigotCommand
 import com.projectcitybuild.platforms.spigot.environment.SpigotCommandInput
 import org.bukkit.entity.Player
-import org.bukkit.plugin.Plugin
+import java.time.LocalDateTime
 import javax.inject.Inject
 
 class SetWarpCommand @Inject constructor(
-    private val plugin: Plugin
+    private val warpRepository: WarpRepository,
+    private val config: PlatformConfig,
 ): SpigotCommand {
 
     override val label = "setwarp"
@@ -30,19 +34,21 @@ class SetWarpCommand @Inject constructor(
 
         val warpName = input.args.first()
 
-        MessageToBungeecord(
-            plugin = plugin,
-            sender = player,
-            subChannel = SubChannel.SET_WARP,
-            params = arrayOf(
-                warpName,
-                player.world.name,
-                player.location.x,
-                player.location.y,
-                player.location.z,
-                player.location.pitch,
-                player.location.yaw,
-            )
-        ).send()
+        if (warpRepository.exists(warpName)) {
+            input.sender.send().error("A warp for $warpName already exists")
+            return
+        }
+
+        val warp = Warp(
+            warpName,
+            CrossServerLocation.fromLocation(
+                serverName = config.get(PluginConfig.SPIGOT_SERVER_NAME),
+                location = player.location,
+            ),
+            LocalDateTime.now()
+        )
+        warpRepository.add(warp)
+
+        input.sender.send().success("Created warp for $warpName")
     }
 }
