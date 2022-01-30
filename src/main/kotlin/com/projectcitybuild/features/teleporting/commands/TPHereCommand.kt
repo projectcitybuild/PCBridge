@@ -1,6 +1,7 @@
 package com.projectcitybuild.features.teleporting.commands
 
 import com.projectcitybuild.core.InvalidCommandArgumentsException
+import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.features.teleporting.PlayerTeleportRequester
 import com.projectcitybuild.modules.nameguesser.NameGuesser
 import com.projectcitybuild.modules.textcomponentbuilder.send
@@ -41,11 +42,17 @@ class TPHereCommand @Inject constructor(
             return
         }
 
-        playerTeleportRequester.summon(
+        val result = playerTeleportRequester.summon(
             summonedPlayer = targetPlayer,
             destinationPlayer = input.player,
             shouldCheckAllowingTP = true
         )
+        if (result is Failure) {
+            when (result.reason) {
+                PlayerTeleportRequester.FailureReason.TARGET_PLAYER_DISALLOWS_TP ->
+                    input.player.send().error("${targetPlayer.name} is disallowing teleports")
+            }
+        }
     }
 
     override fun onTabComplete(sender: CommandSender?, args: List<String>): Iterable<String>? {
