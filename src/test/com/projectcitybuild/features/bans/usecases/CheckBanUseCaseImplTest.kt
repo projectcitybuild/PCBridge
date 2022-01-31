@@ -18,11 +18,14 @@ class CheckBanUseCaseImplTest {
 
     private lateinit var useCase: CheckBanUseCase
 
-    private val banRepository = mock(BanRepository::class.java)
-    private val playerUUIDRepository = mock(PlayerUUIDRepository::class.java)
+    private lateinit var banRepository: BanRepository
+    private lateinit var playerUUIDRepository: PlayerUUIDRepository
 
     @BeforeEach
     fun setUp() {
+        banRepository = mock(BanRepository::class.java)
+        playerUUIDRepository = mock(PlayerUUIDRepository::class.java)
+
         useCase = CheckBanUseCaseImpl(
             banRepository,
             playerUUIDRepository,

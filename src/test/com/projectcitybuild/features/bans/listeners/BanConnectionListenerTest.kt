@@ -26,13 +26,18 @@ class BanConnectionListenerTest {
     private lateinit var listener: BanConnectionListener
     private lateinit var scheduler: TestCoroutineScheduler
 
-    private val plugin = mock(Plugin::class.java)
-    private val banRepository = mock(BanRepository::class.java)
-    private val logger = mock(PlatformLogger::class.java)
-    private val errorReporter = mock(ErrorReporter::class.java)
+    private lateinit var plugin: Plugin
+    private lateinit var banRepository: BanRepository
+    private lateinit var logger: PlatformLogger
+    private lateinit var errorReporter: ErrorReporter
 
     @BeforeEach
     fun setUp() {
+        plugin = mock(Plugin::class.java)
+        banRepository = mock(BanRepository::class.java)
+        logger = mock(PlatformLogger::class.java)
+        errorReporter = mock(ErrorReporter::class.java)
+
         scheduler = TestCoroutineScheduler()
         listener = BanConnectionListener(
             plugin,

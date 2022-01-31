@@ -19,12 +19,16 @@ class UnbanUseCaseImplTest {
 
     private lateinit var useCase: UnbanUseCase
 
-    private val banRepository = mock(BanRepository::class.java)
-    private val playerUUIDRepository = mock(PlayerUUIDRepository::class.java)
-    private val messageBroadcaster = mock(MessageBroadcaster::class.java)
+    private lateinit var banRepository: BanRepository
+    private lateinit var playerUUIDRepository: PlayerUUIDRepository
+    private lateinit var messageBroadcaster: MessageBroadcaster
 
     @BeforeEach
     fun setUp() {
+        banRepository = mock(BanRepository::class.java)
+        playerUUIDRepository = mock(PlayerUUIDRepository::class.java)
+        messageBroadcaster = mock(MessageBroadcaster::class.java)
+
         useCase = UnbanUseCaseImpl(
             banRepository,
             playerUUIDRepository,

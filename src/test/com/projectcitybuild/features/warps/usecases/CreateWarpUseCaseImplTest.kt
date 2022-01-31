@@ -48,7 +48,7 @@ class CreateWarpUseCaseImplTest {
         val location = CrossServerLocationMock()
         val now = LocalDateTime.now()
 
-        `when`(warpRepository.exists(warpName)).thenReturn(true)
+        `when`(warpRepository.exists(warpName)).thenReturn(false)
         `when`(time.now()).thenReturn(now)
 
         val result = useCase.createWarp(warpName, location)

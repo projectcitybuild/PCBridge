@@ -17,11 +17,14 @@ class PlayerTeleportRequesterTest {
 
     private lateinit var requester: PlayerTeleportRequester
 
-    private val playerConfigRepository = mock(PlayerConfigRepository::class.java)
-    private val queuedTeleportRepository = mock(QueuedTeleportRepository::class.java)
+    private lateinit var playerConfigRepository: PlayerConfigRepository
+    private lateinit var queuedTeleportRepository: QueuedTeleportRepository
 
     @BeforeEach
     fun setUp() {
+        playerConfigRepository = mock(PlayerConfigRepository::class.java)
+        queuedTeleportRepository = mock(QueuedTeleportRepository::class.java)
+
         requester = PlayerTeleportRequester(
             playerConfigRepository,
             queuedTeleportRepository,

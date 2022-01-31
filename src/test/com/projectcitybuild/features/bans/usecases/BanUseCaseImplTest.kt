@@ -22,13 +22,18 @@ class BanUseCaseImplTest {
 
     private lateinit var useCase: BanUseCaseImpl
 
-    private val banRepository = mock(BanRepository::class.java)
-    private val playerUUIDRepository = mock(PlayerUUIDRepository::class.java)
-    private val playerKicker = mock(PlayerKicker::class.java)
-    private val messageBroadcaster = mock(MessageBroadcaster::class.java)
+    private lateinit var banRepository: BanRepository
+    private lateinit var playerUUIDRepository: PlayerUUIDRepository
+    private lateinit var playerKicker: PlayerKicker
+    private lateinit var messageBroadcaster: MessageBroadcaster
 
     @BeforeEach
     fun setUp() {
+        banRepository = mock(BanRepository::class.java)
+        playerUUIDRepository = mock(PlayerUUIDRepository::class.java)
+        playerKicker = mock(PlayerKicker::class.java)
+        messageBroadcaster = mock(MessageBroadcaster::class.java)
+
         useCase = BanUseCaseImpl(
             banRepository,
             playerUUIDRepository,
