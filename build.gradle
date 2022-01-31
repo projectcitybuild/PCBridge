@@ -53,6 +53,7 @@ dependencies {
     implementation "co.aikar:idb-core:1.0.0-SNAPSHOT"
     implementation 'com.google.dagger:dagger:2.40.5'
     implementation 'io.sentry:sentry:5.5.2'
+    implementation 'redis.clients:jedis:4.0.1'
     kapt 'com.google.dagger:dagger-compiler:2.40.5'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'

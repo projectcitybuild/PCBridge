@@ -1,4 +1,4 @@
-package com.projectcitybuild.features.warps.usecases
+package com.projectcitybuild.features.warps.usecases.createwarp
 
 import com.projectcitybuild.core.utilities.Result
 import com.projectcitybuild.entities.CrossServerLocation

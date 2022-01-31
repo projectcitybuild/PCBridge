@@ -1,4 +1,4 @@
-package com.projectcitybuild.features.warps.usecases
+package com.projectcitybuild.features.warps.usecases.warp
 
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Result

@@ -12,6 +12,7 @@ import com.projectcitybuild.modules.eventbroadcast.SpigotLocalEventBroadcaster
 import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.modules.logger.implementations.SpigotLogger
 import com.projectcitybuild.modules.network.APIClient
+import com.projectcitybuild.modules.redis.RedisConnection
 import com.projectcitybuild.modules.scheduler.implementations.SpigotScheduler
 import com.projectcitybuild.platforms.spigot.environment.SpigotCommandRegistry
 import com.projectcitybuild.platforms.spigot.environment.SpigotListenerRegistry
@@ -32,6 +33,10 @@ class SpigotPlatform: JavaPlugin() {
                 PluginConfig.DB_NAME,
                 PluginConfig.DB_USERNAME,
                 PluginConfig.DB_PASSWORD,
+                PluginConfig.REDIS_HOSTNAME,
+                PluginConfig.REDIS_PORT,
+                PluginConfig.REDIS_USERNAME,
+                PluginConfig.REDIS_PASSWORD,
                 PluginConfig.ERROR_REPORTING_SENTRY_ENABLED,
                 PluginConfig.ERROR_REPORTING_SENTRY_DSN,
             )
@@ -62,10 +67,12 @@ class SpigotPlatform: JavaPlugin() {
         private val listenerRegistry: SpigotListenerRegistry,
         private val dataSource: DataSource,
         private val errorReporter: ErrorReporter,
+        private val redisConnection: RedisConnection,
     ) {
         fun onEnable(server: Server, modules: List<SpigotFeatureModule>) {
             errorReporter.bootstrap()
 
+            redisConnection.connect()
             dataSource.connect()
 
             val pluginMessageListener = SpigotMessageListener(logger)
@@ -87,7 +94,8 @@ class SpigotPlatform: JavaPlugin() {
 
             listenerRegistry.unregisterAll()
 
-            dataSource.close()
+            dataSource.disconnect()
+            redisConnection.disconnect()
         }
     }
 }

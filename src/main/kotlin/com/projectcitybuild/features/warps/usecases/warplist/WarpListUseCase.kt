@@ -1,4 +1,4 @@
-package com.projectcitybuild.features.warps.usecases
+package com.projectcitybuild.features.warps.usecases.warplist
 
 interface WarpListUseCase {
     data class WarpList(

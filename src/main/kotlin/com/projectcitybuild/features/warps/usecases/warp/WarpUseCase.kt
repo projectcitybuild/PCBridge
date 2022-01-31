@@ -1,4 +1,4 @@
-package com.projectcitybuild.features.warps.usecases
+package com.projectcitybuild.features.warps.usecases.warp
 
 import com.projectcitybuild.core.utilities.Result
 import org.bukkit.entity.Player

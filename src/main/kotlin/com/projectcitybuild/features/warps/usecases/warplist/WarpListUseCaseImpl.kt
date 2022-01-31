@@ -1,4 +1,4 @@
-package com.projectcitybuild.features.warps.usecases
+package com.projectcitybuild.features.warps.usecases.warplist
 
 import com.projectcitybuild.entities.PluginConfig
 import com.projectcitybuild.features.warps.repositories.WarpRepository

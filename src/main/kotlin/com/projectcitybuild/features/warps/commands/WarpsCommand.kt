@@ -1,7 +1,7 @@
 package com.projectcitybuild.features.warps.commands
 
 import com.projectcitybuild.core.InvalidCommandArgumentsException
-import com.projectcitybuild.features.warps.usecases.WarpListUseCase
+import com.projectcitybuild.features.warps.usecases.warplist.WarpListUseCase
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.platforms.bungeecord.extensions.add
 import com.projectcitybuild.platforms.bungeecord.extensions.addIf
@@ -12,7 +12,6 @@ import net.md_5.bungee.api.chat.ClickEvent
 import net.md_5.bungee.api.chat.HoverEvent
 import net.md_5.bungee.api.chat.TextComponent
 import net.md_5.bungee.api.chat.hover.content.Text
-import org.bukkit.entity.Player
 import javax.inject.Inject
 
 class WarpsCommand @Inject constructor(

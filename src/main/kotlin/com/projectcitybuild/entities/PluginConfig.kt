@@ -19,6 +19,11 @@ sealed class PluginConfig {
         val DB_USERNAME = "database.username" defaultTo "username"
         val DB_PASSWORD = "database.password" defaultTo "password"
 
+        val REDIS_HOSTNAME = "redis.hostname" defaultTo "localhost"
+        val REDIS_PORT = "redis.port" defaultTo 6379
+        val REDIS_USERNAME = "redis.username" defaultTo "root"
+        val REDIS_PASSWORD = "redis.password" defaultTo ""
+
         val ERROR_REPORTING_SENTRY_ENABLED = "error_reporting.sentry.enabled" defaultTo false
         val ERROR_REPORTING_SENTRY_DSN = "error_reporting.sentry.dsn" defaultTo "https://<key>@sentry.io/<project>"
 

@@ -10,6 +10,7 @@ import com.projectcitybuild.modules.eventbroadcast.LocalEventBroadcaster
 import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.modules.network.APIClient
 import com.projectcitybuild.modules.network.NetworkModule
+import com.projectcitybuild.modules.redis.RedisProvider
 import com.projectcitybuild.modules.scheduler.PlatformScheduler
 import com.projectcitybuild.platforms.spigot.SpigotFeatureListModule.SpigotFeatureModules
 import dagger.BindsInstance
@@ -26,6 +27,7 @@ import javax.inject.Singleton
     WarpUseCaseProvider::class,
     NetworkModule::class,
     DataSourceProvider::class,
+    RedisProvider::class,
 ])
 interface SpigotComponent {
 
