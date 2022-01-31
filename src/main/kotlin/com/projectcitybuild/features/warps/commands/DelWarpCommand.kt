@@ -42,8 +42,8 @@ class DelWarpCommand @Inject constructor(
 
     override fun onTabComplete(sender: CommandSender?, args: List<String>): Iterable<String>? {
         return when {
-            args.isEmpty() -> warpRepository.all().map { it.name }
-            args.size == 1 -> warpRepository.all().map { it.name }.filter { it.lowercase().startsWith(args.first()) }
+            args.isEmpty() -> warpRepository.names()
+            args.size == 1 -> warpRepository.names().filter { it.lowercase().startsWith(args.first()) }
             else -> null
         }
     }

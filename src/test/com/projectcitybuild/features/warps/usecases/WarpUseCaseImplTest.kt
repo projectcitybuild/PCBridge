@@ -70,7 +70,7 @@ class WarpUseCaseImplTest {
 
     @Test
     fun `should fail if warp doesn't exist`() = runTest {
-        `when`(warpRepository.all()).thenReturn(emptyList())
+        `when`(warpRepository.names()).thenReturn(emptyList())
 
         val result = useCase.warp("warp", "server_name", player)
 
@@ -83,7 +83,7 @@ class WarpUseCaseImplTest {
         val warp = WarpMock(warpName)
         val server = mock(Server::class.java)
 
-        `when`(warpRepository.all()).thenReturn(listOf(warp))
+        `when`(warpRepository.names()).thenReturn(listOf(warp))
         `when`(nameGuesser.guessClosest(any(), any())).thenReturn(warpName)
         `when`(server.getWorld(anyString())).thenReturn(null)
 
@@ -101,7 +101,7 @@ class WarpUseCaseImplTest {
         val location = Location(world, 1.0, 2.0, 3.0, 4f, 5f)
 
         `when`(player.location).thenReturn(location)
-        `when`(warpRepository.all()).thenReturn(listOf(warp))
+        `when`(warpRepository.names()).thenReturn(listOf(warp))
         `when`(nameGuesser.guessClosest(any(), any())).thenReturn(warpName)
         `when`(server.getWorld(anyString())).thenReturn(world)
 
@@ -122,7 +122,7 @@ class WarpUseCaseImplTest {
         val warp = WarpMock(warpName)
         val world = mock(World::class.java)
 
-        `when`(warpRepository.all()).thenReturn(listOf(warp))
+        `when`(warpRepository.names()).thenReturn(listOf(warp))
         `when`(nameGuesser.guessClosest(any(), any())).thenReturn(warpName)
         `when`(server.getWorld(anyString())).thenReturn(world)
 
@@ -150,7 +150,7 @@ class WarpUseCaseImplTest {
         val playerUUID = UUID.randomUUID()
 
         `when`(player.uniqueId).thenReturn(playerUUID)
-        `when`(warpRepository.all()).thenReturn(listOf(warp))
+        `when`(warpRepository.names()).thenReturn(listOf(warp))
         `when`(nameGuesser.guessClosest(any(), any())).thenReturn(warpName)
         `when`(server.getWorld(anyString())).thenReturn(world)
 

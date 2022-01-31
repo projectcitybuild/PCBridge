@@ -30,13 +30,13 @@ class WarpUseCaseImpl @Inject constructor(
         playerServerName: String,
         player: Player,
     ): Result<WarpUseCase.WarpEvent, WarpUseCase.FailureReason> {
-        val availableWarps = warpRepository.all()
-        val availableWarpNames = availableWarps.map { it.name }
+        val availableWarpNames = warpRepository.names()
 
-        val warpName = nameGuesser.guessClosest(targetWarpName, availableWarpNames)
+        val matchingWarpName = nameGuesser.guessClosest(targetWarpName, availableWarpNames)
             ?: return Failure(WarpUseCase.FailureReason.WARP_NOT_FOUND)
 
-        val warp = availableWarps.first { it.name == warpName }
+        val warp = warpRepository.first(matchingWarpName)
+            ?: return Failure(WarpUseCase.FailureReason.WARP_NOT_FOUND)
 
         localEventBroadcaster.emit(
             PlayerPreWarpEvent(player, player.location)

@@ -15,7 +15,7 @@ class WarpListUseCaseImpl @Inject constructor(
 
     override fun getList(page: Int): WarpListUseCase.WarpList? {
         val warpsPerPage = config.get(PluginConfig.WARPS_PER_PAGE)
-        val availableWarps = warpRepository.all().map { it.name }
+        val availableWarps = warpRepository.names()
         val totalWarpPages = ceil((availableWarps.size.toDouble() / warpsPerPage.toDouble())).toInt()
 
         if (availableWarps.isEmpty()) {

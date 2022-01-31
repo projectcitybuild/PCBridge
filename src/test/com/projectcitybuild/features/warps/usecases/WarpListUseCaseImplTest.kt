@@ -35,7 +35,7 @@ class WarpListUseCaseImplTest {
             WarpMock("c"),
             WarpMock("a"),
         )
-        `when`(warpRepository.all()).thenReturn(warps)
+        `when`(warpRepository.names()).thenReturn(warps)
         `when`(config.get(PluginConfig.WARPS_PER_PAGE)).thenReturn(warps.size)
 
         val received = useCase.getList(page = 1)
@@ -48,7 +48,7 @@ class WarpListUseCaseImplTest {
     fun `should return all warps when less than page max`() = runTest {
         val warps = MutableList(3) { index -> WarpMock(name = "warp_$index") }
 
-        `when`(warpRepository.all()).thenReturn(warps)
+        `when`(warpRepository.names()).thenReturn(warps)
         `when`(config.get(PluginConfig.WARPS_PER_PAGE)).thenReturn(3)
 
         val received = useCase.getList(page = 1)
@@ -66,7 +66,7 @@ class WarpListUseCaseImplTest {
     fun `should return warps paginated when more than page max`() = runTest {
         val warps = MutableList(5) { index -> WarpMock(name = "warp_$index") }
 
-        `when`(warpRepository.all()).thenReturn(warps)
+        `when`(warpRepository.names()).thenReturn(warps)
         `when`(config.get(PluginConfig.WARPS_PER_PAGE)).thenReturn(2)
 
         val firstPage = useCase.getList(page = 1)
