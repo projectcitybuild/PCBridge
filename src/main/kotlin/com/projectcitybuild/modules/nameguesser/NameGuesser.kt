@@ -10,7 +10,7 @@ class NameGuesser @Inject constructor() {
     fun <T> guessClosest(string: String, collection: Collection<T>, comparison: (T) -> String): T? {
         val searchString = string.lowercase()
 
-        var partialMatches: MutableList<String> = mutableListOf()
+        val partialMatches: MutableList<String> = mutableListOf()
 
         collection.forEach { element ->
             val elementString = comparison(element).lowercase()

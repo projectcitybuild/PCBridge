@@ -41,7 +41,7 @@ class WarpCommand @Inject constructor(
             is Failure -> {
                 input.sender.send().error(
                     when (result.reason) {
-                        WarpUseCase.FailureReason.WARP_DOES_NOT_EXIST -> "Warp $targetWarpName does not exist"
+                        WarpUseCase.FailureReason.WARP_NOT_FOUND -> "Warp $targetWarpName does not exist"
                         WarpUseCase.FailureReason.WORLD_NOT_FOUND -> "The target server is either offline or invalid"
                     }
                 )

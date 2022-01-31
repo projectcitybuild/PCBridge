@@ -5,6 +5,7 @@ import com.projectcitybuild.features.warps.repositories.WarpRepository
 import com.projectcitybuild.features.warps.usecases.*
 import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.modules.datetime.Time
+import com.projectcitybuild.modules.eventbroadcast.LocalEventBroadcaster
 import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.modules.nameguesser.NameGuesser
 import dagger.Module
@@ -32,6 +33,7 @@ class WarpUseCaseProvider {
         queuedWarpRepository: QueuedWarpRepository,
         nameGuesser: NameGuesser,
         logger: PlatformLogger,
+        localEventBroadcaster: LocalEventBroadcaster,
     ): WarpUseCase {
         return WarpUseCaseImpl(
             plugin,
@@ -39,6 +41,7 @@ class WarpUseCaseProvider {
             queuedWarpRepository,
             nameGuesser,
             logger,
+            localEventBroadcaster,
         )
     }
 

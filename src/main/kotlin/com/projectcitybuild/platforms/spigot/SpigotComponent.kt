@@ -6,6 +6,7 @@ import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.modules.database.DataSourceProvider
 import com.projectcitybuild.modules.datetime.TimeProvider
 import com.projectcitybuild.modules.errorreporting.ErrorReporterProvider
+import com.projectcitybuild.modules.eventbroadcast.LocalEventBroadcaster
 import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.modules.network.APIClient
 import com.projectcitybuild.modules.network.NetworkModule
@@ -49,6 +50,9 @@ interface SpigotComponent {
 
         @BindsInstance
         fun scheduler(scheduler: PlatformScheduler): Builder
+
+        @BindsInstance
+        fun localEventBroadcaster(broadcaster: LocalEventBroadcaster): Builder
 
         @BindsInstance
         fun apiClient(apiClient: APIClient): Builder

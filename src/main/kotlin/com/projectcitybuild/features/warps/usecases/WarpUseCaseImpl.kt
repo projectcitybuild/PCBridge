@@ -7,10 +7,10 @@ import com.projectcitybuild.entities.SubChannel
 import com.projectcitybuild.features.warps.events.PlayerPreWarpEvent
 import com.projectcitybuild.features.warps.repositories.QueuedWarpRepository
 import com.projectcitybuild.features.warps.repositories.WarpRepository
+import com.projectcitybuild.modules.eventbroadcast.LocalEventBroadcaster
 import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.modules.nameguesser.NameGuesser
 import com.projectcitybuild.platforms.spigot.MessageToBungeecord
-import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
@@ -22,6 +22,7 @@ class WarpUseCaseImpl @Inject constructor(
     private val queuedWarpRepository: QueuedWarpRepository,
     private val nameGuesser: NameGuesser,
     private val logger: PlatformLogger,
+    private val localEventBroadcaster: LocalEventBroadcaster,
 ): WarpUseCase {
 
     override fun warp(
@@ -33,11 +34,11 @@ class WarpUseCaseImpl @Inject constructor(
         val availableWarpNames = availableWarps.map { it.name }
 
         val warpName = nameGuesser.guessClosest(targetWarpName, availableWarpNames)
-            ?: return Failure(WarpUseCase.FailureReason.WARP_DOES_NOT_EXIST)
+            ?: return Failure(WarpUseCase.FailureReason.WARP_NOT_FOUND)
 
         val warp = availableWarps.first { it.name == warpName }
 
-        Bukkit.getPluginManager().callEvent(
+        localEventBroadcaster.emit(
             PlayerPreWarpEvent(player, player.location)
         )
 

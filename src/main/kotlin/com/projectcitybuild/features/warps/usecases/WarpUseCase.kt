@@ -9,7 +9,7 @@ interface WarpUseCase {
         val isSameServer: Boolean
     )
     enum class FailureReason {
-        WARP_DOES_NOT_EXIST,
+        WARP_NOT_FOUND,
         WORLD_NOT_FOUND,
     }
     fun warp(

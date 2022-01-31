@@ -2,9 +2,9 @@ package com.projectcitybuild
 
 import com.projectcitybuild.entities.CrossServerLocation
 
-fun CrossServerLocationMock(): CrossServerLocation {
+fun CrossServerLocationMock(serverName: String = "server_name"): CrossServerLocation {
     return CrossServerLocation(
-        serverName = "server_name",
+        serverName = serverName,
         worldName = "world_name",
         x = 1.0,
         y = 2.0,
