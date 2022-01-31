@@ -13,10 +13,8 @@ class WarpListUseCaseImpl @Inject constructor(
     private val config: PlatformConfig
 ): WarpListUseCase {
 
-    private val warpsPerPage: Int
-        get() = config.get(PluginConfig.WARPS_PER_PAGE)
-
     override fun getList(page: Int): WarpListUseCase.WarpList? {
+        val warpsPerPage = config.get(PluginConfig.WARPS_PER_PAGE)
         val availableWarps = warpRepository.all().map { it.name }
         val totalWarpPages = ceil((availableWarps.size.toDouble() / warpsPerPage.toDouble())).toInt()
 

@@ -22,6 +22,8 @@ class SpigotCommandRegistry @Inject constructor(
     private val errorReporter: ErrorReporter,
 ) {
     fun register(spigotCommand: SpigotCommand) {
+        logger.verbose("Registering command: ${spigotCommand::class.java.simpleName}")
+
         val aliases = spigotCommand.aliases.plus(spigotCommand.label)
 
         aliases.forEach { alias ->
@@ -69,11 +71,11 @@ class SpigotCommandRegistry @Inject constructor(
                     return list.toMutableList()
                 }
             }
-            plugin.getCommand(alias).apply {
+            plugin.getCommand(alias).let {
                 val command = BridgedCommand(spigotCommand)
-                setSuspendingExecutor(command)
-                tabCompleter = command
-                permission = spigotCommand.permission
+                it.setSuspendingExecutor(command)
+                it.tabCompleter = command
+                it.permission = spigotCommand.permission
             }
         }
     }

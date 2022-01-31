@@ -13,7 +13,11 @@ class SpigotConfig(
 ): PlatformConfig {
 
     override fun <T> get(key: PluginConfig.ConfigPath<T>): T {
-        return config.get(key.key) as T
+        val value = config.get(key.key) as T
+        if (value != null) {
+            return value
+        }
+        return key.defaultValue
     }
 
     override fun <T> set(key: PluginConfig.ConfigPath<T>, value: T) {

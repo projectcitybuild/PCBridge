@@ -73,6 +73,8 @@ class SpigotPlatform: JavaPlugin() {
             server.messenger.registerIncomingPluginChannel(plugin, Channel.BUNGEECORD, pluginMessageListener)
 
             modules.forEach { module ->
+                logger.verbose("Registering ${module::class.java.name} module")
+
                 module.spigotCommands.forEach { commandRegistry.register(it) }
                 module.spigotListeners.forEach { listenerRegistry.register(it) }
                 module.spigotSubChannelListeners.forEach { pluginMessageListener.register(it) }
