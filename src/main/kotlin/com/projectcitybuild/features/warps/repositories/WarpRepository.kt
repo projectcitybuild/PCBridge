@@ -42,12 +42,12 @@ class WarpRepository @Inject constructor(
         val cached = redisConnection.resource().use {
             it.smembers(listCacheKey)
         }
-        if (cached != null) {
+        if (cached != null && cached.isNotEmpty()) {
             return cached.sorted()
         }
 
         return dataSource.database()
-            .getResults("SELECT `name`` FROM `warps` ORDER BY `name` ASC")
+            .getResults("SELECT `name` FROM `warps` ORDER BY `name` ASC")
             .map { row -> row.getString("name") }
             .also { warpNames ->
                 redisConnection.resource().use { jedis ->

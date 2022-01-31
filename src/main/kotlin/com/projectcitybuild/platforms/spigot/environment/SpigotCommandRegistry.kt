@@ -5,6 +5,7 @@ import com.github.shynixn.mccoroutine.setSuspendingExecutor
 import com.projectcitybuild.core.InvalidCommandArgumentsException
 import com.projectcitybuild.modules.errorreporting.ErrorReporter
 import com.projectcitybuild.modules.logger.PlatformLogger
+import com.projectcitybuild.modules.textcomponentbuilder.send
 import dagger.Reusable
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.chat.TextComponent
@@ -51,7 +52,7 @@ class SpigotCommandRegistry @Inject constructor(
                         )
                         true
                     } catch (error: Exception) {
-                        sender.sendMessage("An internal error occurred performing your command")
+                        sender.send().error("An internal error occurred performing your command")
                         error.localizedMessage.let { message -> logger.fatal(message) }
                         error.printStackTrace()
                         errorReporter.report(error)

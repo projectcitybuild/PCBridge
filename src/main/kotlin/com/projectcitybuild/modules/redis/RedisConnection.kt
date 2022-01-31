@@ -14,7 +14,12 @@ class RedisConnection(
     private lateinit var connectionPool: JedisPool
 
     fun connect() {
-        connectionPool = JedisPool(hostname, port, username, password)
+        connectionPool = if (password.isEmpty()) {
+            JedisPool(hostname, port)
+        } else {
+            JedisPool(hostname, port, username, password)
+        }
+        testConnection()
     }
 
     fun disconnect() {
@@ -23,5 +28,12 @@ class RedisConnection(
 
     fun resource(): Jedis {
         return connectionPool.resource
+    }
+
+    private fun testConnection() {
+        resource().use {
+            it.set("test", "test")
+            it.del("test")
+        }
     }
 }
