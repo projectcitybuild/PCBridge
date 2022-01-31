@@ -3,24 +3,22 @@ package com.projectcitybuild.features.warps.repositories
 import com.projectcitybuild.entities.CrossServerLocation
 import com.projectcitybuild.entities.Warp
 import com.projectcitybuild.modules.database.DataSource
+import com.projectcitybuild.modules.redis.RedisConnection
 import dagger.Reusable
 import javax.inject.Inject
 
 @Reusable
 class WarpRepository @Inject constructor(
     private val dataSource: DataSource,
+    private val redisConnection: RedisConnection,
 ) {
-    private var cache: List<Warp>? = null
+    private val listCacheKey = "all_warp_names"
 
     fun exists(name: String): Boolean {
         return first(name) != null
     }
 
     fun first(name: String): Warp? {
-        val cache = cache
-        if (cache != null) {
-            return cache.firstOrNull { it.name == name }
-        }
         return dataSource.database()
             .getFirstRow("SELECT * FROM `warps` WHERE `name`= ? LIMIT 1", name)
             ?.let { row ->
@@ -40,35 +38,25 @@ class WarpRepository @Inject constructor(
             }
     }
 
-    fun all(): List<Warp> {
-        val cache = cache
-        if (cache != null) {
-            return cache.sortedBy { it.name }
+    fun names(): List<String> {
+        val cached = redisConnection.resource().use {
+            it.smembers(listCacheKey)
+        }
+        if (cached != null && cached.isNotEmpty()) {
+            return cached.sorted()
         }
 
         return dataSource.database()
-            .getResults("SELECT * FROM `warps` ORDER BY `name` ASC")
-            .map { row ->
-                Warp(
-                    name = row.get("name"),
-                    location = CrossServerLocation(
-                        serverName = row.get("server_name"),
-                        worldName = row.get("world_name"),
-                        x = row.get("x"),
-                        y = row.get("y"),
-                        z = row.get("z"),
-                        pitch = row.get("pitch"),
-                        yaw = row.get("yaw"),
-                    ),
-                    createdAt = row.get("created_at"),
-                )
+            .getResults("SELECT `name` FROM `warps` ORDER BY `name` ASC")
+            .map { row -> row.getString("name") }
+            .also { warpNames ->
+                redisConnection.resource().use { jedis ->
+                    warpNames.forEach { jedis.sadd(listCacheKey, it) }
+                }
             }
-            .also { this.cache = it }
     }
 
     fun add(warp: Warp) {
-        cache = null
-
         dataSource.database().executeInsert(
             "INSERT INTO `warps` VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
             warp.name,
@@ -81,12 +69,18 @@ class WarpRepository @Inject constructor(
             warp.location.yaw,
             warp.createdAt,
         )
+
+        redisConnection.resource().use {
+            it.del(listCacheKey)
+        }
     }
 
     fun delete(name: String) {
-        cache = null
-
         dataSource.database()
             .executeUpdate("DELETE FROM `warps` WHERE `name`= ?", name)
+
+        redisConnection.resource().use {
+            it.del(listCacheKey)
+        }
     }
 }

@@ -8,9 +8,7 @@ import com.projectcitybuild.features.importer.ImporterModule
 import com.projectcitybuild.features.joinmessage.JoinMessageModule
 import com.projectcitybuild.features.playercache.PlayerCacheModule
 import com.projectcitybuild.features.ranksync.RankSyncModule
-import com.projectcitybuild.features.teleporthistory.TeleportHistoryModule
 import com.projectcitybuild.features.teleporting.TeleportModule
-import com.projectcitybuild.features.warps.WarpModule
 import dagger.Module
 import dagger.Provides
 import javax.inject.Qualifier
@@ -33,8 +31,6 @@ class BungeecordFeatureListModule {
         playerCacheModule: PlayerCacheModule,
         rankSyncModule: RankSyncModule,
         teleportModule: TeleportModule.Bungeecord,
-        teleportHistoryModule: TeleportHistoryModule.Bungeecord,
-        warpModule: WarpModule.Bungeecord,
     ): List<BungeecordFeatureModule> = listOf(
         banModule,
         chatModule,
@@ -44,7 +40,5 @@ class BungeecordFeatureListModule {
         playerCacheModule,
         rankSyncModule,
         teleportModule,
-        teleportHistoryModule,
-        warpModule,
     )
 }

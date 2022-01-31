@@ -11,6 +11,7 @@ import com.projectcitybuild.modules.network.NetworkModule
 import com.projectcitybuild.modules.proxyadapter.BungeecordProxyAdapterModule
 import com.projectcitybuild.features.hub.storage.HubFileStorage
 import com.projectcitybuild.features.teleporting.TeleportingUseCaseProvider
+import com.projectcitybuild.modules.datetime.TimeProvider
 import com.projectcitybuild.modules.errorreporting.ErrorReporterProvider
 import com.projectcitybuild.platforms.bungeecord.BungeecordFeatureListModule.BungeecordFeatureModules
 import dagger.BindsInstance
@@ -21,6 +22,7 @@ import javax.inject.Singleton
 
 @Singleton
 @Component(modules = [
+    TimeProvider::class,
     ErrorReporterProvider::class,
     DateTimeFormatterProvider::class,
     BungeecordFeatureListModule::class,

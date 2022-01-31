@@ -103,7 +103,7 @@ class BungeecordPlatform: Plugin() {
         fun onDisable() {
             proxyServer.unregisterChannel(Channel.BUNGEECORD)
 
-            dataSource.close()
+            dataSource.disconnect()
             sessionCache.flush()
             playerConfigCache.flush()
             listenerRegistry.unregisterAll()

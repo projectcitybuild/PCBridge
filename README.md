@@ -5,7 +5,8 @@
 A BungeeCord and Spigot plugin to bridge [Project City Build](https://projectcitybuild.com) and its Minecraft servers
 
 ## Requirements
-* MySQL/MariaDB server
+* MySQL/MariaDB server - for data persistence across the whole network
+* Redis - for shared caching between network nodes
 * [LuckPerms](https://www.spigotmc.org/resources/luckperms-an-advanced-permissions-plugin.28140/) installed on all servers
 
 ## Installation

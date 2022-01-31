@@ -37,7 +37,7 @@ class DataSource(
         }
     }
 
-    fun close() {
+    fun disconnect() {
         database?.close()
     }
 

@@ -1,42 +1,49 @@
 package com.projectcitybuild.features.warps.commands
 
 import com.projectcitybuild.core.InvalidCommandArgumentsException
+import com.projectcitybuild.core.utilities.Failure
+import com.projectcitybuild.core.utilities.Success
 import com.projectcitybuild.features.warps.repositories.WarpRepository
+import com.projectcitybuild.features.warps.usecases.deletewarp.DeleteWarpUseCase
 import com.projectcitybuild.modules.textcomponentbuilder.send
-import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
-import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
-import net.md_5.bungee.api.CommandSender
+import com.projectcitybuild.platforms.spigot.environment.SpigotCommand
+import com.projectcitybuild.platforms.spigot.environment.SpigotCommandInput
+import org.bukkit.command.CommandSender
 import javax.inject.Inject
 
 class DelWarpCommand @Inject constructor(
-    private val warpRepository: WarpRepository
-): BungeecordCommand {
+    private val deleteWarpUseCase: DeleteWarpUseCase,
+    private val warpRepository: WarpRepository,
+): SpigotCommand {
 
     override val label: String = "delwarp"
     override val permission = "pcbridge.warp.delete"
     override val usageHelp = "/delwarp <name>"
 
-    override suspend fun execute(input: BungeecordCommandInput) {
+    override suspend fun execute(input: SpigotCommandInput) {
         if (input.args.size != 1) {
             throw InvalidCommandArgumentsException()
         }
 
         val warpName = input.args.first()
 
-        if (!warpRepository.exists(warpName)) {
-            input.sender.send().error("Warp $warpName does not exist")
-            return
+        val result = deleteWarpUseCase.deleteWarp(warpName)
+        when (result) {
+            is Failure -> {
+                input.sender.send().error(
+                    when (result.reason) {
+                        DeleteWarpUseCase.FailureReason.WARP_NOT_FOUND -> "Warp $warpName does not exist"
+                    }
+                )
+            }
+            is Success -> input.sender.send().success("Warp $warpName deleted")
         }
-
-        // TODO: Add confirmation
-        warpRepository.delete(warpName)
-        input.sender.send().success("Warp $warpName deleted")
     }
 
     override fun onTabComplete(sender: CommandSender?, args: List<String>): Iterable<String>? {
         return when {
-            args.isEmpty() -> warpRepository.all().map { it.name }
-            args.size == 1 -> warpRepository.all().map { it.name }.filter { it.lowercase().startsWith(args.first()) }
+            args.isEmpty() -> warpRepository.names()
+            args.size == 1 -> warpRepository.names().filter { it.lowercase().startsWith(args.first()) }
             else -> null
         }
     }

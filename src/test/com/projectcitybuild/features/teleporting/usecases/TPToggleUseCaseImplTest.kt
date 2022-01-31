@@ -16,10 +16,12 @@ class TPToggleUseCaseImplTest {
 
     private lateinit var useCase: TPToggleUseCase
 
-    private val playerConfigRepository = mock(PlayerConfigRepository::class.java)
+    private lateinit var playerConfigRepository: PlayerConfigRepository
 
     @BeforeEach
     fun setUp() {
+        playerConfigRepository = mock(PlayerConfigRepository::class.java)
+
         useCase = TPToggleUseCaseImpl(playerConfigRepository)
     }
 

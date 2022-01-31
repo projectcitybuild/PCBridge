@@ -5,7 +5,6 @@ sealed class SubChannel {
     companion object {
         const val AFK_END = "pcbridge:sub:afk-end"
         const val GLOBAL_CHAT = "pcbridge:sub:global-chat"
-        const val SET_WARP = "pcbridge:sub:set-warp"
         const val SET_HUB = "pcbridge:sub:set-hub"
         const val TP_SAME_SERVER = "pcbridge:sub:tp-same-server"
         const val TP_ACROSS_SERVER = "pcbridge:sub:tp-across-server"

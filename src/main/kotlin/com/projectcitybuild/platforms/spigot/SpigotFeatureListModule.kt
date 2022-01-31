@@ -26,7 +26,7 @@ class SpigotFeatureListModule {
         joinMessageModule: JoinMessageModule.Spigot,
         teleportModule: TeleportModule.Spigot,
         teleportHistoryModule: TeleportHistoryModule.Spigot,
-        warpModule: WarpModule.Spigot,
+        warpModule: WarpModule,
     ): List<SpigotFeatureModule> = listOf(
         chatModule,
         hubModule,

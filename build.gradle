@@ -53,6 +53,7 @@ dependencies {
     implementation "co.aikar:idb-core:1.0.0-SNAPSHOT"
     implementation 'com.google.dagger:dagger:2.40.5'
     implementation 'io.sentry:sentry:5.5.2'
+    implementation 'redis.clients:jedis:4.0.1'
     kapt 'com.google.dagger:dagger-compiler:2.40.5'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
@@ -61,7 +62,9 @@ dependencies {
     testImplementation 'org.powermock:powermock-api-mockito2:2.0.9'
     testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.0-native-mt'
     testImplementation 'org.mockito:mockito-inline:4.2.0'
+
     testImplementation 'net.md-5:bungeecord-api:1.16-R0.4' // Needed for mocking in tests
+    testImplementation 'org.spigotmc:spigot-api:1.12.2-R0.1-SNAPSHOT' // Needed for mocking in tests
 
     // Spigot
     compileOnly 'org.spigotmc:spigot-api:1.12.2-R0.1-SNAPSHOT'

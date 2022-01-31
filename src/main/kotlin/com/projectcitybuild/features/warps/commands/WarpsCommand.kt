@@ -1,12 +1,12 @@
 package com.projectcitybuild.features.warps.commands
 
 import com.projectcitybuild.core.InvalidCommandArgumentsException
-import com.projectcitybuild.features.warps.usecases.WarpListUseCase
+import com.projectcitybuild.features.warps.usecases.warplist.WarpListUseCase
 import com.projectcitybuild.modules.textcomponentbuilder.send
-import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
-import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
 import com.projectcitybuild.platforms.bungeecord.extensions.add
 import com.projectcitybuild.platforms.bungeecord.extensions.addIf
+import com.projectcitybuild.platforms.spigot.environment.SpigotCommand
+import com.projectcitybuild.platforms.spigot.environment.SpigotCommandInput
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.chat.ClickEvent
 import net.md_5.bungee.api.chat.HoverEvent
@@ -16,13 +16,13 @@ import javax.inject.Inject
 
 class WarpsCommand @Inject constructor(
     private val warpListUseCase: WarpListUseCase,
-): BungeecordCommand {
+): SpigotCommand {
 
     override val label: String = "warps"
     override val permission = "pcbridge.warp.list"
     override val usageHelp = "/warps"
 
-    override suspend fun execute(input: BungeecordCommandInput) {
+    override suspend fun execute(input: SpigotCommandInput) {
         if (input.args.size > 1) {
             throw InvalidCommandArgumentsException()
         }
@@ -59,6 +59,6 @@ class WarpsCommand @Inject constructor(
             .add("\n---\n")
             .add(clickableWarpList)
 
-        input.sender.sendMessage(tc)
+        input.sender.spigot().sendMessage(tc)
     }
 }

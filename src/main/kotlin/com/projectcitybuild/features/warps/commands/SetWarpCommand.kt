@@ -1,17 +1,20 @@
 package com.projectcitybuild.features.warps.commands
 
 import com.projectcitybuild.core.InvalidCommandArgumentsException
-import com.projectcitybuild.entities.SubChannel
+import com.projectcitybuild.core.utilities.Failure
+import com.projectcitybuild.entities.CrossServerLocation
+import com.projectcitybuild.entities.PluginConfig
+import com.projectcitybuild.features.warps.usecases.createwarp.CreateWarpUseCase
+import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.modules.textcomponentbuilder.send
-import com.projectcitybuild.platforms.spigot.MessageToBungeecord
 import com.projectcitybuild.platforms.spigot.environment.SpigotCommand
 import com.projectcitybuild.platforms.spigot.environment.SpigotCommandInput
 import org.bukkit.entity.Player
-import org.bukkit.plugin.Plugin
 import javax.inject.Inject
 
 class SetWarpCommand @Inject constructor(
-    private val plugin: Plugin
+    private val createWarpUseCase: CreateWarpUseCase,
+    private val config: PlatformConfig,
 ): SpigotCommand {
 
     override val label = "setwarp"
@@ -29,20 +32,20 @@ class SetWarpCommand @Inject constructor(
         }
 
         val warpName = input.args.first()
+        val location = CrossServerLocation.fromLocation(
+            serverName = config.get(PluginConfig.SPIGOT_SERVER_NAME),
+            location = player.location,
+        )
+        val result = createWarpUseCase.createWarp(warpName, location)
 
-        MessageToBungeecord(
-            plugin = plugin,
-            sender = player,
-            subChannel = SubChannel.SET_WARP,
-            params = arrayOf(
-                warpName,
-                player.world.name,
-                player.location.x,
-                player.location.y,
-                player.location.z,
-                player.location.pitch,
-                player.location.yaw,
-            )
-        ).send()
+        if (result is Failure) {
+            when (result.reason) {
+                CreateWarpUseCase.FailureReason.WARP_ALREADY_EXISTS
+                    -> input.sender.send().error("A warp for $warpName already exists")
+            }
+            return
+        }
+
+        input.sender.send().success("Created warp for $warpName")
     }
 }
