@@ -1,7 +1,7 @@
 package com.projectcitybuild.modules.database
 
 import co.aikar.idb.HikariPooledDatabase
-import com.projectcitybuild.modules.database.migrations.*
+import com.projectcitybuild.entities.migrations.*
 import com.projectcitybuild.modules.logger.PlatformLogger
 
 object Migration {
@@ -10,6 +10,7 @@ object Migration {
         `20220114_first_time_run`(),
         `20220115_player_configs_warps`(),
         `20220120_teleport_history`(),
+        `20220201_add_hub`(),
     )
 
     fun executeIfNecessary(

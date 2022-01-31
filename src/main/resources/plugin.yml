@@ -17,14 +17,17 @@ commands:
   delwarp:
     description: "Deletes a warp"
     usage: "/delwarp <name>"
-  setwarp:
-    description: "Creates a warp at the current position and direction"
-    permission: "pcbridge.warp.create"
-    usage: "/setwarp <name>"
+  hub:
+    description: "Teleports to the Hub server"
+    usage: "/hub"
   sethub:
     description: "Sets the destination of the /hub command at the current position and direction"
     permission: "pcbridge.hub.set"
     usage: "/sethub"
+  setwarp:
+    description: "Creates a warp at the current position and direction"
+    permission: "pcbridge.warp.create"
+    usage: "/setwarp <name>"
   warp:
     description: "Teleports to a pre-defined location"
     usage: "/warp <name>"

@@ -4,6 +4,7 @@ import com.projectcitybuild.entities.serializables.SerializableDate
 import com.projectcitybuild.entities.serializables.SerializableUUID
 import kotlinx.serialization.Serializable
 
+@Deprecated("Use Warp")
 @Serializable
 data class LegacyWarp(
     val serverName: String,

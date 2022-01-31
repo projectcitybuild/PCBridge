@@ -3,7 +3,6 @@ package com.projectcitybuild.platforms.bungeecord
 import com.projectcitybuild.core.contracts.BungeecordFeatureModule
 import com.projectcitybuild.features.bans.BanModule
 import com.projectcitybuild.features.chat.ChatModule
-import com.projectcitybuild.features.hub.HubModule
 import com.projectcitybuild.features.importer.ImporterModule
 import com.projectcitybuild.features.joinmessage.JoinMessageModule
 import com.projectcitybuild.features.playercache.PlayerCacheModule
@@ -25,7 +24,6 @@ class BungeecordFeatureListModule {
     fun modules(
         banModule: BanModule,
         chatModule: ChatModule.Bungeecord,
-        hubModule: HubModule.Bungeecord,
         joinMessageModule: JoinMessageModule.Bungeecord,
         importModule: ImporterModule,
         playerCacheModule: PlayerCacheModule,
@@ -34,7 +32,6 @@ class BungeecordFeatureListModule {
     ): List<BungeecordFeatureModule> = listOf(
         banModule,
         chatModule,
-        hubModule,
         joinMessageModule,
         importModule,
         playerCacheModule,

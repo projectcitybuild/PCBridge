@@ -1,4 +1,4 @@
-package com.projectcitybuild.features.hub.storage
+package com.projectcitybuild.features.hub
 
 import com.projectcitybuild.entities.LegacyWarp
 import kotlinx.coroutines.CoroutineScope
@@ -9,6 +9,7 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.io.File
 
+@Deprecated("Use HubRepository instead")
 class HubFileStorage(
     private val folderPath: File,
 ) {

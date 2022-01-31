@@ -18,9 +18,6 @@ commands:
   checkban:
     description: "Checks whether a player is currently banned from the server"
     usage: "/checkban <name>"
-  hub:
-    description: "Teleports to the Hub server"
-    usage: "/hub"
   ignore:
     description: "Hides any chat from a player and prevents them direct messaging you"
     usage: "/ignore <name>"
