@@ -21,11 +21,14 @@ class CreateWarpUseCaseImplTest {
 
     private lateinit var useCase: CreateWarpUseCase
 
-    private val warpRepository = mock(WarpRepository::class.java)
-    private val time = mock(Time::class.java)
+    private lateinit var warpRepository: WarpRepository
+    private lateinit var time: Time
 
     @BeforeEach
     fun setUp() {
+        warpRepository = mock(WarpRepository::class.java)
+        time = mock(Time::class.java)
+
         useCase = CreateWarpUseCaseImpl(warpRepository, time)
     }
 
@@ -45,7 +48,7 @@ class CreateWarpUseCaseImplTest {
         val location = CrossServerLocationMock()
         val now = LocalDateTime.now()
 
-        `when`(warpRepository.first(warpName)).thenReturn(null)
+        `when`(warpRepository.exists(warpName)).thenReturn(true)
         `when`(time.now()).thenReturn(now)
 
         val result = useCase.createWarp(warpName, location)
