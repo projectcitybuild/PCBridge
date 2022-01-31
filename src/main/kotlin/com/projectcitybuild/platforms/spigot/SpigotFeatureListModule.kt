@@ -22,7 +22,7 @@ class SpigotFeatureListModule {
     @SpigotFeatureModules
     fun modules(
         chatModule: ChatModule.Spigot,
-        hubModule: HubModule.Spigot,
+        hubModule: HubModule,
         joinMessageModule: JoinMessageModule.Spigot,
         teleportModule: TeleportModule.Spigot,
         teleportHistoryModule: TeleportHistoryModule.Spigot,

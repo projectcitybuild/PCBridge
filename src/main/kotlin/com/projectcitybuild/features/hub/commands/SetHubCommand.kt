@@ -2,19 +2,18 @@ package com.projectcitybuild.features.hub.commands
 
 import com.projectcitybuild.core.InvalidCommandArgumentsException
 import com.projectcitybuild.entities.CrossServerLocation
-import com.projectcitybuild.entities.SubChannel
-import com.projectcitybuild.entities.Warp
+import com.projectcitybuild.entities.PluginConfig
+import com.projectcitybuild.features.hub.repositories.HubRepository
+import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.modules.textcomponentbuilder.send
-import com.projectcitybuild.platforms.spigot.MessageToBungeecord
 import com.projectcitybuild.platforms.spigot.environment.SpigotCommand
 import com.projectcitybuild.platforms.spigot.environment.SpigotCommandInput
 import org.bukkit.entity.Player
-import org.bukkit.plugin.Plugin
-import java.time.LocalDateTime
 import javax.inject.Inject
 
 class SetHubCommand @Inject constructor(
-    private val plugin: Plugin
+    private val hubRepository: HubRepository,
+    private val config: PlatformConfig,
 ): SpigotCommand {
 
     override val label = "sethub"
@@ -25,27 +24,22 @@ class SetHubCommand @Inject constructor(
         if (input.args.isNotEmpty()) {
             throw InvalidCommandArgumentsException()
         }
-        val player = input.sender as? Player
-        if (player == null) {
+        if (input.sender !is Player) {
             input.sender.send().error("Console cannot use this command")
             return
         }
-
-        val warp = Warp(
-            "hub",
-            CrossServerLocation(
-                serverName,
-                worldName,
-                x,
-                y,
-                z,
-                pitch,
-                yaw,
-            ),
-            LocalDateTime.now(),
+        val playerLocation = input.sender.location
+        val location = CrossServerLocation(
+            serverName = config.get(PluginConfig.SPIGOT_SERVER_NAME),
+            playerLocation.world.name,
+            playerLocation.x,
+            playerLocation.y,
+            playerLocation.z,
+            playerLocation.pitch,
+            playerLocation.yaw,
         )
-        hubRepository.save(warp, receiver.uniqueId)
+        hubRepository.set(location)
 
-        receiver.send().success("Destination of /hub has been set")
+        input.sender.send().success("Destination of /hub has been set")
     }
 }
