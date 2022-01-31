@@ -17,7 +17,7 @@ class `20220201_add_hub`: DatabaseMigration {
 	                |   `z` DOUBLE NOT NULL DEFAULT 0,
 	                |   `pitch` FLOAT NOT NULL DEFAULT 0,
 	                |   `yaw` FLOAT NOT NULL DEFAULT 0,
-	                |   `created_at` DATETIME NOT NULL,
+	                |   `created_at` DATETIME NOT NULL
                     |);
                     """
                 .trimMargin("|")

@@ -1,6 +1,7 @@
 package com.projectcitybuild.features.importer.commands
 
 import com.projectcitybuild.core.InvalidCommandArgumentsException
+import com.projectcitybuild.features.hub.storage.HubFileStorage
 import com.projectcitybuild.modules.database.DataSource
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
@@ -21,9 +22,39 @@ class ImportCommand @Inject constructor(
     override suspend fun execute(input: BungeecordCommandInput) {
         when {
             input.args.isEmpty() -> throw InvalidCommandArgumentsException()
+            input.args.first() == "import" -> import(input.sender, input.args)
             else -> throw InvalidCommandArgumentsException()
         }
         input.sender.send().success("Migration complete")
+    }
+
+    private fun import(sender: CommandSender, args: List<String>) {
+        if (args.size <= 1) throw InvalidCommandArgumentsException()
+
+        val name = args[1]
+        when (name) {
+            "hub" -> {
+                val storage = HubFileStorage(plugin.dataFolder)
+                val hub = storage.load()
+
+                if (hub != null) {
+                    dataSource.database().executeInsert(
+                        "INSERT INTO `hub` VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                        hub.serverName,
+                        hub.worldName,
+                        hub.x,
+                        hub.y,
+                        hub.z,
+                        hub.pitch,
+                        hub.yaw,
+                        hub.createdAt
+                    )
+                } else {
+                    sender.send().error("Hub not found")
+                }
+            }
+            else -> sender.send().error("Invalid import")
+        }
     }
 
     override fun onTabComplete(sender: CommandSender?, args: List<String>): Iterable<String>? {

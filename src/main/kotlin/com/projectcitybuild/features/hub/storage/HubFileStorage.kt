@@ -9,6 +9,7 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.io.File
 
+@Deprecated("Use HubRepository instead")
 class HubFileStorage(
     private val folderPath: File,
 ) {
