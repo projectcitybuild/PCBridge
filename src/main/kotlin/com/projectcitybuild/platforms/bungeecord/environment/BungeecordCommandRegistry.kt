@@ -34,7 +34,7 @@ class BungeecordCommandRegistry @Inject constructor(
         }
 
         override fun onTabComplete(sender: CommandSender?, args: Array<out String>?): MutableIterable<String> {
-            var improvedArgs = args?.filter { it.isNotEmpty() } ?: emptyList()
+            val improvedArgs = args?.filter { it.isNotEmpty() } ?: emptyList()
 
             val list = tabComplete(sender, improvedArgs) ?: emptyList()
             return list.toMutableList()

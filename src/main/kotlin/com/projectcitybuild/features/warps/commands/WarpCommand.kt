@@ -4,16 +4,19 @@ import com.projectcitybuild.core.InvalidCommandArgumentsException
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Success
 import com.projectcitybuild.entities.PluginConfig
+import com.projectcitybuild.features.warps.repositories.WarpRepository
 import com.projectcitybuild.features.warps.usecases.WarpUseCase
 import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.platforms.spigot.environment.SpigotCommand
 import com.projectcitybuild.platforms.spigot.environment.SpigotCommandInput
+import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import javax.inject.Inject
 
 class WarpCommand @Inject constructor(
     private val warpUseCase: WarpUseCase,
+    private val warpRepository: WarpRepository,
     private val config: PlatformConfig,
 ): SpigotCommand {
 
@@ -54,11 +57,11 @@ class WarpCommand @Inject constructor(
         }
     }
 
-//    override fun onTabComplete(sender: CommandSender?, args: List<String>): Iterable<String>? {
-//        return when {
-//            args.isEmpty() -> warpRepository.all().map { it.name }
-//            args.size == 1 -> warpRepository.all().map { it.name }.filter { it.lowercase().startsWith(args.first()) }
-//            else -> null
-//        }
-//    }
+    override fun onTabComplete(sender: CommandSender?, args: List<String>): Iterable<String>? {
+        return when {
+            args.isEmpty() -> warpRepository.all().map { it.name }
+            args.size == 1 -> warpRepository.all().map { it.name }.filter { it.lowercase().startsWith(args.first()) }
+            else -> null
+        }
+    }
 }

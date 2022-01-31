@@ -1,5 +1,7 @@
 package com.projectcitybuild.platforms.spigot.environment
 
+import org.bukkit.command.CommandSender
+
 /**
  * Represents a Command that a user can use to perform
  * some kind of action.
@@ -23,4 +25,6 @@ interface SpigotCommand {
     val usageHelp: String
 
     suspend fun execute(input: SpigotCommandInput)
+
+    fun onTabComplete(sender: CommandSender?, args: List<String>): Iterable<String>? = null
 }

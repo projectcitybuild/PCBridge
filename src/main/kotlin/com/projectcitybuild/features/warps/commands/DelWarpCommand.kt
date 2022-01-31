@@ -3,14 +3,17 @@ package com.projectcitybuild.features.warps.commands
 import com.projectcitybuild.core.InvalidCommandArgumentsException
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Success
+import com.projectcitybuild.features.warps.repositories.WarpRepository
 import com.projectcitybuild.features.warps.usecases.DeleteWarpUseCase
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.platforms.spigot.environment.SpigotCommand
 import com.projectcitybuild.platforms.spigot.environment.SpigotCommandInput
+import org.bukkit.command.CommandSender
 import javax.inject.Inject
 
 class DelWarpCommand @Inject constructor(
     private val deleteWarpUseCase: DeleteWarpUseCase,
+    private val warpRepository: WarpRepository,
 ): SpigotCommand {
 
     override val label: String = "delwarp"
@@ -37,11 +40,11 @@ class DelWarpCommand @Inject constructor(
         }
     }
 
-//    override fun onTabComplete(sender: CommandSender?, args: List<String>): Iterable<String>? {
-//        return when {
-//            args.isEmpty() -> warpRepository.all().map { it.name }
-//            args.size == 1 -> warpRepository.all().map { it.name }.filter { it.lowercase().startsWith(args.first()) }
-//            else -> null
-//        }
-//    }
+    override fun onTabComplete(sender: CommandSender?, args: List<String>): Iterable<String>? {
+        return when {
+            args.isEmpty() -> warpRepository.all().map { it.name }
+            args.size == 1 -> warpRepository.all().map { it.name }.filter { it.lowercase().startsWith(args.first()) }
+            else -> null
+        }
+    }
 }
