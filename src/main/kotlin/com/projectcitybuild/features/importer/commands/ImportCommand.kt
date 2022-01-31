@@ -1,7 +1,7 @@
 package com.projectcitybuild.features.importer.commands
 
 import com.projectcitybuild.core.InvalidCommandArgumentsException
-import com.projectcitybuild.features.hub.storage.HubFileStorage
+import com.projectcitybuild.features.hub.HubFileStorage
 import com.projectcitybuild.modules.database.DataSource
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
@@ -15,9 +15,9 @@ class ImportCommand @Inject constructor(
     private val dataSource: DataSource,
 ): BungeecordCommand {
 
-    override val label = "importpcb"
-    override val permission = "pcbridge.import"
-    override val usageHelp = "/importpcb"
+    override val label = "pcbridge"
+    override val permission = "pcbridge.utilities"
+    override val usageHelp = "/pcbridge"
 
     override suspend fun execute(input: BungeecordCommandInput) {
         when {
@@ -47,7 +47,7 @@ class ImportCommand @Inject constructor(
                         hub.z,
                         hub.pitch,
                         hub.yaw,
-                        hub.createdAt
+                        hub.createdAt.unwrapped
                     )
                 } else {
                     sender.send().error("Hub not found")

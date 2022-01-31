@@ -11,7 +11,7 @@ import com.projectcitybuild.modules.logger.implementations.BungeecordLogger
 import com.projectcitybuild.modules.network.APIClient
 import com.projectcitybuild.modules.playerconfig.PlayerConfigCache
 import com.projectcitybuild.modules.sessioncache.BungeecordSessionCache
-import com.projectcitybuild.features.hub.storage.HubFileStorage
+import com.projectcitybuild.features.hub.HubFileStorage
 import com.projectcitybuild.modules.errorreporting.ErrorReporter
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandRegistry
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordListenerRegistry
