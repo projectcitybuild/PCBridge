@@ -1,13 +1,16 @@
 package com.projectcitybuild.features.hub.commands
 
 import com.projectcitybuild.core.InvalidCommandArgumentsException
+import com.projectcitybuild.entities.CrossServerLocation
 import com.projectcitybuild.entities.SubChannel
+import com.projectcitybuild.entities.Warp
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.platforms.spigot.MessageToBungeecord
 import com.projectcitybuild.platforms.spigot.environment.SpigotCommand
 import com.projectcitybuild.platforms.spigot.environment.SpigotCommandInput
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
+import java.time.LocalDateTime
 import javax.inject.Inject
 
 class SetHubCommand @Inject constructor(
@@ -28,18 +31,21 @@ class SetHubCommand @Inject constructor(
             return
         }
 
-        MessageToBungeecord(
-            plugin = plugin,
-            sender = player,
-            subChannel = SubChannel.SET_HUB,
-            params = arrayOf(
-                player.world.name,
-                player.location.x,
-                player.location.y,
-                player.location.z,
-                player.location.pitch,
-                player.location.yaw,
-            )
-        ).send()
+        val warp = Warp(
+            "hub",
+            CrossServerLocation(
+                serverName,
+                worldName,
+                x,
+                y,
+                z,
+                pitch,
+                yaw,
+            ),
+            LocalDateTime.now(),
+        )
+        hubRepository.save(warp, receiver.uniqueId)
+
+        receiver.send().success("Destination of /hub has been set")
     }
 }
