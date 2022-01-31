@@ -1,13 +1,13 @@
 package com.projectcitybuild.features.warps.usecases
 
-import com.projectcitybuild.WarpMock
 import com.projectcitybuild.entities.PluginConfig
 import com.projectcitybuild.features.warps.repositories.WarpRepository
 import com.projectcitybuild.features.warps.usecases.warplist.WarpListUseCase
 import com.projectcitybuild.features.warps.usecases.warplist.WarpListUseCaseImpl
 import com.projectcitybuild.modules.config.PlatformConfig
 import kotlinx.coroutines.test.runTest
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.powermock.api.mockito.PowerMockito.`when`
@@ -30,11 +30,7 @@ class WarpListUseCaseImplTest {
 
     @Test
     fun `should return all warps sorted`() = runTest {
-        val warps = listOf(
-            WarpMock("b"),
-            WarpMock("c"),
-            WarpMock("a"),
-        )
+        val warps = listOf("b", "c", "a",)
         `when`(warpRepository.names()).thenReturn(warps)
         `when`(config.get(PluginConfig.WARPS_PER_PAGE)).thenReturn(warps.size)
 
@@ -46,25 +42,24 @@ class WarpListUseCaseImplTest {
 
     @Test
     fun `should return all warps when less than page max`() = runTest {
-        val warps = MutableList(3) { index -> WarpMock(name = "warp_$index") }
+        val warps = MutableList(3) { index -> "warp_$index" }
 
         `when`(warpRepository.names()).thenReturn(warps)
         `when`(config.get(PluginConfig.WARPS_PER_PAGE)).thenReturn(3)
 
         val received = useCase.getList(page = 1)
-        val expected = warps.map { it.name }
 
-        expected.forEach {
+        warps.forEach {
             assertTrue(received!!.warps.contains(it))
         }
-        assertEquals(expected.size, received?.warps?.size)
+        assertEquals(warps.size, received?.warps?.size)
         assertEquals(1, received?.currentPage)
         assertEquals(1, received?.totalPages)
     }
 
     @Test
     fun `should return warps paginated when more than page max`() = runTest {
-        val warps = MutableList(5) { index -> WarpMock(name = "warp_$index") }
+        val warps = MutableList(5) { index -> "warp_$index" }
 
         `when`(warpRepository.names()).thenReturn(warps)
         `when`(config.get(PluginConfig.WARPS_PER_PAGE)).thenReturn(2)

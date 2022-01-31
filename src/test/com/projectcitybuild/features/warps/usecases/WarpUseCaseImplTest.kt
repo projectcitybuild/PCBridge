@@ -18,7 +18,6 @@ import org.bukkit.World
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentMatchers.anyString
@@ -83,7 +82,8 @@ class WarpUseCaseImplTest {
         val warp = WarpMock(warpName)
         val server = mock(Server::class.java)
 
-        `when`(warpRepository.names()).thenReturn(listOf(warp))
+        `when`(warpRepository.names()).thenReturn(listOf(warp.name))
+        `when`(warpRepository.first(warpName)).thenReturn(warp)
         `when`(nameGuesser.guessClosest(any(), any())).thenReturn(warpName)
         `when`(server.getWorld(anyString())).thenReturn(null)
 
@@ -93,7 +93,7 @@ class WarpUseCaseImplTest {
     }
 
     @Test
-    fun `should emit PlayerPreWarpEvent event if successful warp`() = runTest {
+    fun `should emit PlayerPreWarpEvent event`() = runTest {
         val warpName = "warp"
         val warp = WarpMock(warpName)
         val server = mock(Server::class.java)
@@ -101,7 +101,8 @@ class WarpUseCaseImplTest {
         val location = Location(world, 1.0, 2.0, 3.0, 4f, 5f)
 
         `when`(player.location).thenReturn(location)
-        `when`(warpRepository.names()).thenReturn(listOf(warp))
+        `when`(warpRepository.names()).thenReturn(listOf(warp.name))
+        `when`(warpRepository.first(warpName)).thenReturn(warp)
         `when`(nameGuesser.guessClosest(any(), any())).thenReturn(warpName)
         `when`(server.getWorld(anyString())).thenReturn(world)
 
@@ -113,7 +114,6 @@ class WarpUseCaseImplTest {
             assertEquals(firstValue.player, player)
             assertEquals(firstValue.currentLocation, location)
         }
-        assertTrue(result is Success)
     }
 
     @Test
@@ -122,7 +122,8 @@ class WarpUseCaseImplTest {
         val warp = WarpMock(warpName)
         val world = mock(World::class.java)
 
-        `when`(warpRepository.names()).thenReturn(listOf(warp))
+        `when`(warpRepository.names()).thenReturn(listOf(warp.name))
+        `when`(warpRepository.first(warpName)).thenReturn(warp)
         `when`(nameGuesser.guessClosest(any(), any())).thenReturn(warpName)
         `when`(server.getWorld(anyString())).thenReturn(world)
 
@@ -150,7 +151,8 @@ class WarpUseCaseImplTest {
         val playerUUID = UUID.randomUUID()
 
         `when`(player.uniqueId).thenReturn(playerUUID)
-        `when`(warpRepository.names()).thenReturn(listOf(warp))
+        `when`(warpRepository.names()).thenReturn(listOf(warp.name))
+        `when`(warpRepository.first(warpName)).thenReturn(warp)
         `when`(nameGuesser.guessClosest(any(), any())).thenReturn(warpName)
         `when`(server.getWorld(anyString())).thenReturn(world)
 
