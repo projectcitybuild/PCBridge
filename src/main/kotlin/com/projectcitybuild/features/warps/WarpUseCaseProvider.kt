@@ -4,6 +4,7 @@ import com.projectcitybuild.features.warps.repositories.QueuedWarpRepository
 import com.projectcitybuild.features.warps.repositories.WarpRepository
 import com.projectcitybuild.features.warps.usecases.*
 import com.projectcitybuild.modules.config.PlatformConfig
+import com.projectcitybuild.modules.datetime.Time
 import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.modules.nameguesser.NameGuesser
 import dagger.Module
@@ -44,8 +45,9 @@ class WarpUseCaseProvider {
     @Provides
     fun provideCreateWarpUseCase(
         warpRepository: WarpRepository,
+        time: Time,
     ): CreateWarpUseCase {
-        return CreateWarpUseCaseImpl(warpRepository)
+        return CreateWarpUseCaseImpl(warpRepository, time)
     }
 
     @Provides

@@ -6,11 +6,12 @@ import com.projectcitybuild.core.utilities.Success
 import com.projectcitybuild.entities.CrossServerLocation
 import com.projectcitybuild.entities.Warp
 import com.projectcitybuild.features.warps.repositories.WarpRepository
-import java.time.LocalDateTime
+import com.projectcitybuild.modules.datetime.Time
 import javax.inject.Inject
 
 class CreateWarpUseCaseImpl @Inject constructor(
     private val warpRepository: WarpRepository,
+    private val time: Time,
 ): CreateWarpUseCase {
 
     override fun createWarp(name: String, location: CrossServerLocation): Result<Unit, CreateWarpUseCase.FailureReason> {
@@ -20,7 +21,7 @@ class CreateWarpUseCaseImpl @Inject constructor(
         val warp = Warp(
             name,
             location,
-            LocalDateTime.now()
+            time.now()
         )
         warpRepository.add(warp)
 

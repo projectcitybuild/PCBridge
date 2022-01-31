@@ -10,7 +10,6 @@ import com.projectcitybuild.features.playercache.PlayerCacheModule
 import com.projectcitybuild.features.ranksync.RankSyncModule
 import com.projectcitybuild.features.teleporthistory.TeleportHistoryModule
 import com.projectcitybuild.features.teleporting.TeleportModule
-import com.projectcitybuild.features.warps.WarpModule
 import dagger.Module
 import dagger.Provides
 import javax.inject.Qualifier

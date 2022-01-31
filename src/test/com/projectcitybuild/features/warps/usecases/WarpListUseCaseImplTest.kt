@@ -11,8 +11,7 @@ import org.junit.jupiter.api.Test
 import org.powermock.api.mockito.PowerMockito.`when`
 import org.powermock.api.mockito.PowerMockito.mock
 
-
-class WarpListUseCaseTest {
+class WarpListUseCaseImplTest {
 
     private lateinit var useCase: WarpListUseCase
 
@@ -21,7 +20,7 @@ class WarpListUseCaseTest {
 
     @BeforeEach
     fun setUp() {
-        useCase = WarpListUseCase(
+        useCase = WarpListUseCaseImpl(
             warpRepository,
             config,
         )

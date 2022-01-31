@@ -4,6 +4,7 @@ import com.projectcitybuild.core.contracts.SpigotFeatureModule
 import com.projectcitybuild.features.warps.WarpUseCaseProvider
 import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.modules.database.DataSourceProvider
+import com.projectcitybuild.modules.datetime.TimeProvider
 import com.projectcitybuild.modules.errorreporting.ErrorReporterProvider
 import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.modules.network.APIClient
@@ -18,6 +19,7 @@ import javax.inject.Singleton
 
 @Singleton
 @Component(modules = [
+    TimeProvider::class,
     ErrorReporterProvider::class,
     SpigotFeatureListModule::class,
     WarpUseCaseProvider::class,
