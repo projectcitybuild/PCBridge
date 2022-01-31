@@ -11,6 +11,9 @@ libraries:
   - com.github.shynixn.mccoroutine:mccoroutine-bukkit-core:1.5.0
 
 commands:
+  back:
+    description: "Teleports back to the last position you teleported from"
+    usage: "/back"
   delwarp:
     description: "Deletes a warp"
     usage: "/delwarp <name>"
