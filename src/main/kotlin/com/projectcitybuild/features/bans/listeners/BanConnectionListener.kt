@@ -47,7 +47,8 @@ class BanConnectionListener @Inject constructor(
                             it.isBold = true
                         }
                         .add("Reason: ") { it.color = ChatColor.GRAY }
-                        .add((ban.reason ?: "No reason provided") + "\n") { it.color = ChatColor.WHITE }
+                        .add(ban.reason ?: "No reason provided") { it.color = ChatColor.WHITE }
+                        .add("\n")
                         .add("Expires: ") { it.color = ChatColor.GRAY }
                         .add((ban.expiresAt?.let { dateTimeFormatter.convert(it, FormatStyle.SHORT) } ?: "Never") + "\n\n") { it.color = ChatColor.WHITE }
                         .add("Appeal @ https://projectcitybuild.com") { it.color = ChatColor.AQUA }
@@ -55,7 +56,7 @@ class BanConnectionListener @Inject constructor(
                     event.isCancelled = true
                 }
 
-                val ip = Sanitizer.sanitizedIP(event.connection.socketAddress.toString())
+                val ip = Sanitizer().sanitizedIP(event.connection.socketAddress.toString())
                 val ipBan = ipBanRepository.get(ip)
                 if (ipBan != null) {
                     event.setCancelReason(TextComponent()
@@ -64,7 +65,8 @@ class BanConnectionListener @Inject constructor(
                             it.isBold = true
                         }
                         .add("Reason: ") { it.color = ChatColor.GRAY }
-                        .add((ipBan.reason ?: "No reason provided") + "\n") { it.color = ChatColor.WHITE }
+                        .add(if (ipBan.reason.isEmpty()) "No reason provided" else ipBan.reason) { it.color = ChatColor.WHITE }
+                        .add("\n")
                         .add("\n\n")
                         .add("Appeal @ https://projectcitybuild.com") { it.color = ChatColor.AQUA }
                     )

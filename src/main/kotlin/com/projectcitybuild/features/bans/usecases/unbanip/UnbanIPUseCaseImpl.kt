@@ -13,7 +13,7 @@ class UnbanIPUseCaseImpl @Inject constructor(
 ): UnbanIPUseCase {
 
     override fun unbanIP(ip: String): Result<Unit, UnbanIPUseCase.FailureReason> {
-        val sanitizedIP = Sanitizer.sanitizedIP(ip)
+        val sanitizedIP = Sanitizer().sanitizedIP(ip)
 
         val isValidIP = Regex.IP.matcher(sanitizedIP).matches()
         if (!isValidIP) {

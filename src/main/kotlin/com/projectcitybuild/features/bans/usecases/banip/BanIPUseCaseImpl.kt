@@ -22,7 +22,7 @@ class BanIPUseCaseImpl @Inject constructor(
         bannerName: String,
         reason: String?
     ): Result<Unit, BanIPUseCase.FailureReason> {
-        val sanitizedIP = Sanitizer.sanitizedIP(ip)
+        val sanitizedIP = Sanitizer().sanitizedIP(ip)
 
         val isValidIP = Regex.IP.matcher(sanitizedIP).matches()
         if (!isValidIP) {
