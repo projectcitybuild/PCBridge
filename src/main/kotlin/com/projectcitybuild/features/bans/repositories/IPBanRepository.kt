@@ -26,7 +26,7 @@ class IPBanRepository @Inject constructor(
             "INSERT INTO `ip_bans` VALUES (?, ?, ?, ?)",
             ipBan.ip,
             ipBan.bannerName,
-            if (ipBan.reason != null && ipBan.reason.isNotEmpty()) ipBan.reason else null,
+            ipBan.reason.ifEmpty { null },
             ipBan.createdAt,
         )
     }

@@ -66,7 +66,7 @@ class BanConnectionListener @Inject constructor(
                             it.isBold = true
                         }
                         .add("Reason: ") { it.color = ChatColor.GRAY }
-                        .add(if (ipBan.reason.isEmpty()) "No reason provided" else ipBan.reason) { it.color = ChatColor.WHITE }
+                        .add(ipBan.reason.ifEmpty { "No reason provided" }) { it.color = ChatColor.WHITE }
                         .add("\n")
                         .add("\n\n")
                         .add("Appeal @ https://projectcitybuild.com") { it.color = ChatColor.AQUA }

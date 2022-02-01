@@ -11,8 +11,8 @@ class `20220201_add_ip_bans`: DatabaseMigration {
             """
                     |CREATE TABLE ip_bans (
                     |   `ip` VARCHAR(50) NOT NULL,
-                    |   `banner_name` VARCHAR(50) NOT NULL,
-	                |   `reason` VARCHAR(50) NULL,
+                    |   `banner_name` VARCHAR(50) NULL,
+	                |   `reason` TEXT NULL,
 	                |   `created_at` DATETIME NOT NULL,
 	                |   PRIMARY KEY (`ip`)
                     |);
