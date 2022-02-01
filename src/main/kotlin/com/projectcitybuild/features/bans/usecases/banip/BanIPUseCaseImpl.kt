@@ -35,16 +35,16 @@ class BanIPUseCaseImpl @Inject constructor(
         }
 
         val ban = IPBan(
-            sanitizedIP,
-            bannerName,
-            reason ?: "",
+            ip = sanitizedIP,
+            bannerName = bannerName,
+            reason = reason ?: "",
             createdAt = time.now(),
         )
         ipBanRepository.put(ban)
 
         playerKicker.kickByIP(
             ip = ip,
-            reason = "You have been banned.\nAppeal @ projectcitybuild.com",
+            reason = "You have been banned.\n\nAppeal @ projectcitybuild.com",
             context = PlayerKicker.KickContext.FATAL,
         )
 
