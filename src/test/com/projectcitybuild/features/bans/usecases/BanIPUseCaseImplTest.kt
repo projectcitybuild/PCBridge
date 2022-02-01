@@ -66,10 +66,11 @@ class BanIPUseCaseImplTest {
 
     @Test
     fun `should ban valid IP`() = runTest {
-        arrayOf(
+        val ips = arrayOf(
             "127.0.0.1",
             "/127.0.0.1:1234", // This should get sanitized
-        ).forEach { ip ->
+        )
+        ips.forEach { ip ->
             val now = LocalDateTime.now()
 
             `when`(ipBanRepository.get(ip)).thenReturn(null)
