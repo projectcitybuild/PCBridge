@@ -37,7 +37,7 @@ class BanIPUseCaseImpl @Inject constructor(
         val ban = IPBan(
             sanitizedIP,
             bannerName,
-            reason,
+            reason ?: "",
             createdAt = time.now(),
         )
         ipBanRepository.put(ban)

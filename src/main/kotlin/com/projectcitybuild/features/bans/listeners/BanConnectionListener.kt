@@ -60,7 +60,7 @@ class BanConnectionListener @Inject constructor(
                 val ipBan = ipBanRepository.get(ip)
                 if (ipBan != null) {
                     event.setCancelReason(TextComponent()
-                        .add("Your are currently banned.\n\n") {
+                        .add("You are currently banned.\n\n") {
                             it.color = ChatColor.RED
                             it.isBold = true
                         }
