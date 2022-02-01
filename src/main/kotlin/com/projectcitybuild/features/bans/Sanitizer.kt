@@ -2,6 +2,9 @@ package com.projectcitybuild.features.bans
 
 object Sanitizer {
 
+//    private val ipPortPattern = Regex(":[0-9]+$")
+    private val ipPortPattern = Regex("^.*:[0-9]+$")
+
     /**
      * Sanitizes an IP fetched from a Bungeecord proxy by
      * stripping out slashes and the port if it exists
@@ -9,15 +12,11 @@ object Sanitizer {
      * eg. /127.0.0.1:1234 becomes 127.0.0.1
      */
     fun sanitizedIP(ip: String): String {
-        var sanitized = ip
+        var sanitized = ip.replace("/", "")
 
-        if (ip.startsWith("/")) {
-            sanitized = sanitized.removePrefix("/")
-        }
-
-        if (ip.contains(":[0-9]+$")) {
+        if (sanitized.matches(ipPortPattern)) {
             val colonIndex = sanitized.indexOf(":")
-            sanitized = sanitized.substring(0..colonIndex)
+            sanitized = sanitized.substring(0 until colonIndex)
         }
 
         return sanitized
