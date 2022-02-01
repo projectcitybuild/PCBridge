@@ -1,8 +1,21 @@
 package com.projectcitybuild.features.bans
 
 import com.projectcitybuild.features.bans.repositories.BanRepository
-import com.projectcitybuild.features.bans.usecases.*
+import com.projectcitybuild.features.bans.repositories.IPBanRepository
+import com.projectcitybuild.features.bans.usecases.authconnection.AuthoriseConnectionUseCase
+import com.projectcitybuild.features.bans.usecases.authconnection.AuthoriseConnectionUseCaseImpl
+import com.projectcitybuild.features.bans.usecases.ban.BanUseCase
+import com.projectcitybuild.features.bans.usecases.ban.BanUseCaseImpl
+import com.projectcitybuild.features.bans.usecases.banip.BanIPUseCase
+import com.projectcitybuild.features.bans.usecases.banip.BanIPUseCaseImpl
+import com.projectcitybuild.features.bans.usecases.checkban.CheckBanUseCase
+import com.projectcitybuild.features.bans.usecases.checkban.CheckBanUseCaseImpl
+import com.projectcitybuild.features.bans.usecases.unban.UnbanUseCase
+import com.projectcitybuild.features.bans.usecases.unban.UnbanUseCaseImpl
+import com.projectcitybuild.features.bans.usecases.unbanip.UnbanIPUseCase
+import com.projectcitybuild.features.bans.usecases.unbanip.UnbanIPUseCaseImpl
 import com.projectcitybuild.modules.datetime.DateTimeFormatter
+import com.projectcitybuild.modules.datetime.Time
 import com.projectcitybuild.modules.playeruuid.PlayerUUIDRepository
 import com.projectcitybuild.modules.proxyadapter.broadcast.MessageBroadcaster
 import com.projectcitybuild.modules.proxyadapter.kick.PlayerKicker
@@ -50,6 +63,37 @@ class BanUseCaseProvider {
             banRepository,
             playerUUIDRepository,
             dateTimeFormatter,
+        )
+    }
+
+    @Provides
+    fun provideBanIPUseCase(
+        ipBanRepository: IPBanRepository,
+        playerKicker: PlayerKicker,
+        time: Time,
+    ): BanIPUseCase {
+        return BanIPUseCaseImpl(
+            ipBanRepository,
+            playerKicker,
+            time,
+        )
+    }
+
+    @Provides
+    fun provideUnbanIPUseCase(
+        ipBanRepository: IPBanRepository,
+    ): UnbanIPUseCase {
+        return UnbanIPUseCaseImpl(ipBanRepository)
+    }
+
+    @Provides
+    fun provideAuthoriseConnectionUseCae(
+        banRepository: BanRepository,
+        ipBanRepository: IPBanRepository,
+    ): AuthoriseConnectionUseCase {
+        return AuthoriseConnectionUseCaseImpl(
+            banRepository,
+            ipBanRepository,
         )
     }
 }

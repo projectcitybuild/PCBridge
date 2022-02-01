@@ -15,6 +15,9 @@ commands:
   ban:
     description: "Bans a player from connecting to the server"
     usage: "/ban <name> [reason]"
+  banip:
+    description: "Bans an exact IP, preventing it from connecting to the server"
+    usage: "/ban <ip>"
   checkban:
     description: "Checks whether a player is currently banned from the server"
     usage: "/checkban <name>"
@@ -48,6 +51,9 @@ commands:
   unban:
     description: "Allows a banned player to connect to the server"
     usage: "/unban <name>"
+  unbanip:
+    description: "Allows the given IP to connect to the server"
+    usage: "/unbanip <ip>"
   unignore:
     description: "Unignores a player and allows them to direct message you"
     usage: "/unignore"

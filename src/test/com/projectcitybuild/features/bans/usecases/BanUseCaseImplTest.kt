@@ -4,6 +4,8 @@ import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.modules.proxyadapter.broadcast.MessageBroadcaster
 import com.projectcitybuild.modules.proxyadapter.kick.PlayerKicker
 import com.projectcitybuild.features.bans.repositories.BanRepository
+import com.projectcitybuild.features.bans.usecases.ban.BanUseCase
+import com.projectcitybuild.features.bans.usecases.ban.BanUseCaseImpl
 import com.projectcitybuild.modules.playeruuid.PlayerUUIDRepository
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
@@ -106,6 +108,6 @@ class BanUseCaseImplTest {
         useCase.ban(playerName, UUID.randomUUID(), "staff_player", "reason")
 
         verify(playerKicker, times(1))
-            .kick(eq(playerUUID), anyString(), eq(PlayerKicker.KickContext.FATAL))
+            .kickByUUID(eq(playerUUID), anyString(), eq(PlayerKicker.KickContext.FATAL))
     }
 }

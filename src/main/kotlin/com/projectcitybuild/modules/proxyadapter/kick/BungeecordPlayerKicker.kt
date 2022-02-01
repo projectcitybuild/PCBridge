@@ -10,7 +10,7 @@ class BungeecordPlayerKicker @Inject constructor(
     private val proxyServer: ProxyServer,
 ): PlayerKicker {
 
-    override fun kick(playerName: String, reason: String, context: PlayerKicker.KickContext) {
+    override fun kickByName(playerName: String, reason: String, context: PlayerKicker.KickContext) {
         val caseInsensitiveName = playerName.lowercase()
 
         proxyServer.players
@@ -18,9 +18,15 @@ class BungeecordPlayerKicker @Inject constructor(
             ?.disconnect(makeTextComponent(reason, context))
     }
 
-    override fun kick(playerUUID: UUID, reason: String, context: PlayerKicker.KickContext) {
+    override fun kickByUUID(playerUUID: UUID, reason: String, context: PlayerKicker.KickContext) {
         proxyServer
             .getPlayer(playerUUID)
+            ?.disconnect(makeTextComponent(reason, context))
+    }
+
+    override fun kickByIP(ip: String, reason: String, context: PlayerKicker.KickContext) {
+        proxyServer.players
+            .firstOrNull { it.socketAddress.toString() == ip }
             ?.disconnect(makeTextComponent(reason, context))
     }
 

@@ -5,6 +5,8 @@ import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Success
 import com.projectcitybuild.entities.responses.GameBan
 import com.projectcitybuild.features.bans.repositories.BanRepository
+import com.projectcitybuild.features.bans.usecases.checkban.CheckBanUseCase
+import com.projectcitybuild.features.bans.usecases.checkban.CheckBanUseCaseImpl
 import com.projectcitybuild.modules.playeruuid.PlayerUUIDRepository
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
