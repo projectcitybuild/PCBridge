@@ -1,9 +1,7 @@
 package com.projectcitybuild.features.bans.listeners
 
 import com.projectcitybuild.core.BungeecordListener
-import com.projectcitybuild.features.bans.Sanitizer
-import com.projectcitybuild.features.bans.repositories.BanRepository
-import com.projectcitybuild.features.bans.repositories.IPBanRepository
+import com.projectcitybuild.features.bans.usecases.authconnection.AuthoriseConnectionUseCase
 import com.projectcitybuild.modules.datetime.DateTimeFormatter
 import com.projectcitybuild.modules.errorreporting.ErrorReporter
 import com.projectcitybuild.modules.logger.PlatformLogger
@@ -23,8 +21,7 @@ import javax.inject.Inject
 
 class BanConnectionListener @Inject constructor(
     private val plugin: Plugin,
-    private val banRepository: BanRepository,
-    private val ipBanRepository: IPBanRepository,
+    private val authoriseConnectionUseCase: AuthoriseConnectionUseCase,
     private val logger: PlatformLogger,
     private val dateTimeFormatter: DateTimeFormatter,
     private val errorReporter: ErrorReporter,
@@ -39,40 +36,38 @@ class BanConnectionListener @Inject constructor(
 
         CoroutineScope(dispatcher).launch {
             runCatching {
-                val ban = banRepository.get(targetPlayerUUID = event.connection.uniqueId)
-                if (ban != null) {
-                    event.setCancelReason(TextComponent()
-                        .add("You are currently banned.\n\n") {
-                            it.color = ChatColor.RED
-                            it.isBold = true
-                        }
-                        .add("Reason: ") { it.color = ChatColor.GRAY }
-                        .add(ban.reason ?: "No reason provided") { it.color = ChatColor.WHITE }
-                        .add("\n")
-                        .add("Expires: ") { it.color = ChatColor.GRAY }
-                        .add((ban.expiresAt?.let { dateTimeFormatter.convert(it, FormatStyle.SHORT) } ?: "Never") + "\n\n") { it.color = ChatColor.WHITE }
-                        .add("Appeal @ https://projectcitybuild.com") { it.color = ChatColor.AQUA }
-                    )
-                    event.isCancelled = true
-                    return@runCatching
-                }
+                val ban = authoriseConnectionUseCase.getBan(
+                    uuid = event.connection.uniqueId,
+                    ip = event.connection.socketAddress,
+                ) ?: return@runCatching
 
-                val ip = Sanitizer().sanitizedIP(event.connection.socketAddress.toString())
-                val ipBan = ipBanRepository.get(ip)
-                if (ipBan != null) {
-                    event.setCancelReason(TextComponent()
-                        .add("You are currently banned.\n\n") {
-                            it.color = ChatColor.RED
-                            it.isBold = true
-                        }
-                        .add("Reason: ") { it.color = ChatColor.GRAY }
-                        .add(ipBan.reason.ifEmpty { "No reason provided" }) { it.color = ChatColor.WHITE }
-                        .add("\n")
-                        .add("\n\n")
-                        .add("Appeal @ https://projectcitybuild.com") { it.color = ChatColor.AQUA }
-                    )
-                    event.isCancelled = true
-                }
+                event.setCancelReason(
+                    when (ban) {
+                        is AuthoriseConnectionUseCase.Ban.UUID -> TextComponent()
+                            .add("You are currently banned.\n\n") {
+                                it.color = ChatColor.RED
+                                it.isBold = true
+                            }
+                            .add("Reason: ") { it.color = ChatColor.GRAY }
+                            .add(ban.value.reason ?: "No reason provided") { it.color = ChatColor.WHITE }
+                            .add("\n")
+                            .add("Expires: ") { it.color = ChatColor.GRAY }
+                            .add((ban.value.expiresAt?.let { dateTimeFormatter.convert(it, FormatStyle.SHORT) } ?: "Never") + "\n\n") { it.color = ChatColor.WHITE }
+                            .add("Appeal @ https://projectcitybuild.com") { it.color = ChatColor.AQUA }
+
+                        is AuthoriseConnectionUseCase.Ban.IP -> TextComponent()
+                            .add("You are currently IP banned.\n\n") {
+                                it.color = ChatColor.RED
+                                it.isBold = true
+                            }
+                            .add("Reason: ") { it.color = ChatColor.GRAY }
+                            .add(ban.value.reason.ifEmpty { "No reason provided" }) { it.color = ChatColor.WHITE }
+                            .add("\n")
+                            .add("\n\n")
+                            .add("Appeal @ https://projectcitybuild.com") { it.color = ChatColor.AQUA }
+                    }
+                )
+                event.isCancelled = true
             }
             .onFailure { throwable ->
                 throwable.message?.let { logger.fatal(it) }

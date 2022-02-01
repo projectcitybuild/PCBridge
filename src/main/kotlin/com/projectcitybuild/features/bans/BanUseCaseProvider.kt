@@ -2,6 +2,8 @@ package com.projectcitybuild.features.bans
 
 import com.projectcitybuild.features.bans.repositories.BanRepository
 import com.projectcitybuild.features.bans.repositories.IPBanRepository
+import com.projectcitybuild.features.bans.usecases.authconnection.AuthoriseConnectionUseCase
+import com.projectcitybuild.features.bans.usecases.authconnection.AuthoriseConnectionUseCaseImpl
 import com.projectcitybuild.features.bans.usecases.ban.BanUseCase
 import com.projectcitybuild.features.bans.usecases.ban.BanUseCaseImpl
 import com.projectcitybuild.features.bans.usecases.banip.BanIPUseCase
@@ -82,5 +84,16 @@ class BanUseCaseProvider {
         ipBanRepository: IPBanRepository,
     ): UnbanIPUseCase {
         return UnbanIPUseCaseImpl(ipBanRepository)
+    }
+
+    @Provides
+    fun provideAuthoriseConnectionUseCae(
+        banRepository: BanRepository,
+        ipBanRepository: IPBanRepository,
+    ): AuthoriseConnectionUseCase {
+        return AuthoriseConnectionUseCaseImpl(
+            banRepository,
+            ipBanRepository,
+        )
     }
 }
