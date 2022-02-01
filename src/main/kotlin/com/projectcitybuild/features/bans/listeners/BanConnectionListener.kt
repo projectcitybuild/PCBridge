@@ -1,6 +1,7 @@
 package com.projectcitybuild.features.bans.listeners
 
 import com.projectcitybuild.core.BungeecordListener
+import com.projectcitybuild.features.bans.Sanitizer
 import com.projectcitybuild.features.bans.repositories.BanRepository
 import com.projectcitybuild.features.bans.repositories.IPBanRepository
 import com.projectcitybuild.modules.datetime.DateTimeFormatter
@@ -54,7 +55,8 @@ class BanConnectionListener @Inject constructor(
                     event.isCancelled = true
                 }
 
-                val ipBan = ipBanRepository.get(event.connection.socketAddress.toString())
+                val ip = Sanitizer.sanitizedIP(event.connection.socketAddress.toString())
+                val ipBan = ipBanRepository.get(ip)
                 if (ipBan != null) {
                     event.setCancelReason(TextComponent()
                         .add("Your are currently banned.\n\n") {

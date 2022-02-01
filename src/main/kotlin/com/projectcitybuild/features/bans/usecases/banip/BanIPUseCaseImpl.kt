@@ -5,6 +5,7 @@ import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Result
 import com.projectcitybuild.core.utilities.Success
 import com.projectcitybuild.entities.IPBan
+import com.projectcitybuild.features.bans.Sanitizer
 import com.projectcitybuild.features.bans.repositories.IPBanRepository
 import com.projectcitybuild.modules.datetime.Time
 import com.projectcitybuild.modules.proxyadapter.kick.PlayerKicker
@@ -21,18 +22,20 @@ class BanIPUseCaseImpl @Inject constructor(
         bannerName: String,
         reason: String?
     ): Result<Unit, BanIPUseCase.FailureReason> {
-        val isValidIP = Regex.IP.matcher(ip).matches()
+        val sanitizedIP = Sanitizer.sanitizedIP(ip)
+
+        val isValidIP = Regex.IP.matcher(sanitizedIP).matches()
         if (!isValidIP) {
             return Failure(BanIPUseCase.FailureReason.INVALID_IP)
         }
 
-        val existingBan = ipBanRepository.get(ip)
+        val existingBan = ipBanRepository.get(sanitizedIP)
         if (existingBan != null) {
             return Failure(BanIPUseCase.FailureReason.IP_ALREADY_BANNED)
         }
 
         val ban = IPBan(
-            ip,
+            sanitizedIP,
             bannerName,
             reason,
             createdAt = time.now(),
