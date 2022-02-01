@@ -8,6 +8,7 @@ import com.projectcitybuild.features.bans.usecases.banip.BanIPUseCase
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
+import net.md_5.bungee.api.CommandSender
 import net.md_5.bungee.api.ProxyServer
 import javax.inject.Inject
 
@@ -45,6 +46,14 @@ class BanIPCommand @Inject constructor(
         }
         if (result is Success) {
             input.sender.send().success("IP $targetIP has been banned")
+        }
+    }
+
+    override fun onTabComplete(sender: CommandSender?, args: List<String>): Iterable<String>? {
+        return when {
+            args.isEmpty() -> proxyServer.players.map { it.name }
+            args.size == 1 -> proxyServer.players.map { it.name }.filter { it.lowercase().startsWith(args.first().lowercase()) }
+            else -> null
         }
     }
 }
