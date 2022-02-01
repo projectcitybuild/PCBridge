@@ -32,7 +32,7 @@ class BanIPCommand @Inject constructor(
             ?: input.args.first()
 
         val reason = input.args.joinWithWhitespaces(1 until input.args.size)
-        val bannerName = if (input.isConsoleSender) "CONSOLE" else input.sender.name
+        val bannerName = if (input.isConsoleSender) null else input.sender.name
 
         val result = banIPUseCase.banIP(targetIP, bannerName, reason)
 

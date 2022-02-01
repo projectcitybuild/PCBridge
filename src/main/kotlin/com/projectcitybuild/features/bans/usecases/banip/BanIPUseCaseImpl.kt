@@ -19,7 +19,7 @@ class BanIPUseCaseImpl @Inject constructor(
 
     override fun banIP(
         ip: String,
-        bannerName: String,
+        bannerName: String?,
         reason: String?
     ): Result<Unit, BanIPUseCase.FailureReason> {
         val sanitizedIP = Sanitizer().sanitizedIP(ip)

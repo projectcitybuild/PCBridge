@@ -7,5 +7,5 @@ interface BanIPUseCase {
         IP_ALREADY_BANNED,
         INVALID_IP,
     }
-    fun banIP(ip: String, bannerName: String, reason: String? = null): Result<Unit, FailureReason>
+    fun banIP(ip: String, bannerName: String? = null, reason: String? = null): Result<Unit, FailureReason>
 }
