@@ -21,7 +21,7 @@ class BungeecordPlayerKicker @Inject constructor(
     override fun kick(playerUUID: UUID, reason: String, context: PlayerKicker.KickContext) {
         proxyServer
             .getPlayer(playerUUID)
-            .disconnect(makeTextComponent(reason, context))
+            ?.disconnect(makeTextComponent(reason, context))
     }
 
     private fun makeTextComponent(message: String, context: PlayerKicker.KickContext): TextComponent {
