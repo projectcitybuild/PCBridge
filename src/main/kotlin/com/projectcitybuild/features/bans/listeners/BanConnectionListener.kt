@@ -54,6 +54,7 @@ class BanConnectionListener @Inject constructor(
                         .add("Appeal @ https://projectcitybuild.com") { it.color = ChatColor.AQUA }
                     )
                     event.isCancelled = true
+                    return@runCatching
                 }
 
                 val ip = Sanitizer().sanitizedIP(event.connection.socketAddress.toString())
