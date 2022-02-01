@@ -2,6 +2,7 @@ package com.projectcitybuild.features.bans.listeners
 
 import com.projectcitybuild.core.BungeecordListener
 import com.projectcitybuild.features.bans.repositories.BanRepository
+import com.projectcitybuild.features.bans.repositories.IPBanRepository
 import com.projectcitybuild.modules.datetime.DateTimeFormatter
 import com.projectcitybuild.modules.errorreporting.ErrorReporter
 import com.projectcitybuild.modules.logger.PlatformLogger
@@ -22,6 +23,7 @@ import javax.inject.Inject
 class BanConnectionListener @Inject constructor(
     private val plugin: Plugin,
     private val banRepository: BanRepository,
+    private val ipBanRepository: IPBanRepository,
     private val logger: PlatformLogger,
     private val dateTimeFormatter: DateTimeFormatter,
     private val errorReporter: ErrorReporter,
@@ -47,6 +49,21 @@ class BanConnectionListener @Inject constructor(
                         .add((ban.reason ?: "No reason provided") + "\n") { it.color = ChatColor.WHITE }
                         .add("Expires: ") { it.color = ChatColor.GRAY }
                         .add((ban.expiresAt?.let { dateTimeFormatter.convert(it, FormatStyle.SHORT) } ?: "Never") + "\n\n") { it.color = ChatColor.WHITE }
+                        .add("Appeal @ https://projectcitybuild.com") { it.color = ChatColor.AQUA }
+                    )
+                    event.isCancelled = true
+                }
+
+                val ipBan = ipBanRepository.get(event.connection.socketAddress.toString())
+                if (ipBan != null) {
+                    event.setCancelReason(TextComponent()
+                        .add("Your are currently banned.\n\n") {
+                            it.color = ChatColor.RED
+                            it.isBold = true
+                        }
+                        .add("Reason: ") { it.color = ChatColor.GRAY }
+                        .add((ipBan.reason ?: "No reason provided") + "\n") { it.color = ChatColor.WHITE }
+                        .add("\n\n")
                         .add("Appeal @ https://projectcitybuild.com") { it.color = ChatColor.AQUA }
                     )
                     event.isCancelled = true

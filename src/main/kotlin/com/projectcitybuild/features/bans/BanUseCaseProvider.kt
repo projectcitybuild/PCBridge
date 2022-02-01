@@ -10,6 +10,8 @@ import com.projectcitybuild.features.bans.usecases.checkban.CheckBanUseCase
 import com.projectcitybuild.features.bans.usecases.checkban.CheckBanUseCaseImpl
 import com.projectcitybuild.features.bans.usecases.unban.UnbanUseCase
 import com.projectcitybuild.features.bans.usecases.unban.UnbanUseCaseImpl
+import com.projectcitybuild.features.bans.usecases.unbanip.UnbanIPUseCase
+import com.projectcitybuild.features.bans.usecases.unbanip.UnbanIPUseCaseImpl
 import com.projectcitybuild.modules.datetime.DateTimeFormatter
 import com.projectcitybuild.modules.datetime.Time
 import com.projectcitybuild.modules.playeruuid.PlayerUUIDRepository
@@ -65,11 +67,20 @@ class BanUseCaseProvider {
     @Provides
     fun provideBanIPUseCase(
         ipBanRepository: IPBanRepository,
+        playerKicker: PlayerKicker,
         time: Time,
     ): BanIPUseCase {
         return BanIPUseCaseImpl(
             ipBanRepository,
+            playerKicker,
             time,
         )
+    }
+
+    @Provides
+    fun provideUnbanIPUseCase(
+        ipBanRepository: IPBanRepository,
+    ): UnbanIPUseCase {
+        return UnbanIPUseCaseImpl(ipBanRepository)
     }
 }

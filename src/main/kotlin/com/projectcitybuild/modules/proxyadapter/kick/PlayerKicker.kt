@@ -7,15 +7,21 @@ interface PlayerKicker {
         FATAL,
     }
 
-    fun kick(
+    fun kickByName(
         playerName: String,
         reason: String,
-        context: KickContext = KickContext.FATAL
+        context: KickContext = KickContext.FATAL,
     )
 
-    fun kick(
+    fun kickByUUID(
         playerUUID: UUID,
         reason: String,
-        context: KickContext = KickContext.FATAL
+        context: KickContext = KickContext.FATAL,
+    )
+
+    fun kickByIP(
+        ip: String,
+        reason: String,
+        context: KickContext = KickContext.FATAL,
     )
 }

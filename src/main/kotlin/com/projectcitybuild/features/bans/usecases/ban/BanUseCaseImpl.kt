@@ -44,7 +44,7 @@ class BanUseCaseImpl @Inject constructor(
                     }
                 )
             )
-            playerKicker.kick(
+            playerKicker.kickByUUID(
                 playerUUID = targetPlayerUUID,
                 reason = "You have been banned.\nAppeal @ projectcitybuild.com",
                 context = PlayerKicker.KickContext.FATAL,

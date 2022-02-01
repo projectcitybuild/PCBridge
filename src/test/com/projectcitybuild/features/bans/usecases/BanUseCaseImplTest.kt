@@ -108,6 +108,6 @@ class BanUseCaseImplTest {
         useCase.ban(playerName, UUID.randomUUID(), "staff_player", "reason")
 
         verify(playerKicker, times(1))
-            .kick(eq(playerUUID), anyString(), eq(PlayerKicker.KickContext.FATAL))
+            .kickByUUID(eq(playerUUID), anyString(), eq(PlayerKicker.KickContext.FATAL))
     }
 }
