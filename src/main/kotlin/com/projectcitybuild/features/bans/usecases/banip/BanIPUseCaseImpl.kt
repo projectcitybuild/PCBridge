@@ -27,17 +27,19 @@ class BanIPUseCaseImpl @Inject constructor(
         if (!isValidIP) {
             return Failure(BanIPUseCase.FailureReason.INVALID_IP)
         }
-        try {
-            val ban = IPBan(
-                ip,
-                bannerName,
-                reason,
-                createdAt = time.now(),
-            )
-            ipBanRepository.put(ban)
-        } catch (e: IPBanRepository.IPAlreadyBanned) {
+
+        val existingBan = ipBanRepository.get(ip)
+        if (existingBan != null) {
             return Failure(BanIPUseCase.FailureReason.IP_ALREADY_BANNED)
         }
+
+        val ban = IPBan(
+            ip,
+            bannerName,
+            reason,
+            createdAt = time.now(),
+        )
+        ipBanRepository.put(ban)
 
         return Success(Unit)
     }
