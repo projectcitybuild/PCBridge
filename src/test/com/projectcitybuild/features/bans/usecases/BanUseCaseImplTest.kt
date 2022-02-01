@@ -4,6 +4,8 @@ import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.modules.proxyadapter.broadcast.MessageBroadcaster
 import com.projectcitybuild.modules.proxyadapter.kick.PlayerKicker
 import com.projectcitybuild.features.bans.repositories.BanRepository
+import com.projectcitybuild.features.bans.usecases.ban.BanUseCase
+import com.projectcitybuild.features.bans.usecases.ban.BanUseCaseImpl
 import com.projectcitybuild.modules.playeruuid.PlayerUUIDRepository
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach

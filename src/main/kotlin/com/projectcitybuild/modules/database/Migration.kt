@@ -11,6 +11,7 @@ object Migration {
         `20220115_player_configs_warps`(),
         `20220120_teleport_history`(),
         `20220201_add_hub`(),
+        `20220201_add_ip_bans`(),
     )
 
     fun executeIfNecessary(

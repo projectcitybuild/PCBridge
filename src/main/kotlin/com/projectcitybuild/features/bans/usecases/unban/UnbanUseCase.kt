@@ -1,4 +1,4 @@
-package com.projectcitybuild.features.bans.usecases
+package com.projectcitybuild.features.bans.usecases.unban
 
 import com.projectcitybuild.core.utilities.Result
 import java.util.*

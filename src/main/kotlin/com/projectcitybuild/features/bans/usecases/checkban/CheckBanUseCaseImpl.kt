@@ -1,4 +1,4 @@
-package com.projectcitybuild.features.bans.usecases
+package com.projectcitybuild.features.bans.usecases.checkban
 
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Result
