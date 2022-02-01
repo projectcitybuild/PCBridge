@@ -2,8 +2,7 @@ package com.projectcitybuild.features.bans.listeners
 
 import com.projectcitybuild.DateTimeFormatterMock
 import com.projectcitybuild.GameBanMock
-import com.projectcitybuild.features.bans.repositories.BanRepository
-import com.projectcitybuild.features.bans.repositories.IPBanRepository
+import com.projectcitybuild.features.bans.usecases.authconnection.AuthoriseConnectionUseCase
 import com.projectcitybuild.modules.errorreporting.ErrorReporter
 import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.stubs.IPBanMock
@@ -29,33 +28,29 @@ class BanConnectionListenerTest {
     private lateinit var listener: BanConnectionListener
 
     private lateinit var scheduler: TestCoroutineScheduler
-    private lateinit var banRepository: BanRepository
-    private lateinit var ipBanRepository: IPBanRepository
+    private lateinit var authoriseConnectionListener: AuthoriseConnectionUseCase
+    private lateinit var errorReporter: ErrorReporter
 
     @BeforeEach
     fun setUp() {
-        banRepository = mock(BanRepository::class.java)
-        ipBanRepository = mock(IPBanRepository::class.java)
+        authoriseConnectionListener = mock(AuthoriseConnectionUseCase::class.java)
         scheduler = TestCoroutineScheduler()
+        errorReporter = mock(ErrorReporter::class.java)
 
         listener = BanConnectionListener(
             mock(Plugin::class.java),
-            banRepository,
-            ipBanRepository,
+            authoriseConnectionListener,
             mock(PlatformLogger::class.java),
             DateTimeFormatterMock(),
-            mock(ErrorReporter::class.java),
+            errorReporter,
         ).apply {
             dispatcher = StandardTestDispatcher(scheduler)
         }
     }
 
-    private fun mockedEvent(ip: String = "127.0.0.1", uuid: UUID = UUID.randomUUID()): LoginEvent {
-        val socketAddress = mock(SocketAddress::class.java).also {
-            `when`(it.toString()).thenReturn(ip)
-        }
+    private fun loginEvent(uuid: UUID, ip: SocketAddress): LoginEvent {
         val connection = mock(PendingConnection::class.java).also {
-            `when`(it.socketAddress).thenReturn(socketAddress)
+            `when`(it.socketAddress).thenReturn(ip)
             `when`(it.uniqueId).thenReturn(uuid)
         }
         return mock(LoginEvent::class.java).also {
@@ -63,54 +58,77 @@ class BanConnectionListenerTest {
         }
     }
 
+    private fun socketAddress(ip: String = "127.0.0.1"): SocketAddress {
+        return mock(SocketAddress::class.java).also {
+            `when`(it.toString()).thenReturn(ip)
+        }
+    }
+
     @Test
     fun `cancels login event if player is banned`() = runTest {
-        val playerIP = "127.0.0.1"
-        val playerUUID = UUID.randomUUID()
-        val event = mockedEvent(playerIP)
-        val connection = mock(PendingConnection::class.java)
+        arrayOf(
+            AuthoriseConnectionUseCase.Ban.UUID(GameBanMock()),
+            AuthoriseConnectionUseCase.Ban.IP(IPBanMock()),
+        ).forEach { ban ->
+            val uuid = UUID.randomUUID()
+            val ip = socketAddress()
+            val event = loginEvent(uuid, ip)
 
-        `when`(banRepository.get(playerUUID)).thenReturn(GameBanMock())
-        `when`(ipBanRepository.get(playerIP)).thenReturn(null)
-        `when`(event.connection).thenReturn(connection)
-        `when`(connection.uniqueId).thenReturn(playerUUID)
+            `when`(authoriseConnectionListener.getBan(uuid, ip)).thenReturn(ban)
 
-        listener.onLoginEvent(event)
-        scheduler.runCurrent()
+            listener.onLoginEvent(event)
+            scheduler.runCurrent()
 
-        verify(event).isCancelled = true
-        verify(event).setCancelReason(any(BaseComponent::class.java))
+            verify(event).isCancelled = true
+            verify(event).setCancelReason(any(BaseComponent::class.java))
+            verify(event).completeIntent(any())
+        }
     }
 
     @Test
-    fun `cancels login event if IP is banned`() = runTest {
-        val playerIP = "127.0.0.1"
-        val playerUUID = UUID.randomUUID()
-        val event = mockedEvent(playerIP, playerUUID)
+    fun `does not cancel login event if player is not banned`() = runTest {
+        val uuid = UUID.randomUUID()
+        val ip = socketAddress()
+        val event = loginEvent(uuid, ip)
 
-        `when`(banRepository.get(playerUUID)).thenReturn(null)
-        `when`(ipBanRepository.get(playerIP)).thenReturn(IPBanMock(playerIP))
-
-        listener.onLoginEvent(event)
-        scheduler.runCurrent()
-
-        verify(event).isCancelled = true
-        verify(event).setCancelReason(any(BaseComponent::class.java))
-    }
-
-    @Test
-    fun `does not cancel login event if player and IP is not banned`() = runTest {
-        val playerIP = "127.0.0.1"
-        val playerUUID = UUID.randomUUID()
-        val event = mockedEvent(playerIP, playerUUID)
-
-        `when`(banRepository.get(playerUUID)).thenReturn(null)
-        `when`(ipBanRepository.get(playerIP)).thenReturn(null)
+        `when`(authoriseConnectionListener.getBan(uuid, ip)).thenReturn(null)
 
         listener.onLoginEvent(event)
         scheduler.runCurrent()
 
         verify(event, never()).isCancelled
         verify(event, never()).setCancelReason(any(BaseComponent::class.java))
+        verify(event).completeIntent(any())
+    }
+
+    @Test
+    fun `cancels login event if cannot fetch ban`() = runTest {
+        val uuid = UUID.randomUUID()
+        val ip = socketAddress()
+        val event = loginEvent(uuid, ip)
+
+        `when`(authoriseConnectionListener.getBan(uuid, ip)).thenThrow(Exception())
+
+        listener.onLoginEvent(event)
+        scheduler.runCurrent()
+
+        verify(event).isCancelled = true
+        verify(event).setCancelReason(any(BaseComponent::class.java))
+        verify(event).completeIntent(any())
+    }
+
+    @Test
+    fun `reports error if cannot fetch ban`() = runTest {
+        val uuid = UUID.randomUUID()
+        val ip = socketAddress()
+        val event = loginEvent(uuid, ip)
+        val exception = Exception()
+
+        `when`(authoriseConnectionListener.getBan(uuid, ip)).thenThrow(exception)
+
+        listener.onLoginEvent(event)
+        scheduler.runCurrent()
+
+        verify(errorReporter).report(exception)
     }
 }
