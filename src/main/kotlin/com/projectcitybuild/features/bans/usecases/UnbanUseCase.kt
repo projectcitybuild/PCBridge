@@ -1,4 +1,4 @@
-package com.projectcitybuild.features.bans.usecases.unban
+package com.projectcitybuild.features.bans.usecases
 
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Result
@@ -9,22 +9,26 @@ import com.projectcitybuild.modules.proxyadapter.broadcast.MessageBroadcaster
 import com.projectcitybuild.modules.proxyadapter.messages.TextComponentBox
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.chat.TextComponent
-import java.util.UUID
+import java.util.*
 import javax.inject.Inject
 
-class UnbanUseCaseImpl @Inject constructor(
+class UnbanUseCase @Inject constructor(
     private val banRepository: BanRepository,
     private val playerUUIDRepository: PlayerUUIDRepository,
     private val messageBroadcaster: MessageBroadcaster,
-): UnbanUseCase {
+) {
+    enum class FailureReason {
+        PlayerDoesNotExist,
+        PlayerNotBanned,
+    }
 
-    override suspend fun unban(
+    suspend fun unban(
         targetPlayerName: String,
         bannerUUID: UUID?,
-    ): Result<Unit, UnbanUseCase.FailureReason> {
+    ): Result<Unit, FailureReason> {
         try {
             val targetPlayerUUID = playerUUIDRepository.request(targetPlayerName)
-                ?: return Failure(UnbanUseCase.FailureReason.PlayerDoesNotExist)
+                ?: return Failure(FailureReason.PlayerDoesNotExist)
 
             banRepository.unban(
                 targetPlayerUUID = targetPlayerUUID,
@@ -41,7 +45,7 @@ class UnbanUseCaseImpl @Inject constructor(
             return Success(Unit)
         }
         catch (e: BanRepository.PlayerNotBannedException) {
-            return Failure(UnbanUseCase.FailureReason.PlayerNotBanned)
+            return Failure(FailureReason.PlayerNotBanned)
         }
     }
 }

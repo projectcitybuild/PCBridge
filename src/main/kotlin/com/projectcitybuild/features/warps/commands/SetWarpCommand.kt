@@ -4,7 +4,7 @@ import com.projectcitybuild.core.InvalidCommandArgumentsException
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.entities.CrossServerLocation
 import com.projectcitybuild.entities.PluginConfig
-import com.projectcitybuild.features.warps.usecases.createwarp.CreateWarpUseCase
+import com.projectcitybuild.features.warps.usecases.CreateWarpUseCase
 import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.platforms.spigot.environment.SpigotCommand

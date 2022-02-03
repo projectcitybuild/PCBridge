@@ -5,7 +5,7 @@ import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Success
 import com.projectcitybuild.entities.PluginConfig
 import com.projectcitybuild.features.warps.repositories.WarpRepository
-import com.projectcitybuild.features.warps.usecases.warp.WarpUseCase
+import com.projectcitybuild.features.warps.usecases.WarpUseCase
 import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.platforms.spigot.environment.SpigotCommand

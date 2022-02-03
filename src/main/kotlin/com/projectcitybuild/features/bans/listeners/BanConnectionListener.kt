@@ -1,7 +1,7 @@
 package com.projectcitybuild.features.bans.listeners
 
 import com.projectcitybuild.core.BungeecordListener
-import com.projectcitybuild.features.bans.usecases.authconnection.AuthoriseConnectionUseCase
+import com.projectcitybuild.features.bans.usecases.AuthoriseConnectionUseCase
 import com.projectcitybuild.modules.datetime.DateTimeFormatter
 import com.projectcitybuild.modules.errorreporting.ErrorReporter
 import com.projectcitybuild.modules.logger.PlatformLogger

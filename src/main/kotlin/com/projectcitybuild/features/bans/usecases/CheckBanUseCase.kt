@@ -1,4 +1,4 @@
-package com.projectcitybuild.features.bans.usecases.checkban
+package com.projectcitybuild.features.bans.usecases
 
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Result
@@ -8,22 +8,31 @@ import com.projectcitybuild.modules.datetime.DateTimeFormatter
 import com.projectcitybuild.modules.playeruuid.PlayerUUIDRepository
 import javax.inject.Inject
 
-class CheckBanUseCaseImpl @Inject constructor(
+class CheckBanUseCase @Inject constructor(
     private val banRepository: BanRepository,
     private val playerUUIDRepository: PlayerUUIDRepository,
     private val dateTimeFormatter: DateTimeFormatter,
-): CheckBanUseCase {
+) {
+    enum class FailureReason {
+        PlayerDoesNotExist,
+    }
 
-    override suspend fun getBan(
+    data class BanRecord(
+        val reason: String,
+        val dateOfBan: String,
+        val expiryDate: String,
+    )
+
+    suspend fun getBan(
         targetPlayerName: String
-    ): Result<CheckBanUseCase.BanRecord?, CheckBanUseCase.FailureReason> {
+    ): Result<BanRecord?, FailureReason> {
         val targetPlayerUUID = playerUUIDRepository.request(targetPlayerName)
-            ?: return Failure(CheckBanUseCase.FailureReason.PlayerDoesNotExist)
+            ?: return Failure(FailureReason.PlayerDoesNotExist)
 
         val ban = banRepository.get(targetPlayerUUID = targetPlayerUUID)
             ?: return Success(null)
 
-        val banRecord = CheckBanUseCase.BanRecord(
+        val banRecord = BanRecord(
             reason = ban.reason ?: "No reason given",
             dateOfBan = ban.createdAt.let { dateTimeFormatter.convert(it) },
             expiryDate = ban.expiresAt?.let { dateTimeFormatter.convert(it) } ?: "Never"

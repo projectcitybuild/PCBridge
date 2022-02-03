@@ -5,14 +5,14 @@ import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Success
 import com.projectcitybuild.modules.playerconfig.PlayerConfigRepository
 import kotlinx.coroutines.test.runTest
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.Assertions.assertEquals
 import org.powermock.api.mockito.PowerMockito.`when`
 import org.powermock.api.mockito.PowerMockito.mock
-import java.util.UUID
+import java.util.*
 
-class TPToggleUseCaseImplTest {
+class TPToggleUseCaseTest {
 
     private lateinit var useCase: TPToggleUseCase
 
@@ -22,7 +22,7 @@ class TPToggleUseCaseImplTest {
     fun setUp() {
         playerConfigRepository = mock(PlayerConfigRepository::class.java)
 
-        useCase = TPToggleUseCaseImpl(playerConfigRepository)
+        useCase = TPToggleUseCase(playerConfigRepository)
     }
 
     @Test

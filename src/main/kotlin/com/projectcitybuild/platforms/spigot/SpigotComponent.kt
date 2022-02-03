@@ -1,7 +1,6 @@
 package com.projectcitybuild.platforms.spigot
 
 import com.projectcitybuild.core.contracts.SpigotFeatureModule
-import com.projectcitybuild.features.warps.WarpUseCaseProvider
 import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.modules.database.DataSourceProvider
 import com.projectcitybuild.modules.datetime.TimeProvider
@@ -24,7 +23,6 @@ import javax.inject.Singleton
     TimeProvider::class,
     ErrorReporterProvider::class,
     SpigotFeatureListModule::class,
-    WarpUseCaseProvider::class,
     NetworkModule::class,
     DataSourceProvider::class,
     RedisProvider::class,

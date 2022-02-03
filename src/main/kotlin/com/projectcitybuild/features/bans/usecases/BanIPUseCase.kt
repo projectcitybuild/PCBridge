@@ -1,4 +1,4 @@
-package com.projectcitybuild.features.bans.usecases.banip
+package com.projectcitybuild.features.bans.usecases
 
 import com.projectcitybuild.core.Regex
 import com.projectcitybuild.core.utilities.Failure
@@ -11,27 +11,31 @@ import com.projectcitybuild.modules.datetime.Time
 import com.projectcitybuild.modules.proxyadapter.kick.PlayerKicker
 import javax.inject.Inject
 
-class BanIPUseCaseImpl @Inject constructor(
+class BanIPUseCase @Inject constructor(
     private val ipBanRepository: IPBanRepository,
     private val playerKicker: PlayerKicker,
     private val time: Time,
-): BanIPUseCase {
+) {
+    enum class FailureReason {
+        IP_ALREADY_BANNED,
+        INVALID_IP,
+    }
 
-    override fun banIP(
+    fun banIP(
         ip: String,
         bannerName: String?,
         reason: String?
-    ): Result<Unit, BanIPUseCase.FailureReason> {
+    ): Result<Unit, FailureReason> {
         val sanitizedIP = Sanitizer().sanitizedIP(ip)
 
         val isValidIP = Regex.IP.matcher(sanitizedIP).matches()
         if (!isValidIP) {
-            return Failure(BanIPUseCase.FailureReason.INVALID_IP)
+            return Failure(FailureReason.INVALID_IP)
         }
 
         val existingBan = ipBanRepository.get(sanitizedIP)
         if (existingBan != null) {
-            return Failure(BanIPUseCase.FailureReason.IP_ALREADY_BANNED)
+            return Failure(FailureReason.IP_ALREADY_BANNED)
         }
 
         val ban = IPBan(

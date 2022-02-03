@@ -3,8 +3,6 @@ package com.projectcitybuild.features.bans.usecases
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Success
 import com.projectcitybuild.features.bans.repositories.IPBanRepository
-import com.projectcitybuild.features.bans.usecases.unbanip.UnbanIPUseCase
-import com.projectcitybuild.features.bans.usecases.unbanip.UnbanIPUseCaseImpl
 import com.projectcitybuild.stubs.IPBanMock
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -15,7 +13,7 @@ import org.mockito.Mockito.verify
 import org.powermock.api.mockito.PowerMockito.`when`
 import org.powermock.api.mockito.PowerMockito.mock
 
-class UnbanIPUseCaseImplTest {
+class UnbanIPUseCaseTest {
 
     private lateinit var useCase: UnbanIPUseCase
 
@@ -25,7 +23,7 @@ class UnbanIPUseCaseImplTest {
     fun setUp() {
         ipBanRepository = mock(IPBanRepository::class.java)
 
-        useCase = UnbanIPUseCaseImpl(ipBanRepository)
+        useCase = UnbanIPUseCase(ipBanRepository)
     }
 
     @Test

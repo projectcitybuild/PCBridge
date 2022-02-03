@@ -3,7 +3,6 @@ package com.projectcitybuild.features.warps.usecases
 import com.projectcitybuild.entities.PluginConfig
 import com.projectcitybuild.features.warps.repositories.WarpRepository
 import com.projectcitybuild.features.warps.usecases.warplist.WarpListUseCase
-import com.projectcitybuild.features.warps.usecases.warplist.WarpListUseCaseImpl
 import com.projectcitybuild.modules.config.PlatformConfig
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -13,7 +12,7 @@ import org.junit.jupiter.api.Test
 import org.powermock.api.mockito.PowerMockito.`when`
 import org.powermock.api.mockito.PowerMockito.mock
 
-class WarpListUseCaseImplTest {
+class WarpListUseCaseTest {
 
     private lateinit var useCase: WarpListUseCase
 
@@ -22,7 +21,7 @@ class WarpListUseCaseImplTest {
 
     @BeforeEach
     fun setUp() {
-        useCase = WarpListUseCaseImpl(
+        useCase = WarpListUseCase(
             warpRepository,
             config,
         )

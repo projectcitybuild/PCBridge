@@ -5,11 +5,9 @@ import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Success
 import com.projectcitybuild.entities.Warp
 import com.projectcitybuild.features.warps.repositories.WarpRepository
-import com.projectcitybuild.features.warps.usecases.createwarp.CreateWarpUseCase
-import com.projectcitybuild.features.warps.usecases.createwarp.CreateWarpUseCaseImpl
 import com.projectcitybuild.modules.datetime.Time
 import kotlinx.coroutines.test.runTest
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.times
@@ -18,7 +16,7 @@ import org.powermock.api.mockito.PowerMockito.`when`
 import org.powermock.api.mockito.PowerMockito.mock
 import java.time.LocalDateTime
 
-class CreateWarpUseCaseImplTest {
+class CreateWarpUseCaseTest {
 
     private lateinit var useCase: CreateWarpUseCase
 
@@ -30,7 +28,7 @@ class CreateWarpUseCaseImplTest {
         warpRepository = mock(WarpRepository::class.java)
         time = mock(Time::class.java)
 
-        useCase = CreateWarpUseCaseImpl(warpRepository, time)
+        useCase = CreateWarpUseCase(warpRepository, time)
     }
 
     @Test

@@ -2,7 +2,7 @@ package com.projectcitybuild.features.bans.commands
 
 import com.projectcitybuild.core.InvalidCommandArgumentsException
 import com.projectcitybuild.core.utilities.Failure
-import com.projectcitybuild.features.bans.usecases.unban.UnbanUseCase
+import com.projectcitybuild.features.bans.usecases.UnbanUseCase
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput

@@ -3,8 +3,6 @@ package com.projectcitybuild.features.bans.usecases
 import com.projectcitybuild.GameBanMock
 import com.projectcitybuild.features.bans.repositories.BanRepository
 import com.projectcitybuild.features.bans.repositories.IPBanRepository
-import com.projectcitybuild.features.bans.usecases.authconnection.AuthoriseConnectionUseCase
-import com.projectcitybuild.features.bans.usecases.authconnection.AuthoriseConnectionUseCaseImpl
 import com.projectcitybuild.stubs.IPBanMock
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -16,7 +14,7 @@ import org.powermock.api.mockito.PowerMockito.mock
 import java.net.SocketAddress
 import java.util.*
 
-class AuthoriseConnectionUseCaseImplTest {
+class AuthoriseConnectionUseCaseTest {
 
     private lateinit var useCase: AuthoriseConnectionUseCase
 
@@ -28,7 +26,7 @@ class AuthoriseConnectionUseCaseImplTest {
         banRepository = mock(BanRepository::class.java)
         ipBanRepository = mock(IPBanRepository::class.java)
 
-        useCase = AuthoriseConnectionUseCaseImpl(
+        useCase = AuthoriseConnectionUseCase(
             banRepository,
             ipBanRepository,
         )
