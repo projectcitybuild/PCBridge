@@ -1,16 +1,14 @@
 package com.projectcitybuild.features.bans.usecases
 
 import com.projectcitybuild.core.utilities.Failure
+import com.projectcitybuild.features.bans.repositories.BanRepository
+import com.projectcitybuild.modules.playeruuid.PlayerUUIDRepository
 import com.projectcitybuild.modules.proxyadapter.broadcast.MessageBroadcaster
 import com.projectcitybuild.modules.proxyadapter.kick.PlayerKicker
-import com.projectcitybuild.features.bans.repositories.BanRepository
-import com.projectcitybuild.features.bans.usecases.ban.BanUseCase
-import com.projectcitybuild.features.bans.usecases.ban.BanUseCaseImpl
-import com.projectcitybuild.modules.playeruuid.PlayerUUIDRepository
 import kotlinx.coroutines.test.runTest
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.Assertions.assertEquals
 import org.mockito.ArgumentMatchers.anyString
 import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
@@ -18,11 +16,11 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.eq
 import org.powermock.api.mockito.PowerMockito.`when`
 import org.powermock.api.mockito.PowerMockito.mock
-import java.util.UUID
+import java.util.*
 
-class BanUseCaseImplTest {
+class BanUseCaseTest {
 
-    private lateinit var useCase: BanUseCaseImpl
+    private lateinit var useCase: BanUseCase
 
     private lateinit var banRepository: BanRepository
     private lateinit var playerUUIDRepository: PlayerUUIDRepository
@@ -36,7 +34,7 @@ class BanUseCaseImplTest {
         playerKicker = mock(PlayerKicker::class.java)
         messageBroadcaster = mock(MessageBroadcaster::class.java)
 
-        useCase = BanUseCaseImpl(
+        useCase = BanUseCase(
             banRepository,
             playerUUIDRepository,
             playerKicker,

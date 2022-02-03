@@ -1,4 +1,4 @@
-package com.projectcitybuild.features.bans.usecases.ban
+package com.projectcitybuild.features.bans.usecases
 
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Result
@@ -13,22 +13,26 @@ import net.md_5.bungee.api.chat.TextComponent
 import java.util.*
 import javax.inject.Inject
 
-class BanUseCaseImpl @Inject constructor(
+class BanUseCase @Inject constructor(
     private val banRepository: BanRepository,
     private val playerUUIDRepository: PlayerUUIDRepository,
     private val playerKicker: PlayerKicker,
     private val messageBroadcaster: MessageBroadcaster,
-): BanUseCase {
+) {
+    enum class FailureReason {
+        PlayerDoesNotExist,
+        PlayerAlreadyBanned,
+    }
 
-    override suspend fun ban(
+    suspend fun ban(
         targetPlayerName: String,
         bannerUUID: UUID?,
         bannerName: String,
         reason: String?
-    ): Result<Unit, BanUseCase.FailureReason> {
+    ): Result<Unit, FailureReason> {
         try {
             val targetPlayerUUID = playerUUIDRepository.request(targetPlayerName)
-                ?: return Failure(BanUseCase.FailureReason.PlayerDoesNotExist)
+                ?: return Failure(FailureReason.PlayerDoesNotExist)
 
             banRepository.ban(
                 targetPlayerUUID = targetPlayerUUID,
@@ -52,7 +56,7 @@ class BanUseCaseImpl @Inject constructor(
             return Success(Unit)
         }
         catch (e: BanRepository.PlayerAlreadyBannedException) {
-            return Failure(BanUseCase.FailureReason.PlayerAlreadyBanned)
+            return Failure(FailureReason.PlayerAlreadyBanned)
         }
     }
 }

@@ -5,18 +5,16 @@ import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Success
 import com.projectcitybuild.entities.responses.GameBan
 import com.projectcitybuild.features.bans.repositories.BanRepository
-import com.projectcitybuild.features.bans.usecases.checkban.CheckBanUseCase
-import com.projectcitybuild.features.bans.usecases.checkban.CheckBanUseCaseImpl
 import com.projectcitybuild.modules.playeruuid.PlayerUUIDRepository
 import kotlinx.coroutines.test.runTest
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.Assertions.assertEquals
 import org.powermock.api.mockito.PowerMockito.`when`
 import org.powermock.api.mockito.PowerMockito.mock
 import java.util.*
 
-class CheckBanUseCaseImplTest {
+class CheckBanUseCaseTest {
 
     private lateinit var useCase: CheckBanUseCase
 
@@ -28,7 +26,7 @@ class CheckBanUseCaseImplTest {
         banRepository = mock(BanRepository::class.java)
         playerUUIDRepository = mock(PlayerUUIDRepository::class.java)
 
-        useCase = CheckBanUseCaseImpl(
+        useCase = CheckBanUseCase(
             banRepository,
             playerUUIDRepository,
             DateTimeFormatterMock()

@@ -4,7 +4,7 @@ import com.projectcitybuild.core.InvalidCommandArgumentsException
 import com.projectcitybuild.core.extensions.joinWithWhitespaces
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Success
-import com.projectcitybuild.features.bans.usecases.banip.BanIPUseCase
+import com.projectcitybuild.features.bans.usecases.BanIPUseCase
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput

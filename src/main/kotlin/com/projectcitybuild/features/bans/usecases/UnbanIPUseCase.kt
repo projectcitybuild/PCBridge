@@ -1,4 +1,4 @@
-package com.projectcitybuild.features.bans.usecases.unbanip
+package com.projectcitybuild.features.bans.usecases
 
 import com.projectcitybuild.core.Regex
 import com.projectcitybuild.core.utilities.Failure
@@ -8,20 +8,24 @@ import com.projectcitybuild.features.bans.Sanitizer
 import com.projectcitybuild.features.bans.repositories.IPBanRepository
 import javax.inject.Inject
 
-class UnbanIPUseCaseImpl @Inject constructor(
+class UnbanIPUseCase @Inject constructor(
     private val ipBanRepository: IPBanRepository,
-): UnbanIPUseCase {
+) {
+    enum class FailureReason {
+        IP_NOT_BANNED,
+        INVALID_IP,
+    }
 
-    override fun unbanIP(ip: String): Result<Unit, UnbanIPUseCase.FailureReason> {
+    fun unbanIP(ip: String): Result<Unit, FailureReason> {
         val sanitizedIP = Sanitizer().sanitizedIP(ip)
 
         val isValidIP = Regex.IP.matcher(sanitizedIP).matches()
         if (!isValidIP) {
-            return Failure(UnbanIPUseCase.FailureReason.INVALID_IP)
+            return Failure(FailureReason.INVALID_IP)
         }
 
         ipBanRepository.get(sanitizedIP)
-            ?: return Failure(UnbanIPUseCase.FailureReason.IP_NOT_BANNED)
+            ?: return Failure(FailureReason.IP_NOT_BANNED)
 
         ipBanRepository.delete(sanitizedIP)
 

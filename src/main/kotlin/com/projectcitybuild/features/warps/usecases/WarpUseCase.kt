@@ -1,4 +1,4 @@
-package com.projectcitybuild.features.warps.usecases.warp
+package com.projectcitybuild.features.warps.usecases
 
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Result
@@ -16,27 +16,35 @@ import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
 import javax.inject.Inject
 
-class WarpUseCaseImpl @Inject constructor(
+class WarpUseCase @Inject constructor(
     private val plugin: Plugin,
     private val warpRepository: WarpRepository,
     private val queuedWarpRepository: QueuedWarpRepository,
     private val nameGuesser: NameGuesser,
     private val logger: PlatformLogger,
     private val localEventBroadcaster: LocalEventBroadcaster,
-): WarpUseCase {
+) {
+    data class WarpEvent(
+        val warpName: String,
+        val isSameServer: Boolean
+    )
+    enum class FailureReason {
+        WARP_NOT_FOUND,
+        WORLD_NOT_FOUND,
+    }
 
-    override fun warp(
+    fun warp(
         targetWarpName: String,
         playerServerName: String,
         player: Player,
-    ): Result<WarpUseCase.WarpEvent, WarpUseCase.FailureReason> {
+    ): Result<WarpEvent, FailureReason> {
         val availableWarpNames = warpRepository.names()
 
         val matchingWarpName = nameGuesser.guessClosest(targetWarpName, availableWarpNames)
-            ?: return Failure(WarpUseCase.FailureReason.WARP_NOT_FOUND)
+            ?: return Failure(FailureReason.WARP_NOT_FOUND)
 
         val warp = warpRepository.first(matchingWarpName)
-            ?: return Failure(WarpUseCase.FailureReason.WARP_NOT_FOUND)
+            ?: return Failure(FailureReason.WARP_NOT_FOUND)
 
         localEventBroadcaster.emit(
             PlayerPreWarpEvent(player, player.location)
@@ -48,7 +56,7 @@ class WarpUseCaseImpl @Inject constructor(
             val world = plugin.server.getWorld(worldName)
             if (world == null) {
                 logger.warning("Could not find world matching name [$worldName] for warp")
-                return Failure(WarpUseCase.FailureReason.WORLD_NOT_FOUND)
+                return Failure(FailureReason.WORLD_NOT_FOUND)
             }
             player.teleport(
                 Location(
@@ -75,7 +83,7 @@ class WarpUseCaseImpl @Inject constructor(
         }
 
         return Success(
-            WarpUseCase.WarpEvent(
+            WarpEvent(
                 warpName = warp.name,
                 isSameServer = isWarpOnSameServer,
             )

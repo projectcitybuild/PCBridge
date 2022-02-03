@@ -8,12 +8,17 @@ import kotlin.math.ceil
 import kotlin.math.max
 import kotlin.math.min
 
-class WarpListUseCaseImpl @Inject constructor(
+class WarpListUseCase @Inject constructor(
     private val warpRepository: WarpRepository,
     private val config: PlatformConfig
-): WarpListUseCase {
+) {
+    data class WarpList(
+        val totalPages: Int,
+        val currentPage: Int,
+        val warps: List<String>,
+    )
 
-    override fun getList(page: Int): WarpListUseCase.WarpList? {
+    fun getList(page: Int = 1): WarpList? {
         val warpsPerPage = config.get(PluginConfig.WARPS_PER_PAGE)
         val availableWarps = warpRepository.names()
         val totalWarpPages = ceil((availableWarps.size.toDouble() / warpsPerPage.toDouble())).toInt()
@@ -28,7 +33,7 @@ class WarpListUseCaseImpl @Inject constructor(
             .sorted()
             .chunked(warpsPerPage)[max(currentPage - 1, 0)]
 
-        return WarpListUseCase.WarpList(
+        return WarpList(
             totalPages = totalWarpPages,
             currentPage = currentPage,
             warps = warpList,

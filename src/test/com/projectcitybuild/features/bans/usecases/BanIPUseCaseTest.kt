@@ -4,8 +4,6 @@ import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Success
 import com.projectcitybuild.entities.IPBan
 import com.projectcitybuild.features.bans.repositories.IPBanRepository
-import com.projectcitybuild.features.bans.usecases.banip.BanIPUseCase
-import com.projectcitybuild.features.bans.usecases.banip.BanIPUseCaseImpl
 import com.projectcitybuild.modules.datetime.Time
 import com.projectcitybuild.modules.proxyadapter.kick.PlayerKicker
 import com.projectcitybuild.stubs.IPBanMock
@@ -20,7 +18,7 @@ import org.powermock.api.mockito.PowerMockito.`when`
 import org.powermock.api.mockito.PowerMockito.mock
 import java.time.LocalDateTime
 
-class BanIPUseCaseImplTest {
+class BanIPUseCaseTest {
 
     private lateinit var useCase: BanIPUseCase
 
@@ -34,7 +32,7 @@ class BanIPUseCaseImplTest {
         playerKicker = mock(PlayerKicker::class.java)
         time = mock(Time::class.java)
 
-        useCase = BanIPUseCaseImpl(
+        useCase = BanIPUseCase(
             ipBanRepository,
             playerKicker,
             time,

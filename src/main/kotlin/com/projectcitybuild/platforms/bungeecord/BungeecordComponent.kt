@@ -1,18 +1,16 @@
 package com.projectcitybuild.platforms.bungeecord
 
 import com.projectcitybuild.core.contracts.BungeecordFeatureModule
-import com.projectcitybuild.features.bans.BanUseCaseProvider
+import com.projectcitybuild.features.hub.HubFileStorage
 import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.modules.database.DataSourceProvider
 import com.projectcitybuild.modules.datetime.DateTimeFormatterProvider
+import com.projectcitybuild.modules.datetime.TimeProvider
+import com.projectcitybuild.modules.errorreporting.ErrorReporterProvider
 import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.modules.network.APIClient
 import com.projectcitybuild.modules.network.NetworkModule
 import com.projectcitybuild.modules.proxyadapter.BungeecordProxyAdapterModule
-import com.projectcitybuild.features.hub.HubFileStorage
-import com.projectcitybuild.features.teleporting.TeleportingUseCaseProvider
-import com.projectcitybuild.modules.datetime.TimeProvider
-import com.projectcitybuild.modules.errorreporting.ErrorReporterProvider
 import com.projectcitybuild.platforms.bungeecord.BungeecordFeatureListModule.BungeecordFeatureModules
 import dagger.BindsInstance
 import dagger.Component
@@ -28,8 +26,6 @@ import javax.inject.Singleton
     BungeecordFeatureListModule::class,
     NetworkModule::class,
     DataSourceProvider::class,
-    BanUseCaseProvider::class,
-    TeleportingUseCaseProvider::class,
     BungeecordProxyAdapterModule::class,
 ])
 interface BungeecordComponent {

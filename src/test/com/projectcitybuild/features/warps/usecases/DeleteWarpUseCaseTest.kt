@@ -3,10 +3,8 @@ package com.projectcitybuild.features.warps.usecases
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Success
 import com.projectcitybuild.features.warps.repositories.WarpRepository
-import com.projectcitybuild.features.warps.usecases.deletewarp.DeleteWarpUseCase
-import com.projectcitybuild.features.warps.usecases.deletewarp.DeleteWarpUseCaseImpl
 import kotlinx.coroutines.test.runTest
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.times
@@ -14,7 +12,7 @@ import org.mockito.Mockito.verify
 import org.powermock.api.mockito.PowerMockito.`when`
 import org.powermock.api.mockito.PowerMockito.mock
 
-class DeleteWarpUseCaseImplTest {
+class DeleteWarpUseCaseTest {
 
     private lateinit var useCase: DeleteWarpUseCase
 
@@ -24,7 +22,7 @@ class DeleteWarpUseCaseImplTest {
     fun setUp() {
         warpRepository = mock(WarpRepository::class.java)
 
-        useCase = DeleteWarpUseCaseImpl(warpRepository)
+        useCase = DeleteWarpUseCase(warpRepository)
     }
 
     @Test
