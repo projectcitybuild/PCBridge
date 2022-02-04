@@ -1,15 +1,15 @@
-package com.projectcitybuild.features.importer
+package com.projectcitybuild.features.utility
 
 import com.projectcitybuild.core.contracts.BungeecordFeatureModule
-import com.projectcitybuild.features.importer.commands.ImportCommand
+import com.projectcitybuild.features.utility.commands.PCBridgeCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import javax.inject.Inject
 
-class ImporterModule @Inject constructor(
-    importCommand: ImportCommand
+class UtilityModule @Inject constructor(
+    PCBridgeCommand: PCBridgeCommand
 ): BungeecordFeatureModule {
 
     override val bungeecordCommands: Array<BungeecordCommand> = arrayOf(
-        importCommand,
+        PCBridgeCommand,
     )
 }
