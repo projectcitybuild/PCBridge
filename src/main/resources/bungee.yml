@@ -48,6 +48,9 @@ commands:
   tpohere:
     description: "Summons a given player to your location regardless of whether they allow teleports"
     usage: "/tpo <name>"
+  tptoggle:
+    description: "Allows/disallows players to teleport/summon you"
+    usage: "/tptoggle [on|off]"
   unban:
     description: "Allows a banned player to connect to the server"
     usage: "/unban <name>"
