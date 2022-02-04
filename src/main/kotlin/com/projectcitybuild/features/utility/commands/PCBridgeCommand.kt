@@ -1,4 +1,4 @@
-package com.projectcitybuild.features.importer.commands
+package com.projectcitybuild.features.utility.commands
 
 import com.projectcitybuild.core.InvalidCommandArgumentsException
 import com.projectcitybuild.core.Regex
@@ -20,7 +20,7 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
-class ImportCommand @Inject constructor(
+class PCBridgeCommand @Inject constructor(
     private val plugin: Plugin,
     private val dataSource: DataSource,
     private val logger: PlatformLogger,
