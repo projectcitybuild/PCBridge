@@ -20,7 +20,7 @@ import java.util.UUID
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-class TPACommand @Inject constructor(
+class TPAHereCommand @Inject constructor(
     private val proxyServer: ProxyServer,
     private val nameGuesser: NameGuesser,
     private val teleportRequestRepository: TeleportRequestRepository,
@@ -28,9 +28,9 @@ class TPACommand @Inject constructor(
     private val timer: Timer,
 ): BungeecordCommand {
 
-    override val label: String = "tpa"
-    override val permission = "pcbridge.tpa"
-    override val usageHelp = "/tpa <name>"
+    override val label: String = "tpahere"
+    override val permission = "pcbridge.tpahere"
+    override val usageHelp = "/tpahere <name>"
 
     override suspend fun execute(input: BungeecordCommandInput) {
         if (input.player == null) {
@@ -65,7 +65,7 @@ class TPACommand @Inject constructor(
             input.player.uniqueId,
             targetPlayer.uniqueId,
             timerIdentifier,
-            TeleportRequestRepository.TeleportType.TP_TO_PLAYER,
+            TeleportRequestRepository.TeleportType.SUMMON_PLAYER,
         )
 
         timer.scheduleOnce(
@@ -85,12 +85,12 @@ class TPACommand @Inject constructor(
 
         targetPlayer.sendMessage(
             TextComponent()
-                .add("${input.player.name} would like to teleport to you:\n")
+                .add("${input.player.name} would like to summon you to their location:\n")
                 .add(
                     TextComponent("[Accept]").apply {
                         color = ChatColor.GREEN
                         isBold = true
-                        hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT, Text("Teleport them to your location"))
+                        hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT, Text("Teleport to their location"))
                         clickEvent = ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tpaccept")
                     }
                 )

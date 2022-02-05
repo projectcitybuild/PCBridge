@@ -44,10 +44,19 @@ class TPAcceptCommand @Inject constructor(
         input.player.send().info("Accepted teleport request")
         targetPlayer.send().info("${input.player.name} accepted your teleport request")
 
-        playerTeleporter.teleport(
-            player = targetPlayer,
-            destinationPlayer = input.player,
-            shouldCheckAllowingTP = false
-        )
+        when (teleportRequest.teleportType) {
+            TeleportRequestRepository.TeleportType.TP_TO_PLAYER ->
+                playerTeleporter.teleport(
+                    player = targetPlayer,
+                    destinationPlayer = input.player,
+                    shouldCheckAllowingTP = false,
+                )
+            TeleportRequestRepository.TeleportType.SUMMON_PLAYER ->
+                playerTeleporter.summon(
+                    summonedPlayer = input.player,
+                    destinationPlayer = targetPlayer,
+                    shouldCheckAllowingTP = false,
+                )
+        }
     }
 }
