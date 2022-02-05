@@ -1,7 +1,6 @@
 package com.projectcitybuild.features.teleporting.commands
 
 import com.projectcitybuild.core.InvalidCommandArgumentsException
-import com.projectcitybuild.features.teleporting.PlayerTeleporter
 import com.projectcitybuild.features.teleporting.repositories.TeleportRequestRepository
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.modules.timer.Timer
@@ -10,16 +9,15 @@ import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandIn
 import net.md_5.bungee.api.ProxyServer
 import javax.inject.Inject
 
-class TPAcceptCommand @Inject constructor(
+class TPDenyCommand @Inject constructor(
     private val proxyServer: ProxyServer,
     private val teleportRequestRepository: TeleportRequestRepository,
-    private val playerTeleporter: PlayerTeleporter,
     private val timer: Timer,
 ): BungeecordCommand {
 
-    override val label: String = "tpaccept"
+    override val label: String = "tpdeny"
     override val permission = "pcbridge.tpa"
-    override val usageHelp = "/tpaccept"
+    override val usageHelp = "/tpdeny"
 
     override suspend fun execute(input: BungeecordCommandInput) {
         if (input.player == null) {
@@ -41,13 +39,7 @@ class TPAcceptCommand @Inject constructor(
 
         val targetPlayer = proxyServer.getPlayer(teleportRequest.targetUUID)
 
-        input.player.send().info("Accepted teleport request")
-        targetPlayer.send().info("${input.player.name} accepted your teleport request")
-
-        playerTeleporter.teleport(
-            player = targetPlayer,
-            destinationPlayer = input.player,
-            shouldCheckAllowingTP = false
-        )
+        input.player.send().info("Declined teleport request")
+        targetPlayer.send().info("${input.player.name} declined your teleport request")
     }
 }
