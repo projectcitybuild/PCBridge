@@ -29,7 +29,7 @@ class TPACommand @Inject constructor(
 ): BungeecordCommand {
 
     override val label: String = "tpa"
-    override val permission = "pcbridge.tpa.use"
+    override val permission = "pcbridge.tpa"
     override val usageHelp = "/tpa <name>"
 
     override suspend fun execute(input: BungeecordCommandInput) {
@@ -59,13 +59,16 @@ class TPACommand @Inject constructor(
             return
         }
 
+        val timerIdentifier = UUID.randomUUID().toString()
+
         teleportRequestRepository.set(
             input.player.uniqueId,
             targetPlayer.uniqueId,
+            timerIdentifier,
         )
 
         timer.scheduleOnce(
-            identifier = UUID.randomUUID().toString(),
+            identifier = timerIdentifier,
             delay = 15,
             unit = TimeUnit.SECONDS,
         ) {
