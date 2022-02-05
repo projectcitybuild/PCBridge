@@ -1,7 +1,9 @@
 package com.projectcitybuild.features.teleporting.commands
 
 import com.projectcitybuild.core.InvalidCommandArgumentsException
+import com.projectcitybuild.features.teleporting.repositories.TeleportRequestRepository
 import com.projectcitybuild.modules.nameguesser.NameGuesser
+import com.projectcitybuild.modules.scheduler.PlatformScheduler
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.modules.timer.Timer
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
@@ -14,11 +16,15 @@ import net.md_5.bungee.api.chat.ClickEvent
 import net.md_5.bungee.api.chat.HoverEvent
 import net.md_5.bungee.api.chat.TextComponent
 import net.md_5.bungee.api.chat.hover.content.Text
+import java.util.UUID
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class TPACommand @Inject constructor(
     private val proxyServer: ProxyServer,
     private val nameGuesser: NameGuesser,
+    private val teleportRequestRepository: TeleportRequestRepository,
+    private val scheduler: PlatformScheduler,
     private val timer: Timer,
 ): BungeecordCommand {
 
@@ -47,6 +53,32 @@ class TPACommand @Inject constructor(
             return
         }
 
+        val existingRequest = teleportRequestRepository.get(targetPlayer.uniqueId)
+        if (existingRequest != null) {
+            input.sender.send().error("${targetPlayer.name} already has a pending teleport request. Please try again shortly")
+            return
+        }
+
+        teleportRequestRepository.set(
+            input.player.uniqueId,
+            targetPlayer.uniqueId,
+        )
+
+        timer.scheduleOnce(
+            identifier = UUID.randomUUID().toString(),
+            delay = 15,
+            unit = TimeUnit.SECONDS,
+        ) {
+            val request = teleportRequestRepository.get(targetPlayer.uniqueId)
+            if (request != null && request.requesterUUID == input.player.uniqueId) {
+                teleportRequestRepository.delete(targetPlayer.uniqueId)
+                scheduler.sync {
+                    input.player.send().action("Teleport request expired")
+                    targetPlayer.send().action("Teleport request expired")
+                }
+            }
+        }
+
         targetPlayer.sendMessage(
             TextComponent()
                 .add("${input.player.name} would like to teleport to you:\n")
@@ -67,11 +99,6 @@ class TPACommand @Inject constructor(
                         clickEvent = ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tpdeny")
                     }
                 )
-                .add("\n")
-                .add("(Request will expire in 15 seconds)") {
-                    it.color = ChatColor.GRAY
-                    it.isItalic = true
-                }
         )
     }
 
