@@ -13,9 +13,9 @@ import org.powermock.api.mockito.PowerMockito.`when`
 import org.powermock.api.mockito.PowerMockito.mock
 import java.util.*
 
-class PlayerTeleportRequesterTest {
+class PlayerTeleporterTest {
 
-    private lateinit var requester: PlayerTeleportRequester
+    private lateinit var requester: PlayerTeleporter
 
     private lateinit var playerConfigRepository: PlayerConfigRepository
     private lateinit var queuedTeleportRepository: QueuedTeleportRepository
@@ -25,7 +25,7 @@ class PlayerTeleportRequesterTest {
         playerConfigRepository = mock(PlayerConfigRepository::class.java)
         queuedTeleportRepository = mock(QueuedTeleportRepository::class.java)
 
-        requester = PlayerTeleportRequester(
+        requester = PlayerTeleporter(
             playerConfigRepository,
             queuedTeleportRepository,
         )
@@ -44,7 +44,7 @@ class PlayerTeleportRequesterTest {
 
         val result = requester.teleport(originPlayer, targetPlayer, true)
 
-        assertEquals(result, Failure(PlayerTeleportRequester.FailureReason.TARGET_PLAYER_DISALLOWS_TP))
+        assertEquals(result, Failure(PlayerTeleporter.FailureReason.TARGET_PLAYER_DISALLOWS_TP))
     }
 
     @Test
@@ -60,6 +60,6 @@ class PlayerTeleportRequesterTest {
 
         val result = requester.summon(targetPlayer, originPlayer, true)
 
-        assertEquals(result, Failure(PlayerTeleportRequester.FailureReason.TARGET_PLAYER_DISALLOWS_TP))
+        assertEquals(result, Failure(PlayerTeleporter.FailureReason.TARGET_PLAYER_DISALLOWS_TP))
     }
 }

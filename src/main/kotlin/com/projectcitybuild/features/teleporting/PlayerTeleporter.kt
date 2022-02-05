@@ -13,7 +13,7 @@ import net.md_5.bungee.api.connection.ProxiedPlayer
 import java.time.LocalDateTime
 import javax.inject.Inject
 
-class PlayerTeleportRequester @Inject constructor(
+class PlayerTeleporter @Inject constructor(
     private val playerConfigRepository: PlayerConfigRepository,
     private val queuedTeleportRepository: QueuedTeleportRepository,
 ) {
