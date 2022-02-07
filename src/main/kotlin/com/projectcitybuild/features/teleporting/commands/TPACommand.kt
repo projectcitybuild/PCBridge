@@ -16,7 +16,7 @@ import net.md_5.bungee.api.chat.ClickEvent
 import net.md_5.bungee.api.chat.HoverEvent
 import net.md_5.bungee.api.chat.TextComponent
 import net.md_5.bungee.api.chat.hover.content.Text
-import java.util.UUID
+import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -62,8 +62,8 @@ class TPACommand @Inject constructor(
         val timerIdentifier = UUID.randomUUID().toString()
 
         teleportRequestRepository.set(
-            input.player.uniqueId,
-            targetPlayer.uniqueId,
+            requesterUUID = input.player.uniqueId,
+            targetUUID = targetPlayer.uniqueId,
             timerIdentifier,
             TeleportRequestRepository.TeleportType.TP_TO_PLAYER,
         )
@@ -83,13 +83,18 @@ class TPACommand @Inject constructor(
             }
         }
 
+        input.player.send().action("Teleport request sent...")
+
         targetPlayer.sendMessage(
             TextComponent()
-                .add("${input.player.name} would like to teleport to you:\n")
+                .add("${input.player.name} would like to teleport to you:\n") {
+                    it.isBold = true
+                }
                 .add(
                     TextComponent("[Accept]").apply {
                         color = ChatColor.GREEN
                         isBold = true
+                        isUnderlined = true
                         hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT, Text("Teleport them to your location"))
                         clickEvent = ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tpaccept")
                     }
@@ -99,6 +104,7 @@ class TPACommand @Inject constructor(
                     TextComponent("[Decline]").apply {
                         color = ChatColor.RED
                         isBold = true
+                        isUnderlined = true
                         hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT, Text("Decline the request and do nothing"))
                         clickEvent = ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tpdeny")
                     }

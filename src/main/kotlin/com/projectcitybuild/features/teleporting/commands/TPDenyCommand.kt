@@ -2,6 +2,7 @@ package com.projectcitybuild.features.teleporting.commands
 
 import com.projectcitybuild.core.InvalidCommandArgumentsException
 import com.projectcitybuild.features.teleporting.repositories.TeleportRequestRepository
+import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.modules.timer.PlatformTimer
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
@@ -13,6 +14,7 @@ class TPDenyCommand @Inject constructor(
     private val proxyServer: ProxyServer,
     private val teleportRequestRepository: TeleportRequestRepository,
     private val timer: PlatformTimer,
+    private val logger: PlatformLogger,
 ): BungeecordCommand {
 
     override val label: String = "tpdeny"
@@ -37,9 +39,29 @@ class TPDenyCommand @Inject constructor(
         timer.cancel(teleportRequest.timerIdentifier)
         teleportRequestRepository.delete(input.player.uniqueId)
 
-        val targetPlayer = proxyServer.getPlayer(teleportRequest.targetUUID)
+        logger.debug(teleportRequest.toString())
 
-        input.player.send().info("Declined teleport request")
-        targetPlayer.send().info("${input.player.name} declined your teleport request")
+        val requesterPlayer = proxyServer.getPlayer(teleportRequest.requesterUUID)
+        if (requesterPlayer == null) {
+            input.player.send().error("Player not found")
+            return
+        }
+
+        val targetPlayer = proxyServer.getPlayer(teleportRequest.targetUUID)
+        if (targetPlayer == null) {
+            input.player.send().error("Player not found")
+            return
+        }
+
+        when (teleportRequest.teleportType) {
+            TeleportRequestRepository.TeleportType.TP_TO_PLAYER -> {
+                targetPlayer.send().info("Declined teleport request")
+                requesterPlayer.send().info("${input.player.name} declined your teleport request")
+            }
+            TeleportRequestRepository.TeleportType.SUMMON_PLAYER -> {
+                targetPlayer.send().info("Declined summon request")
+                requesterPlayer.send().info("${input.player.name} declined your summon request")
+            }
+        }
     }
 }

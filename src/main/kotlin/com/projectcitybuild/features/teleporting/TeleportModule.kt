@@ -24,7 +24,7 @@ class TeleportModule {
         tpDenyCommand: TPDenyCommand,
         tpoCommand: TPOCommand,
         tpoHereCommand: TPOHereCommand,
-        tpToggleCommand: TPHereCommand,
+        tpToggleCommand: TPToggleCommand,
         switchPlayerServerSubChannelListener: SwitchPlayerServerSubChannelListener,
     ): BungeecordFeatureModule {
         override val bungeecordCommands: Array<BungeecordCommand> = arrayOf(

@@ -3,6 +3,7 @@ package com.projectcitybuild.features.teleporting.commands
 import com.projectcitybuild.core.InvalidCommandArgumentsException
 import com.projectcitybuild.features.teleporting.PlayerTeleporter
 import com.projectcitybuild.features.teleporting.repositories.TeleportRequestRepository
+import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.modules.timer.PlatformTimer
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
@@ -15,6 +16,7 @@ class TPAcceptCommand @Inject constructor(
     private val teleportRequestRepository: TeleportRequestRepository,
     private val playerTeleporter: PlayerTeleporter,
     private val timer: PlatformTimer,
+    private val logger: PlatformLogger,
 ): BungeecordCommand {
 
     override val label: String = "tpaccept"
@@ -39,24 +41,39 @@ class TPAcceptCommand @Inject constructor(
         timer.cancel(teleportRequest.timerIdentifier)
         teleportRequestRepository.delete(input.player.uniqueId)
 
-        val targetPlayer = proxyServer.getPlayer(teleportRequest.targetUUID)
+        logger.debug(teleportRequest.toString())
 
-        input.player.send().info("Accepted teleport request")
-        targetPlayer.send().info("${input.player.name} accepted your teleport request")
+        val requesterPlayer = proxyServer.getPlayer(teleportRequest.requesterUUID)
+        if (requesterPlayer == null) {
+            input.player.send().error("Player not found")
+            return
+        }
+
+        val targetPlayer = proxyServer.getPlayer(teleportRequest.targetUUID)
+        if (targetPlayer == null) {
+            input.player.send().error("Player not found")
+            return
+        }
 
         when (teleportRequest.teleportType) {
-            TeleportRequestRepository.TeleportType.TP_TO_PLAYER ->
+            TeleportRequestRepository.TeleportType.TP_TO_PLAYER -> {
                 playerTeleporter.teleport(
-                    player = targetPlayer,
-                    destinationPlayer = input.player,
-                    shouldCheckAllowingTP = false,
-                )
-            TeleportRequestRepository.TeleportType.SUMMON_PLAYER ->
-                playerTeleporter.summon(
-                    summonedPlayer = input.player,
+                    player = requesterPlayer,
                     destinationPlayer = targetPlayer,
                     shouldCheckAllowingTP = false,
                 )
+                targetPlayer.send().info("Accepted teleport request")
+                requesterPlayer.send().info("${input.player.name} accepted your teleport request")
+            }
+            TeleportRequestRepository.TeleportType.SUMMON_PLAYER -> {
+                playerTeleporter.summon(
+                    summonedPlayer = targetPlayer,
+                    destinationPlayer = requesterPlayer,
+                    shouldCheckAllowingTP = false,
+                )
+                targetPlayer.send().info("Accepted summon request")
+                requesterPlayer.send().info("${input.player.name} accepted your summon request")
+            }
         }
     }
 }
