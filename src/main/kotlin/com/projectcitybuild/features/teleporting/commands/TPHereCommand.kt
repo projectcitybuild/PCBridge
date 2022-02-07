@@ -45,7 +45,8 @@ class TPHereCommand @Inject constructor(
         val result = playerTeleporter.summon(
             summonedPlayer = targetPlayer,
             destinationPlayer = input.player,
-            shouldCheckAllowingTP = true
+            shouldCheckAllowingTP = true,
+            shouldSupressTeleportedMessage = false,
         )
         if (result is Failure) {
             when (result.reason) {

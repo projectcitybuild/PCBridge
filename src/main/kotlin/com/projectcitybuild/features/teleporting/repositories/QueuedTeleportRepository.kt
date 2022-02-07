@@ -14,11 +14,12 @@ class QueuedTeleportRepository @Inject constructor(
             dequeue(queuedTeleport.playerUUID)
         }
         dataSource.database().executeInsert(
-            "INSERT INTO `queued_teleports` VALUES (?, ?, ?, ?, ?)",
+            "INSERT INTO `queued_teleports` VALUES (?, ?, ?, ?, ?, ?)",
             queuedTeleport.playerUUID.toString(),
             queuedTeleport.targetPlayerUUID.toString(),
             queuedTeleport.targetServerName,
             queuedTeleport.teleportType.toString(),
+            if (queuedTeleport.isSilentTeleport) 1 else 0,
             queuedTeleport.createdAt,
         )
     }
@@ -45,6 +46,7 @@ class QueuedTeleportRepository @Inject constructor(
                     "SUMMON" -> TeleportType.SUMMON
                     else -> throw Exception("Unhandled TeleportType: ${row.getString("teleport_type")}")
                 },
+                isSilentTeleport = row.getInt("is_silent_tp") == 1,
                 createdAt = row.get("created_at"),
             )
         }

@@ -44,7 +44,8 @@ class TPOHereCommand @Inject constructor(
         playerTeleporter.summon(
             summonedPlayer = targetPlayer,
             destinationPlayer = input.player,
-            shouldCheckAllowingTP = false
+            shouldCheckAllowingTP = false,
+            shouldSupressTeleportedMessage = true,
         )
     }
 

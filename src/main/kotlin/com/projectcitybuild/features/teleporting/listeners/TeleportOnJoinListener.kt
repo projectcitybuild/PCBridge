@@ -48,12 +48,18 @@ class TeleportOnJoinListener @Inject constructor(
 
         when (queuedTeleport.teleportType) {
             TeleportType.TP -> {
-                destinationPlayer.send().action("${event.player.name} teleported to you")
                 event.player.send().action("Teleported to ${destinationPlayer.name}")
+
+                if (!queuedTeleport.isSilentTeleport) {
+                    destinationPlayer.send().action("${event.player.name} teleported to you")
+                }
             }
             TeleportType.SUMMON -> {
                 destinationPlayer.send().action("You summoned ${event.player.name} to you")
-                event.player.send().action("You were summoned to ${destinationPlayer.name}")
+
+                if (!queuedTeleport.isSilentTeleport) {
+                    event.player.send().action("You were summoned to ${destinationPlayer.name}")
+                }
             }
         }
     }

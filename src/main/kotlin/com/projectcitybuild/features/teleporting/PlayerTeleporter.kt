@@ -3,8 +3,8 @@ package com.projectcitybuild.features.teleporting
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Result
 import com.projectcitybuild.core.utilities.Success
-import com.projectcitybuild.entities.SubChannel
 import com.projectcitybuild.entities.QueuedTeleport
+import com.projectcitybuild.entities.SubChannel
 import com.projectcitybuild.entities.TeleportType
 import com.projectcitybuild.features.teleporting.repositories.QueuedTeleportRepository
 import com.projectcitybuild.modules.playerconfig.PlayerConfigRepository
@@ -24,7 +24,8 @@ class PlayerTeleporter @Inject constructor(
     fun teleport(
         player: ProxiedPlayer,
         destinationPlayer: ProxiedPlayer,
-        shouldCheckAllowingTP: Boolean
+        shouldCheckAllowingTP: Boolean,
+        shouldSupressTeleportedMessage: Boolean,
     ): Result<Unit, FailureReason> {
         if (shouldCheckAllowingTP) {
             val targetPlayerConfig = playerConfigRepository.get(destinationPlayer.uniqueId)!!
@@ -42,7 +43,8 @@ class PlayerTeleporter @Inject constructor(
                 arrayOf(
                     player.uniqueId.toString(),
                     destinationPlayer.uniqueId.toString(),
-                    false,
+                    false, // isSummon
+                    shouldSupressTeleportedMessage,
                 )
             ).send()
         } else {
@@ -52,6 +54,7 @@ class PlayerTeleporter @Inject constructor(
                     targetPlayerUUID = destinationPlayer.uniqueId,
                     targetServerName = destinationServer.name,
                     teleportType = TeleportType.TP,
+                    isSilentTeleport = shouldSupressTeleportedMessage,
                     createdAt = LocalDateTime.now()
                 )
             )
@@ -71,7 +74,8 @@ class PlayerTeleporter @Inject constructor(
     fun summon(
         summonedPlayer: ProxiedPlayer,
         destinationPlayer: ProxiedPlayer,
-        shouldCheckAllowingTP: Boolean
+        shouldCheckAllowingTP: Boolean,
+        shouldSupressTeleportedMessage: Boolean,
     ): Result<Unit, FailureReason> {
         if (shouldCheckAllowingTP) {
             val summonedPlayerConfig = playerConfigRepository.get(summonedPlayer.uniqueId)!!
@@ -99,6 +103,7 @@ class PlayerTeleporter @Inject constructor(
                     targetPlayerUUID = destinationPlayer.uniqueId,
                     targetServerName = targetServer.name,
                     teleportType = TeleportType.TP,
+                    isSilentTeleport = shouldSupressTeleportedMessage,
                     createdAt = LocalDateTime.now()
                 )
             )

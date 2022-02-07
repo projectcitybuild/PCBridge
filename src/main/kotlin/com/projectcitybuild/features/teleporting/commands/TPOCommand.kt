@@ -44,7 +44,8 @@ class TPOCommand @Inject constructor(
         playerTeleporter.teleport(
             player = input.player,
             destinationPlayer = targetPlayer,
-            shouldCheckAllowingTP = false
+            shouldCheckAllowingTP = false,
+            shouldSupressTeleportedMessage = true,
         )
     }
 

@@ -21,6 +21,10 @@ class SameServerTeleportChannelListener @Inject constructor(
 
     override fun onSpigotReceivedMessage(player: Player?, stream: ByteArrayDataInput) {
         val targetPlayerUUID = UUID.fromString(stream.readUTF())
+        val destinationPlayerUUID = UUID.fromString(stream.readUTF())
+        val isSummon = stream.readBoolean()
+        val isSilentTP = stream.readBoolean()
+
         val targetPlayer = plugin.server.getPlayer(targetPlayerUUID)
         if (targetPlayer == null) {
             logger.warning("Could not find player. Did they disconnect?")
@@ -31,7 +35,6 @@ class SameServerTeleportChannelListener @Inject constructor(
             PlayerPreSummonEvent(targetPlayer, targetPlayer.location)
         )
 
-        val destinationPlayerUUID = UUID.fromString(stream.readUTF())
         val destinationPlayer = plugin.server.getPlayer(destinationPlayerUUID)
         if (destinationPlayer == null) {
             logger.warning("Could not find destination player. Did they disconnect?")
@@ -42,14 +45,19 @@ class SameServerTeleportChannelListener @Inject constructor(
 
         targetPlayer.teleport(destinationPlayer.location)
 
-        val isSummon = stream.readBoolean()
         if (isSummon) {
             destinationPlayer.send().action("You summoned ${targetPlayer.name} to you")
-            targetPlayer.send().action("You were summoned to ${destinationPlayer.name}")
+
+            if (!isSilentTP) {
+                targetPlayer.send().action("You were summoned to ${destinationPlayer.name}")
+            }
 
         } else {
-            destinationPlayer.send().action("${targetPlayer.name} teleported to you")
             targetPlayer.send().action("Teleported to ${destinationPlayer.name}")
+
+            if (!isSilentTP) {
+                destinationPlayer.send().action("${targetPlayer.name} teleported to you")
+            }
         }
     }
 }

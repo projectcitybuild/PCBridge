@@ -61,6 +61,7 @@ class TPAcceptCommand @Inject constructor(
                     player = requesterPlayer,
                     destinationPlayer = targetPlayer,
                     shouldCheckAllowingTP = false,
+                    shouldSupressTeleportedMessage = false,
                 )
                 targetPlayer.send().info("Accepted teleport request")
                 requesterPlayer.send().info("${input.player.name} accepted your teleport request")
@@ -70,6 +71,7 @@ class TPAcceptCommand @Inject constructor(
                     summonedPlayer = targetPlayer,
                     destinationPlayer = requesterPlayer,
                     shouldCheckAllowingTP = false,
+                    shouldSupressTeleportedMessage = false,
                 )
                 targetPlayer.send().info("Accepted summon request")
                 requesterPlayer.send().info("${input.player.name} accepted your summon request")
