@@ -45,7 +45,8 @@ class TPCommand @Inject constructor(
         val result = playerTeleporter.teleport(
             player = input.player,
             destinationPlayer = targetPlayer,
-            shouldCheckAllowingTP = true
+            shouldCheckAllowingTP = true,
+            shouldSupressTeleportedMessage = false,
         )
         if (result is Failure) {
             when (result.reason) {

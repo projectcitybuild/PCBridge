@@ -8,6 +8,7 @@ data class QueuedTeleport(
     val targetPlayerUUID: UUID,
     val targetServerName: String,
     val teleportType: TeleportType,
+    val isSilentTeleport: Boolean,
     val createdAt: LocalDateTime,
 )
 

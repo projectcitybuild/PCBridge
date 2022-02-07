@@ -16,17 +16,27 @@ class TPOHereCommand @Inject constructor(
     private val nameGuesser: NameGuesser
 ): BungeecordCommand {
 
-    override val label: String = "tphere"
+    override val label: String = "tpohere"
     override val permission = "pcbridge.tpo.here"
-    override val usageHelp = "/tpohere <name>"
+    override val usageHelp = "/tpohere <name> [--silent]"
 
     override suspend fun execute(input: BungeecordCommandInput) {
         if (input.player == null) {
             input.sender.send().error("Console cannot use this command")
             return
         }
-        if (input.args.size != 1) {
+        if (input.args.isEmpty() || input.args.size > 2) {
             throw InvalidCommandArgumentsException()
+        }
+
+        var isSilentTP = false
+        if (input.args.size == 2) {
+            if (input.args[1] == "--silent") {
+                isSilentTP = true
+            } else {
+                input.player.send().error("${input.args[1]} is not a valid argument")
+                return
+            }
         }
 
         val targetPlayerName = input.args.first()
@@ -44,7 +54,8 @@ class TPOHereCommand @Inject constructor(
         playerTeleporter.summon(
             summonedPlayer = targetPlayer,
             destinationPlayer = input.player,
-            shouldCheckAllowingTP = false
+            shouldCheckAllowingTP = false,
+            shouldSupressTeleportedMessage = isSilentTP,
         )
     }
 
@@ -58,6 +69,8 @@ class TPOHereCommand @Inject constructor(
                 .map { it.name }
                 .filter { it != sender?.name }
                 .filter { it.lowercase().startsWith(args.first().lowercase()) }
+
+            args.size == 2 -> listOf("--silent")
 
             else -> null
         }
