@@ -1,7 +1,9 @@
 package com.projectcitybuild.features.teleporting.commands
 
 import com.projectcitybuild.core.InvalidCommandArgumentsException
+import com.projectcitybuild.entities.PluginConfig
 import com.projectcitybuild.features.teleporting.repositories.TeleportRequestRepository
+import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.modules.nameguesser.NameGuesser
 import com.projectcitybuild.modules.scheduler.PlatformScheduler
 import com.projectcitybuild.modules.textcomponentbuilder.send
@@ -26,6 +28,7 @@ class TPAHereCommand @Inject constructor(
     private val teleportRequestRepository: TeleportRequestRepository,
     private val scheduler: PlatformScheduler,
     private val timer: PlatformTimer,
+    private val config: PlatformConfig,
 ): BungeecordCommand {
 
     override val label: String = "tpahere"
@@ -70,7 +73,7 @@ class TPAHereCommand @Inject constructor(
 
         timer.scheduleOnce(
             identifier = timerIdentifier,
-            delay = 15,
+            delay = config.get(PluginConfig.TP_REQUEST_AUTO_EXPIRE_SECONDS).toLong(),
             unit = TimeUnit.SECONDS,
         ) {
             val request = teleportRequestRepository.get(targetPlayer.uniqueId)

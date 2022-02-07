@@ -29,6 +29,8 @@ sealed class PluginConfig {
 
         val WARPS_PER_PAGE = "warps.warps_per_page" defaultTo 15
 
+        val TP_REQUEST_AUTO_EXPIRE_SECONDS = "teleports.requests.auto_expiry_in_seconds" defaultTo 20
+
         val TIME_TIMEZONE = "time.timezone" defaultTo "UTC"
         val TIME_LOCALE = "time.locale" defaultTo "en-us"
 
