@@ -1,7 +1,6 @@
 package com.projectcitybuild.platforms.bungeecord
 
 import com.projectcitybuild.core.contracts.BungeecordFeatureModule
-import com.projectcitybuild.features.hub.HubFileStorage
 import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.modules.database.DataSourceProvider
 import com.projectcitybuild.modules.datetime.DateTimeFormatterProvider
@@ -58,10 +57,6 @@ interface BungeecordComponent {
 
         @BindsInstance
         fun apiClient(apiClient: APIClient): Builder
-
-        @Deprecated("Will be deleted in next version")
-        @BindsInstance
-        fun hubFileStorage(hubFileStorage: HubFileStorage): Builder
 
         fun build(): BungeecordComponent
     }
