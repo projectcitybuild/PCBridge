@@ -13,6 +13,8 @@ import com.projectcitybuild.modules.playerconfig.PlayerConfigCache
 import com.projectcitybuild.modules.sessioncache.BungeecordSessionCache
 import com.projectcitybuild.features.hub.HubFileStorage
 import com.projectcitybuild.modules.errorreporting.ErrorReporter
+import com.projectcitybuild.modules.scheduler.implementations.BungeecordScheduler
+import com.projectcitybuild.modules.timer.implementations.BungeecordTimer
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandRegistry
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordListenerRegistry
 import kotlinx.coroutines.Dispatchers
@@ -61,6 +63,8 @@ class BungeecordPlatform: Plugin() {
             .proxyServer(proxy)
             .config(config)
             .logger(BungeecordLogger(logger))
+            .scheduler(BungeecordScheduler(this))
+            .timer(BungeecordTimer(this, proxy))
             .apiClient(APIClient { Dispatchers.IO })
             .hubFileStorage(HubFileStorage(dataFolder))
             .build()

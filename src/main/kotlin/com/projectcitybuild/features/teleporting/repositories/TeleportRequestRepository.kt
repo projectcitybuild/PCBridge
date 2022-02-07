@@ -1,11 +1,12 @@
 package com.projectcitybuild.features.teleporting.repositories
 
-import java.util.UUID
+import java.util.*
 import java.util.concurrent.ConcurrentHashMap
+import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class TeleportRequestRepository {
+class TeleportRequestRepository @Inject constructor() {
     data class TeleportRequest(
         val requesterUUID: UUID,
         val targetUUID: UUID,

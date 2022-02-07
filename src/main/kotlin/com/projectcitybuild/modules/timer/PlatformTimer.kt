@@ -3,7 +3,7 @@ package com.projectcitybuild.modules.timer
 import com.projectcitybuild.core.utilities.Cancellable
 import java.util.concurrent.TimeUnit
 
-interface Timer {
+interface PlatformTimer {
 
     fun scheduleOnce(
         identifier: String,

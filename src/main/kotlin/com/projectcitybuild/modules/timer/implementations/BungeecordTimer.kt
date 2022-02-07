@@ -1,7 +1,7 @@
 package com.projectcitybuild.modules.timer.implementations
 
 import com.projectcitybuild.core.utilities.Cancellable
-import com.projectcitybuild.modules.timer.Timer
+import com.projectcitybuild.modules.timer.PlatformTimer
 import net.md_5.bungee.api.ProxyServer
 import net.md_5.bungee.api.plugin.Plugin
 import net.md_5.bungee.api.scheduler.ScheduledTask
@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit
 class BungeecordTimer(
     private val plugin: Plugin,
     private val proxyServer: ProxyServer
-): Timer {
+): PlatformTimer {
     private val tasks: HashMap<String, ScheduledTask> = hashMapOf()
 
     override fun scheduleOnce(

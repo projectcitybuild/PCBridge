@@ -3,7 +3,7 @@ package com.projectcitybuild.features.teleporting.commands
 import com.projectcitybuild.core.InvalidCommandArgumentsException
 import com.projectcitybuild.features.teleporting.repositories.TeleportRequestRepository
 import com.projectcitybuild.modules.textcomponentbuilder.send
-import com.projectcitybuild.modules.timer.Timer
+import com.projectcitybuild.modules.timer.PlatformTimer
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
 import net.md_5.bungee.api.ProxyServer
@@ -12,7 +12,7 @@ import javax.inject.Inject
 class TPDenyCommand @Inject constructor(
     private val proxyServer: ProxyServer,
     private val teleportRequestRepository: TeleportRequestRepository,
-    private val timer: Timer,
+    private val timer: PlatformTimer,
 ): BungeecordCommand {
 
     override val label: String = "tpdeny"

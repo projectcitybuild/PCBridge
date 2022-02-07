@@ -11,6 +11,8 @@ import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.modules.network.APIClient
 import com.projectcitybuild.modules.network.NetworkModule
 import com.projectcitybuild.modules.proxyadapter.BungeecordProxyAdapterModule
+import com.projectcitybuild.modules.scheduler.PlatformScheduler
+import com.projectcitybuild.modules.timer.PlatformTimer
 import com.projectcitybuild.platforms.bungeecord.BungeecordFeatureListModule.BungeecordFeatureModules
 import dagger.BindsInstance
 import dagger.Component
@@ -49,8 +51,15 @@ interface BungeecordComponent {
         fun logger(logger: PlatformLogger): Builder
 
         @BindsInstance
+        fun scheduler(scheduler: PlatformScheduler): Builder
+
+        @BindsInstance
+        fun timer(timer: PlatformTimer): Builder
+
+        @BindsInstance
         fun apiClient(apiClient: APIClient): Builder
 
+        @Deprecated("Will be deleted in next version")
         @BindsInstance
         fun hubFileStorage(hubFileStorage: HubFileStorage): Builder
 

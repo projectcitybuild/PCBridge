@@ -5,7 +5,7 @@ import com.projectcitybuild.features.teleporting.repositories.TeleportRequestRep
 import com.projectcitybuild.modules.nameguesser.NameGuesser
 import com.projectcitybuild.modules.scheduler.PlatformScheduler
 import com.projectcitybuild.modules.textcomponentbuilder.send
-import com.projectcitybuild.modules.timer.Timer
+import com.projectcitybuild.modules.timer.PlatformTimer
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
 import com.projectcitybuild.platforms.bungeecord.extensions.add
@@ -25,7 +25,7 @@ class TPACommand @Inject constructor(
     private val nameGuesser: NameGuesser,
     private val teleportRequestRepository: TeleportRequestRepository,
     private val scheduler: PlatformScheduler,
-    private val timer: Timer,
+    private val timer: PlatformTimer,
 ): BungeecordCommand {
 
     override val label: String = "tpa"
