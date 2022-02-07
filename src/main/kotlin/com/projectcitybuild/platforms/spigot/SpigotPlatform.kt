@@ -72,30 +72,44 @@ class SpigotPlatform: JavaPlugin() {
         fun onEnable(server: Server, modules: List<SpigotFeatureModule>) {
             errorReporter.bootstrap()
 
-            redisConnection.connect()
-            dataSource.connect()
+            runCatching {
+                redisConnection.connect()
+                dataSource.connect()
 
-            val pluginMessageListener = SpigotMessageListener(logger)
-            server.messenger.registerOutgoingPluginChannel(plugin, Channel.BUNGEECORD)
-            server.messenger.registerIncomingPluginChannel(plugin, Channel.BUNGEECORD, pluginMessageListener)
+                val pluginMessageListener = SpigotMessageListener(logger)
+                server.messenger.registerOutgoingPluginChannel(plugin, Channel.BUNGEECORD)
+                server.messenger.registerIncomingPluginChannel(plugin, Channel.BUNGEECORD, pluginMessageListener)
 
-            modules.forEach { module ->
-                logger.verbose("Registering ${module::class.java.name} module")
+                modules.forEach { module ->
+                    logger.verbose("Registering ${module::class.java.name} module")
 
-                module.spigotCommands.forEach { commandRegistry.register(it) }
-                module.spigotListeners.forEach { listenerRegistry.register(it) }
-                module.spigotSubChannelListeners.forEach { pluginMessageListener.register(it) }
+                    module.spigotCommands.forEach { commandRegistry.register(it) }
+                    module.spigotListeners.forEach { listenerRegistry.register(it) }
+                    module.spigotSubChannelListeners.forEach { pluginMessageListener.register(it) }
+                }
+
+            }.onFailure {
+                reportError(it)
+                server.pluginManager.disablePlugin(plugin)
             }
         }
 
         fun onDisable(server: Server) {
-            server.messenger.unregisterOutgoingPluginChannel(plugin)
-            server.messenger.unregisterIncomingPluginChannel(plugin)
+            runCatching {
+                server.messenger.unregisterOutgoingPluginChannel(plugin)
+                server.messenger.unregisterIncomingPluginChannel(plugin)
 
-            listenerRegistry.unregisterAll()
+                listenerRegistry.unregisterAll()
 
-            dataSource.disconnect()
-            redisConnection.disconnect()
+                dataSource.disconnect()
+                redisConnection.disconnect()
+
+            }.onFailure { reportError(it) }
+        }
+
+        private fun reportError(throwable: Throwable) {
+            throwable.printStackTrace()
+            errorReporter.report(throwable)
         }
     }
 }
