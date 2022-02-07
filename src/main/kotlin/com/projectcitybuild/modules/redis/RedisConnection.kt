@@ -14,10 +14,13 @@ class RedisConnection(
     private lateinit var connectionPool: JedisPool
 
     fun connect() {
-        connectionPool = if (password.isEmpty()) {
-            JedisPool(hostname, port)
-        } else {
-            JedisPool(hostname, port, username, password)
+        connectionPool = JedisPool(hostname, port).also { jedis ->
+            if (password.isEmpty()) return@also
+
+            jedis.resource.use {
+                if (username.isEmpty()) it.auth(password)
+                else it.auth(username, password)
+            }
         }
         testConnection()
     }
