@@ -18,15 +18,25 @@ class TPOCommand @Inject constructor(
 
     override val label: String = "tpo"
     override val permission = "pcbridge.tpo.use"
-    override val usageHelp = "/tpo <name>"
+    override val usageHelp = "/tpo <name> [--silent]"
 
     override suspend fun execute(input: BungeecordCommandInput) {
         if (input.player == null) {
             input.sender.send().error("Console cannot use this command")
             return
         }
-        if (input.args.size != 1) {
+        if (input.args.isEmpty() || input.args.size > 2) {
             throw InvalidCommandArgumentsException()
+        }
+
+        var isSilentTP = false
+        if (input.args.size == 2) {
+            if (input.args[1] == "--silent") {
+                isSilentTP = true
+            } else {
+                input.player.send().error("${input.args[1]} is not a valid argument")
+                return
+            }
         }
 
         val targetPlayerName = input.args.first()
@@ -45,7 +55,7 @@ class TPOCommand @Inject constructor(
             player = input.player,
             destinationPlayer = targetPlayer,
             shouldCheckAllowingTP = false,
-            shouldSupressTeleportedMessage = true,
+            shouldSupressTeleportedMessage = isSilentTP,
         )
     }
 
@@ -59,6 +69,8 @@ class TPOCommand @Inject constructor(
                 .map { it.name }
                 .filter { it != sender?.name }
                 .filter { it.lowercase().startsWith(args.first().lowercase()) }
+
+            args.size == 2 -> listOf("--silent")
 
             else -> null
         }
