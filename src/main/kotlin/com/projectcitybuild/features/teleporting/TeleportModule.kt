@@ -3,10 +3,7 @@ package com.projectcitybuild.features.teleporting
 import com.projectcitybuild.core.SpigotListener
 import com.projectcitybuild.core.contracts.BungeecordFeatureModule
 import com.projectcitybuild.core.contracts.SpigotFeatureModule
-import com.projectcitybuild.features.teleporting.commands.TPCommand
-import com.projectcitybuild.features.teleporting.commands.TPHereCommand
-import com.projectcitybuild.features.teleporting.commands.TPOCommand
-import com.projectcitybuild.features.teleporting.commands.TPOHereCommand
+import com.projectcitybuild.features.teleporting.commands.*
 import com.projectcitybuild.features.teleporting.listeners.TeleportOnJoinListener
 import com.projectcitybuild.features.teleporting.subchannels.AcrossServerTeleportChannelListener
 import com.projectcitybuild.features.teleporting.subchannels.SameServerTeleportChannelListener
@@ -21,14 +18,22 @@ class TeleportModule {
     class Bungeecord @Inject constructor(
         tpCommand: TPCommand,
         tpHereCommand: TPHereCommand,
+        tpaCommand: TPACommand,
+        tpaHereCommand: TPAHereCommand,
+        tpAcceptCommand: TPAcceptCommand,
+        tpDenyCommand: TPDenyCommand,
         tpoCommand: TPOCommand,
         tpoHereCommand: TPOHereCommand,
-        tpToggleCommand: TPHereCommand,
+        tpToggleCommand: TPToggleCommand,
         switchPlayerServerSubChannelListener: SwitchPlayerServerSubChannelListener,
     ): BungeecordFeatureModule {
         override val bungeecordCommands: Array<BungeecordCommand> = arrayOf(
             tpCommand,
             tpHereCommand,
+            tpaCommand,
+            tpaHereCommand,
+            tpAcceptCommand,
+            tpDenyCommand,
             tpoCommand,
             tpoHereCommand,
             tpToggleCommand,

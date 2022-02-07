@@ -39,6 +39,12 @@ commands:
   tp:
     description: "Teleports to a given player"
     usage: "/tp <name>"
+  tpaccept:
+    description: "Accept an incoming teleport request"
+    usage: "/tpaccept"
+  tpdeny:
+    description: "Decline an incoming teleport request"
+    usage: "/tpdeny"
   tpo:
     description: "Teleports to a given player regardless of whether they allow teleports"
     usage: "/tpo <name>"

@@ -3,16 +3,18 @@ package com.projectcitybuild.platforms.bungeecord
 import com.projectcitybuild.core.contracts.BungeecordFeatureModule
 import com.projectcitybuild.entities.Channel
 import com.projectcitybuild.entities.PluginConfig
+import com.projectcitybuild.features.hub.HubFileStorage
 import com.projectcitybuild.modules.channels.bungeecord.BungeecordMessageListener
 import com.projectcitybuild.modules.config.implementations.BungeecordConfig
 import com.projectcitybuild.modules.database.DataSource
+import com.projectcitybuild.modules.errorreporting.ErrorReporter
 import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.modules.logger.implementations.BungeecordLogger
 import com.projectcitybuild.modules.network.APIClient
 import com.projectcitybuild.modules.playerconfig.PlayerConfigCache
+import com.projectcitybuild.modules.scheduler.implementations.BungeecordScheduler
 import com.projectcitybuild.modules.sessioncache.BungeecordSessionCache
-import com.projectcitybuild.features.hub.HubFileStorage
-import com.projectcitybuild.modules.errorreporting.ErrorReporter
+import com.projectcitybuild.modules.timer.implementations.BungeecordTimer
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandRegistry
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordListenerRegistry
 import kotlinx.coroutines.Dispatchers
@@ -30,6 +32,7 @@ class BungeecordPlatform: Plugin() {
                 PluginConfig.API_BASE_URL,
                 PluginConfig.API_IS_LOGGING_ENABLED,
                 PluginConfig.WARPS_PER_PAGE,
+                PluginConfig.TP_REQUEST_AUTO_EXPIRE_SECONDS,
                 PluginConfig.DB_HOSTNAME,
                 PluginConfig.DB_PORT,
                 PluginConfig.DB_NAME,
@@ -61,6 +64,8 @@ class BungeecordPlatform: Plugin() {
             .proxyServer(proxy)
             .config(config)
             .logger(BungeecordLogger(logger))
+            .scheduler(BungeecordScheduler(this))
+            .timer(BungeecordTimer(this, proxy))
             .apiClient(APIClient { Dispatchers.IO })
             .hubFileStorage(HubFileStorage(dataFolder))
             .build()
