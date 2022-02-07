@@ -94,6 +94,7 @@ class PlayerTeleporter @Inject constructor(
                     summonedPlayer.uniqueId.toString(),
                     destinationPlayer.uniqueId.toString(),
                     true,
+                    shouldSupressTeleportedMessage,
                 )
             ).send()
         } else {
