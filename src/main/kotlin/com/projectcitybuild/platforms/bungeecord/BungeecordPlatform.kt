@@ -3,7 +3,6 @@ package com.projectcitybuild.platforms.bungeecord
 import com.projectcitybuild.core.contracts.BungeecordFeatureModule
 import com.projectcitybuild.entities.Channel
 import com.projectcitybuild.entities.PluginConfig
-import com.projectcitybuild.features.hub.HubFileStorage
 import com.projectcitybuild.modules.channels.bungeecord.BungeecordMessageListener
 import com.projectcitybuild.modules.config.implementations.BungeecordConfig
 import com.projectcitybuild.modules.database.DataSource
@@ -67,7 +66,6 @@ class BungeecordPlatform: Plugin() {
             .scheduler(BungeecordScheduler(this))
             .timer(BungeecordTimer(this, proxy))
             .apiClient(APIClient { Dispatchers.IO })
-            .hubFileStorage(HubFileStorage(dataFolder))
             .build()
 
         container = component.container()
