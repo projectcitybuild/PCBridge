@@ -11,8 +11,8 @@ import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.modules.logger.implementations.BungeecordLogger
 import com.projectcitybuild.modules.network.APIClient
 import com.projectcitybuild.modules.playerconfig.PlayerConfigCache
+import com.projectcitybuild.modules.redis.RedisConnection
 import com.projectcitybuild.modules.scheduler.implementations.BungeecordScheduler
-import com.projectcitybuild.modules.sessioncache.BungeecordSessionCache
 import com.projectcitybuild.modules.timer.implementations.BungeecordTimer
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandRegistry
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordListenerRegistry
@@ -37,6 +37,10 @@ class BungeecordPlatform: Plugin() {
                 PluginConfig.DB_NAME,
                 PluginConfig.DB_USERNAME,
                 PluginConfig.DB_PASSWORD,
+                PluginConfig.REDIS_HOSTNAME,
+                PluginConfig.REDIS_PORT,
+                PluginConfig.REDIS_USERNAME,
+                PluginConfig.REDIS_PASSWORD,
                 PluginConfig.ERROR_REPORTING_SENTRY_ENABLED,
                 PluginConfig.ERROR_REPORTING_SENTRY_DSN,
                 PluginConfig.GROUPS_APPEARANCE_ADMIN_DISPLAY_NAME,
@@ -80,11 +84,11 @@ class BungeecordPlatform: Plugin() {
         private val proxyServer: ProxyServer,
         private val logger: PlatformLogger,
         private val dataSource: DataSource,
-        private val sessionCache: BungeecordSessionCache,
         private val commandRegistry: BungeecordCommandRegistry,
         private val listenerRegistry: BungeecordListenerRegistry,
         private val playerConfigCache: PlayerConfigCache,
         private val errorReporter: ErrorReporter,
+        private val redisConnection: RedisConnection,
     ) {
         fun onEnable(modules: List<BungeecordFeatureModule>) {
             errorReporter.bootstrap()
@@ -92,6 +96,7 @@ class BungeecordPlatform: Plugin() {
             runCatching {
                 proxyServer.registerChannel(Channel.BUNGEECORD)
 
+                redisConnection.connect()
                 dataSource.connect()
 
                 val subChannelListener = BungeecordMessageListener(logger)
@@ -114,7 +119,7 @@ class BungeecordPlatform: Plugin() {
                 proxyServer.unregisterChannel(Channel.BUNGEECORD)
 
                 dataSource.disconnect()
-                sessionCache.flush()
+                redisConnection.disconnect()
                 playerConfigCache.flush()
                 listenerRegistry.unregisterAll()
 

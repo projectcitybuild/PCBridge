@@ -10,6 +10,7 @@ import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.modules.network.APIClient
 import com.projectcitybuild.modules.network.NetworkModule
 import com.projectcitybuild.modules.proxyadapter.BungeecordProxyAdapterModule
+import com.projectcitybuild.modules.redis.RedisProvider
 import com.projectcitybuild.modules.scheduler.PlatformScheduler
 import com.projectcitybuild.modules.timer.PlatformTimer
 import com.projectcitybuild.platforms.bungeecord.BungeecordFeatureListModule.BungeecordFeatureModules
@@ -27,6 +28,7 @@ import javax.inject.Singleton
     BungeecordFeatureListModule::class,
     NetworkModule::class,
     DataSourceProvider::class,
+    RedisProvider::class,
     BungeecordProxyAdapterModule::class,
 ])
 interface BungeecordComponent {

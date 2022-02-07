@@ -3,9 +3,9 @@ package com.projectcitybuild.features.chat.commands
 import com.projectcitybuild.core.InvalidCommandArgumentsException
 import com.projectcitybuild.core.extensions.joinWithWhitespaces
 import com.projectcitybuild.features.chat.repositories.ChatIgnoreRepository
+import com.projectcitybuild.features.chat.repositories.LastWhisperedRepository
 import com.projectcitybuild.modules.nameguesser.NameGuesser
 import com.projectcitybuild.modules.playerconfig.PlayerConfigRepository
-import com.projectcitybuild.modules.sessioncache.BungeecordSessionCache
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
@@ -20,7 +20,7 @@ class WhisperCommand @Inject constructor(
     private val proxyServer: ProxyServer,
     private val playerConfigRepository: PlayerConfigRepository,
     private val chatIgnoreRepository: ChatIgnoreRepository,
-    private val sessionCache: BungeecordSessionCache,
+    private val lastWhisperedRepository: LastWhisperedRepository,
     private val nameGuesser: NameGuesser
 ): BungeecordCommand {
 
@@ -77,7 +77,10 @@ class WhisperCommand @Inject constructor(
         input.sender.sendMessage(tc)
 
         if (input.player != null) {
-            sessionCache.lastWhispered[targetPlayer.uniqueId] = input.player.uniqueId
+            lastWhisperedRepository.set(
+                whisperer = input.player.uniqueId,
+                targetOfWhisper = targetPlayer.uniqueId,
+            )
         }
     }
 
