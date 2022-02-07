@@ -91,27 +91,41 @@ class BungeecordPlatform: Plugin() {
         fun onEnable(modules: List<BungeecordFeatureModule>) {
             errorReporter.bootstrap()
 
-            proxyServer.registerChannel(Channel.BUNGEECORD)
+            runCatching {
+                proxyServer.registerChannel(Channel.BUNGEECORD)
 
-            dataSource.connect()
+                dataSource.connect()
 
-            val subChannelListener = BungeecordMessageListener(logger)
-            listenerRegistry.register(subChannelListener)
+                val subChannelListener = BungeecordMessageListener(logger)
+                listenerRegistry.register(subChannelListener)
 
-            modules.forEach { module ->
-                module.bungeecordCommands.forEach { commandRegistry.register(it) }
-                module.bungeecordListeners.forEach { listenerRegistry.register(it) }
-                module.bungeecordSubChannelListeners.forEach { subChannelListener.register(it) }
+                modules.forEach { module ->
+                    module.bungeecordCommands.forEach { commandRegistry.register(it) }
+                    module.bungeecordListeners.forEach { listenerRegistry.register(it) }
+                    module.bungeecordSubChannelListeners.forEach { subChannelListener.register(it) }
+                }
+
+            }.onFailure {
+                reportError(it)
+                proxyServer.pluginManager.getPlugin("PCBridge")?.onDisable()
             }
         }
 
         fun onDisable() {
-            proxyServer.unregisterChannel(Channel.BUNGEECORD)
+            runCatching {
+                proxyServer.unregisterChannel(Channel.BUNGEECORD)
 
-            dataSource.disconnect()
-            sessionCache.flush()
-            playerConfigCache.flush()
-            listenerRegistry.unregisterAll()
+                dataSource.disconnect()
+                sessionCache.flush()
+                playerConfigCache.flush()
+                listenerRegistry.unregisterAll()
+
+            }.onFailure { reportError(it) }
+        }
+
+        private fun reportError(throwable: Throwable) {
+            throwable.printStackTrace()
+            errorReporter.report(throwable)
         }
     }
 }
