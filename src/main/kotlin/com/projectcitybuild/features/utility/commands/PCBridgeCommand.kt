@@ -4,7 +4,6 @@ import com.projectcitybuild.core.InvalidCommandArgumentsException
 import com.projectcitybuild.core.Regex
 import com.projectcitybuild.entities.IPBan
 import com.projectcitybuild.features.bans.repositories.IPBanRepository
-import com.projectcitybuild.features.hub.HubFileStorage
 import com.projectcitybuild.modules.database.DataSource
 import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.modules.textcomponentbuilder.send
@@ -52,27 +51,6 @@ class PCBridgeCommand @Inject constructor(
 
         val name = args[1]
         when (name) {
-            "hub" -> {
-                val storage = HubFileStorage(plugin.dataFolder)
-                val hub = storage.load()
-
-                if (hub != null) {
-                    dataSource.database().executeInsert(
-                        "INSERT INTO `hub` VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-                        hub.serverName,
-                        hub.worldName,
-                        hub.x,
-                        hub.y,
-                        hub.z,
-                        hub.pitch,
-                        hub.yaw,
-                        hub.createdAt.unwrapped
-                    )
-                    sender.send().success("Imported hub")
-                } else {
-                    sender.send().error("Hub not found")
-                }
-            }
             "banned-ips" -> {
                 val file = File(plugin.dataFolder, "banned-ips.json")
                 val json = file.readLines().joinToString(separator = "")
