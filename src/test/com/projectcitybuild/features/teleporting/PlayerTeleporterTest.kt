@@ -42,7 +42,7 @@ class PlayerTeleporterTest {
             PlayerConfigMock(targetPlayerUUID).apply { isAllowingTPs = false }
         )
 
-        val result = requester.teleport(originPlayer, targetPlayer, true)
+        val result = requester.teleport(originPlayer, targetPlayer, true, false)
 
         assertEquals(result, Failure(PlayerTeleporter.FailureReason.TARGET_PLAYER_DISALLOWS_TP))
     }
@@ -58,7 +58,7 @@ class PlayerTeleporterTest {
             PlayerConfigMock(targetPlayerUUID).apply { isAllowingTPs = false }
         )
 
-        val result = requester.summon(targetPlayer, originPlayer, true)
+        val result = requester.summon(targetPlayer, originPlayer, true, false)
 
         assertEquals(result, Failure(PlayerTeleporter.FailureReason.TARGET_PLAYER_DISALLOWS_TP))
     }
