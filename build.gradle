@@ -15,7 +15,7 @@ plugins {
 }
 
 group 'com.projectcitybuild'
-version '3.5.0'
+version '3.6.0'
 
 apply plugin: 'kotlin'
 apply plugin: 'com.github.johnrengelman.shadow'
