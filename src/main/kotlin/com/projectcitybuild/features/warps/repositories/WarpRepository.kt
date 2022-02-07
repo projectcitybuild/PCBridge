@@ -12,7 +12,7 @@ class WarpRepository @Inject constructor(
     private val dataSource: DataSource,
     private val redisConnection: RedisConnection,
 ) {
-    private val listCacheKey = "all_warp_names"
+    private val listCacheKey = "pcbridge:all_warp_names"
 
     fun exists(name: String): Boolean {
         return first(name) != null

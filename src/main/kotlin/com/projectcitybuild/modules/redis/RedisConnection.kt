@@ -32,8 +32,8 @@ class RedisConnection(
 
     private fun testConnection() {
         resource().use {
-            it.set("test", "test")
-            it.del("test")
+            it.set("pcbridge:test", "test")
+            it.del("pcbridge:test")
         }
     }
 }
