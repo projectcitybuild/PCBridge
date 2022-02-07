@@ -1,22 +1,31 @@
 package com.projectcitybuild.features.afk.repositories
 
+import com.projectcitybuild.modules.redis.RedisConnection
 import dagger.Reusable
-import java.util.*
+import java.util.UUID
 import javax.inject.Inject
 
 @Reusable
-class AFKRepository @Inject constructor() {
-    private val afkPlayers: MutableSet<UUID> = mutableSetOf()
+class AFKRepository @Inject constructor(
+    private val redisConnection: RedisConnection,
+) {
+    private val cacheKey = "pcbridge:afk"
 
     fun isAFK(uuid: UUID): Boolean {
-        return afkPlayers.contains(uuid)
+        return redisConnection.resource().use {
+            it.sismember(cacheKey, uuid.toString())
+        }
     }
 
     fun add(uuid: UUID) {
-        afkPlayers.add(uuid)
+        redisConnection.resource().use {
+            it.sadd(cacheKey, uuid.toString())
+        }
     }
 
     fun remove(uuid: UUID) {
-        afkPlayers.remove(uuid)
+        redisConnection.resource().use {
+            it.srem(cacheKey, uuid.toString())
+        }
     }
 }

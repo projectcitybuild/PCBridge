@@ -1,6 +1,7 @@
 package com.projectcitybuild.platforms.spigot
 
 import com.projectcitybuild.core.contracts.SpigotFeatureModule
+import com.projectcitybuild.features.afk.AFKModule
 import com.projectcitybuild.features.chat.ChatModule
 import com.projectcitybuild.features.hub.HubModule
 import com.projectcitybuild.features.joinmessage.JoinMessageModule
@@ -21,6 +22,7 @@ class SpigotFeatureListModule {
     @Provides
     @SpigotFeatureModules
     fun modules(
+        afkModule: AFKModule.Spigot,
         chatModule: ChatModule.Spigot,
         hubModule: HubModule,
         joinMessageModule: JoinMessageModule.Spigot,
@@ -28,6 +30,7 @@ class SpigotFeatureListModule {
         teleportHistoryModule: TeleportHistoryModule.Spigot,
         warpModule: WarpModule,
     ): List<SpigotFeatureModule> = listOf(
+        afkModule,
         chatModule,
         hubModule,
         joinMessageModule,
