@@ -26,7 +26,11 @@ class WarpsCommand @Inject constructor(
         if (input.args.size > 1) {
             throw InvalidCommandArgumentsException()
         }
-        val page = input.args.firstOrNull()?.toInt() ?: 1
+        val page = try {
+            input.args.firstOrNull()?.toInt()
+        } catch (e: NumberFormatException) {
+            null
+        } ?: 1
 
         val warpList = warpListUseCase.getList(page)
         if (warpList == null) {
