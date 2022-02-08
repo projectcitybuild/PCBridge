@@ -7,7 +7,7 @@ import com.projectcitybuild.modules.errorreporting.ErrorReporterProvider
 import com.projectcitybuild.modules.eventbroadcast.LocalEventBroadcaster
 import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.modules.network.APIClient
-import com.projectcitybuild.modules.network.NetworkModule
+import com.projectcitybuild.modules.network.NetworkProvider
 import com.projectcitybuild.modules.redis.RedisProvider
 import com.projectcitybuild.modules.scheduler.PlatformScheduler
 import dagger.BindsInstance
@@ -20,7 +20,7 @@ import javax.inject.Singleton
 @Component(modules = [
     DateTimeProvider::class,
     ErrorReporterProvider::class,
-    NetworkModule::class,
+    NetworkProvider::class,
     DataSourceProvider::class,
     RedisProvider::class,
 ])

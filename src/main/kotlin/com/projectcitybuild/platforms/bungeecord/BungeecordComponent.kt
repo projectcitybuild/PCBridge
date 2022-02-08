@@ -7,7 +7,7 @@ import com.projectcitybuild.modules.datetime.DateTimeProvider
 import com.projectcitybuild.modules.errorreporting.ErrorReporterProvider
 import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.modules.network.APIClient
-import com.projectcitybuild.modules.network.NetworkModule
+import com.projectcitybuild.modules.network.NetworkProvider
 import com.projectcitybuild.modules.proxyadapter.BungeecordProxyAdapterModule
 import com.projectcitybuild.modules.scheduler.PlatformScheduler
 import com.projectcitybuild.modules.timer.PlatformTimer
@@ -23,7 +23,7 @@ import javax.inject.Singleton
     DateTimeProvider::class,
     ErrorReporterProvider::class,
     BungeecordModulesProvider::class,
-    NetworkModule::class,
+    NetworkProvider::class,
     DataSourceProvider::class,
     BungeecordProxyAdapterModule::class,
 ])
