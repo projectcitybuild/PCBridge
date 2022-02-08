@@ -56,11 +56,12 @@ class DynmapMarkerAdapter @Inject constructor(
         logger.verbose("Redrawing warp markers...")
 
         val markerAPI = dynmap.markerAPI
+        val markerLabel = "Warps" // This name shows up in the Dynmap web interface
 
         val warpMarkerSet = markerAPI.getMarkerSet(markerSetName)
             ?: markerAPI.createMarkerSet(
                 markerSetName,
-                "warps",
+                markerLabel,
                 null, // TODO: what is this?
                 false, // TODO: what is this?
             )
