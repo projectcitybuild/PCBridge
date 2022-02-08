@@ -31,4 +31,5 @@ interface SpigotFeatureModule {
         get() = emptyArray()
 
     fun onEnable() = run { }
+    fun onDisable() = run { }
 }

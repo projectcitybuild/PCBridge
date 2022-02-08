@@ -1,6 +1,5 @@
 package com.projectcitybuild.platforms.spigot
 
-import com.projectcitybuild.core.contracts.SpigotFeatureModule
 import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.modules.database.DataSourceProvider
 import com.projectcitybuild.modules.datetime.TimeProvider
@@ -11,7 +10,6 @@ import com.projectcitybuild.modules.network.APIClient
 import com.projectcitybuild.modules.network.NetworkModule
 import com.projectcitybuild.modules.redis.RedisProvider
 import com.projectcitybuild.modules.scheduler.PlatformScheduler
-import com.projectcitybuild.platforms.spigot.SpigotFeatureListModule.SpigotFeatureModules
 import dagger.BindsInstance
 import dagger.Component
 import org.bukkit.plugin.Plugin
@@ -22,7 +20,6 @@ import javax.inject.Singleton
 @Component(modules = [
     TimeProvider::class,
     ErrorReporterProvider::class,
-    SpigotFeatureListModule::class,
     NetworkModule::class,
     DataSourceProvider::class,
     RedisProvider::class,
@@ -30,9 +27,6 @@ import javax.inject.Singleton
 interface SpigotComponent {
 
     fun container(): SpigotPlatform.Container
-
-    @SpigotFeatureModules
-    fun modules(): List<SpigotFeatureModule>
 
     @Component.Builder
     interface Builder {
