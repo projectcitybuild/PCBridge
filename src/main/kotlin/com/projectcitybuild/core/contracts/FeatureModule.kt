@@ -29,4 +29,6 @@ interface SpigotFeatureModule {
 
     val spigotSubChannelListeners: Array<SpigotSubChannelListener>
         get() = emptyArray()
+
+    fun onEnable() = run { }
 }

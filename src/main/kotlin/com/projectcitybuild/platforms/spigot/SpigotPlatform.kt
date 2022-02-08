@@ -86,6 +86,7 @@ class SpigotPlatform: JavaPlugin() {
                     module.spigotCommands.forEach { commandRegistry.register(it) }
                     module.spigotListeners.forEach { listenerRegistry.register(it) }
                     module.spigotSubChannelListeners.forEach { pluginMessageListener.register(it) }
+                    module.onEnable()
                 }
 
             }.onFailure {
