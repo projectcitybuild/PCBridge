@@ -56,6 +56,26 @@ class WarpRepository @Inject constructor(
             }
     }
 
+    fun all(): List<Warp> {
+        return dataSource.database()
+            .getResults("SELECT * FROM `warps` ORDER BY `name` ASC")
+            .map { row ->
+                Warp(
+                    name = row.get("name"),
+                    location = CrossServerLocation(
+                        serverName = row.get("server_name"),
+                        worldName = row.get("world_name"),
+                        x = row.get("x"),
+                        y = row.get("y"),
+                        z = row.get("z"),
+                        pitch = row.get("pitch"),
+                        yaw = row.get("yaw"),
+                    ),
+                    createdAt = row.get("created_at"),
+                )
+            }
+    }
+
     fun add(warp: Warp) {
         dataSource.database().executeInsert(
             "INSERT INTO `warps` VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",

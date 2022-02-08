@@ -31,6 +31,8 @@ sealed class PluginConfig {
 
         val TP_REQUEST_AUTO_EXPIRE_SECONDS = "teleports.requests.auto_expiry_in_seconds" defaultTo 20
 
+        val INTEGRATION_DYNMAP_WARP_ICON = "integrations.dynmap.warp_icon" defaultTo "portal"
+
         val TIME_TIMEZONE = "time.timezone" defaultTo "UTC"
         val TIME_LOCALE = "time.locale" defaultTo "en-us"
 

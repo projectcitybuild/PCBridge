@@ -3,6 +3,7 @@ name: PCBridge
 version: 3.6.0
 softdepend:
   - LuckPerms
+  - dynmap
 
 api-version: 1.16
 
