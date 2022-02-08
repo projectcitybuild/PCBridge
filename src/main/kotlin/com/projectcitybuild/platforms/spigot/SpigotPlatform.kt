@@ -2,6 +2,7 @@ package com.projectcitybuild.platforms.spigot
 
 import com.github.shynixn.mccoroutine.minecraftDispatcher
 import com.projectcitybuild.entities.Channel
+import com.projectcitybuild.entities.PluginConfig
 import com.projectcitybuild.modules.channels.spigot.SpigotMessageListener
 import com.projectcitybuild.modules.config.implementations.SpigotConfig
 import com.projectcitybuild.modules.database.DataSource
