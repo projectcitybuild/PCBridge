@@ -58,7 +58,7 @@ class WarpRepository @Inject constructor(
 
     fun all(): List<Warp> {
         return dataSource.database()
-            .getResults("SELECT *` FROM `warps` ORDER BY `name` ASC")
+            .getResults("SELECT * FROM `warps` ORDER BY `name` ASC")
             .map { row ->
                 Warp(
                     name = row.get("name"),

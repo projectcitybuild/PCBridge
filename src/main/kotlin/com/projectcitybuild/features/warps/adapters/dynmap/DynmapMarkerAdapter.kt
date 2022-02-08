@@ -26,19 +26,20 @@ class DynmapMarkerAdapter @Inject constructor(
     private lateinit var dynmap: DynmapAPI
 
     fun enable() {
-        val plugin = plugin.server.pluginManager.getPlugin("dynmap")
-        if (plugin == null) {
+        val anyPlugin = plugin.server.pluginManager.getPlugin("dynmap")
+        if (anyPlugin == null) {
             logger.warning("Cannot find dynmap pluigin")
             throw DynmapNotFoundException()
         }
-        if (plugin !is DynmapAPI) {
+        if (anyPlugin !is DynmapAPI) {
             logger.fatal("Found dynmap plugin but cannot access dynmap-api")
             throw DynmapNotFoundException()
         }
 
-        isEnabled = true
-
+        dynmap = anyPlugin
         plugin.server.pluginManager.registerEvents(this, plugin)
+
+        isEnabled = true
 
         updateWarpMarkers()
     }
