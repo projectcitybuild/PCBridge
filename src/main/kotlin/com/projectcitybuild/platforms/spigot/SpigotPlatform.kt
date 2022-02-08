@@ -24,29 +24,11 @@ class SpigotPlatform: JavaPlugin() {
     private lateinit var container: Container
 
     override fun onEnable() {
-        val config = SpigotConfig(plugin = this, config = config).apply {
-            load(
-                PluginConfig.SPIGOT_SERVER_NAME,
-                PluginConfig.DB_HOSTNAME,
-                PluginConfig.DB_PORT,
-                PluginConfig.DB_NAME,
-                PluginConfig.DB_USERNAME,
-                PluginConfig.DB_PASSWORD,
-                PluginConfig.REDIS_HOSTNAME,
-                PluginConfig.REDIS_PORT,
-                PluginConfig.REDIS_USERNAME,
-                PluginConfig.REDIS_PASSWORD,
-                PluginConfig.ERROR_REPORTING_SENTRY_ENABLED,
-                PluginConfig.ERROR_REPORTING_SENTRY_DSN,
-                PluginConfig.INTEGRATION_DYNMAP_WARP_ICON,
-            )
-        }
-
         val component = DaggerSpigotComponent.builder()
             .plugin(this)
             .javaPlugin(this)
-            .config(config)
-            .logger(SpigotLogger(logger = logger))
+            .config(SpigotConfig(this, config))
+            .logger(SpigotLogger(logger))
             .scheduler(SpigotScheduler(this))
             .localEventBroadcaster(SpigotLocalEventBroadcaster())
             .apiClient(APIClient { this.minecraftDispatcher })
