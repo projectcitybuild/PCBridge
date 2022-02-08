@@ -31,7 +31,7 @@ class BanUseCase @Inject constructor(
         reason: String?
     ): Result<Unit, FailureReason> {
         try {
-            val targetPlayerUUID = playerUUIDRepository.request(targetPlayerName)
+            val targetPlayerUUID = playerUUIDRepository.get(targetPlayerName)
                 ?: return Failure(FailureReason.PlayerDoesNotExist)
 
             banRepository.ban(

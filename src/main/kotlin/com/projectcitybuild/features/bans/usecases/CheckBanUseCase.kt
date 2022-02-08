@@ -26,7 +26,7 @@ class CheckBanUseCase @Inject constructor(
     suspend fun getBan(
         targetPlayerName: String
     ): Result<BanRecord?, FailureReason> {
-        val targetPlayerUUID = playerUUIDRepository.request(targetPlayerName)
+        val targetPlayerUUID = playerUUIDRepository.get(targetPlayerName)
             ?: return Failure(FailureReason.PlayerDoesNotExist)
 
         val ban = banRepository.get(targetPlayerUUID = targetPlayerUUID)

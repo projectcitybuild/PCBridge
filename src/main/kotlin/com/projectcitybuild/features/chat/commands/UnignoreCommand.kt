@@ -45,7 +45,7 @@ class UnignoreCommand @Inject constructor(
             if (targetPlayer != null) {
                 targetPlayer.uniqueId
             } else {
-                playerUUIDRepository.request(targetPlayerName)
+                playerUUIDRepository.get(targetPlayerName)
                     ?: throw Exception("Could not find UUID for $targetPlayerName. This player likely doesn't exist")
             }
 
