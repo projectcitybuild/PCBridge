@@ -34,8 +34,4 @@ class WarpModule @Inject constructor(
     override fun onEnable() {
         dynmapMarkerAdapter.enable()
     }
-
-    override fun onDisable() {
-        dynmapMarkerAdapter.disable()
-    }
 }

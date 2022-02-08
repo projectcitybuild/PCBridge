@@ -21,6 +21,7 @@ class DynmapMarkerAdapter @Inject constructor(
     class DynmapMarkerIconNotFoundException: Exception()
 
     private val markerSetName = "pcbridge"
+    private var isEnabled = false
 
     private lateinit var dynmap: DynmapAPI
 
@@ -35,13 +36,24 @@ class DynmapMarkerAdapter @Inject constructor(
             throw DynmapNotFoundException()
         }
 
+        isEnabled = true
+
         plugin.server.pluginManager.registerEvents(this, plugin)
+
+        updateWarpMarkers()
     }
 
     @EventHandler fun onWarpCreate(event: WarpCreateEvent) = updateWarpMarkers()
     @EventHandler fun onWarpDelete(event: WarpDeleteEvent) = updateWarpMarkers()
 
     private fun updateWarpMarkers() {
+        if (!isEnabled) {
+            logger.verbose("Dynmap integration disabled. Skipping warp marker update")
+            return
+        }
+
+        logger.verbose("Redrawing warp markers...")
+
         val markerAPI = dynmap.markerAPI
 
         val warpMarkerSet = markerAPI.getMarkerSet(markerSetName)
