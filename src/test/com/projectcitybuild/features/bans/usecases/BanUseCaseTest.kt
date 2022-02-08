@@ -46,7 +46,7 @@ class BanUseCaseTest {
     fun `ban should fail when player doesn't exist`() = runTest {
         val playerName = "banned_player"
 
-        `when`(playerUUIDRepository.request(playerName)).thenReturn(null)
+        `when`(playerUUIDRepository.get(playerName)).thenReturn(null)
 
         val result = useCase.ban(playerName, null, "staff_player", null)
 
@@ -60,7 +60,7 @@ class BanUseCaseTest {
         val staffName = "staff_player"
         val staffUUID = UUID.randomUUID()
 
-        `when`(playerUUIDRepository.request(playerName)).thenReturn(playerUUID)
+        `when`(playerUUIDRepository.get(playerName)).thenReturn(playerUUID)
         `when`(banRepository.ban(playerUUID, playerName, staffUUID, null))
             .thenThrow(BanRepository.PlayerAlreadyBannedException())
 
@@ -76,7 +76,7 @@ class BanUseCaseTest {
         val staffUUID = UUID.randomUUID()
         val reason = "reason"
 
-        `when`(playerUUIDRepository.request(playerName)).thenReturn(playerUUID)
+        `when`(playerUUIDRepository.get(playerName)).thenReturn(playerUUID)
 
         useCase.ban(playerName, staffUUID, "staff_player", reason)
 
@@ -88,7 +88,7 @@ class BanUseCaseTest {
     fun `ban should be broadcasted to all online players`() = runTest {
         val playerName = "banned_player"
 
-        `when`(playerUUIDRepository.request(playerName)).thenReturn(UUID.randomUUID())
+        `when`(playerUUIDRepository.get(playerName)).thenReturn(UUID.randomUUID())
 
         useCase.ban(playerName, UUID.randomUUID(), "staff_player", "reason")
 
@@ -101,7 +101,7 @@ class BanUseCaseTest {
         val playerName = "banned_player"
         val playerUUID = UUID.randomUUID()
 
-        `when`(playerUUIDRepository.request(playerName)).thenReturn(playerUUID)
+        `when`(playerUUIDRepository.get(playerName)).thenReturn(playerUUID)
 
         useCase.ban(playerName, UUID.randomUUID(), "staff_player", "reason")
 

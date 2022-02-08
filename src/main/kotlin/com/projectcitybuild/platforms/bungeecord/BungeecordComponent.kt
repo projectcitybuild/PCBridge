@@ -3,12 +3,11 @@ package com.projectcitybuild.platforms.bungeecord
 import com.projectcitybuild.core.contracts.BungeecordFeatureModule
 import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.modules.database.DataSourceProvider
-import com.projectcitybuild.modules.datetime.DateTimeFormatterProvider
-import com.projectcitybuild.modules.datetime.TimeProvider
+import com.projectcitybuild.modules.datetime.DateTimeProvider
 import com.projectcitybuild.modules.errorreporting.ErrorReporterProvider
 import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.modules.network.APIClient
-import com.projectcitybuild.modules.network.NetworkModule
+import com.projectcitybuild.modules.network.NetworkProvider
 import com.projectcitybuild.modules.proxyadapter.BungeecordProxyAdapterModule
 import com.projectcitybuild.modules.scheduler.PlatformScheduler
 import com.projectcitybuild.modules.timer.PlatformTimer
@@ -21,11 +20,10 @@ import javax.inject.Singleton
 
 @Singleton
 @Component(modules = [
-    TimeProvider::class,
+    DateTimeProvider::class,
     ErrorReporterProvider::class,
-    DateTimeFormatterProvider::class,
     BungeecordModulesProvider::class,
-    NetworkModule::class,
+    NetworkProvider::class,
     DataSourceProvider::class,
     BungeecordProxyAdapterModule::class,
 ])

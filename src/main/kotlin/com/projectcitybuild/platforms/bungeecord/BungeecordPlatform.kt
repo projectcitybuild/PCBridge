@@ -12,7 +12,6 @@ import com.projectcitybuild.modules.logger.implementations.BungeecordLogger
 import com.projectcitybuild.modules.network.APIClient
 import com.projectcitybuild.modules.playerconfig.PlayerConfigCache
 import com.projectcitybuild.modules.scheduler.implementations.BungeecordScheduler
-import com.projectcitybuild.modules.sessioncache.BungeecordSessionCache
 import com.projectcitybuild.modules.timer.implementations.BungeecordTimer
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandRegistry
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordListenerRegistry
@@ -80,7 +79,6 @@ class BungeecordPlatform: Plugin() {
         private val proxyServer: ProxyServer,
         private val logger: PlatformLogger,
         private val dataSource: DataSource,
-        private val sessionCache: BungeecordSessionCache,
         private val commandRegistry: BungeecordCommandRegistry,
         private val listenerRegistry: BungeecordListenerRegistry,
         private val playerConfigCache: PlayerConfigCache,
@@ -112,11 +110,9 @@ class BungeecordPlatform: Plugin() {
         fun onDisable() {
             runCatching {
                 proxyServer.unregisterChannel(Channel.BUNGEECORD)
-
-                dataSource.disconnect()
-                sessionCache.flush()
-                playerConfigCache.flush()
                 listenerRegistry.unregisterAll()
+                dataSource.disconnect()
+                playerConfigCache.flush()
 
             }.onFailure { reportError(it) }
         }

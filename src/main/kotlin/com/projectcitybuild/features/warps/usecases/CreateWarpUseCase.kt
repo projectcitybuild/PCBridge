@@ -7,7 +7,7 @@ import com.projectcitybuild.entities.CrossServerLocation
 import com.projectcitybuild.entities.Warp
 import com.projectcitybuild.features.warps.events.WarpCreateEvent
 import com.projectcitybuild.features.warps.repositories.WarpRepository
-import com.projectcitybuild.modules.datetime.Time
+import com.projectcitybuild.modules.datetime.time.Time
 import com.projectcitybuild.modules.eventbroadcast.LocalEventBroadcaster
 import javax.inject.Inject
 

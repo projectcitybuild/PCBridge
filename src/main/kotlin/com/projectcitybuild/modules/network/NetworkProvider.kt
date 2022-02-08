@@ -8,7 +8,7 @@ import dagger.Module
 import dagger.Provides
 
 @Module
-class NetworkModule {
+class NetworkProvider {
 
     @Provides
     fun provideAPIRequestFactory(config: PlatformConfig): APIRequestFactory {

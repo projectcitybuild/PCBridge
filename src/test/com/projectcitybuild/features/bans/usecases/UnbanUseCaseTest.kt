@@ -40,7 +40,7 @@ class UnbanUseCaseTest {
     fun `unban should fail when player doesn't exist`() = runTest {
         val playerName = "banned_player"
 
-        `when`(playerUUIDRepository.request(playerName)).thenReturn(null)
+        `when`(playerUUIDRepository.get(playerName)).thenReturn(null)
 
         val result = useCase.unban(playerName, null)
 
@@ -53,7 +53,7 @@ class UnbanUseCaseTest {
         val playerUUID = UUID.randomUUID()
         val staffUUID = UUID.randomUUID()
 
-        `when`(playerUUIDRepository.request(playerName)).thenReturn(playerUUID)
+        `when`(playerUUIDRepository.get(playerName)).thenReturn(playerUUID)
         `when`(banRepository.unban(playerUUID, staffUUID))
             .thenThrow(BanRepository.PlayerNotBannedException())
 
@@ -68,7 +68,7 @@ class UnbanUseCaseTest {
         val playerUUID = UUID.randomUUID()
         val staffUUID = UUID.randomUUID()
 
-        `when`(playerUUIDRepository.request(playerName)).thenReturn(playerUUID)
+        `when`(playerUUIDRepository.get(playerName)).thenReturn(playerUUID)
 
         useCase.unban(playerName, staffUUID)
 
@@ -80,7 +80,7 @@ class UnbanUseCaseTest {
     fun `unban should be broadcasted to all online players`() = runTest {
         val playerName = "banned_player"
 
-        `when`(playerUUIDRepository.request(playerName)).thenReturn(UUID.randomUUID())
+        `when`(playerUUIDRepository.get(playerName)).thenReturn(UUID.randomUUID())
 
         useCase.unban(playerName, UUID.randomUUID())
 

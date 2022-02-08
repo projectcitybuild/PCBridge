@@ -2,7 +2,6 @@ package com.projectcitybuild.modules.network.pcb.client
 
 import com.projectcitybuild.modules.network.pcb.requests.AuthApiInterface
 import com.projectcitybuild.modules.network.pcb.requests.BanApiInterface
-import com.projectcitybuild.modules.network.pcb.requests.DonorApiInterface
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -17,7 +16,6 @@ class PCBClient(
 
     val banApi: BanApiInterface = instance.create(BanApiInterface::class.java)
     val authApi: AuthApiInterface = instance.create(AuthApiInterface::class.java)
-    val donorApi: DonorApiInterface = instance.create(DonorApiInterface::class.java)
 
     private fun build(withLogging: Boolean) : Retrofit {
         val authenticatedClient = makeAuthenticatedClient(authToken, withLogging)

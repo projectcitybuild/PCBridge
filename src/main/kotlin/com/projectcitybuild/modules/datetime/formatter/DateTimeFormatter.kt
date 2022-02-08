@@ -1,4 +1,4 @@
-package com.projectcitybuild.modules.datetime
+package com.projectcitybuild.modules.datetime.formatter
 
 import java.time.format.FormatStyle
 

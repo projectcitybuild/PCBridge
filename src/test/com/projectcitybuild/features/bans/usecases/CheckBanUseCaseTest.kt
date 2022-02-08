@@ -37,7 +37,7 @@ class CheckBanUseCaseTest {
     fun `getBan should fail when player doesn't exist`() = runTest {
         val playerName = "banned_player"
 
-        `when`(playerUUIDRepository.request(playerName)).thenReturn(null)
+        `when`(playerUUIDRepository.get(playerName)).thenReturn(null)
 
         val result = useCase.getBan(playerName)
 
@@ -50,7 +50,7 @@ class CheckBanUseCaseTest {
         val playerUUID = UUID.randomUUID()
         val staffUUID = UUID.randomUUID()
 
-        `when`(playerUUIDRepository.request(playerName)).thenReturn(playerUUID)
+        `when`(playerUUIDRepository.get(playerName)).thenReturn(playerUUID)
         `when`(banRepository.get(playerUUID)).thenReturn(
             GameBan(
                 id = 1,
@@ -85,7 +85,7 @@ class CheckBanUseCaseTest {
         val playerUUID = UUID.randomUUID()
         val staffUUID = UUID.randomUUID()
 
-        `when`(playerUUIDRepository.request(playerName)).thenReturn(playerUUID)
+        `when`(playerUUIDRepository.get(playerName)).thenReturn(playerUUID)
         `when`(banRepository.get(playerUUID)).thenReturn(
             GameBan(
                 id = 1,

@@ -1,10 +1,10 @@
-package com.projectcitybuild.modules.datetime
+package com.projectcitybuild.modules.datetime.formatter
 
 import dagger.Reusable
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.FormatStyle
-import java.util.Locale
+import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 

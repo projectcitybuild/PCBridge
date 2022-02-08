@@ -7,7 +7,7 @@ import com.projectcitybuild.modules.channels.spigot.SpigotMessageListener
 import com.projectcitybuild.modules.config.implementations.SpigotConfig
 import com.projectcitybuild.modules.database.DataSource
 import com.projectcitybuild.modules.errorreporting.ErrorReporter
-import com.projectcitybuild.modules.eventbroadcast.SpigotLocalEventBroadcaster
+import com.projectcitybuild.modules.eventbroadcast.implementations.SpigotLocalEventBroadcaster
 import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.modules.logger.implementations.SpigotLogger
 import com.projectcitybuild.modules.network.APIClient

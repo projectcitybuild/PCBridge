@@ -2,8 +2,8 @@ package com.projectcitybuild.features.chat.commands
 
 import com.projectcitybuild.core.InvalidCommandArgumentsException
 import com.projectcitybuild.features.chat.repositories.ChatIgnoreRepository
+import com.projectcitybuild.features.chat.repositories.LastWhisperedRepository
 import com.projectcitybuild.modules.playerconfig.PlayerConfigRepository
-import com.projectcitybuild.modules.sessioncache.BungeecordSessionCache
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
@@ -16,7 +16,7 @@ class ReplyCommand @Inject constructor(
     private val proxyServer: ProxyServer,
     private val playerConfigRepository: PlayerConfigRepository,
     private val chatIgnoreRepository: ChatIgnoreRepository,
-    private val sessionCache: BungeecordSessionCache
+    private val lastWhisperedRepository: LastWhisperedRepository,
 ): BungeecordCommand {
 
     override val label = "reply"
@@ -33,7 +33,7 @@ class ReplyCommand @Inject constructor(
             throw InvalidCommandArgumentsException()
         }
 
-        val playerWhoLastWhispered = sessionCache.lastWhispered[input.player.uniqueId]
+        val playerWhoLastWhispered = lastWhisperedRepository.getLastWhisperer(input.player.uniqueId)
         if (playerWhoLastWhispered == null) {
             input.sender.send().error("You have not been direct messaged by anyone yet")
             return
@@ -41,7 +41,7 @@ class ReplyCommand @Inject constructor(
 
         val targetPlayer = proxyServer.getPlayer(playerWhoLastWhispered)
         if (targetPlayer == null) {
-            sessionCache.lastWhispered.remove(input.player.uniqueId)
+            lastWhisperedRepository.remove(input.player.uniqueId)
             input.sender.send().error("Player not online")
             return
         }
@@ -63,6 +63,9 @@ class ReplyCommand @Inject constructor(
         targetPlayer.sendMessage(tc)
         input.sender.sendMessage(tc)
 
-        sessionCache.lastWhispered[targetPlayer.uniqueId] = input.player.uniqueId
+        lastWhisperedRepository.set(
+            whisperer = input.player.uniqueId,
+            targetOfWhisper = targetPlayer.uniqueId,
+        )
     }
 }
