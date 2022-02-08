@@ -2,7 +2,6 @@ package com.projectcitybuild.platforms.bungeecord
 
 import com.projectcitybuild.core.contracts.BungeecordFeatureModule
 import com.projectcitybuild.entities.Channel
-import com.projectcitybuild.entities.PluginConfig
 import com.projectcitybuild.modules.channels.bungeecord.BungeecordMessageListener
 import com.projectcitybuild.modules.config.implementations.BungeecordConfig
 import com.projectcitybuild.modules.database.DataSource
@@ -24,43 +23,10 @@ class BungeecordPlatform: Plugin() {
     private lateinit var container: Container
 
     override fun onEnable() {
-        val config = BungeecordConfig(dataFolder).apply {
-            load(
-                PluginConfig.API_KEY,
-                PluginConfig.API_BASE_URL,
-                PluginConfig.API_IS_LOGGING_ENABLED,
-                PluginConfig.WARPS_PER_PAGE,
-                PluginConfig.TP_REQUEST_AUTO_EXPIRE_SECONDS,
-                PluginConfig.DB_HOSTNAME,
-                PluginConfig.DB_PORT,
-                PluginConfig.DB_NAME,
-                PluginConfig.DB_USERNAME,
-                PluginConfig.DB_PASSWORD,
-                PluginConfig.ERROR_REPORTING_SENTRY_ENABLED,
-                PluginConfig.ERROR_REPORTING_SENTRY_DSN,
-                PluginConfig.GROUPS_APPEARANCE_ADMIN_DISPLAY_NAME,
-                PluginConfig.GROUPS_APPEARANCE_ADMIN_HOVER_NAME,
-                PluginConfig.GROUPS_APPEARANCE_SOP_DISPLAY_NAME,
-                PluginConfig.GROUPS_APPEARANCE_SOP_HOVER_NAME,
-                PluginConfig.GROUPS_APPEARANCE_OP_DISPLAY_NAME,
-                PluginConfig.GROUPS_APPEARANCE_OP_HOVER_NAME,
-                PluginConfig.GROUPS_APPEARANCE_MODERATOR_DISPLAY_NAME,
-                PluginConfig.GROUPS_APPEARANCE_MODERATOR_HOVER_NAME,
-                PluginConfig.GROUPS_APPEARANCE_TRUSTEDPLUS_HOVER_NAME,
-                PluginConfig.GROUPS_APPEARANCE_TRUSTED_HOVER_NAME,
-                PluginConfig.GROUPS_APPEARANCE_DONOR_HOVER_NAME,
-                PluginConfig.GROUPS_APPEARANCE_ARCHITECT_HOVER_NAME,
-                PluginConfig.GROUPS_APPEARANCE_ENGINEER_HOVER_NAME,
-                PluginConfig.GROUPS_APPEARANCE_PLANNER_HOVER_NAME,
-                PluginConfig.GROUPS_APPEARANCE_BUILDER_HOVER_NAME,
-                PluginConfig.GROUPS_APPEARANCE_INTERN_HOVER_NAME,
-            )
-        }
-
         val component = DaggerBungeecordComponent.builder()
             .plugin(this)
             .proxyServer(proxy)
-            .config(config)
+            .config(BungeecordConfig(dataFolder))
             .logger(BungeecordLogger(logger))
             .scheduler(BungeecordScheduler(this))
             .timer(BungeecordTimer(this, proxy))
