@@ -2,13 +2,17 @@ package com.projectcitybuild.modules.datetime
 
 import com.projectcitybuild.entities.PluginConfig
 import com.projectcitybuild.modules.config.PlatformConfig
+import com.projectcitybuild.modules.datetime.formatter.DateTimeFormatter
+import com.projectcitybuild.modules.datetime.formatter.DateTimeFormatterImpl
+import com.projectcitybuild.modules.datetime.time.LocalizedTime
+import com.projectcitybuild.modules.datetime.time.Time
 import dagger.Module
 import dagger.Provides
 import java.time.ZoneId
 import java.util.*
 
 @Module
-class DateTimeFormatterProvider {
+class DateTimeProvider {
 
     @Provides
     fun provideDateTimeFormatter(config: PlatformConfig): DateTimeFormatter {
@@ -20,5 +24,10 @@ class DateTimeFormatterProvider {
                 config.get(PluginConfig.TIME_TIMEZONE)
             ),
         )
+    }
+
+    @Provides
+    fun provideTime(): Time {
+        return LocalizedTime()
     }
 }

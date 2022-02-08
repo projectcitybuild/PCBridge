@@ -1,5 +1,6 @@
-package com.projectcitybuild.modules.eventbroadcast
+package com.projectcitybuild.modules.eventbroadcast.implementations
 
+import com.projectcitybuild.modules.eventbroadcast.LocalEventBroadcaster
 import org.bukkit.Bukkit
 import org.bukkit.event.Event
 import javax.inject.Inject

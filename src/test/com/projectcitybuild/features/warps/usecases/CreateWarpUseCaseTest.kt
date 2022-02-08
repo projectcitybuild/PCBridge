@@ -5,7 +5,7 @@ import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Success
 import com.projectcitybuild.entities.Warp
 import com.projectcitybuild.features.warps.repositories.WarpRepository
-import com.projectcitybuild.modules.datetime.Time
+import com.projectcitybuild.modules.datetime.time.Time
 import com.projectcitybuild.modules.eventbroadcast.LocalEventBroadcaster
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals

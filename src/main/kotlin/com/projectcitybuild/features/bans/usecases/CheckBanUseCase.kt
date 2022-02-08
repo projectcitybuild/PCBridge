@@ -4,7 +4,7 @@ import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Result
 import com.projectcitybuild.core.utilities.Success
 import com.projectcitybuild.features.bans.repositories.BanRepository
-import com.projectcitybuild.modules.datetime.DateTimeFormatter
+import com.projectcitybuild.modules.datetime.formatter.DateTimeFormatter
 import com.projectcitybuild.modules.playeruuid.PlayerUUIDRepository
 import javax.inject.Inject
 
