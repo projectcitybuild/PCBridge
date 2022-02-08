@@ -4,6 +4,11 @@ buildscript {
     repositories {
         mavenCentral()
         gradlePluginPortal()
+
+        maven {
+            name = 'dynmap'
+            url "https://repo.mikeprimm.com/"
+        }
     }
 }
 
@@ -65,6 +70,10 @@ dependencies {
 
     testImplementation 'net.md-5:bungeecord-api:1.16-R0.4' // Needed for mocking in tests
     testImplementation 'org.spigotmc:spigot-api:1.12.2-R0.1-SNAPSHOT' // Needed for mocking in tests
+
+    // dynmap
+    compileOnly 'us.dynmap:dynmap-api:3.3'
+    compileOnly 'us.dynmap:DynmapCoreAPI:3.3'
 
     // Spigot
     compileOnly 'org.spigotmc:spigot-api:1.12.2-R0.1-SNAPSHOT'
