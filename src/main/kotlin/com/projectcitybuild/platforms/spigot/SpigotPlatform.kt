@@ -38,6 +38,7 @@ class SpigotPlatform: JavaPlugin() {
                 PluginConfig.REDIS_PASSWORD,
                 PluginConfig.ERROR_REPORTING_SENTRY_ENABLED,
                 PluginConfig.ERROR_REPORTING_SENTRY_DSN,
+                PluginConfig.INTEGRATION_DYNMAP_WARP_ICON,
             )
         }
 

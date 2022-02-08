@@ -1,9 +1,11 @@
 package com.projectcitybuild.features.warps.adapters.dynmap
 
 import com.projectcitybuild.core.SpigotListener
+import com.projectcitybuild.entities.PluginConfig
 import com.projectcitybuild.features.warps.events.WarpCreateEvent
 import com.projectcitybuild.features.warps.events.WarpDeleteEvent
 import com.projectcitybuild.features.warps.repositories.WarpRepository
+import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.modules.logger.PlatformLogger
 import dagger.Reusable
 import org.bukkit.event.EventHandler
@@ -15,6 +17,7 @@ import javax.inject.Inject
 class DynmapMarkerAdapter @Inject constructor(
     private val plugin: Plugin,
     private val warpRepository: WarpRepository,
+    private val config: PlatformConfig,
     private val logger: PlatformLogger,
 ): SpigotListener {
     class DynmapNotFoundException: Exception("Dynmap plugin not found")
@@ -73,7 +76,8 @@ class DynmapMarkerAdapter @Inject constructor(
             it.deleteMarker()
         }
 
-        val icon = markerAPI.getMarkerIcon("portal")
+        val iconName = config.get(PluginConfig.INTEGRATION_DYNMAP_WARP_ICON)
+        val icon = markerAPI.getMarkerIcon(iconName)
             ?: throw DynmapMarkerIconNotFoundException()
 
         warpRepository.all().forEach { warp ->
