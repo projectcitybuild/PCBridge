@@ -12,7 +12,7 @@ import com.projectcitybuild.modules.network.NetworkModule
 import com.projectcitybuild.modules.proxyadapter.BungeecordProxyAdapterModule
 import com.projectcitybuild.modules.scheduler.PlatformScheduler
 import com.projectcitybuild.modules.timer.PlatformTimer
-import com.projectcitybuild.platforms.bungeecord.BungeecordFeatureListModule.BungeecordFeatureModules
+import com.projectcitybuild.platforms.bungeecord.BungeecordModulesProvider.BungeecordFeatureModules
 import dagger.BindsInstance
 import dagger.Component
 import net.md_5.bungee.api.ProxyServer
@@ -24,7 +24,7 @@ import javax.inject.Singleton
     TimeProvider::class,
     ErrorReporterProvider::class,
     DateTimeFormatterProvider::class,
-    BungeecordFeatureListModule::class,
+    BungeecordModulesProvider::class,
     NetworkModule::class,
     DataSourceProvider::class,
     BungeecordProxyAdapterModule::class,

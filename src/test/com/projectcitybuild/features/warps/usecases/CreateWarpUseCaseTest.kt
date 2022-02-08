@@ -6,12 +6,14 @@ import com.projectcitybuild.core.utilities.Success
 import com.projectcitybuild.entities.Warp
 import com.projectcitybuild.features.warps.repositories.WarpRepository
 import com.projectcitybuild.modules.datetime.Time
+import com.projectcitybuild.modules.eventbroadcast.LocalEventBroadcaster
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
+import org.mockito.kotlin.any
 import org.powermock.api.mockito.PowerMockito.`when`
 import org.powermock.api.mockito.PowerMockito.mock
 import java.time.LocalDateTime
@@ -21,14 +23,16 @@ class CreateWarpUseCaseTest {
     private lateinit var useCase: CreateWarpUseCase
 
     private lateinit var warpRepository: WarpRepository
+    private lateinit var localEventBroadcaster: LocalEventBroadcaster
     private lateinit var time: Time
 
     @BeforeEach
     fun setUp() {
         warpRepository = mock(WarpRepository::class.java)
+        localEventBroadcaster = mock(LocalEventBroadcaster::class.java)
         time = mock(Time::class.java)
 
-        useCase = CreateWarpUseCase(warpRepository, time)
+        useCase = CreateWarpUseCase(warpRepository, localEventBroadcaster, time)
     }
 
     @Test
@@ -59,6 +63,21 @@ class CreateWarpUseCaseTest {
         )
 
         verify(warpRepository, times(1)).add(expectedWarp)
+        assertEquals(result, Success(Unit))
+    }
+
+    @Test
+    fun `should emit an event when a warp is created`() = runTest {
+        val warpName = "warp"
+        val location = CrossServerLocationMock()
+        val now = LocalDateTime.now()
+
+        `when`(warpRepository.exists(warpName)).thenReturn(false)
+        `when`(time.now()).thenReturn(now)
+
+        val result = useCase.createWarp(warpName, location)
+
+        verify(localEventBroadcaster).emit(any())
         assertEquals(result, Success(Unit))
     }
 }

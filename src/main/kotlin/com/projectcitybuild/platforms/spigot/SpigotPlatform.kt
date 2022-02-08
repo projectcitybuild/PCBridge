@@ -1,7 +1,6 @@
 package com.projectcitybuild.platforms.spigot
 
 import com.github.shynixn.mccoroutine.minecraftDispatcher
-import com.projectcitybuild.core.contracts.SpigotFeatureModule
 import com.projectcitybuild.entities.Channel
 import com.projectcitybuild.entities.PluginConfig
 import com.projectcitybuild.modules.channels.spigot.SpigotMessageListener
@@ -39,6 +38,7 @@ class SpigotPlatform: JavaPlugin() {
                 PluginConfig.REDIS_PASSWORD,
                 PluginConfig.ERROR_REPORTING_SENTRY_ENABLED,
                 PluginConfig.ERROR_REPORTING_SENTRY_DSN,
+                PluginConfig.INTEGRATION_DYNMAP_WARP_ICON,
             )
         }
 
@@ -53,7 +53,7 @@ class SpigotPlatform: JavaPlugin() {
             .build()
 
         container = component.container()
-        container.onEnable(server, component.modules())
+        container.onEnable(server)
     }
 
     override fun onDisable() {
@@ -61,6 +61,7 @@ class SpigotPlatform: JavaPlugin() {
     }
 
     class Container @Inject constructor(
+        private val modulesContainer: SpigotModulesContainer,
         private val plugin: Plugin,
         private val logger: PlatformLogger,
         private val commandRegistry: SpigotCommandRegistry,
@@ -69,7 +70,7 @@ class SpigotPlatform: JavaPlugin() {
         private val errorReporter: ErrorReporter,
         private val redisConnection: RedisConnection,
     ) {
-        fun onEnable(server: Server, modules: List<SpigotFeatureModule>) {
+        fun onEnable(server: Server) {
             errorReporter.bootstrap()
 
             runCatching {
@@ -80,12 +81,13 @@ class SpigotPlatform: JavaPlugin() {
                 server.messenger.registerOutgoingPluginChannel(plugin, Channel.BUNGEECORD)
                 server.messenger.registerIncomingPluginChannel(plugin, Channel.BUNGEECORD, pluginMessageListener)
 
-                modules.forEach { module ->
+                modulesContainer.modules.forEach { module ->
                     logger.verbose("Registering ${module::class.java.name} module")
 
                     module.spigotCommands.forEach { commandRegistry.register(it) }
                     module.spigotListeners.forEach { listenerRegistry.register(it) }
                     module.spigotSubChannelListeners.forEach { pluginMessageListener.register(it) }
+                    module.onEnable()
                 }
 
             }.onFailure {
@@ -96,6 +98,8 @@ class SpigotPlatform: JavaPlugin() {
 
         fun onDisable(server: Server) {
             runCatching {
+                modulesContainer.modules.forEach { it.onDisable() }
+
                 server.messenger.unregisterOutgoingPluginChannel(plugin)
                 server.messenger.unregisterIncomingPluginChannel(plugin)
 
