@@ -7,11 +7,12 @@ import com.projectcitybuild.features.ranksync.SyncPlayerGroupService
 import java.util.*
 import javax.inject.Inject
 
-class SyncPlayerGroupsUseCase @Inject constructor(
+class UpdatePlayerGroupsUseCase @Inject constructor(
     private val syncPlayerGroupService: SyncPlayerGroupService
 ) {
     enum class FailureReason {
         ACCOUNT_NOT_LINKED,
+        PERMISSION_USER_NOT_FOUND,
     }
 
     suspend fun sync(playerUUID: UUID): Result<Unit, FailureReason> {
@@ -19,6 +20,8 @@ class SyncPlayerGroupsUseCase @Inject constructor(
             syncPlayerGroupService.execute(playerUUID)
         } catch (e: SyncPlayerGroupService.AccountNotLinkedException) {
             return Failure(FailureReason.ACCOUNT_NOT_LINKED)
+        } catch (e: SyncPlayerGroupService.PermissionUserNotFoundException) {
+            return Failure(FailureReason.PERMISSION_USER_NOT_FOUND)
         }
         return Success(Unit)
     }

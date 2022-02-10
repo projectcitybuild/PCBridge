@@ -4,7 +4,7 @@ import com.projectcitybuild.core.InvalidCommandArgumentsException
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Success
 import com.projectcitybuild.features.ranksync.usecases.GenerateAccountVerificationURLUseCase
-import com.projectcitybuild.features.ranksync.usecases.SyncPlayerGroupsUseCase
+import com.projectcitybuild.features.ranksync.usecases.UpdatePlayerGroupsUseCase
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
@@ -19,7 +19,7 @@ import javax.inject.Inject
 
 class SyncCommand @Inject constructor(
     private val generateAccountVerificationURLUseCase: GenerateAccountVerificationURLUseCase,
-    private val syncPlayerGroupsUseCase: SyncPlayerGroupsUseCase,
+    private val updatePlayerGroupsUseCase: UpdatePlayerGroupsUseCase,
 ): BungeecordCommand {
 
     override val label: String = "sync"
@@ -49,29 +49,30 @@ class SyncCommand @Inject constructor(
                 GenerateAccountVerificationURLUseCase.FailureReason.EMPTY_RESPONSE
                     -> player.send().error("Failed to generate verification URL: No URL received from server")
             }
-            is Success -> {
-                player.sendMessage(
-                    TextComponent()
-                        .add("To link your account, please ")
-                        .add("click here") {
-                            it.isBold = true
-                            it.isUnderlined = true
-                            it.clickEvent = ClickEvent(ClickEvent.Action.OPEN_URL, result.value.urlString)
-                            it.hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT, Text(result.value.urlString))
-                        }
-                        .add(" and login if required")
-                )
-            }
+            is Success -> player.sendMessage(
+                TextComponent()
+                    .add("To link your account, please ")
+                    .add("click here") {
+                        it.isBold = true
+                        it.isUnderlined = true
+                        it.clickEvent = ClickEvent(ClickEvent.Action.OPEN_URL, result.value.urlString)
+                        it.hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT, Text(result.value.urlString))
+                    }
+                    .add(" and login if required")
+            )
         }
     }
 
     private suspend fun syncGroups(player: ProxiedPlayer) {
-        val result = syncPlayerGroupsUseCase.sync(player.uniqueId)
+        val result = updatePlayerGroupsUseCase.sync(player.uniqueId)
 
         when (result) {
             is Failure -> when (result.reason) {
-                SyncPlayerGroupsUseCase.FailureReason.ACCOUNT_NOT_LINKED
+                UpdatePlayerGroupsUseCase.FailureReason.ACCOUNT_NOT_LINKED
                     -> player.send().error("Sync failed. Did you finish registering your account?")
+
+                UpdatePlayerGroupsUseCase.FailureReason.PERMISSION_USER_NOT_FOUND
+                    -> player.send().error("Permission user not found. Check that the user exists in the Permission plugin")
             }
             is Success -> {
                 player.send().success("Account linked! Your rank will be automatically synchronized with the PCB network")
