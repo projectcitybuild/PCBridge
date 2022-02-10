@@ -10,6 +10,7 @@ import com.projectcitybuild.modules.permissions.PermissionsManager
 import java.util.*
 import javax.inject.Inject
 
+// TODO: combine with SyncPlayerUseCase
 class SyncPlayerGroupService @Inject constructor(
     private val permissionsManager: PermissionsManager,
     private val apiRequestFactory: APIRequestFactory,
