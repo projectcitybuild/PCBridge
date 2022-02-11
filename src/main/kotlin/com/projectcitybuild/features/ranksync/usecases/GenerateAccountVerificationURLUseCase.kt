@@ -24,17 +24,17 @@ class GenerateAccountVerificationURLUseCase @Inject constructor(
             val authApi = apiRequestFactory.pcb.authApi
             val response = apiClient.execute { authApi.getVerificationUrl(uuid = playerUUID.toString()) }
 
-            return if (response.data == null) {
+            return if (response.data == null || response.data.url.isEmpty()) {
                 Failure(FailureReason.EMPTY_RESPONSE)
             } else {
                 Success(VerificationURL(response.data.url))
             }
 
-        } catch (throwable: APIClient.HTTPError) {
-            if (throwable.errorBody?.id == "already_authenticated") {
+        } catch (e: APIClient.HTTPError) {
+            if (e.errorBody?.id == "already_authenticated") {
                 return Failure(FailureReason.ALREADY_LINKED)
             }
-            throw throwable
+            throw e
         }
     }
 }
