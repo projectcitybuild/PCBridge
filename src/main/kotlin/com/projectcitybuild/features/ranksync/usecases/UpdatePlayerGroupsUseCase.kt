@@ -9,6 +9,7 @@ import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.modules.network.APIClient
 import com.projectcitybuild.modules.network.APIRequestFactory
+import com.projectcitybuild.modules.permissions.Permissions
 import com.projectcitybuild.modules.permissions.PermissionsManager
 import java.util.*
 import javax.inject.Inject
@@ -17,6 +18,7 @@ class UpdatePlayerGroupsUseCase @Inject constructor(
     private val permissionsManager: PermissionsManager,
     private val apiRequestFactory: APIRequestFactory,
     private val apiClient: APIClient,
+    private val permissions: Permissions,
     private val config: PlatformConfig,
     private val logger: PlatformLogger
 ) {
@@ -37,6 +39,12 @@ class UpdatePlayerGroupsUseCase @Inject constructor(
         }
 
         val groups: List<Group> = response.data?.groups ?: listOf()
+
+        val groupNames = groups
+            .mapNotNull { it.minecraftName }
+            .ifEmpty { listOf(config.get(PluginConfig.GROUPS_GUEST)) }
+
+        permissions.setUserGroups(playerUUID, groupNames)
 
         val user = permissionsManager.getUser(playerUUID)
         if (user == null) {
