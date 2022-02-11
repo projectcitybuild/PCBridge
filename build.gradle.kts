@@ -20,9 +20,6 @@ plugins {
     id("org.jetbrains.kotlin.kapt") version "1.6.10"
 }
 
-group "com.projectcitybuild"
-version "3.6.0"
-
 apply(plugin = "com.github.johnrengelman.shadow")
 
 repositories {
@@ -83,6 +80,12 @@ dependencies {
     compileOnly ("net.md-5:bungeecord-api:1.16-R0.4")
 }
 
+tasks {
+    build {
+        dependsOn(shadowJar)
+    }
+}
+
 tasks.withType<KotlinCompile>().configureEach {
     kotlinOptions {
         jvmTarget = "1.8"
@@ -91,17 +94,8 @@ tasks.withType<KotlinCompile>().configureEach {
 tasks.withType<ShadowJar> {
     archiveBaseName.set("all")
     destinationDirectory.set(File("build/release"))
+    archiveVersion.set("3.6.0")
 }
-
-tasks {
-    build {
-        dependsOn(shadowJar)
-    }
-}
-
-//compileTestKotlin {
-//    kotlinOptions.jvmTarget = "1.8"
-//}
 
 tasks.test {
     useJUnitPlatform()
@@ -119,3 +113,25 @@ sourceSets {
         }
     }
 }
+
+//task createProperties() {
+//    doLast {
+//        def details = versionDetails()
+//        new File("$buildDir/resources/main/version.properties").withWriter { w ->
+//            Properties p = new Properties()
+//            p["version"] = project.version.toString()
+//            p["gitLastTag"] = details.lastTag
+//            p["gitCommitDistance"] = details.commitDistance.toString()
+//            p["gitHash"] = details.gitHash.toString()
+//            p["gitHashFull"] = details.gitHashFull.toString() // full 40-character Git commit hash
+//            p["gitBranchName"] = details.branchName // is null if the repository in detached HEAD mode
+//            p["gitIsCleanTag"] = details.isCleanTag.toString()
+//            p.store w, null
+//        }
+//        // copy needed, otherwise the bean VersionController can"t load the file at startup when running complete-app tests.
+//        copy {
+//            from "$buildDir/resources/main/version.properties"
+//            into "bin/main/"
+//        }
+//    }
+//}
