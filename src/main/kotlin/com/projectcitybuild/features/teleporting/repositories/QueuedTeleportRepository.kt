@@ -46,7 +46,7 @@ class QueuedTeleportRepository @Inject constructor(
                     "SUMMON" -> TeleportType.SUMMON
                     else -> throw Exception("Unhandled TeleportType: ${row.getString("teleport_type")}")
                 },
-                isSilentTeleport = row.getInt("is_silent_tp") == 1,
+                isSilentTeleport = row.get("is_silent_tp"),
                 createdAt = row.get("created_at"),
             )
         }
