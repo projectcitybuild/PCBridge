@@ -11,6 +11,7 @@ import com.projectcitybuild.modules.eventbroadcast.implementations.SpigotLocalEv
 import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.modules.logger.implementations.SpigotLogger
 import com.projectcitybuild.modules.network.APIClient
+import com.projectcitybuild.modules.network.APIClientImpl
 import com.projectcitybuild.modules.redis.RedisConnection
 import com.projectcitybuild.modules.scheduler.implementations.SpigotScheduler
 import com.projectcitybuild.platforms.spigot.environment.SpigotCommandRegistry
@@ -31,7 +32,7 @@ class SpigotPlatform: JavaPlugin() {
             .logger(SpigotLogger(logger))
             .scheduler(SpigotScheduler(this))
             .localEventBroadcaster(SpigotLocalEventBroadcaster())
-            .apiClient(APIClient { this.minecraftDispatcher })
+            .apiClient(APIClientImpl { this.minecraftDispatcher })
             .build()
 
         container = component.container()
