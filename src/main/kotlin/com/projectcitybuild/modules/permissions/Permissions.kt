@@ -4,5 +4,5 @@ import java.util.*
 
 interface Permissions {
     fun bootstrap()
-    fun setUserGroups(playerUUID: UUID, groups: List<String>)
+    fun setUserGroups(playerUUID: UUID, groupNames: List<String>)
 }
