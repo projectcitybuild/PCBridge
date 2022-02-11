@@ -8,6 +8,7 @@ import com.projectcitybuild.modules.errorreporting.ErrorReporterProvider
 import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.modules.network.APIClient
 import com.projectcitybuild.modules.network.NetworkProvider
+import com.projectcitybuild.modules.permissions.PermissionsProvider
 import com.projectcitybuild.modules.proxyadapter.BungeecordProxyAdapterModule
 import com.projectcitybuild.modules.scheduler.PlatformScheduler
 import com.projectcitybuild.modules.timer.PlatformTimer
@@ -22,6 +23,7 @@ import javax.inject.Singleton
 @Component(modules = [
     DateTimeProvider::class,
     ErrorReporterProvider::class,
+    PermissionsProvider::class,
     BungeecordModulesProvider::class,
     NetworkProvider::class,
     DataSourceProvider::class,

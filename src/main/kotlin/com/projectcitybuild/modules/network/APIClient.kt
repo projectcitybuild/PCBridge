@@ -1,17 +1,8 @@
 package com.projectcitybuild.modules.network
 
-import com.google.gson.Gson
 import com.projectcitybuild.entities.responses.ApiError
-import dagger.Reusable
-import kotlinx.coroutines.withContext
-import retrofit2.HttpException
-import java.io.IOException
-import kotlin.coroutines.CoroutineContext
 
-@Reusable
-class APIClient(
-    private val getCoroutineContext: () -> CoroutineContext
-) {
+interface APIClient {
     data class ErrorBody(val error: ApiError)
 
     class HTTPError(val errorBody: ApiError?) : Exception(
@@ -23,26 +14,5 @@ class APIClient(
         "Failed to contact PCB auth server"
     )
 
-    suspend fun <T> execute(apiCall: suspend () -> T): T {
-       return withContext(getCoroutineContext()) {
-            try {
-                apiCall.invoke()
-            } catch (_: IOException) {
-                throw NetworkError()
-            } catch (e: HttpException) {
-                val code = e.code()
-                throw HTTPError(errorBody = convertErrorBody(e, code))
-            } catch (e: Exception) {
-                throw e
-            }
-        }
-    }
-
-    private fun convertErrorBody(e: HttpException, code: Int): ApiError? {
-        e.response()?.errorBody()?.string().let {
-            val errorBody = Gson().fromJson(it, ErrorBody::class.java).error
-            errorBody.status = code
-            return errorBody
-        }
-    }
+    suspend fun <T> execute(apiCall: suspend () -> T): T
 }

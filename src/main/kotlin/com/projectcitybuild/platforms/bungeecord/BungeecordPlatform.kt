@@ -9,6 +9,7 @@ import com.projectcitybuild.modules.errorreporting.ErrorReporter
 import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.modules.logger.implementations.BungeecordLogger
 import com.projectcitybuild.modules.network.APIClient
+import com.projectcitybuild.modules.network.APIClientImpl
 import com.projectcitybuild.modules.playerconfig.PlayerConfigCache
 import com.projectcitybuild.modules.scheduler.implementations.BungeecordScheduler
 import com.projectcitybuild.modules.timer.implementations.BungeecordTimer
@@ -30,7 +31,7 @@ class BungeecordPlatform: Plugin() {
             .logger(BungeecordLogger(logger))
             .scheduler(BungeecordScheduler(this))
             .timer(BungeecordTimer(this, proxy))
-            .apiClient(APIClient { Dispatchers.IO })
+            .apiClient(APIClientImpl { Dispatchers.IO })
             .build()
 
         container = component.container()
