@@ -25,7 +25,7 @@ class LuckPermsPermissions @Inject constructor(
     override fun setUserGroups(playerUUID: UUID, groupNames: List<String>) {
         val user = luckPerms.userManager.getUser(playerUUID)
         if (user == null) {
-            logger.warning("Could not load user from permissions manager (UUID: ${playerUUID})")
+            logger.fatal("Could not load user ($playerUUID) from permissions manager")
             throw PermissionUserNotFoundException()
         }
 
