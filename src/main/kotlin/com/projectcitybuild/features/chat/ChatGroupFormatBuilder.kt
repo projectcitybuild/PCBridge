@@ -2,8 +2,7 @@ package com.projectcitybuild.features.chat
 
 import com.projectcitybuild.entities.PluginConfig
 import com.projectcitybuild.modules.config.PlatformConfig
-import com.projectcitybuild.modules.permissions.PermissionsGroup
-import com.projectcitybuild.modules.permissions.PermissionsManager
+import com.projectcitybuild.modules.permissions.Permissions
 import net.md_5.bungee.api.chat.BaseComponent
 import net.md_5.bungee.api.chat.HoverEvent
 import net.md_5.bungee.api.chat.TextComponent
@@ -12,7 +11,7 @@ import net.md_5.bungee.api.connection.ProxiedPlayer
 import javax.inject.Inject
 
 class ChatGroupFormatBuilder @Inject constructor(
-    private val permissionsManager: PermissionsManager,
+    private val permissions: Permissions,
     private val config: PlatformConfig
 ) {
     data class Aggregate(
@@ -26,36 +25,33 @@ class ChatGroupFormatBuilder @Inject constructor(
     private val donorGroups = config.get(PluginConfig.GROUPS_DONOR_PRIORITY)
 
     fun format(player: ProxiedPlayer): Aggregate {
-        val lpUser = permissionsManager.getUser(player.uniqueId)
-                ?: throw Exception("Could not load user from Permission plugin")
+        val groupNames = permissions.getUserGroups(player.uniqueId)
 
-        val groupNodes = lpUser.groups()
+        var highestTrust: Pair<Int, String>? = null
+        var highestBuild: Pair<Int, String>? = null
+        var highestDonor: Pair<Int, String>? = null
 
-        var highestTrust: Pair<Int, PermissionsGroup>? = null
-        var highestBuild: Pair<Int, PermissionsGroup>? = null
-        var highestDonor: Pair<Int, PermissionsGroup>? = null
+        for (groupName in groupNames) {
+            val lowercaseGroupName = groupName.lowercase()
 
-        for (groupNode in groupNodes) {
-            val groupName = groupNode.name.lowercase()
-
-            val trustIndex = trustedGroups.indexOf(groupName)
+            val trustIndex = trustedGroups.indexOf(lowercaseGroupName)
             if (trustIndex != -1) {
                 if (highestTrust == null || trustIndex < highestTrust.first) {
-                    highestTrust = Pair(trustIndex, groupNode)
+                    highestTrust = Pair(trustIndex, groupName)
                 }
             }
 
-            val builderIndex = builderGroups.indexOf(groupName)
+            val builderIndex = builderGroups.indexOf(lowercaseGroupName)
             if (builderIndex != -1) {
                 if (highestBuild == null || builderIndex < highestBuild.first) {
-                    highestBuild = Pair(builderIndex, groupNode)
+                    highestBuild = Pair(builderIndex, groupName)
                 }
             }
 
-            val donorIndex = donorGroups.indexOf(groupName)
+            val donorIndex = donorGroups.indexOf(lowercaseGroupName)
             if (donorIndex != -1) {
                 if (highestDonor == null || donorIndex < highestDonor.first) {
-                    highestDonor = Pair(donorIndex, groupNode)
+                    highestDonor = Pair(donorIndex, groupName)
                 }
             }
         }
@@ -63,10 +59,10 @@ class ChatGroupFormatBuilder @Inject constructor(
         val groupTC = TextComponent()
 
         if (highestDonor != null) {
-            val hoverName = config.get(path = "groups.appearance.${highestDonor.second.name}.hover_name") as? String
-            var displayName = config.get(path = "groups.appearance.${highestDonor.second.name}.display_name") as? String
+            val hoverName = config.get(path = "groups.appearance.${highestDonor.second}.hover_name") as? String
+            var displayName = config.get(path = "groups.appearance.${highestDonor.second}.display_name") as? String
             if (displayName.isNullOrBlank()) {
-                displayName = highestDonor.second.getDisplayName(permissionsManager)
+                displayName = permissions.getGroupDisplayName(highestDonor.second)
             }
             TextComponent
                     .fromLegacyText(displayName)
@@ -78,10 +74,10 @@ class ChatGroupFormatBuilder @Inject constructor(
                     }
         }
         if (highestTrust != null) {
-            val hoverName = config.get(path = "groups.appearance.${highestTrust.second.name}.hover_name") as? String
-            var displayName = config.get(path = "groups.appearance.${highestTrust.second.name}.display_name") as? String
+            val hoverName = config.get(path = "groups.appearance.${highestTrust.second}.hover_name") as? String
+            var displayName = config.get(path = "groups.appearance.${highestTrust.second}.display_name") as? String
             if (displayName.isNullOrBlank()) {
-                displayName = highestTrust.second.getDisplayName(permissionsManager)
+                displayName = permissions.getGroupDisplayName(highestTrust.second)
             }
             TextComponent
                 .fromLegacyText(displayName)
@@ -93,10 +89,10 @@ class ChatGroupFormatBuilder @Inject constructor(
                 }
         }
         if (highestBuild != null) {
-            val hoverName = config.get(path = "groups.appearance.${highestBuild.second.name}.hover_name") as? String
-            var displayName = config.get(path = "groups.appearance.${highestBuild.second.name}.display_name") as? String
+            val hoverName = config.get(path = "groups.appearance.${highestBuild.second}.hover_name") as? String
+            var displayName = config.get(path = "groups.appearance.${highestBuild.second}.display_name") as? String
             if (displayName.isNullOrBlank()) {
-                displayName = highestBuild.second.getDisplayName(permissionsManager)
+                displayName = permissions.getGroupDisplayName(highestBuild.second)
             }
             TextComponent
                 .fromLegacyText(displayName)
@@ -109,8 +105,12 @@ class ChatGroupFormatBuilder @Inject constructor(
         }
 
         return Aggregate(
-            prefix = TextComponent.fromLegacyText(lpUser.prefixes()),
-            suffix = TextComponent.fromLegacyText(lpUser.suffixes()),
+            prefix = TextComponent.fromLegacyText(
+                permissions.getUserPrefix(player.uniqueId)
+            ),
+            suffix = TextComponent.fromLegacyText(
+                permissions.getUserSuffix(player.uniqueId)
+            ),
             groups = groupTC,
         )
     }
