@@ -1,11 +1,14 @@
 package com.projectcitybuild.features.ranksync.usecases
 
+import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Success
 import com.projectcitybuild.entities.PluginConfig
+import com.projectcitybuild.entities.responses.ApiError
 import com.projectcitybuild.entities.responses.ApiResponse
 import com.projectcitybuild.entities.responses.AuthPlayerGroups
 import com.projectcitybuild.entities.responses.Group
 import com.projectcitybuild.modules.config.PlatformConfig
+import com.projectcitybuild.modules.network.APIClient
 import com.projectcitybuild.modules.network.APIClientMock
 import com.projectcitybuild.modules.network.APIRequestFactory
 import com.projectcitybuild.modules.network.pcb.client.PCBClient
@@ -15,6 +18,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.verify
+import org.mockito.kotlin.verifyNoInteractions
 import org.powermock.api.mockito.PowerMockito.`when`
 import org.powermock.api.mockito.PowerMockito.mock
 import java.util.*
@@ -97,5 +101,24 @@ class UpdatePlayerGroupsUseCaseTest {
 
         verify(permissions).setUserGroups(playerUUID, listOf("group1", "group2"))
         assertEquals(result, Success(Unit))
+    }
+
+    @Test
+    fun `should return failure if account not linked`() = runTest {
+        val playerUUID = UUID.randomUUID()
+
+        apiClient.exception = APIClient.HTTPError(
+            errorBody = ApiError(
+                id = "account_not_linked",
+                title = "",
+                detail = "",
+                status = 1,
+            )
+        )
+
+        val result = useCase.sync(playerUUID)
+
+        verifyNoInteractions(permissions)
+        assertEquals(result, Failure(UpdatePlayerGroupsUseCase.FailureReason.ACCOUNT_NOT_LINKED))
     }
 }
