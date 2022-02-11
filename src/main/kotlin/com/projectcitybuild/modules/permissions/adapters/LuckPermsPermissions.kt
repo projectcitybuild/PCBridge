@@ -2,6 +2,7 @@ package com.projectcitybuild.modules.permissions.adapters
 
 import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.modules.permissions.Permissions
+import dagger.Reusable
 import net.luckperms.api.LuckPerms
 import net.luckperms.api.LuckPermsProvider
 import net.luckperms.api.node.NodeType
@@ -10,6 +11,7 @@ import java.util.*
 import java.util.stream.Collectors
 import javax.inject.Inject
 
+@Reusable
 class LuckPermsPermissions @Inject constructor(
     private val logger: PlatformLogger,
 ): Permissions {

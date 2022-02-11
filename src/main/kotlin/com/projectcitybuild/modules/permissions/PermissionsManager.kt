@@ -12,6 +12,7 @@ import java.util.stream.Collectors
 import javax.inject.Inject
 
 @Reusable
+@Deprecated("Use Permissions interface")
 class PermissionsManager @Inject constructor() {
 
     val plugin = getPermissionPlugin()
