@@ -25,13 +25,12 @@ class BungeecordConfig(
         val config = ConfigurationProvider
             .getProvider(YamlConfiguration::class.java)
             .load(file)
-
-        generateDefaultConfig()
+            .also { generateDefaultConfig(it) }
 
         config
     }
 
-    private fun generateDefaultConfig() {
+    private fun generateDefaultConfig(config: Configuration) {
         arrayOf(
             PluginConfig.API_KEY,
             PluginConfig.API_BASE_URL,
@@ -65,7 +64,7 @@ class BungeecordConfig(
             if (config.get(key.key) == null)
                 config.set(key.key, key.defaultValue)
         }
-        save()
+        save(config)
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -83,7 +82,7 @@ class BungeecordConfig(
         val config = config
 
         config.set(key.key, value)
-        save()
+        save(config)
     }
 
     private fun createIfNeeded(file: File) {
@@ -102,7 +101,7 @@ class BungeecordConfig(
         }
     }
 
-    private fun save() {
+    private fun save(config: Configuration) {
         ConfigurationProvider
             .getProvider(YamlConfiguration::class.java)
             .save(config, file)
