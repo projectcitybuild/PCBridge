@@ -43,8 +43,9 @@ class PCBridgeCommand @Inject constructor(
             load(object {}.javaClass.getResourceAsStream("/version.properties"))
         }
         val version = properties.getProperty("version")
+        val commit = properties.getProperty("commit")
 
-        sender.send().info("Running PCBridge v$version")
+        sender.send().info("Running PCBridge v$version ($commit)")
     }
 
     @Serializable
