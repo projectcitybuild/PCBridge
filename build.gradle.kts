@@ -1,6 +1,9 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
+group = "com.projectcitybuild"
+version = "3.6.0"
+
 buildscript {
     repositories {
         mavenCentral()
@@ -80,6 +83,19 @@ dependencies {
     compileOnly ("net.md-5:bungeecord-api:1.16-R0.4")
 }
 
+sourceSets {
+    main {
+        java {
+            srcDirs("src/main/kotlin")
+        }
+    }
+    test {
+        java {
+            srcDirs("src/test")
+        }
+    }
+}
+
 tasks {
     build {
         dependsOn(shadowJar)
@@ -99,19 +115,6 @@ tasks.withType<ShadowJar> {
 
 tasks.test {
     useJUnitPlatform()
-}
-
-sourceSets {
-    main {
-        java {
-            srcDirs("src/main/kotlin")
-        }
-    }
-    test {
-        java {
-            srcDirs("src/test")
-        }
-    }
 }
 
 //task createProperties() {
