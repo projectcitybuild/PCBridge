@@ -4,7 +4,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.FileOutputStream
 import java.util.*
 
-val generatedVersionDir = "$buildDir/version"
+val generatedVersionDir = "$buildDir/generated-resources"
 
 group = "com.projectcitybuild"
 version = "3.6.0"
