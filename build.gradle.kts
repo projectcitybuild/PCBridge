@@ -1,5 +1,10 @@
+
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import java.io.FileOutputStream
+import java.util.*
+
+val generatedVersionDir = "$buildDir/version"
 
 group = "com.projectcitybuild"
 version = "3.6.0"
@@ -88,6 +93,9 @@ sourceSets {
         java {
             srcDirs("src/main/kotlin")
         }
+        kotlin {
+            output.dir(generatedVersionDir)
+        }
     }
     test {
         java {
@@ -108,33 +116,52 @@ tasks.withType<KotlinCompile>().configureEach {
     }
 }
 tasks.withType<ShadowJar> {
-    archiveBaseName.set("all")
     destinationDirectory.set(File("build/release"))
-    archiveVersion.set("3.6.0")
+    archiveVersion.set(project.version.toString())
 }
 
 tasks.test {
     useJUnitPlatform()
 }
 
-//task createProperties() {
-//    doLast {
-//        def details = versionDetails()
-//        new File("$buildDir/resources/main/version.properties").withWriter { w ->
-//            Properties p = new Properties()
-//            p["version"] = project.version.toString()
-//            p["gitLastTag"] = details.lastTag
-//            p["gitCommitDistance"] = details.commitDistance.toString()
-//            p["gitHash"] = details.gitHash.toString()
-//            p["gitHashFull"] = details.gitHashFull.toString() // full 40-character Git commit hash
-//            p["gitBranchName"] = details.branchName // is null if the repository in detached HEAD mode
-//            p["gitIsCleanTag"] = details.isCleanTag.toString()
-//            p.store w, null
-//        }
-//        // copy needed, otherwise the bean VersionController can"t load the file at startup when running complete-app tests.
-//        copy {
-//            from "$buildDir/resources/main/version.properties"
-//            into "bin/main/"
-//        }
-//    }
-//}
+tasks.create("incrementVersion") {
+    group = "automation"
+    description = "Increments the output plugin version"
+
+    fun generateVersion(): String {
+        val updateMode = properties["mode"] ?: "minor"
+        val currentVersion = version.toString()
+        val (oldMajor, oldMinor, oldPatch) = currentVersion.split(".").map(String::toInt)
+        var (newMajor, newMinor, newPatch) = arrayOf(oldMajor, oldMinor, 0)
+        when (updateMode) {
+            "major" -> newMajor = (oldMajor + 1).also { newMinor = 0 }
+            "minor" -> newMinor = oldMinor + 1
+            else -> newPatch = oldPatch + 1
+        }
+        return "$newMajor.$newMinor.$newPatch"
+    }
+    doLast {
+        val newVersion = properties["overrideVersion"] as String? ?: generateVersion()
+        val oldContent = buildFile.readText()
+        val newContent = oldContent.replace("""= "$version"""", """= "$newVersion"""")
+        buildFile.writeText(newContent)
+    }
+}
+
+tasks.create("generateVersionResource") {
+    group = "automation"
+    description = "Generates a file containing the version that the plugin can access during runtime"
+
+    doLast {
+        val propertiesFile = file("$generatedVersionDir/version.properties")
+        propertiesFile.parentFile.mkdirs()
+        val properties = Properties()
+        properties.setProperty("version", version.toString())
+        val output = FileOutputStream(propertiesFile)
+        properties.store(output, null)
+    }
+}
+
+tasks.named("processResources") {
+    dependsOn("generateVersionResource")
+}

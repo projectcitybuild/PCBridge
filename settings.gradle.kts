@@ -1,1 +1,1 @@
-rootProject.name = "PCBridge"
+rootProject.name = "pcbridge"
