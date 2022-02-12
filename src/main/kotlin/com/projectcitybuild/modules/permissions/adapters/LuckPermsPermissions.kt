@@ -2,7 +2,6 @@ package com.projectcitybuild.modules.permissions.adapters
 
 import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.modules.permissions.Permissions
-import dagger.Reusable
 import net.luckperms.api.LuckPerms
 import net.luckperms.api.LuckPermsProvider
 import net.luckperms.api.model.user.User
@@ -11,8 +10,9 @@ import net.luckperms.api.node.types.InheritanceNode
 import java.util.*
 import java.util.stream.Collectors
 import javax.inject.Inject
+import javax.inject.Singleton
 
-@Reusable
+@Singleton
 class LuckPermsPermissions @Inject constructor(
     private val logger: PlatformLogger,
 ): Permissions {
@@ -21,8 +21,10 @@ class LuckPermsPermissions @Inject constructor(
 
     private lateinit var luckPerms: LuckPerms
 
-    override fun bootstrap() {
+    override fun connect() {
         luckPerms = LuckPermsProvider.get()
+
+        logger.info("Connected to LuckPerms")
     }
 
     private fun getUser(playerUUID: UUID): User {

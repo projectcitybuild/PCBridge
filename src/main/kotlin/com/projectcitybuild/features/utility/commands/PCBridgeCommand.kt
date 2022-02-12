@@ -17,6 +17,7 @@ import net.md_5.bungee.api.plugin.Plugin
 import java.io.File
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.*
 import javax.inject.Inject
 
 class PCBridgeCommand @Inject constructor(
@@ -31,10 +32,20 @@ class PCBridgeCommand @Inject constructor(
 
     override suspend fun execute(input: BungeecordCommandInput) {
         when {
-            input.args.isEmpty() -> throw InvalidCommandArgumentsException()
+            input.args.isEmpty() -> showVersion(input.sender)
             input.args.first() == "import" -> import(input.sender, input.args)
             else -> throw InvalidCommandArgumentsException()
         }
+    }
+
+    private fun showVersion(sender: CommandSender) {
+        val properties = Properties().apply {
+            load(object {}.javaClass.getResourceAsStream("/version.properties"))
+        }
+        val version = properties.getProperty("version")
+        val commit = properties.getProperty("commit")
+
+        sender.send().info("Running PCBridge v$version ($commit)")
     }
 
     @Serializable

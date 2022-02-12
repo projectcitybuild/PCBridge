@@ -1,10 +1,11 @@
 
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import java.io.ByteArrayOutputStream
 import java.io.FileOutputStream
 import java.util.*
 
-val generatedVersionDir = "$buildDir/version"
+val generatedVersionDir = "$buildDir/generated-resources"
 
 group = "com.projectcitybuild"
 version = "3.6.0"
@@ -152,11 +153,22 @@ tasks.create("generateVersionResource") {
     group = "automation"
     description = "Generates a file containing the version that the plugin can access during runtime"
 
+    val gitDescribe: String by lazy {
+        val stdout = ByteArrayOutputStream()
+        rootProject.exec {
+            commandLine("git", "describe", "--tags")
+            standardOutput = stdout
+        }
+        stdout.toString().trim()
+            .replace("-g", "-") // Remove `g` for `git` in the commit id
+    }
     doLast {
         val propertiesFile = file("$generatedVersionDir/version.properties")
         propertiesFile.parentFile.mkdirs()
-        val properties = Properties()
-        properties.setProperty("version", version.toString())
+        val properties = Properties().apply {
+            setProperty("version", version.toString())
+            setProperty("commit", gitDescribe)
+        }
         val output = FileOutputStream(propertiesFile)
         properties.store(output, null)
     }
