@@ -3,7 +3,7 @@ package com.projectcitybuild.modules.permissions
 import java.util.*
 
 interface Permissions {
-    fun bootstrap()
+    fun connect()
 
     fun setUserGroups(playerUUID: UUID, groupNames: List<String>)
     fun getUserGroups(playerUUID: UUID): Set<String>
