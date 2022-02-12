@@ -156,7 +156,7 @@ tasks.create("generateVersionResource") {
     val gitDescribe: String by lazy {
         val stdout = ByteArrayOutputStream()
         rootProject.exec {
-            commandLine("git", "describe", "--tags")
+            commandLine("cmd", "git", "describe", "--tags")
             standardOutput = stdout
         }
         stdout.toString().trim()
