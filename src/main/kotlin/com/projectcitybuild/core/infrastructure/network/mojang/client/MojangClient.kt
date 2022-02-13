@@ -1,6 +1,6 @@
-package com.projectcitybuild.modules.network.mojang.client
+package com.projectcitybuild.core.infrastructure.network.mojang.client
 
-import com.projectcitybuild.modules.network.mojang.requests.MojangApiInterface
+import com.projectcitybuild.core.infrastructure.network.mojang.requests.MojangApiInterface
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit

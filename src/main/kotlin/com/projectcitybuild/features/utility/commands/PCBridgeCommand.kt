@@ -4,7 +4,7 @@ import com.projectcitybuild.core.InvalidCommandArgumentsException
 import com.projectcitybuild.core.Regex
 import com.projectcitybuild.entities.IPBan
 import com.projectcitybuild.features.bans.repositories.IPBanRepository
-import com.projectcitybuild.modules.database.DataSource
+import com.projectcitybuild.core.infrastructure.database.DataSource
 import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand

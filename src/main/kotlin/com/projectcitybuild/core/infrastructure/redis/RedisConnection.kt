@@ -1,4 +1,4 @@
-package com.projectcitybuild.modules.redis
+package com.projectcitybuild.core.infrastructure.redis
 
 import redis.clients.jedis.Jedis
 import redis.clients.jedis.JedisPool

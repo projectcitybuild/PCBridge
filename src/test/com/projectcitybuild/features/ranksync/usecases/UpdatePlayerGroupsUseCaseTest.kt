@@ -8,10 +8,10 @@ import com.projectcitybuild.entities.responses.ApiResponse
 import com.projectcitybuild.entities.responses.AuthPlayerGroups
 import com.projectcitybuild.entities.responses.Group
 import com.projectcitybuild.modules.config.PlatformConfig
-import com.projectcitybuild.modules.network.APIClient
-import com.projectcitybuild.modules.network.APIClientMock
-import com.projectcitybuild.modules.network.APIRequestFactory
-import com.projectcitybuild.modules.network.pcb.client.PCBClient
+import com.projectcitybuild.core.infrastructure.network.APIClient
+import com.projectcitybuild.core.infrastructure.network.APIClientMock
+import com.projectcitybuild.core.infrastructure.network.APIRequestFactory
+import com.projectcitybuild.core.infrastructure.network.pcb.client.PCBClient
 import com.projectcitybuild.modules.permissions.Permissions
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals

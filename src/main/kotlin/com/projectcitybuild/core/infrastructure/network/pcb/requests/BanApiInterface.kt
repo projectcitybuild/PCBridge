@@ -1,4 +1,4 @@
-package com.projectcitybuild.modules.network.pcb.requests
+package com.projectcitybuild.core.infrastructure.network.pcb.requests
 
 import com.projectcitybuild.entities.responses.ApiResponse
 import com.projectcitybuild.entities.responses.GameBan

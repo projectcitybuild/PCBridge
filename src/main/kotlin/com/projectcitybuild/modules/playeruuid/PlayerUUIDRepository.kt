@@ -2,8 +2,8 @@ package com.projectcitybuild.modules.playeruuid
 
 import com.projectcitybuild.core.extensions.toDashFormattedUUID
 import com.projectcitybuild.entities.responses.MojangPlayer
-import com.projectcitybuild.modules.network.APIClient
-import com.projectcitybuild.modules.network.APIRequestFactory
+import com.projectcitybuild.core.infrastructure.network.APIClient
+import com.projectcitybuild.core.infrastructure.network.APIRequestFactory
 import com.projectcitybuild.modules.proxyadapter.playerlist.OnlinePlayerList
 import java.util.*
 import javax.inject.Inject

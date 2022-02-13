@@ -1,4 +1,4 @@
-package com.projectcitybuild.modules.redis
+package com.projectcitybuild.core.infrastructure.redis
 
 import com.projectcitybuild.entities.PluginConfig
 import com.projectcitybuild.modules.config.PlatformConfig

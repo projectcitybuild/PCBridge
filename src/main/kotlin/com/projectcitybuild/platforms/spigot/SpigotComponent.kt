@@ -1,14 +1,14 @@
 package com.projectcitybuild.platforms.spigot
 
 import com.projectcitybuild.modules.config.PlatformConfig
-import com.projectcitybuild.modules.database.DataSourceProvider
+import com.projectcitybuild.core.infrastructure.database.DataSourceProvider
 import com.projectcitybuild.modules.datetime.DateTimeProvider
 import com.projectcitybuild.modules.errorreporting.ErrorReporterProvider
 import com.projectcitybuild.modules.eventbroadcast.LocalEventBroadcaster
 import com.projectcitybuild.modules.logger.PlatformLogger
-import com.projectcitybuild.modules.network.APIClient
-import com.projectcitybuild.modules.network.NetworkProvider
-import com.projectcitybuild.modules.redis.RedisProvider
+import com.projectcitybuild.core.infrastructure.network.APIClient
+import com.projectcitybuild.core.infrastructure.network.NetworkProvider
+import com.projectcitybuild.core.infrastructure.redis.RedisProvider
 import com.projectcitybuild.modules.scheduler.PlatformScheduler
 import dagger.BindsInstance
 import dagger.Component

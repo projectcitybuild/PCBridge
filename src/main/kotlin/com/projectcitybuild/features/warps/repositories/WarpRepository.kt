@@ -2,8 +2,8 @@ package com.projectcitybuild.features.warps.repositories
 
 import com.projectcitybuild.entities.CrossServerLocation
 import com.projectcitybuild.entities.Warp
-import com.projectcitybuild.modules.database.DataSource
-import com.projectcitybuild.modules.redis.RedisConnection
+import com.projectcitybuild.core.infrastructure.database.DataSource
+import com.projectcitybuild.core.infrastructure.redis.RedisConnection
 import dagger.Reusable
 import javax.inject.Inject
 

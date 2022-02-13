@@ -4,13 +4,13 @@ import com.github.shynixn.mccoroutine.minecraftDispatcher
 import com.projectcitybuild.entities.Channel
 import com.projectcitybuild.modules.channels.spigot.SpigotMessageListener
 import com.projectcitybuild.modules.config.implementations.SpigotConfig
-import com.projectcitybuild.modules.database.DataSource
+import com.projectcitybuild.core.infrastructure.database.DataSource
 import com.projectcitybuild.modules.errorreporting.ErrorReporter
 import com.projectcitybuild.modules.eventbroadcast.implementations.SpigotLocalEventBroadcaster
 import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.modules.logger.implementations.SpigotLogger
-import com.projectcitybuild.modules.network.APIClientImpl
-import com.projectcitybuild.modules.redis.RedisConnection
+import com.projectcitybuild.core.infrastructure.network.APIClientImpl
+import com.projectcitybuild.core.infrastructure.redis.RedisConnection
 import com.projectcitybuild.modules.scheduler.implementations.SpigotScheduler
 import com.projectcitybuild.platforms.spigot.environment.SpigotCommandRegistry
 import com.projectcitybuild.platforms.spigot.environment.SpigotListenerRegistry

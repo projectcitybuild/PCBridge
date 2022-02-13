@@ -4,11 +4,11 @@ import com.projectcitybuild.core.contracts.BungeecordFeatureModule
 import com.projectcitybuild.entities.Channel
 import com.projectcitybuild.modules.channels.bungeecord.BungeecordMessageListener
 import com.projectcitybuild.modules.config.implementations.BungeecordConfig
-import com.projectcitybuild.modules.database.DataSource
+import com.projectcitybuild.core.infrastructure.database.DataSource
 import com.projectcitybuild.modules.errorreporting.ErrorReporter
 import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.modules.logger.implementations.BungeecordLogger
-import com.projectcitybuild.modules.network.APIClientImpl
+import com.projectcitybuild.core.infrastructure.network.APIClientImpl
 import com.projectcitybuild.modules.permissions.Permissions
 import com.projectcitybuild.modules.playerconfig.PlayerConfigCache
 import com.projectcitybuild.modules.scheduler.implementations.BungeecordScheduler

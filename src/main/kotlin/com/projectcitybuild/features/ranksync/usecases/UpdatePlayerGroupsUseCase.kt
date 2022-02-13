@@ -6,8 +6,8 @@ import com.projectcitybuild.core.utilities.Success
 import com.projectcitybuild.entities.PluginConfig
 import com.projectcitybuild.entities.responses.Group
 import com.projectcitybuild.modules.config.PlatformConfig
-import com.projectcitybuild.modules.network.APIClient
-import com.projectcitybuild.modules.network.APIRequestFactory
+import com.projectcitybuild.core.infrastructure.network.APIClient
+import com.projectcitybuild.core.infrastructure.network.APIRequestFactory
 import com.projectcitybuild.modules.permissions.Permissions
 import java.util.*
 import javax.inject.Inject

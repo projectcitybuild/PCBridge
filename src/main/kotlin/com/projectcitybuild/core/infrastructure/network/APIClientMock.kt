@@ -1,4 +1,4 @@
-package com.projectcitybuild.modules.network
+package com.projectcitybuild.core.infrastructure.network
 
 import dagger.Reusable
 
