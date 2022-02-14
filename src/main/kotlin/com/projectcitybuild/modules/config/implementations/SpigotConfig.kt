@@ -30,6 +30,8 @@ class SpigotConfig(
             PluginConfig.REDIS_PASSWORD,
             PluginConfig.ERROR_REPORTING_SENTRY_ENABLED,
             PluginConfig.ERROR_REPORTING_SENTRY_DSN,
+            PluginConfig.SHARED_CACHE_ADAPTER,
+            PluginConfig.SHARED_CACHE_FILE_RELATIVE_PATH,
             PluginConfig.INTEGRATION_DYNMAP_WARP_ICON,
         ).forEach { key ->
             config.addDefault(key.key, key.defaultValue)

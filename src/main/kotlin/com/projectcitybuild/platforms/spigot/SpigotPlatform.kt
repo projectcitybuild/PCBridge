@@ -31,6 +31,7 @@ class SpigotPlatform: JavaPlugin() {
             .scheduler(SpigotScheduler(this))
             .localEventBroadcaster(SpigotLocalEventBroadcaster())
             .apiClient(APIClientImpl { this.minecraftDispatcher })
+            .baseFolder(dataFolder)
             .build()
 
         container = component.container()

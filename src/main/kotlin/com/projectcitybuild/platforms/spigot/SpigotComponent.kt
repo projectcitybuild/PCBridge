@@ -10,10 +10,13 @@ import com.projectcitybuild.core.infrastructure.network.APIClient
 import com.projectcitybuild.core.infrastructure.network.NetworkProvider
 import com.projectcitybuild.core.infrastructure.redis.RedisProvider
 import com.projectcitybuild.modules.scheduler.PlatformScheduler
+import com.projectcitybuild.modules.sharedcache.SharedCacheSetProvider
 import dagger.BindsInstance
 import dagger.Component
 import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
+import java.io.File
+import javax.inject.Qualifier
 import javax.inject.Singleton
 
 @Singleton
@@ -23,6 +26,7 @@ import javax.inject.Singleton
     NetworkProvider::class,
     DataSourceProvider::class,
     RedisProvider::class,
+    SharedCacheSetProvider::class,
 ])
 interface SpigotComponent {
 
@@ -50,6 +54,9 @@ interface SpigotComponent {
 
         @BindsInstance
         fun apiClient(apiClient: APIClient): Builder
+
+        @BindsInstance
+        fun baseFolder(baseFolder: File): Builder
 
         fun build(): SpigotComponent
     }
