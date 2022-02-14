@@ -4,15 +4,16 @@ import com.projectcitybuild.entities.CrossServerLocation
 import com.projectcitybuild.entities.Warp
 import com.projectcitybuild.core.infrastructure.database.DataSource
 import com.projectcitybuild.core.infrastructure.redis.RedisConnection
+import com.projectcitybuild.modules.sharedcache.SharedCacheSetFactory
 import dagger.Reusable
 import javax.inject.Inject
 
 @Reusable
 class WarpRepository @Inject constructor(
     private val dataSource: DataSource,
-    private val redisConnection: RedisConnection,
+    sharedCacheSetFactory: SharedCacheSetFactory,
 ) {
-    private val listCacheKey = "pcbridge:all_warp_names"
+    private val sharedCacheSet = sharedCacheSetFactory.build("all_warp_names")
 
     fun exists(name: String): Boolean {
         return first(name) != null
@@ -39,10 +40,8 @@ class WarpRepository @Inject constructor(
     }
 
     fun names(): List<String> {
-        val cached = redisConnection.resource().use {
-            it.smembers(listCacheKey)
-        }
-        if (cached != null && cached.isNotEmpty()) {
+        val cached = sharedCacheSet.all()
+        if (cached.isNotEmpty()) {
             return cached.sorted()
         }
 
@@ -50,9 +49,7 @@ class WarpRepository @Inject constructor(
             .getResults("SELECT `name` FROM `warps` ORDER BY `name` ASC")
             .map { row -> row.getString("name") }
             .also { warpNames ->
-                redisConnection.resource().use { jedis ->
-                    warpNames.forEach { jedis.sadd(listCacheKey, it) }
-                }
+                sharedCacheSet.add(warpNames)
             }
     }
 
@@ -90,17 +87,13 @@ class WarpRepository @Inject constructor(
             warp.createdAt,
         )
 
-        redisConnection.resource().use {
-            it.del(listCacheKey)
-        }
+        sharedCacheSet.removeAll()
     }
 
     fun delete(name: String) {
         dataSource.database()
             .executeUpdate("DELETE FROM `warps` WHERE `name`= ?", name)
 
-        redisConnection.resource().use {
-            it.del(listCacheKey)
-        }
+        sharedCacheSet.remove(name)
     }
 }
