@@ -4,23 +4,26 @@ import com.projectcitybuild.entities.PluginConfig
 import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.modules.sharedcache.SharedCacheSet
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.*
-import kotlinx.serialization.json.*
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.encodeToJsonElement
 import java.io.File
 import java.io.FileWriter
 import java.nio.charset.Charset
 import javax.inject.Inject
 
 class FlatFileSharedCacheSet @Inject constructor(
-    config: PlatformConfig,
-    baseFolder: File,
+    private val config: PlatformConfig,
+    private val baseFolder: File,
 ): SharedCacheSet {
 
     override lateinit var key: String
 
-    private val fileName = key.replace(oldValue = ":", newValue = ".")
-    private val fileRelativePath = config.get(PluginConfig.SHARED_CACHE_FILE_RELATIVE_PATH) + "/" + fileName
-    private val file = baseFolder.resolve(fileRelativePath)
+    private val file by lazy {
+        val fileName = key.replace(oldValue = ":", newValue = ".")
+        val fileRelativePath = config.get(PluginConfig.SHARED_CACHE_FILE_RELATIVE_PATH) + "/" + fileName
+        baseFolder.resolve(fileRelativePath)
+    }
 
     @Serializable
     data class Data(val set: Set<String>)

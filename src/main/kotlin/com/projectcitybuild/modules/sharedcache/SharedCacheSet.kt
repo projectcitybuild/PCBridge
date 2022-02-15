@@ -1,7 +1,7 @@
 package com.projectcitybuild.modules.sharedcache
 
 /**
- * Represents a cache that is shared between all servers.
+ * Represents a cachable String Set that is shared between all servers.
  *
  * Anything that conforms to this interface must guarantee that
  * regardless of which server it's used from, the underlying
