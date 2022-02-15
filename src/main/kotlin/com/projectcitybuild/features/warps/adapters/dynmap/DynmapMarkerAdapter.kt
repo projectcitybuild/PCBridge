@@ -20,7 +20,7 @@ class DynmapMarkerAdapter @Inject constructor(
     private val config: PlatformConfig,
     private val logger: PlatformLogger,
 ): SpigotListener {
-    class DynmapNotFoundException: Exception("Dynmap plugin not found")
+    class DynmapAPINotFoundException: Exception("Dynmap plugin not found")
     class DynmapMarkerIconNotFoundException: Exception()
 
     private val markerSetName = "pcbridge"
@@ -31,12 +31,12 @@ class DynmapMarkerAdapter @Inject constructor(
     fun enable() {
         val anyPlugin = plugin.server.pluginManager.getPlugin("dynmap")
         if (anyPlugin == null) {
-            logger.warning("Cannot find dynmap pluigin")
-            throw DynmapNotFoundException()
+            logger.warning("Cannot find dynmap plugin. Disabling marker integration")
+            return
         }
         if (anyPlugin !is DynmapAPI) {
             logger.fatal("Found dynmap plugin but cannot access dynmap-api")
-            throw DynmapNotFoundException()
+            throw DynmapAPINotFoundException()
         }
 
         dynmap = anyPlugin
