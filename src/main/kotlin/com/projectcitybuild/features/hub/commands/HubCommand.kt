@@ -1,7 +1,7 @@
 package com.projectcitybuild.features.hub.commands
 
 import com.projectcitybuild.core.InvalidCommandArgumentsException
-import com.projectcitybuild.entities.PluginConfig
+import com.projectcitybuild.modules.config.PluginConfig
 import com.projectcitybuild.entities.SubChannel
 import com.projectcitybuild.entities.Warp
 import com.projectcitybuild.features.hub.repositories.HubRepository

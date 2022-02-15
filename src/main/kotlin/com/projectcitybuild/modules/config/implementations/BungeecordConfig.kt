@@ -1,7 +1,7 @@
 package com.projectcitybuild.modules.config.implementations
 
 import com.google.common.io.ByteStreams
-import com.projectcitybuild.entities.PluginConfig
+import com.projectcitybuild.modules.config.PluginConfig
 import com.projectcitybuild.modules.config.PlatformConfig
 import net.md_5.bungee.config.Configuration
 import net.md_5.bungee.config.ConfigurationProvider

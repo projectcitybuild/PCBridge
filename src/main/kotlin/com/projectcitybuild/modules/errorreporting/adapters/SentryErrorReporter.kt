@@ -1,6 +1,6 @@
 package com.projectcitybuild.modules.errorreporting.adapters
 
-import com.projectcitybuild.entities.PluginConfig
+import com.projectcitybuild.modules.config.PluginConfig
 import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.modules.errorreporting.ErrorReporter
 import com.projectcitybuild.modules.logger.PlatformLogger

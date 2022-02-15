@@ -1,6 +1,6 @@
 package com.projectcitybuild.modules.config
 
-import com.projectcitybuild.entities.PluginConfig
+import com.projectcitybuild.modules.config.PluginConfig
 
 interface PlatformConfig {
     fun <T> get(key: PluginConfig.ConfigPath<T>): T

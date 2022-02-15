@@ -1,6 +1,6 @@
 package com.projectcitybuild.modules.config.implementations
 
-import com.projectcitybuild.entities.PluginConfig
+import com.projectcitybuild.modules.config.PluginConfig
 import com.projectcitybuild.modules.config.PlatformConfig
 import dagger.Reusable
 import org.bukkit.configuration.file.FileConfiguration

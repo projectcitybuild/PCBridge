@@ -1,4 +1,4 @@
-package com.projectcitybuild.entities
+package com.projectcitybuild.modules.config
 
 sealed class PluginConfig {
 

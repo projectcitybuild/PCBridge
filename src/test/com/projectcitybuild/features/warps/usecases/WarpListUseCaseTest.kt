@@ -1,6 +1,6 @@
 package com.projectcitybuild.features.warps.usecases
 
-import com.projectcitybuild.entities.PluginConfig
+import com.projectcitybuild.modules.config.PluginConfig
 import com.projectcitybuild.features.warps.repositories.WarpRepository
 import com.projectcitybuild.features.warps.usecases.warplist.WarpListUseCase
 import com.projectcitybuild.modules.config.PlatformConfig

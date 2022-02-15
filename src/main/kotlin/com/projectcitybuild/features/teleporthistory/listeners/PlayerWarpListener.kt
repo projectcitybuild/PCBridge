@@ -2,7 +2,7 @@ package com.projectcitybuild.features.teleporthistory.listeners
 
 import com.projectcitybuild.core.SpigotListener
 import com.projectcitybuild.entities.CrossServerLocation
-import com.projectcitybuild.entities.PluginConfig
+import com.projectcitybuild.modules.config.PluginConfig
 import com.projectcitybuild.features.teleporthistory.repositories.LastKnownLocationRepositoy
 import com.projectcitybuild.features.warps.events.PlayerPreWarpEvent
 import com.projectcitybuild.modules.config.PlatformConfig

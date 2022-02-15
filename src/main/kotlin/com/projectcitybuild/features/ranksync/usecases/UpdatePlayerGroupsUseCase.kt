@@ -3,7 +3,7 @@ package com.projectcitybuild.features.ranksync.usecases
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Result
 import com.projectcitybuild.core.utilities.Success
-import com.projectcitybuild.entities.PluginConfig
+import com.projectcitybuild.modules.config.PluginConfig
 import com.projectcitybuild.entities.responses.Group
 import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.core.infrastructure.network.APIClient

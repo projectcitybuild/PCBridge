@@ -1,6 +1,6 @@
 package com.projectcitybuild.core.infrastructure.network
 
-import com.projectcitybuild.entities.PluginConfig
+import com.projectcitybuild.modules.config.PluginConfig
 import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.core.infrastructure.network.mojang.client.MojangClient
 import com.projectcitybuild.core.infrastructure.network.pcb.client.PCBClient

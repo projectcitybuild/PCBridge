@@ -1,7 +1,7 @@
 package com.projectcitybuild.features.teleporting.commands
 
 import com.projectcitybuild.core.InvalidCommandArgumentsException
-import com.projectcitybuild.entities.PluginConfig
+import com.projectcitybuild.modules.config.PluginConfig
 import com.projectcitybuild.features.teleporting.repositories.TeleportRequestRepository
 import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.modules.nameguesser.NameGuesser

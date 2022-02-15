@@ -1,6 +1,6 @@
 package com.projectcitybuild.modules.sharedcache
 
-import com.projectcitybuild.entities.PluginConfig
+import com.projectcitybuild.modules.config.PluginConfig
 import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.modules.sharedcache.adapters.FlatFileSharedCacheSet
 import com.projectcitybuild.modules.sharedcache.adapters.RedisSharedCacheSet

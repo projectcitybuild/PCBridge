@@ -2,7 +2,7 @@ package com.projectcitybuild.features.ranksync.usecases
 
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Success
-import com.projectcitybuild.entities.PluginConfig
+import com.projectcitybuild.modules.config.PluginConfig
 import com.projectcitybuild.entities.responses.ApiError
 import com.projectcitybuild.entities.responses.ApiResponse
 import com.projectcitybuild.entities.responses.AuthPlayerGroups

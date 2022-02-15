@@ -1,7 +1,7 @@
 package com.projectcitybuild.features.teleporting.listeners
 
 import com.projectcitybuild.core.SpigotListener
-import com.projectcitybuild.entities.PluginConfig
+import com.projectcitybuild.modules.config.PluginConfig
 import com.projectcitybuild.entities.TeleportType
 import com.projectcitybuild.features.teleporting.repositories.QueuedTeleportRepository
 import com.projectcitybuild.modules.config.PlatformConfig

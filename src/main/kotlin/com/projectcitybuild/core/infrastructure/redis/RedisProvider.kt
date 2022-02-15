@@ -1,6 +1,6 @@
 package com.projectcitybuild.core.infrastructure.redis
 
-import com.projectcitybuild.entities.PluginConfig
+import com.projectcitybuild.modules.config.PluginConfig
 import com.projectcitybuild.modules.config.PlatformConfig
 import dagger.Module
 import dagger.Provides

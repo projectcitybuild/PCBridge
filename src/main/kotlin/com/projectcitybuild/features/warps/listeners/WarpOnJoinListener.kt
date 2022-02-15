@@ -1,7 +1,7 @@
 package com.projectcitybuild.features.warps.listeners
 
 import com.projectcitybuild.core.SpigotListener
-import com.projectcitybuild.entities.PluginConfig
+import com.projectcitybuild.modules.config.PluginConfig
 import com.projectcitybuild.features.warps.repositories.QueuedWarpRepository
 import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.modules.logger.PlatformLogger

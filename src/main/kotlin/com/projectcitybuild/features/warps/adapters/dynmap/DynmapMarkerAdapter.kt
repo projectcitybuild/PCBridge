@@ -1,7 +1,7 @@
 package com.projectcitybuild.features.warps.adapters.dynmap
 
 import com.projectcitybuild.core.SpigotListener
-import com.projectcitybuild.entities.PluginConfig
+import com.projectcitybuild.modules.config.PluginConfig
 import com.projectcitybuild.features.warps.events.WarpCreateEvent
 import com.projectcitybuild.features.warps.events.WarpDeleteEvent
 import com.projectcitybuild.features.warps.repositories.WarpRepository
