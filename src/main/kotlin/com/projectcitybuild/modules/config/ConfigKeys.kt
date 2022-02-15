@@ -1,10 +1,10 @@
 package com.projectcitybuild.modules.config
 
-sealed class PluginConfig {
+sealed class ConfigKeys {
 
     data class ConfigPath<T>(val key: String, val defaultValue: T)
 
-    companion object Keys {
+    companion object {
         private infix fun <T> String.defaultTo(defaultValue: T): ConfigPath<T> {
             return ConfigPath(this, defaultValue)
         }

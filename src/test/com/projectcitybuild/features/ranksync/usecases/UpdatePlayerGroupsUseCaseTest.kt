@@ -2,7 +2,7 @@ package com.projectcitybuild.features.ranksync.usecases
 
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Success
-import com.projectcitybuild.modules.config.PluginConfig
+import com.projectcitybuild.modules.config.ConfigKeys
 import com.projectcitybuild.entities.responses.ApiError
 import com.projectcitybuild.entities.responses.ApiResponse
 import com.projectcitybuild.entities.responses.AuthPlayerGroups
@@ -77,7 +77,7 @@ class UpdatePlayerGroupsUseCaseTest {
     fun `should assign player to guest group if no groups`() = runTest {
         val playerUUID = UUID.randomUUID()
 
-        `when`(config.get(PluginConfig.GROUPS_GUEST)).thenReturn("guest_group")
+        `when`(config.get(ConfigKeys.GROUPS_GUEST)).thenReturn("guest_group")
 
         apiClient.result = apiResponseMock(groups = emptyList())
 

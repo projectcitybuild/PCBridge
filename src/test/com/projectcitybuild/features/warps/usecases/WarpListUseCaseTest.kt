@@ -1,6 +1,6 @@
 package com.projectcitybuild.features.warps.usecases
 
-import com.projectcitybuild.modules.config.PluginConfig
+import com.projectcitybuild.modules.config.ConfigKeys
 import com.projectcitybuild.features.warps.repositories.WarpRepository
 import com.projectcitybuild.features.warps.usecases.warplist.WarpListUseCase
 import com.projectcitybuild.modules.config.PlatformConfig
@@ -31,7 +31,7 @@ class WarpListUseCaseTest {
     fun `should return all warps sorted`() = runTest {
         val warps = listOf("b", "c", "a",)
         `when`(warpRepository.names()).thenReturn(warps)
-        `when`(config.get(PluginConfig.WARPS_PER_PAGE)).thenReturn(warps.size)
+        `when`(config.get(ConfigKeys.WARPS_PER_PAGE)).thenReturn(warps.size)
 
         val received = useCase.getList(page = 1)
         val expected = listOf("a", "b", "c")
@@ -44,7 +44,7 @@ class WarpListUseCaseTest {
         val warps = MutableList(3) { index -> "warp_$index" }
 
         `when`(warpRepository.names()).thenReturn(warps)
-        `when`(config.get(PluginConfig.WARPS_PER_PAGE)).thenReturn(3)
+        `when`(config.get(ConfigKeys.WARPS_PER_PAGE)).thenReturn(3)
 
         val received = useCase.getList(page = 1)
 
@@ -61,7 +61,7 @@ class WarpListUseCaseTest {
         val warps = MutableList(5) { index -> "warp_$index" }
 
         `when`(warpRepository.names()).thenReturn(warps)
-        `when`(config.get(PluginConfig.WARPS_PER_PAGE)).thenReturn(2)
+        `when`(config.get(ConfigKeys.WARPS_PER_PAGE)).thenReturn(2)
 
         val firstPage = useCase.getList(page = 1)
         assertEquals(listOf("warp_0", "warp_1"), firstPage?.warps)

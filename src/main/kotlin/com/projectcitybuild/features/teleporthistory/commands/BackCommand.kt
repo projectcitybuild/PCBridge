@@ -1,7 +1,7 @@
 package com.projectcitybuild.features.teleporthistory.commands
 
 import com.projectcitybuild.core.InvalidCommandArgumentsException
-import com.projectcitybuild.modules.config.PluginConfig
+import com.projectcitybuild.modules.config.ConfigKeys
 import com.projectcitybuild.entities.SubChannel
 import com.projectcitybuild.entities.Warp
 import com.projectcitybuild.features.teleporthistory.repositories.LastKnownLocationRepositoy
@@ -52,7 +52,7 @@ class BackCommand @Inject constructor(
             PlayerPreWarpEvent(input.sender, input.sender.location)
         )
 
-        val currentServerName = config.get(PluginConfig.SPIGOT_SERVER_NAME)
+        val currentServerName = config.get(ConfigKeys.SPIGOT_SERVER_NAME)
         val isDestinationOnSameServer = currentServerName == lastKnownLocation.location.serverName
         if (isDestinationOnSameServer) {
             val worldName = lastKnownLocation.location.worldName

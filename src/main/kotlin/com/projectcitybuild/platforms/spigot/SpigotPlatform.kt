@@ -5,7 +5,7 @@ import com.projectcitybuild.core.infrastructure.database.DataSource
 import com.projectcitybuild.core.infrastructure.network.APIClientImpl
 import com.projectcitybuild.core.infrastructure.redis.RedisConnection
 import com.projectcitybuild.entities.Channel
-import com.projectcitybuild.modules.config.PluginConfig
+import com.projectcitybuild.modules.config.ConfigKeys
 import com.projectcitybuild.modules.channels.spigot.SpigotMessageListener
 import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.modules.config.implementations.SpigotConfig
@@ -56,7 +56,7 @@ class SpigotPlatform: JavaPlugin() {
         private val redisConnection: RedisConnection,
     ) {
         private val isRedisEnabled: Boolean
-            get() = config.get(PluginConfig.SHARED_CACHE_ADAPTER) == "redis"
+            get() = config.get(ConfigKeys.SHARED_CACHE_ADAPTER) == "redis"
 
         fun onEnable(server: Server) {
             errorReporter.bootstrap()

@@ -1,6 +1,6 @@
 package com.projectcitybuild.modules.sharedcache
 
-import com.projectcitybuild.modules.config.PluginConfig
+import com.projectcitybuild.modules.config.ConfigKeys
 import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.modules.sharedcache.adapters.FlatFileSharedCacheSet
 import com.projectcitybuild.modules.sharedcache.adapters.RedisSharedCacheSet
@@ -16,7 +16,7 @@ class SharedCacheSetProvider {
         redisSharedCacheSet: RedisSharedCacheSet,
         flatFileSharedCacheSet: FlatFileSharedCacheSet,
     ): SharedCacheSet {
-        val adapter = config.get(PluginConfig.SHARED_CACHE_ADAPTER)
+        val adapter = config.get(ConfigKeys.SHARED_CACHE_ADAPTER)
 
         return when (adapter) {
             "redis" -> redisSharedCacheSet

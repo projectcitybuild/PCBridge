@@ -1,7 +1,7 @@
 package com.projectcitybuild.modules.config.implementations
 
 import com.google.common.io.ByteStreams
-import com.projectcitybuild.modules.config.PluginConfig
+import com.projectcitybuild.modules.config.ConfigKeys
 import com.projectcitybuild.modules.config.PlatformConfig
 import net.md_5.bungee.config.Configuration
 import net.md_5.bungee.config.ConfigurationProvider
@@ -32,34 +32,34 @@ class BungeecordConfig(
 
     private fun generateDefaultConfig(config: Configuration) {
         arrayOf(
-            PluginConfig.API_KEY,
-            PluginConfig.API_BASE_URL,
-            PluginConfig.API_IS_LOGGING_ENABLED,
-            PluginConfig.WARPS_PER_PAGE,
-            PluginConfig.TP_REQUEST_AUTO_EXPIRE_SECONDS,
-            PluginConfig.DB_HOSTNAME,
-            PluginConfig.DB_PORT,
-            PluginConfig.DB_NAME,
-            PluginConfig.DB_USERNAME,
-            PluginConfig.DB_PASSWORD,
-            PluginConfig.ERROR_REPORTING_SENTRY_ENABLED,
-            PluginConfig.ERROR_REPORTING_SENTRY_DSN,
-            PluginConfig.GROUPS_APPEARANCE_ADMIN_DISPLAY_NAME,
-            PluginConfig.GROUPS_APPEARANCE_ADMIN_HOVER_NAME,
-            PluginConfig.GROUPS_APPEARANCE_SOP_DISPLAY_NAME,
-            PluginConfig.GROUPS_APPEARANCE_SOP_HOVER_NAME,
-            PluginConfig.GROUPS_APPEARANCE_OP_DISPLAY_NAME,
-            PluginConfig.GROUPS_APPEARANCE_OP_HOVER_NAME,
-            PluginConfig.GROUPS_APPEARANCE_MODERATOR_DISPLAY_NAME,
-            PluginConfig.GROUPS_APPEARANCE_MODERATOR_HOVER_NAME,
-            PluginConfig.GROUPS_APPEARANCE_TRUSTEDPLUS_HOVER_NAME,
-            PluginConfig.GROUPS_APPEARANCE_TRUSTED_HOVER_NAME,
-            PluginConfig.GROUPS_APPEARANCE_DONOR_HOVER_NAME,
-            PluginConfig.GROUPS_APPEARANCE_ARCHITECT_HOVER_NAME,
-            PluginConfig.GROUPS_APPEARANCE_ENGINEER_HOVER_NAME,
-            PluginConfig.GROUPS_APPEARANCE_PLANNER_HOVER_NAME,
-            PluginConfig.GROUPS_APPEARANCE_BUILDER_HOVER_NAME,
-            PluginConfig.GROUPS_APPEARANCE_INTERN_HOVER_NAME,
+            ConfigKeys.API_KEY,
+            ConfigKeys.API_BASE_URL,
+            ConfigKeys.API_IS_LOGGING_ENABLED,
+            ConfigKeys.WARPS_PER_PAGE,
+            ConfigKeys.TP_REQUEST_AUTO_EXPIRE_SECONDS,
+            ConfigKeys.DB_HOSTNAME,
+            ConfigKeys.DB_PORT,
+            ConfigKeys.DB_NAME,
+            ConfigKeys.DB_USERNAME,
+            ConfigKeys.DB_PASSWORD,
+            ConfigKeys.ERROR_REPORTING_SENTRY_ENABLED,
+            ConfigKeys.ERROR_REPORTING_SENTRY_DSN,
+            ConfigKeys.GROUPS_APPEARANCE_ADMIN_DISPLAY_NAME,
+            ConfigKeys.GROUPS_APPEARANCE_ADMIN_HOVER_NAME,
+            ConfigKeys.GROUPS_APPEARANCE_SOP_DISPLAY_NAME,
+            ConfigKeys.GROUPS_APPEARANCE_SOP_HOVER_NAME,
+            ConfigKeys.GROUPS_APPEARANCE_OP_DISPLAY_NAME,
+            ConfigKeys.GROUPS_APPEARANCE_OP_HOVER_NAME,
+            ConfigKeys.GROUPS_APPEARANCE_MODERATOR_DISPLAY_NAME,
+            ConfigKeys.GROUPS_APPEARANCE_MODERATOR_HOVER_NAME,
+            ConfigKeys.GROUPS_APPEARANCE_TRUSTEDPLUS_HOVER_NAME,
+            ConfigKeys.GROUPS_APPEARANCE_TRUSTED_HOVER_NAME,
+            ConfigKeys.GROUPS_APPEARANCE_DONOR_HOVER_NAME,
+            ConfigKeys.GROUPS_APPEARANCE_ARCHITECT_HOVER_NAME,
+            ConfigKeys.GROUPS_APPEARANCE_ENGINEER_HOVER_NAME,
+            ConfigKeys.GROUPS_APPEARANCE_PLANNER_HOVER_NAME,
+            ConfigKeys.GROUPS_APPEARANCE_BUILDER_HOVER_NAME,
+            ConfigKeys.GROUPS_APPEARANCE_INTERN_HOVER_NAME,
         ).forEach { key ->
             if (config.get(key.key) == null)
                 config.set(key.key, key.defaultValue)
@@ -68,7 +68,7 @@ class BungeecordConfig(
     }
 
     @Suppress("UNCHECKED_CAST")
-    override fun <T> get(key: PluginConfig.ConfigPath<T>): T {
+    override fun <T> get(key: ConfigKeys.ConfigPath<T>): T {
         val config = config
         return config.get(key.key) as? T ?: key.defaultValue
     }
@@ -78,7 +78,7 @@ class BungeecordConfig(
         return config.get(path)
     }
 
-    override fun <T> set(key: PluginConfig.ConfigPath<T>, value: T) {
+    override fun <T> set(key: ConfigKeys.ConfigPath<T>, value: T) {
         val config = config
 
         config.set(key.key, value)

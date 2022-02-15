@@ -3,7 +3,7 @@ package com.projectcitybuild.features.warps.commands
 import com.projectcitybuild.core.InvalidCommandArgumentsException
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.entities.CrossServerLocation
-import com.projectcitybuild.modules.config.PluginConfig
+import com.projectcitybuild.modules.config.ConfigKeys
 import com.projectcitybuild.features.warps.usecases.CreateWarpUseCase
 import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.modules.textcomponentbuilder.send
@@ -33,7 +33,7 @@ class SetWarpCommand @Inject constructor(
 
         val warpName = input.args.first()
         val location = CrossServerLocation.fromLocation(
-            serverName = config.get(PluginConfig.SPIGOT_SERVER_NAME),
+            serverName = config.get(ConfigKeys.SPIGOT_SERVER_NAME),
             location = player.location,
         )
         val result = createWarpUseCase.createWarp(warpName, location)
