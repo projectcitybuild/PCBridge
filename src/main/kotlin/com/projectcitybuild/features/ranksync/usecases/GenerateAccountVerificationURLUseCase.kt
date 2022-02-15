@@ -3,8 +3,8 @@ package com.projectcitybuild.features.ranksync.usecases
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Result
 import com.projectcitybuild.core.utilities.Success
-import com.projectcitybuild.modules.network.APIClient
-import com.projectcitybuild.modules.network.APIRequestFactory
+import com.projectcitybuild.core.infrastructure.network.APIClient
+import com.projectcitybuild.core.infrastructure.network.APIRequestFactory
 import java.util.*
 import javax.inject.Inject
 

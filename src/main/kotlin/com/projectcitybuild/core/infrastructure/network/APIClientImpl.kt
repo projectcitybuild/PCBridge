@@ -1,4 +1,4 @@
-package com.projectcitybuild.modules.network
+package com.projectcitybuild.core.infrastructure.network
 
 import com.google.gson.Gson
 import com.projectcitybuild.entities.responses.ApiError

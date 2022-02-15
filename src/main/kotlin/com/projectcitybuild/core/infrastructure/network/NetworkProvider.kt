@@ -1,9 +1,9 @@
-package com.projectcitybuild.modules.network
+package com.projectcitybuild.core.infrastructure.network
 
 import com.projectcitybuild.entities.PluginConfig
 import com.projectcitybuild.modules.config.PlatformConfig
-import com.projectcitybuild.modules.network.mojang.client.MojangClient
-import com.projectcitybuild.modules.network.pcb.client.PCBClient
+import com.projectcitybuild.core.infrastructure.network.mojang.client.MojangClient
+import com.projectcitybuild.core.infrastructure.network.pcb.client.PCBClient
 import dagger.Module
 import dagger.Provides
 

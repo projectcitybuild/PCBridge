@@ -2,7 +2,7 @@ package com.projectcitybuild.features.warps.repositories
 
 import com.projectcitybuild.entities.CrossServerLocation
 import com.projectcitybuild.entities.Warp
-import com.projectcitybuild.modules.database.DataSource
+import com.projectcitybuild.core.infrastructure.database.DataSource
 import java.util.*
 import javax.inject.Inject
 

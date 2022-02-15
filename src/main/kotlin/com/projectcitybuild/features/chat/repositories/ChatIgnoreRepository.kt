@@ -1,6 +1,6 @@
 package com.projectcitybuild.features.chat.repositories
 
-import com.projectcitybuild.modules.database.DataSource
+import com.projectcitybuild.core.infrastructure.database.DataSource
 import java.sql.Date
 import javax.inject.Inject
 

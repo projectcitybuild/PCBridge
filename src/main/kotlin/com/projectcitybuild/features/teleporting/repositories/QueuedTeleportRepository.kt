@@ -2,7 +2,7 @@ package com.projectcitybuild.features.teleporting.repositories
 
 import com.projectcitybuild.entities.QueuedTeleport
 import com.projectcitybuild.entities.TeleportType
-import com.projectcitybuild.modules.database.DataSource
+import com.projectcitybuild.core.infrastructure.database.DataSource
 import java.util.*
 import javax.inject.Inject
 

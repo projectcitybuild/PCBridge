@@ -27,6 +27,10 @@ sealed class PluginConfig {
         val ERROR_REPORTING_SENTRY_ENABLED = "error_reporting.sentry.enabled" defaultTo false
         val ERROR_REPORTING_SENTRY_DSN = "error_reporting.sentry.dsn" defaultTo "https://<key>@sentry.io/<project>"
 
+        // Supports 'redis' or 'flatfile'
+        val SHARED_CACHE_ADAPTER = "shared_cache.adapter" defaultTo "flatfile"
+        val SHARED_CACHE_FILE_RELATIVE_PATH = "shared_cache.flatfile.relative_path" defaultTo "../../cache/pcbridge"
+
         val WARPS_PER_PAGE = "warps.warps_per_page" defaultTo 15
 
         val TP_REQUEST_AUTO_EXPIRE_SECONDS = "teleports.requests.auto_expiry_in_seconds" defaultTo 20

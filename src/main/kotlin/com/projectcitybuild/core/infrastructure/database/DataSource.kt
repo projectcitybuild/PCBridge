@@ -1,4 +1,4 @@
-package com.projectcitybuild.modules.database
+package com.projectcitybuild.core.infrastructure.database
 
 import co.aikar.idb.DatabaseOptions
 import co.aikar.idb.HikariPooledDatabase

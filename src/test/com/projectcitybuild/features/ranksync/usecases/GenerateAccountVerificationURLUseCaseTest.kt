@@ -5,10 +5,10 @@ import com.projectcitybuild.core.utilities.Success
 import com.projectcitybuild.entities.responses.ApiError
 import com.projectcitybuild.entities.responses.ApiResponse
 import com.projectcitybuild.entities.responses.AuthURL
-import com.projectcitybuild.modules.network.APIClient
-import com.projectcitybuild.modules.network.APIClientMock
-import com.projectcitybuild.modules.network.APIRequestFactory
-import com.projectcitybuild.modules.network.pcb.client.PCBClient
+import com.projectcitybuild.core.infrastructure.network.APIClient
+import com.projectcitybuild.core.infrastructure.network.APIClientMock
+import com.projectcitybuild.core.infrastructure.network.APIRequestFactory
+import com.projectcitybuild.core.infrastructure.network.pcb.client.PCBClient
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach

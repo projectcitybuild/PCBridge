@@ -1,16 +1,18 @@
 package com.projectcitybuild.platforms.spigot
 
 import com.github.shynixn.mccoroutine.minecraftDispatcher
+import com.projectcitybuild.core.infrastructure.database.DataSource
+import com.projectcitybuild.core.infrastructure.network.APIClientImpl
+import com.projectcitybuild.core.infrastructure.redis.RedisConnection
 import com.projectcitybuild.entities.Channel
+import com.projectcitybuild.entities.PluginConfig
 import com.projectcitybuild.modules.channels.spigot.SpigotMessageListener
+import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.modules.config.implementations.SpigotConfig
-import com.projectcitybuild.modules.database.DataSource
 import com.projectcitybuild.modules.errorreporting.ErrorReporter
 import com.projectcitybuild.modules.eventbroadcast.implementations.SpigotLocalEventBroadcaster
 import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.modules.logger.implementations.SpigotLogger
-import com.projectcitybuild.modules.network.APIClientImpl
-import com.projectcitybuild.modules.redis.RedisConnection
 import com.projectcitybuild.modules.scheduler.implementations.SpigotScheduler
 import com.projectcitybuild.platforms.spigot.environment.SpigotCommandRegistry
 import com.projectcitybuild.platforms.spigot.environment.SpigotListenerRegistry
@@ -31,6 +33,7 @@ class SpigotPlatform: JavaPlugin() {
             .scheduler(SpigotScheduler(this))
             .localEventBroadcaster(SpigotLocalEventBroadcaster())
             .apiClient(APIClientImpl { this.minecraftDispatcher })
+            .baseFolder(dataFolder)
             .build()
 
         container = component.container()
@@ -44,6 +47,7 @@ class SpigotPlatform: JavaPlugin() {
     class Container @Inject constructor(
         private val modulesContainer: SpigotModulesContainer,
         private val plugin: Plugin,
+        private val config: PlatformConfig,
         private val logger: PlatformLogger,
         private val commandRegistry: SpigotCommandRegistry,
         private val listenerRegistry: SpigotListenerRegistry,
@@ -51,12 +55,18 @@ class SpigotPlatform: JavaPlugin() {
         private val errorReporter: ErrorReporter,
         private val redisConnection: RedisConnection,
     ) {
+        private val isRedisEnabled: Boolean
+            get() = config.get(PluginConfig.SHARED_CACHE_ADAPTER) == "redis"
+
         fun onEnable(server: Server) {
             errorReporter.bootstrap()
 
             runCatching {
-                redisConnection.connect()
                 dataSource.connect()
+
+                if (isRedisEnabled) {
+                    redisConnection.connect()
+                }
 
                 val pluginMessageListener = SpigotMessageListener(logger)
                 server.messenger.registerOutgoingPluginChannel(plugin, Channel.BUNGEECORD)
@@ -87,7 +97,10 @@ class SpigotPlatform: JavaPlugin() {
                 listenerRegistry.unregisterAll()
 
                 dataSource.disconnect()
-                redisConnection.disconnect()
+
+                if (isRedisEnabled) {
+                    redisConnection.disconnect()
+                }
 
             }.onFailure { reportError(it) }
         }

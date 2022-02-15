@@ -1,7 +1,7 @@
-package com.projectcitybuild.modules.network.pcb.client
+package com.projectcitybuild.core.infrastructure.network.pcb.client
 
-import com.projectcitybuild.modules.network.pcb.requests.AuthApiInterface
-import com.projectcitybuild.modules.network.pcb.requests.BanApiInterface
+import com.projectcitybuild.core.infrastructure.network.pcb.requests.AuthApiInterface
+import com.projectcitybuild.core.infrastructure.network.pcb.requests.BanApiInterface
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit

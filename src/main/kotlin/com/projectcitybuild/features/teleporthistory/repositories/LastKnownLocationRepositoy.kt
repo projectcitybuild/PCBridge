@@ -2,7 +2,7 @@ package com.projectcitybuild.features.teleporthistory.repositories
 
 import com.projectcitybuild.entities.CrossServerLocation
 import com.projectcitybuild.entities.LastKnownLocation
-import com.projectcitybuild.modules.database.DataSource
+import com.projectcitybuild.core.infrastructure.database.DataSource
 import java.time.LocalDateTime
 import java.util.*
 import javax.inject.Inject
