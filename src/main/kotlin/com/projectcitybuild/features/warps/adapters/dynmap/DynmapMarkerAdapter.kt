@@ -1,7 +1,7 @@
 package com.projectcitybuild.features.warps.adapters.dynmap
 
 import com.projectcitybuild.core.SpigotListener
-import com.projectcitybuild.entities.PluginConfig
+import com.projectcitybuild.modules.config.ConfigKey
 import com.projectcitybuild.features.warps.events.WarpCreateEvent
 import com.projectcitybuild.features.warps.events.WarpDeleteEvent
 import com.projectcitybuild.features.warps.repositories.WarpRepository
@@ -76,7 +76,7 @@ class DynmapMarkerAdapter @Inject constructor(
             it.deleteMarker()
         }
 
-        val iconName = config.get(PluginConfig.INTEGRATION_DYNMAP_WARP_ICON)
+        val iconName = config.get(ConfigKey.INTEGRATION_DYNMAP_WARP_ICON)
         val icon = markerAPI.getMarkerIcon(iconName)
             ?: throw DynmapMarkerIconNotFoundException()
 

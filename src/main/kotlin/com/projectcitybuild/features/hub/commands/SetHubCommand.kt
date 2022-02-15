@@ -2,7 +2,7 @@ package com.projectcitybuild.features.hub.commands
 
 import com.projectcitybuild.core.InvalidCommandArgumentsException
 import com.projectcitybuild.entities.CrossServerLocation
-import com.projectcitybuild.entities.PluginConfig
+import com.projectcitybuild.modules.config.ConfigKey
 import com.projectcitybuild.features.hub.repositories.HubRepository
 import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.modules.textcomponentbuilder.send
@@ -30,7 +30,7 @@ class SetHubCommand @Inject constructor(
         }
         val playerLocation = input.sender.location
         val location = CrossServerLocation(
-            serverName = config.get(PluginConfig.SPIGOT_SERVER_NAME),
+            serverName = config.get(ConfigKey.SPIGOT_SERVER_NAME),
             playerLocation.world.name,
             playerLocation.x,
             playerLocation.y,

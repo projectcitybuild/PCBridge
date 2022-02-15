@@ -1,7 +1,7 @@
 package com.projectcitybuild.features.hub.commands
 
 import com.projectcitybuild.core.InvalidCommandArgumentsException
-import com.projectcitybuild.entities.PluginConfig
+import com.projectcitybuild.modules.config.ConfigKey
 import com.projectcitybuild.entities.SubChannel
 import com.projectcitybuild.entities.Warp
 import com.projectcitybuild.features.hub.repositories.HubRepository
@@ -52,7 +52,7 @@ class HubCommand @Inject constructor(
             PlayerPreWarpEvent(input.sender, input.sender.location)
         )
 
-        val currentServerName = config.get(PluginConfig.SPIGOT_SERVER_NAME)
+        val currentServerName = config.get(ConfigKey.SPIGOT_SERVER_NAME)
         val isHubOnSameServer = currentServerName == hub.serverName
         if (isHubOnSameServer) {
             val worldName = hub.worldName

@@ -1,6 +1,6 @@
 package com.projectcitybuild.core.infrastructure.redis
 
-import com.projectcitybuild.entities.PluginConfig
+import com.projectcitybuild.modules.config.ConfigKey
 import com.projectcitybuild.modules.config.PlatformConfig
 import dagger.Module
 import dagger.Provides
@@ -13,10 +13,10 @@ class RedisProvider {
     @Singleton
     fun provideRedisConnection(config: PlatformConfig): RedisConnection {
         return RedisConnection(
-            hostname = config.get(PluginConfig.REDIS_HOSTNAME),
-            port = config.get(PluginConfig.REDIS_PORT),
-            username = config.get(PluginConfig.REDIS_USERNAME),
-            password = config.get(PluginConfig.REDIS_PASSWORD),
+            hostname = config.get(ConfigKey.REDIS_HOSTNAME),
+            port = config.get(ConfigKey.REDIS_PORT),
+            username = config.get(ConfigKey.REDIS_USERNAME),
+            password = config.get(ConfigKey.REDIS_PASSWORD),
         )
     }
 }

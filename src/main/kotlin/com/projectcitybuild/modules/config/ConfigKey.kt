@@ -1,14 +1,15 @@
-package com.projectcitybuild.entities
+package com.projectcitybuild.modules.config
 
-sealed class PluginConfig {
+sealed class ConfigKey {
 
     data class ConfigPath<T>(val key: String, val defaultValue: T)
 
-    companion object Keys {
+    companion object {
         private infix fun <T> String.defaultTo(defaultValue: T): ConfigPath<T> {
             return ConfigPath(this, defaultValue)
         }
 
+        val API_ENABLED = "api.enabled" defaultTo false
         val API_KEY = "api.key" defaultTo "FILL_THIS_IN"
         val API_BASE_URL = "api.base_url" defaultTo "https://projectcitybuild.com/api/"
         val API_IS_LOGGING_ENABLED = "api.is_logging_enabled" defaultTo false

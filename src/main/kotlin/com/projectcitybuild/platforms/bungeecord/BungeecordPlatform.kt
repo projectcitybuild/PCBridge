@@ -1,14 +1,16 @@
 package com.projectcitybuild.platforms.bungeecord
 
 import com.projectcitybuild.core.contracts.BungeecordFeatureModule
+import com.projectcitybuild.core.infrastructure.database.DataSource
+import com.projectcitybuild.core.infrastructure.network.APIClientImpl
 import com.projectcitybuild.entities.Channel
 import com.projectcitybuild.modules.channels.bungeecord.BungeecordMessageListener
+import com.projectcitybuild.modules.config.ConfigKey
+import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.modules.config.implementations.BungeecordConfig
-import com.projectcitybuild.core.infrastructure.database.DataSource
 import com.projectcitybuild.modules.errorreporting.ErrorReporter
 import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.modules.logger.implementations.BungeecordLogger
-import com.projectcitybuild.core.infrastructure.network.APIClientImpl
 import com.projectcitybuild.modules.permissions.Permissions
 import com.projectcitybuild.modules.playerconfig.PlayerConfigCache
 import com.projectcitybuild.modules.scheduler.implementations.BungeecordScheduler
@@ -45,6 +47,7 @@ class BungeecordPlatform: Plugin() {
     class Container @Inject constructor(
         private val proxyServer: ProxyServer,
         private val logger: PlatformLogger,
+        private val config: PlatformConfig,
         private val dataSource: DataSource,
         private val commandRegistry: BungeecordCommandRegistry,
         private val listenerRegistry: BungeecordListenerRegistry,
@@ -68,6 +71,22 @@ class BungeecordPlatform: Plugin() {
                     module.bungeecordCommands.forEach { commandRegistry.register(it) }
                     module.bungeecordListeners.forEach { listenerRegistry.register(it) }
                     module.bungeecordSubChannelListeners.forEach { subChannelListener.register(it) }
+                }
+
+                if (!config.get(ConfigKey.API_ENABLED)) {
+                    """
+                    #********************************************************
+                    #
+                    #  PCB NETWORK API DISABLED VIA CONFIG
+                    #  
+                    #  This will prevent the plugin from checking bans and syncing ranks. 
+                    #  If this is not a local dev environment, the API should be enabled!
+                    #  
+                    #********************************************************
+                    """
+                    .trimMargin("#")
+                    .split("\n")
+                    .forEach { logger.warning(it) }
                 }
 
             }.onFailure {
