@@ -1,7 +1,7 @@
 package com.projectcitybuild.features.teleporting.listeners
 
 import com.projectcitybuild.core.SpigotListener
-import com.projectcitybuild.modules.config.ConfigKeys
+import com.projectcitybuild.modules.config.ConfigKey
 import com.projectcitybuild.entities.TeleportType
 import com.projectcitybuild.features.teleporting.repositories.QueuedTeleportRepository
 import com.projectcitybuild.modules.config.PlatformConfig
@@ -21,7 +21,7 @@ class TeleportOnJoinListener @Inject constructor(
     @EventHandler(priority = EventPriority.HIGHEST)
     fun onPlayerJoin(event: PlayerSpawnLocationEvent) {
         val playerUUID = event.player.uniqueId
-        val serverName = config.get(ConfigKeys.SPIGOT_SERVER_NAME)
+        val serverName = config.get(ConfigKey.SPIGOT_SERVER_NAME)
 
         val queuedTeleport = queuedTeleportRepository.get(playerUUID)
         if (queuedTeleport == null) {

@@ -1,6 +1,6 @@
 package com.projectcitybuild.features.chat
 
-import com.projectcitybuild.modules.config.ConfigKeys
+import com.projectcitybuild.modules.config.ConfigKey
 import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.modules.permissions.Permissions
 import net.md_5.bungee.api.chat.BaseComponent
@@ -20,9 +20,9 @@ class ChatGroupFormatBuilder @Inject constructor(
         val groups: TextComponent,
     )
 
-    private val trustedGroups = config.get(ConfigKeys.GROUPS_TRUST_PRIORITY)
-    private val builderGroups = config.get(ConfigKeys.GROUPS_BUILD_PRIORITY)
-    private val donorGroups = config.get(ConfigKeys.GROUPS_DONOR_PRIORITY)
+    private val trustedGroups = config.get(ConfigKey.GROUPS_TRUST_PRIORITY)
+    private val builderGroups = config.get(ConfigKey.GROUPS_BUILD_PRIORITY)
+    private val donorGroups = config.get(ConfigKey.GROUPS_DONOR_PRIORITY)
 
     fun format(player: ProxiedPlayer): Aggregate {
         val groupNames = permissions.getUserGroups(player.uniqueId)

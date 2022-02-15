@@ -1,6 +1,6 @@
 package com.projectcitybuild.modules.datetime
 
-import com.projectcitybuild.modules.config.ConfigKeys
+import com.projectcitybuild.modules.config.ConfigKey
 import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.modules.datetime.formatter.DateTimeFormatter
 import com.projectcitybuild.modules.datetime.formatter.DateTimeFormatterImpl
@@ -18,10 +18,10 @@ class DateTimeProvider {
     fun provideDateTimeFormatter(config: PlatformConfig): DateTimeFormatter {
         return DateTimeFormatterImpl(
             locale = Locale.forLanguageTag(
-                config.get(ConfigKeys.TIME_LOCALE)
+                config.get(ConfigKey.TIME_LOCALE)
             ),
             timezone = ZoneId.of(
-                config.get(ConfigKeys.TIME_TIMEZONE)
+                config.get(ConfigKey.TIME_TIMEZONE)
             ),
         )
     }

@@ -1,6 +1,6 @@
 package com.projectcitybuild.modules.sharedcache.adapters
 
-import com.projectcitybuild.modules.config.ConfigKeys
+import com.projectcitybuild.modules.config.ConfigKey
 import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.modules.sharedcache.SharedCacheSet
 import kotlinx.serialization.Serializable
@@ -23,7 +23,7 @@ class FlatFileSharedCacheSet @Inject constructor(
     override lateinit var key: String
 
     private val folder by lazy {
-        val relativePath = config.get(ConfigKeys.SHARED_CACHE_FILE_RELATIVE_PATH)
+        val relativePath = config.get(ConfigKey.SHARED_CACHE_FILE_RELATIVE_PATH)
         baseFolder.resolve(relativePath)
     }
 

@@ -2,7 +2,7 @@ package com.projectcitybuild.features.teleporthistory.listeners
 
 import com.projectcitybuild.core.SpigotListener
 import com.projectcitybuild.entities.CrossServerLocation
-import com.projectcitybuild.modules.config.ConfigKeys
+import com.projectcitybuild.modules.config.ConfigKey
 import com.projectcitybuild.features.teleporthistory.repositories.LastKnownLocationRepositoy
 import com.projectcitybuild.features.teleporting.events.PlayerPreSummonEvent
 import com.projectcitybuild.modules.config.PlatformConfig
@@ -19,7 +19,7 @@ class PlayerSummonListener @Inject constructor(
         lastKnownLocationRepository.set(
             playerUUID = event.summonedPlayer.uniqueId,
             location = CrossServerLocation.fromLocation(
-                serverName = config.get(ConfigKeys.SPIGOT_SERVER_NAME),
+                serverName = config.get(ConfigKey.SPIGOT_SERVER_NAME),
                 location = event.currentLocation,
             ),
         )

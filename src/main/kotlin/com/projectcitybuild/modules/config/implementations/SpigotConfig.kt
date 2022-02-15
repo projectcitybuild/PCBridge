@@ -1,6 +1,6 @@
 package com.projectcitybuild.modules.config.implementations
 
-import com.projectcitybuild.modules.config.ConfigKeys
+import com.projectcitybuild.modules.config.ConfigKey
 import com.projectcitybuild.modules.config.PlatformConfig
 import dagger.Reusable
 import org.bukkit.configuration.file.FileConfiguration
@@ -18,21 +18,21 @@ class SpigotConfig(
 
     private fun generateDefaultConfig() {
         arrayOf(
-            ConfigKeys.SPIGOT_SERVER_NAME,
-            ConfigKeys.DB_HOSTNAME,
-            ConfigKeys.DB_PORT,
-            ConfigKeys.DB_NAME,
-            ConfigKeys.DB_USERNAME,
-            ConfigKeys.DB_PASSWORD,
-            ConfigKeys.REDIS_HOSTNAME,
-            ConfigKeys.REDIS_PORT,
-            ConfigKeys.REDIS_USERNAME,
-            ConfigKeys.REDIS_PASSWORD,
-            ConfigKeys.ERROR_REPORTING_SENTRY_ENABLED,
-            ConfigKeys.ERROR_REPORTING_SENTRY_DSN,
-            ConfigKeys.SHARED_CACHE_ADAPTER,
-            ConfigKeys.SHARED_CACHE_FILE_RELATIVE_PATH,
-            ConfigKeys.INTEGRATION_DYNMAP_WARP_ICON,
+            ConfigKey.SPIGOT_SERVER_NAME,
+            ConfigKey.DB_HOSTNAME,
+            ConfigKey.DB_PORT,
+            ConfigKey.DB_NAME,
+            ConfigKey.DB_USERNAME,
+            ConfigKey.DB_PASSWORD,
+            ConfigKey.REDIS_HOSTNAME,
+            ConfigKey.REDIS_PORT,
+            ConfigKey.REDIS_USERNAME,
+            ConfigKey.REDIS_PASSWORD,
+            ConfigKey.ERROR_REPORTING_SENTRY_ENABLED,
+            ConfigKey.ERROR_REPORTING_SENTRY_DSN,
+            ConfigKey.SHARED_CACHE_ADAPTER,
+            ConfigKey.SHARED_CACHE_FILE_RELATIVE_PATH,
+            ConfigKey.INTEGRATION_DYNMAP_WARP_ICON,
         ).forEach { key ->
             config.addDefault(key.key, key.defaultValue)
         }
@@ -40,7 +40,7 @@ class SpigotConfig(
         plugin.saveConfig()
     }
 
-    override fun <T> get(key: ConfigKeys.ConfigPath<T>): T {
+    override fun <T> get(key: ConfigKey.ConfigPath<T>): T {
         val value = config.get(key.key) as T
         if (value != null) {
             return value
@@ -52,7 +52,7 @@ class SpigotConfig(
         return config.get(path)
     }
 
-    override fun <T> set(key: ConfigKeys.ConfigPath<T>, value: T) {
+    override fun <T> set(key: ConfigKey.ConfigPath<T>, value: T) {
         return config.set(key.key, value)
     }
 }

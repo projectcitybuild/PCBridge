@@ -3,7 +3,7 @@ package com.projectcitybuild.features.ranksync.usecases
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Result
 import com.projectcitybuild.core.utilities.Success
-import com.projectcitybuild.modules.config.ConfigKeys
+import com.projectcitybuild.modules.config.ConfigKey
 import com.projectcitybuild.entities.responses.Group
 import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.core.infrastructure.network.APIClient
@@ -38,7 +38,7 @@ class UpdatePlayerGroupsUseCase @Inject constructor(
 
         val groupNames = groups
             .mapNotNull { it.minecraftName }
-            .ifEmpty { listOf(config.get(ConfigKeys.GROUPS_GUEST)) }
+            .ifEmpty { listOf(config.get(ConfigKey.GROUPS_GUEST)) }
 
         permissions.setUserGroups(playerUUID, groupNames)
 

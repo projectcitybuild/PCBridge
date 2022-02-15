@@ -1,6 +1,6 @@
 package com.projectcitybuild.modules.config
 
-sealed class ConfigKeys {
+sealed class ConfigKey {
 
     data class ConfigPath<T>(val key: String, val defaultValue: T)
 
@@ -9,6 +9,7 @@ sealed class ConfigKeys {
             return ConfigPath(this, defaultValue)
         }
 
+        val API_ENABLED = "api.enabled" defaultTo false
         val API_KEY = "api.key" defaultTo "FILL_THIS_IN"
         val API_BASE_URL = "api.base_url" defaultTo "https://projectcitybuild.com/api/"
         val API_IS_LOGGING_ENABLED = "api.is_logging_enabled" defaultTo false

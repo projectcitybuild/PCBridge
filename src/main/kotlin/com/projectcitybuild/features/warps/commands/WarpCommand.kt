@@ -3,7 +3,7 @@ package com.projectcitybuild.features.warps.commands
 import com.projectcitybuild.core.InvalidCommandArgumentsException
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Success
-import com.projectcitybuild.modules.config.ConfigKeys
+import com.projectcitybuild.modules.config.ConfigKey
 import com.projectcitybuild.features.warps.repositories.WarpRepository
 import com.projectcitybuild.features.warps.usecases.WarpUseCase
 import com.projectcitybuild.modules.config.PlatformConfig
@@ -36,7 +36,7 @@ class WarpCommand @Inject constructor(
         val targetWarpName = input.args.first()
         val result = warpUseCase.warp(
             targetWarpName,
-            config.get(ConfigKeys.SPIGOT_SERVER_NAME),
+            config.get(ConfigKey.SPIGOT_SERVER_NAME),
             input.sender
         )
 
