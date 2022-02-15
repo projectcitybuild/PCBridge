@@ -19,18 +19,24 @@ class FlatFileSharedCacheSet @Inject constructor(
 
     override lateinit var key: String
 
+    private val folder by lazy {
+        val relativePath = config.get(PluginConfig.SHARED_CACHE_FILE_RELATIVE_PATH)
+        baseFolder.resolve(relativePath)
+    }
+
     private val file by lazy {
-        val fileName = key.replace(oldValue = ":", newValue = ".")
-        val fileRelativePath = config.get(PluginConfig.SHARED_CACHE_FILE_RELATIVE_PATH) + "/" + fileName
-        baseFolder.resolve(fileRelativePath)
+        val fileName = key.replace(oldValue = ":", newValue = ".") + ".json"
+        File(folder, fileName)
     }
 
     @Serializable
     data class Data(val set: Set<String>)
 
     private fun createFileIfNeeded() {
+        if (!folder.exists()) {
+            folder.mkdirs()
+        }
         if (!file.exists()) {
-            file.mkdirs()
             file.createNewFile()
         }
     }
