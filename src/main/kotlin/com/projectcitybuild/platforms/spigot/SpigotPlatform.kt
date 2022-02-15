@@ -5,8 +5,8 @@ import com.projectcitybuild.core.infrastructure.database.DataSource
 import com.projectcitybuild.core.infrastructure.network.APIClientImpl
 import com.projectcitybuild.core.infrastructure.redis.RedisConnection
 import com.projectcitybuild.entities.Channel
-import com.projectcitybuild.modules.config.ConfigKey
 import com.projectcitybuild.modules.channels.spigot.SpigotMessageListener
+import com.projectcitybuild.modules.config.ConfigKey
 import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.modules.config.implementations.SpigotConfig
 import com.projectcitybuild.modules.errorreporting.ErrorReporter
