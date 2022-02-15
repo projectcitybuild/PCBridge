@@ -38,6 +38,12 @@ class FlatFileSharedCacheSet @Inject constructor(
         }
         if (!file.exists()) {
             file.createNewFile()
+
+            val json = Json.encodeToJsonElement(Data(emptySet()))
+
+            FileWriter(file, Charset.defaultCharset()).use {
+                it.write(json.toString())
+            }
         }
     }
 
