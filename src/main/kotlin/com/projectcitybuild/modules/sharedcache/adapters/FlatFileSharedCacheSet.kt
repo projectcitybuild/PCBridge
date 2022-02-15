@@ -7,10 +7,16 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.encodeToJsonElement
+import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.FileInputStream
 import java.io.FileWriter
+import java.lang.Integer.min
+import java.nio.ByteBuffer
 import java.nio.charset.Charset
+import java.nio.charset.StandardCharsets
 import javax.inject.Inject
+
 
 class FlatFileSharedCacheSet @Inject constructor(
     private val config: PlatformConfig,
@@ -50,8 +56,8 @@ class FlatFileSharedCacheSet @Inject constructor(
     private fun write(writeOperation: (MutableSet<String>) -> Unit) {
         createFileIfNeeded()
 
-        val data = Json.decodeFromString<Data>(file.readText())
-        val mutatedSet = data.set.toMutableSet().also(writeOperation)
+        val set = readSet()
+        val mutatedSet = set.toMutableSet().also(writeOperation)
         val json = Json.encodeToJsonElement(Data(mutatedSet))
 
         FileWriter(file, Charset.defaultCharset()).use {
@@ -60,7 +66,21 @@ class FlatFileSharedCacheSet @Inject constructor(
     }
 
     private fun readSet(): Set<String> {
-        val fileContents = file.readText()
+        val fileContents = FileInputStream(file).use { fileInputStream ->
+            fileInputStream.channel.use { channel ->
+                channel.lock(0, Long.MAX_VALUE, true).use {
+                    val out = ByteArrayOutputStream()
+                    val bufferSize = min(1024, channel.size().toInt())
+                    val buff = ByteBuffer.allocate(bufferSize)
+
+                    while (channel.read(buff) > 0) {
+                        out.write(buff.array(), 0, buff.position())
+                        buff.clear()
+                    }
+                    String(out.toByteArray(), StandardCharsets.UTF_8)
+                }
+            }
+        }
         val data = Json.decodeFromString<Data>(fileContents)
         return data.set
     }
