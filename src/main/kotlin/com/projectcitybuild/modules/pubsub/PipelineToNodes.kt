@@ -5,10 +5,10 @@ import com.projectcitybuild.entities.SubChannel
 interface PipelineToNodes {
     fun connect()
     fun close()
-    fun subscribeToNodes(subChannel: SubChannel, subscriber: Subscriber)
+    fun <Message: ServerMessage> subscribeToNodes(subChannel: SubChannel, subscriber: Subscriber<Message>)
     fun publishToNodes(destination: String, subChannel: SubChannel, message: ServerMessage)
 
-    interface Subscriber {
-        fun onReceiveMessage(message: ServerMessage)
+    interface Subscriber<Message: ServerMessage> {
+        fun onReceiveMessage(message: Message)
     }
 }

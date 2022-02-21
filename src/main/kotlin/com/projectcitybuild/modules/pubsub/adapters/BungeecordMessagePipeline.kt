@@ -16,14 +16,17 @@ class BungeecordMessagePipeline @Inject constructor(
     private val plugin: Plugin,
     private val logger: PlatformLogger,
 ): PipelineToNodes, BungeecordListener {
-    private val listeners = HashMap<String, PipelineToNodes.Subscriber>()
+    private val listeners = HashMap<String, PipelineToNodes.Subscriber<*>>()
 
     override fun connect() {
         plugin.proxy.registerChannel(Channel.BUNGEECORD)
         plugin.proxy.pluginManager?.registerListener(plugin, this)
     }
 
-    override fun subscribeToNodes(subChannel: SubChannel, subscriber: PipelineToNodes.Subscriber) {
+    override fun <Message: ServerMessage>  subscribeToNodes(
+        subChannel: SubChannel,
+        subscriber: PipelineToNodes.Subscriber<Message>
+    ) {
         listeners[subChannel.toString()] = subscriber
     }
 
