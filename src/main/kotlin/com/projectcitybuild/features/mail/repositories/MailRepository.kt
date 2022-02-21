@@ -67,4 +67,22 @@ class MailRepository @Inject constructor(
             playerUUID.toString(),
         )
     }
+
+    fun send(
+        senderUUID: UUID,
+        senderName: String,
+        targetUUID: UUID,
+        targetName: String,
+        message: String,
+    ) {
+        dataSource.database().executeInsert(
+            "INSERT INTO `mail` VALUES (NULL, ?, ?, ?, ?, ?, false, false, NULL, NULL, ?)",
+            senderUUID.toString(),
+            senderName,
+            targetUUID.toString(),
+            targetName,
+            message,
+            LocalDateTime.now(),
+        )
+    }
 }

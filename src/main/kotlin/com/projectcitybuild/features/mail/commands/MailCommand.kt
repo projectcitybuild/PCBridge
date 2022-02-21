@@ -1,10 +1,12 @@
 package com.projectcitybuild.features.mail.commands
 
 import com.projectcitybuild.core.InvalidCommandArgumentsException
+import com.projectcitybuild.core.extensions.joinWithWhitespaces
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Success
 import com.projectcitybuild.features.mail.usecases.ClearMailUseCase
 import com.projectcitybuild.features.mail.usecases.GetUnclearedMailUseCase
+import com.projectcitybuild.features.mail.usecases.SendMailUseCase
 import com.projectcitybuild.modules.nameguesser.NameGuesser
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
@@ -20,6 +22,7 @@ class MailCommand @Inject constructor(
     private val nameGuesser: NameGuesser,
     private val getUnclearedMailUseCase: GetUnclearedMailUseCase,
     private val clearMailUseCase: ClearMailUseCase,
+    private val sendMailUseCase: SendMailUseCase,
 ): BungeecordCommand {
 
     override val label: String = "mail"
@@ -35,7 +38,7 @@ class MailCommand @Inject constructor(
             null -> throw InvalidCommandArgumentsException()
             "read" -> showMessages(input.player, input)
             "clear" -> clearMail(input.player, input)
-            "send" -> sendMail()
+            "send" -> sendMail(input.player, input)
         }
     }
 
@@ -94,7 +97,27 @@ class MailCommand @Inject constructor(
         }
     }
 
-    private fun sendMail() {
+    private fun sendMail(player: ProxiedPlayer, input: BungeecordCommandInput) {
+        if (input.args.size < 3) {
+            throw InvalidCommandArgumentsException()
+        }
+        val message = input.args.joinWithWhitespaces(2 until input.args.size)
+            ?: throw InvalidCommandArgumentsException()
 
+        val targetPlayerName = input.args[1]
+        val targetPlayer = nameGuesser.guessClosest(targetPlayerName, proxyServer.players) { it.name }
+        if (targetPlayer == null) {
+            player.send().error("Player not found")
+            return
+        }
+        sendMailUseCase.sendMail(
+            player.uniqueId,
+            player.name,
+            targetPlayer.uniqueId,
+            targetPlayer.name,
+            message,
+        )
+
+        player.send().success("Mail sent to ${targetPlayer.name}")
     }
 }
