@@ -10,7 +10,7 @@ import java.lang.Integer.max
 import java.util.*
 import javax.inject.Inject
 
-class GetAllMailUseCase @Inject constructor(
+class GetUnclearedMail @Inject constructor(
     private val mailRepository: MailRepository,
     private val dateTimeFormatter: DateTimeFormatter,
 ) {
@@ -26,7 +26,7 @@ class GetAllMailUseCase @Inject constructor(
     )
 
     fun getMail(playerUUID: UUID, page: Int): Result<UnreadMail, FailureReason> {
-        val totalUnreadCount = mailRepository.numberOfUnread(playerUUID)
+        val totalUnreadCount = mailRepository.numberOfUncleared(playerUUID)
 
         if (totalUnreadCount == 0) {
             return Failure(FailureReason.NO_MAIL)
@@ -35,14 +35,17 @@ class GetAllMailUseCase @Inject constructor(
             return Failure(FailureReason.PAGE_TOO_HIGH)
         }
 
-        val mail = mailRepository.firstUnread(
+        val mail = mailRepository.firstUncleared(
             playerUUID = playerUUID,
             offset = max(1, page - 1)
-        )
+        )!!
+
+        mailRepository.markAsRead(mail.id)
+
         return Success(
             UnreadMail(
                 totalUnreadCount,
-                mail!!,
+                mail,
                 formattedSendDate = dateTimeFormatter.convert(mail.createdAt),
             )
         )

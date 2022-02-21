@@ -3,7 +3,7 @@ package com.projectcitybuild.features.mail.commands
 import com.projectcitybuild.core.InvalidCommandArgumentsException
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Success
-import com.projectcitybuild.features.mail.usecases.GetAllMailUseCase
+import com.projectcitybuild.features.mail.usecases.GetUnclearedMail
 import com.projectcitybuild.modules.nameguesser.NameGuesser
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
@@ -17,7 +17,7 @@ import javax.inject.Inject
 class MailCommand @Inject constructor(
     private val proxyServer: ProxyServer,
     private val nameGuesser: NameGuesser,
-    private val getAllMailUseCase: GetAllMailUseCase,
+    private val getUnclearedMail: GetUnclearedMail,
 ): BungeecordCommand {
 
     override val label: String = "mail"
@@ -44,14 +44,14 @@ class MailCommand @Inject constructor(
             else -> throw InvalidCommandArgumentsException()
         }
 
-        val result = getAllMailUseCase.getMail(player.uniqueId, page)
+        val result = getUnclearedMail.getMail(player.uniqueId, page)
 
         when (result) {
             is Failure -> when(result.reason) {
-                GetAllMailUseCase.FailureReason.PAGE_TOO_HIGH
+                GetUnclearedMail.FailureReason.PAGE_TOO_HIGH
                     -> player.send().info("You do not have that many pages of mail to read")
 
-                GetAllMailUseCase.FailureReason.NO_MAIL
+                GetUnclearedMail.FailureReason.NO_MAIL
                     -> player.send().info("You do not have any unread mail")
             }
             is Success -> {

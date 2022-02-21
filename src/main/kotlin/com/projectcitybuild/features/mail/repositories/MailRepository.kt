@@ -2,25 +2,26 @@ package com.projectcitybuild.features.mail.repositories
 
 import com.projectcitybuild.core.infrastructure.database.DataSource
 import com.projectcitybuild.entities.Mail
+import java.time.LocalDateTime
 import java.util.*
 import javax.inject.Inject
 
 class MailRepository @Inject constructor(
     private val dataSource: DataSource,
 ) {
-    fun numberOfUnread(playerUUID: UUID): Int {
+    fun numberOfUncleared(playerUUID: UUID): Int {
         return dataSource.database()
             .getFirstRow(
-                "SELECT COUNT(*) AS count FROM `mail` WHERE `receiver_uuid` = ? AND `is_read` = false",
+                "SELECT COUNT(*) AS count FROM `mail` WHERE `receiver_uuid` = ? AND `is_cleared` = false",
                 playerUUID.toString(),
             )
             .get("count")
     }
 
-    fun firstUnread(playerUUID: UUID, offset: Int): Mail? {
+    fun firstUncleared(playerUUID: UUID, offset: Int): Mail? {
         return dataSource.database()
             .getResults(
-                "SELECT * FROM `mail` WHERE `receiver_uuid` = ? AND `is_read` = false ORDER BY `created_at` ASC LIMIT ?,1",
+                "SELECT * FROM `mail` WHERE `receiver_uuid` = ? AND `is_cleared` = false ORDER BY `created_at` ASC LIMIT ?,1",
                 playerUUID.toString(),
                 offset,
             )
@@ -33,18 +34,20 @@ class MailRepository @Inject constructor(
                     receiverName = row.get("receiver_name"),
                     message = row.get("message"),
                     isRead = row.get("is_read"),
+                    isCleared = row.get("is_cleared"),
                     readAt = row.get("read_at"),
+                    clearedAt = row.get("cleared_at"),
                     createdAt = row.get("created_at"),
                 )
             }
             .firstOrNull()
     }
 
-    fun hasUnreadMail(playerUUID: UUID): Boolean {
-        return firstUnread(playerUUID, 1) != null
-    }
-
-    fun readAll() {
-
+    fun markAsRead(id: Long) {
+        dataSource.database().executeUpdate(
+            "UPDATE `mail` SET `is_read` = true, `read_at` = ? WHERE `id` = ?",
+            LocalDateTime.now(),
+            id,
+        )
     }
 }
