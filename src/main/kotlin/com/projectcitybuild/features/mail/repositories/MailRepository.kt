@@ -2,6 +2,7 @@ package com.projectcitybuild.features.mail.repositories
 
 import com.projectcitybuild.core.infrastructure.database.DataSource
 import com.projectcitybuild.entities.Mail
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
 import javax.inject.Inject
@@ -48,6 +49,22 @@ class MailRepository @Inject constructor(
             "UPDATE `mail` SET `is_read` = true, `read_at` = ? WHERE `id` = ?",
             LocalDateTime.now(),
             id,
+        )
+    }
+
+    fun clear(id: Long) {
+        dataSource.database().executeUpdate(
+            "UPDATE `mail` SET `is_cleared` = true, `cleared_at` = ? WHERE `id` = ?",
+            LocalDate.now(),
+            id,
+        )
+    }
+
+    fun clearAll(playerUUID: UUID) {
+        dataSource.database().executeUpdate(
+            "UPDATE `mail` SET `is_cleared` = true, `cleared_at` = ? WHERE `receiver_uuid` = ? AND `is_cleared` = false",
+            LocalDate.now(),
+            playerUUID.toString(),
         )
     }
 }

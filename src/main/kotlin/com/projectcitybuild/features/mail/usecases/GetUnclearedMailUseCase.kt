@@ -10,13 +10,14 @@ import java.lang.Integer.max
 import java.util.*
 import javax.inject.Inject
 
-class GetUnclearedMail @Inject constructor(
+class GetUnclearedMailUseCase @Inject constructor(
     private val mailRepository: MailRepository,
     private val dateTimeFormatter: DateTimeFormatter,
 ) {
     enum class FailureReason {
         NO_MAIL,
         PAGE_TOO_HIGH,
+        INVALID_PAGE_NUMBER,
     }
 
     data class UnreadMail(
@@ -33,6 +34,9 @@ class GetUnclearedMail @Inject constructor(
         }
         if (page > totalUnreadCount) {
             return Failure(FailureReason.PAGE_TOO_HIGH)
+        }
+        if (page < 1) {
+            return Failure(FailureReason.INVALID_PAGE_NUMBER)
         }
 
         val mail = mailRepository.firstUncleared(
