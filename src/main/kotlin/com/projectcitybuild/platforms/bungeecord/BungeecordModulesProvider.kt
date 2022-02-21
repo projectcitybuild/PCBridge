@@ -4,6 +4,7 @@ import com.projectcitybuild.core.contracts.BungeecordFeatureModule
 import com.projectcitybuild.features.bans.BanModule
 import com.projectcitybuild.features.chat.ChatModule
 import com.projectcitybuild.features.joinmessage.JoinMessageModule
+import com.projectcitybuild.features.mail.MailModule
 import com.projectcitybuild.features.playercache.PlayerCacheModule
 import com.projectcitybuild.features.ranksync.RankSyncModule
 import com.projectcitybuild.features.teleporting.TeleportModule
@@ -26,6 +27,7 @@ class BungeecordModulesProvider {
         chatModule: ChatModule.Bungeecord,
         joinMessageModule: JoinMessageModule.Bungeecord,
         importModule: UtilityModule,
+        mailModule: MailModule,
         playerCacheModule: PlayerCacheModule,
         rankSyncModule: RankSyncModule,
         teleportModule: TeleportModule.Bungeecord,
@@ -34,6 +36,7 @@ class BungeecordModulesProvider {
         chatModule,
         joinMessageModule,
         importModule,
+        mailModule,
         playerCacheModule,
         rankSyncModule,
         teleportModule,
