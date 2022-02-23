@@ -40,6 +40,7 @@ class SpigotConfig(
         plugin.saveConfig()
     }
 
+    @Suppress("UNCHECKED_CAST")
     override fun <T> get(key: ConfigKey.ConfigPath<T>): T {
         val value = config.get(key.key) as T
         if (value != null) {

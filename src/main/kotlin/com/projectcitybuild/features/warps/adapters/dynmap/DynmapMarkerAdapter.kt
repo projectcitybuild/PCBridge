@@ -47,8 +47,13 @@ class DynmapMarkerAdapter @Inject constructor(
         updateWarpMarkers()
     }
 
-    @EventHandler fun onWarpCreate(event: WarpCreateEvent) = updateWarpMarkers()
-    @EventHandler fun onWarpDelete(event: WarpDeleteEvent) = updateWarpMarkers()
+    @EventHandler
+    @Suppress("UNUSED_PARAMETER")
+    fun onWarpCreate(event: WarpCreateEvent) = updateWarpMarkers()
+
+    @EventHandler
+    @Suppress("UNUSED_PARAMETER")
+    fun onWarpDelete(event: WarpDeleteEvent) = updateWarpMarkers()
 
     private fun updateWarpMarkers() {
         if (!isEnabled) {
