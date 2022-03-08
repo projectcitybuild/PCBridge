@@ -10,6 +10,7 @@ class Text: MessageBuilder.Token() {
             var isItalic: Boolean = false,
             var isBold: Boolean = false,
             var color: Color = Color.WHITE,
+            var decoration: Decoration? = null,
         ): Token() {
             fun italic(string: String? = null): Regular {
                 return apply {
@@ -29,6 +30,13 @@ class Text: MessageBuilder.Token() {
                 return apply {
                     text = text ?: string
                     this.color = color
+                }
+            }
+
+            fun decoration(decoration: Decoration, string: String? = null): Regular {
+                return apply {
+                    text = text ?: string
+                    this.decoration = decoration
                 }
             }
         }
@@ -52,6 +60,12 @@ class Text: MessageBuilder.Token() {
 
     fun color(color: Color, string: String? = null): Token.Regular {
         return Token.Regular().color(color, string).also {
+            tokens.add(it)
+        }
+    }
+
+    fun decoration(decoration: Decoration, string: String? = null): Token.Regular {
+        return Token.Regular().decoration(decoration, string).also {
             tokens.add(it)
         }
     }

@@ -2,6 +2,7 @@ package com.projectcitybuild.modules.messaging.senders
 
 import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.modules.messaging.MessageBuilder
+import com.projectcitybuild.modules.messaging.PlatformMessageSender
 import com.projectcitybuild.modules.messaging.serializers.TextComponentSerializer
 import net.md_5.bungee.api.ProxyServer
 import java.util.*
