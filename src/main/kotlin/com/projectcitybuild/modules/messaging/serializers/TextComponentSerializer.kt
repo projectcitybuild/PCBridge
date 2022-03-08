@@ -13,7 +13,7 @@ import net.md_5.bungee.api.chat.TextComponent
 import net.md_5.bungee.api.chat.hover.content.Text as HoverText
 
 class TextComponentSerializer {
-    private val maxLineLength = 53  // Hardcoded for Minecraft chat
+    private val maxLineLength = 53  // Hardcoded in Minecraft client
     private val linebreak = "\n"
 
     fun serialize(builder: MessageBuilder): TextComponent {
@@ -24,15 +24,25 @@ class TextComponentSerializer {
                 is TextToken -> {
                     value.parts.forEach { part ->
                         when (part) {
-                            is TextToken.Part.Regular -> textComponent.add(TextComponent().apply {
-                                text = part.text
-                                color = part.color.toChatColor()
-                                isItalic = part.isItalic
-                                isBold = part.isBold
-                                isStrikethrough = part.isStrikethrough
+                            is TextToken.Part.Regular -> TextComponent()
+                                .apply {
+                                    text = part.text
+                                    color = part.color.toChatColor()
+                                    isItalic = part.isItalic
+                                    isBold = part.isBold
+                                    isStrikethrough = part.isStrikethrough
+                                }
+                                .let { originalTextComponent ->
+                                    val decoration = part.decoration
+                                        ?: return originalTextComponent
 
-                                // TODO: support Decoration
-                            })
+                                    // Decorations are also colors in Bungeecord/Spigot, so we need
+                                    // an additional TextComponent as only one color can be assigned
+                                    // per TextComponent
+                                    return TextComponent()
+                                        .apply { color = decoration.toChatColor() }
+                                        .add(originalTextComponent)
+                                }
 
                             is TextToken.Part.URL -> textComponent.add(TextComponent().apply {
                                 text = part.string
