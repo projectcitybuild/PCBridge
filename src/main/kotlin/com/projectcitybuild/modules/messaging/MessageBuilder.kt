@@ -1,22 +1,19 @@
 package com.projectcitybuild.modules.messaging
 
 import com.projectcitybuild.modules.messaging.components.MessageStyle
-import com.projectcitybuild.modules.messaging.components.Text
+import com.projectcitybuild.modules.messaging.tokens.DividerToken
+import com.projectcitybuild.modules.messaging.tokens.TextToken
 
 class MessageBuilder {
-    sealed class Token {
-
-    }
-
-    private val tokens: MutableList<Token> = mutableListOf()
+    val tokens: MutableList<MessageBuilderToken> = mutableListOf()
 
     var style: MessageStyle = MessageStyle.NORMAL
 
-    fun text(apply: Text.() -> Unit) {
-        tokens.add(Text().apply(apply))
+    fun text(apply: TextToken.() -> Unit) {
+        tokens.add(TextToken().apply(apply))
     }
 
     fun divider() {
-
+        tokens.add(DividerToken())
     }
 }

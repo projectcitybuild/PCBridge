@@ -3,12 +3,70 @@ package com.projectcitybuild.modules.messaging.serializers
 import com.projectcitybuild.modules.messaging.MessageBuilder
 import com.projectcitybuild.modules.messaging.components.Color
 import com.projectcitybuild.modules.messaging.components.Decoration
+import com.projectcitybuild.modules.messaging.tokens.DividerToken
+import com.projectcitybuild.modules.messaging.tokens.TextToken
+import com.projectcitybuild.platforms.bungeecord.extensions.add
 import net.md_5.bungee.api.ChatColor
+import net.md_5.bungee.api.chat.ClickEvent
+import net.md_5.bungee.api.chat.HoverEvent
 import net.md_5.bungee.api.chat.TextComponent
+import net.md_5.bungee.api.chat.hover.content.Text as HoverText
 
 class TextComponentSerializer {
+    private val maxLineLength = 53  // Hardcoded for Minecraft chat
+    private val linebreak = "\n"
+
     fun serialize(builder: MessageBuilder): TextComponent {
-        
+        return builder.tokens.withIndex().fold(TextComponent()) { textComponent, token ->
+            val value = token.value
+
+            when (value) {
+                is TextToken -> {
+                    value.parts.forEach { part ->
+                        when (part) {
+                            is TextToken.Part.Regular -> textComponent.add(TextComponent().apply {
+                                text = part.text
+                                color = part.color.toChatColor()
+                                isItalic = part.isItalic
+                                isBold = part.isBold
+                                isStrikethrough = part.isStrikethrough
+
+                                // TODO: support Decoration
+                            })
+
+                            is TextToken.Part.URL -> textComponent.add(TextComponent().apply {
+                                text = part.string
+                                color = ChatColor.WHITE
+                                isUnderlined = true
+                                clickEvent = ClickEvent(ClickEvent.Action.OPEN_URL, part.string)
+                                hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT, HoverText(part.string))
+                            })
+
+                            is TextToken.Part.Command -> textComponent.add(TextComponent().apply {
+                                text = part.text
+                                color = ChatColor.WHITE
+                                isBold = true
+                                isUnderlined = true
+                                clickEvent = ClickEvent(ClickEvent.Action.RUN_COMMAND, part.command)
+                                hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT, HoverText("/" + part.command))
+                            })
+                        }
+                    }
+                }
+                is DividerToken -> {
+                    textComponent.add(
+                        TextComponent("-".repeat(maxLineLength))
+                    )
+                }
+            }
+
+            val isLastLine = token.index == builder.tokens.size - 1
+            if (!isLastLine) {
+                textComponent.add(linebreak)
+            }
+
+            return textComponent
+        }
     }
 }
 
