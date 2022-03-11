@@ -59,8 +59,6 @@ class TextToken: MessageBuilderToken() {
             }
         }
 
-        data class Unformatted(val string: String): Part()
-
         data class URL(val string: String): Part()
 
         data class Command(val text: String, val command: String): Part()
