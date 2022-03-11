@@ -18,9 +18,7 @@ class TextComponentSerializer {
 
     fun serialize(builder: MessageBuilder): TextComponent {
         return builder.tokens.withIndex().fold(TextComponent()) { textComponent, token ->
-            val value = token.value
-
-            when (value) {
+            when (val value = token.value) {
                 is TextToken -> {
                     value.parts.forEach { part ->
                         when (part) {

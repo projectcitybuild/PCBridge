@@ -11,6 +11,7 @@ class TextToken: MessageBuilderToken() {
             var text: String? = null,
             var isItalic: Boolean = false,
             var isBold: Boolean = false,
+            var isUnderlined: Boolean = false,
             var isStrikethrough: Boolean = false,
             var color: Color = Color.WHITE,
             var decoration: Decoration? = null,
@@ -26,6 +27,13 @@ class TextToken: MessageBuilderToken() {
                 return apply {
                     text = text ?: string
                     isBold = true
+                }
+            }
+
+            fun underline(string: String? = null): Regular {
+                return apply {
+                    text = text ?: string
+                    isUnderlined = true
                 }
             }
 
@@ -51,12 +59,20 @@ class TextToken: MessageBuilderToken() {
             }
         }
 
+        data class Unformatted(val string: String): Part()
+
         data class URL(val string: String): Part()
 
         data class Command(val text: String, val command: String): Part()
     }
 
     val parts: MutableList<Part> = mutableListOf()
+
+    fun unformatted(string: String): Part.Regular {
+        return Part.Regular(text = string).also {
+            parts.add(it)
+        }
+    }
 
     fun italic(string: String? = null): Part.Regular {
         return Part.Regular().italic(string).also {
@@ -66,6 +82,12 @@ class TextToken: MessageBuilderToken() {
 
     fun bold(string: String? = null): Part.Regular {
         return Part.Regular().bold(string).also {
+            parts.add(it)
+        }
+    }
+
+    fun underline(string: String? = null): Part.Regular {
+        return Part.Regular().underline(string).also {
             parts.add(it)
         }
     }

@@ -13,6 +13,7 @@ import com.projectcitybuild.modules.errorreporting.ErrorReporter
 import com.projectcitybuild.modules.eventbroadcast.implementations.SpigotLocalEventBroadcaster
 import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.modules.logger.implementations.SpigotLogger
+import com.projectcitybuild.modules.messaging.senders.SpigotMessageSender
 import com.projectcitybuild.modules.scheduler.implementations.SpigotScheduler
 import com.projectcitybuild.platforms.spigot.environment.SpigotCommandRegistry
 import com.projectcitybuild.platforms.spigot.environment.SpigotListenerRegistry
@@ -31,6 +32,7 @@ class SpigotPlatform: JavaPlugin() {
             .config(SpigotConfig(this, config))
             .logger(SpigotLogger(logger))
             .scheduler(SpigotScheduler(this))
+            .messageSender(SpigotMessageSender(server))
             .localEventBroadcaster(SpigotLocalEventBroadcaster())
             .apiClient(APIClientImpl { this.minecraftDispatcher })
             .baseFolder(dataFolder)

@@ -4,6 +4,9 @@ import com.projectcitybuild.core.InvalidCommandArgumentsException
 import com.projectcitybuild.core.extensions.joinWithWhitespaces
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.features.bans.usecases.BanUseCase
+import com.projectcitybuild.modules.messaging.PlatformMessageSender
+import com.projectcitybuild.modules.messaging.components.MessageStyle
+import com.projectcitybuild.modules.messaging.senders.send
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
@@ -14,6 +17,7 @@ import javax.inject.Inject
 class BanCommand @Inject constructor(
     private val proxyServer: ProxyServer,
     private val banUseCase: BanUseCase,
+    private val messageSender: PlatformMessageSender,
 ): BungeecordCommand {
 
     override val label = "ban"
@@ -36,12 +40,15 @@ class BanCommand @Inject constructor(
             reason
         )
         if (result is Failure) {
-            input.sender.send().error(
-                when (result.reason) {
-                    BanUseCase.FailureReason.PlayerDoesNotExist -> "Could not find UUID for $targetPlayerName. This player likely doesn't exist"
-                    BanUseCase.FailureReason.PlayerAlreadyBanned -> "$targetPlayerName is already banned"
-                }
-            )
+            messageSender.send(input.sender) {
+                style = MessageStyle.ERROR
+                text(
+                    when (result.reason) {
+                        BanUseCase.FailureReason.PlayerDoesNotExist -> "Could not find UUID for $targetPlayerName. This player likely doesn't exist"
+                        BanUseCase.FailureReason.PlayerAlreadyBanned -> "$targetPlayerName is already banned"
+                    }
+                )
+            }
         }
     }
 

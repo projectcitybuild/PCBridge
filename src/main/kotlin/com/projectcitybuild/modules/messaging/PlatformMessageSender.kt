@@ -2,16 +2,15 @@ package com.projectcitybuild.modules.messaging
 
 import com.projectcitybuild.modules.messaging.components.Color
 import com.projectcitybuild.modules.messaging.components.MessageStyle
-import java.util.*
 
 interface PlatformMessageSender {
 
     /**
      * Interprets a MessageBuilder and sends the formatted version
-     * as a message to the given player UUID
+     * as a message to the given receiver
      */
     fun process(
-        playerUUID: UUID,
+        receiver: MessageReceivable,
         builder: MessageBuilder
     )
 }
@@ -20,12 +19,12 @@ interface PlatformMessageSender {
  * Sends a message to the given player UUID
  */
 inline fun PlatformMessageSender.send(
-    playerUUID: UUID,
+    receiver: MessageReceivable,
     build: MessageBuilder.() -> Unit
 ) {
     val builder = MessageBuilder()
     build(builder)
-    process(playerUUID, builder)
+    process(receiver, builder)
 }
 
 /**
@@ -36,10 +35,10 @@ inline fun PlatformMessageSender.send(
  * upon the user teleporting
  */
 fun PlatformMessageSender.notifyOfAction(
-    playerUUID: UUID,
+    receiver: MessageReceivable,
     message: String,
 ) {
-    send(playerUUID) {
+    send(receiver) {
         style = MessageStyle.NORMAL
 
         text {

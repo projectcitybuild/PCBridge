@@ -1,13 +1,14 @@
 package com.projectcitybuild.platforms.bungeecord
 
 import com.projectcitybuild.core.contracts.BungeecordFeatureModule
-import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.core.infrastructure.database.DataSourceProvider
+import com.projectcitybuild.core.infrastructure.network.APIClient
+import com.projectcitybuild.core.infrastructure.network.NetworkProvider
+import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.modules.datetime.DateTimeProvider
 import com.projectcitybuild.modules.errorreporting.ErrorReporterProvider
 import com.projectcitybuild.modules.logger.PlatformLogger
-import com.projectcitybuild.core.infrastructure.network.APIClient
-import com.projectcitybuild.core.infrastructure.network.NetworkProvider
+import com.projectcitybuild.modules.messaging.PlatformMessageSender
 import com.projectcitybuild.modules.permissions.PermissionsProvider
 import com.projectcitybuild.modules.proxyadapter.BungeecordProxyAdapterModule
 import com.projectcitybuild.modules.scheduler.PlatformScheduler
@@ -55,6 +56,9 @@ interface BungeecordComponent {
         @BindsInstance
         fun timer(timer: PlatformTimer): Builder
 
+        @BindsInstance
+        fun messageSender(messageSender: PlatformMessageSender): Builder
+        
         @BindsInstance
         fun apiClient(apiClient: APIClient): Builder
 

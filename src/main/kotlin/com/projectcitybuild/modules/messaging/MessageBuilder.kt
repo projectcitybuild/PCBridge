@@ -13,7 +13,21 @@ class MessageBuilder {
         tokens.add(TextToken().apply(apply))
     }
 
+    fun text(string: String) {
+        tokens.add(TextToken().apply { unformatted(string) })
+    }
+
     fun divider() {
         tokens.add(DividerToken())
+    }
+
+    fun paginated(
+        numberOfPages: Int,
+        currentPage: Int,
+        prevPageCommand: String,
+        nextPageCommand: String,
+        apply: TextToken.() -> Unit
+    ) {
+        TODO()
     }
 }

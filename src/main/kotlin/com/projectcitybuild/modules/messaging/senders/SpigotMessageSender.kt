@@ -5,25 +5,25 @@ import com.projectcitybuild.modules.messaging.MessageReceivable
 import com.projectcitybuild.modules.messaging.PlatformMessageSender
 import com.projectcitybuild.modules.messaging.send
 import com.projectcitybuild.modules.messaging.serializers.TextComponentSerializer
-import net.md_5.bungee.api.CommandSender
+import org.bukkit.command.CommandSender
 import javax.inject.Inject
 
-class BungeecordMessageSender @Inject constructor(): PlatformMessageSender {
+class SpigotMessageSender @Inject constructor(): PlatformMessageSender {
 
     override fun process(
         receiver: MessageReceivable,
         builder: MessageBuilder
     ) {
-        if (receiver !is BungeecordMessageReceiver) {
+        if (receiver !is SpigotMessageReceiver) {
             return
         }
         TextComponentSerializer().serialize(builder).let {
-            receiver.commandSender.sendMessage(it)
+            receiver.commandSender.spigot().sendMessage(it)
         }
     }
 }
 
-data class BungeecordMessageReceiver(
+data class SpigotMessageReceiver(
     val commandSender: CommandSender,
 ): MessageReceivable
 
@@ -31,5 +31,5 @@ inline fun PlatformMessageSender.send(
     receiver: CommandSender,
     build: MessageBuilder.() -> Unit
 ) {
-    send(BungeecordMessageReceiver(receiver), build)
+    send(SpigotMessageReceiver(receiver), build)
 }
