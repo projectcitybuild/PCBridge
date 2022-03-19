@@ -90,7 +90,7 @@ dependencies {
     compileOnly("us.dynmap:DynmapCoreAPI:3.3")
 
     // GadgetsMenu
-    implementation(files("libs/GadgetsMenu.jar"))
+    compileOnly(files("libs/GadgetsMenu.jar"))
 
     // Spigot
     compileOnly("org.spigotmc:spigot-api:1.12.2-R0.1-SNAPSHOT")

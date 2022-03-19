@@ -12,13 +12,12 @@ import javax.inject.Inject
 class GadgetsMenuAdapter @Inject constructor(
     private val plugin: Plugin,
     private val logger: PlatformLogger,
-    private val currencyProvider: CurrencyProvider,
 ): SpigotListener {
     private var isEnabled = false
 
     fun enable() {
         if (plugin.server.pluginManager.isPluginEnabled("GadgetsMenu")) {
-            GEconomyProvider.setMysteryDustStorage(currencyProvider)
+            GEconomyProvider.setMysteryDustStorage(CurrencyProvider(plugin, logger))
         } else {
             logger.warning("Cannot find GadgetsMenu plugin. Disabling integration")
             return
@@ -26,7 +25,7 @@ class GadgetsMenuAdapter @Inject constructor(
         isEnabled = true
     }
 
-    class CurrencyProvider @Inject constructor(
+    class CurrencyProvider constructor(
         plugin: Plugin,
         private val logger: PlatformLogger,
     ): GEconomyProvider(plugin, "pcbridge") {
