@@ -4,6 +4,7 @@ version: 3.7.0
 softdepend:
   - LuckPerms
   - dynmap
+  - GadgetsMenu
 
 api-version: 1.16
 
