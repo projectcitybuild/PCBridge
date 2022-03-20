@@ -1,7 +1,7 @@
 package com.projectcitybuild.modules.playerconfig
 
 import com.projectcitybuild.entities.PlayerConfig
-import com.projectcitybuild.modules.database.DataSource
+import com.projectcitybuild.core.infrastructure.database.DataSource
 import java.time.LocalDateTime
 import java.util.*
 import javax.inject.Inject

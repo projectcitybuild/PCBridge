@@ -6,7 +6,7 @@ import java.util.*
 import javax.inject.Inject
 
 /**
- * A memory cache of configs for players currently online
+ * A PlayerConfig memory cache for players currently online
  * on any of the connected servers
  */
 @Reusable

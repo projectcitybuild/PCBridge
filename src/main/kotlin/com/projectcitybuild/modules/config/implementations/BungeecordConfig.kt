@@ -1,7 +1,7 @@
 package com.projectcitybuild.modules.config.implementations
 
 import com.google.common.io.ByteStreams
-import com.projectcitybuild.entities.PluginConfig
+import com.projectcitybuild.modules.config.ConfigKey
 import com.projectcitybuild.modules.config.PlatformConfig
 import net.md_5.bungee.config.Configuration
 import net.md_5.bungee.config.ConfigurationProvider
@@ -16,44 +16,74 @@ class BungeecordConfig(
     private val dataFolder: File
 ): PlatformConfig {
 
-    private var config: Configuration? = null
-    private fun getFile(): File = File(dataFolder, "config.yml")
+    private val file: File
+        get() = File(dataFolder, "config.yml")
+
+    private val config: Configuration by lazy {
+        createIfNeeded(file)
+
+        val config = ConfigurationProvider
+            .getProvider(YamlConfiguration::class.java)
+            .load(file)
+            .also { generateDefaultConfig(it) }
+
+        config
+    }
+
+    private fun generateDefaultConfig(config: Configuration) {
+        arrayOf(
+            ConfigKey.API_ENABLED,
+            ConfigKey.API_KEY,
+            ConfigKey.API_BASE_URL,
+            ConfigKey.API_IS_LOGGING_ENABLED,
+            ConfigKey.WARPS_PER_PAGE,
+            ConfigKey.TP_REQUEST_AUTO_EXPIRE_SECONDS,
+            ConfigKey.DB_HOSTNAME,
+            ConfigKey.DB_PORT,
+            ConfigKey.DB_NAME,
+            ConfigKey.DB_USERNAME,
+            ConfigKey.DB_PASSWORD,
+            ConfigKey.ERROR_REPORTING_SENTRY_ENABLED,
+            ConfigKey.ERROR_REPORTING_SENTRY_DSN,
+            ConfigKey.GROUPS_APPEARANCE_ADMIN_DISPLAY_NAME,
+            ConfigKey.GROUPS_APPEARANCE_ADMIN_HOVER_NAME,
+            ConfigKey.GROUPS_APPEARANCE_SOP_DISPLAY_NAME,
+            ConfigKey.GROUPS_APPEARANCE_SOP_HOVER_NAME,
+            ConfigKey.GROUPS_APPEARANCE_OP_DISPLAY_NAME,
+            ConfigKey.GROUPS_APPEARANCE_OP_HOVER_NAME,
+            ConfigKey.GROUPS_APPEARANCE_MODERATOR_DISPLAY_NAME,
+            ConfigKey.GROUPS_APPEARANCE_MODERATOR_HOVER_NAME,
+            ConfigKey.GROUPS_APPEARANCE_TRUSTEDPLUS_HOVER_NAME,
+            ConfigKey.GROUPS_APPEARANCE_TRUSTED_HOVER_NAME,
+            ConfigKey.GROUPS_APPEARANCE_DONOR_HOVER_NAME,
+            ConfigKey.GROUPS_APPEARANCE_ARCHITECT_HOVER_NAME,
+            ConfigKey.GROUPS_APPEARANCE_ENGINEER_HOVER_NAME,
+            ConfigKey.GROUPS_APPEARANCE_PLANNER_HOVER_NAME,
+            ConfigKey.GROUPS_APPEARANCE_BUILDER_HOVER_NAME,
+            ConfigKey.GROUPS_APPEARANCE_INTERN_HOVER_NAME,
+        ).forEach { key ->
+            if (config.get(key.key) == null)
+                config.set(key.key, key.defaultValue)
+        }
+        save(config)
+    }
 
     @Suppress("UNCHECKED_CAST")
-    override fun <T> get(key: PluginConfig.ConfigPath<T>): T {
-        val config = config ?: throw Exception("Attempted to read config file without loading it")
+    override fun <T> get(key: ConfigKey.ConfigPath<T>): T {
+        val config = config
         return config.get(key.key) as? T ?: key.defaultValue
     }
 
     override fun get(path: String): Any? {
-        val config = config ?: throw Exception("Attempted to read config file without loading it")
+        val config = config
         return config.get(path)
     }
 
-    override fun <T> set(key: PluginConfig.ConfigPath<T>, value: T) {
-        val config = config ?: throw Exception("Attempted to read config file without loading it")
+    override fun <T> set(key: ConfigKey.ConfigPath<T>, value: T) {
+        val config = config
 
         config.set(key.key, value)
-        save()
-    }
-
-    override fun load(vararg keys: PluginConfig.ConfigPath<*>) {
-        config = null
-
-        val file = getFile()
-        createIfNeeded(file)
-
-        config = ConfigurationProvider
-            .getProvider(YamlConfiguration::class.java)
-            .load(file)
-            .also { config ->
-                keys.forEach { key ->
-                    if (config.get(key.key) == null)
-                        config.set(key.key, key.defaultValue)
-                }
-            }
-
-        save()
+        save(config)
     }
 
     private fun createIfNeeded(file: File) {
@@ -72,9 +102,9 @@ class BungeecordConfig(
         }
     }
 
-    fun save() {
+    private fun save(config: Configuration) {
         ConfigurationProvider
             .getProvider(YamlConfiguration::class.java)
-            .save(config, getFile())
+            .save(config, file)
     }
 }

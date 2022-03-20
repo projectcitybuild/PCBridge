@@ -7,7 +7,7 @@ import com.projectcitybuild.core.utilities.Success
 import com.projectcitybuild.entities.IPBan
 import com.projectcitybuild.features.bans.Sanitizer
 import com.projectcitybuild.features.bans.repositories.IPBanRepository
-import com.projectcitybuild.modules.datetime.Time
+import com.projectcitybuild.modules.datetime.time.Time
 import com.projectcitybuild.modules.proxyadapter.kick.PlayerKicker
 import javax.inject.Inject
 

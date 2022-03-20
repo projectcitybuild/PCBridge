@@ -1,19 +1,18 @@
 package com.projectcitybuild.platforms.bungeecord
 
 import com.projectcitybuild.core.contracts.BungeecordFeatureModule
-import com.projectcitybuild.features.hub.HubFileStorage
 import com.projectcitybuild.modules.config.PlatformConfig
-import com.projectcitybuild.modules.database.DataSourceProvider
-import com.projectcitybuild.modules.datetime.DateTimeFormatterProvider
-import com.projectcitybuild.modules.datetime.TimeProvider
+import com.projectcitybuild.core.infrastructure.database.DataSourceProvider
+import com.projectcitybuild.modules.datetime.DateTimeProvider
 import com.projectcitybuild.modules.errorreporting.ErrorReporterProvider
 import com.projectcitybuild.modules.logger.PlatformLogger
-import com.projectcitybuild.modules.network.APIClient
-import com.projectcitybuild.modules.network.NetworkModule
+import com.projectcitybuild.core.infrastructure.network.APIClient
+import com.projectcitybuild.core.infrastructure.network.NetworkProvider
+import com.projectcitybuild.modules.permissions.PermissionsProvider
 import com.projectcitybuild.modules.proxyadapter.BungeecordProxyAdapterModule
 import com.projectcitybuild.modules.scheduler.PlatformScheduler
 import com.projectcitybuild.modules.timer.PlatformTimer
-import com.projectcitybuild.platforms.bungeecord.BungeecordFeatureListModule.BungeecordFeatureModules
+import com.projectcitybuild.platforms.bungeecord.BungeecordModulesProvider.BungeecordFeatureModules
 import dagger.BindsInstance
 import dagger.Component
 import net.md_5.bungee.api.ProxyServer
@@ -22,11 +21,11 @@ import javax.inject.Singleton
 
 @Singleton
 @Component(modules = [
-    TimeProvider::class,
+    DateTimeProvider::class,
     ErrorReporterProvider::class,
-    DateTimeFormatterProvider::class,
-    BungeecordFeatureListModule::class,
-    NetworkModule::class,
+    PermissionsProvider::class,
+    BungeecordModulesProvider::class,
+    NetworkProvider::class,
     DataSourceProvider::class,
     BungeecordProxyAdapterModule::class,
 ])
@@ -58,10 +57,6 @@ interface BungeecordComponent {
 
         @BindsInstance
         fun apiClient(apiClient: APIClient): Builder
-
-        @Deprecated("Will be deleted in next version")
-        @BindsInstance
-        fun hubFileStorage(hubFileStorage: HubFileStorage): Builder
 
         fun build(): BungeecordComponent
     }

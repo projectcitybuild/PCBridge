@@ -1,7 +1,7 @@
 package com.projectcitybuild.features.warps.listeners
 
 import com.projectcitybuild.core.SpigotListener
-import com.projectcitybuild.entities.PluginConfig
+import com.projectcitybuild.modules.config.ConfigKey
 import com.projectcitybuild.features.warps.repositories.QueuedWarpRepository
 import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.modules.logger.PlatformLogger
@@ -21,7 +21,7 @@ class WarpOnJoinListener @Inject constructor(
     @EventHandler(priority = EventPriority.HIGHEST)
     fun onPlayerJoin(event: PlayerSpawnLocationEvent) {
         val playerUUID = event.player.uniqueId
-        val serverName = config.get(PluginConfig.SPIGOT_SERVER_NAME)
+        val serverName = config.get(ConfigKey.SPIGOT_SERVER_NAME)
 
         val queuedWarp = queuedWarpRepository.get(playerUUID)
         if (queuedWarp == null) {

@@ -4,7 +4,7 @@ import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Result
 import com.projectcitybuild.core.utilities.Success
 import com.projectcitybuild.features.bans.repositories.BanRepository
-import com.projectcitybuild.modules.datetime.DateTimeFormatter
+import com.projectcitybuild.modules.datetime.formatter.DateTimeFormatter
 import com.projectcitybuild.modules.playeruuid.PlayerUUIDRepository
 import javax.inject.Inject
 
@@ -26,7 +26,7 @@ class CheckBanUseCase @Inject constructor(
     suspend fun getBan(
         targetPlayerName: String
     ): Result<BanRecord?, FailureReason> {
-        val targetPlayerUUID = playerUUIDRepository.request(targetPlayerName)
+        val targetPlayerUUID = playerUUIDRepository.get(targetPlayerName)
             ?: return Failure(FailureReason.PlayerDoesNotExist)
 
         val ban = banRepository.get(targetPlayerUUID = targetPlayerUUID)

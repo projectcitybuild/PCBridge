@@ -1,8 +1,8 @@
 package com.projectcitybuild.features.hub.repositories
 
 import com.projectcitybuild.entities.CrossServerLocation
-import com.projectcitybuild.modules.database.DataSource
-import com.projectcitybuild.modules.datetime.Time
+import com.projectcitybuild.core.infrastructure.database.DataSource
+import com.projectcitybuild.modules.datetime.time.Time
 import javax.inject.Inject
 
 class HubRepository @Inject constructor(

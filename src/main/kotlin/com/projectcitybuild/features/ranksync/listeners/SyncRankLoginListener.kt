@@ -1,7 +1,7 @@
 package com.projectcitybuild.features.ranksync.listeners
 
 import com.projectcitybuild.core.BungeecordListener
-import com.projectcitybuild.features.ranksync.SyncPlayerGroupService
+import com.projectcitybuild.features.ranksync.usecases.UpdatePlayerGroupsUseCase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -11,17 +11,13 @@ import net.md_5.bungee.event.EventPriority
 import javax.inject.Inject
 
 class SyncRankLoginListener @Inject constructor(
-    private val syncPlayerGroupService: SyncPlayerGroupService
+    private val updatePlayerGroupsUseCase: UpdatePlayerGroupsUseCase,
 ): BungeecordListener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     fun onPlayerJoin(event: PostLoginEvent) {
         CoroutineScope(Dispatchers.IO).launch {
-            try {
-                syncPlayerGroupService.execute(event.player.uniqueId)
-            } catch (e: SyncPlayerGroupService.AccountNotLinkedException) {
-                // Do nothing
-            }
+            updatePlayerGroupsUseCase.sync(event.player.uniqueId)
         }
     }
 }

@@ -4,8 +4,7 @@ import com.projectcitybuild.core.InvalidCommandArgumentsException
 import com.projectcitybuild.core.Regex
 import com.projectcitybuild.entities.IPBan
 import com.projectcitybuild.features.bans.repositories.IPBanRepository
-import com.projectcitybuild.features.hub.HubFileStorage
-import com.projectcitybuild.modules.database.DataSource
+import com.projectcitybuild.core.infrastructure.database.DataSource
 import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
@@ -18,6 +17,7 @@ import net.md_5.bungee.api.plugin.Plugin
 import java.io.File
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.*
 import javax.inject.Inject
 
 class PCBridgeCommand @Inject constructor(
@@ -32,10 +32,20 @@ class PCBridgeCommand @Inject constructor(
 
     override suspend fun execute(input: BungeecordCommandInput) {
         when {
-            input.args.isEmpty() -> throw InvalidCommandArgumentsException()
+            input.args.isEmpty() -> showVersion(input.sender)
             input.args.first() == "import" -> import(input.sender, input.args)
             else -> throw InvalidCommandArgumentsException()
         }
+    }
+
+    private fun showVersion(sender: CommandSender) {
+        val properties = Properties().apply {
+            load(object {}.javaClass.getResourceAsStream("/version.properties"))
+        }
+        val version = properties.getProperty("version")
+        val commit = properties.getProperty("commit")
+
+        sender.send().info("Running PCBridge v$version ($commit)")
     }
 
     @Serializable
@@ -52,27 +62,6 @@ class PCBridgeCommand @Inject constructor(
 
         val name = args[1]
         when (name) {
-            "hub" -> {
-                val storage = HubFileStorage(plugin.dataFolder)
-                val hub = storage.load()
-
-                if (hub != null) {
-                    dataSource.database().executeInsert(
-                        "INSERT INTO `hub` VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-                        hub.serverName,
-                        hub.worldName,
-                        hub.x,
-                        hub.y,
-                        hub.z,
-                        hub.pitch,
-                        hub.yaw,
-                        hub.createdAt.unwrapped
-                    )
-                    sender.send().success("Imported hub")
-                } else {
-                    sender.send().error("Hub not found")
-                }
-            }
             "banned-ips" -> {
                 val file = File(plugin.dataFolder, "banned-ips.json")
                 val json = file.readLines().joinToString(separator = "")

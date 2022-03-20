@@ -1,7 +1,7 @@
 package com.projectcitybuild.features.teleporting.commands
 
 import com.projectcitybuild.core.InvalidCommandArgumentsException
-import com.projectcitybuild.entities.PluginConfig
+import com.projectcitybuild.modules.config.ConfigKey
 import com.projectcitybuild.features.teleporting.repositories.TeleportRequestRepository
 import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.modules.nameguesser.NameGuesser
@@ -73,7 +73,7 @@ class TPAHereCommand @Inject constructor(
 
         timer.scheduleOnce(
             identifier = timerIdentifier,
-            delay = config.get(PluginConfig.TP_REQUEST_AUTO_EXPIRE_SECONDS).toLong(),
+            delay = config.get(ConfigKey.TP_REQUEST_AUTO_EXPIRE_SECONDS).toLong(),
             unit = TimeUnit.SECONDS,
         ) {
             val request = teleportRequestRepository.get(targetPlayer.uniqueId)

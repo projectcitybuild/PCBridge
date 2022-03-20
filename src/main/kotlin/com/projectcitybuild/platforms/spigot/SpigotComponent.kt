@@ -1,38 +1,36 @@
 package com.projectcitybuild.platforms.spigot
 
-import com.projectcitybuild.core.contracts.SpigotFeatureModule
 import com.projectcitybuild.modules.config.PlatformConfig
-import com.projectcitybuild.modules.database.DataSourceProvider
-import com.projectcitybuild.modules.datetime.TimeProvider
+import com.projectcitybuild.core.infrastructure.database.DataSourceProvider
+import com.projectcitybuild.modules.datetime.DateTimeProvider
 import com.projectcitybuild.modules.errorreporting.ErrorReporterProvider
 import com.projectcitybuild.modules.eventbroadcast.LocalEventBroadcaster
 import com.projectcitybuild.modules.logger.PlatformLogger
-import com.projectcitybuild.modules.network.APIClient
-import com.projectcitybuild.modules.network.NetworkModule
-import com.projectcitybuild.modules.redis.RedisProvider
+import com.projectcitybuild.core.infrastructure.network.APIClient
+import com.projectcitybuild.core.infrastructure.network.NetworkProvider
+import com.projectcitybuild.core.infrastructure.redis.RedisProvider
 import com.projectcitybuild.modules.scheduler.PlatformScheduler
-import com.projectcitybuild.platforms.spigot.SpigotFeatureListModule.SpigotFeatureModules
+import com.projectcitybuild.modules.sharedcache.SharedCacheSetProvider
 import dagger.BindsInstance
 import dagger.Component
 import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
+import java.io.File
+import javax.inject.Qualifier
 import javax.inject.Singleton
 
 @Singleton
 @Component(modules = [
-    TimeProvider::class,
+    DateTimeProvider::class,
     ErrorReporterProvider::class,
-    SpigotFeatureListModule::class,
-    NetworkModule::class,
+    NetworkProvider::class,
     DataSourceProvider::class,
     RedisProvider::class,
+    SharedCacheSetProvider::class,
 ])
 interface SpigotComponent {
 
     fun container(): SpigotPlatform.Container
-
-    @SpigotFeatureModules
-    fun modules(): List<SpigotFeatureModule>
 
     @Component.Builder
     interface Builder {
@@ -56,6 +54,9 @@ interface SpigotComponent {
 
         @BindsInstance
         fun apiClient(apiClient: APIClient): Builder
+
+        @BindsInstance
+        fun baseFolder(baseFolder: File): Builder
 
         fun build(): SpigotComponent
     }

@@ -1,7 +1,7 @@
 package com.projectcitybuild.entities.migrations
 
 import co.aikar.idb.HikariPooledDatabase
-import com.projectcitybuild.modules.database.DatabaseMigration
+import com.projectcitybuild.core.infrastructure.database.DatabaseMigration
 
 class `20220201_add_hub`: DatabaseMigration {
     override val description = "Add hub location"

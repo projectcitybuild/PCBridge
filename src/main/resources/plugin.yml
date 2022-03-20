@@ -1,8 +1,9 @@
 main: com.projectcitybuild.platforms.spigot.SpigotPlatform
 name: PCBridge
-version: 3.5.2
+version: 3.6.0
 softdepend:
   - LuckPerms
+  - dynmap
 
 api-version: 1.16
 

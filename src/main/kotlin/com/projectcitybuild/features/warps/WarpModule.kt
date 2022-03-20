@@ -2,6 +2,7 @@ package com.projectcitybuild.features.warps
 
 import com.projectcitybuild.core.SpigotListener
 import com.projectcitybuild.core.contracts.SpigotFeatureModule
+import com.projectcitybuild.features.warps.adapters.dynmap.DynmapMarkerAdapter
 import com.projectcitybuild.features.warps.commands.DelWarpCommand
 import com.projectcitybuild.features.warps.commands.SetWarpCommand
 import com.projectcitybuild.features.warps.commands.WarpCommand
@@ -16,6 +17,7 @@ class WarpModule @Inject constructor(
     warpCommand: WarpCommand,
     warpsCommand: WarpsCommand,
     warpOnJoinListener: WarpOnJoinListener,
+    private val dynmapMarkerAdapter: DynmapMarkerAdapter,
 ): SpigotFeatureModule {
 
     override val spigotCommands: Array<SpigotCommand> = arrayOf(
@@ -28,4 +30,8 @@ class WarpModule @Inject constructor(
     override val spigotListeners: Array<SpigotListener> = arrayOf(
         warpOnJoinListener,
     )
+
+    override fun onEnable() {
+        dynmapMarkerAdapter.enable()
+    }
 }

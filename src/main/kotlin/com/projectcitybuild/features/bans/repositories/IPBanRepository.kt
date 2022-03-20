@@ -1,7 +1,7 @@
 package com.projectcitybuild.features.bans.repositories
 
 import com.projectcitybuild.entities.IPBan
-import com.projectcitybuild.modules.database.DataSource
+import com.projectcitybuild.core.infrastructure.database.DataSource
 import javax.inject.Inject
 
 class IPBanRepository @Inject constructor(

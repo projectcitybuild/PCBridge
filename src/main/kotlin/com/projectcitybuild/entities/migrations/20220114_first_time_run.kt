@@ -1,7 +1,7 @@
 package com.projectcitybuild.entities.migrations
 
 import co.aikar.idb.HikariPooledDatabase
-import com.projectcitybuild.modules.database.DatabaseMigration
+import com.projectcitybuild.core.infrastructure.database.DatabaseMigration
 
 class `20220114_first_time_run`: DatabaseMigration {
     override val description = "First-time run"

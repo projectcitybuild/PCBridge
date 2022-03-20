@@ -1,18 +1,18 @@
 package com.projectcitybuild.platforms.spigot
 
 import com.github.shynixn.mccoroutine.minecraftDispatcher
-import com.projectcitybuild.core.contracts.SpigotFeatureModule
+import com.projectcitybuild.core.infrastructure.database.DataSource
+import com.projectcitybuild.core.infrastructure.network.APIClientImpl
+import com.projectcitybuild.core.infrastructure.redis.RedisConnection
 import com.projectcitybuild.entities.Channel
-import com.projectcitybuild.entities.PluginConfig
 import com.projectcitybuild.modules.channels.spigot.SpigotMessageListener
+import com.projectcitybuild.modules.config.ConfigKey
+import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.modules.config.implementations.SpigotConfig
-import com.projectcitybuild.modules.database.DataSource
 import com.projectcitybuild.modules.errorreporting.ErrorReporter
-import com.projectcitybuild.modules.eventbroadcast.SpigotLocalEventBroadcaster
+import com.projectcitybuild.modules.eventbroadcast.implementations.SpigotLocalEventBroadcaster
 import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.modules.logger.implementations.SpigotLogger
-import com.projectcitybuild.modules.network.APIClient
-import com.projectcitybuild.modules.redis.RedisConnection
 import com.projectcitybuild.modules.scheduler.implementations.SpigotScheduler
 import com.projectcitybuild.platforms.spigot.environment.SpigotCommandRegistry
 import com.projectcitybuild.platforms.spigot.environment.SpigotListenerRegistry
@@ -25,35 +25,19 @@ class SpigotPlatform: JavaPlugin() {
     private lateinit var container: Container
 
     override fun onEnable() {
-        val config = SpigotConfig(plugin = this, config = config).apply {
-            load(
-                PluginConfig.SPIGOT_SERVER_NAME,
-                PluginConfig.DB_HOSTNAME,
-                PluginConfig.DB_PORT,
-                PluginConfig.DB_NAME,
-                PluginConfig.DB_USERNAME,
-                PluginConfig.DB_PASSWORD,
-                PluginConfig.REDIS_HOSTNAME,
-                PluginConfig.REDIS_PORT,
-                PluginConfig.REDIS_USERNAME,
-                PluginConfig.REDIS_PASSWORD,
-                PluginConfig.ERROR_REPORTING_SENTRY_ENABLED,
-                PluginConfig.ERROR_REPORTING_SENTRY_DSN,
-            )
-        }
-
         val component = DaggerSpigotComponent.builder()
             .plugin(this)
             .javaPlugin(this)
-            .config(config)
-            .logger(SpigotLogger(logger = logger))
+            .config(SpigotConfig(this, config))
+            .logger(SpigotLogger(logger))
             .scheduler(SpigotScheduler(this))
             .localEventBroadcaster(SpigotLocalEventBroadcaster())
-            .apiClient(APIClient { this.minecraftDispatcher })
+            .apiClient(APIClientImpl { this.minecraftDispatcher })
+            .baseFolder(dataFolder)
             .build()
 
         container = component.container()
-        container.onEnable(server, component.modules())
+        container.onEnable(server)
     }
 
     override fun onDisable() {
@@ -61,7 +45,9 @@ class SpigotPlatform: JavaPlugin() {
     }
 
     class Container @Inject constructor(
+        private val modulesContainer: SpigotModulesContainer,
         private val plugin: Plugin,
+        private val config: PlatformConfig,
         private val logger: PlatformLogger,
         private val commandRegistry: SpigotCommandRegistry,
         private val listenerRegistry: SpigotListenerRegistry,
@@ -69,23 +55,30 @@ class SpigotPlatform: JavaPlugin() {
         private val errorReporter: ErrorReporter,
         private val redisConnection: RedisConnection,
     ) {
-        fun onEnable(server: Server, modules: List<SpigotFeatureModule>) {
+        private val isRedisEnabled: Boolean
+            get() = config.get(ConfigKey.SHARED_CACHE_ADAPTER) == "redis"
+
+        fun onEnable(server: Server) {
             errorReporter.bootstrap()
 
             runCatching {
-                redisConnection.connect()
                 dataSource.connect()
+
+                if (isRedisEnabled) {
+                    redisConnection.connect()
+                }
 
                 val pluginMessageListener = SpigotMessageListener(logger)
                 server.messenger.registerOutgoingPluginChannel(plugin, Channel.BUNGEECORD)
                 server.messenger.registerIncomingPluginChannel(plugin, Channel.BUNGEECORD, pluginMessageListener)
 
-                modules.forEach { module ->
+                modulesContainer.modules.forEach { module ->
                     logger.verbose("Registering ${module::class.java.name} module")
 
                     module.spigotCommands.forEach { commandRegistry.register(it) }
                     module.spigotListeners.forEach { listenerRegistry.register(it) }
                     module.spigotSubChannelListeners.forEach { pluginMessageListener.register(it) }
+                    module.onEnable()
                 }
 
             }.onFailure {
@@ -96,13 +89,18 @@ class SpigotPlatform: JavaPlugin() {
 
         fun onDisable(server: Server) {
             runCatching {
+                modulesContainer.modules.forEach { it.onDisable() }
+
                 server.messenger.unregisterOutgoingPluginChannel(plugin)
                 server.messenger.unregisterIncomingPluginChannel(plugin)
 
                 listenerRegistry.unregisterAll()
 
                 dataSource.disconnect()
-                redisConnection.disconnect()
+
+                if (isRedisEnabled) {
+                    redisConnection.disconnect()
+                }
 
             }.onFailure { reportError(it) }
         }
