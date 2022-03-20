@@ -6,7 +6,7 @@ import com.projectcitybuild.entities.SubChannel
 import com.projectcitybuild.entities.Warp
 import com.projectcitybuild.features.teleporthistory.repositories.LastKnownLocationRepositoy
 import com.projectcitybuild.features.warps.events.PlayerPreWarpEvent
-import com.projectcitybuild.features.warps.repositories.QueuedWarpRepository
+import com.projectcitybuild.modules.teleport.repositories.QueuedLocationTeleportRepository
 import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.modules.eventbroadcast.LocalEventBroadcaster
 import com.projectcitybuild.modules.logger.PlatformLogger
@@ -23,7 +23,7 @@ import javax.inject.Inject
 class BackCommand @Inject constructor(
     private val plugin: Plugin,
     private val lastKnownLocationRepositoy: LastKnownLocationRepositoy,
-    private val queuedWarpRepository: QueuedWarpRepository,
+    private val queuedLocationTeleportRepository: QueuedLocationTeleportRepository,
     private val config: PlatformConfig,
     private val logger: PlatformLogger,
     private val localEventBroadcaster: LocalEventBroadcaster,
@@ -78,7 +78,7 @@ class BackCommand @Inject constructor(
                 location = lastKnownLocation.location,
                 createdAt = LocalDateTime.now() // Not needed
             )
-            queuedWarpRepository.queue(input.sender.uniqueId, warp)
+            queuedLocationTeleportRepository.queue(input.sender.uniqueId, warp)
 
             MessageToBungeecord(
                 plugin,

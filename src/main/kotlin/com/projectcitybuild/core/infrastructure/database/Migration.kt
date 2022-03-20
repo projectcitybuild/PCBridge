@@ -13,6 +13,7 @@ object Migration {
         `20220201_add_hub`(),
         `20220201_add_ip_bans`(),
         `20220207_add_teleport_message_silencing`(),
+        `20220320_rename_queued_warps`(),
     )
 
     fun executeIfNecessary(

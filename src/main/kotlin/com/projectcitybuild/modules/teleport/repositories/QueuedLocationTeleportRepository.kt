@@ -1,43 +1,44 @@
-package com.projectcitybuild.features.warps.repositories
+package com.projectcitybuild.modules.teleport.repositories
 
+import com.projectcitybuild.core.infrastructure.database.DataSource
 import com.projectcitybuild.entities.CrossServerLocation
 import com.projectcitybuild.entities.Warp
-import com.projectcitybuild.core.infrastructure.database.DataSource
+import java.time.LocalDateTime
 import java.util.*
 import javax.inject.Inject
 
-class QueuedWarpRepository @Inject constructor(
+class QueuedLocationTeleportRepository @Inject constructor(
     private val dataSource: DataSource
 ) {
-    fun queue(playerUUID: UUID, warp: Warp) {
+    fun queue(playerUUID: UUID, destinationName: String, destination: CrossServerLocation) {
         if (get(playerUUID) != null) {
             dequeue(playerUUID)
         }
         dataSource.database().executeInsert(
-            "INSERT INTO `queued_warps` VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            "INSERT INTO `queued_location_teleports` VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
             playerUUID.toString(),
-            warp.name,
-            warp.location.serverName,
-            warp.location.worldName,
-            warp.location.x,
-            warp.location.y,
-            warp.location.z,
-            warp.location.pitch,
-            warp.location.yaw,
-            warp.createdAt,
+            destinationName,
+            destination.serverName,
+            destination.worldName,
+            destination.x,
+            destination.y,
+            destination.z,
+            destination.pitch,
+            destination.yaw,
+            LocalDateTime.now(),
         )
     }
 
     fun dequeue(playerUUID: UUID) {
         dataSource.database().executeUpdate(
-            "DELETE FROM `queued_warps` WHERE `player_uuid` = ?",
+            "DELETE FROM `queued_location_teleports` WHERE `player_uuid` = ?",
             playerUUID.toString()
         )
     }
 
     fun get(playerUUID: UUID): Warp? {
         val row = dataSource.database().getFirstRow(
-            "SELECT * FROM `queued_warps` WHERE `player_uuid` = ? LIMIT 1",
+            "SELECT * FROM `queued_location_teleports` WHERE `player_uuid` = ? LIMIT 1",
             playerUUID.toString()
         )
         if (row != null) {

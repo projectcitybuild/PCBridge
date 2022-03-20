@@ -2,9 +2,9 @@ package com.projectcitybuild.features.warps.listeners
 
 import com.projectcitybuild.core.SpigotListener
 import com.projectcitybuild.modules.config.ConfigKey
-import com.projectcitybuild.features.warps.repositories.QueuedWarpRepository
 import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.modules.logger.PlatformLogger
+import com.projectcitybuild.modules.teleport.repositories.QueuedLocationTeleportRepository
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import org.bukkit.Location
 import org.bukkit.event.EventHandler
@@ -13,7 +13,7 @@ import org.spigotmc.event.player.PlayerSpawnLocationEvent
 import javax.inject.Inject
 
 class WarpOnJoinListener @Inject constructor(
-    private val queuedWarpRepository: QueuedWarpRepository,
+    private val queuedLocationTeleportRepository: QueuedLocationTeleportRepository,
     private val config: PlatformConfig,
     private val logger: PlatformLogger,
 ): SpigotListener {
@@ -23,7 +23,7 @@ class WarpOnJoinListener @Inject constructor(
         val playerUUID = event.player.uniqueId
         val serverName = config.get(ConfigKey.SPIGOT_SERVER_NAME)
 
-        val queuedWarp = queuedWarpRepository.get(playerUUID)
+        val queuedWarp = queuedLocationTeleportRepository.get(playerUUID)
         if (queuedWarp == null) {
             logger.debug("No queued warp for $playerUUID")
             return
@@ -34,7 +34,7 @@ class WarpOnJoinListener @Inject constructor(
 
         logger.debug("Found queued warp request for $playerUUID -> $queuedWarp")
 
-        queuedWarpRepository.dequeue(playerUUID)
+        queuedLocationTeleportRepository.dequeue(playerUUID)
 
         val world = event.player.server.getWorld(queuedWarp.location.worldName)
         if (world == null) {

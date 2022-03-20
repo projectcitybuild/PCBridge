@@ -4,7 +4,7 @@ import com.projectcitybuild.WarpMock
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Success
 import com.projectcitybuild.features.warps.events.PlayerPreWarpEvent
-import com.projectcitybuild.features.warps.repositories.QueuedWarpRepository
+import com.projectcitybuild.modules.teleport.repositories.QueuedLocationTeleportRepository
 import com.projectcitybuild.features.warps.repositories.WarpRepository
 import com.projectcitybuild.modules.eventbroadcast.LocalEventBroadcaster
 import com.projectcitybuild.modules.logger.PlatformLogger
@@ -33,7 +33,7 @@ class WarpUseCaseTest {
 
     private lateinit var plugin: Plugin
     private lateinit var warpRepository: WarpRepository
-    private lateinit var queuedWarpRepository: QueuedWarpRepository
+    private lateinit var queuedLocationTeleportRepository: QueuedLocationTeleportRepository
     private lateinit var nameGuesser: NameGuesser
     private lateinit var logger: PlatformLogger
     private lateinit var localEventBroadcaster: LocalEventBroadcaster
@@ -44,7 +44,7 @@ class WarpUseCaseTest {
     fun setUp() {
         plugin = mock(Plugin::class.java)
         warpRepository = mock(WarpRepository::class.java)
-        queuedWarpRepository = mock(QueuedWarpRepository::class.java)
+        queuedLocationTeleportRepository = mock(QueuedLocationTeleportRepository::class.java)
         nameGuesser = mock(NameGuesser::class.java)
         logger = mock(PlatformLogger::class.java)
         localEventBroadcaster = mock(LocalEventBroadcaster::class.java)
@@ -58,7 +58,7 @@ class WarpUseCaseTest {
         useCase = WarpUseCase(
             plugin,
             warpRepository,
-            queuedWarpRepository,
+            queuedLocationTeleportRepository,
             nameGuesser,
             logger,
             localEventBroadcaster,
@@ -156,7 +156,7 @@ class WarpUseCaseTest {
 
         val result = useCase.warp(warpName, "other_server", player)
 
-        verify(queuedWarpRepository, times(1)).queue(playerUUID, warp)
+        verify(queuedLocationTeleportRepository, times(1)).queue(playerUUID, warp)
 
         val expectedResult = Success(WarpUseCase.WarpEvent(warpName = warp.name, isSameServer = false))
         assertEquals(expectedResult, result)
