@@ -140,6 +140,11 @@ class LocationTeleporterTest {
     }
 
     @Test
+    fun `should transfer player to destination server if destination server is different`() = runTest {
+        // TODO: Not testable yet
+    }
+
+    @Test
     fun `should emit PlayerPreLocationTeleportEvent if successful cross-server teleport`() = runTest {
         val destination = CrossServerLocationMock(serverName = "different_server")
 
