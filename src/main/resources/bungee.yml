@@ -1,5 +1,5 @@
 name: PCBridge
-main: com.projectcitybuild.platforms.bungeecord.BungeecordPlatform
+main: com.projectcitybuild.platforms.bungeecord.BungeecordPlugin
 version: 3.7.0
 author: _andy
 

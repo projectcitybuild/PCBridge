@@ -3,8 +3,8 @@ package com.projectcitybuild.features.bans.usecases
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Result
 import com.projectcitybuild.core.utilities.Success
-import com.projectcitybuild.features.bans.repositories.BanRepository
-import com.projectcitybuild.modules.playeruuid.PlayerUUIDRepository
+import com.projectcitybuild.repositories.BanRepository
+import com.projectcitybuild.repositories.PlayerUUIDRepository
 import com.projectcitybuild.modules.proxyadapter.broadcast.MessageBroadcaster
 import com.projectcitybuild.modules.proxyadapter.kick.PlayerKicker
 import com.projectcitybuild.modules.proxyadapter.messages.TextComponentBox

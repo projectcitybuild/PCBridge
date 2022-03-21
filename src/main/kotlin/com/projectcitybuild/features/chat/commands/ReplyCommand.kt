@@ -1,9 +1,9 @@
 package com.projectcitybuild.features.chat.commands
 
 import com.projectcitybuild.core.InvalidCommandArgumentsException
-import com.projectcitybuild.features.chat.repositories.ChatIgnoreRepository
-import com.projectcitybuild.features.chat.repositories.LastWhisperedRepository
-import com.projectcitybuild.modules.playerconfig.PlayerConfigRepository
+import com.projectcitybuild.repositories.ChatIgnoreRepository
+import com.projectcitybuild.repositories.LastWhisperedRepository
+import com.projectcitybuild.repositories.PlayerConfigRepository
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput

@@ -1,7 +1,7 @@
 package com.projectcitybuild.features.warps.usecases
 
 import com.projectcitybuild.modules.config.ConfigKey
-import com.projectcitybuild.features.warps.repositories.WarpRepository
+import com.projectcitybuild.repositories.WarpRepository
 import com.projectcitybuild.features.warps.usecases.warplist.WarpListUseCase
 import com.projectcitybuild.modules.config.PlatformConfig
 import kotlinx.coroutines.test.runTest

@@ -3,8 +3,8 @@ package com.projectcitybuild.features.bans.usecases
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Result
 import com.projectcitybuild.core.utilities.Success
-import com.projectcitybuild.features.bans.repositories.BanRepository
-import com.projectcitybuild.modules.playeruuid.PlayerUUIDRepository
+import com.projectcitybuild.repositories.BanRepository
+import com.projectcitybuild.repositories.PlayerUUIDRepository
 import com.projectcitybuild.modules.proxyadapter.broadcast.MessageBroadcaster
 import com.projectcitybuild.modules.proxyadapter.messages.TextComponentBox
 import net.md_5.bungee.api.ChatColor
