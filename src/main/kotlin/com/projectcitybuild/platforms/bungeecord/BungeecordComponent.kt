@@ -7,6 +7,7 @@ import com.projectcitybuild.core.infrastructure.network.NetworkProvider
 import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.modules.datetime.DateTimeProvider
 import com.projectcitybuild.modules.errorreporting.ErrorReporterProvider
+import com.projectcitybuild.modules.eventbroadcast.LocalEventBroadcaster
 import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.modules.permissions.PermissionsProvider
 import com.projectcitybuild.modules.proxyadapter.BungeecordProxyAdapterModule
@@ -54,6 +55,9 @@ interface BungeecordComponent {
 
         @BindsInstance
         fun timer(timer: PlatformTimer): Builder
+
+        @BindsInstance
+        fun localEventBroadcaster(broadcaster: LocalEventBroadcaster): Builder
 
         @BindsInstance
         fun apiClient(apiClient: APIClient): Builder
