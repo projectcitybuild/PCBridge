@@ -63,7 +63,7 @@ class CrossServerTeleportQueueTest {
     fun `should return null if no queued location teleport`() = runTest {
         `when`(queuedLocationTeleportRepository.get(player.uniqueId)).thenReturn(null)
 
-        val result = teleportQueue.dequeue(player)
+        val result = teleportQueue.dequeue(player.uniqueId)
 
         assertEquals(result, Success(null))
     }
@@ -74,7 +74,7 @@ class CrossServerTeleportQueueTest {
             WarpMock(location = CrossServerLocationMock(serverName = "different_server"))
         )
 
-        val result = teleportQueue.dequeue(player)
+        val result = teleportQueue.dequeue(player.uniqueId)
 
         assertEquals(result, Success(null))
     }
@@ -85,7 +85,7 @@ class CrossServerTeleportQueueTest {
 
         `when`(queuedLocationTeleportRepository.get(player.uniqueId)).thenReturn(warp)
 
-        val result = teleportQueue.dequeue(player)
+        val result = teleportQueue.dequeue(player.uniqueId)
 
         assertEquals(
             result,
@@ -101,7 +101,7 @@ class CrossServerTeleportQueueTest {
         `when`(queuedLocationTeleportRepository.get(player.uniqueId)).thenReturn(warp)
         `when`(server.getWorld(warp.location.worldName)).thenReturn(world)
 
-        val result = teleportQueue.dequeue(player)
+        val result = teleportQueue.dequeue(player.uniqueId)
 
         assertEquals(
             result,
@@ -125,7 +125,7 @@ class CrossServerTeleportQueueTest {
     fun `should return null if queued player teleport not found`() = runTest {
         `when`(queuedPlayerTeleportRepository.get(player.uniqueId)).thenReturn(null)
 
-        val result = teleportQueue.dequeue(player)
+        val result = teleportQueue.dequeue(player.uniqueId)
 
         assertEquals(result, Success(null))
     }
@@ -138,7 +138,7 @@ class CrossServerTeleportQueueTest {
         )
         `when`(queuedPlayerTeleportRepository.get(player.uniqueId)).thenReturn(queuedTeleport)
 
-        val result = teleportQueue.dequeue(player)
+        val result = teleportQueue.dequeue(player.uniqueId)
 
         assertEquals(result, Success(null))
     }
@@ -155,7 +155,7 @@ class CrossServerTeleportQueueTest {
         `when`(queuedPlayerTeleportRepository.get(player.uniqueId)).thenReturn(queuedTeleport)
         `when`(server.getPlayer(targetPlayerUUID)).thenReturn(null)
 
-        val result = teleportQueue.dequeue(player)
+        val result = teleportQueue.dequeue(player.uniqueId)
 
         assertEquals(
             result,
@@ -183,7 +183,7 @@ class CrossServerTeleportQueueTest {
                 `when`(queuedPlayerTeleportRepository.get(player.uniqueId)).thenReturn(queuedTeleport)
                 `when`(server.getPlayer(targetPlayerUUID)).thenReturn(targetPlayer)
 
-                val result = teleportQueue.dequeue(player)
+                val result = teleportQueue.dequeue(player.uniqueId)
 
                 assertEquals(
                     result,

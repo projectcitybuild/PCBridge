@@ -11,6 +11,7 @@ import com.projectcitybuild.repositories.QueuedPlayerTeleportRepository
 import org.bukkit.Location
 import org.bukkit.Server
 import org.bukkit.entity.Player
+import java.util.*
 import javax.inject.Inject
 
 class CrossServerTeleportQueue @Inject constructor(
@@ -44,8 +45,7 @@ class CrossServerTeleportQueue @Inject constructor(
      *
      * @see LocationTeleporter.teleport
      */
-    fun dequeue(player: Player): Result<Destination?, FailureReason> {
-        val playerUUID = player.uniqueId
+    fun dequeue(playerUUID: UUID): Result<Destination?, FailureReason> {
         val serverName = config.get(ConfigKey.SPIGOT_SERVER_NAME)
 
         val destinationLocation = queuedLocationTeleportRepository.get(playerUUID)

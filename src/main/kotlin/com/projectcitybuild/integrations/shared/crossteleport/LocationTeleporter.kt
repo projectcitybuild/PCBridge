@@ -5,7 +5,7 @@ import com.projectcitybuild.core.utilities.Result
 import com.projectcitybuild.core.utilities.Success
 import com.projectcitybuild.entities.CrossServerLocation
 import com.projectcitybuild.entities.SubChannel
-import com.projectcitybuild.features.warps.events.PlayerPreWarpEvent
+import com.projectcitybuild.integrations.shared.crossteleport.events.PlayerPreLocationTeleportEvent
 import com.projectcitybuild.modules.config.ConfigKey
 import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.modules.eventbroadcast.LocalEventBroadcaster
@@ -13,6 +13,7 @@ import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.platforms.spigot.MessageToBungeecord
 import com.projectcitybuild.repositories.QueuedLocationTeleportRepository
 import org.bukkit.Location
+import org.bukkit.Server
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
 import javax.inject.Inject
@@ -21,6 +22,7 @@ class LocationTeleporter @Inject constructor(
     private val localEventBroadcaster: LocalEventBroadcaster,
     private val queuedLocationTeleportRepository: QueuedLocationTeleportRepository,
     private val plugin: Plugin,
+    private val server: Server,
     private val config: PlatformConfig,
     private val logger: PlatformLogger,
 ) {
@@ -37,8 +39,8 @@ class LocationTeleporter @Inject constructor(
      * Attempts to teleport the player to a given location regardless of
      * which server the destination is in.
      *
-     * If the player is in the same server as the location, the teleport
-     * will be instant. If the server is different, the player will be
+     * If the player is in the same server as the destination, the teleport
+     * will be instantaneous. If the server is different, the player will be
      * transferred to the appropriate server and then teleported upon arrival
      *
      * @see CrossServerTeleportQueue.dequeue
@@ -48,48 +50,61 @@ class LocationTeleporter @Inject constructor(
         destination: CrossServerLocation,
         destinationName: String,
     ): Result<DestinationType, FailureReason> {
-        localEventBroadcaster.emit(
-            PlayerPreWarpEvent(player, player.location)
-        )
         val serverName = config.get(ConfigKey.SPIGOT_SERVER_NAME)
         val isWarpOnSameServer = serverName == destination.serverName
-        if (isWarpOnSameServer) {
-            val worldName = destination.worldName
-            val world = plugin.server.getWorld(worldName)
-            if (world == null) {
-                logger.warning("Could not find world matching name [$worldName] for warp")
-                return Failure(FailureReason.WORLD_NOT_FOUND)
-            }
-            player.teleport(
-                Location(
-                    world,
-                    destination.x,
-                    destination.y,
-                    destination.z,
-                    destination.yaw,
-                    destination.pitch,
-                )
-            )
-        } else {
-            queuedLocationTeleportRepository.queue(
-                player.uniqueId,
-                destinationName,
-                destination
-            )
-            MessageToBungeecord(
-                plugin,
-                player,
-                SubChannel.SWITCH_PLAYER_SERVER,
-                arrayOf(
-                    player.uniqueId.toString(),
-                    destination.serverName,
-                )
-            ).send()
-        }
 
-        return Success(
-            if (isWarpOnSameServer) DestinationType.SAME_SERVER
-            else DestinationType.CROSS_SERVER
+        return if (isWarpOnSameServer) {
+            warpImmediately(player, destination)
+        } else {
+            queueWarpThenTransferPlayer(player, destination, destinationName)
+        }
+    }
+
+    private fun warpImmediately(player: Player, destination: CrossServerLocation): Result<DestinationType, FailureReason> {
+        val world = server.getWorld(destination.worldName)
+        if (world == null) {
+            logger.warning("Could not find world matching name [${destination.worldName}] for warp")
+            return Failure(FailureReason.WORLD_NOT_FOUND)
+        }
+        localEventBroadcaster.emit(
+            PlayerPreLocationTeleportEvent(player, player.location)
         )
+        player.teleport(
+            Location(
+                world,
+                destination.x,
+                destination.y,
+                destination.z,
+                destination.yaw,
+                destination.pitch,
+            )
+        )
+        return Success(DestinationType.SAME_SERVER)
+    }
+
+    private fun queueWarpThenTransferPlayer(
+        player: Player,
+        destination: CrossServerLocation,
+        destinationName: String,
+    ): Result<DestinationType, FailureReason> {
+        queuedLocationTeleportRepository.queue(
+            player.uniqueId,
+            destinationName,
+            destination
+        )
+        localEventBroadcaster.emit(
+            PlayerPreLocationTeleportEvent(player, player.location)
+        )
+        MessageToBungeecord(
+            plugin,
+            player,
+            SubChannel.SWITCH_PLAYER_SERVER,
+            arrayOf(
+                player.uniqueId.toString(),
+                destination.serverName,
+            )
+        ).send()
+
+        return Success(DestinationType.CROSS_SERVER)
     }
 }
