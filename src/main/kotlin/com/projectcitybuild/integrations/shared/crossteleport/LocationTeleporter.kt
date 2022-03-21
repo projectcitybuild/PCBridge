@@ -24,7 +24,7 @@ class LocationTeleporter @Inject constructor(
     private val config: PlatformConfig,
     private val logger: PlatformLogger,
 ) {
-    enum class TeleportType {
+    enum class DestinationType {
         SAME_SERVER,
         CROSS_SERVER,
     }
@@ -33,11 +33,21 @@ class LocationTeleporter @Inject constructor(
         WORLD_NOT_FOUND,
     }
 
+    /**
+     * Attempts to teleport the player to a given location regardless of
+     * which server the destination is in.
+     *
+     * If the player is in the same server as the location, the teleport
+     * will be instant. If the server is different, the player will be
+     * transferred to the appropriate server and then teleported upon arrival
+     *
+     * @see CrossServerTeleportQueue.dequeue
+     */
     fun teleport(
         player: Player,
         destination: CrossServerLocation,
         destinationName: String,
-    ): Result<TeleportType, FailureReason> {
+    ): Result<DestinationType, FailureReason> {
         localEventBroadcaster.emit(
             PlayerPreWarpEvent(player, player.location)
         )
@@ -78,8 +88,8 @@ class LocationTeleporter @Inject constructor(
         }
 
         return Success(
-            if (isWarpOnSameServer) TeleportType.SAME_SERVER
-            else TeleportType.CROSS_SERVER
+            if (isWarpOnSameServer) DestinationType.SAME_SERVER
+            else DestinationType.CROSS_SERVER
         )
     }
 }

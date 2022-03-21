@@ -45,7 +45,7 @@ class WarpUseCase @Inject constructor(
             is Success -> Success(
                 WarpEvent(
                     warpName = warp.name,
-                    isSameServer = result.value == LocationTeleporter.TeleportType.SAME_SERVER,
+                    isSameServer = result.value == LocationTeleporter.DestinationType.SAME_SERVER,
                 )
             )
         }

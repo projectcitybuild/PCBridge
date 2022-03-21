@@ -38,6 +38,12 @@ class CrossServerTeleportQueue @Inject constructor(
         object DestinationPlayerNotFound: FailureReason()
     }
 
+    /**
+     * Returns and removes a pending cross-server teleport for the given player,
+     * if one exists and the target destination matches this server.
+     *
+     * @see LocationTeleporter.teleport
+     */
     fun dequeue(player: Player): Result<Destination?, FailureReason> {
         val playerUUID = player.uniqueId
         val serverName = config.get(ConfigKey.SPIGOT_SERVER_NAME)
@@ -68,7 +74,7 @@ class CrossServerTeleportQueue @Inject constructor(
         if (queuedPlayerTeleport != null && queuedPlayerTeleport.targetServerName == serverName) {
             queuedPlayerTeleportRepository.dequeue(playerUUID)
 
-            val destinationPlayer = server.getPlayer(queuedPlayerTeleport.playerUUID)
+            val destinationPlayer = server.getPlayer(queuedPlayerTeleport.targetPlayerUUID)
                 ?: return Failure(FailureReason.DestinationPlayerNotFound)
 
             return Success(

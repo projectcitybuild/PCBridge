@@ -77,7 +77,7 @@ class WarpUseCaseTest {
         `when`(warpRepository.first(warpName)).thenReturn(warp)
         `when`(nameGuesser.guessClosest(any(), any())).thenReturn(warpName)
         `when`(locationTeleporter.teleport(player, warp.location, warp.name)).thenReturn(
-            Success(LocationTeleporter.TeleportType.CROSS_SERVER)
+            Success(LocationTeleporter.DestinationType.CROSS_SERVER)
         )
         assertEquals(
             useCase.warp(player, warpName),
@@ -85,21 +85,11 @@ class WarpUseCaseTest {
         )
 
         `when`(locationTeleporter.teleport(player, warp.location, warp.name)).thenReturn(
-            Success(LocationTeleporter.TeleportType.SAME_SERVER)
+            Success(LocationTeleporter.DestinationType.SAME_SERVER)
         )
         assertEquals(
             useCase.warp(player, warpName),
             Success(WarpUseCase.WarpEvent(warpName = warp.name, isSameServer = true))
         )
-
-//        argumentCaptor<Location>().apply {
-//            verify(player, times(1)).teleport(capture())
-//
-//            assertEquals(firstValue.world, world)
-//            assertEquals(firstValue.x, warp.location.x)
-//            assertEquals(firstValue.z, warp.location.z)
-//            assertEquals(firstValue.pitch, warp.location.pitch)
-//            assertEquals(firstValue.yaw, warp.location.yaw)
-//        }
     }
 }
