@@ -1,17 +1,13 @@
-package com.projectcitybuild.platforms.spigot
+package com.projectcitybuild.modules.channels
 
 import com.google.common.io.ByteStreams
 import com.projectcitybuild.entities.Channel
-import org.bukkit.entity.Player
-import org.bukkit.plugin.Plugin
+import net.md_5.bungee.api.config.ServerInfo
+import javax.inject.Inject
 
-class MessageToBungeecord(
-    private val plugin: Plugin,
-    private val sender: Player,
-    private val subChannel: String,
-    private val params: Array<out Any> = emptyArray()
-) {
-    fun send() {
+class NodeMessenger @Inject constructor() {
+
+    fun sendToNode(nodeServer: ServerInfo, subChannel: String, params: Array<out Any> = emptyArray()) {
         val out = ByteStreams.newDataOutput()
         out.writeUTF(subChannel)
 
@@ -28,8 +24,6 @@ class MessageToBungeecord(
                 is Char -> out.writeChar(param.code)
             }
         }
-//        plugin.server.scheduler.runTaskAsynchronously(plugin) {
-            sender.sendPluginMessage(plugin, Channel.BUNGEECORD, out.toByteArray())
-//        }
+        nodeServer.sendData(Channel.BUNGEECORD, out.toByteArray())
     }
 }

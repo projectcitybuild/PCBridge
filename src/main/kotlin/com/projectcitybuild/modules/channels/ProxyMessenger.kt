@@ -1,15 +1,15 @@
-package com.projectcitybuild.platforms.bungeecord
+package com.projectcitybuild.modules.channels
 
 import com.google.common.io.ByteStreams
 import com.projectcitybuild.entities.Channel
-import net.md_5.bungee.api.config.ServerInfo
+import org.bukkit.entity.Player
+import org.bukkit.plugin.Plugin
+import javax.inject.Inject
 
-class MessageToSpigot(
-    private val serverInfo: ServerInfo,
-    private val subChannel: String,
-    private val params: Array<out Any> = emptyArray()
+class ProxyMessenger @Inject constructor(
+    private val plugin: Plugin,
 ) {
-    fun send() {
+    fun sendToProxy(sender: Player, subChannel: String, params: Array<out Any> = emptyArray()) {
         val out = ByteStreams.newDataOutput()
         out.writeUTF(subChannel)
 
@@ -26,7 +26,6 @@ class MessageToSpigot(
                 is Char -> out.writeChar(param.code)
             }
         }
-
-        serverInfo.sendData(Channel.BUNGEECORD, out.toByteArray())
+        sender.sendPluginMessage(plugin, Channel.BUNGEECORD, out.toByteArray())
     }
 }
