@@ -4,11 +4,13 @@ import com.projectcitybuild.core.contracts.BungeecordFeatureModule
 import com.projectcitybuild.core.infrastructure.database.DataSource
 import com.projectcitybuild.core.infrastructure.network.APIClientImpl
 import com.projectcitybuild.entities.Channel
+import com.projectcitybuild.integrations.shared.playercache.PlayerConfigCache
 import com.projectcitybuild.modules.channels.bungeecord.BungeecordMessageListener
 import com.projectcitybuild.modules.config.ConfigKey
 import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.modules.config.implementations.BungeecordConfig
 import com.projectcitybuild.modules.errorreporting.ErrorReporter
+import com.projectcitybuild.modules.eventbroadcast.implementations.BungeecordLocalEventBroadcaster
 import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.modules.logger.implementations.BungeecordLogger
 import com.projectcitybuild.modules.permissions.Permissions
@@ -16,7 +18,6 @@ import com.projectcitybuild.modules.scheduler.implementations.BungeecordSchedule
 import com.projectcitybuild.modules.timer.implementations.BungeecordTimer
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandRegistry
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordListenerRegistry
-import com.projectcitybuild.integrations.shared.playercache.PlayerConfigCache
 import kotlinx.coroutines.Dispatchers
 import net.md_5.bungee.api.ProxyServer
 import net.md_5.bungee.api.plugin.Plugin
@@ -33,6 +34,7 @@ class BungeecordPlugin: Plugin() {
             .logger(BungeecordLogger(logger))
             .scheduler(BungeecordScheduler(this))
             .timer(BungeecordTimer(this, proxy))
+            .localEventBroadcaster(BungeecordLocalEventBroadcaster(proxy))
             .apiClient(APIClientImpl { Dispatchers.IO })
             .build()
 

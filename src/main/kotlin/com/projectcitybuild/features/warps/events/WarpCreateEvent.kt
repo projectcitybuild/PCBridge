@@ -1,9 +1,10 @@
 package com.projectcitybuild.features.warps.events
 
+import com.projectcitybuild.modules.eventbroadcast.BroadcastableEvent
 import org.bukkit.event.HandlerList
 import org.bukkit.event.Event as SpigotEvent
 
-class WarpCreateEvent: SpigotEvent() {
+class WarpCreateEvent: SpigotEvent(), BroadcastableEvent {
 
     companion object {
         private val HANDLERS = HandlerList()

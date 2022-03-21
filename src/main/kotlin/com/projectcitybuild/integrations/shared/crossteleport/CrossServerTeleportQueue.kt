@@ -10,7 +10,6 @@ import com.projectcitybuild.repositories.QueuedLocationTeleportRepository
 import com.projectcitybuild.repositories.QueuedPlayerTeleportRepository
 import org.bukkit.Location
 import org.bukkit.Server
-import org.bukkit.entity.Player
 import java.util.*
 import javax.inject.Inject
 

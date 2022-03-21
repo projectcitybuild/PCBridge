@@ -35,12 +35,16 @@ class LocationTeleporter @Inject constructor(
     }
 
     /**
-     * Attempts to teleport the player to a given location regardless of
-     * which server the destination is in.
+     * Attempts to teleport the player to a given location regardless of which
+     * server the destination is in.
      *
-     * If the player is in the same server as the destination, the teleport
-     * will be instantaneous. If the server is different, the player will be
-     * transferred to the appropriate server and then teleported upon arrival
+     * If the player is in the same server as the destination, the teleport will
+     * be instantaneous. If the server is different, the player will be transferred
+     * to the appropriate server and then teleported upon arrival
+     *
+     * @param player The player to teleport
+     * @param destination Location to teleport to
+     * @param destinationName Name shown to the player upon successfully teleporting
      *
      * @see CrossServerTeleportQueue.dequeue
      */
