@@ -1,6 +1,6 @@
 package com.projectcitybuild.features.teleporting
 
-import com.projectcitybuild.PlayerConfigMock
+import com.projectcitybuild.stubs.PlayerConfigMock
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.modules.channels.NodeMessenger
 import com.projectcitybuild.repositories.PlayerConfigRepository

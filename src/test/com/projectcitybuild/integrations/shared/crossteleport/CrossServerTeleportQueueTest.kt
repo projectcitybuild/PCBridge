@@ -1,7 +1,7 @@
 package com.projectcitybuild.integrations.shared.crossteleport
 
-import com.projectcitybuild.CrossServerLocationMock
-import com.projectcitybuild.WarpMock
+import com.projectcitybuild.stubs.CrossServerLocationMock
+import com.projectcitybuild.stubs.WarpMock
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Success
 import com.projectcitybuild.entities.TeleportType

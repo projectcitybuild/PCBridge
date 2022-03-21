@@ -1,6 +1,6 @@
 package com.projectcitybuild.features.bans.usecases
 
-import com.projectcitybuild.GameBanMock
+import com.projectcitybuild.stubs.GameBanMock
 import com.projectcitybuild.repositories.BanRepository
 import com.projectcitybuild.repositories.IPBanRepository
 import com.projectcitybuild.stubs.IPBanMock

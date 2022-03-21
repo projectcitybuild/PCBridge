@@ -1,6 +1,6 @@
 package com.projectcitybuild.features.teleporting.usecases
 
-import com.projectcitybuild.PlayerConfigMock
+import com.projectcitybuild.stubs.PlayerConfigMock
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Success
 import com.projectcitybuild.repositories.PlayerConfigRepository

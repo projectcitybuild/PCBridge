@@ -1,7 +1,7 @@
 package com.projectcitybuild.features.bans.listeners
 
-import com.projectcitybuild.DateTimeFormatterMock
-import com.projectcitybuild.GameBanMock
+import com.projectcitybuild.stubs.DateTimeFormatterMock
+import com.projectcitybuild.stubs.GameBanMock
 import com.projectcitybuild.features.bans.usecases.AuthoriseConnectionUseCase
 import com.projectcitybuild.modules.errorreporting.ErrorReporter
 import com.projectcitybuild.modules.logger.PlatformLogger

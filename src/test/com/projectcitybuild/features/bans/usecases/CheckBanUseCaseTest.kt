@@ -1,6 +1,6 @@
 package com.projectcitybuild.features.bans.usecases
 
-import com.projectcitybuild.DateTimeFormatterMock
+import com.projectcitybuild.stubs.DateTimeFormatterMock
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Success
 import com.projectcitybuild.entities.responses.GameBan

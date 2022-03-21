@@ -1,7 +1,7 @@
-package com.projectcitybuild
+package com.projectcitybuild.stubs
 
 import com.projectcitybuild.entities.responses.GameBan
-import java.util.UUID
+import java.util.*
 
 fun GameBanMock(): GameBan {
     return GameBan(

@@ -1,4 +1,4 @@
-package com.projectcitybuild
+package com.projectcitybuild.stubs
 
 import com.projectcitybuild.entities.CrossServerLocation
 

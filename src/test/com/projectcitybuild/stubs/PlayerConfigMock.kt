@@ -1,8 +1,8 @@
-package com.projectcitybuild
+package com.projectcitybuild.stubs
 
 import com.projectcitybuild.entities.PlayerConfig
 import java.time.LocalDateTime
-import java.util.UUID
+import java.util.*
 
 fun PlayerConfigMock(uuid: UUID? = null): PlayerConfig {
     return PlayerConfig(
