@@ -21,12 +21,12 @@ class HomeCommand @Inject constructor(
     override val usageHelp = "/home <name>"
 
     override suspend fun execute(input: SpigotCommandInput) {
-        if (input.args.size != 1) {
-            throw InvalidCommandArgumentsException()
-        }
         if (input.sender !is Player) {
             input.sender.send().error("Console cannot use this command")
             return
+        }
+        if (input.args.size != 1) {
+            throw InvalidCommandArgumentsException()
         }
 
         val targetHomeName = input.args.first()

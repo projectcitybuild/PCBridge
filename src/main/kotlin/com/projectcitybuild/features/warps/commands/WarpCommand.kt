@@ -22,12 +22,12 @@ class WarpCommand @Inject constructor(
     override val usageHelp = "/warp <name>"
 
     override suspend fun execute(input: SpigotCommandInput) {
-        if (input.args.size != 1) {
-            throw InvalidCommandArgumentsException()
-        }
         if (input.sender !is Player) {
             input.sender.send().error("Console cannot use this command")
             return
+        }
+        if (input.args.size != 1) {
+            throw InvalidCommandArgumentsException()
         }
 
         val targetWarpName = input.args.first()

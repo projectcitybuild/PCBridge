@@ -1,21 +1,21 @@
-package com.projectcitybuild.features.warps.commands
+package com.projectcitybuild.features.homes.commands
 
 import com.projectcitybuild.core.InvalidCommandArgumentsException
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Success
-import com.projectcitybuild.features.warps.usecases.DeleteWarpUseCase
+import com.projectcitybuild.features.homes.usecases.DeleteHomeUseCase
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.platforms.spigot.environment.SpigotCommand
 import com.projectcitybuild.platforms.spigot.environment.SpigotCommandInput
-import com.projectcitybuild.repositories.WarpRepository
+import com.projectcitybuild.repositories.HomeRepository
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import javax.inject.Inject
 
-class DelWarpCommand @Inject constructor(
-    private val deleteWarpUseCase: DeleteWarpUseCase,
-    private val warpRepository: WarpRepository,
-) : SpigotCommand {
+class DelHomeCommand @Inject constructor(
+    private val deleteHomeUseCase: DeleteHomeUseCase,
+    private val homeRepository: HomeRepository,
+): SpigotCommand {
 
     override val label: String = "delwarp"
     override val permission = "pcbridge.warp.delete"
@@ -30,25 +30,26 @@ class DelWarpCommand @Inject constructor(
             throw InvalidCommandArgumentsException()
         }
 
-        val warpName = input.args.first()
+        val homeName = input.args.first()
 
-        val result = deleteWarpUseCase.deleteWarp(warpName)
+        val result = deleteHomeUseCase.deleteHome(input.sender.uniqueId, homeName)
         when (result) {
-            is Failure -> {
-                input.sender.send().error(
-                    when (result.reason) {
-                        DeleteWarpUseCase.FailureReason.WARP_NOT_FOUND -> "Warp $warpName does not exist"
-                    }
-                )
-            }
-            is Success -> input.sender.send().success("Warp $warpName deleted")
+            is Failure -> input.sender.send().error(
+                when (result.reason) {
+                    DeleteHomeUseCase.FailureReason.HOME_NOT_FOUND -> "Home $homeName does not exist"
+                }
+            )
+            is Success -> input.sender.send().success("Home $homeName deleted")
         }
     }
 
     override fun onTabComplete(sender: CommandSender?, args: List<String>): Iterable<String>? {
+        if (sender !is Player) {
+            return null
+        }
         return when {
-            args.isEmpty() -> warpRepository.names()
-            args.size == 1 -> warpRepository.names().filter { it.lowercase().startsWith(args.first()) }
+            args.isEmpty() -> homeRepository.names(sender.uniqueId)
+            args.size == 1 -> homeRepository.names(sender.uniqueId).filter { it.lowercase().startsWith(args.first()) }
             else -> null
         }
     }
