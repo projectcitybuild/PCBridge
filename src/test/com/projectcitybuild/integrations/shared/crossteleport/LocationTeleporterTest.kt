@@ -4,7 +4,9 @@ package com.projectcitybuild.integrations.shared.crossteleport
 import com.projectcitybuild.CrossServerLocationMock
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Success
+import com.projectcitybuild.entities.SubChannel
 import com.projectcitybuild.integrations.shared.crossteleport.events.PlayerPreLocationTeleportEvent
+import com.projectcitybuild.modules.channels.ProxyMessenger
 import com.projectcitybuild.modules.config.ConfigKey
 import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.modules.eventbroadcast.LocalEventBroadcaster
@@ -15,7 +17,6 @@ import org.bukkit.Location
 import org.bukkit.Server
 import org.bukkit.World
 import org.bukkit.entity.Player
-import org.bukkit.plugin.Plugin
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -32,10 +33,10 @@ class LocationTeleporterTest {
 
     private lateinit var localEventBroadcaster: LocalEventBroadcaster
     private lateinit var queuedLocationTeleportRepository: QueuedLocationTeleportRepository
-    private lateinit var plugin: Plugin
     private lateinit var server: Server
     private lateinit var config: PlatformConfig
     private lateinit var logger: PlatformLogger
+    private lateinit var proxyMessenger: ProxyMessenger
 
     private lateinit var player: Player
 
@@ -47,12 +48,12 @@ class LocationTeleporterTest {
     fun setUp() {
         localEventBroadcaster = mock(LocalEventBroadcaster::class.java)
         queuedLocationTeleportRepository = mock(QueuedLocationTeleportRepository::class.java)
-        plugin = mock(Plugin::class.java)
         server = mock(Server::class.java)
         logger = mock(PlatformLogger::class.java)
         config = mock(PlatformConfig::class.java).also {
             `when`(it.get(ConfigKey.SPIGOT_SERVER_NAME)).thenReturn(SERVER_NAME)
         }
+        proxyMessenger = mock(ProxyMessenger::class.java)
 
         player = mock(Player::class.java).also {
             `when`(it.uniqueId).thenReturn(UUID.randomUUID())
@@ -62,10 +63,10 @@ class LocationTeleporterTest {
         locationTeleporter = LocationTeleporter(
             localEventBroadcaster,
             queuedLocationTeleportRepository,
-            plugin,
             server,
             config,
             logger,
+            proxyMessenger,
         )
     }
 
@@ -141,7 +142,18 @@ class LocationTeleporterTest {
 
     @Test
     fun `should transfer player to destination server if destination server is different`() = runTest {
-        // TODO: Not testable yet
+        val destination = CrossServerLocationMock(serverName = "different_server")
+
+        locationTeleporter.teleport(player, destination, "destination_name")
+
+        verify(proxyMessenger).sendToProxy(
+            player,
+            SubChannel.SWITCH_PLAYER_SERVER,
+            arrayOf(
+                player.uniqueId.toString(),
+                destination.serverName,
+            ),
+        )
     }
 
     @Test

@@ -6,25 +6,24 @@ import com.projectcitybuild.core.utilities.Success
 import com.projectcitybuild.entities.CrossServerLocation
 import com.projectcitybuild.entities.SubChannel
 import com.projectcitybuild.integrations.shared.crossteleport.events.PlayerPreLocationTeleportEvent
+import com.projectcitybuild.modules.channels.ProxyMessenger
 import com.projectcitybuild.modules.config.ConfigKey
 import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.modules.eventbroadcast.LocalEventBroadcaster
 import com.projectcitybuild.modules.logger.PlatformLogger
-import com.projectcitybuild.platforms.spigot.MessageToBungeecord
 import com.projectcitybuild.repositories.QueuedLocationTeleportRepository
 import org.bukkit.Location
 import org.bukkit.Server
 import org.bukkit.entity.Player
-import org.bukkit.plugin.Plugin
 import javax.inject.Inject
 
 class LocationTeleporter @Inject constructor(
     private val localEventBroadcaster: LocalEventBroadcaster,
     private val queuedLocationTeleportRepository: QueuedLocationTeleportRepository,
-    private val plugin: Plugin,
     private val server: Server,
     private val config: PlatformConfig,
     private val logger: PlatformLogger,
+    private val proxyMessenger: ProxyMessenger,
 ) {
     enum class DestinationType {
         SAME_SERVER,
@@ -95,15 +94,14 @@ class LocationTeleporter @Inject constructor(
         localEventBroadcaster.emit(
             PlayerPreLocationTeleportEvent(player, player.location)
         )
-        MessageToBungeecord(
-            plugin,
-            player,
-            SubChannel.SWITCH_PLAYER_SERVER,
-            arrayOf(
+        proxyMessenger.sendToProxy(
+            sender = player,
+            subChannel = SubChannel.SWITCH_PLAYER_SERVER,
+            params = arrayOf(
                 player.uniqueId.toString(),
                 destination.serverName,
-            )
-        ).send()
+            ),
+        )
 
         return Success(DestinationType.CROSS_SERVER)
     }
