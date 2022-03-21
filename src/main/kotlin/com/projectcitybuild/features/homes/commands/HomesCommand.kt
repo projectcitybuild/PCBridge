@@ -1,7 +1,7 @@
-package com.projectcitybuild.features.warps.commands
+package com.projectcitybuild.features.homes.commands
 
 import com.projectcitybuild.core.InvalidCommandArgumentsException
-import com.projectcitybuild.features.warps.usecases.warplist.WarpListUseCase
+import com.projectcitybuild.features.homes.usecases.HomeListUseCase
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.platforms.bungeecord.extensions.add
 import com.projectcitybuild.platforms.bungeecord.extensions.addIf
@@ -15,13 +15,13 @@ import net.md_5.bungee.api.chat.hover.content.Text
 import org.bukkit.entity.Player
 import javax.inject.Inject
 
-class WarpsCommand @Inject constructor(
-    private val warpListUseCase: WarpListUseCase,
-) : SpigotCommand {
+class HomesCommand @Inject constructor(
+    private val homeListUseCase: HomeListUseCase,
+): SpigotCommand {
 
-    override val label: String = "warps"
-    override val permission = "pcbridge.warp.list"
-    override val usageHelp = "/warps"
+    override val label: String = "homes"
+    override val permission = "pcbridge.homes.list"
+    override val usageHelp = "/homes"
 
     override suspend fun execute(input: SpigotCommandInput) {
         if (input.sender !is Player) {
@@ -37,36 +37,36 @@ class WarpsCommand @Inject constructor(
             null
         } ?: 1
 
-        val warpList = warpListUseCase.getList(page)
-        if (warpList == null) {
-            input.sender.send().info("No warps available")
+        val homeList = homeListUseCase.getList(input.sender.uniqueId, page)
+        if (homeList == null) {
+            input.sender.send().info("No homes registered")
             return
         }
 
-        val clickableWarps = warpList.warps
+        val clickableHomes = homeList.homes
             .map { name ->
                 TextComponent(name).also {
-                    it.clickEvent = ClickEvent(ClickEvent.Action.RUN_COMMAND, "/warp $name")
-                    it.hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT, Text("/warp $name"))
+                    it.clickEvent = ClickEvent(ClickEvent.Action.RUN_COMMAND, "/home $name")
+                    it.hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT, Text("/home $name"))
                     it.isUnderlined = true
                 }
             }
 
-        val clickableWarpList = TextComponent()
-        clickableWarps.forEachIndexed { index, tc ->
-            clickableWarpList.add(tc)
-            if (index < clickableWarps.size - 1) {
-                clickableWarpList.add(", ")
+        val clickableHomeList = TextComponent()
+        clickableHomes.forEachIndexed { index, tc ->
+            clickableHomeList.add(tc)
+            if (index < clickableHomes.size - 1) {
+                clickableHomeList.add(", ")
             }
         }
 
         val tc = TextComponent()
-            .add("Warps") { it.isBold = true }
-            .addIf(warpList.totalPages > 1, " ($page/${warpList.totalPages})") {
+            .add("Homes") { it.isBold = true }
+            .addIf(homeList.totalPages > 1, " ($page/${homeList.totalPages})") {
                 it.color = ChatColor.GRAY
             }
             .add("\n---\n")
-            .add(clickableWarpList)
+            .add(clickableHomeList)
 
         input.sender.spigot().sendMessage(tc)
     }

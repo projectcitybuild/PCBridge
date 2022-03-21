@@ -16,9 +16,9 @@ class HomeCommand @Inject constructor(
     private val homeRepository: HomeRepository,
 ): SpigotCommand {
 
-    override val label: String = "warp"
-    override val permission = "pcbridge.warp.use"
-    override val usageHelp = "/warp <name>"
+    override val label: String = "home"
+    override val permission = "pcbridge.homes.use"
+    override val usageHelp = "/home <name>"
 
     override suspend fun execute(input: SpigotCommandInput) {
         if (input.args.size != 1) {
