@@ -7,7 +7,7 @@ import com.projectcitybuild.modules.logger.PlatformLogger
 import net.md_5.bungee.api.ProxyServer
 import net.md_5.bungee.api.connection.Connection
 import net.md_5.bungee.api.connection.ProxiedPlayer
-import java.util.*
+import java.util.UUID
 import javax.inject.Inject
 
 class SwitchPlayerServerSubChannelListener @Inject constructor(

@@ -7,7 +7,7 @@ import net.luckperms.api.LuckPermsProvider
 import net.luckperms.api.model.user.User
 import net.luckperms.api.node.NodeType
 import net.luckperms.api.node.types.InheritanceNode
-import java.util.*
+import java.util.UUID
 import java.util.stream.Collectors
 import javax.inject.Inject
 import javax.inject.Singleton

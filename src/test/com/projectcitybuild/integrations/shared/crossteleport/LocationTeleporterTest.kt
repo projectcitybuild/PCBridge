@@ -24,7 +24,7 @@ import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.verifyNoInteractions
 import org.powermock.api.mockito.PowerMockito.mock
 import org.powermock.api.mockito.PowerMockito.`when`
-import java.util.*
+import java.util.UUID
 
 class LocationTeleporterTest {
 

@@ -17,7 +17,7 @@ import net.md_5.bungee.api.plugin.Plugin
 import java.io.File
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import java.util.*
+import java.util.Properties
 import javax.inject.Inject
 
 class PCBridgeCommand @Inject constructor(

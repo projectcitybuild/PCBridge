@@ -1,7 +1,7 @@
 package com.projectcitybuild.repositories
 
 import dagger.Reusable
-import java.util.*
+import java.util.UUID
 import javax.inject.Inject
 
 @Reusable

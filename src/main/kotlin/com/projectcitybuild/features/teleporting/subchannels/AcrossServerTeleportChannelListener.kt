@@ -9,7 +9,7 @@ import com.projectcitybuild.modules.logger.PlatformLogger
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
-import java.util.*
+import java.util.UUID
 import javax.inject.Inject
 
 class AcrossServerTeleportChannelListener @Inject constructor(

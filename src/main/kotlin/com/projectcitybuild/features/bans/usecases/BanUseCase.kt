@@ -10,7 +10,7 @@ import com.projectcitybuild.repositories.BanRepository
 import com.projectcitybuild.repositories.PlayerUUIDRepository
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.chat.TextComponent
-import java.util.*
+import java.util.UUID
 import javax.inject.Inject
 
 class BanUseCase @Inject constructor(

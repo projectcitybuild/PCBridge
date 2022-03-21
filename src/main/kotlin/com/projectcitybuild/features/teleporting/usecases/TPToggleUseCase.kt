@@ -4,7 +4,7 @@ import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Result
 import com.projectcitybuild.core.utilities.Success
 import com.projectcitybuild.repositories.PlayerConfigRepository
-import java.util.*
+import java.util.UUID
 import javax.inject.Inject
 
 class TPToggleUseCase @Inject constructor(

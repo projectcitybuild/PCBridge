@@ -1,6 +1,6 @@
 package com.projectcitybuild.repositories
 
-import java.util.*
+import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
 import javax.inject.Singleton

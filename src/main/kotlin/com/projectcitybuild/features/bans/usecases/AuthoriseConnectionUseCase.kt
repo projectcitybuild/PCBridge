@@ -6,7 +6,7 @@ import com.projectcitybuild.features.bans.Sanitizer
 import com.projectcitybuild.repositories.BanRepository
 import com.projectcitybuild.repositories.IPBanRepository
 import java.net.SocketAddress
-import java.util.*
+import java.util.UUID
 import javax.inject.Inject
 
 class AuthoriseConnectionUseCase @Inject constructor(

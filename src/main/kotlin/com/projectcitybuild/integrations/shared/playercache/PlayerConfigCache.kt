@@ -2,7 +2,7 @@ package com.projectcitybuild.integrations.shared.playercache
 
 import com.projectcitybuild.entities.PlayerConfig
 import dagger.Reusable
-import java.util.*
+import java.util.UUID
 import javax.inject.Inject
 
 /**

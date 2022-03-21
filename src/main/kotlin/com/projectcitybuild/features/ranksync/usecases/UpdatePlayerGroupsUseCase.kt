@@ -9,7 +9,7 @@ import com.projectcitybuild.entities.responses.Group
 import com.projectcitybuild.modules.config.ConfigKey
 import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.modules.permissions.Permissions
-import java.util.*
+import java.util.UUID
 import javax.inject.Inject
 
 class UpdatePlayerGroupsUseCase @Inject constructor(

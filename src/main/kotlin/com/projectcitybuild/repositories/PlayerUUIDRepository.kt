@@ -5,7 +5,7 @@ import com.projectcitybuild.core.infrastructure.network.APIClient
 import com.projectcitybuild.core.infrastructure.network.APIRequestFactory
 import com.projectcitybuild.entities.responses.MojangPlayer
 import com.projectcitybuild.modules.proxyadapter.playerlist.OnlinePlayerList
-import java.util.*
+import java.util.UUID
 import javax.inject.Inject
 
 open class PlayerUUIDRepository @Inject constructor(

@@ -13,7 +13,7 @@ import org.mockito.Mockito.verify
 import org.mockito.kotlin.any
 import org.powermock.api.mockito.PowerMockito.mock
 import org.powermock.api.mockito.PowerMockito.`when`
-import java.util.*
+import java.util.UUID
 
 class UnbanUseCaseTest {
 

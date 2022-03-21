@@ -5,7 +5,7 @@ import com.projectcitybuild.core.infrastructure.network.APIRequestFactory
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Result
 import com.projectcitybuild.core.utilities.Success
-import java.util.*
+import java.util.UUID
 import javax.inject.Inject
 
 class GenerateAccountVerificationURLUseCase @Inject constructor(

@@ -21,7 +21,7 @@ import org.mockito.Mockito.verify
 import org.powermock.api.mockito.PowerMockito.mock
 import org.powermock.api.mockito.PowerMockito.`when`
 import java.net.SocketAddress
-import java.util.*
+import java.util.UUID
 
 class BanConnectionListenerTest {
 

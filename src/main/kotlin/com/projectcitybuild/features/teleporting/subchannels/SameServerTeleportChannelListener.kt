@@ -9,7 +9,7 @@ import com.projectcitybuild.modules.textcomponentbuilder.send
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
-import java.util.*
+import java.util.UUID
 import javax.inject.Inject
 
 class SameServerTeleportChannelListener @Inject constructor(

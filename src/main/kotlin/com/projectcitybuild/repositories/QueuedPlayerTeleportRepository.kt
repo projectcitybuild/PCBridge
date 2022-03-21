@@ -3,7 +3,7 @@ package com.projectcitybuild.repositories
 import com.projectcitybuild.core.infrastructure.database.DataSource
 import com.projectcitybuild.entities.QueuedTeleport
 import com.projectcitybuild.entities.TeleportType
-import java.util.*
+import java.util.UUID
 import javax.inject.Inject
 
 class QueuedPlayerTeleportRepository @Inject constructor(

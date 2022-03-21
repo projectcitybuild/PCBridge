@@ -10,7 +10,7 @@ import com.projectcitybuild.repositories.QueuedLocationTeleportRepository
 import com.projectcitybuild.repositories.QueuedPlayerTeleportRepository
 import org.bukkit.Location
 import org.bukkit.Server
-import java.util.*
+import java.util.UUID
 import javax.inject.Inject
 
 class CrossServerTeleportQueue @Inject constructor(
