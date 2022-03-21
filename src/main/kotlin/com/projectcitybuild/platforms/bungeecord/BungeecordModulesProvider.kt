@@ -4,7 +4,7 @@ import com.projectcitybuild.core.contracts.BungeecordFeatureModule
 import com.projectcitybuild.features.bans.BanModule
 import com.projectcitybuild.features.chat.ChatModule
 import com.projectcitybuild.features.joinmessage.JoinMessageModule
-import com.projectcitybuild.wiring.shared.playercache.PlayerCacheModule
+import com.projectcitybuild.integrations.shared.playercache.PlayerCacheModule
 import com.projectcitybuild.features.ranksync.RankSyncModule
 import com.projectcitybuild.features.teleporting.TeleportModule
 import com.projectcitybuild.features.utility.UtilityModule

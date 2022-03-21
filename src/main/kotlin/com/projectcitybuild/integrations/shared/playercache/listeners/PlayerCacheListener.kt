@@ -1,9 +1,9 @@
-package com.projectcitybuild.wiring.shared.playercache.listeners
+package com.projectcitybuild.integrations.shared.playercache.listeners
 
 import com.projectcitybuild.core.BungeecordListener
 import com.projectcitybuild.features.joinmessage.events.FirstTimeJoinEvent
 import com.projectcitybuild.modules.logger.PlatformLogger
-import com.projectcitybuild.wiring.shared.playercache.PlayerConfigCache
+import com.projectcitybuild.integrations.shared.playercache.PlayerConfigCache
 import com.projectcitybuild.repositories.PlayerConfigRepository
 import net.md_5.bungee.api.event.PlayerDisconnectEvent
 import net.md_5.bungee.api.event.PostLoginEvent

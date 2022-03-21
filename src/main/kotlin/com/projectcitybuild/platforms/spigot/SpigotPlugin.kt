@@ -28,6 +28,7 @@ class SpigotPlugin: JavaPlugin() {
         val component = DaggerSpigotComponent.builder()
             .plugin(this)
             .javaPlugin(this)
+            .server(server)
             .config(SpigotConfig(this, config))
             .logger(SpigotLogger(logger))
             .scheduler(SpigotScheduler(this))

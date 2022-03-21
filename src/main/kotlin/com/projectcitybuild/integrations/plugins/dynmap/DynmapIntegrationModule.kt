@@ -1,4 +1,4 @@
-package com.projectcitybuild.wiring.integrations.dynmap
+package com.projectcitybuild.integrations.plugins.dynmap
 
 import com.projectcitybuild.core.contracts.SpigotFeatureModule
 import javax.inject.Inject

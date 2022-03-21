@@ -13,6 +13,7 @@ import com.projectcitybuild.modules.scheduler.PlatformScheduler
 import com.projectcitybuild.modules.sharedcache.SharedCacheSetProvider
 import dagger.BindsInstance
 import dagger.Component
+import org.bukkit.Server
 import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
 import java.io.File
@@ -38,6 +39,9 @@ interface SpigotComponent {
 
         @BindsInstance
         fun javaPlugin(plugin: JavaPlugin): Builder
+
+        @BindsInstance
+        fun server(server: Server): Builder
 
         @BindsInstance
         fun config(config: PlatformConfig): Builder

@@ -1,4 +1,4 @@
-package com.projectcitybuild.wiring.shared.crossteleport
+package com.projectcitybuild.integrations.shared.crossteleport
 
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Result

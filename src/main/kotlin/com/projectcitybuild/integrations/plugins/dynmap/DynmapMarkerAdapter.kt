@@ -1,4 +1,4 @@
-package com.projectcitybuild.wiring.integrations.dynmap
+package com.projectcitybuild.integrations.plugins.dynmap
 
 import com.projectcitybuild.core.SpigotListener
 import com.projectcitybuild.features.warps.events.WarpCreateEvent

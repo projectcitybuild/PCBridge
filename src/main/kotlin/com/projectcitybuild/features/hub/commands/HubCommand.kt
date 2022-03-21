@@ -3,7 +3,7 @@ package com.projectcitybuild.features.hub.commands
 import com.projectcitybuild.core.InvalidCommandArgumentsException
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.repositories.HubRepository
-import com.projectcitybuild.wiring.shared.crossteleport.LocationTeleporter
+import com.projectcitybuild.integrations.shared.crossteleport.LocationTeleporter
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.platforms.spigot.environment.SpigotCommand
 import com.projectcitybuild.platforms.spigot.environment.SpigotCommandInput
@@ -37,7 +37,7 @@ class HubCommand @Inject constructor(
         val result = locationTeleporter.teleport(
             player = input.sender,
             destination = hubLocation,
-            destinationName = "hub",
+            destinationName = "/hub",
         )
         if (result is Failure) {
             when (result.reason) {

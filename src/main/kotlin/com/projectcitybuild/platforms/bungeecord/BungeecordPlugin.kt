@@ -16,7 +16,7 @@ import com.projectcitybuild.modules.scheduler.implementations.BungeecordSchedule
 import com.projectcitybuild.modules.timer.implementations.BungeecordTimer
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandRegistry
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordListenerRegistry
-import com.projectcitybuild.wiring.shared.playercache.PlayerConfigCache
+import com.projectcitybuild.integrations.shared.playercache.PlayerConfigCache
 import kotlinx.coroutines.Dispatchers
 import net.md_5.bungee.api.ProxyServer
 import net.md_5.bungee.api.plugin.Plugin

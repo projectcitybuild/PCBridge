@@ -1,11 +1,11 @@
-package com.projectcitybuild.wiring.shared.crossteleport.listeners
+package com.projectcitybuild.integrations.shared.crossteleport.listeners
 
 import com.projectcitybuild.core.SpigotListener
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Success
 import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.modules.textcomponentbuilder.send
-import com.projectcitybuild.wiring.shared.crossteleport.CrossServerTeleportQueue
+import com.projectcitybuild.integrations.shared.crossteleport.CrossServerTeleportQueue
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.spigotmc.event.player.PlayerSpawnLocationEvent
