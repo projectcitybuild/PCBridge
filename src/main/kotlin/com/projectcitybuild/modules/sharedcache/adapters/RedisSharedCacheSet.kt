@@ -6,7 +6,7 @@ import javax.inject.Inject
 
 class RedisSharedCacheSet @Inject constructor(
     private val redisConnection: RedisConnection,
-): SharedCacheSet {
+) : SharedCacheSet {
 
     override lateinit var key: String
 

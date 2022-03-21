@@ -16,7 +16,7 @@ class AcrossServerTeleportChannelListener @Inject constructor(
     private val plugin: Plugin,
     private val logger: PlatformLogger,
     private val proxyMessenger: ProxyMessenger,
-): SpigotSubChannelListener {
+) : SpigotSubChannelListener {
 
     override val subChannel = SubChannel.TP_ACROSS_SERVER
 

@@ -17,4 +17,3 @@ interface SharedCacheSet {
     fun removeAll()
     fun all(): Set<String>
 }
-

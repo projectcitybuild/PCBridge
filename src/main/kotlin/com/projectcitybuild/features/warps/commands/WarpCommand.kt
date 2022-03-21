@@ -15,7 +15,7 @@ import javax.inject.Inject
 class WarpCommand @Inject constructor(
     private val warpUseCase: WarpUseCase,
     private val warpRepository: WarpRepository,
-): SpigotCommand {
+) : SpigotCommand {
 
     override val label: String = "warp"
     override val permission = "pcbridge.warp.use"

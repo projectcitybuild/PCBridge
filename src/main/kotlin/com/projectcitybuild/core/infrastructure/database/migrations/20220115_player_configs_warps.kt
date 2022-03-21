@@ -3,7 +3,7 @@ package com.projectcitybuild.core.infrastructure.database.migrations
 import co.aikar.idb.HikariPooledDatabase
 import com.projectcitybuild.core.infrastructure.database.DatabaseMigration
 
-class `20220115_player_configs_warps`: DatabaseMigration {
+class `20220115_player_configs_warps` : DatabaseMigration {
     override val description = "Add player configs and warps"
 
     override fun execute(database: HikariPooledDatabase) {

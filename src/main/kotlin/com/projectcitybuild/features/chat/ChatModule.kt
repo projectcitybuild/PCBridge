@@ -21,7 +21,7 @@ class ChatModule {
         unmuteCommand: UnmuteCommand,
         whisperCommand: WhisperCommand,
         incomingChatChannelListener: IncomingChatChannelListener,
-    ): BungeecordFeatureModule {
+    ) : BungeecordFeatureModule {
 
         override val bungeecordCommands: Array<BungeecordCommand> = arrayOf(
             aCommand,
@@ -40,7 +40,7 @@ class ChatModule {
 
     class Spigot @Inject constructor(
         chatListener: ChatListener
-    ): SpigotFeatureModule {
+    ) : SpigotFeatureModule {
 
         override val spigotListeners: Array<SpigotListener> = arrayOf(
             chatListener,

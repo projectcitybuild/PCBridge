@@ -8,7 +8,7 @@ import javax.inject.Inject
 
 class BungeecordLocalEventBroadcaster @Inject constructor(
     private val proxyServer: ProxyServer,
-): LocalEventBroadcaster {
+) : LocalEventBroadcaster {
 
     override fun emit(event: BroadcastableEvent) {
         if (event !is Event) {

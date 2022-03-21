@@ -13,7 +13,7 @@ class WarpModule @Inject constructor(
     setWarpCommand: SetWarpCommand,
     warpCommand: WarpCommand,
     warpsCommand: WarpsCommand,
-): SpigotFeatureModule {
+) : SpigotFeatureModule {
 
     override val spigotCommands: Array<SpigotCommand> = arrayOf(
         delWarpCommand,

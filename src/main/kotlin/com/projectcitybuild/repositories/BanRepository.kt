@@ -62,7 +62,7 @@ class BanRepository @Inject constructor(
         }
     }
 
-    suspend fun get(targetPlayerUUID: UUID) : GameBan? {
+    suspend fun get(targetPlayerUUID: UUID): GameBan? {
         val banApi = apiRequestFactory.pcb.banApi
         val response = apiClient.execute {
             banApi.requestStatus(

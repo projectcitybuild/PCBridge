@@ -3,7 +3,7 @@ package com.projectcitybuild.core.infrastructure.database.migrations
 import co.aikar.idb.HikariPooledDatabase
 import com.projectcitybuild.core.infrastructure.database.DatabaseMigration
 
-class `20220201_add_ip_bans`: DatabaseMigration {
+class `20220201_add_ip_bans` : DatabaseMigration {
     override val description = "Add IP bans table"
 
     override fun execute(database: HikariPooledDatabase) {

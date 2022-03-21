@@ -14,7 +14,7 @@ import javax.inject.Inject
 class BanCommand @Inject constructor(
     private val proxyServer: ProxyServer,
     private val banUseCase: BanUseCase,
-): BungeecordCommand {
+) : BungeecordCommand {
 
     override val label = "ban"
     override val permission = "pcbridge.ban.ban"

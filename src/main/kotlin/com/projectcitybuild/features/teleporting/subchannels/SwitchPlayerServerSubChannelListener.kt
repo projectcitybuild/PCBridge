@@ -13,7 +13,7 @@ import javax.inject.Inject
 class SwitchPlayerServerSubChannelListener @Inject constructor(
     private val proxyServer: ProxyServer,
     private val logger: PlatformLogger,
-): BungeecordSubChannelListener {
+) : BungeecordSubChannelListener {
 
     override val subChannel = SubChannel.SWITCH_PLAYER_SERVER
 

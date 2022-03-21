@@ -19,9 +19,9 @@ class DynmapMarkerAdapter @Inject constructor(
     private val warpRepository: WarpRepository,
     private val config: PlatformConfig,
     private val logger: PlatformLogger,
-): SpigotListener {
-    class DynmapAPINotFoundException: Exception("Dynmap plugin not found")
-    class DynmapMarkerIconNotFoundException: Exception()
+) : SpigotListener {
+    class DynmapAPINotFoundException : Exception("Dynmap plugin not found")
+    class DynmapMarkerIconNotFoundException : Exception()
 
     companion object {
         private const val MARKER_SET_NAME = "pcbridge"

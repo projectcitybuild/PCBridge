@@ -16,7 +16,7 @@ data class SerializableDate(
     val unwrapped: Date
 )
 
-object DateSerializer: KSerializer<Date> {
+object DateSerializer : KSerializer<Date> {
     private val df: DateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm:ss.SSS")
 
     override val descriptor = PrimitiveSerialDescriptor("Date", PrimitiveKind.STRING)

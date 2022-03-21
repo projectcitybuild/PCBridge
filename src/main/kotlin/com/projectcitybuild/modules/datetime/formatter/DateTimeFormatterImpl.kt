@@ -12,7 +12,7 @@ import javax.inject.Inject
 class DateTimeFormatterImpl @Inject constructor(
     private val locale: Locale,
     private val timezone: ZoneId,
-): DateTimeFormatter {
+) : DateTimeFormatter {
 
     override fun convert(timestampInSeconds: Long, formatStyle: FormatStyle): String {
         val formatter = java.time.format.DateTimeFormatter

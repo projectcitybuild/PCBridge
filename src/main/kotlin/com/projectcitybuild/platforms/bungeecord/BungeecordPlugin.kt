@@ -23,7 +23,7 @@ import net.md_5.bungee.api.ProxyServer
 import net.md_5.bungee.api.plugin.Plugin
 import javax.inject.Inject
 
-class BungeecordPlugin: Plugin() {
+class BungeecordPlugin : Plugin() {
     private var container: BungeecordPluginContainer? = null
 
     override fun onEnable() {
@@ -92,7 +92,6 @@ class BungeecordPluginContainer @Inject constructor(
                     .split("\n")
                     .forEach { logger.warning(it) }
             }
-
         }.onFailure {
             reportError(it)
             proxyServer.pluginManager.getPlugin("PCBridge")?.onDisable()
@@ -105,7 +104,6 @@ class BungeecordPluginContainer @Inject constructor(
             listenerRegistry.unregisterAll()
             dataSource.disconnect()
             playerConfigCache.flush()
-
         }.onFailure { reportError(it) }
     }
 

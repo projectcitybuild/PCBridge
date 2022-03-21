@@ -11,10 +11,10 @@ import kotlin.coroutines.CoroutineContext
 @Reusable
 class APIClientImpl(
     private val getCoroutineContext: () -> CoroutineContext
-): APIClient {
+) : APIClient {
 
     override suspend fun <T> execute(apiCall: suspend () -> T): T {
-       return withContext(getCoroutineContext()) {
+        return withContext(getCoroutineContext()) {
             try {
                 apiCall.invoke()
             } catch (_: IOException) {

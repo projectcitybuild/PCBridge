@@ -28,7 +28,7 @@ class SpigotCommandRegistry @Inject constructor(
         val aliases = spigotCommand.aliases.plus(spigotCommand.label)
 
         aliases.forEach { alias ->
-            class BridgedCommand(private val wrappedCommand: SpigotCommand): SuspendingCommandExecutor, TabCompleter {
+            class BridgedCommand(private val wrappedCommand: SpigotCommand) : SuspendingCommandExecutor, TabCompleter {
                 override suspend fun onCommand(
                     sender: CommandSender,
                     command: Command,

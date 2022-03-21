@@ -14,11 +14,10 @@ import java.nio.charset.Charset
 import java.nio.charset.StandardCharsets
 import javax.inject.Inject
 
-
 class FlatFileSharedCacheSet @Inject constructor(
     private val config: PlatformConfig,
     private val baseFolder: File,
-): SharedCacheSet {
+) : SharedCacheSet {
 
     override lateinit var key: String
 

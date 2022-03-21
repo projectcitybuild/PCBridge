@@ -20,14 +20,16 @@ import java.io.File
 import javax.inject.Singleton
 
 @Singleton
-@Component(modules = [
-    DateTimeProvider::class,
-    ErrorReporterProvider::class,
-    NetworkProvider::class,
-    DataSourceProvider::class,
-    RedisProvider::class,
-    SharedCacheSetProvider::class,
-])
+@Component(
+    modules = [
+        DateTimeProvider::class,
+        ErrorReporterProvider::class,
+        NetworkProvider::class,
+        DataSourceProvider::class,
+        RedisProvider::class,
+        SharedCacheSetProvider::class,
+    ]
+)
 interface SpigotComponent {
 
     fun container(): SpigotPluginContainer

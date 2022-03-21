@@ -2,7 +2,6 @@ package com.projectcitybuild.features.teleporting.commands
 
 import com.projectcitybuild.core.InvalidCommandArgumentsException
 import com.projectcitybuild.modules.config.ConfigKey
-import com.projectcitybuild.repositories.TeleportRequestRepository
 import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.modules.nameguesser.NameGuesser
 import com.projectcitybuild.modules.scheduler.PlatformScheduler
@@ -11,6 +10,7 @@ import com.projectcitybuild.modules.timer.PlatformTimer
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
 import com.projectcitybuild.platforms.bungeecord.extensions.add
+import com.projectcitybuild.repositories.TeleportRequestRepository
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.CommandSender
 import net.md_5.bungee.api.ProxyServer
@@ -29,7 +29,7 @@ class TPACommand @Inject constructor(
     private val scheduler: PlatformScheduler,
     private val timer: PlatformTimer,
     private val config: PlatformConfig,
-): BungeecordCommand {
+) : BungeecordCommand {
 
     override val label: String = "tpa"
     override val permission = "pcbridge.tpa"
@@ -117,14 +117,16 @@ class TPACommand @Inject constructor(
 
     override fun onTabComplete(sender: CommandSender?, args: List<String>): Iterable<String>? {
         return when {
-            args.isEmpty() -> proxyServer.players
-                .map { it.name }
-                .filter { it != sender?.name }
+            args.isEmpty() ->
+                proxyServer.players
+                    .map { it.name }
+                    .filter { it != sender?.name }
 
-            args.size == 1 -> proxyServer.players
-                .map { it.name }
-                .filter { it != sender?.name }
-                .filter { it.lowercase().startsWith(args.first().lowercase()) }
+            args.size == 1 ->
+                proxyServer.players
+                    .map { it.name }
+                    .filter { it != sender?.name }
+                    .filter { it.lowercase().startsWith(args.first().lowercase()) }
 
             else -> null
         }

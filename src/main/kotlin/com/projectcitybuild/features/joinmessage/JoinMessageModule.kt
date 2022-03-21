@@ -16,7 +16,7 @@ class JoinMessageModule {
         networkJoinMessageListener: NetworkJoinMessageListener,
         welcomeMessageListener: WelcomeMessageListener,
         firstTimeJoinMessageListener: FirstTimeJoinMessageListener,
-    ): BungeecordFeatureModule {
+    ) : BungeecordFeatureModule {
         override val bungeecordListeners: Array<BungeecordListener> = arrayOf(
             networkJoinMessageListener,
             welcomeMessageListener,
@@ -26,7 +26,7 @@ class JoinMessageModule {
 
     class Spigot @Inject constructor(
         supressJoinMessageListener: SupressJoinMessageListener,
-    ): SpigotFeatureModule {
+    ) : SpigotFeatureModule {
         override val spigotListeners: Array<SpigotListener> = arrayOf(
             supressJoinMessageListener,
         )

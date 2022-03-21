@@ -11,4 +11,3 @@ data class QueuedTeleport(
     val isSilentTeleport: Boolean,
     val createdAt: LocalDateTime,
 )
-

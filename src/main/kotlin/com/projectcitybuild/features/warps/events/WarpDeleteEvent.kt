@@ -4,7 +4,7 @@ import com.projectcitybuild.modules.eventbroadcast.BroadcastableEvent
 import org.bukkit.event.HandlerList
 import org.bukkit.event.Event as SpigotEvent
 
-class WarpDeleteEvent: SpigotEvent(), BroadcastableEvent {
+class WarpDeleteEvent : SpigotEvent(), BroadcastableEvent {
 
     companion object {
         private val HANDLERS = HandlerList()

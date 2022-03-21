@@ -14,7 +14,7 @@ class PlayerConfigCache @Inject constructor() {
     private val cache = HashMap<UUID, PlayerConfig>()
 
     fun get(uuid: UUID): PlayerConfig? {
-       return cache[uuid]
+        return cache[uuid]
     }
 
     fun put(uuid: UUID, player: PlayerConfig) {

@@ -15,7 +15,7 @@ import javax.inject.Inject
 class SameServerTeleportChannelListener @Inject constructor(
     private val plugin: Plugin,
     private val logger: PlatformLogger
-): SpigotSubChannelListener {
+) : SpigotSubChannelListener {
 
     override val subChannel = SubChannel.TP_SAME_SERVER
 
@@ -51,7 +51,6 @@ class SameServerTeleportChannelListener @Inject constructor(
             if (!isSilentTP) {
                 targetPlayer.send().action("You were summoned to ${destinationPlayer.name}")
             }
-
         } else {
             targetPlayer.send().action("Teleported to ${destinationPlayer.name}")
 

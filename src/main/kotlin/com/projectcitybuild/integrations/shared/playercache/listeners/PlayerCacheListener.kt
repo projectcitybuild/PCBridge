@@ -17,7 +17,7 @@ class PlayerCacheListener @Inject constructor(
     private val playerCache: PlayerConfigCache,
     private val playerConfigRepository: PlayerConfigRepository,
     private val logger: PlatformLogger,
-): BungeecordListener {
+) : BungeecordListener {
 
     @EventHandler
     fun onPostLoginEvent(event: PostLoginEvent) {

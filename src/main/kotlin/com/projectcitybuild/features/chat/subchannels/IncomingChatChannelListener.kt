@@ -3,11 +3,11 @@ package com.projectcitybuild.features.chat.subchannels
 import com.google.common.io.ByteArrayDataInput
 import com.projectcitybuild.entities.SubChannel
 import com.projectcitybuild.features.chat.ChatGroupFormatBuilder
-import com.projectcitybuild.repositories.ChatIgnoreRepository
 import com.projectcitybuild.modules.channels.bungeecord.BungeecordSubChannelListener
-import com.projectcitybuild.repositories.PlayerConfigRepository
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.platforms.bungeecord.extensions.add
+import com.projectcitybuild.repositories.ChatIgnoreRepository
+import com.projectcitybuild.repositories.PlayerConfigRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -23,7 +23,7 @@ class IncomingChatChannelListener @Inject constructor(
     private val playerConfigRepository: PlayerConfigRepository,
     private val chatIgnoreRepository: ChatIgnoreRepository,
     private val chatGroupFormatBuilder: ChatGroupFormatBuilder
-): BungeecordSubChannelListener {
+) : BungeecordSubChannelListener {
 
     override val subChannel = SubChannel.GLOBAL_CHAT
 
@@ -43,8 +43,7 @@ class IncomingChatChannelListener @Inject constructor(
 
             val ignorers = chatIgnoreRepository.ignorerIds(senderConfig.id)
             val recipients =
-                if (ignorers.isEmpty()) { proxy.players }
-                else {
+                if (ignorers.isEmpty()) { proxy.players } else {
                     proxy.players.filter { recipient ->
                         val recipientConfig = playerConfigRepository.get(recipient.uniqueId)
                         !ignorers.contains(recipientConfig!!.id)

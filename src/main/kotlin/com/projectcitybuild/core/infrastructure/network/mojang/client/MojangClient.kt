@@ -25,11 +25,11 @@ class MojangClient(private val withLogging: Boolean) {
 
     val mojangApi = instance.create(MojangApiInterface::class.java)
 
-    private fun build() : Retrofit {
+    private fun build(): Retrofit {
         return Retrofit.Builder()
-                .client(client)
-                .baseUrl("https://api.mojang.com/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build()
+            .client(client)
+            .baseUrl("https://api.mojang.com/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
     }
 }

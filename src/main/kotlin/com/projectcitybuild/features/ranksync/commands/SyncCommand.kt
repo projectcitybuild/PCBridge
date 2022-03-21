@@ -20,7 +20,7 @@ import javax.inject.Inject
 class SyncCommand @Inject constructor(
     private val generateAccountVerificationURLUseCase: GenerateAccountVerificationURLUseCase,
     private val updatePlayerGroupsUseCase: UpdatePlayerGroupsUseCase,
-): BungeecordCommand {
+) : BungeecordCommand {
 
     override val label: String = "sync"
     override val permission: String = "pcbridge.sync.login"
@@ -44,10 +44,10 @@ class SyncCommand @Inject constructor(
         when (result) {
             is Failure -> when (result.reason) {
                 GenerateAccountVerificationURLUseCase.FailureReason.ALREADY_LINKED
-                    -> syncGroups(player)
+                -> syncGroups(player)
 
                 GenerateAccountVerificationURLUseCase.FailureReason.EMPTY_RESPONSE
-                    -> player.send().error("Failed to generate verification URL: No URL received from server")
+                -> player.send().error("Failed to generate verification URL: No URL received from server")
             }
             is Success -> player.sendMessage(
                 TextComponent()
@@ -69,10 +69,10 @@ class SyncCommand @Inject constructor(
         when (result) {
             is Failure -> when (result.reason) {
                 UpdatePlayerGroupsUseCase.FailureReason.ACCOUNT_NOT_LINKED
-                    -> player.send().error("Sync failed. Did you finish registering your account?")
+                -> player.send().error("Sync failed. Did you finish registering your account?")
 
                 UpdatePlayerGroupsUseCase.FailureReason.PERMISSION_USER_NOT_FOUND
-                    -> player.send().error("Permission user not found. Check that the user exists in the Permission plugin")
+                -> player.send().error("Permission user not found. Check that the user exists in the Permission plugin")
             }
             is Success -> {
                 player.send().success("Account linked! Your rank will be automatically synchronized with the PCB network")

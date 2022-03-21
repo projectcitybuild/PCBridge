@@ -6,7 +6,7 @@ import javax.inject.Inject
 
 class BungeecordOnlinePlayerList @Inject constructor(
     private val proxyServer: ProxyServer,
-): OnlinePlayerList {
+) : OnlinePlayerList {
 
     override fun getUUID(name: String): UUID? {
         val caseInsensitiveName = name.lowercase()

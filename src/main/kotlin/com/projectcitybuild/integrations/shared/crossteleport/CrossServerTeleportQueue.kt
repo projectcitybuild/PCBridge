@@ -23,19 +23,19 @@ class CrossServerTeleportQueue @Inject constructor(
         data class Location(
             val location: org.bukkit.Location,
             val name: String,
-        ): Destination()
+        ) : Destination()
 
         data class Player(
             val destinationPlayer: org.bukkit.entity.Player,
             val location: org.bukkit.Location,
             val isSummon: Boolean,
             val isSilentTeleport: Boolean,
-        ): Destination()
+        ) : Destination()
     }
 
     sealed class FailureReason {
-        data class WorldNotFound(val worldName: String): FailureReason()
-        object DestinationPlayerNotFound: FailureReason()
+        data class WorldNotFound(val worldName: String) : FailureReason()
+        object DestinationPlayerNotFound : FailureReason()
     }
 
     /**

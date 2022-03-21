@@ -8,7 +8,7 @@ import org.bukkit.event.Event as SpigotEvent
 class PlayerPreSummonEvent(
     val summonedPlayer: Player,
     val currentLocation: Location,
-): SpigotEvent() {
+) : SpigotEvent() {
 
     companion object {
         private val HANDLERS = HandlerList()

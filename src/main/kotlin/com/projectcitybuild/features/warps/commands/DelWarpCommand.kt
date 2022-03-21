@@ -3,18 +3,18 @@ package com.projectcitybuild.features.warps.commands
 import com.projectcitybuild.core.InvalidCommandArgumentsException
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Success
-import com.projectcitybuild.repositories.WarpRepository
 import com.projectcitybuild.features.warps.usecases.DeleteWarpUseCase
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.platforms.spigot.environment.SpigotCommand
 import com.projectcitybuild.platforms.spigot.environment.SpigotCommandInput
+import com.projectcitybuild.repositories.WarpRepository
 import org.bukkit.command.CommandSender
 import javax.inject.Inject
 
 class DelWarpCommand @Inject constructor(
     private val deleteWarpUseCase: DeleteWarpUseCase,
     private val warpRepository: WarpRepository,
-): SpigotCommand {
+) : SpigotCommand {
 
     override val label: String = "delwarp"
     override val permission = "pcbridge.warp.delete"

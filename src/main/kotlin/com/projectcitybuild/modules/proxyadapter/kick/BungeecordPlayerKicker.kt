@@ -8,7 +8,7 @@ import javax.inject.Inject
 
 class BungeecordPlayerKicker @Inject constructor(
     private val proxyServer: ProxyServer,
-): PlayerKicker {
+) : PlayerKicker {
 
     override fun kickByName(playerName: String, reason: String, context: PlayerKicker.KickContext) {
         val caseInsensitiveName = playerName.lowercase()

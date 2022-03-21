@@ -17,7 +17,7 @@ class BanModule @Inject constructor(
     checkBanCommand: CheckBanCommand,
     banConnectionListener: BanConnectionListener,
     config: PlatformConfig,
-): BungeecordFeatureModule {
+) : BungeecordFeatureModule {
 
     override val bungeecordCommands: Array<BungeecordCommand> =
         if (config.get(ConfigKey.API_ENABLED)) arrayOf(

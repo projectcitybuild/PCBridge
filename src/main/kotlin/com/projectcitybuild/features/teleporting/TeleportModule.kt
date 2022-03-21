@@ -24,7 +24,7 @@ class TeleportModule {
         tpoHereCommand: TPOHereCommand,
         tpToggleCommand: TPToggleCommand,
         switchPlayerServerSubChannelListener: SwitchPlayerServerSubChannelListener,
-    ): BungeecordFeatureModule {
+    ) : BungeecordFeatureModule {
         override val bungeecordCommands: Array<BungeecordCommand> = arrayOf(
             tpCommand,
             tpHereCommand,
@@ -45,7 +45,7 @@ class TeleportModule {
     class Spigot @Inject constructor(
         acrossServerTeleportChannelListener: AcrossServerTeleportChannelListener,
         sameServerTeleportChannelListener: SameServerTeleportChannelListener,
-    ): SpigotFeatureModule {
+    ) : SpigotFeatureModule {
         override val spigotSubChannelListeners: Array<SpigotSubChannelListener> = arrayOf(
             acrossServerTeleportChannelListener,
             sameServerTeleportChannelListener,

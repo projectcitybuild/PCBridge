@@ -15,9 +15,9 @@ import javax.inject.Singleton
 @Singleton
 class LuckPermsPermissions @Inject constructor(
     private val logger: PlatformLogger,
-): Permissions {
+) : Permissions {
 
-    class PermissionUserNotFoundException(): Exception()
+    class PermissionUserNotFoundException() : Exception()
 
     private lateinit var luckPerms: LuckPerms
 

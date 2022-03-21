@@ -13,7 +13,7 @@ open class PlayerUUIDRepository @Inject constructor(
     private val apiRequestFactory: APIRequestFactory,
     private val apiClient: APIClient,
 ) {
-    class PlayerNotFoundException: Exception()
+    class PlayerNotFoundException : Exception()
 
     // TODO: cache with expiry time
     private val mojangPlayerCache = HashMap<String, MojangPlayer>()
@@ -46,7 +46,6 @@ open class PlayerUUIDRepository @Inject constructor(
 
                 mojangPlayerCache[playerName] = player
                 player
-
             } catch (e: KotlinNullPointerException) {
                 // Hacky workaround to catch 204 HTTP errors (username not found)
                 throw PlayerNotFoundException()

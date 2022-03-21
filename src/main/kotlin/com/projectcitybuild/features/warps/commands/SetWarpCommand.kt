@@ -3,8 +3,8 @@ package com.projectcitybuild.features.warps.commands
 import com.projectcitybuild.core.InvalidCommandArgumentsException
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.entities.CrossServerLocation
-import com.projectcitybuild.modules.config.ConfigKey
 import com.projectcitybuild.features.warps.usecases.CreateWarpUseCase
+import com.projectcitybuild.modules.config.ConfigKey
 import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.platforms.spigot.environment.SpigotCommand
@@ -15,7 +15,7 @@ import javax.inject.Inject
 class SetWarpCommand @Inject constructor(
     private val createWarpUseCase: CreateWarpUseCase,
     private val config: PlatformConfig,
-): SpigotCommand {
+) : SpigotCommand {
 
     override val label = "setwarp"
     override val permission = "pcbridge.warp.create"
@@ -41,7 +41,7 @@ class SetWarpCommand @Inject constructor(
         if (result is Failure) {
             when (result.reason) {
                 CreateWarpUseCase.FailureReason.WARP_ALREADY_EXISTS
-                    -> input.sender.send().error("A warp for $warpName already exists")
+                -> input.sender.send().error("A warp for $warpName already exists")
             }
             return
         }

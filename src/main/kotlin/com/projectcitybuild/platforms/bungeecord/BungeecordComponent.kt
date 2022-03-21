@@ -21,15 +21,17 @@ import net.md_5.bungee.api.plugin.Plugin
 import javax.inject.Singleton
 
 @Singleton
-@Component(modules = [
-    DateTimeProvider::class,
-    ErrorReporterProvider::class,
-    PermissionsProvider::class,
-    BungeecordModulesProvider::class,
-    NetworkProvider::class,
-    DataSourceProvider::class,
-    BungeecordProxyAdapterModule::class,
-])
+@Component(
+    modules = [
+        DateTimeProvider::class,
+        ErrorReporterProvider::class,
+        PermissionsProvider::class,
+        BungeecordModulesProvider::class,
+        NetworkProvider::class,
+        DataSourceProvider::class,
+        BungeecordProxyAdapterModule::class,
+    ]
+)
 interface BungeecordComponent {
     fun container(): BungeecordPluginContainer
 

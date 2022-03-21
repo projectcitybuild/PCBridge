@@ -3,7 +3,7 @@ package com.projectcitybuild.core.infrastructure.network
 import dagger.Reusable
 
 @Reusable
-class APIClientMock: APIClient {
+class APIClientMock : APIClient {
 
     var result: Any? = null
     var exception: Throwable? = null

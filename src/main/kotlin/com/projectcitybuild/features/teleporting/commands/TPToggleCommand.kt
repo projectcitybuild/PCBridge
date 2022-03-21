@@ -12,7 +12,7 @@ import javax.inject.Inject
 
 class TPToggleCommand @Inject constructor(
     private val tpToggleUseCase: TPToggleUseCase,
-): BungeecordCommand {
+) : BungeecordCommand {
 
     override val label = "tptoggle"
     override val permission = "pcbridge.tp.toggle"
@@ -24,7 +24,7 @@ class TPToggleCommand @Inject constructor(
             return
         }
 
-        val desiredState = when(input.args.firstOrNull()?.lowercase()) {
+        val desiredState = when (input.args.firstOrNull()?.lowercase()) {
             "on" -> true
             "off" -> false
             null -> null

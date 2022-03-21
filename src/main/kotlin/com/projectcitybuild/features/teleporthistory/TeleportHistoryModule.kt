@@ -16,7 +16,7 @@ class TeleportHistoryModule {
         playerTeleportListener: PlayerTeleportListener,
         playerSummonListener: PlayerSummonListener,
         playerWarpListener: PlayerWarpListener,
-    ): SpigotFeatureModule {
+    ) : SpigotFeatureModule {
 
         override val spigotCommands: Array<SpigotCommand> = arrayOf(
             backCommand,

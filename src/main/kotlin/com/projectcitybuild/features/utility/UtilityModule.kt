@@ -7,7 +7,7 @@ import javax.inject.Inject
 
 class UtilityModule @Inject constructor(
     PCBridgeCommand: PCBridgeCommand
-): BungeecordFeatureModule {
+) : BungeecordFeatureModule {
 
     override val bungeecordCommands: Array<BungeecordCommand> = arrayOf(
         PCBridgeCommand,

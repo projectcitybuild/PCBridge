@@ -14,15 +14,14 @@ interface AuthApiInterface {
     @FormUrlEncoded
     @POST("auth/minecraft")
     suspend fun getVerificationUrl(
-            @Field("minecraft_uuid") uuid: String
-    ) : ApiResponse<AuthURL>
+        @Field("minecraft_uuid") uuid: String
+    ): ApiResponse<AuthURL>
 
     /**
      * Fetches the groups that the given UUID belongs to
      */
     @GET("auth/minecraft/{uuid}")
     suspend fun getUserGroups(
-            @Path(value = "uuid") uuid: String
-    ) : ApiResponse<AuthPlayerGroups>
-
+        @Path(value = "uuid") uuid: String
+    ): ApiResponse<AuthPlayerGroups>
 }

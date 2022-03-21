@@ -3,7 +3,7 @@ package com.projectcitybuild.core.infrastructure.database.migrations
 import co.aikar.idb.HikariPooledDatabase
 import com.projectcitybuild.core.infrastructure.database.DatabaseMigration
 
-class `20220120_teleport_history`: DatabaseMigration {
+class `20220120_teleport_history` : DatabaseMigration {
     override val description = "Add last_known_locations"
 
     override fun execute(database: HikariPooledDatabase) {

@@ -7,7 +7,7 @@ import javax.inject.Inject
 
 class CrossTeleportModule @Inject constructor(
     teleportOnJoinListener: TeleportOnJoinListener,
-): SpigotFeatureModule {
+) : SpigotFeatureModule {
 
     override val spigotListeners: Array<SpigotListener> = arrayOf(
         teleportOnJoinListener,

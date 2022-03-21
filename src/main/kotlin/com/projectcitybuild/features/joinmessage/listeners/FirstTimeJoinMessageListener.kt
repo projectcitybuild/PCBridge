@@ -13,7 +13,7 @@ import javax.inject.Inject
 class FirstTimeJoinMessageListener @Inject constructor(
     private val proxyServer: ProxyServer,
     private val logger: PlatformLogger,
-): BungeecordListener {
+) : BungeecordListener {
 
     @EventHandler
     fun onFirstTimeJoin(event: FirstTimeJoinEvent) {

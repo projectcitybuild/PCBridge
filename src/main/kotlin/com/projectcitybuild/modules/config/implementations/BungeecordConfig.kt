@@ -14,7 +14,7 @@ import javax.inject.Singleton
 @Singleton
 class BungeecordConfig(
     private val dataFolder: File
-): PlatformConfig {
+) : PlatformConfig {
 
     private val file: File
         get() = File(dataFolder, "config.yml")

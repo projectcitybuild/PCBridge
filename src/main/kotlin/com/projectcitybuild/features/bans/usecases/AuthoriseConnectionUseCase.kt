@@ -14,8 +14,8 @@ class AuthoriseConnectionUseCase @Inject constructor(
     private val ipBanRepository: IPBanRepository,
 ) {
     sealed class Ban {
-        data class UUID(val value: GameBan): Ban()
-        data class IP(val value: IPBan): Ban()
+        data class UUID(val value: GameBan) : Ban()
+        data class IP(val value: IPBan) : Ban()
     }
 
     @Throws(Exception::class)
