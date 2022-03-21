@@ -3,7 +3,7 @@ package com.projectcitybuild.features.teleporting.usecases
 import com.projectcitybuild.PlayerConfigMock
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Success
-import com.projectcitybuild.modules.playerconfig.PlayerConfigRepository
+import com.projectcitybuild.repositories.PlayerConfigRepository
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach

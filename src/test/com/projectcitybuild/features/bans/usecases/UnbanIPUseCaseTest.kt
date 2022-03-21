@@ -2,7 +2,7 @@ package com.projectcitybuild.features.bans.usecases
 
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Success
-import com.projectcitybuild.features.bans.repositories.IPBanRepository
+import com.projectcitybuild.repositories.IPBanRepository
 import com.projectcitybuild.stubs.IPBanMock
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals

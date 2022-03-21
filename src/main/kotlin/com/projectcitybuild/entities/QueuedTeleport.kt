@@ -12,7 +12,3 @@ data class QueuedTeleport(
     val createdAt: LocalDateTime,
 )
 
-enum class TeleportType {
-    TP,
-    SUMMON,
-}

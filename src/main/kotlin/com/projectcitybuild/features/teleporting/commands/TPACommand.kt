@@ -2,7 +2,7 @@ package com.projectcitybuild.features.teleporting.commands
 
 import com.projectcitybuild.core.InvalidCommandArgumentsException
 import com.projectcitybuild.modules.config.ConfigKey
-import com.projectcitybuild.features.teleporting.repositories.TeleportRequestRepository
+import com.projectcitybuild.repositories.TeleportRequestRepository
 import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.modules.nameguesser.NameGuesser
 import com.projectcitybuild.modules.scheduler.PlatformScheduler

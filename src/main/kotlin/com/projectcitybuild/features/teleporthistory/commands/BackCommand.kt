@@ -4,9 +4,9 @@ import com.projectcitybuild.core.InvalidCommandArgumentsException
 import com.projectcitybuild.modules.config.ConfigKey
 import com.projectcitybuild.entities.SubChannel
 import com.projectcitybuild.entities.Warp
-import com.projectcitybuild.features.teleporthistory.repositories.LastKnownLocationRepositoy
+import com.projectcitybuild.repositories.LastKnownLocationRepositoy
 import com.projectcitybuild.features.warps.events.PlayerPreWarpEvent
-import com.projectcitybuild.modules.teleport.repositories.QueuedLocationTeleportRepository
+import com.projectcitybuild.repositories.QueuedLocationTeleportRepository
 import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.modules.eventbroadcast.LocalEventBroadcaster
 import com.projectcitybuild.modules.logger.PlatformLogger

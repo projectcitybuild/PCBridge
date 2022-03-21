@@ -3,7 +3,7 @@ package com.projectcitybuild.features.utility.commands
 import com.projectcitybuild.core.InvalidCommandArgumentsException
 import com.projectcitybuild.core.Regex
 import com.projectcitybuild.entities.IPBan
-import com.projectcitybuild.features.bans.repositories.IPBanRepository
+import com.projectcitybuild.repositories.IPBanRepository
 import com.projectcitybuild.core.infrastructure.database.DataSource
 import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.modules.textcomponentbuilder.send

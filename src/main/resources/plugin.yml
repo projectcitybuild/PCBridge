@@ -1,4 +1,4 @@
-main: com.projectcitybuild.platforms.spigot.SpigotPlatform
+main: com.projectcitybuild.platforms.spigot.SpigotPlugin
 name: PCBridge
 version: 3.7.0
 softdepend:

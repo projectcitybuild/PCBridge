@@ -2,7 +2,7 @@ package com.projectcitybuild.features.teleporting.commands
 
 import com.projectcitybuild.core.InvalidCommandArgumentsException
 import com.projectcitybuild.features.teleporting.PlayerTeleporter
-import com.projectcitybuild.features.teleporting.repositories.TeleportRequestRepository
+import com.projectcitybuild.repositories.TeleportRequestRepository
 import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.modules.timer.PlatformTimer

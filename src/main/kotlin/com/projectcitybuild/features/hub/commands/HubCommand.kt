@@ -2,8 +2,8 @@ package com.projectcitybuild.features.hub.commands
 
 import com.projectcitybuild.core.InvalidCommandArgumentsException
 import com.projectcitybuild.core.utilities.Failure
-import com.projectcitybuild.features.hub.repositories.HubRepository
-import com.projectcitybuild.modules.teleport.LocationTeleporter
+import com.projectcitybuild.repositories.HubRepository
+import com.projectcitybuild.wiring.shared.crossteleport.LocationTeleporter
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.platforms.spigot.environment.SpigotCommand
 import com.projectcitybuild.platforms.spigot.environment.SpigotCommandInput

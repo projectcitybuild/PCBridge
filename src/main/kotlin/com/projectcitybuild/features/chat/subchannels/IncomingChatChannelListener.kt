@@ -3,9 +3,9 @@ package com.projectcitybuild.features.chat.subchannels
 import com.google.common.io.ByteArrayDataInput
 import com.projectcitybuild.entities.SubChannel
 import com.projectcitybuild.features.chat.ChatGroupFormatBuilder
-import com.projectcitybuild.features.chat.repositories.ChatIgnoreRepository
+import com.projectcitybuild.repositories.ChatIgnoreRepository
 import com.projectcitybuild.modules.channels.bungeecord.BungeecordSubChannelListener
-import com.projectcitybuild.modules.playerconfig.PlayerConfigRepository
+import com.projectcitybuild.repositories.PlayerConfigRepository
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.platforms.bungeecord.extensions.add
 import kotlinx.coroutines.CoroutineScope

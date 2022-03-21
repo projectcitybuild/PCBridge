@@ -3,8 +3,8 @@ package com.projectcitybuild.features.bans.usecases
 import com.projectcitybuild.entities.IPBan
 import com.projectcitybuild.entities.responses.GameBan
 import com.projectcitybuild.features.bans.Sanitizer
-import com.projectcitybuild.features.bans.repositories.BanRepository
-import com.projectcitybuild.features.bans.repositories.IPBanRepository
+import com.projectcitybuild.repositories.BanRepository
+import com.projectcitybuild.repositories.IPBanRepository
 import java.net.SocketAddress
 import java.util.*
 import javax.inject.Inject

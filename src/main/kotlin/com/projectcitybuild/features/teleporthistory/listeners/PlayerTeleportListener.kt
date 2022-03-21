@@ -3,7 +3,7 @@ package com.projectcitybuild.features.teleporthistory.listeners
 import com.projectcitybuild.core.SpigotListener
 import com.projectcitybuild.entities.CrossServerLocation
 import com.projectcitybuild.modules.config.ConfigKey
-import com.projectcitybuild.features.teleporthistory.repositories.LastKnownLocationRepositoy
+import com.projectcitybuild.repositories.LastKnownLocationRepositoy
 import com.projectcitybuild.features.teleporting.events.PlayerPreTeleportEvent
 import com.projectcitybuild.modules.config.PlatformConfig
 import org.bukkit.event.EventHandler

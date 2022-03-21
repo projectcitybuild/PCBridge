@@ -4,8 +4,8 @@ import com.projectcitybuild.WarpMock
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Success
 import com.projectcitybuild.features.warps.events.PlayerPreWarpEvent
-import com.projectcitybuild.modules.teleport.repositories.QueuedLocationTeleportRepository
-import com.projectcitybuild.features.warps.repositories.WarpRepository
+import com.projectcitybuild.repositories.QueuedLocationTeleportRepository
+import com.projectcitybuild.repositories.WarpRepository
 import com.projectcitybuild.modules.eventbroadcast.LocalEventBroadcaster
 import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.modules.nameguesser.NameGuesser

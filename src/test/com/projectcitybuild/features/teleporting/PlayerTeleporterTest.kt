@@ -2,8 +2,8 @@ package com.projectcitybuild.features.teleporting
 
 import com.projectcitybuild.PlayerConfigMock
 import com.projectcitybuild.core.utilities.Failure
-import com.projectcitybuild.features.teleporting.repositories.QueuedTeleportRepository
-import com.projectcitybuild.modules.playerconfig.PlayerConfigRepository
+import com.projectcitybuild.repositories.QueuedPlayerTeleportRepository
+import com.projectcitybuild.repositories.PlayerConfigRepository
 import kotlinx.coroutines.test.runTest
 import net.md_5.bungee.api.connection.ProxiedPlayer
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -18,16 +18,16 @@ class PlayerTeleporterTest {
     private lateinit var requester: PlayerTeleporter
 
     private lateinit var playerConfigRepository: PlayerConfigRepository
-    private lateinit var queuedTeleportRepository: QueuedTeleportRepository
+    private lateinit var queuedPlayerTeleportRepository: QueuedPlayerTeleportRepository
 
     @BeforeEach
     fun setUp() {
         playerConfigRepository = mock(PlayerConfigRepository::class.java)
-        queuedTeleportRepository = mock(QueuedTeleportRepository::class.java)
+        queuedPlayerTeleportRepository = mock(QueuedPlayerTeleportRepository::class.java)
 
         requester = PlayerTeleporter(
             playerConfigRepository,
-            queuedTeleportRepository,
+            queuedPlayerTeleportRepository,
         )
     }
 

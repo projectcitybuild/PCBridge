@@ -6,16 +6,16 @@ import com.projectcitybuild.core.utilities.Success
 import com.projectcitybuild.entities.QueuedTeleport
 import com.projectcitybuild.entities.SubChannel
 import com.projectcitybuild.entities.TeleportType
-import com.projectcitybuild.features.teleporting.repositories.QueuedTeleportRepository
-import com.projectcitybuild.modules.playerconfig.PlayerConfigRepository
 import com.projectcitybuild.platforms.bungeecord.MessageToSpigot
+import com.projectcitybuild.repositories.PlayerConfigRepository
+import com.projectcitybuild.repositories.QueuedPlayerTeleportRepository
 import net.md_5.bungee.api.connection.ProxiedPlayer
 import java.time.LocalDateTime
 import javax.inject.Inject
 
 class PlayerTeleporter @Inject constructor(
     private val playerConfigRepository: PlayerConfigRepository,
-    private val queuedTeleportRepository: QueuedTeleportRepository,
+    private val queuedPlayerTeleportRepository: QueuedPlayerTeleportRepository,
 ) {
     enum class FailureReason {
         TARGET_PLAYER_DISALLOWS_TP,
@@ -48,7 +48,7 @@ class PlayerTeleporter @Inject constructor(
                 )
             ).send()
         } else {
-            queuedTeleportRepository.queue(
+            queuedPlayerTeleportRepository.queue(
                 QueuedTeleport(
                     playerUUID = player.uniqueId,
                     targetPlayerUUID = destinationPlayer.uniqueId,
@@ -98,7 +98,7 @@ class PlayerTeleporter @Inject constructor(
                 )
             ).send()
         } else {
-            queuedTeleportRepository.queue(
+            queuedPlayerTeleportRepository.queue(
                 QueuedTeleport(
                     playerUUID = summonedPlayer.uniqueId,
                     targetPlayerUUID = destinationPlayer.uniqueId,

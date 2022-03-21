@@ -1,7 +1,7 @@
 package com.projectcitybuild.core.infrastructure.database
 
 import co.aikar.idb.HikariPooledDatabase
-import com.projectcitybuild.entities.migrations.*
+import com.projectcitybuild.core.infrastructure.database.migrations.*
 import com.projectcitybuild.modules.logger.PlatformLogger
 
 object Migration {

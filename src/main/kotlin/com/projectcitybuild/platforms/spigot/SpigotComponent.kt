@@ -1,14 +1,14 @@
 package com.projectcitybuild.platforms.spigot
 
-import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.core.infrastructure.database.DataSourceProvider
+import com.projectcitybuild.core.infrastructure.network.APIClient
+import com.projectcitybuild.core.infrastructure.network.NetworkProvider
+import com.projectcitybuild.core.infrastructure.redis.RedisProvider
+import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.modules.datetime.DateTimeProvider
 import com.projectcitybuild.modules.errorreporting.ErrorReporterProvider
 import com.projectcitybuild.modules.eventbroadcast.LocalEventBroadcaster
 import com.projectcitybuild.modules.logger.PlatformLogger
-import com.projectcitybuild.core.infrastructure.network.APIClient
-import com.projectcitybuild.core.infrastructure.network.NetworkProvider
-import com.projectcitybuild.core.infrastructure.redis.RedisProvider
 import com.projectcitybuild.modules.scheduler.PlatformScheduler
 import com.projectcitybuild.modules.sharedcache.SharedCacheSetProvider
 import dagger.BindsInstance
@@ -16,7 +16,6 @@ import dagger.Component
 import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
 import java.io.File
-import javax.inject.Qualifier
 import javax.inject.Singleton
 
 @Singleton
@@ -30,7 +29,7 @@ import javax.inject.Singleton
 ])
 interface SpigotComponent {
 
-    fun container(): SpigotPlatform.Container
+    fun container(): SpigotPluginContainer
 
     @Component.Builder
     interface Builder {
