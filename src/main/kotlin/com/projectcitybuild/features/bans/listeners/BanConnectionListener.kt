@@ -69,19 +69,19 @@ class BanConnectionListener @Inject constructor(
                 )
                 event.isCancelled = true
             }
-            .onFailure { throwable ->
-                throwable.message?.let { logger.fatal(it) }
-                throwable.printStackTrace()
+                .onFailure { throwable ->
+                    throwable.message?.let { logger.fatal(it) }
+                    throwable.printStackTrace()
 
-                errorReporter.report(throwable)
+                    errorReporter.report(throwable)
 
-                // If something goes wrong, better not to let players in
-                event.setCancelReason(
-                    TextComponent("An error occurred while contacting the PCB authentication server. Please try again later")
-                )
-                event.isCancelled = true
-            }
-            .also { event.completeIntent(plugin) }
+                    // If something goes wrong, better not to let players in
+                    event.setCancelReason(
+                        TextComponent("An error occurred while contacting the PCB authentication server. Please try again later")
+                    )
+                    event.isCancelled = true
+                }
+                .also { event.completeIntent(plugin) }
         }
     }
 }

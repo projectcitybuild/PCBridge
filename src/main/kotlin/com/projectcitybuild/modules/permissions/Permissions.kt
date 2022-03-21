@@ -1,6 +1,6 @@
 package com.projectcitybuild.modules.permissions
 
-import java.util.*
+import java.util.UUID
 
 interface Permissions {
     fun connect()

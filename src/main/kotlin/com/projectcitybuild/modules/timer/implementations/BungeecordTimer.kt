@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit
 class BungeecordTimer(
     private val plugin: Plugin,
     private val proxyServer: ProxyServer
-): PlatformTimer {
+) : PlatformTimer {
     private val tasks: HashMap<String, ScheduledTask> = hashMapOf()
 
     override fun scheduleOnce(

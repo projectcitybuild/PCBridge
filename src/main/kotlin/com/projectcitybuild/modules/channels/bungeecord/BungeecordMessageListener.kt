@@ -9,7 +9,7 @@ import net.md_5.bungee.event.EventHandler
 
 class BungeecordMessageListener(
     private val logger: PlatformLogger
-): BungeecordListener {
+) : BungeecordListener {
 
     private val listeners = HashMap<String, BungeecordSubChannelListener>()
 

@@ -3,7 +3,7 @@ package com.projectcitybuild.core.infrastructure.database.migrations
 import co.aikar.idb.HikariPooledDatabase
 import com.projectcitybuild.core.infrastructure.database.DatabaseMigration
 
-class `20220320_rename_queued_warps`: DatabaseMigration {
+class `20220320_rename_queued_warps` : DatabaseMigration {
     override val description = "Add a column to silence teleport messages"
 
     override fun execute(database: HikariPooledDatabase) {

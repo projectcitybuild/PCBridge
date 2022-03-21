@@ -9,14 +9,14 @@ import com.projectcitybuild.modules.logger.PlatformLogger
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
-import java.util.*
+import java.util.UUID
 import javax.inject.Inject
 
 class AcrossServerTeleportChannelListener @Inject constructor(
     private val plugin: Plugin,
     private val logger: PlatformLogger,
     private val proxyMessenger: ProxyMessenger,
-): SpigotSubChannelListener {
+) : SpigotSubChannelListener {
 
     override val subChannel = SubChannel.TP_ACROSS_SERVER
 

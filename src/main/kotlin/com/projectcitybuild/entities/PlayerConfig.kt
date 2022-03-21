@@ -1,7 +1,7 @@
 package com.projectcitybuild.entities
 
 import java.time.LocalDateTime
-import java.util.*
+import java.util.UUID
 
 data class PlayerConfig(
     val id: Long,

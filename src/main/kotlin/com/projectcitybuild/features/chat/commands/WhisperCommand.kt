@@ -2,14 +2,14 @@ package com.projectcitybuild.features.chat.commands
 
 import com.projectcitybuild.core.InvalidCommandArgumentsException
 import com.projectcitybuild.core.extensions.joinWithWhitespaces
-import com.projectcitybuild.repositories.ChatIgnoreRepository
-import com.projectcitybuild.repositories.LastWhisperedRepository
 import com.projectcitybuild.modules.nameguesser.NameGuesser
-import com.projectcitybuild.repositories.PlayerConfigRepository
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
 import com.projectcitybuild.platforms.bungeecord.extensions.add
+import com.projectcitybuild.repositories.ChatIgnoreRepository
+import com.projectcitybuild.repositories.LastWhisperedRepository
+import com.projectcitybuild.repositories.PlayerConfigRepository
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.CommandSender
 import net.md_5.bungee.api.ProxyServer
@@ -22,7 +22,7 @@ class WhisperCommand @Inject constructor(
     private val chatIgnoreRepository: ChatIgnoreRepository,
     private val lastWhisperedRepository: LastWhisperedRepository,
     private val nameGuesser: NameGuesser
-): BungeecordCommand {
+) : BungeecordCommand {
 
     override val label = "whisper"
     override val aliases = arrayOf("msg", "m", "w", "t", "tell", "pm")
@@ -66,12 +66,14 @@ class WhisperCommand @Inject constructor(
                 it.color = ChatColor.GRAY
                 it.isItalic = true
             }
-            .add(TextComponent.fromLegacyText(message).also { charTC ->
-                charTC.forEach {
-                    it.color = ChatColor.GRAY
-                    it.isItalic = true
+            .add(
+                TextComponent.fromLegacyText(message).also { charTC ->
+                    charTC.forEach {
+                        it.color = ChatColor.GRAY
+                        it.isItalic = true
+                    }
                 }
-            })
+            )
 
         targetPlayer.sendMessage(tc)
         input.sender.sendMessage(tc)

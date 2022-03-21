@@ -10,7 +10,7 @@ import javax.inject.Inject
 
 class ChatListener @Inject constructor(
     private val proxyMessenger: ProxyMessenger,
-): SpigotListener {
+) : SpigotListener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     fun onAsyncPlayerChatEvent(event: AsyncPlayerChatEvent) {

@@ -8,7 +8,7 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import java.text.DateFormat
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
 
 @Serializable
 data class SerializableDate(
@@ -16,7 +16,7 @@ data class SerializableDate(
     val unwrapped: Date
 )
 
-object DateSerializer: KSerializer<Date> {
+object DateSerializer : KSerializer<Date> {
     private val df: DateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm:ss.SSS")
 
     override val descriptor = PrimitiveSerialDescriptor("Date", PrimitiveKind.STRING)

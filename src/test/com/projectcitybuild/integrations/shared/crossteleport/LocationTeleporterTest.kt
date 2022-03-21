@@ -1,6 +1,5 @@
 package com.projectcitybuild.integrations.shared.crossteleport
 
-
 import com.projectcitybuild.CrossServerLocationMock
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Success
@@ -23,9 +22,9 @@ import org.junit.jupiter.api.Test
 import org.mockito.Mockito.verify
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.verifyNoInteractions
-import org.powermock.api.mockito.PowerMockito.`when`
 import org.powermock.api.mockito.PowerMockito.mock
-import java.util.*
+import org.powermock.api.mockito.PowerMockito.`when`
+import java.util.UUID
 
 class LocationTeleporterTest {
 
@@ -116,7 +115,7 @@ class LocationTeleporterTest {
             verifyNoInteractions(localEventBroadcaster)
         }
 
-       // Assert interaction because of success
+        // Assert interaction because of success
         val world = mock(World::class.java)
         `when`(server.getWorld(destination.worldName)).thenReturn(world)
 

@@ -1,21 +1,21 @@
 package com.projectcitybuild.features.ranksync.usecases
 
+import com.projectcitybuild.core.infrastructure.network.APIClient
+import com.projectcitybuild.core.infrastructure.network.APIClientMock
+import com.projectcitybuild.core.infrastructure.network.APIRequestFactory
+import com.projectcitybuild.core.infrastructure.network.pcb.client.PCBClient
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Success
 import com.projectcitybuild.entities.responses.ApiError
 import com.projectcitybuild.entities.responses.ApiResponse
 import com.projectcitybuild.entities.responses.AuthURL
-import com.projectcitybuild.core.infrastructure.network.APIClient
-import com.projectcitybuild.core.infrastructure.network.APIClientMock
-import com.projectcitybuild.core.infrastructure.network.APIRequestFactory
-import com.projectcitybuild.core.infrastructure.network.pcb.client.PCBClient
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.powermock.api.mockito.PowerMockito.`when`
 import org.powermock.api.mockito.PowerMockito.mock
-import java.util.*
+import org.powermock.api.mockito.PowerMockito.`when`
+import java.util.UUID
 
 class GenerateAccountVerificationURLUseCaseTest {
 

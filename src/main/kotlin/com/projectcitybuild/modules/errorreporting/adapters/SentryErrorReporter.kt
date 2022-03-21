@@ -11,7 +11,7 @@ import io.sentry.Sentry
 class SentryErrorReporter(
     private val config: PlatformConfig,
     private val logger: PlatformLogger,
-): ErrorReporter {
+) : ErrorReporter {
 
     override fun bootstrap() {
         val enabled = config.get(ConfigKey.ERROR_REPORTING_SENTRY_ENABLED)

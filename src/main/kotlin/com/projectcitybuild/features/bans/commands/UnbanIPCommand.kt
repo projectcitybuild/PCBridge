@@ -11,7 +11,7 @@ import javax.inject.Inject
 
 class UnbanIPCommand @Inject constructor(
     private val unbanIPUseCase: UnbanIPUseCase,
-): BungeecordCommand {
+) : BungeecordCommand {
 
     override val label = "unbanip"
     override val permission = "pcbridge.ban.unbanip"

@@ -6,7 +6,7 @@ import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import javax.inject.Inject
 
-class SupressJoinMessageListener @Inject constructor(): SpigotListener {
+class SupressJoinMessageListener @Inject constructor() : SpigotListener {
 
     @EventHandler
     fun onPlayerJoin(event: PlayerJoinEvent) {

@@ -12,7 +12,7 @@ import javax.inject.Inject
 
 class BackCommand @Inject constructor(
     private val backUseCase: BackUseCase,
-): SpigotCommand {
+) : SpigotCommand {
 
     override val label: String = "back"
     override val permission = "pcbridge.tp.back"
@@ -32,10 +32,10 @@ class BackCommand @Inject constructor(
         when (result) {
             is Failure -> when (result.reason) {
                 BackUseCase.FailureReason.WORLD_NOT_FOUND
-                    -> input.sender.send().error("Could not find world")
+                -> input.sender.send().error("Could not find world")
 
                 BackUseCase.FailureReason.NO_LAST_LOCATION
-                    -> input.sender.send().error("No last known location")
+                -> input.sender.send().error("No last known location")
             }
             is Success -> {
                 input.sender.send().action("Teleporting back to previous location")

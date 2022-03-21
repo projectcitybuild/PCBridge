@@ -9,7 +9,7 @@ import javax.inject.Inject
 class HubModule @Inject constructor(
     hubCommand: HubCommand,
     setHubCommand: SetHubCommand
-): SpigotFeatureModule {
+) : SpigotFeatureModule {
 
     override val spigotCommands: Array<SpigotCommand> = arrayOf(
         hubCommand,

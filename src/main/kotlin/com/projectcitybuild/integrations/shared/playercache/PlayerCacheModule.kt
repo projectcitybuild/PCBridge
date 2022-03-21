@@ -7,7 +7,7 @@ import javax.inject.Inject
 
 class PlayerCacheModule @Inject constructor(
     playerCacheListener: PlayerCacheListener,
-): BungeecordFeatureModule {
+) : BungeecordFeatureModule {
 
     override val bungeecordListeners: Array<Listener> = arrayOf(
         playerCacheListener,

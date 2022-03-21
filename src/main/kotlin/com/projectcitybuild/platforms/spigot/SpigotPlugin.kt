@@ -21,7 +21,7 @@ import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
 import javax.inject.Inject
 
-class SpigotPlugin: JavaPlugin() {
+class SpigotPlugin : JavaPlugin() {
     private var container: SpigotPluginContainer? = null
 
     override fun onEnable() {
@@ -83,7 +83,6 @@ class SpigotPluginContainer @Inject constructor(
                 module.spigotSubChannelListeners.forEach { pluginMessageListener.register(it) }
                 module.onEnable()
             }
-
         }.onFailure {
             reportError(it)
             server.pluginManager.disablePlugin(plugin)
@@ -104,7 +103,6 @@ class SpigotPluginContainer @Inject constructor(
             if (isRedisEnabled) {
                 redisConnection.disconnect()
             }
-
         }.onFailure { reportError(it) }
     }
 

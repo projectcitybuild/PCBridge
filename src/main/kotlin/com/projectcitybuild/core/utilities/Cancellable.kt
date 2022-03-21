@@ -18,8 +18,7 @@ class Cancellable(private val handler: () -> Unit) {
 
             handler()
             isCancelled = true
-        }
-        finally {
+        } finally {
             lock.unlock()
         }
     }

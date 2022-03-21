@@ -4,7 +4,7 @@ import dagger.Reusable
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.FormatStyle
-import java.util.*
+import java.util.Locale
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -12,7 +12,7 @@ import javax.inject.Inject
 class DateTimeFormatterImpl @Inject constructor(
     private val locale: Locale,
     private val timezone: ZoneId,
-): DateTimeFormatter {
+) : DateTimeFormatter {
 
     override fun convert(timestampInSeconds: Long, formatStyle: FormatStyle): String {
         val formatter = java.time.format.DateTimeFormatter

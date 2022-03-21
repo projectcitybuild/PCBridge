@@ -2,18 +2,18 @@ package com.projectcitybuild.features.hub.commands
 
 import com.projectcitybuild.core.InvalidCommandArgumentsException
 import com.projectcitybuild.core.utilities.Failure
-import com.projectcitybuild.repositories.HubRepository
 import com.projectcitybuild.integrations.shared.crossteleport.LocationTeleporter
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.platforms.spigot.environment.SpigotCommand
 import com.projectcitybuild.platforms.spigot.environment.SpigotCommandInput
+import com.projectcitybuild.repositories.HubRepository
 import org.bukkit.entity.Player
 import javax.inject.Inject
 
 class HubCommand @Inject constructor(
     private val hubRepository: HubRepository,
     private val locationTeleporter: LocationTeleporter,
-): SpigotCommand {
+) : SpigotCommand {
 
     override val label: String = "hub"
     override val permission = "pcbridge.hub.use"

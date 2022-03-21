@@ -6,7 +6,7 @@ import com.projectcitybuild.modules.scheduler.PlatformScheduler
 import net.md_5.bungee.api.plugin.Plugin
 import java.util.concurrent.TimeUnit
 
-class BungeecordScheduler(private val plugin: Plugin): PlatformScheduler {
+class BungeecordScheduler(private val plugin: Plugin) : PlatformScheduler {
 
     override fun <T> async(task: ((T) -> Unit) -> Unit): AsyncTask<T> {
         return AsyncTask<T> { resolve ->

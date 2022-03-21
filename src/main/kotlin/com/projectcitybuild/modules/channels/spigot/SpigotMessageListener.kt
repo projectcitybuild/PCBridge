@@ -8,7 +8,7 @@ import org.bukkit.plugin.messaging.PluginMessageListener
 
 class SpigotMessageListener(
     private val logger: PlatformLogger
-): PluginMessageListener {
+) : PluginMessageListener {
 
     private val listeners = HashMap<String, SpigotSubChannelListener>()
 

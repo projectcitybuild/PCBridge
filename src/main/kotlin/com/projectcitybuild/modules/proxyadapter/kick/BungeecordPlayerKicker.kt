@@ -3,12 +3,12 @@ package com.projectcitybuild.modules.proxyadapter.kick
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.ProxyServer
 import net.md_5.bungee.api.chat.TextComponent
-import java.util.*
+import java.util.UUID
 import javax.inject.Inject
 
 class BungeecordPlayerKicker @Inject constructor(
     private val proxyServer: ProxyServer,
-): PlayerKicker {
+) : PlayerKicker {
 
     override fun kickByName(playerName: String, reason: String, context: PlayerKicker.KickContext) {
         val caseInsensitiveName = playerName.lowercase()

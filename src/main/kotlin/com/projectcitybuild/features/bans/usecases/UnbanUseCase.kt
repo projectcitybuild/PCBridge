@@ -3,13 +3,13 @@ package com.projectcitybuild.features.bans.usecases
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Result
 import com.projectcitybuild.core.utilities.Success
-import com.projectcitybuild.repositories.BanRepository
-import com.projectcitybuild.repositories.PlayerUUIDRepository
 import com.projectcitybuild.modules.proxyadapter.broadcast.MessageBroadcaster
 import com.projectcitybuild.modules.proxyadapter.messages.TextComponentBox
+import com.projectcitybuild.repositories.BanRepository
+import com.projectcitybuild.repositories.PlayerUUIDRepository
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.chat.TextComponent
-import java.util.*
+import java.util.UUID
 import javax.inject.Inject
 
 class UnbanUseCase @Inject constructor(
@@ -43,8 +43,7 @@ class UnbanUseCase @Inject constructor(
                 )
             )
             return Success(Unit)
-        }
-        catch (e: BanRepository.PlayerNotBannedException) {
+        } catch (e: BanRepository.PlayerNotBannedException) {
             return Failure(FailureReason.PlayerNotBanned)
         }
     }

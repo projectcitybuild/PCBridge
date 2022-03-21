@@ -32,8 +32,7 @@ class AsyncTask<T>(private val task: (Resolver<T>) -> Cancellable) {
                 isCompleted = true
                 completion(taskResult)
             }
-        }
-        finally {
+        } finally {
             lock.unlock()
         }
     }

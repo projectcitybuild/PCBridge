@@ -5,9 +5,9 @@ import com.projectcitybuild.core.contracts.SpigotFeatureModule
 import com.projectcitybuild.integrations.shared.crossteleport.listeners.TeleportOnJoinListener
 import javax.inject.Inject
 
-class CrossTeleportModule @Inject constructor(
+class CrossServerTeleportModule @Inject constructor(
     teleportOnJoinListener: TeleportOnJoinListener,
-): SpigotFeatureModule {
+) : SpigotFeatureModule {
 
     override val spigotListeners: Array<SpigotListener> = arrayOf(
         teleportOnJoinListener,

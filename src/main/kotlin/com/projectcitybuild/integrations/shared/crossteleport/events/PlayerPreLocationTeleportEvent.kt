@@ -9,7 +9,7 @@ import org.bukkit.event.Event as SpigotEvent
 class PlayerPreLocationTeleportEvent(
     val player: Player,
     val currentLocation: Location,
-): SpigotEvent(), BroadcastableEvent {
+) : SpigotEvent(), BroadcastableEvent {
 
     companion object {
         private val HANDLERS = HandlerList()

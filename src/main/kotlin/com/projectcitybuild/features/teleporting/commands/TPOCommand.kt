@@ -14,7 +14,7 @@ class TPOCommand @Inject constructor(
     private val proxyServer: ProxyServer,
     private val playerTeleporter: PlayerTeleporter,
     private val nameGuesser: NameGuesser
-): BungeecordCommand {
+) : BungeecordCommand {
 
     override val label: String = "tpo"
     override val permission = "pcbridge.tpo.use"
@@ -61,14 +61,16 @@ class TPOCommand @Inject constructor(
 
     override fun onTabComplete(sender: CommandSender?, args: List<String>): Iterable<String>? {
         return when {
-            args.isEmpty() -> proxyServer.players
-                .map { it.name }
-                .filter { it != sender?.name }
+            args.isEmpty() ->
+                proxyServer.players
+                    .map { it.name }
+                    .filter { it != sender?.name }
 
-            args.size == 1 -> proxyServer.players
-                .map { it.name }
-                .filter { it != sender?.name }
-                .filter { it.lowercase().startsWith(args.first().lowercase()) }
+            args.size == 1 ->
+                proxyServer.players
+                    .map { it.name }
+                    .filter { it != sender?.name }
+                    .filter { it.lowercase().startsWith(args.first().lowercase()) }
 
             args.size == 2 -> listOf("--silent")
 

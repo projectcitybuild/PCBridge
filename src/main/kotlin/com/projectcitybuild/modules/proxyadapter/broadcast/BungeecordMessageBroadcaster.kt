@@ -6,7 +6,7 @@ import javax.inject.Inject
 
 class BungeecordMessageBroadcaster @Inject constructor(
     private val proxyServer: ProxyServer,
-): MessageBroadcaster {
+) : MessageBroadcaster {
 
     override fun broadcastToAll(message: TextComponentBox) {
         proxyServer.broadcast(message.textComponent)

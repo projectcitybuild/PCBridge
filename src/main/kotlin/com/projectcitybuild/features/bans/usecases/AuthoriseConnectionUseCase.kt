@@ -6,7 +6,7 @@ import com.projectcitybuild.features.bans.Sanitizer
 import com.projectcitybuild.repositories.BanRepository
 import com.projectcitybuild.repositories.IPBanRepository
 import java.net.SocketAddress
-import java.util.*
+import java.util.UUID
 import javax.inject.Inject
 
 class AuthoriseConnectionUseCase @Inject constructor(
@@ -14,8 +14,8 @@ class AuthoriseConnectionUseCase @Inject constructor(
     private val ipBanRepository: IPBanRepository,
 ) {
     sealed class Ban {
-        data class UUID(val value: GameBan): Ban()
-        data class IP(val value: IPBan): Ban()
+        data class UUID(val value: GameBan) : Ban()
+        data class IP(val value: IPBan) : Ban()
     }
 
     @Throws(Exception::class)

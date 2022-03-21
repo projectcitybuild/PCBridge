@@ -10,7 +10,7 @@ import org.bukkit.plugin.Plugin
 class SpigotConfig(
     private val plugin: Plugin,
     private val config: FileConfiguration
-): PlatformConfig {
+) : PlatformConfig {
 
     init {
         generateDefaultConfig()

@@ -11,7 +11,7 @@ import javax.inject.Inject
 
 class ACommand @Inject constructor(
     private val proxyServer: ProxyServer
-): BungeecordCommand {
+) : BungeecordCommand {
 
     override val label: String = "a"
     override val permission = "pcbridge.chat.staff_channel"

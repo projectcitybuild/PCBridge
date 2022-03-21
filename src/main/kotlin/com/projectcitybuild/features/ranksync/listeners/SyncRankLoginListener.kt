@@ -12,7 +12,7 @@ import javax.inject.Inject
 
 class SyncRankLoginListener @Inject constructor(
     private val updatePlayerGroupsUseCase: UpdatePlayerGroupsUseCase,
-): BungeecordListener {
+) : BungeecordListener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     fun onPlayerJoin(event: PostLoginEvent) {

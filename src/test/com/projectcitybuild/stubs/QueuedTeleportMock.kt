@@ -3,7 +3,7 @@ package com.projectcitybuild.stubs
 import com.projectcitybuild.entities.QueuedTeleport
 import com.projectcitybuild.entities.TeleportType
 import java.time.LocalDateTime
-import java.util.*
+import java.util.UUID
 
 fun QueuedTeleportMock(
     playerUUID: UUID = UUID.randomUUID(),

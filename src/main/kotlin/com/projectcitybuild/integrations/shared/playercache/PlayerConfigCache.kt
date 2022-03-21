@@ -2,7 +2,7 @@ package com.projectcitybuild.integrations.shared.playercache
 
 import com.projectcitybuild.entities.PlayerConfig
 import dagger.Reusable
-import java.util.*
+import java.util.UUID
 import javax.inject.Inject
 
 /**
@@ -14,7 +14,7 @@ class PlayerConfigCache @Inject constructor() {
     private val cache = HashMap<UUID, PlayerConfig>()
 
     fun get(uuid: UUID): PlayerConfig? {
-       return cache[uuid]
+        return cache[uuid]
     }
 
     fun put(uuid: UUID, player: PlayerConfig) {

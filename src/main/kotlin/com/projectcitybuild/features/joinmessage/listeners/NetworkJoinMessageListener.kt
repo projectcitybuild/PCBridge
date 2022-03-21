@@ -13,7 +13,7 @@ import javax.inject.Inject
 
 class NetworkJoinMessageListener @Inject constructor(
     private val proxyServer: ProxyServer
-): BungeecordListener {
+) : BungeecordListener {
 
     @EventHandler
     fun onPostLoginEvent(event: PostLoginEvent) {

@@ -15,7 +15,7 @@ class RankSyncModule @Inject constructor(
     syncOtherCommand: SyncOtherCommand,
     syncRankLoginListener: SyncRankLoginListener,
     config: PlatformConfig,
-): BungeecordFeatureModule {
+) : BungeecordFeatureModule {
 
     override val bungeecordCommands: Array<BungeecordCommand> =
         if (config.get(ConfigKey.API_ENABLED)) arrayOf(

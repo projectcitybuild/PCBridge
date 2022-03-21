@@ -14,7 +14,7 @@ import javax.inject.Inject
 class TeleportOnJoinListener @Inject constructor(
     private val crossServerTeleportQueue: CrossServerTeleportQueue,
     private val logger: PlatformLogger,
-): SpigotListener {
+) : SpigotListener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     fun onPlayerJoin(event: PlayerSpawnLocationEvent) {
@@ -28,7 +28,6 @@ class TeleportOnJoinListener @Inject constructor(
                     logger.warning("Could not find ${result.reason.worldName} world to warp to")
                 }
                 is CrossServerTeleportQueue.FailureReason.DestinationPlayerNotFound -> {
-
                 }
             }
             is Success -> {

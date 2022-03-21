@@ -3,7 +3,8 @@ package com.projectcitybuild.repositories
 import com.projectcitybuild.core.infrastructure.network.APIClient
 import com.projectcitybuild.core.infrastructure.network.APIRequestFactory
 import com.projectcitybuild.entities.responses.GameBan
-import java.util.*
+import java.util.Date
+import java.util.UUID
 import javax.inject.Inject
 
 class BanRepository @Inject constructor(
@@ -62,7 +63,7 @@ class BanRepository @Inject constructor(
         }
     }
 
-    suspend fun get(targetPlayerUUID: UUID) : GameBan? {
+    suspend fun get(targetPlayerUUID: UUID): GameBan? {
         val banApi = apiRequestFactory.pcb.banApi
         val response = apiClient.execute {
             banApi.requestStatus(

@@ -4,7 +4,7 @@ import com.projectcitybuild.core.infrastructure.database.DataSource
 import com.projectcitybuild.entities.CrossServerLocation
 import com.projectcitybuild.entities.LastKnownLocation
 import java.time.LocalDateTime
-import java.util.*
+import java.util.UUID
 import javax.inject.Inject
 
 class LastKnownLocationRepositoy @Inject constructor(
