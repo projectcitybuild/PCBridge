@@ -10,7 +10,7 @@ import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.repositories.LastKnownLocationRepositoy
 import org.bukkit.Location
 import org.bukkit.event.EventHandler
-import java.util.*
+import java.util.UUID
 import javax.inject.Inject
 
 class TeleportListener @Inject constructor(

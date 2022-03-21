@@ -37,6 +37,7 @@ class WarpRepository @Inject constructor(
             .also { warpNames ->
                 sharedCacheSet.add(warpNames)
             }
+            .sorted()
     }
 
     fun all(): List<Warp> {

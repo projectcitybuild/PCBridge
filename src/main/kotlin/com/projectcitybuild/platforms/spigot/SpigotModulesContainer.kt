@@ -20,7 +20,7 @@ class SpigotModulesContainer @Inject constructor(
     hubModule: HubModule,
     joinMessageModule: JoinMessageModule.Spigot,
     teleportModule: TeleportModule.Spigot,
-    teleportHistoryModule: TeleportHistoryModule.Spigot,
+    teleportHistoryModule: TeleportHistoryModule,
     warpModule: WarpModule,
 ) {
     val modules: List<SpigotFeatureModule> = listOf(

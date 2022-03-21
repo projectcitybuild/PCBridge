@@ -4,17 +4,18 @@ import co.aikar.idb.DbRow
 import com.projectcitybuild.core.infrastructure.database.DataSource
 import com.projectcitybuild.entities.CrossServerLocation
 import com.projectcitybuild.entities.Home
+import com.projectcitybuild.modules.sharedcache.SharedCacheSetFactory
 import dagger.Reusable
 import java.time.LocalDateTime
-import java.util.*
+import java.util.UUID
 import javax.inject.Inject
 
 @Reusable
 class HomeRepository @Inject constructor(
     private val dataSource: DataSource,
-//    sharedCacheSetFactory: SharedCacheSetFactory,
+    sharedCacheSetFactory: SharedCacheSetFactory,
 ) {
-//    private val sharedCacheSet = sharedCacheSetFactory.build("all_warp_names")
+    private val sharedCacheSet = sharedCacheSetFactory.build("home_names")
 
     fun exists(name: String, playerUUID: UUID): Boolean {
         return first(name, playerUUID) != null
@@ -31,10 +32,10 @@ class HomeRepository @Inject constructor(
     }
 
     fun names(playerUUID: UUID): List<String> {
-//        val cached = sharedCacheSet.all()
-//        if (cached.isNotEmpty()) {
-//            return cached.sorted()
-//        }
+        val cached = sharedCacheSet.all(subKey = playerUUID.toString())
+        if (cached.isNotEmpty()) {
+            return cached.sorted()
+        }
 
         return dataSource.database()
             .getResults(
@@ -42,9 +43,13 @@ class HomeRepository @Inject constructor(
                 playerUUID.toString()
             )
             .map { row -> row.getString("name") }
-//            .also { warpNames ->
-//                sharedCacheSet.add(warpNames)
-//            }
+            .also { homeNames ->
+                sharedCacheSet.add(
+                    values = homeNames,
+                    subKey = playerUUID.toString(),
+                )
+            }
+            .sorted()
     }
 
     fun all(playerUUID: UUID): List<Home> {
@@ -76,7 +81,7 @@ class HomeRepository @Inject constructor(
             createdAt,
         )
 
-//        sharedCacheSet.removeAll()
+        sharedCacheSet.removeAll(subKey = playerUUID.toString())
     }
 
     fun delete(name: String, playerUUID: UUID) {
@@ -87,7 +92,10 @@ class HomeRepository @Inject constructor(
                 playerUUID.toString(),
             )
 
-//        sharedCacheSet.remove(name)
+        sharedCacheSet.remove(
+            value = name,
+            subKey = playerUUID.toString(),
+        )
     }
 }
 
