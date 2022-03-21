@@ -12,7 +12,6 @@ import net.md_5.bungee.api.chat.ClickEvent
 import net.md_5.bungee.api.chat.HoverEvent
 import net.md_5.bungee.api.chat.TextComponent
 import net.md_5.bungee.api.chat.hover.content.Text
-import org.bukkit.entity.Player
 import javax.inject.Inject
 
 class WarpsCommand @Inject constructor(
@@ -24,10 +23,6 @@ class WarpsCommand @Inject constructor(
     override val usageHelp = "/warps"
 
     override suspend fun execute(input: SpigotCommandInput) {
-        if (input.sender !is Player) {
-            input.sender.send().error("Console cannot use this command")
-            return
-        }
         if (input.args.size > 1) {
             throw InvalidCommandArgumentsException()
         }

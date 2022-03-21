@@ -29,16 +29,11 @@ class SetWarpCommand @Inject constructor(
         if (input.args.size != 1) {
             throw InvalidCommandArgumentsException()
         }
-        val player = input.sender as? Player
-        if (player == null) {
-            input.sender.send().error("Console cannot use this command")
-            return
-        }
 
         val warpName = input.args.first()
         val location = CrossServerLocation.fromLocation(
             serverName = config.get(ConfigKey.SPIGOT_SERVER_NAME),
-            location = player.location,
+            location = input.sender.location,
         )
         val result = createWarpUseCase.createWarp(warpName, location)
 

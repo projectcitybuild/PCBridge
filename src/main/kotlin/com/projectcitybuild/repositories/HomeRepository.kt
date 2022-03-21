@@ -5,9 +5,9 @@ import com.projectcitybuild.core.infrastructure.database.DataSource
 import com.projectcitybuild.entities.CrossServerLocation
 import com.projectcitybuild.entities.Home
 import dagger.Reusable
+import java.time.LocalDateTime
 import java.util.*
 import javax.inject.Inject
-import kotlin.reflect.KClass
 
 @Reusable
 class HomeRepository @Inject constructor(
@@ -56,19 +56,24 @@ class HomeRepository @Inject constructor(
             .map { row -> Home.fromDBRow(row) }
     }
 
-    fun add(home: Home) {
+    fun add(
+        playerUUID: UUID,
+        homeName: String,
+        location: CrossServerLocation,
+        createdAt: LocalDateTime
+    ) {
         dataSource.database().executeInsert(
             "INSERT INTO `homes` VALUES (null, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-            home.name,
-            home.playerUUID,
-            home.location.serverName,
-            home.location.worldName,
-            home.location.x,
-            home.location.y,
-            home.location.z,
-            home.location.pitch,
-            home.location.yaw,
-            home.createdAt,
+            homeName,
+            playerUUID,
+            location.serverName,
+            location.worldName,
+            location.x,
+            location.y,
+            location.z,
+            location.pitch,
+            location.yaw,
+            createdAt,
         )
 
 //        sharedCacheSet.removeAll()
