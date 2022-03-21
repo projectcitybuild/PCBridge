@@ -10,39 +10,46 @@ class RedisSharedCacheSet @Inject constructor(
 
     override lateinit var key: String
 
-    override fun has(value: String): Boolean {
+    private fun key(subKey: String?): String {
+        if (subKey.isNullOrEmpty()) {
+            return key
+        }
+        return "$key:$subKey"
+    }
+
+    override fun has(value: String, subKey: String?): Boolean {
         return redisConnection.resource().use {
-            it.sismember(key, value)
+            it.sismember(key(subKey), value)
         }
     }
 
-    override fun add(value: String) {
+    override fun add(value: String, subKey: String?) {
         redisConnection.resource().use {
-            it.sadd(key, value)
+            it.sadd(key(subKey), value)
         }
     }
 
-    override fun add(values: List<String>) {
+    override fun add(values: List<String>, subKey: String?) {
         redisConnection.resource().use {
-            values.forEach { value -> it.sadd(key, value) }
+            values.forEach { value -> it.sadd(key(subKey), value) }
         }
     }
 
-    override fun remove(value: String) {
+    override fun remove(value: String, subKey: String?) {
         redisConnection.resource().use {
-            it.srem(key, value)
+            it.srem(key(subKey), value)
         }
     }
 
-    override fun removeAll() {
+    override fun removeAll(subKey: String?) {
         redisConnection.resource().use {
-            it.del(key)
+            it.del(key(subKey))
         }
     }
 
-    override fun all(): Set<String> {
+    override fun all(subKey: String?): Set<String> {
         return redisConnection.resource().use {
-            it.smembers(key)
+            it.smembers(key(subKey))
         }
     }
 }

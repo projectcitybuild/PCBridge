@@ -30,37 +30,41 @@ class FlatFileSharedCacheSet @Inject constructor(
         baseFolder.resolve(relativePath)
     }
 
-    private val file by lazy {
-        val fileName = key.replace(oldValue = ":", newValue = ".") + ".json"
-        File(folder, fileName)
+    private fun file(subKey: String?) : File {
+        val formattedKey = if (subKey.isNullOrEmpty()) key else "$key.$subKey"
+        val fileName = formattedKey.replace(oldValue = ":", newValue = ".") + ".json"
+
+        return File(folder, fileName)
     }
 
     @Serializable
     data class Data(val set: Set<String>)
 
-    private fun createFileIfNeeded() {
+    private fun createFileIfNeeded(subKey: String?): File {
         if (!folder.exists()) {
             folder.mkdirs()
         }
-        if (!file.exists()) {
-            file.createNewFile()
+        val flatFile = file(subKey)
+        if (!flatFile.exists()) {
+            flatFile.createNewFile()
 
             val json = Json.encodeToJsonElement(Data(emptySet()))
 
-            FileWriter(file, Charset.defaultCharset()).use {
+            FileWriter(flatFile, Charset.defaultCharset()).use {
                 it.write(json.toString())
             }
         }
+        return flatFile
     }
 
-    private fun write(writeOperation: (MutableSet<String>) -> Unit) {
-        createFileIfNeeded()
+    private fun write(subKey: String?, writeOperation: (MutableSet<String>) -> Unit) {
+        val flatFile = createFileIfNeeded(subKey)
 
-        val set = readSet()
+        val set = readSet(flatFile)
         val mutatedSet = set.toMutableSet().also(writeOperation)
         val json = Json.encodeToJsonElement(Data(mutatedSet))
 
-        FileOutputStream(file).use { fileOutputStream ->
+        FileOutputStream(flatFile).use { fileOutputStream ->
             fileOutputStream.channel.use { channel ->
                 channel.lock().use {
                     val buff = ByteBuffer.wrap(json.toString().toByteArray(StandardCharsets.UTF_8))
@@ -70,7 +74,7 @@ class FlatFileSharedCacheSet @Inject constructor(
         }
     }
 
-    private fun readSet(): Set<String> {
+    private fun readSet(file: File): Set<String> {
         val fileContents = FileInputStream(file).use { fileInputStream ->
             fileInputStream.channel.use { channel ->
                 channel.lock(0, Long.MAX_VALUE, true).use {
@@ -90,31 +94,33 @@ class FlatFileSharedCacheSet @Inject constructor(
         return data.set
     }
 
-    override fun has(value: String): Boolean {
-        if (!file.exists()) return false
+    override fun has(value: String, subKey: String?): Boolean {
+        val flatFile = file(subKey)
+        if (!flatFile.exists()) return false
 
-        return readSet().contains(value)
+        return readSet(flatFile).contains(value)
     }
 
-    override fun add(value: String) {
-        write { it.add(value) }
+    override fun add(value: String, subKey: String?) {
+        write(subKey) { it.add(value) }
     }
 
-    override fun add(values: List<String>) {
-        write { it.addAll(values) }
+    override fun add(values: List<String>, subKey: String?) {
+        write(subKey) { it.addAll(values) }
     }
 
-    override fun remove(value: String) {
-        write { it.remove(value) }
+    override fun remove(value: String, subKey: String?) {
+        write(subKey) { it.remove(value) }
     }
 
-    override fun removeAll() {
-        write { it.clear() }
+    override fun removeAll(subKey: String?) {
+        write(subKey) { it.clear() }
     }
 
-    override fun all(): Set<String> {
-        if (!file.exists()) return emptySet()
+    override fun all(subKey: String?): Set<String> {
+        val flatFile = file(subKey)
+        if (!flatFile.exists()) return emptySet()
 
-        return readSet()
+        return readSet(flatFile)
     }
 }
