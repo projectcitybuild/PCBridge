@@ -1,7 +1,11 @@
 package com.projectcitybuild.features.bans
 
 import com.projectcitybuild.core.contracts.BungeecordFeatureModule
-import com.projectcitybuild.features.bans.commands.*
+import com.projectcitybuild.features.bans.commands.BanCommand
+import com.projectcitybuild.features.bans.commands.BanIPCommand
+import com.projectcitybuild.features.bans.commands.CheckBanCommand
+import com.projectcitybuild.features.bans.commands.UnbanCommand
+import com.projectcitybuild.features.bans.commands.UnbanIPCommand
 import com.projectcitybuild.features.bans.listeners.BanConnectionListener
 import com.projectcitybuild.modules.config.ConfigKey
 import com.projectcitybuild.modules.config.PlatformConfig

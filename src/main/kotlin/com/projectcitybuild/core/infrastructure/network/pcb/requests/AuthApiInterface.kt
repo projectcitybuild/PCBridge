@@ -3,7 +3,11 @@ package com.projectcitybuild.core.infrastructure.network.pcb.requests
 import com.projectcitybuild.entities.responses.ApiResponse
 import com.projectcitybuild.entities.responses.AuthPlayerGroups
 import com.projectcitybuild.entities.responses.AuthURL
-import retrofit2.http.*
+import retrofit2.http.Field
+import retrofit2.http.FormUrlEncoded
+import retrofit2.http.GET
+import retrofit2.http.POST
+import retrofit2.http.Path
 
 interface AuthApiInterface {
 

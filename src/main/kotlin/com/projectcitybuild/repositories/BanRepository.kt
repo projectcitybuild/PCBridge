@@ -3,8 +3,8 @@ package com.projectcitybuild.repositories
 import com.projectcitybuild.core.infrastructure.network.APIClient
 import com.projectcitybuild.core.infrastructure.network.APIRequestFactory
 import com.projectcitybuild.entities.responses.GameBan
-import java.util.UUID
 import java.util.Date
+import java.util.UUID
 import javax.inject.Inject
 
 class BanRepository @Inject constructor(

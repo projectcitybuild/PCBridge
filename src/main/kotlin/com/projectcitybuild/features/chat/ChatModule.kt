@@ -2,7 +2,13 @@ package com.projectcitybuild.features.chat
 
 import com.projectcitybuild.core.contracts.BungeecordFeatureModule
 import com.projectcitybuild.core.contracts.SpigotFeatureModule
-import com.projectcitybuild.features.chat.commands.*
+import com.projectcitybuild.features.chat.commands.ACommand
+import com.projectcitybuild.features.chat.commands.IgnoreCommand
+import com.projectcitybuild.features.chat.commands.MuteCommand
+import com.projectcitybuild.features.chat.commands.ReplyCommand
+import com.projectcitybuild.features.chat.commands.UnignoreCommand
+import com.projectcitybuild.features.chat.commands.UnmuteCommand
+import com.projectcitybuild.features.chat.commands.WhisperCommand
 import com.projectcitybuild.features.chat.listeners.ChatListener
 import com.projectcitybuild.features.chat.subchannels.IncomingChatChannelListener
 import com.projectcitybuild.modules.channels.bungeecord.BungeecordSubChannelListener
