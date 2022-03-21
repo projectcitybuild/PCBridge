@@ -1,5 +1,6 @@
 package com.projectcitybuild.repositories
 
+import co.aikar.idb.DbRow
 import com.projectcitybuild.core.infrastructure.database.DataSource
 import com.projectcitybuild.entities.CrossServerLocation
 import com.projectcitybuild.entities.Warp
@@ -21,21 +22,7 @@ class WarpRepository @Inject constructor(
     fun first(name: String): Warp? {
         return dataSource.database()
             .getFirstRow("SELECT * FROM `warps` WHERE `name`= ? LIMIT 1", name)
-            ?.let { row ->
-                Warp(
-                    name = row.get("name"),
-                    location = CrossServerLocation(
-                        serverName = row.get("server_name"),
-                        worldName = row.get("world_name"),
-                        x = row.get("x"),
-                        y = row.get("y"),
-                        z = row.get("z"),
-                        pitch = row.get("pitch"),
-                        yaw = row.get("yaw"),
-                    ),
-                    createdAt = row.get("created_at"),
-                )
-            }
+            ?.let { row -> Warp.fromDBRow(row) }
     }
 
     fun names(): List<String> {
@@ -55,21 +42,7 @@ class WarpRepository @Inject constructor(
     fun all(): List<Warp> {
         return dataSource.database()
             .getResults("SELECT * FROM `warps` ORDER BY `name` ASC")
-            .map { row ->
-                Warp(
-                    name = row.get("name"),
-                    location = CrossServerLocation(
-                        serverName = row.get("server_name"),
-                        worldName = row.get("world_name"),
-                        x = row.get("x"),
-                        y = row.get("y"),
-                        z = row.get("z"),
-                        pitch = row.get("pitch"),
-                        yaw = row.get("yaw"),
-                    ),
-                    createdAt = row.get("created_at"),
-                )
-            }
+            .map { row -> Warp.fromDBRow(row) }
     }
 
     fun add(warp: Warp) {
@@ -95,4 +68,21 @@ class WarpRepository @Inject constructor(
 
         sharedCacheSet.remove(name)
     }
+}
+
+
+private fun Warp.Companion.fromDBRow(row: DbRow): Warp {
+    return Warp(
+        name = row.get("name"),
+        location = CrossServerLocation(
+            serverName = row.get("server_name"),
+            worldName = row.get("world_name"),
+            x = row.get("x"),
+            y = row.get("y"),
+            z = row.get("z"),
+            pitch = row.get("pitch"),
+            yaw = row.get("yaw"),
+        ),
+        createdAt = row.get("created_at"),
+    )
 }

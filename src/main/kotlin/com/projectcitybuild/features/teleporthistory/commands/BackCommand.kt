@@ -30,16 +30,15 @@ class BackCommand @Inject constructor(
         val result = backUseCase.teleportBack(input.sender)
 
         when (result) {
-            is Failure -> when (result.reason) {
-                BackUseCase.FailureReason.WORLD_NOT_FOUND
-                -> input.sender.send().error("Could not find world")
-
-                BackUseCase.FailureReason.NO_LAST_LOCATION
-                -> input.sender.send().error("No last known location")
-            }
-            is Success -> {
-                input.sender.send().action("Teleporting back to previous location")
-            }
+            is Failure -> input.sender.send().error(result.reason.errorMessage())
+            is Success -> input.sender.send().action("Teleporting back to previous location")
         }
+    }
+}
+
+private fun BackUseCase.FailureReason.errorMessage(): String {
+    return when (this) {
+        BackUseCase.FailureReason.WORLD_NOT_FOUND -> "Could not find world"
+        BackUseCase.FailureReason.NO_LAST_LOCATION -> "No last known location"
     }
 }

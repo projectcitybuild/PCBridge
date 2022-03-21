@@ -2,6 +2,7 @@ package com.projectcitybuild.platforms.spigot
 
 import com.projectcitybuild.core.contracts.SpigotFeatureModule
 import com.projectcitybuild.features.chat.ChatModule
+import com.projectcitybuild.features.homes.HomesModule
 import com.projectcitybuild.features.hub.HubModule
 import com.projectcitybuild.features.joinmessage.JoinMessageModule
 import com.projectcitybuild.features.teleporthistory.TeleportHistoryModule
@@ -15,6 +16,7 @@ class SpigotModulesContainer @Inject constructor(
     chatModule: ChatModule.Spigot,
     crossServerTeleportModule: CrossServerTeleportModule,
     dynmapIntegrationModule: DynmapIntegrationModule,
+    homesModule: HomesModule,
     hubModule: HubModule,
     joinMessageModule: JoinMessageModule.Spigot,
     teleportModule: TeleportModule.Spigot,
@@ -25,6 +27,7 @@ class SpigotModulesContainer @Inject constructor(
         chatModule,
         crossServerTeleportModule,
         dynmapIntegrationModule,
+        homesModule,
         hubModule,
         joinMessageModule,
         teleportModule,
