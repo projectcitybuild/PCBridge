@@ -2,17 +2,16 @@ package com.projectcitybuild.features.teleporthistory.commands
 
 import com.projectcitybuild.core.InvalidCommandArgumentsException
 import com.projectcitybuild.core.utilities.Failure
+import com.projectcitybuild.core.utilities.Success
+import com.projectcitybuild.features.teleporthistory.usecases.BackUseCase
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.platforms.spigot.environment.SpigotCommand
 import com.projectcitybuild.platforms.spigot.environment.SpigotCommandInput
-import com.projectcitybuild.repositories.LastKnownLocationRepositoy
-import com.projectcitybuild.integrations.shared.crossteleport.LocationTeleporter
 import org.bukkit.entity.Player
 import javax.inject.Inject
 
 class BackCommand @Inject constructor(
-    private val lastKnownLocationRepositoy: LastKnownLocationRepositoy,
-    private val locationTeleporter: LocationTeleporter,
+    private val backUseCase: BackUseCase,
 ): SpigotCommand {
 
     override val label: String = "back"
@@ -28,21 +27,18 @@ class BackCommand @Inject constructor(
             throw InvalidCommandArgumentsException()
         }
 
-        val lastKnownLocation = lastKnownLocationRepositoy.get(input.sender.uniqueId)
-        if (lastKnownLocation == null) {
-            input.sender.send().error("No last known location")
-            return
-        }
+        val result = backUseCase.teleportBack(input.sender)
 
-        val result = locationTeleporter.teleport(
-            player = input.sender,
-            destination = lastKnownLocation.location,
-            destinationName = "/back",
-        )
-        if (result is Failure) {
-            when (result.reason) {
-                LocationTeleporter.FailureReason.WORLD_NOT_FOUND ->
-                    input.sender.send().error("Could not find world")
+        when (result) {
+            is Failure -> when (result.reason) {
+                BackUseCase.FailureReason.WORLD_NOT_FOUND
+                    -> input.sender.send().error("Could not find world")
+
+                BackUseCase.FailureReason.NO_LAST_LOCATION
+                    -> input.sender.send().error("No last known location")
+            }
+            is Success -> {
+                input.sender.send().action("Teleporting back to previous location")
             }
         }
     }
