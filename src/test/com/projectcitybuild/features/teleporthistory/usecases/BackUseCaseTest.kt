@@ -13,8 +13,8 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.eq
-import org.powermock.api.mockito.PowerMockito.`when`
 import org.powermock.api.mockito.PowerMockito.mock
+import org.powermock.api.mockito.PowerMockito.`when`
 import java.time.LocalDateTime
 import java.util.*
 

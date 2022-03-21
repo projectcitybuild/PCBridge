@@ -19,4 +19,4 @@ class LastWhisperedRepository @Inject constructor() {
     fun getLastWhisperer(playerUUID: UUID): UUID? {
         return lastWhispered[playerUUID]
     }
-} 
+}

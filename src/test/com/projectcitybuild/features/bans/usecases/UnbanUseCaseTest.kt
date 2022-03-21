@@ -1,9 +1,9 @@
 package com.projectcitybuild.features.bans.usecases
 
 import com.projectcitybuild.core.utilities.Failure
+import com.projectcitybuild.modules.proxyadapter.broadcast.MessageBroadcaster
 import com.projectcitybuild.repositories.BanRepository
 import com.projectcitybuild.repositories.PlayerUUIDRepository
-import com.projectcitybuild.modules.proxyadapter.broadcast.MessageBroadcaster
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
@@ -11,8 +11,8 @@ import org.junit.jupiter.api.Test
 import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
 import org.mockito.kotlin.any
-import org.powermock.api.mockito.PowerMockito.`when`
 import org.powermock.api.mockito.PowerMockito.mock
+import org.powermock.api.mockito.PowerMockito.`when`
 import java.util.*
 
 class UnbanUseCaseTest {

@@ -1,17 +1,17 @@
 package com.projectcitybuild.features.ranksync.usecases
 
-import com.projectcitybuild.core.utilities.Failure
-import com.projectcitybuild.core.utilities.Success
-import com.projectcitybuild.modules.config.ConfigKey
-import com.projectcitybuild.entities.responses.ApiError
-import com.projectcitybuild.entities.responses.ApiResponse
-import com.projectcitybuild.entities.responses.AuthPlayerGroups
-import com.projectcitybuild.entities.responses.Group
-import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.core.infrastructure.network.APIClient
 import com.projectcitybuild.core.infrastructure.network.APIClientMock
 import com.projectcitybuild.core.infrastructure.network.APIRequestFactory
 import com.projectcitybuild.core.infrastructure.network.pcb.client.PCBClient
+import com.projectcitybuild.core.utilities.Failure
+import com.projectcitybuild.core.utilities.Success
+import com.projectcitybuild.entities.responses.ApiError
+import com.projectcitybuild.entities.responses.ApiResponse
+import com.projectcitybuild.entities.responses.AuthPlayerGroups
+import com.projectcitybuild.entities.responses.Group
+import com.projectcitybuild.modules.config.ConfigKey
+import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.modules.permissions.Permissions
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -19,8 +19,8 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.verifyNoInteractions
-import org.powermock.api.mockito.PowerMockito.`when`
 import org.powermock.api.mockito.PowerMockito.mock
+import org.powermock.api.mockito.PowerMockito.`when`
 import java.util.*
 
 class UpdatePlayerGroupsUseCaseTest {
@@ -91,11 +91,13 @@ class UpdatePlayerGroupsUseCaseTest {
     fun `should assign player to given groups`() = runTest {
         val playerUUID = UUID.randomUUID()
 
-        apiClient.result = apiResponseMock(groups = listOf(
-            groupStub(1, "group1"),
-            groupStub(2, "group2"),
-            groupStub(3, null),
-        ))
+        apiClient.result = apiResponseMock(
+            groups = listOf(
+                groupStub(1, "group1"),
+                groupStub(2, "group2"),
+                groupStub(3, null),
+            )
+        )
 
         val result = useCase.sync(playerUUID)
 
