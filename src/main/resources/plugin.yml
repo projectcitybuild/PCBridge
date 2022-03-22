@@ -15,12 +15,24 @@ commands:
   back:
     description: "Teleports back to the last position you teleported from"
     usage: "/back"
+  delhome:
+    description: "Deletes a home"
+    usage: "/delhome <name>"
   delwarp:
     description: "Deletes a warp"
     usage: "/delwarp <name>"
+  home:
+    description: "Teleports to your home"
+    usage: "/home <name>"
+  homes:
+    description: "Gets a list of all of your homes"
+    usage: "/homes"
   hub:
     description: "Teleports to the Hub server"
     usage: "/hub"
+  sethome:
+    description: "Registers a home at the current position and direction"
+    usage: "/sethome <name>"
   sethub:
     description: "Sets the destination of the /hub command at the current position and direction"
     permission: "pcbridge.hub.set"

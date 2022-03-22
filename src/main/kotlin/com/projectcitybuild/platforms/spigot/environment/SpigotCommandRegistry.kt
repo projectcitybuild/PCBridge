@@ -72,11 +72,15 @@ class SpigotCommandRegistry @Inject constructor(
                     return list.toMutableList()
                 }
             }
-            plugin.getCommand(alias).let {
+            val registeredCommand = plugin.getCommand(alias)
+                ?: throw Exception("Command [$alias] not defined in plugin.yml file")
+
+            registeredCommand.apply {
                 val command = BridgedCommand(spigotCommand)
-                it.setSuspendingExecutor(command)
-                it.tabCompleter = command
-                it.permission = spigotCommand.permission
+
+                setSuspendingExecutor(command)
+                tabCompleter = command
+                permission = spigotCommand.permission
             }
         }
     }
