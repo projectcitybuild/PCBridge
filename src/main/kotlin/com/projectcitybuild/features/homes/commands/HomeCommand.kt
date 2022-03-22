@@ -40,7 +40,7 @@ class HomeCommand @Inject constructor(
                 when (result.reason) {
                     HomeUseCase.FailureReason.NO_HOMES_REGISTERED -> "You do not have any homes"
                     HomeUseCase.FailureReason.HOME_NOT_FOUND -> "Home $targetHomeName does not exist"
-                    HomeUseCase.FailureReason.WORLD_NOT_FOUND -> "The target server is either offline or invalid"
+                    HomeUseCase.FailureReason.WORLD_NOT_FOUND -> "The target world is unavailable or missing"
                 }
             )
         }

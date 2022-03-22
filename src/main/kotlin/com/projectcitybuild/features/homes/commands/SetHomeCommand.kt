@@ -46,7 +46,8 @@ class SetHomeCommand @Inject constructor(
             is Failure -> input.sender.send().error(
                 when (result.reason) {
                     CreateHomeUseCase.FailureReason.HOME_ALREADY_EXISTS -> "Home $homeName already exists"
-                    CreateHomeUseCase.FailureReason.HOME_LIMIT_REACHED -> "You have reached the max home limit for this mode"
+                    CreateHomeUseCase.FailureReason.HOME_LIMIT_REACHED -> "You have reached the max home limit for this world"
+                    CreateHomeUseCase.FailureReason.HOME_NOT_ALLOWED_IN_WORLD -> "Homes cannot be created in this world"
                 }
             )
             is Success -> input.sender.send().success("Created home $homeName")

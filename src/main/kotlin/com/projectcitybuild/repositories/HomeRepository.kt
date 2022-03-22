@@ -61,6 +61,17 @@ class HomeRepository @Inject constructor(
             .map { row -> Home.fromDBRow(row) }
     }
 
+    fun count(playerUUID: UUID, serverName: String, worldName: String): Int {
+        return dataSource.database()
+            .getFirstRow(
+                "SELECT COUNT(*) FROM `homes` WHERE `player_uuid` = ? AND `server_name` = ? AND `world_name` = ?",
+                playerUUID.toString(),
+                serverName,
+                worldName,
+            )
+            ?.getInt("COUNT(*)") ?: 0
+    }
+
     fun add(
         playerUUID: UUID,
         homeName: String,
