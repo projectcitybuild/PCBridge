@@ -17,9 +17,9 @@ class DelHomeCommand @Inject constructor(
     private val homeRepository: HomeRepository,
 ): SpigotCommand {
 
-    override val label: String = "delwarp"
-    override val permission = "pcbridge.warp.delete"
-    override val usageHelp = "/delwarp <name>"
+    override val label: String = "delhome"
+    override val permission = "pcbridge.home.delete"
+    override val usageHelp = "/delhome <name>"
 
     override suspend fun execute(input: SpigotCommandInput) {
         if (input.sender !is Player) {

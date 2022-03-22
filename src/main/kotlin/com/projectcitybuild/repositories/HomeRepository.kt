@@ -70,7 +70,7 @@ class HomeRepository @Inject constructor(
         dataSource.database().executeInsert(
             "INSERT INTO `homes` VALUES (null, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
             homeName,
-            playerUUID,
+            playerUUID.toString(),
             location.serverName,
             location.worldName,
             location.x,
@@ -103,7 +103,7 @@ private fun Home.Companion.fromDBRow(row: DbRow): Home {
     return Home(
         id = row.get("id"),
         name = row.get("name"),
-        playerUUID = java.util.UUID.fromString("player_uuid"),
+        playerUUID = UUID.fromString(row.get("player_uuid")),
         location = CrossServerLocation(
             serverName = row.get("server_name"),
             worldName = row.get("world_name"),
