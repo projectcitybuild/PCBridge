@@ -1,7 +1,7 @@
-package com.projectcitybuild.integrations.shared.playercache
+package com.projectcitybuild.integrations.internal.playercache
 
 import com.projectcitybuild.core.contracts.BungeecordFeatureModule
-import com.projectcitybuild.integrations.shared.playercache.listeners.PlayerCacheListener
+import com.projectcitybuild.integrations.internal.playercache.listeners.PlayerCacheListener
 import net.md_5.bungee.api.plugin.Listener
 import javax.inject.Inject
 

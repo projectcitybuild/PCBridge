@@ -1,4 +1,4 @@
-package com.projectcitybuild.integrations.shared.crossteleport
+package com.projectcitybuild.integrations.internal.crossteleport
 
 import com.projectcitybuild.stubs.CrossServerLocationMock
 import com.projectcitybuild.stubs.WarpMock

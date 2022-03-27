@@ -4,7 +4,7 @@ import com.projectcitybuild.stubs.CrossServerLocationMock
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Success
 import com.projectcitybuild.entities.LastKnownLocation
-import com.projectcitybuild.integrations.shared.crossteleport.LocationTeleporter
+import com.projectcitybuild.integrations.internal.crossteleport.LocationTeleporter
 import com.projectcitybuild.repositories.LastKnownLocationRepositoy
 import kotlinx.coroutines.test.runTest
 import org.bukkit.entity.Player

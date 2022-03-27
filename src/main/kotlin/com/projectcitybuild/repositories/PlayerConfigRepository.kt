@@ -2,7 +2,7 @@ package com.projectcitybuild.repositories
 
 import com.projectcitybuild.core.infrastructure.database.DataSource
 import com.projectcitybuild.entities.PlayerConfig
-import com.projectcitybuild.integrations.shared.playercache.PlayerConfigCache
+import com.projectcitybuild.integrations.internal.playercache.PlayerConfigCache
 import java.time.LocalDateTime
 import java.util.UUID
 import javax.inject.Inject

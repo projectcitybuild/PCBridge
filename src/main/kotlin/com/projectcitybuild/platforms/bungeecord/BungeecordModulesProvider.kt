@@ -7,7 +7,7 @@ import com.projectcitybuild.features.joinmessage.JoinMessageModule
 import com.projectcitybuild.features.ranksync.RankSyncModule
 import com.projectcitybuild.features.teleporting.TeleportModule
 import com.projectcitybuild.features.utility.UtilityModule
-import com.projectcitybuild.integrations.shared.playercache.PlayerCacheModule
+import com.projectcitybuild.integrations.internal.playercache.PlayerCacheModule
 import dagger.Module
 import dagger.Provides
 import javax.inject.Qualifier

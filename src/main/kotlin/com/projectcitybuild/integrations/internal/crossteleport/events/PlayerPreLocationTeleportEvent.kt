@@ -1,4 +1,4 @@
-package com.projectcitybuild.integrations.shared.crossteleport.events
+package com.projectcitybuild.integrations.internal.crossteleport.events
 
 import com.projectcitybuild.modules.eventbroadcast.BroadcastableEvent
 import org.bukkit.Location

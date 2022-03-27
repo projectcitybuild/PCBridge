@@ -9,7 +9,7 @@ import com.projectcitybuild.features.teleporthistory.TeleportHistoryModule
 import com.projectcitybuild.features.teleporting.TeleportModule
 import com.projectcitybuild.features.warps.WarpModule
 import com.projectcitybuild.integrations.plugins.dynmap.DynmapIntegrationModule
-import com.projectcitybuild.integrations.shared.crossteleport.CrossServerTeleportModule
+import com.projectcitybuild.integrations.internal.crossteleport.CrossServerTeleportModule
 import javax.inject.Inject
 
 class SpigotModulesContainer @Inject constructor(

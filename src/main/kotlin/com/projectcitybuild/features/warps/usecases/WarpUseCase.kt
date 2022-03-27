@@ -3,7 +3,7 @@ package com.projectcitybuild.features.warps.usecases
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Result
 import com.projectcitybuild.core.utilities.Success
-import com.projectcitybuild.integrations.shared.crossteleport.LocationTeleporter
+import com.projectcitybuild.integrations.internal.crossteleport.LocationTeleporter
 import com.projectcitybuild.modules.nameguesser.NameGuesser
 import com.projectcitybuild.repositories.WarpRepository
 import org.bukkit.entity.Player

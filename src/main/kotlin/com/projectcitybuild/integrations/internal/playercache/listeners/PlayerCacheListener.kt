@@ -1,8 +1,8 @@
-package com.projectcitybuild.integrations.shared.playercache.listeners
+package com.projectcitybuild.integrations.internal.playercache.listeners
 
 import com.projectcitybuild.core.BungeecordListener
 import com.projectcitybuild.features.joinmessage.events.FirstTimeJoinEvent
-import com.projectcitybuild.integrations.shared.playercache.PlayerConfigCache
+import com.projectcitybuild.integrations.internal.playercache.PlayerConfigCache
 import com.projectcitybuild.modules.eventbroadcast.LocalEventBroadcaster
 import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.repositories.PlayerConfigRepository

@@ -3,7 +3,7 @@ package com.projectcitybuild.features.homes.usecases
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Result
 import com.projectcitybuild.core.utilities.Success
-import com.projectcitybuild.integrations.shared.crossteleport.LocationTeleporter
+import com.projectcitybuild.integrations.internal.crossteleport.LocationTeleporter
 import com.projectcitybuild.modules.nameguesser.NameGuesser
 import com.projectcitybuild.repositories.HomeRepository
 import org.bukkit.entity.Player

@@ -4,7 +4,7 @@ import com.projectcitybuild.core.contracts.BungeecordFeatureModule
 import com.projectcitybuild.core.infrastructure.database.DataSource
 import com.projectcitybuild.core.infrastructure.network.APIClientImpl
 import com.projectcitybuild.entities.Channel
-import com.projectcitybuild.integrations.shared.playercache.PlayerConfigCache
+import com.projectcitybuild.integrations.internal.playercache.PlayerConfigCache
 import com.projectcitybuild.modules.channels.bungeecord.BungeecordMessageListener
 import com.projectcitybuild.modules.config.ConfigKey
 import com.projectcitybuild.modules.config.PlatformConfig

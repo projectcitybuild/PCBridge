@@ -1,11 +1,11 @@
-package com.projectcitybuild.integrations.shared.crossteleport
+package com.projectcitybuild.integrations.internal.crossteleport
 
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Result
 import com.projectcitybuild.core.utilities.Success
 import com.projectcitybuild.entities.CrossServerLocation
 import com.projectcitybuild.entities.SubChannel
-import com.projectcitybuild.integrations.shared.crossteleport.events.PlayerPreLocationTeleportEvent
+import com.projectcitybuild.integrations.internal.crossteleport.events.PlayerPreLocationTeleportEvent
 import com.projectcitybuild.modules.channels.ProxyMessenger
 import com.projectcitybuild.modules.config.ConfigKey
 import com.projectcitybuild.modules.config.PlatformConfig
