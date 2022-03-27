@@ -34,7 +34,7 @@ class CreateHomeUseCase @Inject constructor(
 
         val canBypassHomeLimit = permission.hasPermission(
             playerUUID = playerUUID,
-            permissionNode = "pcbridge.homes.limit.bypass"
+            permission = "pcbridge.homes.limit.bypass"
         )
         if (!canBypassHomeLimit) {
             val worldName = location.worldName

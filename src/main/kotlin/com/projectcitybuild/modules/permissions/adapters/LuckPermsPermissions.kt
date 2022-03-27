@@ -4,6 +4,7 @@ import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.modules.permissions.Permissions
 import net.luckperms.api.LuckPerms
 import net.luckperms.api.LuckPermsProvider
+import net.luckperms.api.model.group.Group
 import net.luckperms.api.model.user.User
 import net.luckperms.api.node.NodeType
 import net.luckperms.api.node.types.InheritanceNode
@@ -30,10 +31,18 @@ class LuckPermsPermissions @Inject constructor(
     private fun getUser(playerUUID: UUID): User {
         val user = luckPerms.userManager.getUser(playerUUID)
         if (user == null) {
-            logger.fatal("Could not load user ($playerUUID) from permissions manager")
+            logger.fatal("Could not load user ($playerUUID) from LuckPerms")
             throw PermissionUserNotFoundException()
         }
         return user
+    }
+
+    private fun getGroup(groupName: String): Group? {
+        val group = luckPerms.groupManager.getGroup(groupName)
+        if (group == null) {
+            logger.fatal("Could not load group ($groupName) from LuckPerms. Has it been created?")
+        }
+        return group
     }
 
     override fun setUserGroups(playerUUID: UUID, groupNames: List<String>) {
@@ -98,8 +107,7 @@ class LuckPermsPermissions @Inject constructor(
     }
 
     override fun getGroupDisplayName(groupName: String): String? {
-        // TODO: find better way to get Display Name node
-        return luckPerms.groupManager.getGroup(groupName)?.displayName
+        return getGroup(groupName)?.displayName
     }
 
     override fun hasPermission(playerUUID: UUID, permission: String): Boolean {

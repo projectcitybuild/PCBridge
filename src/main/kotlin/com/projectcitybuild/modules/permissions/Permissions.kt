@@ -13,5 +13,5 @@ interface Permissions {
 
     fun getGroupDisplayName(groupName: String): String?
 
-    fun hasPermission(playerUUID: UUID, permissionNode: String): Boolean
+    fun hasPermission(playerUUID: UUID, permission: String): Boolean
 }
