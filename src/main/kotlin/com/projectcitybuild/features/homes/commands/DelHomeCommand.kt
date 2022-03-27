@@ -32,7 +32,10 @@ class DelHomeCommand @Inject constructor(
 
         val homeName = input.args.first()
 
-        val result = deleteHomeUseCase.deleteHome(input.sender.uniqueId, homeName)
+        val result = deleteHomeUseCase.deleteHome(
+            playerUUID = input.sender.uniqueId,
+            homeName =homeName
+        )
         when (result) {
             is Failure -> input.sender.send().error(
                 when (result.reason) {

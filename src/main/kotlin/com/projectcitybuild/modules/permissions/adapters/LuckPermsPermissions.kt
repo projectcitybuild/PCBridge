@@ -90,8 +90,22 @@ class LuckPermsPermissions @Inject constructor(
             .joinToString(separator = "")
     }
 
+    override fun <T> getUserMetadata(playerUUID: UUID, key: String, valueTransformer: (String) -> T): T? {
+        val user = getUser(playerUUID)
+        val metadataNode = user.cachedData.metaData.getMetaValue(key, valueTransformer)
+
+        return metadataNode.get()
+    }
+
     override fun getGroupDisplayName(groupName: String): String? {
         // TODO: find better way to get Display Name node
         return luckPerms.groupManager.getGroup(groupName)?.displayName
+    }
+
+    override fun hasPermission(playerUUID: UUID, permission: String): Boolean {
+        val user = getUser(playerUUID)
+        val permissionNode = user.cachedData.permissionData.checkPermission(permission)
+
+        return permissionNode.asBoolean()
     }
 }

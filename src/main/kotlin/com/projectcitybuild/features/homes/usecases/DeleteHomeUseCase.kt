@@ -4,7 +4,7 @@ import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Result
 import com.projectcitybuild.core.utilities.Success
 import com.projectcitybuild.repositories.HomeRepository
-import java.util.*
+import java.util.UUID
 import javax.inject.Inject
 
 class DeleteHomeUseCase @Inject constructor(
@@ -14,12 +14,12 @@ class DeleteHomeUseCase @Inject constructor(
         HOME_NOT_FOUND,
     }
 
-    fun deleteHome(playerUUID: UUID, name: String): Result<Unit, FailureReason> {
-        if (!homeRepository.exists(name, playerUUID)) {
+    fun deleteHome(playerUUID: UUID, homeName: String): Result<Unit, FailureReason> {
+        if (!homeRepository.exists(homeName, playerUUID)) {
             return Failure(FailureReason.HOME_NOT_FOUND)
         }
         // TODO: Add confirmation
-        homeRepository.delete(name, playerUUID)
+        homeRepository.delete(homeName, playerUUID)
 
         return Success(Unit)
     }
