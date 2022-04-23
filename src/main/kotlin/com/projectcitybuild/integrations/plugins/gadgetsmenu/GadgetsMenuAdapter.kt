@@ -14,7 +14,7 @@ class GadgetsMenuAdapter @Inject constructor(
     private val plugin: Plugin,
     private val logger: PlatformLogger,
     private val currencyRepository: CurrencyRepository,
-): SpigotListener {
+) : SpigotListener {
     private var isEnabled = false
 
     fun enable() {
@@ -37,7 +37,7 @@ class GadgetsMenuAdapter @Inject constructor(
         plugin: Plugin,
         private val logger: PlatformLogger,
         private val repository: CurrencyRepository,
-    ): GEconomyProvider(plugin, "pcbridge") {
+    ) : GEconomyProvider(plugin, "pcbridge") {
 
         override fun getMysteryDust(p0: OfflinePlayerManager?): Int {
             if (p0 == null) {

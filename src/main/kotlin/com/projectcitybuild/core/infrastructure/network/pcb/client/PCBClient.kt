@@ -9,7 +9,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 class PCBClient(
-    private val oldAuthToken: String,  // Deprecated
+    private val oldAuthToken: String, // Deprecated
     private val authToken: String,
     private val baseUrl: String,
     private val withLogging: Boolean
