@@ -1,11 +1,11 @@
 package com.projectcitybuild.features.ranksync.usecases
 
+import com.projectcitybuild.core.infrastructure.network.APIClient
+import com.projectcitybuild.core.infrastructure.network.APIRequestFactory
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Result
 import com.projectcitybuild.core.utilities.Success
-import com.projectcitybuild.core.infrastructure.network.APIClient
-import com.projectcitybuild.core.infrastructure.network.APIRequestFactory
-import java.util.*
+import java.util.UUID
 import javax.inject.Inject
 
 class GenerateAccountVerificationURLUseCase @Inject constructor(
@@ -29,7 +29,6 @@ class GenerateAccountVerificationURLUseCase @Inject constructor(
             } else {
                 Success(VerificationURL(response.data.url))
             }
-
         } catch (e: APIClient.HTTPError) {
             if (e.errorBody?.id == "already_authenticated") {
                 return Failure(FailureReason.ALREADY_LINKED)

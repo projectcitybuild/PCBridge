@@ -5,7 +5,7 @@ import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Result
 import com.projectcitybuild.core.utilities.Success
 import com.projectcitybuild.features.bans.Sanitizer
-import com.projectcitybuild.features.bans.repositories.IPBanRepository
+import com.projectcitybuild.repositories.IPBanRepository
 import javax.inject.Inject
 
 class UnbanIPUseCase @Inject constructor(

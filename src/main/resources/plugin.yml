@@ -1,9 +1,10 @@
-main: com.projectcitybuild.platforms.spigot.SpigotPlatform
+main: com.projectcitybuild.platforms.spigot.SpigotPlugin
 name: PCBridge
-version: 3.6.0
+version: 3.7.0
 softdepend:
   - LuckPerms
   - dynmap
+  - GadgetsMenu
 
 api-version: 1.16
 

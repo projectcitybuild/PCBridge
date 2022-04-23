@@ -1,6 +1,6 @@
 name: PCBridge
-main: com.projectcitybuild.platforms.bungeecord.BungeecordPlatform
-version: 3.6.0
+main: com.projectcitybuild.platforms.bungeecord.BungeecordPlugin
+version: 3.7.0
 author: _andy
 
 softDepends: ["LuckPerms"]

@@ -16,8 +16,8 @@ class DataSource(
     private val password: String,
     private val shouldRunMigrations: Boolean,
 ) {
-    class DatabaseNotFoundException: Exception()
-    class UndeterminedMigrationVersion: Exception()
+    class DatabaseNotFoundException : Exception()
+    class UndeterminedMigrationVersion : Exception()
 
     private var database: HikariPooledDatabase? = null
 
@@ -71,8 +71,8 @@ class DataSource(
 
     private fun hasTable(expectedName: String): Boolean {
         var doesExist = false
-        val resultSet = database!!.connection.metaData.getTables(null, null, null , arrayOf("TABLE"))
-        while(resultSet.next()) {
+        val resultSet = database!!.connection.metaData.getTables(null, null, null, arrayOf("TABLE"))
+        while (resultSet.next()) {
             val tableName = resultSet.getString("TABLE_NAME")
             if (tableName == expectedName) {
                 doesExist = true

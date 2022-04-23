@@ -7,18 +7,21 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.encodeToJsonElement
-import java.io.*
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
+import java.io.FileWriter
 import java.lang.Integer.min
 import java.nio.ByteBuffer
 import java.nio.charset.Charset
 import java.nio.charset.StandardCharsets
 import javax.inject.Inject
 
-
 class FlatFileSharedCacheSet @Inject constructor(
     private val config: PlatformConfig,
     private val baseFolder: File,
-): SharedCacheSet {
+) : SharedCacheSet {
 
     override lateinit var key: String
 

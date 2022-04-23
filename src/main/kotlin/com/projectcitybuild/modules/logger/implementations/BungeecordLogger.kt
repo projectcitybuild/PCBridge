@@ -5,7 +5,7 @@ import java.util.logging.Logger
 
 class BungeecordLogger(
     private val logger: Logger
-): PlatformLogger {
+) : PlatformLogger {
 
     override fun verbose(message: String) {
         logger.finest(message)

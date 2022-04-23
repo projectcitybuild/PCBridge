@@ -1,7 +1,5 @@
 package com.projectcitybuild.modules.eventbroadcast
 
-import org.bukkit.event.Event
-
 interface LocalEventBroadcaster {
 
     /**
@@ -9,5 +7,5 @@ interface LocalEventBroadcaster {
      *
      * @param event The event to broadcast
      */
-    fun emit(event: Event)
+    fun emit(event: BroadcastableEvent)
 }

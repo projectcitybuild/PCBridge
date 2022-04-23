@@ -3,9 +3,9 @@ package com.projectcitybuild.features.bans.usecases
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Success
 import com.projectcitybuild.entities.IPBan
-import com.projectcitybuild.features.bans.repositories.IPBanRepository
 import com.projectcitybuild.modules.datetime.time.Time
 import com.projectcitybuild.modules.proxyadapter.kick.PlayerKicker
+import com.projectcitybuild.repositories.IPBanRepository
 import com.projectcitybuild.stubs.IPBanMock
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -14,8 +14,8 @@ import org.junit.jupiter.api.Test
 import org.mockito.ArgumentMatchers.anyString
 import org.mockito.Mockito.verify
 import org.mockito.kotlin.eq
-import org.powermock.api.mockito.PowerMockito.`when`
 import org.powermock.api.mockito.PowerMockito.mock
+import org.powermock.api.mockito.PowerMockito.`when`
 import java.time.LocalDateTime
 
 class BanIPUseCaseTest {

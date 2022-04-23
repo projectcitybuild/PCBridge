@@ -16,7 +16,7 @@ class SyncOtherCommand @Inject constructor(
     private val proxyServer: ProxyServer,
     private val updatePlayerGroupsUseCase: UpdatePlayerGroupsUseCase,
     private val nameGuesser: NameGuesser
-): BungeecordCommand {
+) : BungeecordCommand {
 
     override val label: String = "syncother"
     override val permission: String = "pcbridge.sync.other"
@@ -41,10 +41,10 @@ class SyncOtherCommand @Inject constructor(
             is Failure -> input.sender.send().error(
                 when (result.reason) {
                     UpdatePlayerGroupsUseCase.FailureReason.ACCOUNT_NOT_LINKED
-                        -> "Sync failed: Player does not have a linked PCB account"
+                    -> "Sync failed: Player does not have a linked PCB account"
 
                     UpdatePlayerGroupsUseCase.FailureReason.PERMISSION_USER_NOT_FOUND
-                        -> "Permission user not found. Check that the user exists in the Permission plugin"
+                    -> "Permission user not found. Check that the user exists in the Permission plugin"
                 }
             )
             is Success -> {

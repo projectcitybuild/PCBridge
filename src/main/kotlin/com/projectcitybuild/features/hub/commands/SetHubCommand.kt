@@ -3,18 +3,18 @@ package com.projectcitybuild.features.hub.commands
 import com.projectcitybuild.core.InvalidCommandArgumentsException
 import com.projectcitybuild.entities.CrossServerLocation
 import com.projectcitybuild.modules.config.ConfigKey
-import com.projectcitybuild.features.hub.repositories.HubRepository
 import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.platforms.spigot.environment.SpigotCommand
 import com.projectcitybuild.platforms.spigot.environment.SpigotCommandInput
+import com.projectcitybuild.repositories.HubRepository
 import org.bukkit.entity.Player
 import javax.inject.Inject
 
 class SetHubCommand @Inject constructor(
     private val hubRepository: HubRepository,
     private val config: PlatformConfig,
-): SpigotCommand {
+) : SpigotCommand {
 
     override val label = "sethub"
     override val permission = "pcbridge.hub.set"

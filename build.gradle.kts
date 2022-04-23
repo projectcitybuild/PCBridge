@@ -3,12 +3,12 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.ByteArrayOutputStream
 import java.io.FileOutputStream
-import java.util.*
+import java.util.Properties
 
 val generatedVersionDir = "$buildDir/generated-resources"
 
 group = "com.projectcitybuild"
-version = "3.6.0"
+version = "3.7.0"
 
 buildscript {
     repositories {
@@ -27,6 +27,13 @@ plugins {
     id("com.github.johnrengelman.shadow") version "7.0.0"
     id("org.jetbrains.kotlin.plugin.serialization") version "1.6.10"
     id("org.jetbrains.kotlin.kapt") version "1.6.10"
+
+    // klint
+    id("org.jlleitschuh.gradle.ktlint") version "10.2.1"
+
+    // klint integration with Idea
+    // https://github.com/jlleitschuh/ktlint-gradle#additional-helper-tasks
+    id("org.jlleitschuh.gradle.ktlint-idea") version "10.2.1"
 }
 
 apply(plugin = "com.github.johnrengelman.shadow")
@@ -75,18 +82,21 @@ dependencies {
     testImplementation("org.powermock:powermock-api-mockito2:2.0.9")
     testImplementation("org.mockito:mockito-inline:4.2.0")
 
-    testImplementation ("net.md-5:bungeecord-api:1.16-R0.4") // Needed for mocking in tests
-    testImplementation ("org.spigotmc:spigot-api:1.12.2-R0.1-SNAPSHOT") // Needed for mocking in tests
+    testImplementation("net.md-5:bungeecord-api:1.16-R0.4") // Needed for mocking in tests
+    testImplementation("org.spigotmc:spigot-api:1.12.2-R0.1-SNAPSHOT") // Needed for mocking in tests
 
     // dynmap
-    compileOnly ("us.dynmap:dynmap-api:3.3")
-    compileOnly ("us.dynmap:DynmapCoreAPI:3.3")
+    compileOnly("us.dynmap:dynmap-api:3.3")
+    compileOnly("us.dynmap:DynmapCoreAPI:3.3")
+
+    // GadgetsMenu
+    compileOnly(files("libs/GadgetsMenu.jar"))
 
     // Spigot
-    compileOnly ("org.spigotmc:spigot-api:1.12.2-R0.1-SNAPSHOT")
+    compileOnly("org.spigotmc:spigot-api:1.12.2-R0.1-SNAPSHOT")
 
     // Bungeecord
-    compileOnly ("net.md-5:bungeecord-api:1.16-R0.4")
+    compileOnly("net.md-5:bungeecord-api:1.16-R0.4")
 }
 
 sourceSets {

@@ -6,16 +6,17 @@ import com.projectcitybuild.core.utilities.Success
 import com.projectcitybuild.entities.QueuedTeleport
 import com.projectcitybuild.entities.SubChannel
 import com.projectcitybuild.entities.TeleportType
-import com.projectcitybuild.features.teleporting.repositories.QueuedTeleportRepository
-import com.projectcitybuild.modules.playerconfig.PlayerConfigRepository
-import com.projectcitybuild.platforms.bungeecord.MessageToSpigot
+import com.projectcitybuild.modules.channels.NodeMessenger
+import com.projectcitybuild.repositories.PlayerConfigRepository
+import com.projectcitybuild.repositories.QueuedPlayerTeleportRepository
 import net.md_5.bungee.api.connection.ProxiedPlayer
 import java.time.LocalDateTime
 import javax.inject.Inject
 
 class PlayerTeleporter @Inject constructor(
     private val playerConfigRepository: PlayerConfigRepository,
-    private val queuedTeleportRepository: QueuedTeleportRepository,
+    private val queuedPlayerTeleportRepository: QueuedPlayerTeleportRepository,
+    private val nodeMessenger: NodeMessenger,
 ) {
     enum class FailureReason {
         TARGET_PLAYER_DISALLOWS_TP,
@@ -37,18 +38,18 @@ class PlayerTeleporter @Inject constructor(
         val destinationServer = destinationPlayer.server.info
         val isDestinationPlayerOnSameServer = player.server.info.name == destinationServer.name
         if (isDestinationPlayerOnSameServer) {
-            MessageToSpigot(
-                destinationServer,
-                SubChannel.TP_SAME_SERVER,
-                arrayOf(
+            nodeMessenger.sendToNode(
+                nodeServer = destinationServer,
+                subChannel = SubChannel.TP_SAME_SERVER,
+                params = arrayOf(
                     player.uniqueId.toString(),
                     destinationPlayer.uniqueId.toString(),
                     false, // isSummon
                     shouldSupressTeleportedMessage,
-                )
-            ).send()
+                ),
+            )
         } else {
-            queuedTeleportRepository.queue(
+            queuedPlayerTeleportRepository.queue(
                 QueuedTeleport(
                     playerUUID = player.uniqueId,
                     targetPlayerUUID = destinationPlayer.uniqueId,
@@ -58,14 +59,14 @@ class PlayerTeleporter @Inject constructor(
                     createdAt = LocalDateTime.now()
                 )
             )
-            MessageToSpigot(
-                player.server.info,
-                SubChannel.TP_ACROSS_SERVER,
-                arrayOf(
+            nodeMessenger.sendToNode(
+                nodeServer = player.server.info,
+                subChannel = SubChannel.TP_ACROSS_SERVER,
+                params = arrayOf(
                     player.uniqueId.toString(),
                     destinationServer.name,
-                )
-            ).send()
+                ),
+            )
         }
 
         return Success(Unit)
@@ -87,18 +88,18 @@ class PlayerTeleporter @Inject constructor(
         val targetServer = destinationPlayer.server.info
         val isTargetPlayerOnSameServer = summonedPlayer.server.info.name == targetServer.name
         if (isTargetPlayerOnSameServer) {
-            MessageToSpigot(
-                targetServer,
-                SubChannel.TP_SAME_SERVER,
-                arrayOf(
+            nodeMessenger.sendToNode(
+                nodeServer = targetServer,
+                subChannel = SubChannel.TP_SAME_SERVER,
+                params = arrayOf(
                     summonedPlayer.uniqueId.toString(),
                     destinationPlayer.uniqueId.toString(),
                     true,
                     shouldSupressTeleportedMessage,
-                )
-            ).send()
+                ),
+            )
         } else {
-            queuedTeleportRepository.queue(
+            queuedPlayerTeleportRepository.queue(
                 QueuedTeleport(
                     playerUUID = summonedPlayer.uniqueId,
                     targetPlayerUUID = destinationPlayer.uniqueId,
@@ -108,14 +109,14 @@ class PlayerTeleporter @Inject constructor(
                     createdAt = LocalDateTime.now()
                 )
             )
-            MessageToSpigot(
-                summonedPlayer.server.info,
-                SubChannel.TP_ACROSS_SERVER,
-                arrayOf(
+            nodeMessenger.sendToNode(
+                nodeServer = summonedPlayer.server.info,
+                subChannel = SubChannel.TP_ACROSS_SERVER,
+                params = arrayOf(
                     summonedPlayer.uniqueId.toString(),
                     targetServer.name,
                 )
-            ).send()
+            )
         }
 
         return Success(Unit)

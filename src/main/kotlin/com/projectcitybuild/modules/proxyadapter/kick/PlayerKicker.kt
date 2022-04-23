@@ -1,6 +1,6 @@
 package com.projectcitybuild.modules.proxyadapter.kick
 
-import java.util.*
+import java.util.UUID
 
 interface PlayerKicker {
     enum class KickContext {

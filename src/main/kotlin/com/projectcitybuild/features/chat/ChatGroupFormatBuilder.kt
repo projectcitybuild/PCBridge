@@ -65,13 +65,13 @@ class ChatGroupFormatBuilder @Inject constructor(
                 displayName = permissions.getGroupDisplayName(highestDonor.second)
             }
             TextComponent
-                    .fromLegacyText(displayName)
-                    .forEach { c ->
-                        if (hoverName != null && hoverName.isNotEmpty()) {
-                            c.hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT, Text(hoverName))
-                        }
-                        groupTC.addExtra(c)
+                .fromLegacyText(displayName)
+                .forEach { c ->
+                    if (hoverName != null && hoverName.isNotEmpty()) {
+                        c.hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT, Text(hoverName))
                     }
+                    groupTC.addExtra(c)
+                }
         }
         if (highestTrust != null) {
             val hoverName = config.get(path = "groups.appearance.${highestTrust.second}.hover_name") as? String

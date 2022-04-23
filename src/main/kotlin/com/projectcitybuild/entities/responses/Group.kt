@@ -3,13 +3,13 @@ package com.projectcitybuild.entities.responses
 import com.google.gson.annotations.SerializedName
 
 data class Group(
-        @SerializedName("group_id") val id: Int,
-        @SerializedName("name") val name: String,
-        @SerializedName("alias") val alias: String?,
-        @SerializedName("minecraft_name") val minecraftName: String?,
-        @SerializedName("is_default") private val _isDefault: Int,
-        @SerializedName("is_staff") private val _isStaff: Int,
-        @SerializedName("is_admin") private val _isAdmin: Int
+    @SerializedName("group_id") val id: Int,
+    @SerializedName("name") val name: String,
+    @SerializedName("alias") val alias: String?,
+    @SerializedName("minecraft_name") val minecraftName: String?,
+    @SerializedName("is_default") private val _isDefault: Int,
+    @SerializedName("is_staff") private val _isStaff: Int,
+    @SerializedName("is_admin") private val _isAdmin: Int
 ) {
     val isDefaultRank: Boolean
         get() = _isDefault == 1

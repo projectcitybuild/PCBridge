@@ -1,0 +1,3 @@
+package com.projectcitybuild.modules.eventbroadcast
+
+interface BroadcastableEvent

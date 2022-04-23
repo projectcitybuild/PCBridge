@@ -9,7 +9,7 @@ import com.projectcitybuild.modules.datetime.time.Time
 import dagger.Module
 import dagger.Provides
 import java.time.ZoneId
-import java.util.*
+import java.util.Locale
 
 @Module
 class DateTimeProvider {

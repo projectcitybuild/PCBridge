@@ -1,12 +1,12 @@
 package com.projectcitybuild.features.chat.commands
 
 import com.projectcitybuild.core.InvalidCommandArgumentsException
-import com.projectcitybuild.features.chat.repositories.ChatIgnoreRepository
 import com.projectcitybuild.modules.nameguesser.NameGuesser
-import com.projectcitybuild.modules.playerconfig.PlayerConfigRepository
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
 import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
+import com.projectcitybuild.repositories.ChatIgnoreRepository
+import com.projectcitybuild.repositories.PlayerConfigRepository
 import net.md_5.bungee.api.CommandSender
 import net.md_5.bungee.api.ProxyServer
 import javax.inject.Inject
@@ -16,7 +16,7 @@ class IgnoreCommand @Inject constructor(
     private val playerConfigRepository: PlayerConfigRepository,
     private val chatIgnoreRepository: ChatIgnoreRepository,
     private val nameGuesser: NameGuesser
-): BungeecordCommand {
+) : BungeecordCommand {
 
     override val label = "ignore"
     override val permission = "pcbridge.chat.ignore"

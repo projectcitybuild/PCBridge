@@ -3,7 +3,11 @@ package com.projectcitybuild.core.infrastructure.network.pcb.requests
 import com.projectcitybuild.entities.responses.ApiResponse
 import com.projectcitybuild.entities.responses.AuthPlayerGroups
 import com.projectcitybuild.entities.responses.AuthURL
-import retrofit2.http.*
+import retrofit2.http.Field
+import retrofit2.http.FormUrlEncoded
+import retrofit2.http.GET
+import retrofit2.http.POST
+import retrofit2.http.Path
 
 interface AuthApiInterface {
 
@@ -14,15 +18,14 @@ interface AuthApiInterface {
     @FormUrlEncoded
     @POST("auth/minecraft")
     suspend fun getVerificationUrl(
-            @Field("minecraft_uuid") uuid: String
-    ) : ApiResponse<AuthURL>
+        @Field("minecraft_uuid") uuid: String
+    ): ApiResponse<AuthURL>
 
     /**
      * Fetches the groups that the given UUID belongs to
      */
     @GET("auth/minecraft/{uuid}")
     suspend fun getUserGroups(
-            @Path(value = "uuid") uuid: String
-    ) : ApiResponse<AuthPlayerGroups>
-
+        @Path(value = "uuid") uuid: String
+    ): ApiResponse<AuthPlayerGroups>
 }

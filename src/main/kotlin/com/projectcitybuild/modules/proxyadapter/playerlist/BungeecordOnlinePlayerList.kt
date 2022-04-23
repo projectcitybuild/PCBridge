@@ -1,12 +1,12 @@
 package com.projectcitybuild.modules.proxyadapter.playerlist
 
 import net.md_5.bungee.api.ProxyServer
-import java.util.*
+import java.util.UUID
 import javax.inject.Inject
 
 class BungeecordOnlinePlayerList @Inject constructor(
     private val proxyServer: ProxyServer,
-): OnlinePlayerList {
+) : OnlinePlayerList {
 
     override fun getUUID(name: String): UUID? {
         val caseInsensitiveName = name.lowercase()

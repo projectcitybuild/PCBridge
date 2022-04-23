@@ -46,45 +46,48 @@ class BungeecordCommandRegistry @Inject constructor(
         val prefixedLabels = labels.map { "pcbridge:$it" } // Replicate Spigot's command prefixing in-case of conflicts
 
         labels.plus(prefixedLabels).forEach { alias ->
-            plugin.proxy.pluginManager.registerCommand(plugin, CommandProxy(
-                alias,
-                execute = { sender, args ->
-                    if (sender == null)
-                        throw Exception("Attempted to execute command with a null CommandSender")
+            plugin.proxy.pluginManager.registerCommand(
+                plugin,
+                CommandProxy(
+                    alias,
+                    execute = { sender, args ->
+                        if (sender == null)
+                            throw Exception("Attempted to execute command with a null CommandSender")
 
-                    if (!sender.hasPermission(command.permission)) {
-                        sender.send().error("You do not have the required permission to use this command")
-                        return@CommandProxy true
-                    }
+                        if (!sender.hasPermission(command.permission)) {
+                            sender.send().error("You do not have the required permission to use this command")
+                            return@CommandProxy true
+                        }
 
-                    val input = BungeecordCommandInput(
-                        sender = sender,
-                        args = args
-                    )
-                    CoroutineScope(Dispatchers.IO).launch {
-                        runCatching {
-                            command.execute(input)
-                        }.onFailure { throwable ->
-                            if (throwable is InvalidCommandArgumentsException) {
-                                sender.sendMessage(
-                                    TextComponent(command.usageHelp).also {
-                                        it.color = ChatColor.GRAY
-                                        it.isItalic = true
-                                    }
-                                )
-                            } else {
-                                sender.send().error(throwable.message ?: "An internal error occurred performing your command")
-                                throwable.message?.let { logger.fatal(it) }
-                                throwable.printStackTrace()
+                        val input = BungeecordCommandInput(
+                            sender = sender,
+                            args = args
+                        )
+                        CoroutineScope(Dispatchers.IO).launch {
+                            runCatching {
+                                command.execute(input)
+                            }.onFailure { throwable ->
+                                if (throwable is InvalidCommandArgumentsException) {
+                                    sender.sendMessage(
+                                        TextComponent(command.usageHelp).also {
+                                            it.color = ChatColor.GRAY
+                                            it.isItalic = true
+                                        }
+                                    )
+                                } else {
+                                    sender.send().error(throwable.message ?: "An internal error occurred performing your command")
+                                    throwable.message?.let { logger.fatal(it) }
+                                    throwable.printStackTrace()
 
-                                errorReporter.report(throwable)
+                                    errorReporter.report(throwable)
+                                }
                             }
                         }
-                    }
-                    true
-                },
-                tabComplete = { sender, args -> command.onTabComplete(sender, args) }
-            ))
+                        true
+                    },
+                    tabComplete = { sender, args -> command.onTabComplete(sender, args) }
+                )
+            )
         }
     }
 }

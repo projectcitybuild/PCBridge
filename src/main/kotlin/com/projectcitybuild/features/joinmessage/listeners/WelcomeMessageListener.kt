@@ -10,7 +10,7 @@ import javax.inject.Inject
 
 class WelcomeMessageListener @Inject constructor(
     private val proxyServer: ProxyServer
-): BungeecordListener {
+) : BungeecordListener {
 
     @EventHandler
     fun onPostLoginEvent(event: PostLoginEvent) {
@@ -18,7 +18,8 @@ class WelcomeMessageListener @Inject constructor(
 
         event.player.sendMessage(
             TextComponent().add(
-                TextComponent.fromLegacyText("""
+                TextComponent.fromLegacyText(
+                    """
                     #§3Welcome to §f§lPROJECT §6§lCITY §9§lBUILD
                     #
                     #§3Type §c/register §3to become a member.
@@ -26,7 +27,8 @@ class WelcomeMessageListener @Inject constructor(
                     #§3Players online:§c $onlinePlayerCount
                     #
                     #§f§lAsk our staff if you have any questions.
-                """.trimMargin("#"))
+                """.trimMargin("#")
+                )
             )
         )
     }
