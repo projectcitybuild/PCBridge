@@ -9,7 +9,7 @@ import javax.inject.Inject
 
 class BanRepository @Inject constructor(
     private val apiRequestFactory: APIRequestFactory,
-    private val apiClient: APIClient
+    private val apiClient: APIClient,
 ) {
     class PlayerAlreadyBannedException : Exception()
     class PlayerNotBannedException : Exception()

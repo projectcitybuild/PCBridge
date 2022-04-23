@@ -1,8 +1,8 @@
-package com.projectcitybuild.features.cosmetics.adapters.gadgetsmenu
+package com.projectcitybuild.integrations.plugins.gadgetsmenu
 
 import com.projectcitybuild.core.SpigotListener
-import com.projectcitybuild.features.cosmetics.repositories.CurrencyRepository
 import com.projectcitybuild.modules.logger.PlatformLogger
+import com.projectcitybuild.repositories.CurrencyRepository
 import com.yapzhenyie.GadgetsMenu.economy.GEconomyProvider
 import com.yapzhenyie.GadgetsMenu.player.OfflinePlayerManager
 import dagger.Reusable
@@ -44,25 +44,17 @@ class GadgetsMenuAdapter @Inject constructor(
                 logger.warning("Attempted to call getMysteryDust with a null OfflinePlayerManager")
                 return 0
             }
-            return repository.getBalance(p0.uuid)
+            return repository.getBalance(playerUUID = p0.uuid)
         }
 
         override fun setMysteryDust(p0: OfflinePlayerManager?, p1: Int): Boolean {
-            if (p0 == null) {
-                logger.warning("Attempted to call setMysteryDust with a null OfflinePlayerManager")
-                return false
-            }
-            repository.setBalance(p0.uuid, p1)
-            return true
+            // Not permitted
+            return false
         }
 
         override fun addMysteryDust(p0: OfflinePlayerManager?, p1: Int): Boolean {
-            if (p0 == null) {
-                logger.warning("Attempted to call addMysteryDust with a null OfflinePlayerManager")
-                return false
-            }
-            repository.add(p0.uuid, p1)
-            return true
+            // Not permitted
+            return false
         }
 
         override fun removeMysteryDust(p0: OfflinePlayerManager?, p1: Int): Boolean {
@@ -70,7 +62,11 @@ class GadgetsMenuAdapter @Inject constructor(
                 logger.warning("Attempted to call removeMysteryDust with a null OfflinePlayerManager")
                 return false
             }
-            repository.deduct(p0.uuid, p1)
+            repository.deduct(
+                playerUUID = p0.uuid,
+                amount = p1,
+                reason = "Minecraft cosmetic purchase"
+            )
             return true
         }
     }

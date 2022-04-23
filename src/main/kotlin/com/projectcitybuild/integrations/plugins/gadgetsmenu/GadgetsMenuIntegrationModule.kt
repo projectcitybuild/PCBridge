@@ -1,12 +1,11 @@
-package com.projectcitybuild.features.warps
+package com.projectcitybuild.integrations.plugins.gadgetsmenu
 
 import com.projectcitybuild.core.contracts.SpigotFeatureModule
-import com.projectcitybuild.features.cosmetics.adapters.gadgetsmenu.GadgetsMenuAdapter
 import javax.inject.Inject
 
-class CosmeticsModule @Inject constructor(
+class GadgetsMenuIntegrationModule @Inject constructor(
     private val gadgetsMenuAdapter: GadgetsMenuAdapter,
-): SpigotFeatureModule {
+) : SpigotFeatureModule {
 
     override fun onEnable() {
         gadgetsMenuAdapter.enable()
