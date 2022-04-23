@@ -6,8 +6,8 @@ interface APIClient {
     data class ErrorBody(val error: ApiError)
 
     class HTTPError(val errorBody: ApiError?) : Exception(
-        if (errorBody != null) "Bad response received from the ban server: ${errorBody.detail}"
-        else "Bad response received from the ban server (no error given)"
+        if (errorBody != null) "Bad response received from the server: ${errorBody.detail}"
+        else "Bad response received from the server (no error given)"
     )
 
     class NetworkError : Exception(

@@ -8,13 +8,13 @@ import com.projectcitybuild.features.teleporthistory.TeleportHistoryModule
 import com.projectcitybuild.features.teleporting.TeleportModule
 import com.projectcitybuild.features.warps.WarpModule
 import com.projectcitybuild.integrations.plugins.dynmap.DynmapIntegrationModule
-import com.projectcitybuild.integrations.shared.crossteleport.CrossServerTeleportModule
+import com.projectcitybuild.integrations.plugins.gadgetsmenu.GadgetsMenuIntegrationModule
 import javax.inject.Inject
 
 class SpigotModulesContainer @Inject constructor(
     chatModule: ChatModule.Spigot,
-    crossServerTeleportModule: CrossServerTeleportModule,
     dynmapIntegrationModule: DynmapIntegrationModule,
+    gadgetsMenuIntegrationModule: GadgetsMenuIntegrationModule,
     hubModule: HubModule,
     joinMessageModule: JoinMessageModule.Spigot,
     teleportModule: TeleportModule.Spigot,
@@ -23,8 +23,8 @@ class SpigotModulesContainer @Inject constructor(
 ) {
     val modules: List<SpigotFeatureModule> = listOf(
         chatModule,
-        crossServerTeleportModule,
         dynmapIntegrationModule,
+        gadgetsMenuIntegrationModule,
         hubModule,
         joinMessageModule,
         teleportModule,

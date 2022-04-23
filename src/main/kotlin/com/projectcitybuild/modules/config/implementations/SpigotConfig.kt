@@ -19,6 +19,10 @@ class SpigotConfig(
     private fun generateDefaultConfig() {
         arrayOf(
             ConfigKey.SPIGOT_SERVER_NAME,
+            ConfigKey.API_ENABLED,
+            ConfigKey.API_TOKEN,
+            ConfigKey.API_BASE_URL,
+            ConfigKey.API_IS_LOGGING_ENABLED,
             ConfigKey.DB_HOSTNAME,
             ConfigKey.DB_PORT,
             ConfigKey.DB_NAME,

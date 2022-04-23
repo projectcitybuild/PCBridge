@@ -16,7 +16,8 @@ class NetworkProvider {
 
         return APIRequestFactory(
             pcb = PCBClient(
-                authToken = config.get(ConfigKey.API_KEY),
+                oldAuthToken = config.get(ConfigKey.API_KEY),
+                authToken = config.get(ConfigKey.API_TOKEN),
                 baseUrl = config.get(ConfigKey.API_BASE_URL),
                 withLogging = isLoggingEnabled
             ),
