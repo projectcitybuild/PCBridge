@@ -3,16 +3,17 @@ package com.projectcitybuild.features.teleporting
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Result
 import com.projectcitybuild.core.utilities.Success
+import com.projectcitybuild.modules.eventbroadcast.LocalEventBroadcaster
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.plugin.events.PlayerPreSummonEvent
 import com.projectcitybuild.plugin.events.PlayerPreTeleportEvent
 import com.projectcitybuild.repositories.PlayerConfigRepository
-import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import javax.inject.Inject
 
 class PlayerTeleporter @Inject constructor(
     private val playerConfigRepository: PlayerConfigRepository,
+    private val eventBroadcaster: LocalEventBroadcaster,
 ) {
     enum class FailureReason {
         TARGET_PLAYER_DISALLOWS_TP,
@@ -31,7 +32,7 @@ class PlayerTeleporter @Inject constructor(
             }
         }
 
-        Bukkit.getPluginManager().callEvent(
+        eventBroadcaster.emit(
             PlayerPreTeleportEvent(player, player.location)
         )
 
@@ -59,7 +60,7 @@ class PlayerTeleporter @Inject constructor(
             }
         }
 
-        Bukkit.getPluginManager().callEvent(
+        eventBroadcaster.emit(
             PlayerPreSummonEvent(summonedPlayer, summonedPlayer.location)
         )
 
