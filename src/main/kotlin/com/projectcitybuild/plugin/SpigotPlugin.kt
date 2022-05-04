@@ -12,6 +12,7 @@ import com.projectcitybuild.modules.eventbroadcast.implementations.SpigotLocalEv
 import com.projectcitybuild.modules.kick.SpigotPlayerKicker
 import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.modules.logger.implementations.SpigotLogger
+import com.projectcitybuild.modules.permissions.Permissions
 import com.projectcitybuild.modules.scheduler.implementations.SpigotScheduler
 import com.projectcitybuild.modules.timer.implementations.SpigotTimer
 import com.projectcitybuild.plugin.environment.SpigotCommandRegistry
@@ -59,6 +60,7 @@ class SpigotPluginContainer @Inject constructor(
     private val dataSource: DataSource,
     private val errorReporter: ErrorReporter,
     private val redisConnection: RedisConnection,
+    private val permissions: Permissions,
 ) {
     private val isRedisEnabled: Boolean
         get() = config.get(ConfigKey.SHARED_CACHE_ADAPTER) == "redis"
@@ -72,6 +74,8 @@ class SpigotPluginContainer @Inject constructor(
             if (isRedisEnabled) {
                 redisConnection.connect()
             }
+
+            permissions.connect()
 
             modulesContainer.modules.forEach { module ->
                 logger.verbose("Registering ${module::class.java.name} module")
