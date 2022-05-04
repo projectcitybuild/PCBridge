@@ -9,6 +9,7 @@ import com.projectcitybuild.modules.config.ConfigKey
 import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.repositories.QueuedLocationTeleportRepository
 import com.projectcitybuild.repositories.QueuedPlayerTeleportRepository
+import com.projectcitybuild.shared.locationteleport.CrossServerTeleportQueue
 import com.projectcitybuild.stubs.QueuedTeleportMock
 import kotlinx.coroutines.test.runTest
 import org.bukkit.Location

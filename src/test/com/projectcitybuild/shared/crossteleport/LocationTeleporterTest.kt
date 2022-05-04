@@ -4,13 +4,14 @@ import com.projectcitybuild.CrossServerLocationMock
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Success
 import com.projectcitybuild.entities.SubChannel
-import com.projectcitybuild.shared.crossteleport.events.PlayerPreLocationTeleportEvent
+import com.projectcitybuild.shared.locationteleport.events.PlayerPreLocationTeleportEvent
 import com.projectcitybuild.modules.channels.ProxyMessenger
 import com.projectcitybuild.modules.config.ConfigKey
 import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.modules.eventbroadcast.LocalEventBroadcaster
 import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.repositories.QueuedLocationTeleportRepository
+import com.projectcitybuild.shared.locationteleport.LocationTeleporter
 import kotlinx.coroutines.test.runTest
 import org.bukkit.Location
 import org.bukkit.Server

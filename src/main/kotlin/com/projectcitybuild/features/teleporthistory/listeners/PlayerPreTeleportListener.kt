@@ -8,7 +8,7 @@ import com.projectcitybuild.modules.config.ConfigKey
 import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.modules.scheduler.PlatformScheduler
 import com.projectcitybuild.repositories.LastKnownLocationRepositoy
-import com.projectcitybuild.shared.crossteleport.events.PlayerPreLocationTeleportEvent
+import com.projectcitybuild.shared.locationteleport.events.PlayerPreLocationTeleportEvent
 import org.bukkit.Location
 import org.bukkit.event.EventHandler
 import java.util.UUID

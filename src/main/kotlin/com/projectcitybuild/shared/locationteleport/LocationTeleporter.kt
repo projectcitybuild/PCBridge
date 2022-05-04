@@ -1,4 +1,4 @@
-package com.projectcitybuild.shared.crossteleport
+package com.projectcitybuild.shared.locationteleport
 
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Result
@@ -6,7 +6,7 @@ import com.projectcitybuild.core.utilities.Success
 import com.projectcitybuild.entities.CrossServerLocation
 import com.projectcitybuild.modules.eventbroadcast.LocalEventBroadcaster
 import com.projectcitybuild.modules.logger.PlatformLogger
-import com.projectcitybuild.shared.crossteleport.events.PlayerPreLocationTeleportEvent
+import com.projectcitybuild.shared.locationteleport.events.PlayerPreLocationTeleportEvent
 import org.bukkit.Location
 import org.bukkit.Server
 import org.bukkit.entity.Player

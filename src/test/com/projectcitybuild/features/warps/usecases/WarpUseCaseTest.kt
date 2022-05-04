@@ -3,7 +3,7 @@ package com.projectcitybuild.features.warps.usecases
 import com.projectcitybuild.WarpMock
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Success
-import com.projectcitybuild.shared.crossteleport.LocationTeleporter
+import com.projectcitybuild.shared.locationteleport.LocationTeleporter
 import com.projectcitybuild.modules.nameguesser.NameGuesser
 import com.projectcitybuild.repositories.WarpRepository
 import kotlinx.coroutines.test.runTest
