@@ -2,9 +2,9 @@ package com.projectcitybuild.features.ranksync.listeners
 
 import com.projectcitybuild.core.SpigotListener
 import com.projectcitybuild.features.ranksync.usecases.UpdatePlayerGroupsUseCase
-import net.md_5.bungee.api.event.PostLoginEvent
-import net.md_5.bungee.event.EventHandler
-import net.md_5.bungee.event.EventPriority
+import org.bukkit.event.EventHandler
+import org.bukkit.event.EventPriority
+import org.bukkit.event.player.PlayerJoinEvent
 import javax.inject.Inject
 
 class SyncRankLoginListener @Inject constructor(
@@ -12,6 +12,6 @@ class SyncRankLoginListener @Inject constructor(
 ) : SpigotListener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
-    suspend fun onPlayerJoin(event: PostLoginEvent) =
+    suspend fun onPlayerJoin(event: PlayerJoinEvent) =
         updatePlayerGroupsUseCase.sync(event.player.uniqueId)
 }

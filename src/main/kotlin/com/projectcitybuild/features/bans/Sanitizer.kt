@@ -6,7 +6,7 @@ class Sanitizer {
     private val ipPortPattern = Regex("^.*:[0-9]+$")
 
     /**
-     * Sanitizes an IP fetched from a Bungeecord proxy by
+     * Sanitizes an IP provided by a Spigot server by
      * stripping out slashes and the port if it exists
      *
      * eg. /127.0.0.1:1234 becomes 127.0.0.1

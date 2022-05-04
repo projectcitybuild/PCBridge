@@ -25,7 +25,7 @@ class BanConnectionListener @Inject constructor(
     suspend fun onLoginEvent(event: PlayerLoginEvent) = runCatching {
         val ban = authoriseConnectionUseCase.getBan(
             uuid = event.player.uniqueId,
-            ip = event.player.address.toString(),
+            ip = event.address.toString(),
         ) ?: return@runCatching
 
         val message = when (ban) {
