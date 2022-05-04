@@ -5,7 +5,7 @@ import com.projectcitybuild.core.utilities.Result
 import com.projectcitybuild.core.utilities.Success
 import com.projectcitybuild.entities.CrossServerLocation
 import com.projectcitybuild.entities.Warp
-import com.projectcitybuild.features.warps.events.WarpCreateEvent
+import com.projectcitybuild.plugin.events.WarpCreateEvent
 import com.projectcitybuild.modules.datetime.time.Time
 import com.projectcitybuild.modules.eventbroadcast.LocalEventBroadcaster
 import com.projectcitybuild.repositories.WarpRepository

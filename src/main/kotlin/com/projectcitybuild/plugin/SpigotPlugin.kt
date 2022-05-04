@@ -10,7 +10,6 @@ import com.projectcitybuild.modules.config.implementations.SpigotConfig
 import com.projectcitybuild.modules.errorreporting.ErrorReporter
 import com.projectcitybuild.modules.eventbroadcast.implementations.SpigotLocalEventBroadcaster
 import com.projectcitybuild.modules.kick.SpigotPlayerKicker
-import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.modules.logger.implementations.SpigotLogger
 import com.projectcitybuild.modules.permissions.Permissions
 import com.projectcitybuild.modules.scheduler.implementations.SpigotScheduler
@@ -51,10 +50,9 @@ class SpigotPlugin : JavaPlugin() {
 }
 
 class SpigotPluginContainer @Inject constructor(
-    private val modulesContainer: SpigotModulesContainer,
+    private val container: SpigotContainer,
     private val plugin: Plugin,
     private val config: PlatformConfig,
-    private val logger: PlatformLogger,
     private val commandRegistry: SpigotCommandRegistry,
     private val listenerRegistry: SpigotListenerRegistry,
     private val dataSource: DataSource,
@@ -77,13 +75,10 @@ class SpigotPluginContainer @Inject constructor(
 
             permissions.connect()
 
-            modulesContainer.modules.forEach { module ->
-                logger.verbose("Registering ${module::class.java.name} module")
+            container.modules.modules.forEach { it.onEnable() }
+            container.commands.commands.forEach { commandRegistry.register(it) }
+            container.listeners.listeners.forEach { listenerRegistry.register(it) }
 
-                module.spigotCommands.forEach { commandRegistry.register(it) }
-                module.spigotListeners.forEach { listenerRegistry.register(it) }
-                module.onEnable()
-            }
         }.onFailure {
             reportError(it)
             server.pluginManager.disablePlugin(plugin)
@@ -92,10 +87,7 @@ class SpigotPluginContainer @Inject constructor(
 
     fun onDisable(server: Server) {
         runCatching {
-            modulesContainer.modules.forEach { it.onDisable() }
-
-            server.messenger.unregisterOutgoingPluginChannel(plugin)
-            server.messenger.unregisterIncomingPluginChannel(plugin)
+            container.modules.modules.forEach { it.onDisable() }
 
             listenerRegistry.unregisterAll()
 

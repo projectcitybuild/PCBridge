@@ -5,7 +5,7 @@ import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Success
 import com.projectcitybuild.modules.eventbroadcast.LocalEventBroadcaster
 import com.projectcitybuild.modules.logger.PlatformLogger
-import com.projectcitybuild.shared.locationteleport.events.PlayerPreLocationTeleportEvent
+import com.projectcitybuild.plugin.events.PlayerPreLocationTeleportEvent
 import kotlinx.coroutines.test.runTest
 import org.bukkit.Location
 import org.bukkit.Server

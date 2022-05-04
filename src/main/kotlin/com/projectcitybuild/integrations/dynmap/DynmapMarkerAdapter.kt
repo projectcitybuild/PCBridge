@@ -1,8 +1,8 @@
 package com.projectcitybuild.integrations.dynmap
 
 import com.projectcitybuild.core.SpigotListener
-import com.projectcitybuild.features.warps.events.WarpCreateEvent
-import com.projectcitybuild.features.warps.events.WarpDeleteEvent
+import com.projectcitybuild.plugin.events.WarpCreateEvent
+import com.projectcitybuild.plugin.events.WarpDeleteEvent
 import com.projectcitybuild.modules.config.ConfigKey
 import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.modules.logger.PlatformLogger

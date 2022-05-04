@@ -5,6 +5,7 @@ import com.projectcitybuild.GameBanMock
 import com.projectcitybuild.features.bans.usecases.AuthoriseConnectionUseCase
 import com.projectcitybuild.modules.errorreporting.ErrorReporter
 import com.projectcitybuild.modules.logger.PlatformLogger
+import com.projectcitybuild.plugin.listeners.BanConnectionListener
 import com.projectcitybuild.stubs.IPBanMock
 import kotlinx.coroutines.test.runTest
 import org.bukkit.entity.Player
