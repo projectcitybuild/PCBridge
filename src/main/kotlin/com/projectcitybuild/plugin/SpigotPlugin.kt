@@ -25,7 +25,7 @@ class SpigotPlugin : JavaPlugin() {
     private var container: SpigotPluginContainer? = null
 
     override fun onEnable() {
-        val component = DaggerSpigotComponent.builder()
+        container = DaggerSpigotComponent.builder()
             .plugin(this)
             .javaPlugin(this)
             .server(server)
@@ -38,13 +38,13 @@ class SpigotPlugin : JavaPlugin() {
             .apiClient(APIClientImpl { this.minecraftDispatcher })
             .baseFolder(dataFolder)
             .build()
+            .container()
 
-        container = component.container()
         container?.onEnable(server)
     }
 
     override fun onDisable() {
-        container?.onDisable(server)
+        container?.onDisable()
         container = null
     }
 }
@@ -84,7 +84,7 @@ class SpigotPluginContainer @Inject constructor(
         }
     }
 
-    fun onDisable(server: Server) {
+    fun onDisable() {
         runCatching {
             container.modules.modules.forEach { it.onDisable() }
 

@@ -8,8 +8,7 @@ import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.plugin.listeners.BanConnectionListener
 import com.projectcitybuild.stubs.IPBanMock
 import kotlinx.coroutines.test.runTest
-import org.bukkit.entity.Player
-import org.bukkit.event.player.PlayerLoginEvent
+import org.bukkit.event.player.AsyncPlayerPreLoginEvent
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentMatchers.any
@@ -17,9 +16,9 @@ import org.mockito.ArgumentMatchers.anyString
 import org.mockito.ArgumentMatchers.eq
 import org.mockito.Mockito.never
 import org.mockito.Mockito.verify
-import org.powermock.api.mockito.PowerMockito.mock
 import org.powermock.api.mockito.PowerMockito.`when`
-import java.net.InetSocketAddress
+import org.powermock.api.mockito.PowerMockito.mock
+import java.net.InetAddress
 import java.util.UUID
 
 class BanConnectionListenerTest {
@@ -42,16 +41,13 @@ class BanConnectionListenerTest {
         )
     }
 
-    private fun loginEvent(uuid: UUID, ip: String = "127.0.0.1"): PlayerLoginEvent {
-        val socketAddress = mock(InetSocketAddress::class.java).also {
+    private fun loginEvent(uuid: UUID, ip: String = "127.0.0.1"): AsyncPlayerPreLoginEvent {
+        val socketAddress = mock(InetAddress::class.java).also {
             `when`(it.toString()).thenReturn(ip)
         }
-        val player = mock(Player::class.java).also {
+        return mock(AsyncPlayerPreLoginEvent::class.java).also {
             `when`(it.address).thenReturn(socketAddress)
             `when`(it.uniqueId).thenReturn(uuid)
-        }
-        return mock(PlayerLoginEvent::class.java).also {
-            `when`(it.player).thenReturn(player)
         }
     }
 
@@ -67,9 +63,9 @@ class BanConnectionListenerTest {
 
             `when`(authoriseConnectionListener.getBan(uuid, ip)).thenReturn(ban)
 
-            listener.onLoginEvent(event)
+            listener.onAsyncPreLogin(event)
 
-            verify(event).disallow(eq(PlayerLoginEvent.Result.KICK_BANNED), anyString())
+            verify(event).disallow(eq(AsyncPlayerPreLoginEvent.Result.KICK_BANNED), anyString())
         }
     }
 
@@ -81,9 +77,9 @@ class BanConnectionListenerTest {
 
         `when`(authoriseConnectionListener.getBan(uuid, ip)).thenReturn(null)
 
-        listener.onLoginEvent(event)
+        listener.onAsyncPreLogin(event)
 
-        verify(event, never()).disallow(any(), any())
+        verify(event, never()).disallow(any(AsyncPlayerPreLoginEvent.Result::class.java), any())
     }
 
     @Test
@@ -94,9 +90,9 @@ class BanConnectionListenerTest {
 
         `when`(authoriseConnectionListener.getBan(uuid, ip)).thenThrow(Exception())
 
-        listener.onLoginEvent(event)
+        listener.onAsyncPreLogin(event)
 
-        verify(event).disallow(eq(PlayerLoginEvent.Result.KICK_OTHER), anyString())
+        verify(event).disallow(eq(AsyncPlayerPreLoginEvent.Result.KICK_OTHER), anyString())
     }
 
     @Test
@@ -108,7 +104,7 @@ class BanConnectionListenerTest {
 
         `when`(authoriseConnectionListener.getBan(uuid, ip)).thenThrow(exception)
 
-        listener.onLoginEvent(event)
+        listener.onAsyncPreLogin(event)
 
         verify(errorReporter).report(exception)
     }
