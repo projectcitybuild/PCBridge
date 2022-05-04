@@ -75,9 +75,9 @@ class SpigotPluginContainer @Inject constructor(
 
             permissions.connect()
 
-            container.modules.modules.forEach { it.onEnable() }
-            container.commands.commands.forEach { commandRegistry.register(it) }
-            container.listeners.listeners.forEach { listenerRegistry.register(it) }
+            container.integrations.forEach { it.onEnable() }
+            container.commands.forEach { commandRegistry.register(it) }
+            container.listeners.forEach { listenerRegistry.register(it) }
         }.onFailure {
             reportError(it)
             server.pluginManager.disablePlugin(plugin)
@@ -86,7 +86,7 @@ class SpigotPluginContainer @Inject constructor(
 
     fun onDisable() {
         runCatching {
-            container.modules.modules.forEach { it.onDisable() }
+            container.integrations.forEach { it.onDisable() }
 
             listenerRegistry.unregisterAll()
 

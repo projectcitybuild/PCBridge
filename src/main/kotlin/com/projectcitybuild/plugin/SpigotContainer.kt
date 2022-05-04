@@ -39,32 +39,32 @@ import com.projectcitybuild.plugin.environment.SpigotCommand
 import com.projectcitybuild.plugin.listeners.BanConnectionListener
 import com.projectcitybuild.plugin.listeners.ChatListener
 import com.projectcitybuild.plugin.listeners.FirstTimeJoinMessageListener
+import com.projectcitybuild.plugin.listeners.PlayerCacheListener
 import com.projectcitybuild.plugin.listeners.PlayerPreTeleportListener
 import com.projectcitybuild.plugin.listeners.ServerJoinMessageListener
 import com.projectcitybuild.plugin.listeners.SyncRankLoginListener
 import com.projectcitybuild.plugin.listeners.WelcomeMessageListener
-import com.projectcitybuild.shared.playercache.PlayerCacheModule
 import javax.inject.Inject
 
 class SpigotContainer @Inject constructor(
-    val modules: Modules,
-    val commands: Commands,
-    val listeners: Listeners,
-    val integrations: Integrations,
+    private val _commands: Commands,
+    private val _listeners: Listeners,
+    private val _integrations: Integrations,
 ) {
-    class Modules @Inject constructor(
-        playerCacheModule: PlayerCacheModule,
-    ) {
-        val modules: List<SpigotFeatureModule> = listOf(
-            playerCacheModule,
-        )
-    }
+    val commands: List<SpigotCommand>
+        get() = _commands.enabled
+
+    val listeners: List<SpigotListener>
+        get() = _listeners.enabled
+
+    val integrations: List<SpigotFeatureModule>
+        get() = _integrations.enabled
 
     class Integrations @Inject constructor(
         dynmapIntegrationModule: DynmapIntegrationModule,
         gadgetsMenuIntegrationModule: GadgetsMenuIntegrationModule,
     ) {
-        val integrations: List<SpigotFeatureModule> = listOf(
+        val enabled: List<SpigotFeatureModule> = listOf(
             dynmapIntegrationModule,
             gadgetsMenuIntegrationModule,
         )
@@ -103,7 +103,7 @@ class SpigotContainer @Inject constructor(
         warpsCommand: WarpsCommand,
         whisperCommand: WhisperCommand,
     ) {
-        val commands: List<SpigotCommand> = listOf(
+        val enabled: List<SpigotCommand> = listOf(
             aCommand,
             backCommand,
             banCommand,
@@ -142,15 +142,17 @@ class SpigotContainer @Inject constructor(
         banConnectionListener: BanConnectionListener,
         chatListener: ChatListener,
         firstTimeJoinMessageListener: FirstTimeJoinMessageListener,
+        playerCacheListener: PlayerCacheListener,
         playerPreTeleportListener: PlayerPreTeleportListener,
         serverJoinMessageListener: ServerJoinMessageListener,
         syncRankLoginListener: SyncRankLoginListener,
         welcomeMessageListener: WelcomeMessageListener,
     ) {
-        val listeners: List<SpigotListener> = listOf(
+        val enabled: List<SpigotListener> = listOf(
             banConnectionListener,
             chatListener,
             firstTimeJoinMessageListener,
+            playerCacheListener,
             playerPreTeleportListener,
             serverJoinMessageListener,
             syncRankLoginListener,
