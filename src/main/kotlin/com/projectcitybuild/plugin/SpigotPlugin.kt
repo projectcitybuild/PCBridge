@@ -78,7 +78,6 @@ class SpigotPluginContainer @Inject constructor(
             container.modules.modules.forEach { it.onEnable() }
             container.commands.commands.forEach { commandRegistry.register(it) }
             container.listeners.listeners.forEach { listenerRegistry.register(it) }
-
         }.onFailure {
             reportError(it)
             server.pluginManager.disablePlugin(plugin)

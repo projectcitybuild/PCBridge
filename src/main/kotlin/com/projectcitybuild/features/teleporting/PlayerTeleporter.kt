@@ -3,9 +3,9 @@ package com.projectcitybuild.features.teleporting
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Result
 import com.projectcitybuild.core.utilities.Success
+import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.plugin.events.PlayerPreSummonEvent
 import com.projectcitybuild.plugin.events.PlayerPreTeleportEvent
-import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.repositories.PlayerConfigRepository
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
