@@ -1,8 +1,8 @@
 package com.projectcitybuild.repositories
 
 import com.projectcitybuild.core.infrastructure.database.DataSource
-import com.projectcitybuild.entities.SerializableLocation
 import com.projectcitybuild.entities.LastKnownLocation
+import com.projectcitybuild.entities.SerializableLocation
 import java.time.LocalDateTime
 import java.util.UUID
 import javax.inject.Inject

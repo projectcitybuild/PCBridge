@@ -11,14 +11,16 @@ class SetHubUseCase @Inject constructor(
     private val hubRepository: HubRepository,
 ) {
     fun execute(location: Location): Result<Unit, Unit> {
-        hubRepository.set(SerializableLocation(
-            location.world.name,
-            location.x,
-            location.y,
-            location.z,
-            location.pitch,
-            location.yaw,
-        ))
+        hubRepository.set(
+            SerializableLocation(
+                location.world.name,
+                location.x,
+                location.y,
+                location.z,
+                location.pitch,
+                location.yaw,
+            )
+        )
         return Success(Unit)
     }
 }
