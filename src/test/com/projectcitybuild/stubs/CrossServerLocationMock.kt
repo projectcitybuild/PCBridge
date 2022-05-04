@@ -4,7 +4,6 @@ import com.projectcitybuild.entities.SerializableLocation
 
 fun CrossServerLocationMock(serverName: String = "server_name"): SerializableLocation {
     return SerializableLocation(
-        serverName = serverName,
         worldName = "world_name",
         x = 1.0,
         y = 2.0,

@@ -2,26 +2,29 @@ package com.projectcitybuild.features.teleporting
 
 import com.projectcitybuild.PlayerConfigMock
 import com.projectcitybuild.core.utilities.Failure
+import com.projectcitybuild.modules.eventbroadcast.LocalEventBroadcaster
 import com.projectcitybuild.repositories.PlayerConfigRepository
 import kotlinx.coroutines.test.runTest
 import org.bukkit.entity.Player
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.powermock.api.mockito.PowerMockito.mock
 import org.powermock.api.mockito.PowerMockito.`when`
+import org.powermock.api.mockito.PowerMockito.mock
 import java.util.UUID
 
 class PlayerTeleporterTest {
 
     private lateinit var requester: PlayerTeleporter
+    private lateinit var eventBroadcaster: LocalEventBroadcaster
     private lateinit var playerConfigRepository: PlayerConfigRepository
 
     @BeforeEach
     fun setUp() {
         playerConfigRepository = mock(PlayerConfigRepository::class.java)
+        eventBroadcaster = mock(LocalEventBroadcaster::class.java)
 
-        requester = PlayerTeleporter(playerConfigRepository)
+        requester = PlayerTeleporter(playerConfigRepository, eventBroadcaster)
     }
 
     @Test
