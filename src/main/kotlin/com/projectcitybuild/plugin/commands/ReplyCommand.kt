@@ -1,6 +1,7 @@
 package com.projectcitybuild.plugin.commands
 
-import com.projectcitybuild.core.InvalidCommandArgumentsException
+import com.projectcitybuild.core.exceptions.CannotInvokeFromConsoleException
+import com.projectcitybuild.core.exceptions.InvalidCommandArgumentsException
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.plugin.environment.SpigotCommand
 import com.projectcitybuild.plugin.environment.SpigotCommandInput
@@ -26,8 +27,7 @@ class ReplyCommand @Inject constructor(
 
     override suspend fun execute(input: SpigotCommandInput) {
         if (input.isConsole) {
-            input.sender.send().error("Console cannot use this command")
-            return
+            throw CannotInvokeFromConsoleException()
         }
         if (input.args.isEmpty()) {
             throw InvalidCommandArgumentsException()

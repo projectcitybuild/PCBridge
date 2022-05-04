@@ -1,13 +1,13 @@
 package com.projectcitybuild.plugin.commands
 
-import com.projectcitybuild.core.InvalidCommandArgumentsException
+import com.projectcitybuild.core.exceptions.CannotInvokeFromConsoleException
+import com.projectcitybuild.core.exceptions.InvalidCommandArgumentsException
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Success
 import com.projectcitybuild.features.hub.usecases.HubTeleportUseCase
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.plugin.environment.SpigotCommand
 import com.projectcitybuild.plugin.environment.SpigotCommandInput
-import org.bukkit.entity.Player
 import javax.inject.Inject
 
 class HubCommand @Inject constructor(
@@ -19,12 +19,11 @@ class HubCommand @Inject constructor(
     override val usageHelp = "/hub"
 
     override suspend fun execute(input: SpigotCommandInput) {
+        if (input.isConsole) {
+            throw CannotInvokeFromConsoleException()
+        }
         if (input.args.isNotEmpty()) {
             throw InvalidCommandArgumentsException()
-        }
-        if (input.sender !is Player) {
-            input.sender.send().error("Console cannot use this command")
-            return
         }
 
         val result = hubTeleport.execute(player = input.player)

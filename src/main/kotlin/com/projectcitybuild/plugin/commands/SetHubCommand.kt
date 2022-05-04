@@ -1,6 +1,7 @@
 package com.projectcitybuild.plugin.commands
 
-import com.projectcitybuild.core.InvalidCommandArgumentsException
+import com.projectcitybuild.core.exceptions.CannotInvokeFromConsoleException
+import com.projectcitybuild.core.exceptions.InvalidCommandArgumentsException
 import com.projectcitybuild.features.hub.usecases.SetHubUseCase
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.plugin.environment.SpigotCommand
@@ -16,12 +17,11 @@ class SetHubCommand @Inject constructor(
     override val usageHelp = "/sethub"
 
     override suspend fun execute(input: SpigotCommandInput) {
+        if (input.isConsole) {
+            throw CannotInvokeFromConsoleException()
+        }
         if (input.args.isNotEmpty()) {
             throw InvalidCommandArgumentsException()
-        }
-        if (input.isConsole) {
-            input.sender.send().error("Console cannot use this command")
-            return
         }
 
         setHub.execute(location = input.player.location)

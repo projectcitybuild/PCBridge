@@ -1,6 +1,6 @@
 package com.projectcitybuild.plugin.commands
 
-import com.projectcitybuild.core.InvalidCommandArgumentsException
+import com.projectcitybuild.core.exceptions.InvalidCommandArgumentsException
 import com.projectcitybuild.platforms.bungeecord.extensions.add
 import com.projectcitybuild.plugin.environment.SpigotCommand
 import com.projectcitybuild.plugin.environment.SpigotCommandInput
@@ -23,7 +23,7 @@ class ACommand @Inject constructor(
         }
 
         val message = input.args.joinToString(separator = " ")
-        val senderName = input.player?.displayName ?: "CONSOLE"
+        val senderName = if (input.isConsole) "CONSOLE" else input.player.displayName
 
         server.onlinePlayers.forEach { player ->
             if (player.hasPermission("pcbridge.chat.staff_channel"))

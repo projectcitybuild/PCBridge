@@ -1,13 +1,13 @@
 package com.projectcitybuild.plugin.commands
 
-import com.projectcitybuild.core.InvalidCommandArgumentsException
+import com.projectcitybuild.core.exceptions.CannotInvokeFromConsoleException
+import com.projectcitybuild.core.exceptions.InvalidCommandArgumentsException
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Success
 import com.projectcitybuild.features.teleporthistory.usecases.BackUseCase
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.plugin.environment.SpigotCommand
 import com.projectcitybuild.plugin.environment.SpigotCommandInput
-import org.bukkit.entity.Player
 import javax.inject.Inject
 
 class BackCommand @Inject constructor(
@@ -19,15 +19,14 @@ class BackCommand @Inject constructor(
     override val usageHelp = "/back"
 
     override suspend fun execute(input: SpigotCommandInput) {
-        if (input.sender !is Player) {
-            input.sender.send().error("Console cannot use this command")
-            return
+        if (input.isConsole) {
+            throw CannotInvokeFromConsoleException()
         }
         if (input.args.isNotEmpty()) {
             throw InvalidCommandArgumentsException()
         }
 
-        val result = backUseCase.teleportBack(input.sender)
+        val result = backUseCase.teleportBack(input.player)
 
         when (result) {
             is Failure -> when (result.reason) {

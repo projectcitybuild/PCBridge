@@ -1,6 +1,7 @@
 package com.projectcitybuild.plugin.commands
 
-import com.projectcitybuild.core.InvalidCommandArgumentsException
+import com.projectcitybuild.core.exceptions.CannotInvokeFromConsoleException
+import com.projectcitybuild.core.exceptions.InvalidCommandArgumentsException
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Success
 import com.projectcitybuild.features.warps.usecases.WarpUseCase
@@ -9,7 +10,6 @@ import com.projectcitybuild.plugin.environment.SpigotCommand
 import com.projectcitybuild.plugin.environment.SpigotCommandInput
 import com.projectcitybuild.repositories.WarpRepository
 import org.bukkit.command.CommandSender
-import org.bukkit.entity.Player
 import javax.inject.Inject
 
 class WarpCommand @Inject constructor(
@@ -22,17 +22,16 @@ class WarpCommand @Inject constructor(
     override val usageHelp = "/warp <name>"
 
     override suspend fun execute(input: SpigotCommandInput) {
+        if (input.isConsole) {
+            throw CannotInvokeFromConsoleException()
+        }
         if (input.args.size != 1) {
             throw InvalidCommandArgumentsException()
-        }
-        if (input.sender !is Player) {
-            input.sender.send().error("Console cannot use this command")
-            return
         }
 
         val targetWarpName = input.args.first()
         val result = warpUseCase.warp(
-            player = input.sender,
+            player = input.player,
             targetWarpName = targetWarpName,
         )
 

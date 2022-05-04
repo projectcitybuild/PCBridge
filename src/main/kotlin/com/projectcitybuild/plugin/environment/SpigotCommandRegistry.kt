@@ -2,7 +2,8 @@ package com.projectcitybuild.plugin.environment
 
 import com.github.shynixn.mccoroutine.SuspendingCommandExecutor
 import com.github.shynixn.mccoroutine.setSuspendingExecutor
-import com.projectcitybuild.core.InvalidCommandArgumentsException
+import com.projectcitybuild.core.exceptions.CannotInvokeFromConsoleException
+import com.projectcitybuild.core.exceptions.InvalidCommandArgumentsException
 import com.projectcitybuild.modules.errorreporting.ErrorReporter
 import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.modules.textcomponentbuilder.send
@@ -50,6 +51,9 @@ class SpigotCommandRegistry @Inject constructor(
                                 it.isItalic = true
                             }
                         )
+                        true
+                    } catch (error: CannotInvokeFromConsoleException) {
+                        sender.send().error("Console cannot use this command")
                         true
                     } catch (error: Exception) {
                         sender.send().error("An internal error occurred performing your command")

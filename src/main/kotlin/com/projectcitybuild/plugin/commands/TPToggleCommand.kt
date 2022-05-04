@@ -1,6 +1,7 @@
 package com.projectcitybuild.plugin.commands
 
-import com.projectcitybuild.core.InvalidCommandArgumentsException
+import com.projectcitybuild.core.exceptions.CannotInvokeFromConsoleException
+import com.projectcitybuild.core.exceptions.InvalidCommandArgumentsException
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Success
 import com.projectcitybuild.features.teleporting.usecases.TPToggleUseCase
@@ -20,8 +21,7 @@ class TPToggleCommand @Inject constructor(
 
     override suspend fun execute(input: SpigotCommandInput) {
         if (input.isConsole) {
-            input.sender.send().error("Console cannot use this command")
-            return
+            throw CannotInvokeFromConsoleException()
         }
 
         val desiredState = when (input.args.firstOrNull()?.lowercase()) {
