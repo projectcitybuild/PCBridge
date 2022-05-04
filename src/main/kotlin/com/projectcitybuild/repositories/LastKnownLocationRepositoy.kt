@@ -1,8 +1,8 @@
 package com.projectcitybuild.repositories
 
 import com.projectcitybuild.core.infrastructure.database.DataSource
-import com.projectcitybuild.entities.CrossServerLocation
 import com.projectcitybuild.entities.LastKnownLocation
+import com.projectcitybuild.entities.SerializableLocation
 import java.time.LocalDateTime
 import java.util.UUID
 import javax.inject.Inject
@@ -12,14 +12,14 @@ class LastKnownLocationRepositoy @Inject constructor(
 ) {
     fun set(
         playerUUID: UUID,
-        location: CrossServerLocation,
+        location: SerializableLocation,
     ) {
         val lastKnownLocation = get(playerUUID)
         if (lastKnownLocation == null) {
             dataSource.database().executeInsert(
                 "INSERT INTO last_known_locations VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 playerUUID.toString(),
-                location.serverName,
+                "", // TODO: remove 'server name' parameter via migration
                 location.worldName,
                 location.x,
                 location.y,
@@ -30,8 +30,7 @@ class LastKnownLocationRepositoy @Inject constructor(
             )
         } else {
             dataSource.database().executeUpdate(
-                "UPDATE last_known_locations SET server_name = ?, world_name = ?, x = ?, y = ?, z = ?, pitch = ?, yaw = ?, created_at = ? WHERE player_uuid = ?",
-                location.serverName,
+                "UPDATE last_known_locations SET world_name = ?, x = ?, y = ?, z = ?, pitch = ?, yaw = ?, created_at = ? WHERE player_uuid = ?",
                 location.worldName,
                 location.x,
                 location.y,
@@ -52,8 +51,7 @@ class LastKnownLocationRepositoy @Inject constructor(
 
         return LastKnownLocation(
             playerUUID = UUID.fromString(row.get("player_uuid")),
-            location = CrossServerLocation(
-                serverName = row.get("server_name"),
+            location = SerializableLocation(
                 worldName = row.get("world_name"),
                 x = row.get("x"),
                 y = row.get("y"),

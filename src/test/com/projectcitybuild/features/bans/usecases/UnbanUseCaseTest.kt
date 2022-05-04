@@ -1,10 +1,10 @@
 package com.projectcitybuild.features.bans.usecases
 
 import com.projectcitybuild.core.utilities.Failure
-import com.projectcitybuild.modules.proxyadapter.broadcast.MessageBroadcaster
 import com.projectcitybuild.repositories.BanRepository
 import com.projectcitybuild.repositories.PlayerUUIDRepository
 import kotlinx.coroutines.test.runTest
+import org.bukkit.Server
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -21,18 +21,18 @@ class UnbanUseCaseTest {
 
     private lateinit var banRepository: BanRepository
     private lateinit var playerUUIDRepository: PlayerUUIDRepository
-    private lateinit var messageBroadcaster: MessageBroadcaster
+    private lateinit var server: Server
 
     @BeforeEach
     fun setUp() {
         banRepository = mock(BanRepository::class.java)
         playerUUIDRepository = mock(PlayerUUIDRepository::class.java)
-        messageBroadcaster = mock(MessageBroadcaster::class.java)
+        server = mock(Server::class.java)
 
         useCase = UnbanUseCase(
             banRepository,
             playerUUIDRepository,
-            messageBroadcaster,
+            server,
         )
     }
 
@@ -84,7 +84,6 @@ class UnbanUseCaseTest {
 
         useCase.unban(playerName, UUID.randomUUID())
 
-        verify(messageBroadcaster, times(1))
-            .broadcastToAll(any())
+        verify(server).broadcastMessage(any())
     }
 }

@@ -4,12 +4,12 @@ import com.projectcitybuild.core.extensions.toDashFormattedUUID
 import com.projectcitybuild.core.infrastructure.network.APIClient
 import com.projectcitybuild.core.infrastructure.network.APIRequestFactory
 import com.projectcitybuild.entities.responses.MojangPlayer
-import com.projectcitybuild.modules.proxyadapter.playerlist.OnlinePlayerList
+import org.bukkit.Server
 import java.util.UUID
 import javax.inject.Inject
 
 open class PlayerUUIDRepository @Inject constructor(
-    private val onlinePlayerList: OnlinePlayerList,
+    private val server: Server,
     private val apiRequestFactory: APIRequestFactory,
     private val apiClient: APIClient,
 ) {
@@ -19,7 +19,7 @@ open class PlayerUUIDRepository @Inject constructor(
     private val mojangPlayerCache = HashMap<String, MojangPlayer>()
 
     suspend fun get(playerName: String): UUID? {
-        val onlinePlayerUUID = onlinePlayerList.getUUID(playerName)
+        val onlinePlayerUUID = server.getPlayer(playerName)?.uniqueId
         if (onlinePlayerUUID != null) {
             return onlinePlayerUUID
         }

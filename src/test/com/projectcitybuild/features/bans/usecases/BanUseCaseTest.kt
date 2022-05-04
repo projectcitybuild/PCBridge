@@ -1,11 +1,11 @@
 package com.projectcitybuild.features.bans.usecases
 
 import com.projectcitybuild.core.utilities.Failure
-import com.projectcitybuild.modules.proxyadapter.broadcast.MessageBroadcaster
-import com.projectcitybuild.modules.proxyadapter.kick.PlayerKicker
+import com.projectcitybuild.modules.kick.PlayerKicker
 import com.projectcitybuild.repositories.BanRepository
 import com.projectcitybuild.repositories.PlayerUUIDRepository
 import kotlinx.coroutines.test.runTest
+import org.bukkit.Server
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -25,20 +25,20 @@ class BanUseCaseTest {
     private lateinit var banRepository: BanRepository
     private lateinit var playerUUIDRepository: PlayerUUIDRepository
     private lateinit var playerKicker: PlayerKicker
-    private lateinit var messageBroadcaster: MessageBroadcaster
+    private lateinit var server: Server
 
     @BeforeEach
     fun setUp() {
         banRepository = mock(BanRepository::class.java)
         playerUUIDRepository = mock(PlayerUUIDRepository::class.java)
         playerKicker = mock(PlayerKicker::class.java)
-        messageBroadcaster = mock(MessageBroadcaster::class.java)
+        server = mock(Server::class.java)
 
         useCase = BanUseCase(
             banRepository,
             playerUUIDRepository,
+            server,
             playerKicker,
-            messageBroadcaster,
         )
     }
 
@@ -92,8 +92,7 @@ class BanUseCaseTest {
 
         useCase.ban(playerName, UUID.randomUUID(), "staff_player", "reason")
 
-        verify(messageBroadcaster, times(1))
-            .broadcastToAll(any())
+        verify(server).broadcastMessage(any())
     }
 
     @Test
