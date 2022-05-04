@@ -21,28 +21,22 @@ class PlayerPreTeleportListener @Inject constructor(
 ) : SpigotListener {
 
     @EventHandler
-    fun onPlayerPreSummon(event: PlayerPreSummonEvent) {
-        rememberLocation(
-            playerUUID = event.summonedPlayer.uniqueId,
-            location = event.currentLocation,
-        )
-    }
+    fun onPlayerPreSummon(event: PlayerPreSummonEvent) = rememberLocation(
+        playerUUID = event.summonedPlayer.uniqueId,
+        location = event.currentLocation,
+    )
 
     @EventHandler
-    fun onPlayerPreTeleport(event: PlayerPreTeleportEvent) {
-        rememberLocation(
-            playerUUID = event.player.uniqueId,
-            location = event.currentLocation,
-        )
-    }
+    fun onPlayerPreTeleport(event: PlayerPreTeleportEvent) = rememberLocation(
+        playerUUID = event.player.uniqueId,
+        location = event.currentLocation,
+    )
 
     @EventHandler
-    fun onPlayerWarp(event: PlayerPreLocationTeleportEvent) {
-        rememberLocation(
-            playerUUID = event.player.uniqueId,
-            location = event.currentLocation,
-        )
-    }
+    fun onPlayerWarp(event: PlayerPreLocationTeleportEvent) = rememberLocation(
+        playerUUID = event.player.uniqueId,
+        location = event.currentLocation,
+    )
 
     private fun rememberLocation(playerUUID: UUID, location: Location) = scheduler.async<Unit> {
         lastKnownLocationRepository.set(
