@@ -9,9 +9,8 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.powermock.api.mockito.PowerMockito.`when`
 import org.powermock.api.mockito.PowerMockito.mock
-import java.net.SocketAddress
+import org.powermock.api.mockito.PowerMockito.`when`
 import java.util.UUID
 
 class AuthoriseConnectionUseCaseTest {

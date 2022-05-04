@@ -11,8 +11,8 @@ import org.junit.jupiter.api.Test
 import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
 import org.mockito.kotlin.any
-import org.powermock.api.mockito.PowerMockito.`when`
 import org.powermock.api.mockito.PowerMockito.mock
+import org.powermock.api.mockito.PowerMockito.`when`
 import java.util.UUID
 
 class UnbanUseCaseTest {
