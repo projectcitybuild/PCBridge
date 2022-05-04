@@ -1,17 +1,11 @@
-package com.projectcitybuild.shared.crossteleport
+package com.projectcitybuild.shared.locationteleport
 
 import com.projectcitybuild.CrossServerLocationMock
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Success
-import com.projectcitybuild.entities.SubChannel
-import com.projectcitybuild.shared.locationteleport.events.PlayerPreLocationTeleportEvent
-import com.projectcitybuild.modules.channels.ProxyMessenger
-import com.projectcitybuild.modules.config.ConfigKey
-import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.modules.eventbroadcast.LocalEventBroadcaster
 import com.projectcitybuild.modules.logger.PlatformLogger
-import com.projectcitybuild.repositories.QueuedLocationTeleportRepository
-import com.projectcitybuild.shared.locationteleport.LocationTeleporter
+import com.projectcitybuild.shared.locationteleport.events.PlayerPreLocationTeleportEvent
 import kotlinx.coroutines.test.runTest
 import org.bukkit.Location
 import org.bukkit.Server
@@ -23,8 +17,8 @@ import org.junit.jupiter.api.Test
 import org.mockito.Mockito.verify
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.verifyNoInteractions
-import org.powermock.api.mockito.PowerMockito.mock
 import org.powermock.api.mockito.PowerMockito.`when`
+import org.powermock.api.mockito.PowerMockito.mock
 import java.util.UUID
 
 class LocationTeleporterTest {
@@ -32,11 +26,8 @@ class LocationTeleporterTest {
     private lateinit var locationTeleporter: LocationTeleporter
 
     private lateinit var localEventBroadcaster: LocalEventBroadcaster
-    private lateinit var queuedLocationTeleportRepository: QueuedLocationTeleportRepository
     private lateinit var server: Server
-    private lateinit var config: PlatformConfig
     private lateinit var logger: PlatformLogger
-    private lateinit var proxyMessenger: ProxyMessenger
 
     private lateinit var player: Player
 
@@ -47,14 +38,8 @@ class LocationTeleporterTest {
     @BeforeEach
     fun setUp() {
         localEventBroadcaster = mock(LocalEventBroadcaster::class.java)
-        queuedLocationTeleportRepository = mock(QueuedLocationTeleportRepository::class.java)
         server = mock(Server::class.java)
         logger = mock(PlatformLogger::class.java)
-        config = mock(PlatformConfig::class.java).also {
-            `when`(it.get(ConfigKey.SPIGOT_SERVER_NAME)).thenReturn(SERVER_NAME)
-        }
-        proxyMessenger = mock(ProxyMessenger::class.java)
-
         player = mock(Player::class.java).also {
             `when`(it.uniqueId).thenReturn(UUID.randomUUID())
             `when`(it.location).thenReturn(mock(Location::class.java))
@@ -62,11 +47,8 @@ class LocationTeleporterTest {
 
         locationTeleporter = LocationTeleporter(
             localEventBroadcaster,
-            queuedLocationTeleportRepository,
             server,
-            config,
             logger,
-            proxyMessenger,
         )
     }
 
@@ -76,7 +58,7 @@ class LocationTeleporterTest {
 
         `when`(server.getWorld(destination.worldName)).thenReturn(null)
 
-        val result = locationTeleporter.teleport(player, destination, "destination_name")
+        val result = locationTeleporter.teleport(player, destination)
 
         assertEquals(result, Failure(LocationTeleporter.FailureReason.WORLD_NOT_FOUND))
     }
@@ -88,7 +70,7 @@ class LocationTeleporterTest {
 
         `when`(server.getWorld(destination.worldName)).thenReturn(world)
 
-        val result = locationTeleporter.teleport(player, destination, "destination_name")
+        val result = locationTeleporter.teleport(player, destination)
 
         argumentCaptor<Location>().apply {
             verify(player).teleport(capture())
@@ -100,17 +82,17 @@ class LocationTeleporterTest {
             assertEquals(firstValue.pitch, destination.pitch)
             assertEquals(firstValue.yaw, destination.yaw)
         }
-        assertEquals(result, Success(LocationTeleporter.DestinationType.SAME_SERVER))
+        assertEquals(result, Success(Unit))
     }
 
     @Test
-    fun `should emit PlayerPreLocationTeleportEvent if successful same-server teleport`() = runTest {
+    fun `should emit PlayerPreLocationTeleportEvent if successful teleport`() = runTest {
         val destination = CrossServerLocationMock(serverName = SERVER_NAME)
 
         // Assert no interaction because of failure
         `when`(server.getWorld(destination.worldName)).thenReturn(null)
 
-        locationTeleporter.teleport(player, destination, "destination_name")
+        locationTeleporter.teleport(player, destination)
 
         argumentCaptor<PlayerPreLocationTeleportEvent>().apply {
             verifyNoInteractions(localEventBroadcaster)
@@ -120,47 +102,7 @@ class LocationTeleporterTest {
         val world = mock(World::class.java)
         `when`(server.getWorld(destination.worldName)).thenReturn(world)
 
-        locationTeleporter.teleport(player, destination, "destination_name")
-
-        argumentCaptor<PlayerPreLocationTeleportEvent>().apply {
-            verify(localEventBroadcaster).emit(capture())
-
-            assertEquals(firstValue.player, player)
-            assertEquals(firstValue.currentLocation, player.location)
-        }
-    }
-
-    @Test
-    fun `should queue warp if destination server is different`() = runTest {
-        val destination = CrossServerLocationMock(serverName = "different_server")
-
-        val result = locationTeleporter.teleport(player, destination, "destination_name")
-
-        verify(queuedLocationTeleportRepository).queue(player.uniqueId, "destination_name", destination)
-        assertEquals(result, Success(LocationTeleporter.DestinationType.CROSS_SERVER))
-    }
-
-    @Test
-    fun `should transfer player to destination server if destination server is different`() = runTest {
-        val destination = CrossServerLocationMock(serverName = "different_server")
-
-        locationTeleporter.teleport(player, destination, "destination_name")
-
-        verify(proxyMessenger).sendToProxy(
-            player,
-            SubChannel.SWITCH_PLAYER_SERVER,
-            arrayOf(
-                player.uniqueId.toString(),
-                destination.serverName,
-            ),
-        )
-    }
-
-    @Test
-    fun `should emit PlayerPreLocationTeleportEvent if successful cross-server teleport`() = runTest {
-        val destination = CrossServerLocationMock(serverName = "different_server")
-
-        locationTeleporter.teleport(player, destination, "destination_name")
+        locationTeleporter.teleport(player, destination)
 
         argumentCaptor<PlayerPreLocationTeleportEvent>().apply {
             verify(localEventBroadcaster).emit(capture())

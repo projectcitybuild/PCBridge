@@ -9,8 +9,8 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.powermock.api.mockito.PowerMockito.mock
 import org.powermock.api.mockito.PowerMockito.`when`
+import org.powermock.api.mockito.PowerMockito.mock
 import java.net.SocketAddress
 import java.util.UUID
 
@@ -32,22 +32,16 @@ class AuthoriseConnectionUseCaseTest {
         )
     }
 
-    private fun socketAddress(ip: String = "127.0.0.1"): SocketAddress {
-        return mock(SocketAddress::class.java).also {
-            `when`(it.toString()).thenReturn(ip)
-        }
-    }
-
     @Test
     fun `should return UUID ban if banned`() = runTest {
         val uuid = UUID.randomUUID()
         val uuidBan = GameBanMock()
-        val ip = socketAddress()
+        val ip = "127.0.0.1"
 
         `when`(banRepository.get(uuid)).thenReturn(uuidBan)
-        `when`(ipBanRepository.get(ip.toString())).thenReturn(null)
+        `when`(ipBanRepository.get(ip)).thenReturn(null)
 
-        val ban = useCase.getBan(uuid, socketAddress())
+        val ban = useCase.getBan(uuid, ip)
 
         assertEquals(ban, AuthoriseConnectionUseCase.Ban.UUID(uuidBan))
     }
@@ -55,13 +49,13 @@ class AuthoriseConnectionUseCaseTest {
     @Test
     fun `should return IP ban if banned`() = runTest {
         val uuid = UUID.randomUUID()
-        val ip = socketAddress()
+        val ip = "127.0.0.1"
         val ipBan = IPBanMock()
 
         `when`(banRepository.get(uuid)).thenReturn(null)
-        `when`(ipBanRepository.get(ip.toString())).thenReturn(ipBan)
+        `when`(ipBanRepository.get(ip)).thenReturn(ipBan)
 
-        val ban = useCase.getBan(uuid, socketAddress())
+        val ban = useCase.getBan(uuid, ip)
 
         assertEquals(ban, AuthoriseConnectionUseCase.Ban.IP(ipBan))
     }
@@ -69,12 +63,12 @@ class AuthoriseConnectionUseCaseTest {
     @Test
     fun `should return null if not banned`() = runTest {
         val uuid = UUID.randomUUID()
-        val ip = socketAddress()
+        val ip = "127.0.0.1"
 
         `when`(banRepository.get(uuid)).thenReturn(null)
-        `when`(ipBanRepository.get(ip.toString())).thenReturn(null)
+        `when`(ipBanRepository.get(ip)).thenReturn(null)
 
-        val ban = useCase.getBan(uuid, socketAddress())
+        val ban = useCase.getBan(uuid, ip)
 
         assertNull(ban)
     }

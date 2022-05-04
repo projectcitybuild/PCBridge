@@ -3,9 +3,9 @@ package com.projectcitybuild.features.warps.usecases
 import com.projectcitybuild.WarpMock
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Success
-import com.projectcitybuild.shared.locationteleport.LocationTeleporter
 import com.projectcitybuild.modules.nameguesser.NameGuesser
 import com.projectcitybuild.repositories.WarpRepository
+import com.projectcitybuild.shared.locationteleport.LocationTeleporter
 import kotlinx.coroutines.test.runTest
 import org.bukkit.Location
 import org.bukkit.entity.Player
@@ -13,8 +13,8 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
-import org.powermock.api.mockito.PowerMockito.mock
 import org.powermock.api.mockito.PowerMockito.`when`
+import org.powermock.api.mockito.PowerMockito.mock
 
 class WarpUseCaseTest {
 
@@ -59,7 +59,7 @@ class WarpUseCaseTest {
         `when`(warpRepository.names()).thenReturn(listOf(warp.name))
         `when`(warpRepository.first(warpName)).thenReturn(warp)
         `when`(nameGuesser.guessClosest(any(), any())).thenReturn(warpName)
-        `when`(locationTeleporter.teleport(player, warp.location, warp.name)).thenReturn(
+        `when`(locationTeleporter.teleport(player, warp.location)).thenReturn(
             Failure(LocationTeleporter.FailureReason.WORLD_NOT_FOUND)
         )
 
@@ -76,20 +76,18 @@ class WarpUseCaseTest {
         `when`(warpRepository.names()).thenReturn(listOf(warp.name))
         `when`(warpRepository.first(warpName)).thenReturn(warp)
         `when`(nameGuesser.guessClosest(any(), any())).thenReturn(warpName)
-        `when`(locationTeleporter.teleport(player, warp.location, warp.name)).thenReturn(
-            Success(LocationTeleporter.DestinationType.CROSS_SERVER)
-        )
+        `when`(locationTeleporter.teleport(player, warp.location)).thenReturn(Success(Unit))
+
         assertEquals(
             useCase.warp(player, warpName),
-            Success(WarpUseCase.WarpEvent(warpName = warp.name, isSameServer = false))
+            Success(WarpUseCase.WarpEvent(warpName = warp.name))
         )
 
-        `when`(locationTeleporter.teleport(player, warp.location, warp.name)).thenReturn(
-            Success(LocationTeleporter.DestinationType.SAME_SERVER)
-        )
+        `when`(locationTeleporter.teleport(player, warp.location)).thenReturn(Success(Unit))
+
         assertEquals(
             useCase.warp(player, warpName),
-            Success(WarpUseCase.WarpEvent(warpName = warp.name, isSameServer = true))
+            Success(WarpUseCase.WarpEvent(warpName = warp.name))
         )
     }
 }

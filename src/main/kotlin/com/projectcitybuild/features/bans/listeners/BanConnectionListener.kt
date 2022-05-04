@@ -22,50 +22,47 @@ class BanConnectionListener @Inject constructor(
 ) : SpigotListener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
-    suspend fun onLoginEvent(event: PlayerLoginEvent) {
-        runCatching {
-            val ban = authoriseConnectionUseCase.getBan(
-                uuid = event.player.uniqueId,
-                ip = event.player.address,
-            ) ?: return@runCatching
+    suspend fun onLoginEvent(event: PlayerLoginEvent) = runCatching {
+        val ban = authoriseConnectionUseCase.getBan(
+            uuid = event.player.uniqueId,
+            ip = event.player.address.toString(),
+        ) ?: return@runCatching
 
-            val message = when (ban) {
-                is AuthoriseConnectionUseCase.Ban.UUID -> TextComponent()
-                    .add("You are currently banned.\n\n") {
-                        it.color = ChatColor.RED
-                        it.isBold = true
-                    }
-                    .add("Reason: ") { it.color = ChatColor.GRAY }
-                    .add(ban.value.reason ?: "No reason provided") { it.color = ChatColor.WHITE }
-                    .add("\n")
-                    .add("Expires: ") { it.color = ChatColor.GRAY }
-                    .add((ban.value.expiresAt?.let { dateTimeFormatter.convert(it, FormatStyle.SHORT) } ?: "Never") + "\n\n") { it.color = ChatColor.WHITE }
-                    .add("Appeal @ https://projectcitybuild.com") { it.color = ChatColor.AQUA }
+        val message = when (ban) {
+            is AuthoriseConnectionUseCase.Ban.UUID -> TextComponent()
+                .add("You are currently banned.\n\n") {
+                    it.color = ChatColor.RED
+                    it.isBold = true
+                }
+                .add("Reason: ") { it.color = ChatColor.GRAY }
+                .add(ban.value.reason ?: "No reason provided") { it.color = ChatColor.WHITE }
+                .add("\n")
+                .add("Expires: ") { it.color = ChatColor.GRAY }
+                .add((ban.value.expiresAt?.let { dateTimeFormatter.convert(it, FormatStyle.SHORT) } ?: "Never") + "\n\n") { it.color = ChatColor.WHITE }
+                .add("Appeal @ https://projectcitybuild.com") { it.color = ChatColor.AQUA }
 
-                is AuthoriseConnectionUseCase.Ban.IP -> TextComponent()
-                    .add("You are currently IP banned.\n\n") {
-                        it.color = ChatColor.RED
-                        it.isBold = true
-                    }
-                    .add("Reason: ") { it.color = ChatColor.GRAY }
-                    .add(ban.value.reason.ifEmpty { "No reason provided" }) { it.color = ChatColor.WHITE }
-                    .add("\n")
-                    .add("\n\n")
-                    .add("Appeal @ https://projectcitybuild.com") { it.color = ChatColor.AQUA }
-            }
-            event.disallow(PlayerLoginEvent.Result.KICK_BANNED, message.toLegacyText())
+            is AuthoriseConnectionUseCase.Ban.IP -> TextComponent()
+                .add("You are currently IP banned.\n\n") {
+                    it.color = ChatColor.RED
+                    it.isBold = true
+                }
+                .add("Reason: ") { it.color = ChatColor.GRAY }
+                .add(ban.value.reason.ifEmpty { "No reason provided" }) { it.color = ChatColor.WHITE }
+                .add("\n")
+                .add("\n\n")
+                .add("Appeal @ https://projectcitybuild.com") { it.color = ChatColor.AQUA }
         }
-            .onFailure { throwable ->
-                throwable.message?.let { logger.fatal(it) }
-                throwable.printStackTrace()
+        event.disallow(PlayerLoginEvent.Result.KICK_BANNED, message.toLegacyText())
+    }.onFailure { throwable ->
+        throwable.message?.let { logger.fatal(it) }
+        throwable.printStackTrace()
 
-                errorReporter.report(throwable)
+        errorReporter.report(throwable)
 
-                // If something goes wrong, better not to let players in
-                event.disallow(
-                    PlayerLoginEvent.Result.KICK_OTHER,
-                    "An error occurred while contacting the PCB authentication server. Please try again later"
-                )
-            }
+        // If something goes wrong, better not to let players in
+        event.disallow(
+            PlayerLoginEvent.Result.KICK_OTHER,
+            "An error occurred while contacting the PCB authentication server. Please try again later"
+        )
     }
 }

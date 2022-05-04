@@ -7,7 +7,6 @@ import com.projectcitybuild.features.teleporting.events.PlayerPreSummonEvent
 import com.projectcitybuild.features.teleporting.events.PlayerPreTeleportEvent
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.repositories.PlayerConfigRepository
-import com.projectcitybuild.repositories.QueuedPlayerTeleportRepository
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import javax.inject.Inject

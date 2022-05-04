@@ -4,17 +4,16 @@ import com.projectcitybuild.CrossServerLocationMock
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Success
 import com.projectcitybuild.entities.LastKnownLocation
-import com.projectcitybuild.shared.locationteleport.LocationTeleporter
 import com.projectcitybuild.repositories.LastKnownLocationRepositoy
+import com.projectcitybuild.shared.locationteleport.LocationTeleporter
 import kotlinx.coroutines.test.runTest
 import org.bukkit.entity.Player
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.mockito.kotlin.any
 import org.mockito.kotlin.eq
-import org.powermock.api.mockito.PowerMockito.mock
 import org.powermock.api.mockito.PowerMockito.`when`
+import org.powermock.api.mockito.PowerMockito.mock
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -59,7 +58,7 @@ class BackUseCaseTest {
             createdAt = LocalDateTime.now(),
         )
         `when`(lastKnownLocationRepositoy.get(player.uniqueId)).thenReturn(lastKnownLocation)
-        `when`(locationTeleporter.teleport(eq(player), eq(destination), any())).thenReturn(
+        `when`(locationTeleporter.teleport(eq(player), eq(destination))).thenReturn(
             Failure(LocationTeleporter.FailureReason.WORLD_NOT_FOUND)
         )
 
@@ -77,9 +76,7 @@ class BackUseCaseTest {
             createdAt = LocalDateTime.now(),
         )
         `when`(lastKnownLocationRepositoy.get(player.uniqueId)).thenReturn(lastKnownLocation)
-        `when`(locationTeleporter.teleport(eq(player), eq(destination), any())).thenReturn(
-            Success(LocationTeleporter.DestinationType.SAME_SERVER)
-        )
+        `when`(locationTeleporter.teleport(eq(player), eq(destination))).thenReturn(Success(Unit))
 
         val result = useCase.teleportBack(player)
 

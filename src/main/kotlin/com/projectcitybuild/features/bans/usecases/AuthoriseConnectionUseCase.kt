@@ -5,7 +5,6 @@ import com.projectcitybuild.entities.responses.GameBan
 import com.projectcitybuild.features.bans.Sanitizer
 import com.projectcitybuild.repositories.BanRepository
 import com.projectcitybuild.repositories.IPBanRepository
-import java.net.SocketAddress
 import java.util.UUID
 import javax.inject.Inject
 
@@ -19,13 +18,13 @@ class AuthoriseConnectionUseCase @Inject constructor(
     }
 
     @Throws(Exception::class)
-    suspend fun getBan(uuid: UUID, ip: SocketAddress): Ban? {
+    suspend fun getBan(uuid: UUID, ip: String): Ban? {
         val uuidBan = banRepository.get(uuid)
         if (uuidBan != null) {
             return Ban.UUID(uuidBan)
         }
 
-        val sanitizedIP = Sanitizer().sanitizedIP(ip.toString())
+        val sanitizedIP = Sanitizer().sanitizedIP(ip)
         val ipBan = ipBanRepository.get(sanitizedIP)
         if (ipBan != null) {
             return Ban.IP(ipBan)
