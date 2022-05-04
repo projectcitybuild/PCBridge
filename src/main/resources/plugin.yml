@@ -43,7 +43,11 @@ commands:
   mute:
     description: "Prevents a player from talking in chat"
     usage: "/mute <name>"
+  pcbridge:
+    description: "Shows the plugin version or runs utility commands"
+    usage: "/pcbridge <version|import>"
   reply:
+    aliases: [r]
     description: "Replies to the last whisper you received"
     usage: "/reply <message>"
   sethub:
@@ -63,6 +67,12 @@ commands:
   tp:
     description: "Teleports to a given player"
     usage: "/tp <name>"
+  tpa:
+    description: "Asks to teleport to a given player"
+    usage: "/tpa <name>"
+  tpahere:
+    description: "Asks to summon a given player to your location"
+    usage: "/tpahere <name>"
   tpaccept:
     description: "Accept an incoming teleport request"
     usage: "/tpaccept"
@@ -100,5 +110,6 @@ commands:
     description: "Gets a list of all warps available"
     usage: "/warps"
   whisper:
+    aliases: [w, msg, m, tell, t, pm]
     description: "Direct messages a player"
     usage: "/whisper <name> <message>"
