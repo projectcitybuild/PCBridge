@@ -42,7 +42,6 @@ class UnbanUseCase @Inject constructor(
             )
 
             return Success(Unit)
-
         } catch (e: BanRepository.PlayerNotBannedException) {
             return Failure(FailureReason.PlayerNotBanned)
         }

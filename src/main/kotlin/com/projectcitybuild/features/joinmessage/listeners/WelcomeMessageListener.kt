@@ -3,9 +3,9 @@ package com.projectcitybuild.features.joinmessage.listeners
 import com.projectcitybuild.core.SpigotListener
 import com.projectcitybuild.platforms.bungeecord.extensions.add
 import net.md_5.bungee.api.chat.TextComponent
-import net.md_5.bungee.api.event.PostLoginEvent
-import net.md_5.bungee.event.EventHandler
 import org.bukkit.Server
+import org.bukkit.event.EventHandler
+import org.bukkit.event.player.PlayerJoinEvent
 import javax.inject.Inject
 
 class WelcomeMessageListener @Inject constructor(
@@ -13,10 +13,10 @@ class WelcomeMessageListener @Inject constructor(
 ) : SpigotListener {
 
     @EventHandler
-    fun onPostLoginEvent(event: PostLoginEvent) {
+    fun onPlayerJoinEvent(event: PlayerJoinEvent) {
         val onlinePlayerCount = server.onlinePlayers.size
 
-        event.player.sendMessage(
+        event.player.spigot().sendMessage(
             TextComponent().add(
                 TextComponent.fromLegacyText(
                     """

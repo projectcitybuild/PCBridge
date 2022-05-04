@@ -12,6 +12,6 @@ class SyncRankLoginListener @Inject constructor(
 ) : SpigotListener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
-    suspend fun onPlayerJoin(event: PostLoginEvent)
-        = updatePlayerGroupsUseCase.sync(event.player.uniqueId)
+    suspend fun onPlayerJoin(event: PostLoginEvent) =
+        updatePlayerGroupsUseCase.sync(event.player.uniqueId)
 }

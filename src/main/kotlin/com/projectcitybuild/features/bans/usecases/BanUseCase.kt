@@ -54,7 +54,6 @@ class BanUseCase @Inject constructor(
             )
 
             return Success(Unit)
-
         } catch (e: BanRepository.PlayerAlreadyBannedException) {
             return Failure(FailureReason.PlayerAlreadyBanned)
         }

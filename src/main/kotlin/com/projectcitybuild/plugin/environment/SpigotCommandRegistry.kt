@@ -73,6 +73,10 @@ class SpigotCommandRegistry @Inject constructor(
                 }
             }
             plugin.getCommand(alias).let {
+                if (it == null) {
+                    logger.fatal("Missing $alias command in plugin.yml file")
+                    return@let
+                }
                 val command = BridgedCommand(spigotCommand)
                 it.setSuspendingExecutor(command)
                 it.tabCompleter = command

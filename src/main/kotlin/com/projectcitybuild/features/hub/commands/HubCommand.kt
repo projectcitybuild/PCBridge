@@ -2,11 +2,11 @@ package com.projectcitybuild.features.hub.commands
 
 import com.projectcitybuild.core.InvalidCommandArgumentsException
 import com.projectcitybuild.core.utilities.Failure
-import com.projectcitybuild.shared.locationteleport.LocationTeleporter
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.plugin.environment.SpigotCommand
 import com.projectcitybuild.plugin.environment.SpigotCommandInput
 import com.projectcitybuild.repositories.HubRepository
+import com.projectcitybuild.shared.locationteleport.LocationTeleporter
 import org.bukkit.entity.Player
 import javax.inject.Inject
 

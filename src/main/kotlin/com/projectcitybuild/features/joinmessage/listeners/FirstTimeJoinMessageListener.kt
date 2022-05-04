@@ -6,8 +6,8 @@ import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.platforms.bungeecord.extensions.add
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.chat.TextComponent
-import net.md_5.bungee.event.EventHandler
 import org.bukkit.Server
+import org.bukkit.event.EventHandler
 import javax.inject.Inject
 
 class FirstTimeJoinMessageListener @Inject constructor(
