@@ -1,20 +1,20 @@
 package com.projectcitybuild.features.joinmessage.listeners
 
-import com.projectcitybuild.core.BungeecordListener
+import com.projectcitybuild.core.SpigotListener
 import com.projectcitybuild.platforms.bungeecord.extensions.add
-import net.md_5.bungee.api.ProxyServer
 import net.md_5.bungee.api.chat.TextComponent
 import net.md_5.bungee.api.event.PostLoginEvent
 import net.md_5.bungee.event.EventHandler
+import org.bukkit.Server
 import javax.inject.Inject
 
 class WelcomeMessageListener @Inject constructor(
-    private val proxyServer: ProxyServer
-) : BungeecordListener {
+    private val server: Server
+) : SpigotListener {
 
     @EventHandler
     fun onPostLoginEvent(event: PostLoginEvent) {
-        val onlinePlayerCount = proxyServer.players.size
+        val onlinePlayerCount = server.onlinePlayers.size
 
         event.player.sendMessage(
             TextComponent().add(

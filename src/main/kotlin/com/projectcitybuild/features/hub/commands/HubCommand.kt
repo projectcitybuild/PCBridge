@@ -2,10 +2,10 @@ package com.projectcitybuild.features.hub.commands
 
 import com.projectcitybuild.core.InvalidCommandArgumentsException
 import com.projectcitybuild.core.utilities.Failure
-import com.projectcitybuild.integrations.shared.crossteleport.LocationTeleporter
+import com.projectcitybuild.shared.crossteleport.LocationTeleporter
 import com.projectcitybuild.modules.textcomponentbuilder.send
-import com.projectcitybuild.platforms.spigot.environment.SpigotCommand
-import com.projectcitybuild.platforms.spigot.environment.SpigotCommandInput
+import com.projectcitybuild.plugin.environment.SpigotCommand
+import com.projectcitybuild.plugin.environment.SpigotCommandInput
 import com.projectcitybuild.repositories.HubRepository
 import org.bukkit.entity.Player
 import javax.inject.Inject
@@ -37,7 +37,6 @@ class HubCommand @Inject constructor(
         val result = locationTeleporter.teleport(
             player = input.sender,
             destination = hubLocation,
-            destinationName = "/hub",
         )
         if (result is Failure) {
             when (result.reason) {

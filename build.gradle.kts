@@ -8,7 +8,7 @@ import java.util.Properties
 val generatedVersionDir = "$buildDir/generated-resources"
 
 group = "com.projectcitybuild"
-version = "3.7.0"
+version = "4.0.0"
 
 buildscript {
     repositories {

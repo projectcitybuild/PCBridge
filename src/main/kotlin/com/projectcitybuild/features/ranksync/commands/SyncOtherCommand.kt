@@ -6,29 +6,29 @@ import com.projectcitybuild.core.utilities.Success
 import com.projectcitybuild.features.ranksync.usecases.UpdatePlayerGroupsUseCase
 import com.projectcitybuild.modules.nameguesser.NameGuesser
 import com.projectcitybuild.modules.textcomponentbuilder.send
-import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
-import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
-import net.md_5.bungee.api.CommandSender
-import net.md_5.bungee.api.ProxyServer
+import com.projectcitybuild.plugin.environment.SpigotCommand
+import com.projectcitybuild.plugin.environment.SpigotCommandInput
+import org.bukkit.Server
+import org.bukkit.command.CommandSender
 import javax.inject.Inject
 
 class SyncOtherCommand @Inject constructor(
-    private val proxyServer: ProxyServer,
+    private val server: Server,
     private val updatePlayerGroupsUseCase: UpdatePlayerGroupsUseCase,
     private val nameGuesser: NameGuesser
-) : BungeecordCommand {
+) : SpigotCommand {
 
     override val label: String = "syncother"
     override val permission: String = "pcbridge.sync.other"
     override val usageHelp = "/syncother <name>"
 
-    override suspend fun execute(input: BungeecordCommandInput) {
+    override suspend fun execute(input: SpigotCommandInput) {
         if (input.args.size != 1) {
             throw InvalidCommandArgumentsException()
         }
 
         val targetPlayerName = input.args.first()
-        val targetPlayer = nameGuesser.guessClosest(targetPlayerName, proxyServer.players) { it.name }
+        val targetPlayer = nameGuesser.guessClosest(targetPlayerName, server.onlinePlayers) { it.name }
 
         if (targetPlayer == null) {
             input.sender.send().error("$targetPlayerName is not online")
@@ -56,8 +56,8 @@ class SyncOtherCommand @Inject constructor(
 
     override fun onTabComplete(sender: CommandSender?, args: List<String>): Iterable<String>? {
         return when {
-            args.isEmpty() -> proxyServer.players.map { it.name }
-            args.size == 1 -> proxyServer.players.map { it.name }.filter { it.lowercase().startsWith(args.first().lowercase()) }
+            args.isEmpty() -> server.onlinePlayers.map { it.name }
+            args.size == 1 -> server.onlinePlayers.map { it.name }.filter { it.lowercase().startsWith(args.first().lowercase()) }
             else -> null
         }
     }

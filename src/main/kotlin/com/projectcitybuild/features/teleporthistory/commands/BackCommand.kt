@@ -5,8 +5,8 @@ import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Success
 import com.projectcitybuild.features.teleporthistory.usecases.BackUseCase
 import com.projectcitybuild.modules.textcomponentbuilder.send
-import com.projectcitybuild.platforms.spigot.environment.SpigotCommand
-import com.projectcitybuild.platforms.spigot.environment.SpigotCommandInput
+import com.projectcitybuild.plugin.environment.SpigotCommand
+import com.projectcitybuild.plugin.environment.SpigotCommandInput
 import org.bukkit.entity.Player
 import javax.inject.Inject
 

@@ -1,6 +1,7 @@
 package com.projectcitybuild.features.bans
 
-import com.projectcitybuild.core.contracts.BungeecordFeatureModule
+import com.projectcitybuild.core.SpigotListener
+import com.projectcitybuild.core.contracts.SpigotFeatureModule
 import com.projectcitybuild.features.bans.commands.BanCommand
 import com.projectcitybuild.features.bans.commands.BanIPCommand
 import com.projectcitybuild.features.bans.commands.CheckBanCommand
@@ -9,8 +10,7 @@ import com.projectcitybuild.features.bans.commands.UnbanIPCommand
 import com.projectcitybuild.features.bans.listeners.BanConnectionListener
 import com.projectcitybuild.modules.config.ConfigKey
 import com.projectcitybuild.modules.config.PlatformConfig
-import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
-import net.md_5.bungee.api.plugin.Listener
+import com.projectcitybuild.plugin.environment.SpigotCommand
 import javax.inject.Inject
 
 class BanModule @Inject constructor(
@@ -21,9 +21,9 @@ class BanModule @Inject constructor(
     checkBanCommand: CheckBanCommand,
     banConnectionListener: BanConnectionListener,
     config: PlatformConfig,
-) : BungeecordFeatureModule {
+) : SpigotFeatureModule {
 
-    override val bungeecordCommands: Array<BungeecordCommand> =
+    override val spigotCommands: Array<SpigotCommand> =
         if (config.get(ConfigKey.API_ENABLED)) arrayOf(
             banCommand,
             banIPCommand,
@@ -33,7 +33,7 @@ class BanModule @Inject constructor(
         )
         else emptyArray()
 
-    override val bungeecordListeners: Array<Listener> =
+    override val spigotListeners: Array<SpigotListener> =
         if (config.get(ConfigKey.API_ENABLED)) arrayOf(
             banConnectionListener,
         )

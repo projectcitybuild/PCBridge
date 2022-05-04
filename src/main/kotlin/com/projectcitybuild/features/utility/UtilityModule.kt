@@ -1,15 +1,15 @@
 package com.projectcitybuild.features.utility
 
-import com.projectcitybuild.core.contracts.BungeecordFeatureModule
+import com.projectcitybuild.core.contracts.SpigotFeatureModule
 import com.projectcitybuild.features.utility.commands.PCBridgeCommand
-import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
+import com.projectcitybuild.plugin.environment.SpigotCommand
 import javax.inject.Inject
 
 class UtilityModule @Inject constructor(
     PCBridgeCommand: PCBridgeCommand
-) : BungeecordFeatureModule {
+) : SpigotFeatureModule {
 
-    override val bungeecordCommands: Array<BungeecordCommand> = arrayOf(
+    override val spigotCommands: Array<SpigotCommand> = arrayOf(
         PCBridgeCommand,
     )
 }

@@ -7,7 +7,7 @@ import net.md_5.bungee.api.chat.BaseComponent
 import net.md_5.bungee.api.chat.HoverEvent
 import net.md_5.bungee.api.chat.TextComponent
 import net.md_5.bungee.api.chat.hover.content.Text
-import net.md_5.bungee.api.connection.ProxiedPlayer
+import org.bukkit.entity.Player
 import javax.inject.Inject
 
 class ChatGroupFormatBuilder @Inject constructor(
@@ -24,7 +24,7 @@ class ChatGroupFormatBuilder @Inject constructor(
     private val builderGroups = config.get(ConfigKey.GROUPS_BUILD_PRIORITY)
     private val donorGroups = config.get(ConfigKey.GROUPS_DONOR_PRIORITY)
 
-    fun format(player: ProxiedPlayer): Aggregate {
+    fun format(player: Player): Aggregate {
         val groupNames = permissions.getUserGroups(player.uniqueId)
 
         var highestTrust: Pair<Int, String>? = null

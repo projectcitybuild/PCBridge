@@ -6,28 +6,28 @@ import com.projectcitybuild.core.utilities.Success
 import com.projectcitybuild.features.ranksync.usecases.GenerateAccountVerificationURLUseCase
 import com.projectcitybuild.features.ranksync.usecases.UpdatePlayerGroupsUseCase
 import com.projectcitybuild.modules.textcomponentbuilder.send
-import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
-import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
 import com.projectcitybuild.platforms.bungeecord.extensions.add
-import net.md_5.bungee.api.CommandSender
+import com.projectcitybuild.plugin.environment.SpigotCommand
+import com.projectcitybuild.plugin.environment.SpigotCommandInput
 import net.md_5.bungee.api.chat.ClickEvent
 import net.md_5.bungee.api.chat.HoverEvent
 import net.md_5.bungee.api.chat.TextComponent
 import net.md_5.bungee.api.chat.hover.content.Text
-import net.md_5.bungee.api.connection.ProxiedPlayer
+import org.bukkit.command.CommandSender
+import org.bukkit.entity.Player
 import javax.inject.Inject
 
 class SyncCommand @Inject constructor(
     private val generateAccountVerificationURLUseCase: GenerateAccountVerificationURLUseCase,
     private val updatePlayerGroupsUseCase: UpdatePlayerGroupsUseCase,
-) : BungeecordCommand {
+) : SpigotCommand {
 
     override val label: String = "sync"
     override val permission: String = "pcbridge.sync.login"
     override val usageHelp = "/sync [finish]"
 
-    override suspend fun execute(input: BungeecordCommandInput) {
-        if (input.player == null) {
+    override suspend fun execute(input: SpigotCommandInput) {
+        if (input.isConsole) {
             input.sender.send().error("Console cannot use this command")
             return
         }
@@ -38,7 +38,7 @@ class SyncCommand @Inject constructor(
         }
     }
 
-    private suspend fun generateVerificationURL(player: ProxiedPlayer) {
+    private suspend fun generateVerificationURL(player: Player) {
         val result = generateAccountVerificationURLUseCase.generate(player.uniqueId)
 
         when (result) {
@@ -49,7 +49,7 @@ class SyncCommand @Inject constructor(
                 GenerateAccountVerificationURLUseCase.FailureReason.EMPTY_RESPONSE
                 -> player.send().error("Failed to generate verification URL: No URL received from server")
             }
-            is Success -> player.sendMessage(
+            is Success -> player.spigot().sendMessage(
                 TextComponent()
                     .add("To link your account, please ")
                     .add("click here") {
@@ -63,7 +63,7 @@ class SyncCommand @Inject constructor(
         }
     }
 
-    private suspend fun syncGroups(player: ProxiedPlayer) {
+    private suspend fun syncGroups(player: Player) {
         val result = updatePlayerGroupsUseCase.sync(player.uniqueId)
 
         when (result) {

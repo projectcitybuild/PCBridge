@@ -6,14 +6,14 @@ import com.projectcitybuild.core.infrastructure.database.DataSource
 import com.projectcitybuild.entities.IPBan
 import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.modules.textcomponentbuilder.send
-import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
-import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
+import com.projectcitybuild.plugin.environment.SpigotCommand
+import com.projectcitybuild.plugin.environment.SpigotCommandInput
 import com.projectcitybuild.repositories.IPBanRepository
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
-import net.md_5.bungee.api.CommandSender
-import net.md_5.bungee.api.plugin.Plugin
+import org.bukkit.command.CommandSender
+import org.bukkit.plugin.Plugin
 import java.io.File
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -24,13 +24,13 @@ class PCBridgeCommand @Inject constructor(
     private val plugin: Plugin,
     private val dataSource: DataSource,
     private val logger: PlatformLogger,
-) : BungeecordCommand {
+) : SpigotCommand {
 
     override val label = "pcbridge"
     override val permission = "pcbridge.utilities"
     override val usageHelp = "/pcbridge"
 
-    override suspend fun execute(input: BungeecordCommandInput) {
+    override suspend fun execute(input: SpigotCommandInput) {
         when {
             input.args.isEmpty() -> showVersion(input.sender)
             input.args.first() == "import" -> import(input.sender, input.args)

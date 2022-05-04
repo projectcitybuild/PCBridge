@@ -4,24 +4,24 @@ import com.projectcitybuild.core.InvalidCommandArgumentsException
 import com.projectcitybuild.features.teleporting.PlayerTeleporter
 import com.projectcitybuild.modules.nameguesser.NameGuesser
 import com.projectcitybuild.modules.textcomponentbuilder.send
-import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
-import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
-import net.md_5.bungee.api.CommandSender
-import net.md_5.bungee.api.ProxyServer
+import com.projectcitybuild.plugin.environment.SpigotCommand
+import com.projectcitybuild.plugin.environment.SpigotCommandInput
+import org.bukkit.Server
+import org.bukkit.command.CommandSender
 import javax.inject.Inject
 
 class TPOHereCommand @Inject constructor(
-    private val proxyServer: ProxyServer,
+    private val server: Server,
     private val playerTeleporter: PlayerTeleporter,
     private val nameGuesser: NameGuesser
-) : BungeecordCommand {
+) : SpigotCommand {
 
     override val label: String = "tpohere"
     override val permission = "pcbridge.tpo.here"
     override val usageHelp = "/tpohere <name> [--silent]"
 
-    override suspend fun execute(input: BungeecordCommandInput) {
-        if (input.player == null) {
+    override suspend fun execute(input: SpigotCommandInput) {
+        if (input.isConsole) {
             input.sender.send().error("Console cannot use this command")
             return
         }
@@ -40,7 +40,7 @@ class TPOHereCommand @Inject constructor(
         }
 
         val targetPlayerName = input.args.first()
-        val targetPlayer = nameGuesser.guessClosest(targetPlayerName, proxyServer.players) { it.name }
+        val targetPlayer = nameGuesser.guessClosest(targetPlayerName, server.onlinePlayers) { it.name }
         if (targetPlayer == null) {
             input.sender.send().error("Player $targetPlayerName not found")
             return
@@ -62,12 +62,12 @@ class TPOHereCommand @Inject constructor(
     override fun onTabComplete(sender: CommandSender?, args: List<String>): Iterable<String>? {
         return when {
             args.isEmpty() ->
-                proxyServer.players
+                server.onlinePlayers
                     .map { it.name }
                     .filter { it != sender?.name }
 
             args.size == 1 ->
-                proxyServer.players
+                server.onlinePlayers
                     .map { it.name }
                     .filter { it != sender?.name }
                     .filter { it.lowercase().startsWith(args.first().lowercase()) }

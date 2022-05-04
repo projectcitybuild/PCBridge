@@ -3,8 +3,8 @@ package com.projectcitybuild.features.teleporthistory.usecases
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Result
 import com.projectcitybuild.core.utilities.Success
-import com.projectcitybuild.integrations.shared.crossteleport.LocationTeleporter
 import com.projectcitybuild.repositories.LastKnownLocationRepositoy
+import com.projectcitybuild.shared.crossteleport.LocationTeleporter
 import org.bukkit.entity.Player
 import javax.inject.Inject
 
@@ -24,7 +24,6 @@ class BackUseCase @Inject constructor(
         val result = locationTeleporter.teleport(
             player = player,
             destination = lastKnownLocation.location,
-            destinationName = "/back",
         )
         return when (result) {
             is Failure -> Failure(result.reason.bubble())

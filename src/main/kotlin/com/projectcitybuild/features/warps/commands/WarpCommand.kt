@@ -5,8 +5,8 @@ import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Success
 import com.projectcitybuild.features.warps.usecases.WarpUseCase
 import com.projectcitybuild.modules.textcomponentbuilder.send
-import com.projectcitybuild.platforms.spigot.environment.SpigotCommand
-import com.projectcitybuild.platforms.spigot.environment.SpigotCommandInput
+import com.projectcitybuild.plugin.environment.SpigotCommand
+import com.projectcitybuild.plugin.environment.SpigotCommandInput
 import com.projectcitybuild.repositories.WarpRepository
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
@@ -43,9 +43,7 @@ class WarpCommand @Inject constructor(
                     WarpUseCase.FailureReason.WORLD_NOT_FOUND -> "The target server is either offline or invalid"
                 }
             )
-            is Success -> if (result.value.isSameServer) {
-                input.sender.send().action("Warped to ${result.value.warpName}")
-            }
+            is Success -> input.sender.send().action("Warped to ${result.value.warpName}")
         }
     }
 

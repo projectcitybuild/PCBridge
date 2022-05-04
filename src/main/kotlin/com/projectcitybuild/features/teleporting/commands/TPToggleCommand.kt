@@ -5,21 +5,21 @@ import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Success
 import com.projectcitybuild.features.teleporting.usecases.TPToggleUseCase
 import com.projectcitybuild.modules.textcomponentbuilder.send
-import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
-import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
-import net.md_5.bungee.api.CommandSender
+import com.projectcitybuild.plugin.environment.SpigotCommand
+import com.projectcitybuild.plugin.environment.SpigotCommandInput
+import org.bukkit.command.CommandSender
 import javax.inject.Inject
 
 class TPToggleCommand @Inject constructor(
     private val tpToggleUseCase: TPToggleUseCase,
-) : BungeecordCommand {
+) : SpigotCommand {
 
     override val label = "tptoggle"
     override val permission = "pcbridge.tp.toggle"
     override val usageHelp = "/tptoggle [on|off]"
 
-    override suspend fun execute(input: BungeecordCommandInput) {
-        if (input.player == null) {
+    override suspend fun execute(input: SpigotCommandInput) {
+        if (input.isConsole) {
             input.sender.send().error("Console cannot use this command")
             return
         }

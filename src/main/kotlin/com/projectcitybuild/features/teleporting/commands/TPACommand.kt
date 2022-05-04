@@ -7,36 +7,36 @@ import com.projectcitybuild.modules.nameguesser.NameGuesser
 import com.projectcitybuild.modules.scheduler.PlatformScheduler
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.modules.timer.PlatformTimer
-import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
-import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
 import com.projectcitybuild.platforms.bungeecord.extensions.add
+import com.projectcitybuild.plugin.environment.SpigotCommand
+import com.projectcitybuild.plugin.environment.SpigotCommandInput
 import com.projectcitybuild.repositories.TeleportRequestRepository
 import net.md_5.bungee.api.ChatColor
-import net.md_5.bungee.api.CommandSender
-import net.md_5.bungee.api.ProxyServer
 import net.md_5.bungee.api.chat.ClickEvent
 import net.md_5.bungee.api.chat.HoverEvent
 import net.md_5.bungee.api.chat.TextComponent
 import net.md_5.bungee.api.chat.hover.content.Text
+import org.bukkit.Server
+import org.bukkit.command.CommandSender
 import java.util.UUID
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class TPACommand @Inject constructor(
-    private val proxyServer: ProxyServer,
+    private val server: Server,
     private val nameGuesser: NameGuesser,
     private val teleportRequestRepository: TeleportRequestRepository,
     private val scheduler: PlatformScheduler,
     private val timer: PlatformTimer,
     private val config: PlatformConfig,
-) : BungeecordCommand {
+) : SpigotCommand {
 
     override val label: String = "tpa"
     override val permission = "pcbridge.tpa"
     override val usageHelp = "/tpa <name>"
 
-    override suspend fun execute(input: BungeecordCommandInput) {
-        if (input.player == null) {
+    override suspend fun execute(input: SpigotCommandInput) {
+        if (input.isConsole) {
             input.sender.send().error("Console cannot use this command")
             return
         }
@@ -45,7 +45,7 @@ class TPACommand @Inject constructor(
         }
 
         val targetPlayerName = input.args.first()
-        val targetPlayer = nameGuesser.guessClosest(targetPlayerName, proxyServer.players) { it.name }
+        val targetPlayer = nameGuesser.guessClosest(targetPlayerName, server.onlinePlayers) { it.name }
         if (targetPlayer == null) {
             input.sender.send().error("Player $targetPlayerName not found")
             return
@@ -88,7 +88,7 @@ class TPACommand @Inject constructor(
 
         input.player.send().action("Teleport request sent...")
 
-        targetPlayer.sendMessage(
+        targetPlayer.spigot().sendMessage(
             TextComponent()
                 .add("${input.player.name} would like to teleport to you:\n") {
                     it.isBold = true
@@ -118,12 +118,12 @@ class TPACommand @Inject constructor(
     override fun onTabComplete(sender: CommandSender?, args: List<String>): Iterable<String>? {
         return when {
             args.isEmpty() ->
-                proxyServer.players
+                server.onlinePlayers
                     .map { it.name }
                     .filter { it != sender?.name }
 
             args.size == 1 ->
-                proxyServer.players
+                server.onlinePlayers
                     .map { it.name }
                     .filter { it != sender?.name }
                     .filter { it.lowercase().startsWith(args.first().lowercase()) }

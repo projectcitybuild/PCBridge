@@ -5,8 +5,8 @@ import com.projectcitybuild.features.warps.usecases.warplist.WarpListUseCase
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.platforms.bungeecord.extensions.add
 import com.projectcitybuild.platforms.bungeecord.extensions.addIf
-import com.projectcitybuild.platforms.spigot.environment.SpigotCommand
-import com.projectcitybuild.platforms.spigot.environment.SpigotCommandInput
+import com.projectcitybuild.plugin.environment.SpigotCommand
+import com.projectcitybuild.plugin.environment.SpigotCommandInput
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.chat.ClickEvent
 import net.md_5.bungee.api.chat.HoverEvent

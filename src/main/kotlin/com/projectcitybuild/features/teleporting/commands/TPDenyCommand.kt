@@ -4,25 +4,25 @@ import com.projectcitybuild.core.InvalidCommandArgumentsException
 import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.modules.timer.PlatformTimer
-import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
-import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
+import com.projectcitybuild.plugin.environment.SpigotCommand
+import com.projectcitybuild.plugin.environment.SpigotCommandInput
 import com.projectcitybuild.repositories.TeleportRequestRepository
-import net.md_5.bungee.api.ProxyServer
+import org.bukkit.Server
 import javax.inject.Inject
 
 class TPDenyCommand @Inject constructor(
-    private val proxyServer: ProxyServer,
+    private val server: Server,
     private val teleportRequestRepository: TeleportRequestRepository,
     private val timer: PlatformTimer,
     private val logger: PlatformLogger,
-) : BungeecordCommand {
+) : SpigotCommand {
 
     override val label: String = "tpdeny"
     override val permission = "pcbridge.tpa"
     override val usageHelp = "/tpdeny"
 
-    override suspend fun execute(input: BungeecordCommandInput) {
-        if (input.player == null) {
+    override suspend fun execute(input: SpigotCommandInput) {
+        if (input.isConsole) {
             input.sender.send().error("Console cannot use this command")
             return
         }
@@ -41,13 +41,13 @@ class TPDenyCommand @Inject constructor(
 
         logger.debug(teleportRequest.toString())
 
-        val requesterPlayer = proxyServer.getPlayer(teleportRequest.requesterUUID)
+        val requesterPlayer = server.getPlayer(teleportRequest.requesterUUID)
         if (requesterPlayer == null) {
             input.player.send().error("Player not found")
             return
         }
 
-        val targetPlayer = proxyServer.getPlayer(teleportRequest.targetUUID)
+        val targetPlayer = server.getPlayer(teleportRequest.targetUUID)
         if (targetPlayer == null) {
             input.player.send().error("Player not found")
             return

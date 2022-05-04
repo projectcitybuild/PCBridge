@@ -2,30 +2,30 @@ package com.projectcitybuild.features.chat.commands
 
 import com.projectcitybuild.core.InvalidCommandArgumentsException
 import com.projectcitybuild.modules.textcomponentbuilder.send
-import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
-import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
+import com.projectcitybuild.plugin.environment.SpigotCommand
+import com.projectcitybuild.plugin.environment.SpigotCommandInput
 import com.projectcitybuild.repositories.ChatIgnoreRepository
 import com.projectcitybuild.repositories.LastWhisperedRepository
 import com.projectcitybuild.repositories.PlayerConfigRepository
 import net.md_5.bungee.api.ChatColor
-import net.md_5.bungee.api.ProxyServer
 import net.md_5.bungee.api.chat.TextComponent
+import org.bukkit.Server
 import javax.inject.Inject
 
 class ReplyCommand @Inject constructor(
-    private val proxyServer: ProxyServer,
+    private val server: Server,
     private val playerConfigRepository: PlayerConfigRepository,
     private val chatIgnoreRepository: ChatIgnoreRepository,
     private val lastWhisperedRepository: LastWhisperedRepository,
-) : BungeecordCommand {
+) : SpigotCommand {
 
     override val label = "reply"
     override val aliases = arrayOf("r")
     override val permission = "pcbridge.chat.whisper"
     override val usageHelp = "/reply <message>"
 
-    override suspend fun execute(input: BungeecordCommandInput) {
-        if (input.player == null) {
+    override suspend fun execute(input: SpigotCommandInput) {
+        if (input.isConsole) {
             input.sender.send().error("Console cannot use this command")
             return
         }
@@ -39,7 +39,7 @@ class ReplyCommand @Inject constructor(
             return
         }
 
-        val targetPlayer = proxyServer.getPlayer(playerWhoLastWhispered)
+        val targetPlayer = server.getPlayer(playerWhoLastWhispered)
         if (targetPlayer == null) {
             lastWhisperedRepository.remove(input.player.uniqueId)
             input.sender.send().error("Player not online")
@@ -60,8 +60,8 @@ class ReplyCommand @Inject constructor(
             it.color = ChatColor.GRAY
             it.isItalic = true
         }
-        targetPlayer.sendMessage(tc)
-        input.sender.sendMessage(tc)
+        targetPlayer.spigot().sendMessage(tc)
+        input.sender.spigot().sendMessage(tc)
 
         lastWhisperedRepository.set(
             whisperer = input.player.uniqueId,

@@ -5,19 +5,19 @@ import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Success
 import com.projectcitybuild.features.bans.usecases.UnbanIPUseCase
 import com.projectcitybuild.modules.textcomponentbuilder.send
-import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
-import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
+import com.projectcitybuild.plugin.environment.SpigotCommand
+import com.projectcitybuild.plugin.environment.SpigotCommandInput
 import javax.inject.Inject
 
 class UnbanIPCommand @Inject constructor(
     private val unbanIPUseCase: UnbanIPUseCase,
-) : BungeecordCommand {
+) : SpigotCommand {
 
     override val label = "unbanip"
     override val permission = "pcbridge.ban.unbanip"
     override val usageHelp = "/unbanip <ip>"
 
-    override suspend fun execute(input: BungeecordCommandInput) {
+    override suspend fun execute(input: SpigotCommandInput) {
         if (input.args.size != 1) {
             throw InvalidCommandArgumentsException()
         }

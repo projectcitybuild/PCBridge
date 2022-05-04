@@ -3,7 +3,7 @@ package com.projectcitybuild.features.hub
 import com.projectcitybuild.core.contracts.SpigotFeatureModule
 import com.projectcitybuild.features.hub.commands.HubCommand
 import com.projectcitybuild.features.hub.commands.SetHubCommand
-import com.projectcitybuild.platforms.spigot.environment.SpigotCommand
+import com.projectcitybuild.plugin.environment.SpigotCommand
 import javax.inject.Inject
 
 class HubModule @Inject constructor(

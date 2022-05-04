@@ -5,23 +5,23 @@ import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Success
 import com.projectcitybuild.features.bans.usecases.CheckBanUseCase
 import com.projectcitybuild.modules.textcomponentbuilder.send
-import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommand
-import com.projectcitybuild.platforms.bungeecord.environment.BungeecordCommandInput
+import com.projectcitybuild.plugin.environment.SpigotCommand
+import com.projectcitybuild.plugin.environment.SpigotCommandInput
 import net.md_5.bungee.api.ChatColor
-import net.md_5.bungee.api.CommandSender
-import net.md_5.bungee.api.ProxyServer
+import org.bukkit.Server
+import org.bukkit.command.CommandSender
 import javax.inject.Inject
 
 class CheckBanCommand @Inject constructor(
-    private val proxyServer: ProxyServer,
+    private val server: Server,
     private val checkBanUseCase: CheckBanUseCase,
-) : BungeecordCommand {
+) : SpigotCommand {
 
     override val label = "checkban"
     override val permission = "pcbridge.ban.checkban"
     override val usageHelp = "/checkban <name>"
 
-    override suspend fun execute(input: BungeecordCommandInput) {
+    override suspend fun execute(input: SpigotCommandInput) {
         if (input.args.size != 1) {
             throw InvalidCommandArgumentsException()
         }
@@ -57,8 +57,8 @@ class CheckBanCommand @Inject constructor(
 
     override fun onTabComplete(sender: CommandSender?, args: List<String>): Iterable<String>? {
         return when {
-            args.isEmpty() -> proxyServer.players.map { it.name }
-            args.size == 1 -> proxyServer.players.map { it.name }.filter { it.lowercase().startsWith(args.first().lowercase()) }
+            args.isEmpty() -> server.onlinePlayers.map { it.name }
+            args.size == 1 -> server.onlinePlayers.map { it.name }.filter { it.lowercase().startsWith(args.first().lowercase()) }
             else -> null
         }
     }
