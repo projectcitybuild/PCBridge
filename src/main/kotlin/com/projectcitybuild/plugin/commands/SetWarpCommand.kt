@@ -4,8 +4,6 @@ import com.projectcitybuild.core.InvalidCommandArgumentsException
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.entities.SerializableLocation
 import com.projectcitybuild.features.warps.usecases.CreateWarpUseCase
-import com.projectcitybuild.modules.config.ConfigKey
-import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.plugin.environment.SpigotCommand
 import com.projectcitybuild.plugin.environment.SpigotCommandInput
@@ -13,8 +11,7 @@ import org.bukkit.entity.Player
 import javax.inject.Inject
 
 class SetWarpCommand @Inject constructor(
-    private val createWarpUseCase: CreateWarpUseCase,
-    private val config: PlatformConfig,
+    private val createWarp: CreateWarpUseCase,
 ) : SpigotCommand {
 
     override val label = "setwarp"
@@ -32,11 +29,9 @@ class SetWarpCommand @Inject constructor(
         }
 
         val warpName = input.args.first()
-        val location = SerializableLocation.fromLocation(
-            serverName = config.get(ConfigKey.SPIGOT_SERVER_NAME),
-            location = player.location,
-        )
-        val result = createWarpUseCase.createWarp(warpName, location)
+        val location = SerializableLocation.fromLocation(player.location)
+
+        val result = createWarp.createWarp(warpName, location)
 
         if (result is Failure) {
             when (result.reason) {

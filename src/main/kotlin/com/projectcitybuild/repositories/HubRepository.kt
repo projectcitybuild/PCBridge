@@ -13,7 +13,6 @@ class HubRepository @Inject constructor(
         val row = dataSource.database().getFirstRow("SELECT * FROM `hub` LIMIT 1")
         if (row != null) {
             return SerializableLocation(
-                serverName = row.get("server_name"),
                 worldName = row.get("world_name"),
                 x = row.get("x"),
                 y = row.get("y"),
@@ -29,7 +28,7 @@ class HubRepository @Inject constructor(
         dataSource.database().executeUpdate("DELETE FROM `hub`")
         dataSource.database().executeInsert(
             "INSERT INTO `hub` VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-            location.serverName,
+            "", // TODO: remove 'server name' parameter via migration
             location.worldName,
             location.x,
             location.y,

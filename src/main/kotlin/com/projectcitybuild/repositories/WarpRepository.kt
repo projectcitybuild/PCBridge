@@ -25,7 +25,6 @@ class WarpRepository @Inject constructor(
                 Warp(
                     name = row.get("name"),
                     location = SerializableLocation(
-                        serverName = row.get("server_name"),
                         worldName = row.get("world_name"),
                         x = row.get("x"),
                         y = row.get("y"),
@@ -59,7 +58,6 @@ class WarpRepository @Inject constructor(
                 Warp(
                     name = row.get("name"),
                     location = SerializableLocation(
-                        serverName = row.get("server_name"),
                         worldName = row.get("world_name"),
                         x = row.get("x"),
                         y = row.get("y"),
@@ -76,7 +74,7 @@ class WarpRepository @Inject constructor(
         dataSource.database().executeInsert(
             "INSERT INTO `warps` VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
             warp.name,
-            warp.location.serverName,
+            "", // TODO: remove parameter via migration
             warp.location.worldName,
             warp.location.x,
             warp.location.y,

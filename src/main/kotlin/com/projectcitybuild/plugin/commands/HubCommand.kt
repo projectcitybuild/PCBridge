@@ -11,7 +11,7 @@ import org.bukkit.entity.Player
 import javax.inject.Inject
 
 class HubCommand @Inject constructor(
-    private val hubTeleportUseCase: HubTeleportUseCase,
+    private val hubTeleport: HubTeleportUseCase,
 ) : SpigotCommand {
 
     override val label: String = "hub"
@@ -27,7 +27,7 @@ class HubCommand @Inject constructor(
             return
         }
 
-        val result = hubTeleportUseCase.execute(player = input.player)
+        val result = hubTeleport.execute(player = input.player)
 
         when (result) {
             is Failure -> input.sender.send().error(

@@ -19,7 +19,7 @@ class LastKnownLocationRepositoy @Inject constructor(
             dataSource.database().executeInsert(
                 "INSERT INTO last_known_locations VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 playerUUID.toString(),
-                location.serverName,
+                "", // TODO: remove 'server name' parameter via migration
                 location.worldName,
                 location.x,
                 location.y,
@@ -30,8 +30,7 @@ class LastKnownLocationRepositoy @Inject constructor(
             )
         } else {
             dataSource.database().executeUpdate(
-                "UPDATE last_known_locations SET server_name = ?, world_name = ?, x = ?, y = ?, z = ?, pitch = ?, yaw = ?, created_at = ? WHERE player_uuid = ?",
-                location.serverName,
+                "UPDATE last_known_locations SET world_name = ?, x = ?, y = ?, z = ?, pitch = ?, yaw = ?, created_at = ? WHERE player_uuid = ?",
                 location.worldName,
                 location.x,
                 location.y,
@@ -53,7 +52,6 @@ class LastKnownLocationRepositoy @Inject constructor(
         return LastKnownLocation(
             playerUUID = UUID.fromString(row.get("player_uuid")),
             location = SerializableLocation(
-                serverName = row.get("server_name"),
                 worldName = row.get("world_name"),
                 x = row.get("x"),
                 y = row.get("y"),

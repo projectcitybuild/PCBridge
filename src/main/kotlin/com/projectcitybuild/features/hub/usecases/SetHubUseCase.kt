@@ -12,7 +12,6 @@ class SetHubUseCase @Inject constructor(
 ) {
     fun execute(location: Location): Result<Unit, Unit> {
         hubRepository.set(SerializableLocation(
-            serverName = "",
             location.world.name,
             location.x,
             location.y,

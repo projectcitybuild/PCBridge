@@ -3,7 +3,6 @@ package com.projectcitybuild.entities
 import org.bukkit.Location
 
 data class SerializableLocation(
-    val serverName: String,
     val worldName: String,
     val x: Double,
     val y: Double,
@@ -12,9 +11,8 @@ data class SerializableLocation(
     val yaw: Float,
 ) {
     companion object {
-        fun fromLocation(serverName: String, location: Location): SerializableLocation {
+        fun fromLocation(location: Location): SerializableLocation {
             return SerializableLocation(
-                serverName = serverName,
                 worldName = location.world.name,
                 x = location.x,
                 y = location.y,

@@ -2,8 +2,6 @@ package com.projectcitybuild.plugin.listeners
 
 import com.projectcitybuild.core.SpigotListener
 import com.projectcitybuild.entities.SerializableLocation
-import com.projectcitybuild.modules.config.ConfigKey
-import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.modules.scheduler.PlatformScheduler
 import com.projectcitybuild.plugin.events.PlayerPreLocationTeleportEvent
 import com.projectcitybuild.plugin.events.PlayerPreSummonEvent
@@ -17,7 +15,6 @@ import javax.inject.Inject
 class PlayerPreTeleportListener @Inject constructor(
     private val scheduler: PlatformScheduler,
     private val lastKnownLocationRepository: LastKnownLocationRepositoy,
-    private val config: PlatformConfig,
 ) : SpigotListener {
 
     @EventHandler
@@ -38,13 +35,12 @@ class PlayerPreTeleportListener @Inject constructor(
         location = event.currentLocation,
     )
 
-    private fun rememberLocation(playerUUID: UUID, location: Location) = scheduler.async<Unit> {
-        lastKnownLocationRepository.set(
-            playerUUID = playerUUID,
-            location = SerializableLocation.fromLocation(
-                serverName = config.get(ConfigKey.SPIGOT_SERVER_NAME),
-                location = location,
+    private fun rememberLocation(playerUUID: UUID, location: Location) {
+        scheduler.async<Unit> {
+            lastKnownLocationRepository.set(
+                playerUUID = playerUUID,
+                location = SerializableLocation.fromLocation(location)
             )
-        )
-    }.start()
+        }.start()
+    }
 }
