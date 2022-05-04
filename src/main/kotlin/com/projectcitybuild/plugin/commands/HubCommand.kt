@@ -2,17 +2,16 @@ package com.projectcitybuild.plugin.commands
 
 import com.projectcitybuild.core.InvalidCommandArgumentsException
 import com.projectcitybuild.core.utilities.Failure
+import com.projectcitybuild.core.utilities.Success
+import com.projectcitybuild.features.hub.usecases.HubTeleportUseCase
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.plugin.environment.SpigotCommand
 import com.projectcitybuild.plugin.environment.SpigotCommandInput
-import com.projectcitybuild.repositories.HubRepository
-import com.projectcitybuild.shared.locationteleport.LocationTeleporter
 import org.bukkit.entity.Player
 import javax.inject.Inject
 
 class HubCommand @Inject constructor(
-    private val hubRepository: HubRepository,
-    private val locationTeleporter: LocationTeleporter,
+    private val hubTeleportUseCase: HubTeleportUseCase,
 ) : SpigotCommand {
 
     override val label: String = "hub"
@@ -28,21 +27,16 @@ class HubCommand @Inject constructor(
             return
         }
 
-        val hubLocation = hubRepository.get()
-        if (hubLocation == null) {
-            input.sender.send().error("Hub has not been set")
-            return
-        }
+        val result = hubTeleportUseCase.execute(player = input.player)
 
-        val result = locationTeleporter.teleport(
-            player = input.sender,
-            destination = hubLocation,
-        )
-        if (result is Failure) {
-            when (result.reason) {
-                LocationTeleporter.FailureReason.WORLD_NOT_FOUND ->
-                    input.sender.send().error("Could not find world")
-            }
+        when (result) {
+            is Failure -> input.sender.send().error(
+                when (result.reason) {
+                    HubTeleportUseCase.FailureReason.NO_HUB_EXISTS -> "Hub has not been set"
+                    HubTeleportUseCase.FailureReason.WORLD_NOT_FOUND -> "Could not find world"
+                }
+            )
+            is Success -> input.sender.send().action("Teleported to hub")
         }
     }
 }

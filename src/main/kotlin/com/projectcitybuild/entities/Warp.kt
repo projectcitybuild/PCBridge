@@ -4,6 +4,6 @@ import java.time.LocalDateTime
 
 data class Warp(
     val name: String,
-    val location: CrossServerLocation,
+    val location: SerializableLocation,
     val createdAt: LocalDateTime,
 )

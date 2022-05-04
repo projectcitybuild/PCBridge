@@ -1,7 +1,7 @@
 package com.projectcitybuild.repositories
 
 import com.projectcitybuild.core.infrastructure.database.DataSource
-import com.projectcitybuild.entities.CrossServerLocation
+import com.projectcitybuild.entities.SerializableLocation
 import com.projectcitybuild.entities.LastKnownLocation
 import java.time.LocalDateTime
 import java.util.UUID
@@ -12,7 +12,7 @@ class LastKnownLocationRepositoy @Inject constructor(
 ) {
     fun set(
         playerUUID: UUID,
-        location: CrossServerLocation,
+        location: SerializableLocation,
     ) {
         val lastKnownLocation = get(playerUUID)
         if (lastKnownLocation == null) {
@@ -52,7 +52,7 @@ class LastKnownLocationRepositoy @Inject constructor(
 
         return LastKnownLocation(
             playerUUID = UUID.fromString(row.get("player_uuid")),
-            location = CrossServerLocation(
+            location = SerializableLocation(
                 serverName = row.get("server_name"),
                 worldName = row.get("world_name"),
                 x = row.get("x"),

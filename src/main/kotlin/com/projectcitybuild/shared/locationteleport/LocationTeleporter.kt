@@ -3,7 +3,7 @@ package com.projectcitybuild.shared.locationteleport
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Result
 import com.projectcitybuild.core.utilities.Success
-import com.projectcitybuild.entities.CrossServerLocation
+import com.projectcitybuild.entities.SerializableLocation
 import com.projectcitybuild.modules.eventbroadcast.LocalEventBroadcaster
 import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.plugin.events.PlayerPreLocationTeleportEvent
@@ -23,7 +23,7 @@ class LocationTeleporter @Inject constructor(
 
     fun teleport(
         player: Player,
-        destination: CrossServerLocation,
+        destination: SerializableLocation,
     ): Result<Unit, FailureReason> {
         val world = server.getWorld(destination.worldName)
         if (world == null) {

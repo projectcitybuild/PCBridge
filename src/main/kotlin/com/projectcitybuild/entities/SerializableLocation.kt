@@ -2,7 +2,7 @@ package com.projectcitybuild.entities
 
 import org.bukkit.Location
 
-data class CrossServerLocation(
+data class SerializableLocation(
     val serverName: String,
     val worldName: String,
     val x: Double,
@@ -12,8 +12,8 @@ data class CrossServerLocation(
     val yaw: Float,
 ) {
     companion object {
-        fun fromLocation(serverName: String, location: Location): CrossServerLocation {
-            return CrossServerLocation(
+        fun fromLocation(serverName: String, location: Location): SerializableLocation {
+            return SerializableLocation(
                 serverName = serverName,
                 worldName = location.world.name,
                 x = location.x,

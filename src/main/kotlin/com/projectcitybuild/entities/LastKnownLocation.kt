@@ -5,6 +5,6 @@ import java.util.UUID
 
 data class LastKnownLocation(
     val playerUUID: UUID,
-    val location: CrossServerLocation,
+    val location: SerializableLocation,
     val createdAt: LocalDateTime,
 )
