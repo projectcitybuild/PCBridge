@@ -29,7 +29,7 @@ class ReplyCommand @Inject constructor(
         }
 
         val result = reply.execute(
-            player = input.player,
+            whisperingPlayer = input.player,
             onlinePlayers = server.onlinePlayers.toList(),
             message = input.args.joinToString(separator = " "),
         )
