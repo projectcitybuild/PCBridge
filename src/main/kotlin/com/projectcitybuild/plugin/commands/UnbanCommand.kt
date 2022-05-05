@@ -2,7 +2,7 @@ package com.projectcitybuild.plugin.commands
 
 import com.projectcitybuild.core.exceptions.InvalidCommandArgumentsException
 import com.projectcitybuild.core.utilities.Failure
-import com.projectcitybuild.features.bans.usecases.UnbanUseCase
+import com.projectcitybuild.features.bans.usecases.UnbanUUIDUseCase
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.plugin.environment.SpigotCommand
 import com.projectcitybuild.plugin.environment.SpigotCommandInput
@@ -12,11 +12,11 @@ import javax.inject.Inject
 
 class UnbanCommand @Inject constructor(
     private val server: Server,
-    private val unbanUseCase: UnbanUseCase,
+    private val unbanUUIDUseCase: UnbanUUIDUseCase,
 ) : SpigotCommand {
 
-    override val label: String = "unban"
-    override val permission: String = "pcbridge.ban.unban"
+    override val label = "unban"
+    override val permission = "pcbridge.ban.unban"
     override val usageHelp = "/unban <name>"
 
     override suspend fun execute(input: SpigotCommandInput) {
@@ -27,12 +27,12 @@ class UnbanCommand @Inject constructor(
         val targetPlayerName = input.args.first()
         val staffPlayer = if (input.isConsole) null else input.player
 
-        val result = unbanUseCase.unban(targetPlayerName, staffPlayer?.uniqueId)
+        val result = unbanUUIDUseCase.unban(targetPlayerName, staffPlayer?.uniqueId)
         if (result is Failure) {
             input.sender.send().error(
                 when (result.reason) {
-                    UnbanUseCase.FailureReason.PlayerDoesNotExist -> "Could not find UUID for $targetPlayerName. This player likely doesn't exist"
-                    UnbanUseCase.FailureReason.PlayerNotBanned -> "$targetPlayerName is not currently banned"
+                    UnbanUUIDUseCase.FailureReason.PlayerDoesNotExist -> "Could not find UUID for $targetPlayerName. This player likely doesn't exist"
+                    UnbanUUIDUseCase.FailureReason.PlayerNotBanned -> "$targetPlayerName is not currently banned"
                 }
             )
         }

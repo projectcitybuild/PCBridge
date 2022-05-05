@@ -32,7 +32,7 @@ class TPACommand @Inject constructor(
     private val config: PlatformConfig,
 ) : SpigotCommand {
 
-    override val label: String = "tpa"
+    override val label = "tpa"
     override val permission = "pcbridge.tpa"
     override val usageHelp = "/tpa <name>"
 

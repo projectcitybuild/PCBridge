@@ -31,21 +31,19 @@ class BanIPCommand @Inject constructor(
             ?.address?.toString()
             ?: input.args.first()
 
-        val reason = input.args.joinWithWhitespaces(1 until input.args.size)
-        val bannerName = if (input.isConsole) null else input.sender.name
-
-        val result = banIPUseCase.banIP(targetIP, bannerName, reason)
-
-        if (result is Failure) {
-            input.sender.send().error(
+        val result = banIPUseCase.banIP(
+            ip = targetIP,
+            bannerName = if (input.isConsole) null else input.sender.name,
+            reason = input.args.joinWithWhitespaces(1 until input.args.size),
+        )
+        when (result) {
+            is Failure -> input.sender.send().error(
                 when (result.reason) {
                     BanIPUseCase.FailureReason.IP_ALREADY_BANNED -> "$targetIP is already banned"
                     BanIPUseCase.FailureReason.INVALID_IP -> "$targetIP is not a valid IP"
                 }
             )
-        }
-        if (result is Success) {
-            input.sender.send().success("IP $targetIP has been banned")
+            is Success -> input.sender.send().success("IP $targetIP has been banned")
         }
     }
 

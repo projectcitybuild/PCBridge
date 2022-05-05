@@ -18,8 +18,8 @@ class SyncOtherCommand @Inject constructor(
     private val nameGuesser: NameGuesser
 ) : SpigotCommand {
 
-    override val label: String = "syncother"
-    override val permission: String = "pcbridge.sync.other"
+    override val label = "syncother"
+    override val permission = "pcbridge.sync.other"
     override val usageHelp = "/syncother <name>"
 
     override suspend fun execute(input: SpigotCommandInput) {

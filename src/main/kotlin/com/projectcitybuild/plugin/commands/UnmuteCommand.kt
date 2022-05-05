@@ -1,23 +1,23 @@
 package com.projectcitybuild.plugin.commands
 
 import com.projectcitybuild.core.exceptions.InvalidCommandArgumentsException
-import com.projectcitybuild.modules.nameguesser.NameGuesser
+import com.projectcitybuild.core.utilities.Failure
+import com.projectcitybuild.core.utilities.Success
+import com.projectcitybuild.features.chat.usecases.MuteUseCase
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.plugin.environment.SpigotCommand
 import com.projectcitybuild.plugin.environment.SpigotCommandInput
-import com.projectcitybuild.repositories.PlayerConfigRepository
 import org.bukkit.Server
 import org.bukkit.command.CommandSender
 import javax.inject.Inject
 
 class UnmuteCommand @Inject constructor(
     private val server: Server,
-    private val playerConfigRepository: PlayerConfigRepository,
-    private val nameGuesser: NameGuesser
+    private val mute: MuteUseCase,
 ) : SpigotCommand {
 
-    override val label: String = "unmute"
-    override val permission: String = "pcbridge.chat.unmute"
+    override val label = "unmute"
+    override val permission = "pcbridge.chat.unmute"
     override val usageHelp = "/unmute <name>"
 
     override suspend fun execute(input: SpigotCommandInput) {
@@ -26,20 +26,23 @@ class UnmuteCommand @Inject constructor(
         }
 
         val targetPlayerName = input.args.first()
-        val targetPlayer = nameGuesser.guessClosest(targetPlayerName, server.onlinePlayers) { it.name }
-        if (targetPlayer == null) {
-            input.sender.send().error("Player $targetPlayerName is not online")
-            return
+
+        val result = mute.execute(
+            willBeMuted = false,
+            targetPlayerName = targetPlayerName,
+            onlinePlayers = server.onlinePlayers.toList(),
+        )
+        when (result) {
+            is Failure -> input.sender.send().error(
+                when (result.reason) {
+                    MuteUseCase.FailureReason.PLAYER_NOT_ONLINE -> "$targetPlayerName is not online"
+                }
+            )
+            is Success -> {
+                input.sender.send().success("${result.value.name} has been unmuted")
+                result.value.send().info("You have been unmuted by ${input.sender.name}")
+            }
         }
-
-        val targetPlayerConfig = playerConfigRepository
-            .get(targetPlayer.uniqueId)!!
-            .also { it.isMuted = false }
-
-        playerConfigRepository.save(targetPlayerConfig)
-
-        input.sender.send().success("${targetPlayer.name} has been unmuted")
-        targetPlayer.send().info("You have been unmuted by ${input.sender.name}")
     }
 
     override fun onTabComplete(sender: CommandSender?, args: List<String>): Iterable<String>? {

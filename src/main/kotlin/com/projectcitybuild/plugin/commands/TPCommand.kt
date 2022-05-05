@@ -18,7 +18,7 @@ class TPCommand @Inject constructor(
     private val nameGuesser: NameGuesser
 ) : SpigotCommand {
 
-    override val label: String = "tp"
+    override val label = "tp"
     override val permission = "pcbridge.tp.use"
     override val usageHelp = "/tp <name>"
 

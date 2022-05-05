@@ -2,6 +2,7 @@ package com.projectcitybuild.plugin.commands
 
 import com.projectcitybuild.core.exceptions.InvalidCommandArgumentsException
 import com.projectcitybuild.core.utilities.Failure
+import com.projectcitybuild.core.utilities.Success
 import com.projectcitybuild.entities.SerializableLocation
 import com.projectcitybuild.features.warps.usecases.CreateWarpUseCase
 import com.projectcitybuild.modules.textcomponentbuilder.send
@@ -29,18 +30,17 @@ class SetWarpCommand @Inject constructor(
         }
 
         val warpName = input.args.first()
-        val location = SerializableLocation.fromLocation(player.location)
-
-        val result = createWarp.createWarp(warpName, location)
-
-        if (result is Failure) {
-            when (result.reason) {
-                CreateWarpUseCase.FailureReason.WARP_ALREADY_EXISTS
-                -> input.sender.send().error("A warp for $warpName already exists")
-            }
-            return
+        val result = createWarp.createWarp(
+            name = warpName,
+            location = SerializableLocation.fromLocation(player.location)
+        )
+        when (result) {
+            is Success -> input.sender.send().success("Created warp for $warpName")
+            is Failure -> input.sender.send().error(
+                when (result.reason) {
+                    CreateWarpUseCase.FailureReason.WARP_ALREADY_EXISTS -> "A warp for $warpName already exists"
+                }
+            )
         }
-
-        input.sender.send().success("Created warp for $warpName")
     }
 }

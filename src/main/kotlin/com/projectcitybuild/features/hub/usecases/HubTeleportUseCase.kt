@@ -3,8 +3,8 @@ package com.projectcitybuild.features.hub.usecases
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Result
 import com.projectcitybuild.core.utilities.Success
+import com.projectcitybuild.modules.locationteleport.LocationTeleporter
 import com.projectcitybuild.repositories.HubRepository
-import com.projectcitybuild.shared.locationteleport.LocationTeleporter
 import org.bukkit.entity.Player
 import javax.inject.Inject
 

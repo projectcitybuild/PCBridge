@@ -13,7 +13,7 @@ class ACommand @Inject constructor(
     private val server: Server
 ) : SpigotCommand {
 
-    override val label: String = "a"
+    override val label = "a"
     override val permission = "pcbridge.chat.staff_channel"
     override val usageHelp = "/a <message>"
 

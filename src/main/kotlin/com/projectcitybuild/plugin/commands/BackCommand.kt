@@ -14,7 +14,7 @@ class BackCommand @Inject constructor(
     private val backUseCase: BackUseCase,
 ) : SpigotCommand {
 
-    override val label: String = "back"
+    override val label = "back"
     override val permission = "pcbridge.tp.back"
     override val usageHelp = "/back"
 

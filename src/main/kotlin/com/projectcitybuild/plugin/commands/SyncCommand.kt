@@ -23,8 +23,8 @@ class SyncCommand @Inject constructor(
     private val updatePlayerGroupsUseCase: UpdatePlayerGroupsUseCase,
 ) : SpigotCommand {
 
-    override val label: String = "sync"
-    override val permission: String = "pcbridge.sync.login"
+    override val label = "sync"
+    override val permission = "pcbridge.sync.login"
     override val usageHelp = "/sync [finish]"
 
     override suspend fun execute(input: SpigotCommandInput) {

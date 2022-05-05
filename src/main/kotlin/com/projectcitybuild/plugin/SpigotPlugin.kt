@@ -89,7 +89,6 @@ class SpigotPluginContainer @Inject constructor(
             container.integrations.forEach { it.onDisable() }
 
             listenerRegistry.unregisterAll()
-
             dataSource.disconnect()
 
             if (isRedisEnabled) {

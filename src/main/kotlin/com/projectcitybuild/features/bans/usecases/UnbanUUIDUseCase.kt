@@ -3,7 +3,6 @@ package com.projectcitybuild.features.bans.usecases
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Result
 import com.projectcitybuild.core.utilities.Success
-import com.projectcitybuild.modules.kick.PlayerKicker
 import com.projectcitybuild.repositories.BanRepository
 import com.projectcitybuild.repositories.PlayerUUIDRepository
 import net.md_5.bungee.api.ChatColor
@@ -12,50 +11,39 @@ import org.bukkit.Server
 import java.util.UUID
 import javax.inject.Inject
 
-class BanUseCase @Inject constructor(
+class UnbanUUIDUseCase @Inject constructor(
     private val banRepository: BanRepository,
     private val playerUUIDRepository: PlayerUUIDRepository,
     private val server: Server,
-    private val playerKicker: PlayerKicker,
 ) {
     enum class FailureReason {
         PlayerDoesNotExist,
-        PlayerAlreadyBanned,
+        PlayerNotBanned,
     }
 
-    suspend fun ban(
+    suspend fun unban(
         targetPlayerName: String,
         bannerUUID: UUID?,
-        bannerName: String,
-        reason: String?
     ): Result<Unit, FailureReason> {
         try {
             val targetPlayerUUID = playerUUIDRepository.get(targetPlayerName)
                 ?: return Failure(FailureReason.PlayerDoesNotExist)
 
-            banRepository.ban(
+            banRepository.unban(
                 targetPlayerUUID = targetPlayerUUID,
-                targetPlayerName = targetPlayerName,
                 staffId = bannerUUID,
-                reason = reason
-            )
-
-            playerKicker.kickByUUID(
-                playerUUID = targetPlayerUUID,
-                reason = "You have been banned.\n\nAppeal @ projectcitybuild.com",
-                context = PlayerKicker.KickContext.FATAL,
             )
 
             server.broadcastMessage(
-                TextComponent("$targetPlayerName has been banned by $bannerName: ${reason ?: "No reason given"}").apply {
+                TextComponent("$targetPlayerName has been unbanned").apply {
                     color = ChatColor.GRAY
                     isItalic = true
                 }.toLegacyText()
             )
 
             return Success(Unit)
-        } catch (e: BanRepository.PlayerAlreadyBannedException) {
-            return Failure(FailureReason.PlayerAlreadyBanned)
+        } catch (e: BanRepository.PlayerNotBannedException) {
+            return Failure(FailureReason.PlayerNotBanned)
         }
     }
 }

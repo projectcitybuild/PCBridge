@@ -1,4 +1,4 @@
-package com.projectcitybuild.shared.locationteleport
+package com.projectcitybuild.modules.locationteleport
 
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Result

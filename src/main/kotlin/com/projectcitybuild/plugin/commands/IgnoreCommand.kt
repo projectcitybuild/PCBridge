@@ -2,21 +2,19 @@ package com.projectcitybuild.plugin.commands
 
 import com.projectcitybuild.core.exceptions.CannotInvokeFromConsoleException
 import com.projectcitybuild.core.exceptions.InvalidCommandArgumentsException
-import com.projectcitybuild.modules.nameguesser.NameGuesser
+import com.projectcitybuild.core.utilities.Failure
+import com.projectcitybuild.core.utilities.Success
+import com.projectcitybuild.features.chat.usecases.IgnoreUseCase
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.plugin.environment.SpigotCommand
 import com.projectcitybuild.plugin.environment.SpigotCommandInput
-import com.projectcitybuild.repositories.ChatIgnoreRepository
-import com.projectcitybuild.repositories.PlayerConfigRepository
 import org.bukkit.Server
 import org.bukkit.command.CommandSender
 import javax.inject.Inject
 
 class IgnoreCommand @Inject constructor(
     private val server: Server,
-    private val playerConfigRepository: PlayerConfigRepository,
-    private val chatIgnoreRepository: ChatIgnoreRepository,
-    private val nameGuesser: NameGuesser
+    private val ignore: IgnoreUseCase,
 ) : SpigotCommand {
 
     override val label = "ignore"
@@ -32,27 +30,22 @@ class IgnoreCommand @Inject constructor(
         }
 
         val targetPlayerName = input.args.first()
-        val targetPlayer = nameGuesser.guessClosest(targetPlayerName, server.onlinePlayers) { it.name }
-        if (targetPlayer == null) {
-            input.player.send().error("Could not find $targetPlayerName online")
-            return
+
+        val result = ignore.execute(
+            ignoringPlayer = input.player,
+            targetPlayerName = targetPlayerName,
+            onlinePlayers = server.onlinePlayers.toList(),
+        )
+        when (result) {
+            is Failure -> input.sender.send().error(
+                when (result.reason) {
+                    IgnoreUseCase.FailureReason.PLAYER_NOT_ONLINE -> "$targetPlayerName is not online"
+                    IgnoreUseCase.FailureReason.CANNOT_IGNORE_SELF -> "You cannot ignore yourself"
+                    IgnoreUseCase.FailureReason.ALREADY_IGNORING -> "$targetPlayerName is already on your ignore list"
+                }
+            )
+            is Success -> input.sender.send().success("You are now ignoring chat and DMs from ${result.value.name}")
         }
-        if (input.player == targetPlayer) {
-            input.player.send().error("You cannot ignore yourself")
-            return
-        }
-
-        val playerConfig = playerConfigRepository.get(input.player.uniqueId)
-        val targetPlayerConfig = playerConfigRepository.get(targetPlayer.uniqueId)
-
-        if (chatIgnoreRepository.isIgnored(playerConfig!!.id, targetPlayerConfig!!.id)) {
-            input.player.send().error("$targetPlayerName is already on your ignore list")
-            return
-        }
-
-        chatIgnoreRepository.add(playerConfig.id, targetPlayerConfig.id)
-
-        input.sender.send().success("You are now ignoring chat and DMs from $targetPlayerName")
     }
 
     override fun onTabComplete(sender: CommandSender?, args: List<String>): Iterable<String>? {

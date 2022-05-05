@@ -3,26 +3,18 @@ package com.projectcitybuild.plugin.commands
 import com.projectcitybuild.core.exceptions.CannotInvokeFromConsoleException
 import com.projectcitybuild.core.exceptions.InvalidCommandArgumentsException
 import com.projectcitybuild.core.extensions.joinWithWhitespaces
-import com.projectcitybuild.modules.nameguesser.NameGuesser
+import com.projectcitybuild.core.utilities.Failure
+import com.projectcitybuild.features.chat.usecases.WhisperUseCase
 import com.projectcitybuild.modules.textcomponentbuilder.send
-import com.projectcitybuild.platforms.bungeecord.extensions.add
 import com.projectcitybuild.plugin.environment.SpigotCommand
 import com.projectcitybuild.plugin.environment.SpigotCommandInput
-import com.projectcitybuild.repositories.ChatIgnoreRepository
-import com.projectcitybuild.repositories.LastWhisperedRepository
-import com.projectcitybuild.repositories.PlayerConfigRepository
-import net.md_5.bungee.api.ChatColor
-import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.Server
 import org.bukkit.command.CommandSender
 import javax.inject.Inject
 
 class WhisperCommand @Inject constructor(
     private val server: Server,
-    private val playerConfigRepository: PlayerConfigRepository,
-    private val chatIgnoreRepository: ChatIgnoreRepository,
-    private val lastWhisperedRepository: LastWhisperedRepository,
-    private val nameGuesser: NameGuesser
+    private val whisper: WhisperUseCase,
 ) : SpigotCommand {
 
     override val label = "whisper"
@@ -37,53 +29,26 @@ class WhisperCommand @Inject constructor(
         if (input.args.isEmpty()) {
             throw InvalidCommandArgumentsException()
         }
+
+        val targetPlayerName = input.args.first()
         val message = input.args.joinWithWhitespaces(1 until input.args.size)
             ?: throw InvalidCommandArgumentsException()
 
-        val targetPlayerName = input.args.first()
-
-        val targetPlayer = nameGuesser.guessClosest(targetPlayerName, server.onlinePlayers) { it.name }
-        if (targetPlayer == null) {
-            input.sender.send().error("Player not found")
-            return
-        }
-
-        if (targetPlayer == input.player) {
-            input.sender.send().error("You cannot directly message yourself")
-            return
-        }
-
-        val playerConfig = playerConfigRepository.get(input.player.uniqueId)
-        val targetPlayerConfig = playerConfigRepository.get(targetPlayer.uniqueId)
-
-        if (chatIgnoreRepository.isIgnored(targetPlayerConfig!!.id, playerConfig!!.id)) {
-            input.sender.send().error("Cannot send. You are being ignored by $targetPlayerName")
-            return
-        }
-
-        val senderName = input.player.displayName
-
-        val tc = TextComponent()
-            .add("✉ [$senderName -> ${targetPlayer.name}] ") {
-                it.color = ChatColor.GRAY
-                it.isItalic = true
-            }
-            .add(
-                TextComponent.fromLegacyText(message).also { charTC ->
-                    charTC.forEach {
-                        it.color = ChatColor.GRAY
-                        it.isItalic = true
-                    }
+        val result = whisper.execute(
+            whisperingPlayer = input.player,
+            targetPlayerName = targetPlayerName,
+            onlinePlayers = server.onlinePlayers.toList(),
+            message = message,
+        )
+        if (result is Failure) {
+            input.sender.send().error(
+                when (result.reason) {
+                    WhisperUseCase.FailureReason.PLAYER_NOT_ONLINE -> "Player not online"
+                    WhisperUseCase.FailureReason.CANNOT_WHISPER_SELF -> "You cannot directly message yourself"
+                    WhisperUseCase.FailureReason.BEING_IGNORED -> "Cannot send. You are being ignored by that player"
                 }
             )
-
-        targetPlayer.spigot().sendMessage(tc)
-        input.sender.spigot().sendMessage(tc)
-
-        lastWhisperedRepository.set(
-            whisperer = input.player.uniqueId,
-            targetOfWhisper = targetPlayer.uniqueId,
-        )
+        }
     }
 
     override fun onTabComplete(sender: CommandSender?, args: List<String>): Iterable<String>? {
