@@ -14,9 +14,9 @@ import org.powermock.api.mockito.PowerMockito.mock
 import org.powermock.api.mockito.PowerMockito.`when`
 import java.util.UUID
 
-class CheckBanUseCaseTest {
+class CheckBanUUIDUseCaseTest {
 
-    private lateinit var useCase: CheckBanUseCase
+    private lateinit var useCase: CheckUUIDBanUseCase
 
     private lateinit var banRepository: BanRepository
     private lateinit var playerUUIDRepository: PlayerUUIDRepository
@@ -26,7 +26,7 @@ class CheckBanUseCaseTest {
         banRepository = mock(BanRepository::class.java)
         playerUUIDRepository = mock(PlayerUUIDRepository::class.java)
 
-        useCase = CheckBanUseCase(
+        useCase = CheckUUIDBanUseCase(
             banRepository,
             playerUUIDRepository,
             DateTimeFormatterMock()
@@ -41,7 +41,7 @@ class CheckBanUseCaseTest {
 
         val result = useCase.getBan(playerName)
 
-        assertEquals(result, Failure(CheckBanUseCase.FailureReason.PlayerDoesNotExist))
+        assertEquals(result, Failure(CheckUUIDBanUseCase.FailureReason.PLAYER_DOES_NOT_EXIST))
     }
 
     @Test
@@ -70,7 +70,7 @@ class CheckBanUseCaseTest {
         )
 
         val result = useCase.getBan(playerName)
-        val expected = CheckBanUseCase.BanRecord(
+        val expected = CheckUUIDBanUseCase.BanRecord(
             reason = "griefing",
             dateOfBan = "Jan 23, 2022, 4:06:12 PM",
             expiryDate = "Never"
@@ -105,7 +105,7 @@ class CheckBanUseCaseTest {
         )
 
         val result = useCase.getBan(playerName)
-        val expected = CheckBanUseCase.BanRecord(
+        val expected = CheckUUIDBanUseCase.BanRecord(
             reason = "griefing",
             dateOfBan = "Jan 23, 2022, 4:06:12 PM",
             expiryDate = "Jan 25, 2022, 11:06:05 AM"

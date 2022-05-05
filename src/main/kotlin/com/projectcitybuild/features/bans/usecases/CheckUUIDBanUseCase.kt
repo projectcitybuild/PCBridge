@@ -8,13 +8,13 @@ import com.projectcitybuild.repositories.BanRepository
 import com.projectcitybuild.repositories.PlayerUUIDRepository
 import javax.inject.Inject
 
-class CheckBanUseCase @Inject constructor(
+class CheckUUIDBanUseCase @Inject constructor(
     private val banRepository: BanRepository,
     private val playerUUIDRepository: PlayerUUIDRepository,
     private val dateTimeFormatter: DateTimeFormatter,
 ) {
     enum class FailureReason {
-        PlayerDoesNotExist,
+        PLAYER_DOES_NOT_EXIST,
     }
 
     data class BanRecord(
@@ -27,7 +27,7 @@ class CheckBanUseCase @Inject constructor(
         targetPlayerName: String
     ): Result<BanRecord?, FailureReason> {
         val targetPlayerUUID = playerUUIDRepository.get(targetPlayerName)
-            ?: return Failure(FailureReason.PlayerDoesNotExist)
+            ?: return Failure(FailureReason.PLAYER_DOES_NOT_EXIST)
 
         val ban = banRepository.get(targetPlayerUUID = targetPlayerUUID)
             ?: return Success(null)

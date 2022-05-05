@@ -1,6 +1,7 @@
 package com.projectcitybuild.features.bans.usecases
 
 import com.projectcitybuild.core.utilities.Failure
+import com.projectcitybuild.modules.kick.PlayerKicker
 import com.projectcitybuild.repositories.BanRepository
 import com.projectcitybuild.repositories.PlayerUUIDRepository
 import kotlinx.coroutines.test.runTest
@@ -8,82 +9,102 @@ import org.bukkit.Server
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.mockito.ArgumentMatchers.anyString
 import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
 import org.mockito.kotlin.any
+import org.mockito.kotlin.eq
 import org.powermock.api.mockito.PowerMockito.mock
 import org.powermock.api.mockito.PowerMockito.`when`
 import java.util.UUID
 
-class UnbanUseCaseTest {
+class BanUUIDUseCaseTest {
 
-    private lateinit var useCase: UnbanUseCase
+    private lateinit var useCase: BanUUIDUseCase
 
     private lateinit var banRepository: BanRepository
     private lateinit var playerUUIDRepository: PlayerUUIDRepository
+    private lateinit var playerKicker: PlayerKicker
     private lateinit var server: Server
 
     @BeforeEach
     fun setUp() {
         banRepository = mock(BanRepository::class.java)
         playerUUIDRepository = mock(PlayerUUIDRepository::class.java)
+        playerKicker = mock(PlayerKicker::class.java)
         server = mock(Server::class.java)
 
-        useCase = UnbanUseCase(
+        useCase = BanUUIDUseCase(
             banRepository,
             playerUUIDRepository,
             server,
+            playerKicker,
         )
     }
 
     @Test
-    fun `unban should fail when player doesn't exist`() = runTest {
+    fun `ban should fail when player doesn't exist`() = runTest {
         val playerName = "banned_player"
 
         `when`(playerUUIDRepository.get(playerName)).thenReturn(null)
 
-        val result = useCase.unban(playerName, null)
+        val result = useCase.ban(playerName, null, "staff_player", null)
 
-        assertEquals(result, Failure(UnbanUseCase.FailureReason.PlayerDoesNotExist))
+        assertEquals(result, Failure(BanUUIDUseCase.FailureReason.PlayerDoesNotExist))
     }
 
     @Test
-    fun `unban should fail when player is not banned`() = runTest {
+    fun `ban should fail when player is already banned`() = runTest {
         val playerName = "banned_player"
         val playerUUID = UUID.randomUUID()
+        val staffName = "staff_player"
         val staffUUID = UUID.randomUUID()
 
         `when`(playerUUIDRepository.get(playerName)).thenReturn(playerUUID)
-        `when`(banRepository.unban(playerUUID, staffUUID))
-            .thenThrow(BanRepository.PlayerNotBannedException())
+        `when`(banRepository.ban(playerUUID, playerName, staffUUID, null))
+            .thenThrow(BanRepository.PlayerAlreadyBannedException())
 
-        val result = useCase.unban(playerName, staffUUID)
+        val result = useCase.ban(playerName, staffUUID, staffName, null)
 
-        assertEquals(result, Failure(UnbanUseCase.FailureReason.PlayerNotBanned))
+        assertEquals(result, Failure(BanUUIDUseCase.FailureReason.PlayerAlreadyBanned))
     }
 
     @Test
-    fun `unban should pass input to ban repository`() = runTest {
+    fun `ban should pass input to ban repository`() = runTest {
         val playerName = "banned_player"
         val playerUUID = UUID.randomUUID()
         val staffUUID = UUID.randomUUID()
+        val reason = "reason"
 
         `when`(playerUUIDRepository.get(playerName)).thenReturn(playerUUID)
 
-        useCase.unban(playerName, staffUUID)
+        useCase.ban(playerName, staffUUID, "staff_player", reason)
 
         verify(banRepository, times(1))
-            .unban(playerUUID, staffUUID)
+            .ban(playerUUID, playerName, staffUUID, reason)
     }
 
     @Test
-    fun `unban should be broadcasted to all online players`() = runTest {
+    fun `ban should be broadcasted to all online players`() = runTest {
         val playerName = "banned_player"
 
         `when`(playerUUIDRepository.get(playerName)).thenReturn(UUID.randomUUID())
 
-        useCase.unban(playerName, UUID.randomUUID())
+        useCase.ban(playerName, UUID.randomUUID(), "staff_player", "reason")
 
         verify(server).broadcastMessage(any())
+    }
+
+    @Test
+    fun `ban should kick the online player`() = runTest {
+        val playerName = "banned_player"
+        val playerUUID = UUID.randomUUID()
+
+        `when`(playerUUIDRepository.get(playerName)).thenReturn(playerUUID)
+
+        useCase.ban(playerName, UUID.randomUUID(), "staff_player", "reason")
+
+        verify(playerKicker, times(1))
+            .kickByUUID(eq(playerUUID), anyString(), eq(PlayerKicker.KickContext.FATAL))
     }
 }
