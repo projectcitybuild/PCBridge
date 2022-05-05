@@ -23,18 +23,17 @@ class UnbanIPCommand @Inject constructor(
         }
 
         val targetIP = input.args.first()
+
         val result = unbanIPUseCase.unbanIP(targetIP)
 
-        if (result is Failure) {
-            input.sender.send().error(
+        when (result) {
+            is Failure -> input.sender.send().error(
                 when (result.reason) {
                     UnbanIPUseCase.FailureReason.IP_NOT_BANNED -> "$targetIP is not currently banned"
                     UnbanIPUseCase.FailureReason.INVALID_IP -> "$targetIP is not a valid IP"
                 }
             )
-        }
-        if (result is Success) {
-            input.sender.send().success("IP $targetIP has been unbanned")
+            is Success -> input.sender.send().success("IP $targetIP has been unbanned")
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.projectcitybuild.integrations.gadgetsmenu
 
 import com.projectcitybuild.core.SpigotListener
+import com.projectcitybuild.core.contracts.SpigotIntegration
 import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.repositories.CurrencyRepository
 import com.yapzhenyie.GadgetsMenu.economy.GEconomyProvider
@@ -10,14 +11,15 @@ import org.bukkit.plugin.Plugin
 import javax.inject.Inject
 
 @Reusable
-class GadgetsMenuAdapter @Inject constructor(
+class GadgetsMenuIntegration @Inject constructor(
     private val plugin: Plugin,
     private val logger: PlatformLogger,
     private val currencyRepository: CurrencyRepository,
-) : SpigotListener {
+) : SpigotListener, SpigotIntegration {
+
     private var isEnabled = false
 
-    fun enable() {
+    override fun onEnable() {
         if (plugin.server.pluginManager.isPluginEnabled("GadgetsMenu")) {
             GEconomyProvider.setMysteryDustStorage(CurrencyProvider(plugin, logger, currencyRepository))
         } else {
@@ -25,6 +27,10 @@ class GadgetsMenuAdapter @Inject constructor(
             return
         }
         isEnabled = true
+    }
+
+    override fun onDisable() {
+        isEnabled = false
     }
 
     /**

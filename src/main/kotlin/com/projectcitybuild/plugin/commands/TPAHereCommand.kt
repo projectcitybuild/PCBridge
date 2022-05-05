@@ -32,7 +32,7 @@ class TPAHereCommand @Inject constructor(
     private val config: PlatformConfig,
 ) : SpigotCommand {
 
-    override val label: String = "tpahere"
+    override val label = "tpahere"
     override val permission = "pcbridge.tpahere"
     override val usageHelp = "/tpahere <name>"
 

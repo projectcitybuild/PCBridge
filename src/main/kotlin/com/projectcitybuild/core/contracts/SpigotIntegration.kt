@@ -1,6 +1,6 @@
 package com.projectcitybuild.core.contracts
 
-interface SpigotFeatureModule {
+interface SpigotIntegration {
     fun onEnable() = run { }
     fun onDisable() = run { }
 }

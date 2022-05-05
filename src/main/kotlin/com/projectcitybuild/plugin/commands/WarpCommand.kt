@@ -17,7 +17,7 @@ class WarpCommand @Inject constructor(
     private val warpRepository: WarpRepository,
 ) : SpigotCommand {
 
-    override val label: String = "warp"
+    override val label = "warp"
     override val permission = "pcbridge.warp.use"
     override val usageHelp = "/warp <name>"
 

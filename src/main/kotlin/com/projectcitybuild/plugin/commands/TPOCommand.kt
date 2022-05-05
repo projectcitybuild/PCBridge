@@ -17,7 +17,7 @@ class TPOCommand @Inject constructor(
     private val nameGuesser: NameGuesser
 ) : SpigotCommand {
 
-    override val label: String = "tpo"
+    override val label = "tpo"
     override val permission = "pcbridge.tpo.use"
     override val usageHelp = "/tpo <name> [--silent]"
 

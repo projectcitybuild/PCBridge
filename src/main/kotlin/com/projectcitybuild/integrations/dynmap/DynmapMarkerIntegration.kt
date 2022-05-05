@@ -1,6 +1,7 @@
 package com.projectcitybuild.integrations.dynmap
 
 import com.projectcitybuild.core.SpigotListener
+import com.projectcitybuild.core.contracts.SpigotIntegration
 import com.projectcitybuild.modules.config.ConfigKey
 import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.modules.logger.PlatformLogger
@@ -14,12 +15,13 @@ import org.dynmap.DynmapAPI
 import javax.inject.Inject
 
 @Reusable
-class DynmapMarkerAdapter @Inject constructor(
+class DynmapMarkerIntegration @Inject constructor(
     private val plugin: Plugin,
     private val warpRepository: WarpRepository,
     private val config: PlatformConfig,
     private val logger: PlatformLogger,
-) : SpigotListener {
+) : SpigotListener, SpigotIntegration {
+
     class DynmapAPINotFoundException : Exception("Dynmap plugin not found")
     class DynmapMarkerIconNotFoundException : Exception()
 
@@ -29,7 +31,7 @@ class DynmapMarkerAdapter @Inject constructor(
 
     private var dynmap: DynmapAPI? = null
 
-    fun enable() {
+    override fun onEnable() {
         val anyPlugin = plugin.server.pluginManager.getPlugin("dynmap")
         if (anyPlugin == null) {
             logger.warning("Cannot find dynmap plugin. Disabling marker integration")
@@ -44,6 +46,12 @@ class DynmapMarkerAdapter @Inject constructor(
         plugin.server.pluginManager.registerEvents(this, plugin)
 
         updateWarpMarkers()
+    }
+
+    override fun onDisable() {
+        if (dynmap != null) {
+            dynmap = null
+        }
     }
 
     @EventHandler fun onWarpCreate(event: WarpCreateEvent) = updateWarpMarkers()

@@ -1,9 +1,9 @@
 package com.projectcitybuild.plugin
 
 import com.projectcitybuild.core.SpigotListener
-import com.projectcitybuild.core.contracts.SpigotFeatureModule
-import com.projectcitybuild.integrations.dynmap.DynmapIntegrationModule
-import com.projectcitybuild.integrations.gadgetsmenu.GadgetsMenuIntegrationModule
+import com.projectcitybuild.core.contracts.SpigotIntegration
+import com.projectcitybuild.integrations.dynmap.DynmapMarkerIntegration
+import com.projectcitybuild.integrations.gadgetsmenu.GadgetsMenuIntegration
 import com.projectcitybuild.plugin.commands.ACommand
 import com.projectcitybuild.plugin.commands.BackCommand
 import com.projectcitybuild.plugin.commands.BanCommand
@@ -57,14 +57,14 @@ class SpigotContainer @Inject constructor(
     val listeners: List<SpigotListener>
         get() = _listeners.enabled
 
-    val integrations: List<SpigotFeatureModule>
+    val integrations: List<SpigotIntegration>
         get() = _integrations.enabled
 
     class Integrations @Inject constructor(
-        dynmapIntegrationModule: DynmapIntegrationModule,
-        gadgetsMenuIntegrationModule: GadgetsMenuIntegrationModule,
+        dynmapIntegrationModule: DynmapMarkerIntegration,
+        gadgetsMenuIntegrationModule: GadgetsMenuIntegration,
     ) {
-        val enabled: List<SpigotFeatureModule> = listOf(
+        val enabled: List<SpigotIntegration> = listOf(
             dynmapIntegrationModule,
             gadgetsMenuIntegrationModule,
         )

@@ -15,8 +15,8 @@ class UnbanCommand @Inject constructor(
     private val unbanUseCase: UnbanUseCase,
 ) : SpigotCommand {
 
-    override val label: String = "unban"
-    override val permission: String = "pcbridge.ban.unban"
+    override val label = "unban"
+    override val permission = "pcbridge.ban.unban"
     override val usageHelp = "/unban <name>"
 
     override suspend fun execute(input: SpigotCommandInput) {

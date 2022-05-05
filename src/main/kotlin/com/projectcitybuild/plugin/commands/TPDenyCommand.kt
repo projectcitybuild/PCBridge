@@ -18,7 +18,7 @@ class TPDenyCommand @Inject constructor(
     private val logger: PlatformLogger,
 ) : SpigotCommand {
 
-    override val label: String = "tpdeny"
+    override val label = "tpdeny"
     override val permission = "pcbridge.tpa"
     override val usageHelp = "/tpdeny"
 

@@ -18,7 +18,7 @@ class TPHereCommand @Inject constructor(
     private val nameGuesser: NameGuesser
 ) : SpigotCommand {
 
-    override val label: String = "tphere"
+    override val label = "tphere"
     override val permission = "pcbridge.tp.here"
     override val usageHelp = "/tphere <name>"
 

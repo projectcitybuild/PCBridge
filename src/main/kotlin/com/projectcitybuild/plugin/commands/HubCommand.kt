@@ -14,7 +14,7 @@ class HubCommand @Inject constructor(
     private val hubTeleport: HubTeleportUseCase,
 ) : SpigotCommand {
 
-    override val label: String = "hub"
+    override val label = "hub"
     override val permission = "pcbridge.hub.use"
     override val usageHelp = "/hub"
 

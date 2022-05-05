@@ -16,7 +16,7 @@ class DelWarpCommand @Inject constructor(
     private val warpRepository: WarpRepository,
 ) : SpigotCommand {
 
-    override val label: String = "delwarp"
+    override val label = "delwarp"
     override val permission = "pcbridge.warp.delete"
     override val usageHelp = "/delwarp <name>"
 

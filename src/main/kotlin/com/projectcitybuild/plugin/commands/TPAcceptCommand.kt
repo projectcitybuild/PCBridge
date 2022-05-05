@@ -20,7 +20,7 @@ class TPAcceptCommand @Inject constructor(
     private val logger: PlatformLogger,
 ) : SpigotCommand {
 
-    override val label: String = "tpaccept"
+    override val label = "tpaccept"
     override val permission = "pcbridge.tpa"
     override val usageHelp = "/tpaccept"
 
