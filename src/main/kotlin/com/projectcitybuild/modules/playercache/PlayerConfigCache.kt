@@ -1,4 +1,4 @@
-package com.projectcitybuild.shared.playercache
+package com.projectcitybuild.modules.playercache
 
 import com.projectcitybuild.entities.PlayerConfig
 import dagger.Reusable

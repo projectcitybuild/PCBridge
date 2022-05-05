@@ -1,4 +1,4 @@
-package com.projectcitybuild.shared.locationteleport
+package com.projectcitybuild.modules.locationteleport
 
 import com.projectcitybuild.CrossServerLocationMock
 import com.projectcitybuild.core.utilities.Failure

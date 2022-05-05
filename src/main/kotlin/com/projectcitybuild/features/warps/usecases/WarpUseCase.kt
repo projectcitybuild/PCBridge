@@ -5,7 +5,7 @@ import com.projectcitybuild.core.utilities.Result
 import com.projectcitybuild.core.utilities.Success
 import com.projectcitybuild.modules.nameguesser.NameGuesser
 import com.projectcitybuild.repositories.WarpRepository
-import com.projectcitybuild.shared.locationteleport.LocationTeleporter
+import com.projectcitybuild.modules.locationteleport.LocationTeleporter
 import org.bukkit.entity.Player
 import javax.inject.Inject
 
