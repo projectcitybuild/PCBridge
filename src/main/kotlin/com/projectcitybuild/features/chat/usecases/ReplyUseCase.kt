@@ -13,9 +13,9 @@ class ReplyUseCase @Inject constructor(
     private val lastWhisperedRepository: LastWhisperedRepository,
 ) {
     sealed class FailureReason {
-        object NO_ONE_TO_REPLY_TO: FailureReason()
-        object PLAYER_NOT_ONLINE: FailureReason()
-        data class IGNORED(val targetPlayerName: String): FailureReason()
+        object NO_ONE_TO_REPLY_TO : FailureReason()
+        object PLAYER_NOT_ONLINE : FailureReason()
+        data class IGNORED(val targetPlayerName: String) : FailureReason()
     }
 
     fun execute(

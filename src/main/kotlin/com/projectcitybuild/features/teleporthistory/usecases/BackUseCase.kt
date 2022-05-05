@@ -3,8 +3,8 @@ package com.projectcitybuild.features.teleporthistory.usecases
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Result
 import com.projectcitybuild.core.utilities.Success
-import com.projectcitybuild.repositories.LastKnownLocationRepositoy
 import com.projectcitybuild.modules.locationteleport.LocationTeleporter
+import com.projectcitybuild.repositories.LastKnownLocationRepositoy
 import org.bukkit.entity.Player
 import javax.inject.Inject
 

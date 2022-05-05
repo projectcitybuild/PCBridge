@@ -17,9 +17,9 @@ class Whisperer @Inject constructor(
     private val lastWhisperedRepository: LastWhisperedRepository,
     private val nameGuesser: NameGuesser
 ) {
-    class PlayerNotOnlineException: Exception()
-    class CannotWhisperSelfException: Exception()
-    class BeingIgnoredException(val targetPlayerName: String): Exception()
+    class PlayerNotOnlineException : Exception()
+    class CannotWhisperSelfException : Exception()
+    class BeingIgnoredException(val targetPlayerName: String) : Exception()
 
     /**
      * Whispers to a player matching (or resembling) a given name
