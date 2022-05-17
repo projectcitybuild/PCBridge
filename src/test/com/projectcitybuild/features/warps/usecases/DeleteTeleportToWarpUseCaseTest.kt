@@ -14,7 +14,7 @@ import org.mockito.kotlin.any
 import org.powermock.api.mockito.PowerMockito.mock
 import org.powermock.api.mockito.PowerMockito.`when`
 
-class DeleteWarpUseCaseTest {
+class DeleteTeleportToWarpUseCaseTest {
 
     private lateinit var useCase: DeleteWarpUseCase
 

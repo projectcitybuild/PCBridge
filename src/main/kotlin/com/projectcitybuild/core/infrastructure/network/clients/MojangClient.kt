@@ -1,6 +1,6 @@
-package com.projectcitybuild.core.infrastructure.network.mojang.client
+package com.projectcitybuild.core.infrastructure.network.clients
 
-import com.projectcitybuild.core.infrastructure.network.mojang.requests.MojangApiInterface
+import com.projectcitybuild.entities.requests.mojang.MojangAPIRequest
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -23,7 +23,7 @@ class MojangClient(private val withLogging: Boolean) {
             return clientBuilder.build()
         }
 
-    val mojangApi = instance.create(MojangApiInterface::class.java)
+    val mojangApi = instance.create(MojangAPIRequest::class.java)
 
     private fun build(): Retrofit {
         return Retrofit.Builder()

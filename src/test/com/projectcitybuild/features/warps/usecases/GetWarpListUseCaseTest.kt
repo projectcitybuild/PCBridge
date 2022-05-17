@@ -1,6 +1,6 @@
 package com.projectcitybuild.features.warps.usecases
 
-import com.projectcitybuild.features.warps.usecases.warplist.WarpListUseCase
+import com.projectcitybuild.features.warps.usecases.warplist.GetWarpListUseCase
 import com.projectcitybuild.modules.config.ConfigKey
 import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.repositories.WarpRepository
@@ -12,16 +12,16 @@ import org.junit.jupiter.api.Test
 import org.powermock.api.mockito.PowerMockito.mock
 import org.powermock.api.mockito.PowerMockito.`when`
 
-class WarpListUseCaseTest {
+class GetWarpListUseCaseTest {
 
-    private lateinit var useCase: WarpListUseCase
+    private lateinit var useCase: GetWarpListUseCase
 
     private val warpRepository = mock(WarpRepository::class.java)
     private val config = mock(PlatformConfig::class.java)
 
     @BeforeEach
     fun setUp() {
-        useCase = WarpListUseCase(
+        useCase = GetWarpListUseCase(
             warpRepository,
             config,
         )

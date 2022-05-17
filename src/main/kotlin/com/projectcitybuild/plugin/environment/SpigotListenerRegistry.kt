@@ -14,8 +14,6 @@ class SpigotListenerRegistry @Inject constructor(
     private val logger: PlatformLogger
 ) {
     fun register(listener: Listener) {
-        logger.verbose("Beginning listener registration...")
-
         plugin.server.pluginManager.registerSuspendingEvents(listener, plugin)
         logger.verbose("Registered listener: ${listener::class.simpleName}")
     }

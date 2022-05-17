@@ -1,4 +1,4 @@
-package com.projectcitybuild.core.infrastructure.network.pcb.requests
+package com.projectcitybuild.entities.requests.pcb
 
 import com.projectcitybuild.entities.responses.AccountBalance
 import com.projectcitybuild.entities.responses.ApiResponse
@@ -8,7 +8,7 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
 
-interface BalanceApiInterface {
+interface BalanceAPIRequest {
 
     @GET("v2/minecraft/{uuid}/balance")
     suspend fun get(

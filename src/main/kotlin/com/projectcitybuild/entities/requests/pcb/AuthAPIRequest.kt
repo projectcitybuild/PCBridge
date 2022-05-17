@@ -1,4 +1,4 @@
-package com.projectcitybuild.core.infrastructure.network.pcb.requests
+package com.projectcitybuild.entities.requests.pcb
 
 import com.projectcitybuild.entities.responses.ApiResponse
 import com.projectcitybuild.entities.responses.AuthPlayerGroups
@@ -9,7 +9,7 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
 
-interface AuthApiInterface {
+interface AuthAPIRequest {
 
     /**
      * Begins the authentication flow by exchanging a player's UUID

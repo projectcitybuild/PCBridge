@@ -1,8 +1,8 @@
-package com.projectcitybuild.core.infrastructure.network.pcb.client
+package com.projectcitybuild.core.infrastructure.network.clients
 
-import com.projectcitybuild.core.infrastructure.network.pcb.requests.AuthApiInterface
-import com.projectcitybuild.core.infrastructure.network.pcb.requests.BalanceApiInterface
-import com.projectcitybuild.core.infrastructure.network.pcb.requests.BanApiInterface
+import com.projectcitybuild.entities.requests.pcb.AuthAPIRequest
+import com.projectcitybuild.entities.requests.pcb.BalanceAPIRequest
+import com.projectcitybuild.entities.requests.pcb.BanAPIRequest
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -16,9 +16,9 @@ class PCBClient(
 ) {
     private val instance: Retrofit = build()
 
-    val banApi: BanApiInterface = instance.create(BanApiInterface::class.java)
-    val authApi: AuthApiInterface = instance.create(AuthApiInterface::class.java)
-    val balanceApi: BalanceApiInterface = instance.create(BalanceApiInterface::class.java)
+    val banApi: BanAPIRequest = instance.create(BanAPIRequest::class.java)
+    val authApi: AuthAPIRequest = instance.create(AuthAPIRequest::class.java)
+    val balanceApi: BalanceAPIRequest = instance.create(BalanceAPIRequest::class.java)
 
     private fun build(): Retrofit {
         val authenticatedClient = makeAuthenticatedClient()

@@ -16,9 +16,9 @@ import org.mockito.kotlin.any
 import org.powermock.api.mockito.PowerMockito.mock
 import org.powermock.api.mockito.PowerMockito.`when`
 
-class WarpUseCaseTest {
+class TeleportToWarpUseCaseTest {
 
-    private lateinit var useCase: WarpUseCase
+    private lateinit var useCase: TeleportToWarpUseCase
 
     private lateinit var warpRepository: WarpRepository
     private lateinit var locationTeleporter: LocationTeleporter
@@ -35,7 +35,7 @@ class WarpUseCaseTest {
             `when`(it.location).thenReturn(mock(Location::class.java))
         }
 
-        useCase = WarpUseCase(
+        useCase = TeleportToWarpUseCase(
             warpRepository,
             nameGuesser,
             locationTeleporter,
@@ -48,7 +48,7 @@ class WarpUseCaseTest {
 
         val result = useCase.warp(player, "warp")
 
-        assertEquals(result, Failure(WarpUseCase.FailureReason.WARP_NOT_FOUND))
+        assertEquals(result, Failure(TeleportToWarpUseCase.FailureReason.WARP_NOT_FOUND))
     }
 
     @Test
@@ -65,7 +65,7 @@ class WarpUseCaseTest {
 
         val result = useCase.warp(player, warpName)
 
-        assertEquals(result, Failure(WarpUseCase.FailureReason.WORLD_NOT_FOUND))
+        assertEquals(result, Failure(TeleportToWarpUseCase.FailureReason.WORLD_NOT_FOUND))
     }
 
     @Test
@@ -80,14 +80,14 @@ class WarpUseCaseTest {
 
         assertEquals(
             useCase.warp(player, warpName),
-            Success(WarpUseCase.WarpEvent(warpName = warp.name))
+            Success(TeleportToWarpUseCase.WarpEvent(warpName = warp.name))
         )
 
         `when`(locationTeleporter.teleport(player, warp.location)).thenReturn(Success(Unit))
 
         assertEquals(
             useCase.warp(player, warpName),
-            Success(WarpUseCase.WarpEvent(warpName = warp.name))
+            Success(TeleportToWarpUseCase.WarpEvent(warpName = warp.name))
         )
     }
 }

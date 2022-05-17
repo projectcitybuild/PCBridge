@@ -8,7 +8,7 @@ import kotlin.math.ceil
 import kotlin.math.max
 import kotlin.math.min
 
-class WarpListUseCase @Inject constructor(
+class GetWarpListUseCase @Inject constructor(
     private val warpRepository: WarpRepository,
     private val config: PlatformConfig
 ) {

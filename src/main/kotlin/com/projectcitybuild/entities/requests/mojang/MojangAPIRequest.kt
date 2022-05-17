@@ -1,11 +1,11 @@
-package com.projectcitybuild.core.infrastructure.network.mojang.requests
+package com.projectcitybuild.entities.requests.mojang
 
 import com.projectcitybuild.entities.responses.MojangPlayer
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
 
-interface MojangApiInterface {
+interface MojangAPIRequest {
 
     @GET("users/profiles/minecraft/{username}")
     suspend fun getMojangPlayer(

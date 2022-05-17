@@ -3,7 +3,7 @@ package com.projectcitybuild.features.ranksync.usecases
 import com.projectcitybuild.core.infrastructure.network.APIClient
 import com.projectcitybuild.core.infrastructure.network.APIClientMock
 import com.projectcitybuild.core.infrastructure.network.APIRequestFactory
-import com.projectcitybuild.core.infrastructure.network.pcb.client.PCBClient
+import com.projectcitybuild.core.infrastructure.network.clients.PCBClient
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Success
 import com.projectcitybuild.entities.responses.ApiError

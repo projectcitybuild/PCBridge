@@ -3,6 +3,7 @@ package com.projectcitybuild.plugin
 import com.projectcitybuild.core.SpigotListener
 import com.projectcitybuild.core.contracts.SpigotIntegration
 import com.projectcitybuild.integrations.dynmap.DynmapMarkerIntegration
+import com.projectcitybuild.integrations.essentials.EssentialsIntegration
 import com.projectcitybuild.integrations.gadgetsmenu.GadgetsMenuIntegration
 import com.projectcitybuild.plugin.commands.ACommand
 import com.projectcitybuild.plugin.commands.BanCommand
@@ -44,12 +45,14 @@ class SpigotContainer @Inject constructor(
         get() = _integrations.enabled
 
     class Integrations @Inject constructor(
-        dynmapIntegrationModule: DynmapMarkerIntegration,
-        gadgetsMenuIntegrationModule: GadgetsMenuIntegration,
+        dynmapIntegration: DynmapMarkerIntegration,
+        essentialsIntegration: EssentialsIntegration,
+        gadgetsMenuIntegration: GadgetsMenuIntegration,
     ) {
         val enabled: List<SpigotIntegration> = listOf(
-            dynmapIntegrationModule,
-            gadgetsMenuIntegrationModule,
+            dynmapIntegration,
+            essentialsIntegration,
+            gadgetsMenuIntegration,
         )
     }
 

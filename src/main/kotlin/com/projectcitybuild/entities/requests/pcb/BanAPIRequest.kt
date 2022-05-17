@@ -1,4 +1,4 @@
-package com.projectcitybuild.core.infrastructure.network.pcb.requests
+package com.projectcitybuild.entities.requests.pcb
 
 import com.projectcitybuild.entities.responses.ApiResponse
 import com.projectcitybuild.entities.responses.GameBan
@@ -7,7 +7,7 @@ import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.POST
 
-interface BanApiInterface {
+interface BanAPIRequest {
 
     @FormUrlEncoded
     @POST("bans/store/ban")
