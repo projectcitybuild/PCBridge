@@ -1,6 +1,6 @@
 package com.projectcitybuild.plugin.environment
 
-import com.github.shynixn.mccoroutine.registerSuspendingEvents
+import com.github.shynixn.mccoroutine.bukkit.registerSuspendingEvents
 import com.projectcitybuild.modules.logger.PlatformLogger
 import dagger.Reusable
 import org.bukkit.event.HandlerList
@@ -14,8 +14,6 @@ class SpigotListenerRegistry @Inject constructor(
     private val logger: PlatformLogger
 ) {
     fun register(listener: Listener) {
-        logger.verbose("Beginning listener registration...")
-
         plugin.server.pluginManager.registerSuspendingEvents(listener, plugin)
         logger.verbose("Registered listener: ${listener::class.simpleName}")
     }

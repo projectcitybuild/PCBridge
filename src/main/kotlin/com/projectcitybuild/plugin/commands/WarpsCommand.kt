@@ -1,7 +1,7 @@
 package com.projectcitybuild.plugin.commands
 
 import com.projectcitybuild.core.exceptions.InvalidCommandArgumentsException
-import com.projectcitybuild.features.warps.usecases.warplist.WarpListUseCase
+import com.projectcitybuild.features.warps.usecases.warplist.GetWarpListUseCase
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.platforms.bungeecord.extensions.add
 import com.projectcitybuild.platforms.bungeecord.extensions.addIf
@@ -15,7 +15,7 @@ import net.md_5.bungee.api.chat.hover.content.Text
 import javax.inject.Inject
 
 class WarpsCommand @Inject constructor(
-    private val warpListUseCase: WarpListUseCase,
+    private val getWarpListUseCase: GetWarpListUseCase,
 ) : SpigotCommand {
 
     override val label = "warps"
@@ -32,7 +32,7 @@ class WarpsCommand @Inject constructor(
             null
         } ?: 1
 
-        val warpList = warpListUseCase.getList(page)
+        val warpList = getWarpListUseCase.getList(page)
         if (warpList == null) {
             input.sender.send().info("No warps available")
             return

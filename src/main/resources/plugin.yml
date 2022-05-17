@@ -5,23 +5,14 @@ softdepend:
   - LuckPerms
   - dynmap
   - GadgetsMenu
+  - Essentials
 
 api-version: 1.16
-
-libraries:
-  - com.github.shynixn.mccoroutine:mccoroutine-bukkit-api:1.5.0
-  - com.github.shynixn.mccoroutine:mccoroutine-bukkit-core:1.5.0
 
 commands:
   a:
     description: "Sends a message to all staff currently online"
     usage: "/a"
-  afk:
-    description: "Toggles AFK mode"
-    usage: "/afk"
-  back:
-    description: "Teleports back to the last position you teleported from"
-    usage: "/back"
   ban:
     description: "Bans a player from connecting to the server"
     usage: "/ban <name> [reason]"
@@ -34,26 +25,12 @@ commands:
   delwarp:
     description: "Deletes a warp"
     usage: "/delwarp <name>"
-  hub:
-    description: "Teleports to the Hub server"
-    usage: "/hub"
-  ignore:
-    description: "Hides any chat from a player and prevents them direct messaging you"
-    usage: "/ignore <name>"
   mute:
     description: "Prevents a player from talking in chat"
     usage: "/mute <name>"
   pcbridge:
     description: "Shows the plugin version or runs utility commands"
     usage: "/pcbridge <version|import>"
-  reply:
-    aliases: [r]
-    description: "Replies to the last whisper you received"
-    usage: "/reply <message>"
-  sethub:
-    description: "Sets the destination of the /hub command at the current position and direction"
-    permission: "pcbridge.hub.set"
-    usage: "/sethub"
   setwarp:
     description: "Creates a warp at the current position and direction"
     permission: "pcbridge.warp.create"
@@ -64,42 +41,12 @@ commands:
   syncother:
     description: "Syncs a given player's rank with the website"
     usage: "/syncother <name>"
-  tp:
-    description: "Teleports to a given player"
-    usage: "/tp <name>"
-  tpa:
-    description: "Asks to teleport to a given player"
-    usage: "/tpa <name>"
-  tpahere:
-    description: "Asks to summon a given player to your location"
-    usage: "/tpahere <name>"
-  tpaccept:
-    description: "Accept an incoming teleport request"
-    usage: "/tpaccept"
-  tpdeny:
-    description: "Decline an incoming teleport request"
-    usage: "/tpdeny"
-  tpo:
-    description: "Teleports to a given player regardless of whether they allow teleports"
-    usage: "/tpo <name>"
-  tphere:
-    description: "Summons a given player to your location"
-    usage: "/tphere <name>"
-  tpohere:
-    description: "Summons a given player to your location regardless of whether they allow teleports"
-    usage: "/tpo <name>"
-  tptoggle:
-    description: "Allows/disallows players to teleport/summon you"
-    usage: "/tptoggle [on|off]"
   unban:
     description: "Allows a banned player to connect to the server"
     usage: "/unban <name>"
   unbanip:
     description: "Allows the given IP to connect to the server"
     usage: "/unbanip <ip>"
-  unignore:
-    description: "Unignores a player and allows them to direct message you"
-    usage: "/unignore"
   unmute:
     description: "Allows a muted player to talk in chat again"
     usage: "/unmute"
@@ -109,7 +56,3 @@ commands:
   warps:
     description: "Gets a list of all warps available"
     usage: "/warps"
-  whisper:
-    aliases: [w, msg, m, tell, t, pm]
-    description: "Direct messages a player"
-    usage: "/whisper <name> <message>"

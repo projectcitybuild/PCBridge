@@ -4,7 +4,6 @@ import com.projectcitybuild.core.SpigotListener
 import com.projectcitybuild.features.chat.ChatGroupFormatBuilder
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.platforms.bungeecord.extensions.add
-import com.projectcitybuild.repositories.ChatIgnoreRepository
 import com.projectcitybuild.repositories.PlayerConfigRepository
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.chat.TextComponent
@@ -17,7 +16,6 @@ import javax.inject.Inject
 class ChatListener @Inject constructor(
     private val server: Server,
     private val playerConfigRepository: PlayerConfigRepository,
-    private val chatIgnoreRepository: ChatIgnoreRepository,
     private val chatGroupFormatBuilder: ChatGroupFormatBuilder
 ) : SpigotListener {
 
@@ -34,15 +32,6 @@ class ChatListener @Inject constructor(
         // normal way) will interfere with a lot of other plugins
         event.recipients.clear()
 
-        val ignorers = chatIgnoreRepository.ignorerIds(senderConfig.id)
-        val recipients =
-            if (ignorers.isEmpty()) { server.onlinePlayers } else {
-                server.onlinePlayers.filter { recipient ->
-                    val recipientConfig = playerConfigRepository.get(recipient.uniqueId)
-                    !ignorers.contains(recipientConfig!!.id)
-                }
-            }
-
         // TODO: stop IO thrashing and cache all this instead
         val format = chatGroupFormatBuilder.format(event.player)
 
@@ -55,6 +44,6 @@ class ChatListener @Inject constructor(
             .add(": ") { it.color = ChatColor.RESET }
             .add(TextComponent.fromLegacyText(event.message))
 
-        recipients.forEach { it.spigot().sendMessage(tc) }
+        server.onlinePlayers.forEach { it.spigot().sendMessage(tc) }
     }
 }

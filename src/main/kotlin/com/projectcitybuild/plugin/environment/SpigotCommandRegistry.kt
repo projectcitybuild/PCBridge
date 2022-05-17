@@ -1,7 +1,7 @@
 package com.projectcitybuild.plugin.environment
 
-import com.github.shynixn.mccoroutine.SuspendingCommandExecutor
-import com.github.shynixn.mccoroutine.setSuspendingExecutor
+import com.github.shynixn.mccoroutine.bukkit.SuspendingCommandExecutor
+import com.github.shynixn.mccoroutine.bukkit.setSuspendingExecutor
 import com.projectcitybuild.core.exceptions.CannotInvokeFromConsoleException
 import com.projectcitybuild.core.exceptions.InvalidCommandArgumentsException
 import com.projectcitybuild.modules.errorreporting.ErrorReporter
@@ -65,14 +65,14 @@ class SpigotCommandRegistry @Inject constructor(
                 }
 
                 override fun onTabComplete(
-                    sender: CommandSender?,
-                    command: Command?,
-                    alias: String?,
-                    args: Array<out String>?
-                ): MutableList<String> {
-                    val improvedArgs = args?.filter { it.isNotEmpty() } ?: emptyList()
+                    p0: CommandSender,
+                    p1: Command,
+                    p2: String,
+                    p3: Array<out String>
+                ): MutableList<String>? {
+                    val improvedArgs = p3.filter { it.isNotEmpty() }
 
-                    val list = wrappedCommand.onTabComplete(sender, improvedArgs) ?: emptyList()
+                    val list = wrappedCommand.onTabComplete(p0, improvedArgs) ?: emptyList()
                     return list.toMutableList()
                 }
             }

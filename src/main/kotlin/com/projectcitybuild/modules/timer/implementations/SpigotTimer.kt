@@ -50,6 +50,6 @@ class SpigotTimer @Inject constructor(
     }
 
     override fun cancelAll() {
-        plugin.server.scheduler.cancelAllTasks()
+        plugin.server.scheduler.cancelTasks(plugin)
     }
 }

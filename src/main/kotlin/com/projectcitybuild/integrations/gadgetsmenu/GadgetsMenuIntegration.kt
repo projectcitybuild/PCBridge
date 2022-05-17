@@ -26,6 +26,8 @@ class GadgetsMenuIntegration @Inject constructor(
             logger.warning("Cannot find GadgetsMenu plugin. Disabling integration")
             return
         }
+        logger.info("GadgetsMenu integration enabled")
+
         isEnabled = true
     }
 

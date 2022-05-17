@@ -10,18 +10,6 @@ val generatedVersionDir = "$buildDir/generated-resources"
 group = "com.projectcitybuild"
 version = "4.0.0"
 
-buildscript {
-    repositories {
-        mavenCentral()
-        gradlePluginPortal()
-
-        maven {
-            name = "dynmap"
-            url = uri("https://repo.mikeprimm.com/")
-        }
-    }
-}
-
 plugins {
     kotlin("jvm") version "1.6.10"
     id("com.github.johnrengelman.shadow") version "7.0.0"
@@ -40,6 +28,20 @@ apply(plugin = "com.github.johnrengelman.shadow")
 
 repositories {
     mavenCentral()
+    gradlePluginPortal()
+
+    maven {
+        name = "dynmap"
+        url = uri("https://repo.mikeprimm.com/")
+    }
+    maven {
+        name = "essentialsx-releases"
+        url = uri("https://repo.essentialsx.net/releases/")
+    }
+    maven {
+        name = "papermc"
+        url = uri("https://papermc.io/repo/repository/maven-public/")
+    }
 
     maven { url = uri("https://hub.spigotmc.org/nexus/content/repositories/snapshots/") }
     maven { url = uri("https://oss.sonatype.org/content/repositories/snapshots") }
@@ -54,23 +56,36 @@ dependencies {
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.0-native-mt")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
 
-    compileOnly("net.luckperms:api:5.3")
+    compileOnly("org.spigotmc:spigot-api:1.12.2-R0.1-SNAPSHOT")
+
+    compileOnly("net.md-5:bungeecord-api:1.16-R0.4")
+
+    compileOnly("net.luckperms:api:5.4")
+
+    compileOnly("net.essentialsx:EssentialsX:2.19.0")
+
+    // dynmap
+    compileOnly("us.dynmap:dynmap-api:3.3")
+    compileOnly("us.dynmap:DynmapCoreAPI:3.3")
+
+    // GadgetsMenu
+    compileOnly(files("libs/GadgetsMenu.jar"))
 
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.9.3")
 
-    implementation("com.github.shynixn.mccoroutine:mccoroutine-bukkit-api:1.5.0")
-    implementation("com.github.shynixn.mccoroutine:mccoroutine-bukkit-core:1.5.0")
+    implementation("com.github.shynixn.mccoroutine:mccoroutine-bukkit-api:2.2.0")
+    implementation("com.github.shynixn.mccoroutine:mccoroutine-bukkit-core:2.2.0")
 
     implementation("com.zaxxer:HikariCP:5.0.1")
 
     implementation("co.aikar:idb-core:1.0.0-SNAPSHOT")
 
-    implementation("com.google.dagger:dagger:2.40.5")
-    kapt("com.google.dagger:dagger-compiler:2.40.5")
+    implementation("com.google.dagger:dagger:2.42")
+    kapt("com.google.dagger:dagger-compiler:2.42")
 
-    implementation("io.sentry:sentry:5.5.2")
+    implementation("io.sentry:sentry:5.7.4")
 
     implementation("redis.clients:jedis:4.0.1")
 
@@ -84,19 +99,6 @@ dependencies {
 
     testImplementation("net.md-5:bungeecord-api:1.16-R0.4") // Needed for mocking in tests
     testImplementation("org.spigotmc:spigot-api:1.12.2-R0.1-SNAPSHOT") // Needed for mocking in tests
-
-    // dynmap
-    compileOnly("us.dynmap:dynmap-api:3.3")
-    compileOnly("us.dynmap:DynmapCoreAPI:3.3")
-
-    // GadgetsMenu
-    compileOnly(files("libs/GadgetsMenu.jar"))
-
-    // Spigot
-    compileOnly("org.spigotmc:spigot-api:1.12.2-R0.1-SNAPSHOT")
-
-    // Bungeecord
-    compileOnly("net.md-5:bungeecord-api:1.16-R0.4")
 }
 
 sourceSets {

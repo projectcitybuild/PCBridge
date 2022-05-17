@@ -42,6 +42,8 @@ class DynmapMarkerIntegration @Inject constructor(
             throw DynmapAPINotFoundException()
         }
 
+        logger.info("dynmap integration enabled")
+
         dynmap = anyPlugin
         plugin.server.pluginManager.registerEvents(this, plugin)
 
