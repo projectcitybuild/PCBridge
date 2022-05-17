@@ -1,6 +1,6 @@
 package com.projectcitybuild.plugin.environment
 
-import com.github.shynixn.mccoroutine.registerSuspendingEvents
+import com.github.shynixn.mccoroutine.bukkit.registerSuspendingEvents
 import com.projectcitybuild.modules.logger.PlatformLogger
 import dagger.Reusable
 import org.bukkit.event.HandlerList

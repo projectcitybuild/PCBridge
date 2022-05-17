@@ -1,6 +1,6 @@
 package com.projectcitybuild.plugin
 
-import com.github.shynixn.mccoroutine.minecraftDispatcher
+import com.github.shynixn.mccoroutine.bukkit.minecraftDispatcher
 import com.projectcitybuild.core.infrastructure.database.DataSource
 import com.projectcitybuild.core.infrastructure.network.APIClientImpl
 import com.projectcitybuild.core.infrastructure.redis.RedisConnection

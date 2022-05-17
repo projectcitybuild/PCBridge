@@ -13,7 +13,7 @@ data class SerializableLocation(
     companion object {
         fun fromLocation(location: Location): SerializableLocation {
             return SerializableLocation(
-                worldName = location.world.name,
+                worldName = location.world!!.name,
                 x = location.x,
                 y = location.y,
                 z = location.z,
