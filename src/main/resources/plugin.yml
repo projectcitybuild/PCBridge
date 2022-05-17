@@ -1,35 +1,55 @@
-main: com.projectcitybuild.platforms.spigot.SpigotPlugin
+main: com.projectcitybuild.plugin.SpigotPlugin
 name: PCBridge
-version: 3.7.0
+version: 4.0.0
 softdepend:
   - LuckPerms
   - dynmap
   - GadgetsMenu
+  - Essentials
 
 api-version: 1.16
 
-libraries:
-  - com.github.shynixn.mccoroutine:mccoroutine-bukkit-api:1.5.0
-  - com.github.shynixn.mccoroutine:mccoroutine-bukkit-core:1.5.0
-
 commands:
-  back:
-    description: "Teleports back to the last position you teleported from"
-    usage: "/back"
+  a:
+    description: "Sends a message to all staff currently online"
+    usage: "/a"
+  ban:
+    description: "Bans a player from connecting to the server"
+    usage: "/ban <name> [reason]"
+  banip:
+    description: "Bans an exact IP, preventing it from connecting to the server"
+    usage: "/ban <ip>"
+  checkban:
+    description: "Checks whether a player is currently banned from the server"
+    usage: "/checkban <name>"
   delwarp:
     description: "Deletes a warp"
     usage: "/delwarp <name>"
-  hub:
-    description: "Teleports to the Hub server"
-    usage: "/hub"
-  sethub:
-    description: "Sets the destination of the /hub command at the current position and direction"
-    permission: "pcbridge.hub.set"
-    usage: "/sethub"
+  mute:
+    description: "Prevents a player from talking in chat"
+    usage: "/mute <name>"
+  pcbridge:
+    description: "Shows the plugin version or runs utility commands"
+    usage: "/pcbridge <version|import>"
   setwarp:
     description: "Creates a warp at the current position and direction"
     permission: "pcbridge.warp.create"
     usage: "/setwarp <name>"
+  sync:
+    description: "Syncs your rank with the website"
+    usage: "/sync [finish]"
+  syncother:
+    description: "Syncs a given player's rank with the website"
+    usage: "/syncother <name>"
+  unban:
+    description: "Allows a banned player to connect to the server"
+    usage: "/unban <name>"
+  unbanip:
+    description: "Allows the given IP to connect to the server"
+    usage: "/unbanip <ip>"
+  unmute:
+    description: "Allows a muted player to talk in chat again"
+    usage: "/unmute"
   warp:
     description: "Teleports to a pre-defined location"
     usage: "/warp <name>"

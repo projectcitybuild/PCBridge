@@ -1,7 +1,7 @@
 package com.projectcitybuild.repositories
 
 import com.projectcitybuild.core.infrastructure.database.DataSource
-import com.projectcitybuild.entities.CrossServerLocation
+import com.projectcitybuild.entities.SerializableLocation
 import com.projectcitybuild.entities.Warp
 import com.projectcitybuild.modules.sharedcache.SharedCacheSetFactory
 import dagger.Reusable
@@ -24,8 +24,7 @@ class WarpRepository @Inject constructor(
             ?.let { row ->
                 Warp(
                     name = row.get("name"),
-                    location = CrossServerLocation(
-                        serverName = row.get("server_name"),
+                    location = SerializableLocation(
                         worldName = row.get("world_name"),
                         x = row.get("x"),
                         y = row.get("y"),
@@ -58,8 +57,7 @@ class WarpRepository @Inject constructor(
             .map { row ->
                 Warp(
                     name = row.get("name"),
-                    location = CrossServerLocation(
-                        serverName = row.get("server_name"),
+                    location = SerializableLocation(
                         worldName = row.get("world_name"),
                         x = row.get("x"),
                         y = row.get("y"),
@@ -76,7 +74,7 @@ class WarpRepository @Inject constructor(
         dataSource.database().executeInsert(
             "INSERT INTO `warps` VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
             warp.name,
-            warp.location.serverName,
+            "", // TODO: remove parameter via migration
             warp.location.worldName,
             warp.location.x,
             warp.location.y,

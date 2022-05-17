@@ -1,10 +1,9 @@
 package com.projectcitybuild
 
-import com.projectcitybuild.entities.CrossServerLocation
+import com.projectcitybuild.entities.SerializableLocation
 
-fun CrossServerLocationMock(serverName: String = "server_name"): CrossServerLocation {
-    return CrossServerLocation(
-        serverName = serverName,
+fun CrossServerLocationMock(serverName: String = "server_name"): SerializableLocation {
+    return SerializableLocation(
         worldName = "world_name",
         x = 1.0,
         y = 2.0,

@@ -36,4 +36,8 @@ class AsyncTask<T>(private val task: (Resolver<T>) -> Cancellable) {
             lock.unlock()
         }
     }
+
+    fun start(): Cancellable {
+        return startAndSubscribe {}
+    }
 }
