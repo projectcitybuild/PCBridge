@@ -4,16 +4,13 @@ import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Result
 import com.projectcitybuild.core.utilities.Success
 import com.projectcitybuild.entities.SerializableLocation
-import com.projectcitybuild.modules.eventbroadcast.LocalEventBroadcaster
 import com.projectcitybuild.modules.logger.PlatformLogger
-import com.projectcitybuild.plugin.events.PlayerPreLocationTeleportEvent
 import org.bukkit.Location
 import org.bukkit.Server
 import org.bukkit.entity.Player
 import javax.inject.Inject
 
 class LocationTeleporter @Inject constructor(
-    private val localEventBroadcaster: LocalEventBroadcaster,
     private val server: Server,
     private val logger: PlatformLogger,
 ) {
@@ -30,9 +27,6 @@ class LocationTeleporter @Inject constructor(
             logger.warning("Could not find world matching name [${destination.worldName}] for warp")
             return Failure(FailureReason.WORLD_NOT_FOUND)
         }
-        localEventBroadcaster.emit(
-            PlayerPreLocationTeleportEvent(player, player.location)
-        )
         player.teleport(
             Location(
                 world,
