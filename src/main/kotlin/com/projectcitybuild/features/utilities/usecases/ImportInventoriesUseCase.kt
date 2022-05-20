@@ -70,9 +70,9 @@ class ImportInventoriesUseCase @Inject constructor(
                 it.parentFile.mkdirs()
             }
 
-            // Multiverse serializes by player name...
+            // TODO: Multiverse serializes by player name...
             val lastKnownName = input.compound.getCompound("bukkit").getString("lastKnownName")
-            val outputFile = File(plugin.dataFolder, "inventories/multiverse/creative/$lastKnownName.json").also {
+            val outputFile = File(plugin.dataFolder, "inventories/multiverse/creative/$playerUUID.json").also {
                 if (it.exists()) {
                     it.delete()
                 }
@@ -80,7 +80,7 @@ class ImportInventoriesUseCase @Inject constructor(
             }
 
             val player = MultiverseWorldPlayer(
-                enderChestContents = hashMapOf(),
+                enderChestContents = inventoryMap(enderItems),
                 potions = emptyList(),
                 armorContents = hashMapOf(),
                 inventoryContents = inventoryMap(inventory),
