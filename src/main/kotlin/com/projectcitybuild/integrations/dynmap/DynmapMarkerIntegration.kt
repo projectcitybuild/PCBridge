@@ -32,22 +32,26 @@ class DynmapMarkerIntegration @Inject constructor(
     private var dynmap: DynmapAPI? = null
 
     override fun onEnable() {
-        val anyPlugin = plugin.server.pluginManager.getPlugin("dynmap")
-        if (anyPlugin == null) {
-            logger.warning("Cannot find dynmap plugin. Disabling marker integration")
-            return
+        try {
+            val anyPlugin = plugin.server.pluginManager.getPlugin("dynmap")
+            if (anyPlugin == null) {
+                logger.warning("Cannot find dynmap plugin. Disabling marker integration")
+                return
+            }
+            if (anyPlugin !is DynmapAPI) {
+                logger.fatal("Found dynmap plugin but cannot access dynmap-api")
+                throw DynmapAPINotFoundException()
+            }
+
+            logger.info("dynmap integration enabled")
+
+            dynmap = anyPlugin
+            plugin.server.pluginManager.registerEvents(this, plugin)
+
+            updateWarpMarkers()
+        } catch (e: NoClassDefFoundError) {
+            logger.warning("dynmap either missing or failed to load. Disabling marker integration")
         }
-        if (anyPlugin !is DynmapAPI) {
-            logger.fatal("Found dynmap plugin but cannot access dynmap-api")
-            throw DynmapAPINotFoundException()
-        }
-
-        logger.info("dynmap integration enabled")
-
-        dynmap = anyPlugin
-        plugin.server.pluginManager.registerEvents(this, plugin)
-
-        updateWarpMarkers()
     }
 
     override fun onDisable() {

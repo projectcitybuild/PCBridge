@@ -99,6 +99,9 @@ dependencies {
 
     testImplementation("net.md-5:bungeecord-api:1.16-R0.4") // Needed for mocking in tests
     testImplementation("org.spigotmc:spigot-api:1.12.2-R0.1-SNAPSHOT") // Needed for mocking in tests
+
+    // NBT reader for inventory importing
+    implementation("br.com.gamemods:nbt-manipulator:3.1.0")
 }
 
 sourceSets {
