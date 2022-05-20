@@ -1,6 +1,8 @@
 package com.projectcitybuild.features.utilities.usecases
 
+import br.com.gamemods.nbtmanipulator.NbtCompound
 import br.com.gamemods.nbtmanipulator.NbtIO
+import br.com.gamemods.nbtmanipulator.NbtList
 import com.google.gson.Gson
 import com.projectcitybuild.modules.logger.PlatformLogger
 import org.bukkit.Material
@@ -18,9 +20,6 @@ class ImportInventoriesUseCase @Inject constructor(
 ) {
     private val inventoriesFolder = File(plugin.dataFolder, "inventories")
 
-    private data class MultiverseWorld(
-        val data: HashMap<String, MultiverseWorldPlayer>,
-    )
     private data class MultiverseWorldPlayer(
         val enderChestContents: HashMap<String, ItemStack>,
         val potions: List<String>,
@@ -62,6 +61,7 @@ class ImportInventoriesUseCase @Inject constructor(
             val totalXP = input.compound.getInt("XpTotal")
             val fallDistance = input.compound.getFloat("FallDistance")
             val inventory = input.compound.getCompoundList("Inventory")
+            val enderItems = input.compound.getCompoundList("EnderItems")
 
             val playerFile = File(inventoriesFolder, "multiverse/players/$playerUUID.json").also {
                 if (it.exists()) {
@@ -79,45 +79,11 @@ class ImportInventoriesUseCase @Inject constructor(
                 it.parentFile.mkdirs()
             }
 
-            val inventoryMap = hashMapOf<String, ItemStack>()
-            inventory.forEach { compound ->
-                val material = Material.matchMaterial(compound.getString("id"))
-                    ?: return@forEach
-
-                val amount = compound.getByte("Count")
-                val stack = ItemStack(material, amount.toInt())
-                val slot = compound.getByte("Slot")
-
-                if (compound.containsKey("tag")) {
-                    val tags = compound.getCompound("tag")
-
-                    if (tags.containsKey("Enchantments")) {
-                        val enchantments = tags.getCompoundList("Enchantments")
-                        if (enchantments.size > 0) {
-                            val id = compound.getString("id")
-                            val level = compound.getInt("lvl")
-
-                            Enchantment.getByName(id)?.let {
-                                stack.addEnchantment(it, level)
-                            }
-                        }
-                    }
-                    if (tags.containsKey("Damage")) {
-                        val itemMeta = stack.itemMeta
-                        if (itemMeta != null && itemMeta is Damageable) {
-                            val damage = tags.getInt("Damage")
-                            itemMeta.damage = damage
-                        }
-                    }
-                }
-                inventoryMap.put(key = slot.toString(), value = stack)
-            }
-
             val player = MultiverseWorldPlayer(
                 enderChestContents = hashMapOf(),
                 potions = emptyList(),
                 armorContents = hashMapOf(),
-                inventoryContents = inventoryMap,
+                inventoryContents = inventoryMap(inventory),
                 offHandItem = null,
                 stats = Stats(
                     ex = foodExhaustion.toString(),
@@ -134,12 +100,79 @@ class ImportInventoriesUseCase @Inject constructor(
                 )
             )
 
-            val world = MultiverseWorld(
-                data = hashMapOf(Pair("SURVIVAL", player))
-            )
             val gson = Gson()
-            gson.toJson(world, FileWriter(outputFile))
+            FileWriter(outputFile).use {
+                gson.toJson(hashMapOf(Pair("SURVIVAL", player)), it)
+            }
         }
+    }
+
+    private fun inventoryMap(inventoryCompound: NbtList<NbtCompound>): HashMap<String, ItemStack> {
+        val inventoryMap = hashMapOf<String, ItemStack>()
+
+        inventoryCompound.forEach { compound ->
+            val material = Material.matchMaterial(compound.getString("id"))
+                ?: return@forEach
+
+            val amount = compound.getByte("Count")
+            val stack = ItemStack(material, amount.toInt())
+            val slot = compound.getByte("Slot")
+
+            if (compound.containsKey("tag")) {
+                val tags = compound.getCompound("tag")
+
+                if (tags.containsKey("Enchantments")) {
+                    val enchantments = tags.getCompoundList("Enchantments")
+                    enchantments.forEach { enchantmentCompound ->
+                        val id = enchantmentCompound.getString("id")
+                        val level = enchantmentCompound.getShort("lvl")
+
+                        Enchantment.getByName(id)?.let {
+                            stack.addEnchantment(it, level.toInt())
+                        }
+                    }
+                }
+                if (tags.containsKey("Damage")) {
+                    val itemMeta = stack.itemMeta
+                    if (itemMeta != null && itemMeta is Damageable) {
+                        val damage = tags.getInt("Damage")
+                        itemMeta.damage = damage
+                    }
+                }
+                if (tags.containsKey("display")) {
+                    val display = tags.getCompound("display")
+                    if (display.containsKey("Name")) {
+                        stack.itemMeta?.setDisplayName(display.getString("Name"))
+                    }
+                    if (display.containsKey("Lore")) {
+                        // TODO
+                    }
+                    logIfNotExpected(
+                        expected = listOf("Name", "Lore"),
+                        compound = display,
+                        name = "display",
+                    )
+                }
+                if (tags.containsKey("SkullOwner")) {
+                    // TODO
+                }
+
+                logIfNotExpected(
+                    expected = listOf("Enchantments", "Damage", "display", "SkullOwner"),
+                    compound = tags,
+                    name = "tag",
+                )
+            }
+            inventoryMap.put(key = slot.toString(), value = stack)
+        }
+
+        return inventoryMap
+    }
+
+    private fun logIfNotExpected(expected: List<String>, compound: NbtCompound, name: String) {
+        compound.keys
+            .filter { !expected.contains(it) }
+            .forEach { logger.fatal("Unexpected $name: $it") }
     }
 
     object Multiverse {
