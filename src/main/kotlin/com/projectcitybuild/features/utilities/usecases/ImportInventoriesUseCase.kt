@@ -57,7 +57,10 @@ class ImportInventoriesUseCase @Inject constructor(
             val health = input.compound.getFloat("Health")
             val foodExhaustion = input.compound.getFloat("foodExhaustionLevel")
             val foodSaturation = input.compound.getFloat("foodSaturationLevel")
+            val foodLevel = input.compound.getInt("foodLevel")
             val air = input.compound.getShort("Air")
+            val playerLevel = input.compound.getInt("XpLevel")
+            val xpPercentToNextLevel = input.compound.getFloat("XpP")
             val totalXP = input.compound.getInt("XpTotal")
             val fallDistance = input.compound.getFloat("FallDistance")
             val inventory = input.compound.getCompoundList("Inventory")
@@ -72,7 +75,7 @@ class ImportInventoriesUseCase @Inject constructor(
 
             // TODO: Multiverse serializes by player name...
             val lastKnownName = input.compound.getCompound("bukkit").getString("lastKnownName")
-            val outputFile = File(plugin.dataFolder, "inventories/multiverse/creative/$playerUUID.json").also {
+            val outputFile = File(plugin.dataFolder, "inventories/multiverse/creative/$lastKnownName.json").also {
                 if (it.exists()) {
                     it.delete()
                 }
@@ -88,10 +91,10 @@ class ImportInventoriesUseCase @Inject constructor(
                 stats = Stats(
                     ex = foodExhaustion.toString(),
                     ma = air.toString(),
-                    fl = "",
-                    el = "",
+                    fl = foodLevel.toString(),
+                    el = playerLevel.toString(),
                     hp = health.toString(),
-                    xp = "",
+                    xp = xpPercentToNextLevel.toString(),
                     txp = totalXP.toString(),
                     ft = "-20",
                     fd = fallDistance.toString(),
