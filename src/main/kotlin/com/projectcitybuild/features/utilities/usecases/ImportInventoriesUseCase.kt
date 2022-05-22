@@ -10,10 +10,12 @@ import org.bukkit.Material
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.Damageable
+import org.bukkit.inventory.meta.SkullMeta
 import org.bukkit.plugin.Plugin
 import java.io.EOFException
 import java.io.File
 import javax.inject.Inject
+
 
 class ImportInventoriesUseCase @Inject constructor(
     private val plugin: Plugin,
@@ -26,6 +28,9 @@ class ImportInventoriesUseCase @Inject constructor(
 
         worlds.forEach { worldFolderName ->
             val folder = File(inventoriesFolder, worldFolderName)
+            if (! folder.exists()) {
+                folder.mkdirs()
+            }
 
             folder.listFiles { file ->file.extension == "dat" }?.forEach { file ->
                 logger.info("Importing [$worldFolderName]: ${file.name}")
@@ -58,7 +63,7 @@ class ImportInventoriesUseCase @Inject constructor(
                     logger.fatal("No last known name for $playerUUID")
                     return@forEach
                 }
-                val playerWorldFile = File(plugin.dataFolder, "inventories/multiverse/creative/$lastKnownName.json").also {
+                val playerWorldFile = File(folder, "$lastKnownName.json").also {
                     if (it.exists()) {
                         it.delete()
                     }
@@ -78,12 +83,19 @@ class ImportInventoriesUseCase @Inject constructor(
                             set("$world.enderChestContents.${pair.key}", pair.value)
                         }
                         set("$world.potions", emptyList<String>()) // Too much work to keep potion effects
-//                    set("armorContents", JSONObject())
 
+                        val armorSlots = arrayOf("100", "101", "102", "103")
                         inventoryMap(inventory).entries.forEach { pair ->
-                            set("$world.inventoryContents.${pair.key}", pair.value)
+                            if (armorSlots.contains(pair.key)) {
+                                // Specific slots are hardcoded for armor slots
+                                set("$world.armorContents.${pair.key}", pair.value)
+                            } else if (pair.key == "-106") {
+                                // -106 is hardcoded for an off-hand item (eg. shield)
+                                set("$world.offHandItem", pair.value)
+                            } else {
+                                set("$world.inventoryContents.${pair.key}", pair.value)
+                            }
                         }
-//                    set("offHandItem", JSONObject())
                         set("$world.stats.ex", foodExhaustion.toString())
                         set("$world.stats.ma", air.toString())
                         set("$world.stats.fl", foodLevel.toString())
@@ -99,26 +111,25 @@ class ImportInventoriesUseCase @Inject constructor(
                         save(configFile)
                     }
                 }
-
-
-                val globalPlayerFile = File(inventoriesFolder, "multiverse/players/$playerUUID.json").also {
-                    if (it.exists()) {
-                        it.delete()
-                    }
-                    it.parentFile.mkdirs()
-                    it.createNewFile()
-                }
-                globalPlayerFile.let { configFile ->
-                    JsonConfiguration.loadConfiguration(configFile).apply {
-                        set("playerData.lastWorld", "") // TODO
-                        set("playerData.shouldLoad", false) // TODO: should this be true...?
-                        set("playerData.lastKnownName", "") // TODO
-
-                        save(configFile)
-                    }
-                }
             }
         }
+
+//        val globalPlayerFile = File(inventoriesFolder, "multiverse/players/$playerUUID.json").also {
+//            if (it.exists()) {
+//                it.delete()
+//            }
+//            it.parentFile.mkdirs()
+//            it.createNewFile()
+//        }
+//        globalPlayerFile.let { configFile ->
+//            JsonConfiguration.loadConfiguration(configFile).apply {
+//                set("playerData.lastWorld", "") // TODO
+//                set("playerData.shouldLoad", false) // TODO: should this be true...?
+//                set("playerData.lastKnownName", "") // TODO
+//
+//                save(configFile)
+//            }
+//        }
 
         logger.info("Completed import")
     }
@@ -170,7 +181,11 @@ class ImportInventoriesUseCase @Inject constructor(
                     )
                 }
                 if (tags.containsKey("SkullOwner")) {
-                    // TODO
+                    val itemMeta = stack.itemMeta
+                    if (itemMeta != null && itemMeta is SkullMeta) {
+                        itemMeta.setOwner(tags.getCompound("Properties").getString("Name"))
+                        stack.itemMeta = itemMeta
+                    }
                 }
 
                 logIfNotExpected(
