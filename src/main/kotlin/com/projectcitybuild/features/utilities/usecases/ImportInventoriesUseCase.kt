@@ -10,13 +10,14 @@ import org.bukkit.Material
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.Damageable
+import org.bukkit.inventory.meta.Repairable
 import org.bukkit.inventory.meta.SkullMeta
 import org.bukkit.plugin.Plugin
 import java.io.EOFException
 import java.io.File
 import javax.inject.Inject
 
-
+// Warning: There be dragons ahead...
 class ImportInventoriesUseCase @Inject constructor(
     private val plugin: Plugin,
     private val logger: PlatformLogger,
@@ -27,12 +28,14 @@ class ImportInventoriesUseCase @Inject constructor(
         val worlds = arrayOf("creative", "survival")
 
         worlds.forEach { worldFolderName ->
-            val folder = File(inventoriesFolder, worldFolderName)
-            if (! folder.exists()) {
-                folder.mkdirs()
+            val existingInventoryFolder = File(inventoriesFolder, worldFolderName)
+
+            val outputFolder = File(inventoriesFolder, "multiverse/$worldFolderName")
+            if (! outputFolder.exists()) {
+                outputFolder.mkdirs()
             }
 
-            folder.listFiles { file ->file.extension == "dat" }?.forEach { file ->
+            existingInventoryFolder.listFiles { file -> file.extension == "dat" }?.forEach { file ->
                 logger.info("Importing [$worldFolderName]: ${file.name}")
 
                 val playerUUID = file.nameWithoutExtension
@@ -63,7 +66,7 @@ class ImportInventoriesUseCase @Inject constructor(
                     logger.fatal("No last known name for $playerUUID")
                     return@forEach
                 }
-                val playerWorldFile = File(folder, "$lastKnownName.json").also {
+                val playerWorldFile = File(outputFolder, "$lastKnownName.json").also {
                     if (it.exists()) {
                         it.delete()
                     }
@@ -154,6 +157,7 @@ class ImportInventoriesUseCase @Inject constructor(
                         val id = enchantmentCompound.getString("id")
                         val level = enchantmentCompound.getShort("lvl")
 
+                        // TODO: why isn't this working?
                         Enchantment.getByName(id)?.let {
                             stack.addEnchantment(it, level.toInt())
                         }
@@ -164,6 +168,7 @@ class ImportInventoriesUseCase @Inject constructor(
                     if (itemMeta != null && itemMeta is Damageable) {
                         val damage = tags.getInt("Damage")
                         itemMeta.damage = damage
+                        stack.itemMeta = itemMeta
                     }
                 }
                 if (tags.containsKey("display")) {
@@ -181,15 +186,33 @@ class ImportInventoriesUseCase @Inject constructor(
                     )
                 }
                 if (tags.containsKey("SkullOwner")) {
+                    val skullOwner = tags.getCompound("SkullOwner")
+                    val properties = skullOwner.getCompound("Properties")
+
                     val itemMeta = stack.itemMeta
                     if (itemMeta != null && itemMeta is SkullMeta) {
-                        itemMeta.setOwner(tags.getCompound("Properties").getString("Name"))
+                        if (properties.containsKey("Name")) {
+                            itemMeta.setOwner(tags.getCompound("Properties").getString("Name"))
+                            stack.itemMeta = itemMeta
+                        } else {
+                            logger.fatal("No Name found for skull")
+                        }
+                    }
+                }
+                if (tags.containsKey("RepairCost")) {
+                    val itemMeta = stack.itemMeta
+                    if (itemMeta != null && itemMeta is Repairable) {
+                        itemMeta.repairCost = tags.getInt("RepairCost")
                         stack.itemMeta = itemMeta
                     }
                 }
+                if (tags.containsKey("BlockEntityTag")) {
+                    // TODO (shulker box, etc)
+                    // Use `f9b51cf5-a34e-440c-b4ab-4d497ef1105f` survival
+                }
 
                 logIfNotExpected(
-                    expected = listOf("Enchantments", "Damage", "display", "SkullOwner"),
+                    expected = listOf("Enchantments", "Damage", "display", "SkullOwner", "RepairCost"),
                     compound = tags,
                     name = "tag",
                 )

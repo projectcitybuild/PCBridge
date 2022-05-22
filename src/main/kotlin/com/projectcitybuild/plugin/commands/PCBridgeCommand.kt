@@ -4,6 +4,7 @@ import com.projectcitybuild.core.exceptions.InvalidCommandArgumentsException
 import com.projectcitybuild.features.utilities.usecases.DataImportUseCase
 import com.projectcitybuild.features.utilities.usecases.GetVersionUseCase
 import com.projectcitybuild.features.utilities.usecases.ImportInventoriesUseCase
+import com.projectcitybuild.modules.scheduler.PlatformScheduler
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.plugin.environment.SpigotCommand
 import com.projectcitybuild.plugin.environment.SpigotCommandInput
@@ -14,6 +15,7 @@ class PCBridgeCommand @Inject constructor(
     private val getVersion: GetVersionUseCase,
     private val dataImport: DataImportUseCase,
     private val importInventories: ImportInventoriesUseCase,
+    private val scheduler: PlatformScheduler,
 ) : SpigotCommand {
 
     override val label = "pcbridge"
@@ -24,7 +26,7 @@ class PCBridgeCommand @Inject constructor(
         when {
             input.args.isEmpty() -> showVersion(input.sender)
             input.args.first() == "import" -> dataImport.execute(sender = input.player, args = input.args)
-            input.args.first() == "import-inv" -> importInventories.execute()
+            input.args.first() == "import-inv" -> scheduler.async<Unit> { importInventories.execute() }.start()
             else -> throw InvalidCommandArgumentsException()
         }
     }
