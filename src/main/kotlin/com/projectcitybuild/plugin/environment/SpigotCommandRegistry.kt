@@ -57,7 +57,7 @@ class SpigotCommandRegistry @Inject constructor(
                         true
                     } catch (error: Exception) {
                         sender.send().error("An internal error occurred performing your command")
-                        error.localizedMessage.let { message -> logger.fatal(message) }
+                        error.localizedMessage?.let { message -> logger.fatal(message) }
                         error.printStackTrace()
                         errorReporter.report(error)
                         true

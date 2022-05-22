@@ -1,17 +1,18 @@
 package com.projectcitybuild.features.utilities.usecases
 
 import br.com.gamemods.nbtmanipulator.NbtCompound
+import br.com.gamemods.nbtmanipulator.NbtFile
 import br.com.gamemods.nbtmanipulator.NbtIO
 import br.com.gamemods.nbtmanipulator.NbtList
-import com.google.gson.Gson
+import com.dumptruckman.bukkit.configuration.json.JsonConfiguration
 import com.projectcitybuild.modules.logger.PlatformLogger
 import org.bukkit.Material
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.Damageable
 import org.bukkit.plugin.Plugin
+import java.io.EOFException
 import java.io.File
-import java.io.FileWriter
 import javax.inject.Inject
 
 class ImportInventoriesUseCase @Inject constructor(
@@ -20,94 +21,106 @@ class ImportInventoriesUseCase @Inject constructor(
 ) {
     private val inventoriesFolder = File(plugin.dataFolder, "inventories")
 
-    private data class MultiverseWorldPlayer(
-        val enderChestContents: HashMap<String, ItemStack>,
-        val potions: List<String>,
-        val armorContents: HashMap<String, ItemStack>,
-        val inventoryContents: HashMap<String, ItemStack>,
-        val offHandItem: ItemStack?,
-        val stats: Stats
-    )
-    private data class Stats(
-        val ex: String,     // food exhaustion
-        val ma: String,     // air
-        val fl: String,     // food level
-        val el: String,     // player level
-        val hp: String,     // health
-        val xp: String,     // player experience
-        val txp: String,    // player total experience
-        val ft: String,     // fire ticks
-        val fd: String,     // fall distance
-        val sa: String,     // food saturation
-        val ra: String,     // remaining air
-    )
-
     fun execute() {
-        val folder = File(inventoriesFolder, "creative")
-        folder.listFiles { file ->file.extension == "dat" }?.forEach { file ->
-            logger.info("Importing: ${file.name}")
+        val worlds = arrayOf("creative", "survival")
 
-            val playerUUID = file.nameWithoutExtension
-            val input = NbtIO.readNbtFile(file)
+        worlds.forEach { worldFolderName ->
+            val folder = File(inventoriesFolder, worldFolderName)
 
-            val pos = input.compound.getDoubleList("Pos")
-            val x = pos[0]
-            val y = pos[1]
-            val z = pos[2]
-            val health = input.compound.getFloat("Health")
-            val foodExhaustion = input.compound.getFloat("foodExhaustionLevel")
-            val foodSaturation = input.compound.getFloat("foodSaturationLevel")
-            val foodLevel = input.compound.getInt("foodLevel")
-            val air = input.compound.getShort("Air")
-            val playerLevel = input.compound.getInt("XpLevel")
-            val xpPercentToNextLevel = input.compound.getFloat("XpP")
-            val totalXP = input.compound.getInt("XpTotal")
-            val fallDistance = input.compound.getFloat("FallDistance")
-            val inventory = input.compound.getCompoundList("Inventory")
-            val enderItems = input.compound.getCompoundList("EnderItems")
+            folder.listFiles { file ->file.extension == "dat" }?.forEach { file ->
+                logger.info("Importing [$worldFolderName]: ${file.name}")
 
-            val playerFile = File(inventoriesFolder, "multiverse/players/$playerUUID.json").also {
-                if (it.exists()) {
-                    it.delete()
+                val playerUUID = file.nameWithoutExtension
+                val input: NbtFile = try {
+                    NbtIO.readNbtFile(file)
+                } catch (e: EOFException) {
+                    logger.fatal("Encountered unexpected EOF for $playerUUID.json")
+                    return@forEach
                 }
-                it.parentFile.mkdirs()
-            }
 
-            // TODO: Multiverse serializes by player name...
-            val lastKnownName = input.compound.getCompound("bukkit").getString("lastKnownName")
-            val outputFile = File(plugin.dataFolder, "inventories/multiverse/creative/$lastKnownName.json").also {
-                if (it.exists()) {
-                    it.delete()
+                val health = input.compound.getFloat("Health")
+                val foodExhaustion = input.compound.getFloat("foodExhaustionLevel")
+                val foodSaturation = input.compound.getFloat("foodSaturationLevel")
+                val foodLevel = input.compound.getInt("foodLevel")
+                val air = input.compound.getShort("Air")
+                val playerLevel = input.compound.getInt("XpLevel")
+                val xpPercentToNextLevel = input.compound.getFloat("XpP")
+                val totalXP = input.compound.getInt("XpTotal")
+                val fallDistance = input.compound.getFloat("FallDistance")
+                val inventory = input.compound.getCompoundList("Inventory")
+                val enderItems = input.compound.getCompoundList("EnderItems")
+
+                // Multiverse serializes by player name...
+                // Apparently if a player changes their username, Multiverse Inventory will update this to the correct
+                // name when they join the server
+                val lastKnownName = input.compound.getCompound("bukkit").getString("lastKnownName")
+                if (lastKnownName.isEmpty()) {
+                    logger.fatal("No last known name for $playerUUID")
+                    return@forEach
                 }
-                it.parentFile.mkdirs()
-            }
+                val playerWorldFile = File(plugin.dataFolder, "inventories/multiverse/creative/$lastKnownName.json").also {
+                    if (it.exists()) {
+                        it.delete()
+                    }
+                    it.parentFile.mkdirs()
+                    it.createNewFile()
+                }
 
-            val player = MultiverseWorldPlayer(
-                enderChestContents = inventoryMap(enderItems),
-                potions = emptyList(),
-                armorContents = hashMapOf(),
-                inventoryContents = inventoryMap(inventory),
-                offHandItem = null,
-                stats = Stats(
-                    ex = foodExhaustion.toString(),
-                    ma = air.toString(),
-                    fl = foodLevel.toString(),
-                    el = playerLevel.toString(),
-                    hp = health.toString(),
-                    xp = xpPercentToNextLevel.toString(),
-                    txp = totalXP.toString(),
-                    ft = "-20",
-                    fd = fallDistance.toString(),
-                    sa = foodSaturation.toString(),
-                    ra = "300",
-                )
-            )
+                // TODO: figure out what "Max Air" actually maps to
+                if (air.toString() != "300") {
+                    logger.fatal("Air was $air. Expected 300")
+                }
 
-            val gson = Gson()
-            FileWriter(outputFile).use {
-                gson.toJson(hashMapOf(Pair("SURVIVAL", player)), it)
+                playerWorldFile.let { configFile ->
+                    JsonConfiguration.loadConfiguration(configFile).apply {
+                        val world = "SURVIVAL"
+                        inventoryMap(enderItems).entries.forEach { pair ->
+                            set("$world.enderChestContents.${pair.key}", pair.value)
+                        }
+                        set("$world.potions", emptyList<String>()) // Too much work to keep potion effects
+//                    set("armorContents", JSONObject())
+
+                        inventoryMap(inventory).entries.forEach { pair ->
+                            set("$world.inventoryContents.${pair.key}", pair.value)
+                        }
+//                    set("offHandItem", JSONObject())
+                        set("$world.stats.ex", foodExhaustion.toString())
+                        set("$world.stats.ma", air.toString())
+                        set("$world.stats.fl", foodLevel.toString())
+                        set("$world.stats.el", playerLevel.toString())
+                        set("$world.stats.hp", health.toString())
+                        set("$world.stats.xp", xpPercentToNextLevel.toString())
+                        set("$world.stats.txp", totalXP.toString())
+                        set("$world.stats.ft", "-20")
+                        set("$world.stats.fd", fallDistance.toString())
+                        set("$world.stats.sa", foodSaturation.toString())
+                        set("$world.stats.ra", "300")
+
+                        save(configFile)
+                    }
+                }
+
+
+                val globalPlayerFile = File(inventoriesFolder, "multiverse/players/$playerUUID.json").also {
+                    if (it.exists()) {
+                        it.delete()
+                    }
+                    it.parentFile.mkdirs()
+                    it.createNewFile()
+                }
+                globalPlayerFile.let { configFile ->
+                    JsonConfiguration.loadConfiguration(configFile).apply {
+                        set("playerData.lastWorld", "") // TODO
+                        set("playerData.shouldLoad", false) // TODO: should this be true...?
+                        set("playerData.lastKnownName", "") // TODO
+
+                        save(configFile)
+                    }
+                }
             }
         }
+
+        logger.info("Completed import")
     }
 
     private fun inventoryMap(inventoryCompound: NbtList<NbtCompound>): HashMap<String, ItemStack> {

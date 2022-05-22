@@ -43,6 +43,12 @@ repositories {
         url = uri("https://papermc.io/repo/repository/maven-public/")
     }
 
+    // For JsonConfiguration - delete later
+    maven {
+        name = "onarandombox"
+        url = uri("https://repo.onarandombox.com/content/groups/public")
+    }
+
     maven { url = uri("https://hub.spigotmc.org/nexus/content/repositories/snapshots/") }
     maven { url = uri("https://oss.sonatype.org/content/repositories/snapshots") }
     maven { url = uri("https://nexus.hc.to/content/repositories/pub_releases") }
@@ -102,6 +108,10 @@ dependencies {
 
     // NBT reader for inventory importing
     implementation("br.com.gamemods:nbt-manipulator:3.1.0")
+
+    // JSON serializer to match Multiverse-Inventory
+    implementation("com.dumptruckman.minecraft:JsonConfiguration:1.1")
+    implementation("net.minidev:json-smart:1.1.1")
 }
 
 sourceSets {
