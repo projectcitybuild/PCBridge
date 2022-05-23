@@ -10,6 +10,7 @@ import br.com.gamemods.nbtmanipulator.NbtString
 import com.dumptruckman.bukkit.configuration.json.JsonConfiguration
 import com.projectcitybuild.modules.logger.PlatformLogger
 import net.md_5.bungee.chat.ComponentSerializer
+import org.bukkit.Bukkit
 import org.bukkit.Color
 import org.bukkit.DyeColor
 import org.bukkit.FireworkEffect
@@ -37,6 +38,7 @@ import java.lang.Integer.max
 import java.lang.Integer.min
 import java.util.Base64
 import java.util.Locale
+import java.util.UUID
 import javax.inject.Inject
 
 //           ,     \    /      ,
@@ -87,7 +89,7 @@ class ImportInventoriesUseCase @Inject constructor(
                 val input: NbtFile = try {
                     NbtIO.readNbtFile(file)
                 } catch (e: EOFException) {
-                    logger.fatal("Encountered unexpected EOF for $playerUUID.json")
+                    logger.fatal("Encountered unexpected EOF for $playerUUID.json: ${e.message}")
                     return@forEach
                 }
 
@@ -385,7 +387,7 @@ class ImportInventoriesUseCase @Inject constructor(
                             if (properties.containsKey("Name")) {
                                 val name = properties.getString("Name")
                                 val offlinePlayer = plugin.server.getOfflinePlayer(name)
-                                itemMeta.setOwningPlayer(offlinePlayer)
+                                itemMeta.owningPlayer = offlinePlayer
 //                                itemMeta.setOwner(name)
                                 stack.itemMeta = itemMeta
                             } else {
@@ -412,10 +414,19 @@ class ImportInventoriesUseCase @Inject constructor(
                                         val encoded = texture.getString("Value")
                                         val decoded = String(Base64.getUrlDecoder().decode(encoded))
                                         val json = JSONObject(decoded)
-                                        val name = json.getString("profileName")
 
-                                        itemMeta.setOwner(name)
-                                        stack.itemMeta = itemMeta
+                                        if (json.has("profileName")) {
+                                            val name = json.getString("profileName")
+                                            itemMeta.setOwner(name)
+                                            stack.itemMeta = itemMeta
+                                        } else {
+                                            // We're out of options. Set the damn thing manually.
+                                            val textureURL = json.getJSONObject("textures").getJSONObject("SKIN").getString("url")
+                                            val encodedURL = Base64.getEncoder().encodeToString(textureURL.toByteArray())
+                                            val hashAsId = UUID(encodedURL.hashCode().toLong(), encodedURL.hashCode().toLong())
+                                            Bukkit.getUnsafe().modifyItemStack(stack, "{SkullOwner:{Id:\"" + hashAsId + "\",Properties:{textures:[{Value:\"" + encodedURL + "\"}]}}}")
+                                        }
+
                                     } catch (e: Exception) {
                                         logger.fatal("Failed to decode texture: ${e.message}")
                                     }
