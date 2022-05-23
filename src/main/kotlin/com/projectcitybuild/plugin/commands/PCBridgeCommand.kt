@@ -26,7 +26,7 @@ class PCBridgeCommand @Inject constructor(
         when {
             input.args.isEmpty() -> showVersion(input.sender)
             input.args.first() == "import" -> dataImport.execute(sender = input.player, args = input.args)
-            input.args.first() == "import-inv" -> scheduler.async<Unit> { importInventories.execute() }.start()
+            input.args.first() == "import-inv" -> importInventories(input)
             else -> throw InvalidCommandArgumentsException()
         }
     }
@@ -34,6 +34,12 @@ class PCBridgeCommand @Inject constructor(
     private fun showVersion(sender: CommandSender) {
         val version = getVersion.execute()
         sender.send().info("Running PCBridge v${version.version} (${version.commitHash})")
+    }
+
+    fun importInventories(input: SpigotCommandInput) {
+        scheduler.async<Unit> {
+            importInventories.execute(isDryRun = input.args.contains("--dry-run"))
+        }.start()
     }
 
     override fun onTabComplete(sender: CommandSender?, args: List<String>): Iterable<String>? {
