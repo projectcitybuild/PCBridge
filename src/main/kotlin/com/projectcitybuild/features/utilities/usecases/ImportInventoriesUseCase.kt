@@ -16,15 +16,19 @@ import org.bukkit.DyeColor
 import org.bukkit.FireworkEffect
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
+import org.bukkit.attribute.Attribute
+import org.bukkit.attribute.AttributeModifier
 import org.bukkit.block.ShulkerBox
 import org.bukkit.block.banner.Pattern
 import org.bukkit.block.banner.PatternType
 import org.bukkit.enchantments.Enchantment
+import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.BannerMeta
 import org.bukkit.inventory.meta.BlockStateMeta
 import org.bukkit.inventory.meta.BookMeta
 import org.bukkit.inventory.meta.Damageable
+import org.bukkit.inventory.meta.EnchantmentStorageMeta
 import org.bukkit.inventory.meta.FireworkMeta
 import org.bukkit.inventory.meta.MapMeta
 import org.bukkit.inventory.meta.Repairable
@@ -266,7 +270,7 @@ class ImportInventoriesUseCase @Inject constructor(
                     enchantments.forEach { enchantmentCompound ->
                         val id = enchantmentCompound.getString("id")
 
-                        // Some shulker boxes have an NbtInt instead of an NbtShort...
+                        // Some shulker boxes contain items with an NbtInt instead of an NbtShort...
                         val unsafeLevel = if (enchantmentCompound.get("lvl") is NbtShort) {
                             enchantmentCompound.getShort("lvl").toInt()
                         } else if (enchantmentCompound.get("lvl") is NbtInt) {
@@ -291,8 +295,30 @@ class ImportInventoriesUseCase @Inject constructor(
                             // Just throw out the enchantment if something goes wrong.
                             // There's some enchantments that aren't allowed to be applied to the
                             // given ItemStack, like imageonmap:___gloweffect___
-                            logger.fatal("Could not map enchantment [$id]: ${e.message}")
+
+                            // Also ignore items that have had hacked-in enchantments applied
+                            if (e.message != "Specified enchantment cannot be applied to this itemstack") {
+                                logger.fatal("Could not map enchantment [$id]: ${e.message}")
+                            }
                         }
+                    }
+                }
+                if (tags.containsKey("StoredEnchantments")) {
+                    val itemMeta = stack.itemMeta
+
+                    if (itemMeta != null && itemMeta is EnchantmentStorageMeta) {
+                        tags.getCompoundList("StoredEnchantments").forEach {
+                            val id = it.getString("id")
+                            val level = it.getShort("lvl").toInt()
+
+                            val key = NamespacedKey.minecraft(id.removePrefix("minecraft:"))
+                            val mappedEnchant = Enchantment.getByKey(key)
+                            if (mappedEnchant != null) {
+                                val ignoresLevelRestriction = false
+                                itemMeta.addStoredEnchant(mappedEnchant, level, ignoresLevelRestriction)
+                            }
+                        }
+                        stack.itemMeta = itemMeta
                     }
                 }
                 if (tags.containsKey("Damage")) {
@@ -332,6 +358,10 @@ class ImportInventoriesUseCase @Inject constructor(
                         compound = display,
                         name = "display",
                     )
+                }
+                // No idea why there's a few here... is this an old NBT?
+                if (tags.containsKey("lore")) {
+                    stack.itemMeta?.lore = tags.getStringList("lore").map { it.value }
                 }
                 if (tags.containsKey("pages")) {
                     val pages = tags.getStringList("pages")
@@ -388,7 +418,6 @@ class ImportInventoriesUseCase @Inject constructor(
                                 val name = properties.getString("Name")
                                 val offlinePlayer = plugin.server.getOfflinePlayer(name)
                                 itemMeta.owningPlayer = offlinePlayer
-//                                itemMeta.setOwner(name)
                                 stack.itemMeta = itemMeta
                             } else {
                                 // We can try base64 decode the `Value`, which will (hopefully) contain the
@@ -449,6 +478,14 @@ class ImportInventoriesUseCase @Inject constructor(
                 if (tags.containsKey("BlockEntityTag")) {
                     val blockEntities = tags.getCompound("BlockEntityTag")
 
+                    if (blockEntities.containsKey("Base")) {
+                        val itemMeta = stack.itemMeta
+                        if (itemMeta != null && itemMeta is BannerMeta) {
+                            val rawColor = blockEntities.getInt("Base")
+                            itemMeta.baseColor = DyeColor.getByDyeData(rawColor.toByte())
+                            stack.itemMeta = itemMeta
+                        }
+                    }
                     if (blockEntities.containsKey("Patterns")) {
                         val patterns = blockEntities.getCompoundList("Patterns")
                         val itemMeta = stack.itemMeta
@@ -463,6 +500,12 @@ class ImportInventoriesUseCase @Inject constructor(
 
                                 if (color != null && patternType != null) {
                                     itemMeta.patterns.add(Pattern(color, patternType))
+                                } else {
+                                    logger.fatal("Pattern was missing data")
+                                    logger.fatal("color=$color")
+                                    logger.fatal("pattern=$patternType")
+                                    logger.fatal("rawColor=$rawColor")
+                                    logger.fatal("rawPattern=$rawPattern")
                                 }
                             }
                         }
@@ -489,8 +532,12 @@ class ImportInventoriesUseCase @Inject constructor(
                         stack.itemMeta = itemMeta
                     }
 
+                    if (blockEntities.containsKey("CustomName")) {
+                        stack.itemMeta?.setDisplayName(blockEntities.getString("CustomName"))
+                    }
+
                     logIfNotExpected(
-                        expected = listOf("Patterns", "Items", "id"),
+                        expected = listOf("Patterns", "Items", "id", "Base", "CustomName"),
                         compound = tags.getCompound("BlockEntityTag"),
                         name = "BlockEntityTag",
                     )
@@ -548,9 +595,72 @@ class ImportInventoriesUseCase @Inject constructor(
                         stack.itemMeta = itemMeta
                     }
                 }
+                if (tags.containsKey("AttributeModifiers")) {
+                    tags.getCompoundList("AttributeModifiers").forEach {
+                        val attribute = when (it.getString("AttributeName")) {
+                            "generic.max_health" -> Attribute.GENERIC_MAX_HEALTH
+                            "generic.follow_range" -> Attribute.GENERIC_FOLLOW_RANGE
+                            "generic.knockback_resistance" -> Attribute.GENERIC_KNOCKBACK_RESISTANCE
+                            "generic.movement_speed" -> Attribute.GENERIC_MOVEMENT_SPEED
+                            "generic.flying_speed" -> Attribute.GENERIC_FLYING_SPEED
+                            "generic.attack_damage" -> Attribute.GENERIC_ATTACK_DAMAGE
+                            "generic.attack_knockback" -> Attribute.GENERIC_ATTACK_KNOCKBACK
+                            "generic.attack_speed" -> Attribute.GENERIC_ATTACK_SPEED
+                            "generic.armor" -> Attribute.GENERIC_ARMOR
+                            "generic.armor_toughness" -> Attribute.GENERIC_ARMOR_TOUGHNESS
+                            "generic.luck" -> Attribute.GENERIC_LUCK
+                            "horse.jump_strength" -> Attribute.HORSE_JUMP_STRENGTH
+                            "zombie.spawn_reinforcements" -> Attribute.ZOMBIE_SPAWN_REINFORCEMENTS
+                            else -> return@forEach
+                        }
+                        var slot: EquipmentSlot? = null
+                        if (it.containsKey("Slot")) {
+                            slot = when(it.getString("Slot")) {
+                                "mainhand" -> EquipmentSlot.HAND
+                                "offhand" -> EquipmentSlot.OFF_HAND
+                                "feet" -> EquipmentSlot.FEET
+                                "legs" -> EquipmentSlot.LEGS
+                                "chest" -> EquipmentSlot.CHEST
+                                "head" -> EquipmentSlot.HEAD
+                                else -> null
+                            }
+                        }
+                        val modifier = if (slot != null) {
+                            AttributeModifier(
+                                UUID.fromString(it.getIntArray("UUID").joinToString()),
+                                it.getString("Name"),
+                                it.getDouble("Amount"),
+                                when (it.getInt("Operation")) {
+                                    0 -> AttributeModifier.Operation.ADD_NUMBER
+                                    1 -> AttributeModifier.Operation.ADD_SCALAR
+                                    2 -> AttributeModifier.Operation.MULTIPLY_SCALAR_1
+                                    else -> return@forEach
+                                },
+                                slot,
+                            )
+                        } else {
+                            AttributeModifier(
+                                UUID.fromString(it.getIntArray("UUID").joinToString()),
+                                it.getString("Name"),
+                                it.getDouble("Amount"),
+                                when (it.getInt("Operation")) {
+                                    0 -> AttributeModifier.Operation.ADD_NUMBER
+                                    1 -> AttributeModifier.Operation.ADD_SCALAR
+                                    2 -> AttributeModifier.Operation.MULTIPLY_SCALAR_1
+                                    else -> return@forEach
+                                },
+                            )
+                        }
+                        stack.itemMeta?.addAttributeModifier(attribute, modifier)
+                    }
+                }
+                if (tags.containsKey("Unbreakable") && tags.getBooleanByte("Unbreakable")) {
+                    stack.itemMeta?.isUnbreakable = true
+                }
 
                 logIfNotExpected(
                     expected = listOf(
+                        "AttributeModifier",
                         "BlockEntityTag",
                         "Enchantments",
                         "Fireworks",
@@ -565,6 +675,9 @@ class ImportInventoriesUseCase @Inject constructor(
                         "title",
                         "generation",
                         "resolved",  // Not needed
+                        "lore",
+                        "Unbreakable",
+                        "StoredEnchantments",
                     ),
                     compound = tags,
                     name = "tag",
