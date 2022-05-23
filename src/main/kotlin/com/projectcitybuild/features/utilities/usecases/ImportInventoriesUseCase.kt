@@ -9,6 +9,7 @@ import br.com.gamemods.nbtmanipulator.NbtShort
 import br.com.gamemods.nbtmanipulator.NbtString
 import com.dumptruckman.bukkit.configuration.json.JsonConfiguration
 import com.projectcitybuild.modules.logger.PlatformLogger
+import net.md_5.bungee.chat.ComponentSerializer
 import org.bukkit.Color
 import org.bukkit.DyeColor
 import org.bukkit.FireworkEffect
@@ -334,7 +335,15 @@ class ImportInventoriesUseCase @Inject constructor(
                     val pages = tags.getStringList("pages")
                     val itemMeta = stack.itemMeta
                     if (itemMeta != null && itemMeta is BookMeta) {
-                        itemMeta.pages = pages.map { it.value }
+                        pages.forEach {
+                            try {
+                                // Attempt to parse as JSON
+                                itemMeta.spigot().addPage(ComponentSerializer.parse(it.value))
+                            } catch (e: Exception) {
+                                // ... but not all pages are JSON
+                                itemMeta.addPage(it.value)
+                            }
+                        }
                         stack.itemMeta = itemMeta
                     }
                 }
