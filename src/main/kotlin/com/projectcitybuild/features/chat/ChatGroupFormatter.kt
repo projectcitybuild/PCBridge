@@ -1,7 +1,7 @@
 package com.projectcitybuild.features.chat
 
 import com.projectcitybuild.modules.config.ConfigKey
-import com.projectcitybuild.modules.config.PlatformConfig
+import com.projectcitybuild.modules.config.ConfigKeys
 import com.projectcitybuild.modules.permissions.Permissions
 import dagger.Reusable
 import net.md_5.bungee.api.chat.BaseComponent
@@ -14,7 +14,7 @@ import javax.inject.Inject
 @Reusable
 class ChatGroupFormatter @Inject constructor(
     private val permissions: Permissions,
-    private val config: PlatformConfig
+    private val config: ConfigKeys
 ) {
     data class Aggregate(
         val prefix: List<BaseComponent>,

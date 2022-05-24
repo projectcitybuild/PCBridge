@@ -3,7 +3,7 @@ package com.projectcitybuild.core.http
 import com.projectcitybuild.core.http.clients.MojangClient
 import com.projectcitybuild.core.http.clients.PCBClient
 import com.projectcitybuild.modules.config.ConfigKey
-import com.projectcitybuild.modules.config.PlatformConfig
+import com.projectcitybuild.modules.config.ConfigKeys
 import dagger.Module
 import dagger.Provides
 
@@ -11,7 +11,7 @@ import dagger.Provides
 class NetworkProvider {
 
     @Provides
-    fun provideAPIRequestFactory(config: PlatformConfig): APIRequestFactory {
+    fun provideAPIRequestFactory(config: ConfigKeys): APIRequestFactory {
         val isLoggingEnabled = config.get(ConfigKey.API_IS_LOGGING_ENABLED)
 
         return APIRequestFactory(

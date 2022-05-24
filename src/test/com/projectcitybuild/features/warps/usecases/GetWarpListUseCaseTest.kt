@@ -2,7 +2,7 @@ package com.projectcitybuild.features.warps.usecases
 
 import com.projectcitybuild.features.warps.usecases.warplist.GetWarpListUseCase
 import com.projectcitybuild.modules.config.ConfigKey
-import com.projectcitybuild.modules.config.PlatformConfig
+import com.projectcitybuild.modules.config.ConfigKeys
 import com.projectcitybuild.repositories.WarpRepository
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -17,7 +17,7 @@ class GetWarpListUseCaseTest {
     private lateinit var useCase: GetWarpListUseCase
 
     private val warpRepository = mock(WarpRepository::class.java)
-    private val config = mock(PlatformConfig::class.java)
+    private val config = mock(ConfigKeys::class.java)
 
     @BeforeEach
     fun setUp() {

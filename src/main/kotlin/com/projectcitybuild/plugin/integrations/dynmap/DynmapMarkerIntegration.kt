@@ -2,7 +2,7 @@ package com.projectcitybuild.plugin.integrations.dynmap
 
 import com.projectcitybuild.core.SpigotListener
 import com.projectcitybuild.modules.config.ConfigKey
-import com.projectcitybuild.modules.config.PlatformConfig
+import com.projectcitybuild.modules.config.ConfigKeys
 import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.plugin.SpigotIntegration
 import com.projectcitybuild.plugin.events.WarpCreateEvent
@@ -18,7 +18,7 @@ import javax.inject.Inject
 class DynmapMarkerIntegration @Inject constructor(
     private val plugin: Plugin,
     private val warpRepository: WarpRepository,
-    private val config: PlatformConfig,
+    private val config: ConfigKeys,
     private val logger: PlatformLogger,
 ) : SpigotListener, SpigotIntegration {
 

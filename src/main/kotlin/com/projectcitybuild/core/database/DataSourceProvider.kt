@@ -1,7 +1,7 @@
 package com.projectcitybuild.core.database
 
 import com.projectcitybuild.modules.config.ConfigKey
-import com.projectcitybuild.modules.config.PlatformConfig
+import com.projectcitybuild.modules.config.ConfigKeys
 import com.projectcitybuild.modules.logger.PlatformLogger
 import dagger.Module
 import dagger.Provides
@@ -14,7 +14,7 @@ class DataSourceProvider {
     @Singleton
     fun providesDataSource(
         logger: PlatformLogger,
-        config: PlatformConfig
+        config: ConfigKeys
     ): DataSource {
         return DataSource(
             logger = logger,

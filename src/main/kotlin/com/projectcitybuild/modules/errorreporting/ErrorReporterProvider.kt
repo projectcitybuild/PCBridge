@@ -1,6 +1,6 @@
 package com.projectcitybuild.modules.errorreporting
 
-import com.projectcitybuild.modules.config.PlatformConfig
+import com.projectcitybuild.modules.config.ConfigKeys
 import com.projectcitybuild.modules.errorreporting.adapters.SentryErrorReporter
 import com.projectcitybuild.modules.logger.PlatformLogger
 import dagger.Module
@@ -11,7 +11,7 @@ class ErrorReporterProvider {
 
     @Provides
     fun provideErrorReporter(
-        config: PlatformConfig,
+        config: ConfigKeys,
         logger: PlatformLogger,
     ): ErrorReporter {
         return SentryErrorReporter(config, logger)

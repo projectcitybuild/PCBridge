@@ -3,7 +3,6 @@ package com.projectcitybuild.plugin
 import com.github.shynixn.mccoroutine.bukkit.minecraftDispatcher
 import com.projectcitybuild.core.database.DataSource
 import com.projectcitybuild.core.http.APIClientImpl
-import com.projectcitybuild.modules.config.implementations.SpigotConfig
 import com.projectcitybuild.modules.errorreporting.ErrorReporter
 import com.projectcitybuild.modules.eventbroadcast.implementations.SpigotLocalEventBroadcaster
 import com.projectcitybuild.modules.kick.SpigotPlayerKicker
@@ -26,7 +25,6 @@ class SpigotPlugin : JavaPlugin() {
             .plugin(this)
             .javaPlugin(this)
             .server(server)
-            .config(SpigotConfig(plugin = this, config))
             .logger(SpigotLogger(logger))
             .scheduler(SpigotScheduler(plugin = this))
             .timer(SpigotTimer(plugin = this))

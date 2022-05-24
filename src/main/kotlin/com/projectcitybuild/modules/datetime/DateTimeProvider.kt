@@ -1,7 +1,7 @@
 package com.projectcitybuild.modules.datetime
 
 import com.projectcitybuild.modules.config.ConfigKey
-import com.projectcitybuild.modules.config.PlatformConfig
+import com.projectcitybuild.modules.config.ConfigKeys
 import com.projectcitybuild.modules.datetime.formatter.DateTimeFormatter
 import com.projectcitybuild.modules.datetime.formatter.DateTimeFormatterImpl
 import com.projectcitybuild.modules.datetime.time.LocalizedTime
@@ -15,7 +15,7 @@ import java.util.Locale
 class DateTimeProvider {
 
     @Provides
-    fun provideDateTimeFormatter(config: PlatformConfig): DateTimeFormatter {
+    fun provideDateTimeFormatter(config: ConfigKeys): DateTimeFormatter {
         return DateTimeFormatterImpl(
             locale = Locale.forLanguageTag(
                 config.get(ConfigKey.TIME_LOCALE)
