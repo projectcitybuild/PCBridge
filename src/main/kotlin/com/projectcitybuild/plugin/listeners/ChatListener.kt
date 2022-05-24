@@ -1,9 +1,9 @@
 package com.projectcitybuild.plugin.listeners
 
 import com.projectcitybuild.core.SpigotListener
-import com.projectcitybuild.features.chat.ChatGroupFormatBuilder
+import com.projectcitybuild.features.chat.ChatGroupFormatter
+import com.projectcitybuild.modules.textcomponentbuilder.add
 import com.projectcitybuild.modules.textcomponentbuilder.send
-import com.projectcitybuild.platforms.bungeecord.extensions.add
 import com.projectcitybuild.repositories.PlayerConfigRepository
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.chat.TextComponent
@@ -16,7 +16,7 @@ import javax.inject.Inject
 class ChatListener @Inject constructor(
     private val server: Server,
     private val playerConfigRepository: PlayerConfigRepository,
-    private val chatGroupFormatBuilder: ChatGroupFormatBuilder
+    private val chatGroupFormatter: ChatGroupFormatter
 ) : SpigotListener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -28,12 +28,19 @@ class ChatListener @Inject constructor(
             return
         }
 
-        // Super unsafe, but no other option as cancelling the event (as per the
-        // normal way) will interfere with a lot of other plugins
+        // Semi-dangerous workaround for other plugins not receiving chat.
+        //
+        // The typical way to format chat would be to modify the message in the event,
+        // however that doesn't support HoverText, which we need because all our groups
+        // are abbreviated and similar-looking.
+        //
+        // We can't cancel the chat event either, as that would prevent other plugins
+        // like DiscordSRV from receiving the message and sending it to Discord. This is a
+        // hack that lets the original message be sent (and seen by other plugins), but
+        // will essentially be cancelled for any online players.
         event.recipients.clear()
 
-        // TODO: stop IO thrashing and cache all this instead
-        val format = chatGroupFormatBuilder.format(event.player)
+        val format = chatGroupFormatter.get(playerUUID = event.player.uniqueId)
 
         val tc = TextComponent()
             .add(format.prefix)

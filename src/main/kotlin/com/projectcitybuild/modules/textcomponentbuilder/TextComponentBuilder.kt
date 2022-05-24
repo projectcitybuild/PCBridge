@@ -1,4 +1,4 @@
-package com.projectcitybuild.platforms.bungeecord.extensions
+package com.projectcitybuild.modules.textcomponentbuilder
 
 import net.md_5.bungee.api.chat.BaseComponent
 import net.md_5.bungee.api.chat.TextComponent
@@ -31,6 +31,11 @@ fun TextComponent.addIf(condition: Boolean, message: String, config: ((TextCompo
 
 fun TextComponent.add(number: Int, config: ((TextComponent) -> Unit)? = null): TextComponent {
     return add(number.toString(), config)
+}
+
+fun TextComponent.add(collection: List<BaseComponent>): TextComponent {
+    collection.forEach { this.addExtra(it) }
+    return this
 }
 
 fun TextComponent.add(collection: Array<out BaseComponent>): TextComponent {

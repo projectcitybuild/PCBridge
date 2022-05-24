@@ -90,6 +90,13 @@ class LuckPermsPermissions @Inject constructor(
             .joinToString(separator = "")
     }
 
+    override fun getGroupMetaData(groupName: String, key: String): String? {
+        val group = luckPerms.groupManager.getGroup(groupName)
+            ?: return null
+
+        return group.cachedData.metaData.getMetaValue(key)
+    }
+
     override fun getGroupDisplayName(groupName: String): String? {
         // TODO: find better way to get Display Name node
         return luckPerms.groupManager.getGroup(groupName)?.displayName

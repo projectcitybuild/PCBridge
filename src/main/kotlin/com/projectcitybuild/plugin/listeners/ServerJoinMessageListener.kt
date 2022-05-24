@@ -1,7 +1,7 @@
 package com.projectcitybuild.plugin.listeners
 
 import com.projectcitybuild.core.SpigotListener
-import com.projectcitybuild.platforms.bungeecord.extensions.add
+import com.projectcitybuild.modules.textcomponentbuilder.add
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.Server
