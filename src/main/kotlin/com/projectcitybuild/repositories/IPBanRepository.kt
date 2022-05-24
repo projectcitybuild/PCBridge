@@ -1,6 +1,6 @@
 package com.projectcitybuild.repositories
 
-import com.projectcitybuild.core.infrastructure.database.DataSource
+import com.projectcitybuild.core.database.DataSource
 import com.projectcitybuild.entities.IPBan
 import javax.inject.Inject
 

@@ -1,10 +1,6 @@
 package com.projectcitybuild.plugin
 
 import com.projectcitybuild.core.SpigotListener
-import com.projectcitybuild.core.contracts.SpigotIntegration
-import com.projectcitybuild.integrations.dynmap.DynmapMarkerIntegration
-import com.projectcitybuild.integrations.essentials.EssentialsIntegration
-import com.projectcitybuild.integrations.gadgetsmenu.GadgetsMenuIntegration
 import com.projectcitybuild.plugin.commands.ACommand
 import com.projectcitybuild.plugin.commands.BanCommand
 import com.projectcitybuild.plugin.commands.BanIPCommand
@@ -21,6 +17,9 @@ import com.projectcitybuild.plugin.commands.UnmuteCommand
 import com.projectcitybuild.plugin.commands.WarpCommand
 import com.projectcitybuild.plugin.commands.WarpsCommand
 import com.projectcitybuild.plugin.environment.SpigotCommand
+import com.projectcitybuild.plugin.integrations.dynmap.DynmapMarkerIntegration
+import com.projectcitybuild.plugin.integrations.essentials.EssentialsIntegration
+import com.projectcitybuild.plugin.integrations.gadgetsmenu.GadgetsMenuIntegration
 import com.projectcitybuild.plugin.listeners.BanConnectionListener
 import com.projectcitybuild.plugin.listeners.ChatListener
 import com.projectcitybuild.plugin.listeners.FirstTimeJoinMessageListener
