@@ -3,6 +3,7 @@ package com.projectcitybuild.features.chat
 import com.projectcitybuild.modules.config.ConfigKey
 import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.modules.permissions.Permissions
+import dagger.Reusable
 import net.md_5.bungee.api.chat.BaseComponent
 import net.md_5.bungee.api.chat.HoverEvent
 import net.md_5.bungee.api.chat.TextComponent
@@ -10,21 +11,30 @@ import net.md_5.bungee.api.chat.hover.content.Text
 import org.bukkit.entity.Player
 import javax.inject.Inject
 
-class ChatGroupFormatBuilder @Inject constructor(
+@Reusable
+class ChatGroupFormatter @Inject constructor(
     private val permissions: Permissions,
     private val config: PlatformConfig
 ) {
     data class Aggregate(
-        val prefix: Array<out BaseComponent>,
-        val suffix: Array<out BaseComponent>,
+        val prefix: List<BaseComponent>,
+        val suffix: List<BaseComponent>,
         val groups: TextComponent,
     )
 
-    private val trustedGroups = config.get(ConfigKey.GROUPS_TRUST_PRIORITY)
-    private val builderGroups = config.get(ConfigKey.GROUPS_BUILD_PRIORITY)
-    private val donorGroups = config.get(ConfigKey.GROUPS_DONOR_PRIORITY)
+    enum class GroupType {
+        TRUST,
+        BUILD,
+        DONOR,
+    }
+
+    private val groupPriorities: MutableMap<String, Pair<GroupType, Int>> = mutableMapOf()
 
     fun format(player: Player): Aggregate {
+        if (groupPriorities.isEmpty()) {
+            buildGroupList()
+        }
+
         val groupNames = permissions.getUserGroups(player.uniqueId)
 
         var highestTrust: Pair<Int, String>? = null
@@ -33,25 +43,18 @@ class ChatGroupFormatBuilder @Inject constructor(
 
         for (groupName in groupNames) {
             val lowercaseGroupName = groupName.lowercase()
+            val (groupType, priorityIndex) = groupPriorities[lowercaseGroupName]
+                ?: continue
 
-            val trustIndex = trustedGroups.indexOf(lowercaseGroupName)
-            if (trustIndex != -1) {
-                if (highestTrust == null || trustIndex < highestTrust.first) {
-                    highestTrust = Pair(trustIndex, groupName)
+            when (groupType) {
+                GroupType.TRUST -> if (highestTrust == null || priorityIndex < highestTrust.first) {
+                    highestTrust = Pair(priorityIndex, groupName)
                 }
-            }
-
-            val builderIndex = builderGroups.indexOf(lowercaseGroupName)
-            if (builderIndex != -1) {
-                if (highestBuild == null || builderIndex < highestBuild.first) {
-                    highestBuild = Pair(builderIndex, groupName)
+                GroupType.BUILD -> if (highestBuild == null || priorityIndex < highestBuild.first) {
+                    highestBuild = Pair(priorityIndex, groupName)
                 }
-            }
-
-            val donorIndex = donorGroups.indexOf(lowercaseGroupName)
-            if (donorIndex != -1) {
-                if (highestDonor == null || donorIndex < highestDonor.first) {
-                    highestDonor = Pair(donorIndex, groupName)
+                GroupType.DONOR -> if (highestDonor == null || priorityIndex < highestDonor.first) {
+                    highestDonor = Pair(priorityIndex, groupName)
                 }
             }
         }
@@ -104,14 +107,29 @@ class ChatGroupFormatBuilder @Inject constructor(
                 }
         }
 
+        val prefix = TextComponent.fromLegacyText(permissions.getUserPrefix(player.uniqueId)).toList()
+        val suffix = TextComponent.fromLegacyText(permissions.getUserSuffix(player.uniqueId)).toList()
+
         return Aggregate(
-            prefix = TextComponent.fromLegacyText(
-                permissions.getUserPrefix(player.uniqueId)
-            ),
-            suffix = TextComponent.fromLegacyText(
-                permissions.getUserSuffix(player.uniqueId)
-            ),
+            prefix = prefix,
+            suffix = suffix,
             groups = groupTC,
         )
+    }
+
+    private fun buildGroupList() {
+        val trustedGroupPriority = config.get(ConfigKey.GROUPS_TRUST_PRIORITY)
+        val builderGroupPriority = config.get(ConfigKey.GROUPS_BUILD_PRIORITY)
+        val donorGroupPriority = config.get(ConfigKey.GROUPS_DONOR_PRIORITY)
+
+        trustedGroupPriority.withIndex().forEach {
+            groupPriorities[it.value.lowercase()] = Pair(GroupType.TRUST, it.index)
+        }
+        builderGroupPriority.withIndex().forEach {
+            groupPriorities[it.value.lowercase()] = Pair(GroupType.BUILD, it.index)
+        }
+        donorGroupPriority.withIndex().forEach {
+            groupPriorities[it.value.lowercase()] = Pair(GroupType.DONOR, it.index)
+        }
     }
 }

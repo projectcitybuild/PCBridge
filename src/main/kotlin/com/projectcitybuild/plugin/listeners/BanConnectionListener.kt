@@ -5,7 +5,7 @@ import com.projectcitybuild.features.bans.usecases.AuthoriseConnectionUseCase
 import com.projectcitybuild.modules.datetime.formatter.DateTimeFormatter
 import com.projectcitybuild.modules.errorreporting.ErrorReporter
 import com.projectcitybuild.modules.logger.PlatformLogger
-import com.projectcitybuild.platforms.bungeecord.extensions.add
+import com.projectcitybuild.modules.textcomponentbuilder.add
 import kotlinx.coroutines.runBlocking
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.chat.TextComponent
