@@ -1,23 +1,22 @@
 package com.projectcitybuild.features.warps.usecases
 
 import com.projectcitybuild.features.warps.usecases.warplist.GetWarpListUseCase
-import com.projectcitybuild.modules.config.ConfigKey
-import com.projectcitybuild.modules.config.ConfigKeys
+import com.projectcitybuild.modules.config.Config
 import com.projectcitybuild.repositories.WarpRepository
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.powermock.api.mockito.PowerMockito.mock
 import org.powermock.api.mockito.PowerMockito.`when`
+import org.powermock.api.mockito.PowerMockito.mock
 
 class GetWarpListUseCaseTest {
 
     private lateinit var useCase: GetWarpListUseCase
 
     private val warpRepository = mock(WarpRepository::class.java)
-    private val config = mock(ConfigKeys::class.java)
+    private val config = mock(Config::class.java)
 
     @BeforeEach
     fun setUp() {
@@ -31,7 +30,7 @@ class GetWarpListUseCaseTest {
     fun `should return all warps sorted`() = runTest {
         val warps = listOf("b", "c", "a",)
         `when`(warpRepository.names()).thenReturn(warps)
-        `when`(config.get(ConfigKey.WARPS_PER_PAGE)).thenReturn(warps.size)
+        `when`(config.keys.WARPS_PER_PAGE).thenReturn(warps.size)
 
         val received = useCase.getList(page = 1)
         val expected = listOf("a", "b", "c")
@@ -44,7 +43,7 @@ class GetWarpListUseCaseTest {
         val warps = MutableList(3) { index -> "warp_$index" }
 
         `when`(warpRepository.names()).thenReturn(warps)
-        `when`(config.get(ConfigKey.WARPS_PER_PAGE)).thenReturn(3)
+        `when`(config.keys.WARPS_PER_PAGE).thenReturn(3)
 
         val received = useCase.getList(page = 1)
 
@@ -61,7 +60,7 @@ class GetWarpListUseCaseTest {
         val warps = MutableList(5) { index -> "warp_$index" }
 
         `when`(warpRepository.names()).thenReturn(warps)
-        `when`(config.get(ConfigKey.WARPS_PER_PAGE)).thenReturn(2)
+        `when`(config.keys.WARPS_PER_PAGE).thenReturn(2)
 
         val firstPage = useCase.getList(page = 1)
         assertEquals(listOf("warp_0", "warp_1"), firstPage?.warps)

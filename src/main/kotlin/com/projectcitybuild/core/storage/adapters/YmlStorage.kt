@@ -8,16 +8,16 @@ class YmlStorage(
     private val config: FileConfiguration
 ) : Storage {
 
-    override fun <T> get(key: StoragePath<T>): T {
-        val value = config.get(key.key) as T
+    override fun <T> get(path: StoragePath<T>): T {
+        val value = config.get(path.key) as T
         if (value != null) {
             return value
         }
-        return key.defaultValue
+        return path.defaultValue
     }
 
-    override fun <T> set(key: StoragePath<T>, value: T) {
-        return config.set(key.key, value)
+    override fun <T> set(path: StoragePath<T>, value: T) {
+        config.set(path.key, value)
     }
 
     override fun get(path: String): Any? {

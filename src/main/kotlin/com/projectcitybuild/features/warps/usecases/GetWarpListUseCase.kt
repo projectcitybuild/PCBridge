@@ -1,7 +1,6 @@
 package com.projectcitybuild.features.warps.usecases.warplist
 
-import com.projectcitybuild.modules.config.ConfigKey
-import com.projectcitybuild.modules.config.ConfigKeys
+import com.projectcitybuild.modules.config.Config
 import com.projectcitybuild.repositories.WarpRepository
 import javax.inject.Inject
 import kotlin.math.ceil
@@ -10,7 +9,7 @@ import kotlin.math.min
 
 class GetWarpListUseCase @Inject constructor(
     private val warpRepository: WarpRepository,
-    private val config: ConfigKeys
+    private val config: Config
 ) {
     data class WarpList(
         val totalWarps: Int,
@@ -20,7 +19,7 @@ class GetWarpListUseCase @Inject constructor(
     )
 
     fun getList(page: Int = 1): WarpList? {
-        val warpsPerPage = config.get(ConfigKey.WARPS_PER_PAGE)
+        val warpsPerPage = config.keys.WARPS_PER_PAGE
         val availableWarps = warpRepository.names()
         val totalWarpPages = ceil((availableWarps.size.toDouble() / warpsPerPage.toDouble())).toInt()
 

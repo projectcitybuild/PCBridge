@@ -3,7 +3,7 @@ package com.projectcitybuild.plugin
 import com.projectcitybuild.core.database.DataSourceProvider
 import com.projectcitybuild.core.http.APIClient
 import com.projectcitybuild.core.http.NetworkProvider
-import com.projectcitybuild.modules.config.Config
+import com.projectcitybuild.core.storage.Storage
 import com.projectcitybuild.modules.datetime.DateTimeProvider
 import com.projectcitybuild.modules.errorreporting.ErrorReporterProvider
 import com.projectcitybuild.modules.eventbroadcast.LocalEventBroadcaster
@@ -46,7 +46,7 @@ interface SpigotComponent {
         fun server(server: Server): Builder
 
         @BindsInstance
-        fun config(config: Config): Builder
+        fun storage(storage: Storage): Builder
 
         @BindsInstance
         fun logger(logger: PlatformLogger): Builder

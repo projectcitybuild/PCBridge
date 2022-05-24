@@ -1,7 +1,6 @@
 package com.projectcitybuild.modules.datetime
 
-import com.projectcitybuild.modules.config.ConfigKey
-import com.projectcitybuild.modules.config.ConfigKeys
+import com.projectcitybuild.modules.config.Config
 import com.projectcitybuild.modules.datetime.formatter.DateTimeFormatter
 import com.projectcitybuild.modules.datetime.formatter.DateTimeFormatterImpl
 import com.projectcitybuild.modules.datetime.time.LocalizedTime
@@ -15,13 +14,13 @@ import java.util.Locale
 class DateTimeProvider {
 
     @Provides
-    fun provideDateTimeFormatter(config: ConfigKeys): DateTimeFormatter {
+    fun provideDateTimeFormatter(config: Config): DateTimeFormatter {
         return DateTimeFormatterImpl(
             locale = Locale.forLanguageTag(
-                config.get(ConfigKey.TIME_LOCALE)
+                config.keys.TIME_LOCALE
             ),
             timezone = ZoneId.of(
-                config.get(ConfigKey.TIME_TIMEZONE)
+                config.keys.TIME_TIMEZONE
             ),
         )
     }
