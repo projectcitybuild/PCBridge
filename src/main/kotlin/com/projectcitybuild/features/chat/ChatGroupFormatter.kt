@@ -8,7 +8,7 @@ import net.md_5.bungee.api.chat.BaseComponent
 import net.md_5.bungee.api.chat.HoverEvent
 import net.md_5.bungee.api.chat.TextComponent
 import net.md_5.bungee.api.chat.hover.content.Text
-import org.bukkit.entity.Player
+import java.util.UUID
 import javax.inject.Inject
 
 @Reusable
@@ -29,13 +29,23 @@ class ChatGroupFormatter @Inject constructor(
     }
 
     private val groupPriorities: MutableMap<String, Pair<GroupType, Int>> = mutableMapOf()
+    private val cache: MutableMap<UUID, Aggregate> = mutableMapOf()
 
-    fun format(player: Player): Aggregate {
+    fun format(playerUUID: UUID): Aggregate {
+        val cached = cache[playerUUID]
+        if (cached != null) {
+            return cached
+        }
+        return buildAggregate(playerUUID = playerUUID)
+            .also { cache[playerUUID] = it }
+    }
+
+    private fun buildAggregate(playerUUID: UUID): Aggregate {
         if (groupPriorities.isEmpty()) {
             buildGroupList()
         }
 
-        val groupNames = permissions.getUserGroups(player.uniqueId)
+        val groupNames = permissions.getUserGroups(playerUUID)
 
         var highestTrust: Pair<Int, String>? = null
         var highestBuild: Pair<Int, String>? = null
@@ -62,59 +72,38 @@ class ChatGroupFormatter @Inject constructor(
         val groupTC = TextComponent()
 
         if (highestDonor != null) {
-            val hoverName = config.get(path = "groups.appearance.${highestDonor.second}.hover_name") as? String
-            var displayName = config.get(path = "groups.appearance.${highestDonor.second}.display_name") as? String
-            if (displayName.isNullOrBlank()) {
-                displayName = permissions.getGroupDisplayName(highestDonor.second)
-            }
-            TextComponent
-                .fromLegacyText(displayName)
-                .forEach { c ->
-                    if (hoverName != null && hoverName.isNotEmpty()) {
-                        c.hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT, Text(hoverName))
-                    }
-                    groupTC.addExtra(c)
-                }
+            groupTextComponent(highestDonor).forEach { groupTC.addExtra(it) }
         }
         if (highestTrust != null) {
-            val hoverName = config.get(path = "groups.appearance.${highestTrust.second}.hover_name") as? String
-            var displayName = config.get(path = "groups.appearance.${highestTrust.second}.display_name") as? String
-            if (displayName.isNullOrBlank()) {
-                displayName = permissions.getGroupDisplayName(highestTrust.second)
-            }
-            TextComponent
-                .fromLegacyText(displayName)
-                .forEach { c ->
-                    if (hoverName != null && hoverName.isNotEmpty()) {
-                        c.hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT, Text(hoverName))
-                    }
-                    groupTC.addExtra(c)
-                }
+            groupTextComponent(highestTrust).forEach { groupTC.addExtra(it) }
         }
         if (highestBuild != null) {
-            val hoverName = config.get(path = "groups.appearance.${highestBuild.second}.hover_name") as? String
-            var displayName = config.get(path = "groups.appearance.${highestBuild.second}.display_name") as? String
-            if (displayName.isNullOrBlank()) {
-                displayName = permissions.getGroupDisplayName(highestBuild.second)
-            }
-            TextComponent
-                .fromLegacyText(displayName)
-                .forEach { c ->
-                    if (hoverName != null && hoverName.isNotEmpty()) {
-                        c.hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT, Text(hoverName))
-                    }
-                    groupTC.addExtra(c)
-                }
+            groupTextComponent(highestBuild).forEach { groupTC.addExtra(it) }
         }
 
-        val prefix = TextComponent.fromLegacyText(permissions.getUserPrefix(player.uniqueId)).toList()
-        val suffix = TextComponent.fromLegacyText(permissions.getUserSuffix(player.uniqueId)).toList()
+        val prefix = TextComponent.fromLegacyText(permissions.getUserPrefix(playerUUID)).toList()
+        val suffix = TextComponent.fromLegacyText(permissions.getUserSuffix(playerUUID)).toList()
 
         return Aggregate(
             prefix = prefix,
             suffix = suffix,
             groups = groupTC,
         )
+    }
+
+    private fun groupTextComponent(group: Pair<Int, String>): Array<out BaseComponent> {
+        val hoverName = config.get(path = "groups.appearance.${group.second}.hover_name") as? String
+        var displayName = config.get(path = "groups.appearance.${group.second}.display_name") as? String
+        if (displayName.isNullOrBlank()) {
+            displayName = permissions.getGroupDisplayName(group.second)
+        }
+        return TextComponent
+            .fromLegacyText(displayName)
+            .onEach { c ->
+                if (hoverName != null && hoverName.isNotEmpty()) {
+                    c.hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT, Text(hoverName))
+                }
+            }
     }
 
     private fun buildGroupList() {
