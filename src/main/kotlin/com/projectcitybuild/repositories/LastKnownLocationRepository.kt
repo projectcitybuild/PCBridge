@@ -1,6 +1,6 @@
 package com.projectcitybuild.repositories
 
-import com.projectcitybuild.integrations.essentials.EssentialsIntegration
+import com.projectcitybuild.plugin.integrations.essentials.EssentialsIntegration
 import org.bukkit.entity.Player
 import javax.inject.Inject
 

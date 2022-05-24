@@ -1,4 +1,4 @@
-package com.projectcitybuild.integrations.essentials
+package com.projectcitybuild.plugin.integrations.essentials
 
 import com.earth2me.essentials.Essentials
 import com.projectcitybuild.core.SpigotListener

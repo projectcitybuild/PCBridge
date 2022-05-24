@@ -1,9 +1,9 @@
 package com.projectcitybuild.plugin
 
 import com.projectcitybuild.core.SpigotListener
-import com.projectcitybuild.integrations.dynmap.DynmapMarkerIntegration
-import com.projectcitybuild.integrations.essentials.EssentialsIntegration
-import com.projectcitybuild.integrations.gadgetsmenu.GadgetsMenuIntegration
+import com.projectcitybuild.plugin.integrations.dynmap.DynmapMarkerIntegration
+import com.projectcitybuild.plugin.integrations.essentials.EssentialsIntegration
+import com.projectcitybuild.plugin.integrations.gadgetsmenu.GadgetsMenuIntegration
 import com.projectcitybuild.plugin.commands.ACommand
 import com.projectcitybuild.plugin.commands.BanCommand
 import com.projectcitybuild.plugin.commands.BanIPCommand

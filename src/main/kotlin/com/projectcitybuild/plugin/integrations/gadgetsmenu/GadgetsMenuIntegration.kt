@@ -1,4 +1,4 @@
-package com.projectcitybuild.integrations.gadgetsmenu
+package com.projectcitybuild.plugin.integrations.gadgetsmenu
 
 import com.projectcitybuild.core.SpigotListener
 import com.projectcitybuild.plugin.SpigotIntegration

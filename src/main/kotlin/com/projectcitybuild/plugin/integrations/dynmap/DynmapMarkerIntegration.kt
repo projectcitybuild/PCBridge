@@ -1,4 +1,4 @@
-package com.projectcitybuild.integrations.dynmap
+package com.projectcitybuild.plugin.integrations.dynmap
 
 import com.projectcitybuild.core.SpigotListener
 import com.projectcitybuild.plugin.SpigotIntegration
