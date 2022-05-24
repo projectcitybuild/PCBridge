@@ -9,7 +9,7 @@ class ReloadPluginUseCase @Inject constructor(
     private val playerConfigCache: PlayerConfigCache,
 ) {
     fun execute() {
-        chatGroupFormatter.flushCache()
+        chatGroupFormatter.flushAllCaches()
         playerConfigCache.flush()
     }
 }

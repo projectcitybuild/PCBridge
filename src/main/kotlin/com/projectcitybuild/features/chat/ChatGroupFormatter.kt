@@ -40,9 +40,13 @@ class ChatGroupFormatter @Inject constructor(
             .also { cache[playerUUID] = it }
     }
 
-    fun flushCache() {
+    fun flushAllCaches() {
         cache.clear()
         groupPriorities.clear()
+    }
+
+    fun flush(playerUUID: UUID) {
+        cache.remove(playerUUID)
     }
 
     private fun buildAggregate(playerUUID: UUID): Aggregate {
@@ -105,9 +109,9 @@ class ChatGroupFormatter @Inject constructor(
 
         return TextComponent
             .fromLegacyText(displayName)
-            .onEach { c ->
+            .also { tc ->
                 if (hoverName != null && hoverName.isNotEmpty()) {
-                    c.hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT, Text(hoverName))
+                    tc.forEach { it.hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT, Text(hoverName)) }
                 }
             }
     }

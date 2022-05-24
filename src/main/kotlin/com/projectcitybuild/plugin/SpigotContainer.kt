@@ -20,6 +20,7 @@ import com.projectcitybuild.plugin.environment.SpigotCommand
 import com.projectcitybuild.plugin.integrations.dynmap.DynmapMarkerIntegration
 import com.projectcitybuild.plugin.integrations.essentials.EssentialsIntegration
 import com.projectcitybuild.plugin.integrations.gadgetsmenu.GadgetsMenuIntegration
+import com.projectcitybuild.plugin.integrations.luckperms.LuckPermsIntegration
 import com.projectcitybuild.plugin.listeners.BanConnectionListener
 import com.projectcitybuild.plugin.listeners.ChatListener
 import com.projectcitybuild.plugin.listeners.FirstTimeJoinMessageListener
@@ -47,11 +48,13 @@ class SpigotContainer @Inject constructor(
         dynmapIntegration: DynmapMarkerIntegration,
         essentialsIntegration: EssentialsIntegration,
         gadgetsMenuIntegration: GadgetsMenuIntegration,
+        luckPermsIntegration: LuckPermsIntegration,
     ) {
         val enabled: List<SpigotIntegration> = listOf(
             dynmapIntegration,
             essentialsIntegration,
             gadgetsMenuIntegration,
+            luckPermsIntegration,
         )
     }
 

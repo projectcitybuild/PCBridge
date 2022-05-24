@@ -1,6 +1,7 @@
 package com.projectcitybuild.plugin.listeners
 
 import com.projectcitybuild.core.SpigotListener
+import com.projectcitybuild.features.chat.ChatGroupFormatter
 import com.projectcitybuild.modules.eventbroadcast.LocalEventBroadcaster
 import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.modules.playercache.PlayerConfigCache
@@ -16,6 +17,7 @@ class PlayerCacheListener @Inject constructor(
     private val localEventBroadcaster: LocalEventBroadcaster,
     private val playerCache: PlayerConfigCache,
     private val playerConfigRepository: PlayerConfigRepository,
+    private val chatGroupFormatter: ChatGroupFormatter,
     private val logger: PlatformLogger,
 ) : SpigotListener {
 
@@ -41,5 +43,6 @@ class PlayerCacheListener @Inject constructor(
     @EventHandler
     fun onPlayerQuit(event: PlayerQuitEvent) {
         playerCache.remove(event.player.uniqueId)
+        chatGroupFormatter.flush(event.player.uniqueId)
     }
 }
