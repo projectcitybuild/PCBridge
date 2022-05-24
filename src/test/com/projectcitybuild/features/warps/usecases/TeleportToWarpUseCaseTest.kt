@@ -3,9 +3,9 @@ package com.projectcitybuild.features.warps.usecases
 import com.projectcitybuild.WarpMock
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Success
+import com.projectcitybuild.modules.eventbroadcast.LocalEventBroadcaster
 import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.modules.nameguesser.NameGuesser
-import com.projectcitybuild.repositories.LastKnownLocationRepository
 import com.projectcitybuild.repositories.WarpRepository
 import kotlinx.coroutines.test.runTest
 import org.bukkit.Location
@@ -18,8 +18,8 @@ import org.junit.jupiter.api.Test
 import org.mockito.ArgumentMatchers.anyString
 import org.mockito.kotlin.any
 import org.mockito.kotlin.verify
-import org.powermock.api.mockito.PowerMockito.mock
 import org.powermock.api.mockito.PowerMockito.`when`
+import org.powermock.api.mockito.PowerMockito.mock
 
 class TeleportToWarpUseCaseTest {
 
@@ -44,7 +44,7 @@ class TeleportToWarpUseCaseTest {
             warpRepository = warpRepository,
             nameGuesser = nameGuesser,
             logger = mock(PlatformLogger::class.java),
-            lastKnownLocationRepository = mock(LastKnownLocationRepository::class.java),
+            localEventBroadcaster = mock(LocalEventBroadcaster::class.java),
             server = server,
         )
     }
