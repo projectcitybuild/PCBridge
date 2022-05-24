@@ -1,7 +1,7 @@
 package com.projectcitybuild.repositories
 
-import com.projectcitybuild.core.infrastructure.network.APIClient
-import com.projectcitybuild.core.infrastructure.network.APIRequestFactory
+import com.projectcitybuild.core.http.APIClient
+import com.projectcitybuild.core.http.APIRequestFactory
 import dagger.Reusable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

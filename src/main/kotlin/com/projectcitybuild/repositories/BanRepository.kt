@@ -1,7 +1,7 @@
 package com.projectcitybuild.repositories
 
-import com.projectcitybuild.core.infrastructure.network.APIClient
-import com.projectcitybuild.core.infrastructure.network.APIRequestFactory
+import com.projectcitybuild.core.http.APIClient
+import com.projectcitybuild.core.http.APIRequestFactory
 import com.projectcitybuild.entities.responses.GameBan
 import java.util.Date
 import java.util.UUID

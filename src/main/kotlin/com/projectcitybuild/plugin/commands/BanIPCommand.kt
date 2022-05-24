@@ -1,6 +1,6 @@
 package com.projectcitybuild.plugin.commands
 
-import com.projectcitybuild.core.exceptions.InvalidCommandArgumentsException
+import com.projectcitybuild.plugin.exceptions.InvalidCommandArgumentsException
 import com.projectcitybuild.core.extensions.joinWithWhitespaces
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Success

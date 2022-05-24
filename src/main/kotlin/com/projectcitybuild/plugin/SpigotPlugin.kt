@@ -1,9 +1,9 @@
 package com.projectcitybuild.plugin
 
 import com.github.shynixn.mccoroutine.bukkit.minecraftDispatcher
-import com.projectcitybuild.core.infrastructure.database.DataSource
-import com.projectcitybuild.core.infrastructure.network.APIClientImpl
-import com.projectcitybuild.core.infrastructure.redis.RedisConnection
+import com.projectcitybuild.core.database.DataSource
+import com.projectcitybuild.core.http.APIClientImpl
+import com.projectcitybuild.core.redis.RedisConnection
 import com.projectcitybuild.modules.config.ConfigKey
 import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.modules.config.implementations.SpigotConfig

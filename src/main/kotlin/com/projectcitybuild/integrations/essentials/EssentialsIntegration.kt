@@ -2,7 +2,7 @@ package com.projectcitybuild.integrations.essentials
 
 import com.earth2me.essentials.Essentials
 import com.projectcitybuild.core.SpigotListener
-import com.projectcitybuild.core.contracts.SpigotIntegration
+import com.projectcitybuild.plugin.SpigotIntegration
 import com.projectcitybuild.modules.logger.PlatformLogger
 import dagger.Reusable
 import org.bukkit.entity.Player

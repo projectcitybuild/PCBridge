@@ -1,7 +1,7 @@
 package com.projectcitybuild.integrations.dynmap
 
 import com.projectcitybuild.core.SpigotListener
-import com.projectcitybuild.core.contracts.SpigotIntegration
+import com.projectcitybuild.plugin.SpigotIntegration
 import com.projectcitybuild.modules.config.ConfigKey
 import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.modules.logger.PlatformLogger

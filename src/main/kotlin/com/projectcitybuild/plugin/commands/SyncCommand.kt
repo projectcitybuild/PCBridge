@@ -1,7 +1,7 @@
 package com.projectcitybuild.plugin.commands
 
-import com.projectcitybuild.core.exceptions.CannotInvokeFromConsoleException
-import com.projectcitybuild.core.exceptions.InvalidCommandArgumentsException
+import com.projectcitybuild.plugin.exceptions.CannotInvokeFromConsoleException
+import com.projectcitybuild.plugin.exceptions.InvalidCommandArgumentsException
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Success
 import com.projectcitybuild.features.ranksync.usecases.GenerateAccountVerificationURLUseCase

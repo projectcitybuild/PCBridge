@@ -1,7 +1,6 @@
 package com.projectcitybuild.plugin
 
 import com.projectcitybuild.core.SpigotListener
-import com.projectcitybuild.core.contracts.SpigotIntegration
 import com.projectcitybuild.integrations.dynmap.DynmapMarkerIntegration
 import com.projectcitybuild.integrations.essentials.EssentialsIntegration
 import com.projectcitybuild.integrations.gadgetsmenu.GadgetsMenuIntegration

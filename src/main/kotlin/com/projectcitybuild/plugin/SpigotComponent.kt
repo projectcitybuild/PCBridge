@@ -1,9 +1,9 @@
 package com.projectcitybuild.plugin
 
-import com.projectcitybuild.core.infrastructure.database.DataSourceProvider
-import com.projectcitybuild.core.infrastructure.network.APIClient
-import com.projectcitybuild.core.infrastructure.network.NetworkProvider
-import com.projectcitybuild.core.infrastructure.redis.RedisProvider
+import com.projectcitybuild.core.database.DataSourceProvider
+import com.projectcitybuild.core.http.APIClient
+import com.projectcitybuild.core.http.NetworkProvider
+import com.projectcitybuild.core.redis.RedisProvider
 import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.modules.datetime.DateTimeProvider
 import com.projectcitybuild.modules.errorreporting.ErrorReporterProvider

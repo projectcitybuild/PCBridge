@@ -1,6 +1,6 @@
 package com.projectcitybuild.modules.sharedcache.adapters
 
-import com.projectcitybuild.core.infrastructure.redis.RedisConnection
+import com.projectcitybuild.core.redis.RedisConnection
 import com.projectcitybuild.modules.sharedcache.SharedCacheSet
 import javax.inject.Inject
 

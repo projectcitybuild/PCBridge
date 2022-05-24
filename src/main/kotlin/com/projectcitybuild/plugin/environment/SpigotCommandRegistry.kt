@@ -2,8 +2,8 @@ package com.projectcitybuild.plugin.environment
 
 import com.github.shynixn.mccoroutine.bukkit.SuspendingCommandExecutor
 import com.github.shynixn.mccoroutine.bukkit.setSuspendingExecutor
-import com.projectcitybuild.core.exceptions.CannotInvokeFromConsoleException
-import com.projectcitybuild.core.exceptions.InvalidCommandArgumentsException
+import com.projectcitybuild.plugin.exceptions.CannotInvokeFromConsoleException
+import com.projectcitybuild.plugin.exceptions.InvalidCommandArgumentsException
 import com.projectcitybuild.modules.errorreporting.ErrorReporter
 import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.modules.textcomponentbuilder.send

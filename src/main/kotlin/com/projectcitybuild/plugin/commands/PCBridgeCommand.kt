@@ -1,6 +1,6 @@
 package com.projectcitybuild.plugin.commands
 
-import com.projectcitybuild.core.exceptions.InvalidCommandArgumentsException
+import com.projectcitybuild.plugin.exceptions.InvalidCommandArgumentsException
 import com.projectcitybuild.features.utilities.usecases.DataImportUseCase
 import com.projectcitybuild.features.utilities.usecases.GetVersionUseCase
 import com.projectcitybuild.features.utilities.usecases.ImportInventoriesUseCase

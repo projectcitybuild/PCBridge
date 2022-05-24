@@ -1,6 +1,6 @@
 package com.projectcitybuild.plugin.commands
 
-import com.projectcitybuild.core.exceptions.InvalidCommandArgumentsException
+import com.projectcitybuild.plugin.exceptions.InvalidCommandArgumentsException
 import com.projectcitybuild.features.warps.usecases.warplist.GetWarpListUseCase
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.platforms.bungeecord.extensions.add
