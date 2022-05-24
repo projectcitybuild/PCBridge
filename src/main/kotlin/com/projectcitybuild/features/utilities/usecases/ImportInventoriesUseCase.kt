@@ -133,7 +133,7 @@ class ImportInventoriesUseCase @Inject constructor(
                         lastWorldName = when (dimension) {
                             "overworld" -> "Survival"
                             "the_nether" -> "Survival_nether"
-                            "hub", "big_city_2020", "creative_epsilon" -> dimension  // Keep some world names lowercase
+                            "hub", "big_city_2020", "creative_epsilon" -> dimension // Keep some world names lowercase
                             else -> dimension.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
                         }
                     }
@@ -189,7 +189,7 @@ class ImportInventoriesUseCase @Inject constructor(
                         }
 
                         set("$world.stats.ex", foodExhaustion.toString())
-                        set("$world.stats.ma", "300")   // We don't have any plugins that will increase air above the default 300
+                        set("$world.stats.ma", "300") // We don't have any plugins that will increase air above the default 300
                         set("$world.stats.fl", foodLevel.toString())
                         set("$world.stats.el", playerLevel.toString())
                         set("$world.stats.hp", health.toString())
@@ -244,7 +244,7 @@ class ImportInventoriesUseCase @Inject constructor(
             }
             globalPlayerFile.let { configFile ->
                 JsonConfiguration.loadConfiguration(configFile).apply {
-                    set("playerData.lastWorld", profile.lastWorldName ?: "hub")  // Default to `hub` if no world
+                    set("playerData.lastWorld", profile.lastWorldName ?: "hub") // Default to `hub` if no world
                     set("playerData.shouldLoad", true) // TODO: should this be false...?
                     set("playerData.lastKnownName", profile.lastKnownName)
 
@@ -397,6 +397,8 @@ class ImportInventoriesUseCase @Inject constructor(
                     }
                 }
 
+                setProjectiles(stack, tags)
+
                 setFireworks(stack, tags)
 
                 setAttributeModifiers(stack, tags)
@@ -431,11 +433,11 @@ class ImportInventoriesUseCase @Inject constructor(
                         "author",
                         "title",
                         "generation",
-                        "resolved",  // Not needed
+                        "resolved", // Not needed
                         "lore",
                         "Unbreakable",
                         "StoredEnchantments",
-                        "Charged"  // Ignore
+                        "Charged" // Ignore
                     ),
                     compound = tags,
                     name = "tag",
@@ -469,11 +471,11 @@ class ImportInventoriesUseCase @Inject constructor(
             val shouldShowIcon = if (it.containsKey("ShowIcon")) it.getBooleanByte("ShowIcon") else false
             val shouldShowParticles = if (it.containsKey("ShowParticles")) it.getBooleanByte("ShowParticles") else false
 
-            val overwrite = true  // Overwrite what...?
+            val overwrite = true // Overwrite what...?
 
             val potionType = PotionEffectType.getById(id)
             if (potionType == null) {
-                logger.fatal("Could not map PotionEffectType: ${id}")
+                logger.fatal("Could not map PotionEffectType: $id")
                 return@forEach
             }
             val effect = PotionEffect(
@@ -581,12 +583,12 @@ class ImportInventoriesUseCase @Inject constructor(
             stack.itemMeta = itemMeta
         }
         if (tags.containsKey("generation")) {
-            itemMeta.generation = when(tags.getInt("generation")) {
+            itemMeta.generation = when (tags.getInt("generation")) {
                 0 -> BookMeta.Generation.ORIGINAL
                 1 -> BookMeta.Generation.COPY_OF_ORIGINAL
                 2 -> BookMeta.Generation.COPY_OF_COPY
                 3 -> BookMeta.Generation.TATTERED
-                else -> BookMeta.Generation.COPY_OF_ORIGINAL  // Just to be safe
+                else -> BookMeta.Generation.COPY_OF_ORIGINAL // Just to be safe
             }
         }
         stack.itemMeta = itemMeta
@@ -658,7 +660,7 @@ class ImportInventoriesUseCase @Inject constructor(
         //      "url" : "http://textures.minecraft.net/texture/7ee5fbf3ef15bd5287c556014de1a77f8d082f9ea11aa03d2834175f74e9c2a2"
         //    }
         //  }
-        //}
+        // }
         val textures = properties.getCompoundList("textures")
         if (textures.size > 1) {
             logger.fatal("More than 1 texture. Is this intended?")
@@ -681,7 +683,6 @@ class ImportInventoriesUseCase @Inject constructor(
                     val hashAsId = UUID(encodedURL.hashCode().toLong(), encodedURL.hashCode().toLong())
                     Bukkit.getUnsafe().modifyItemStack(stack, "{SkullOwner:{Id:\"" + hashAsId + "\",Properties:{textures:[{Value:\"" + encodedURL + "\"}]}}}")
                 }
-
             } catch (e: Exception) {
                 logger.fatal("Failed to decode texture: ${e.message}")
             }
