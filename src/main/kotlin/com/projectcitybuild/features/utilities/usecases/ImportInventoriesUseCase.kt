@@ -1,5 +1,6 @@
 package com.projectcitybuild.features.utilities.usecases
 
+import br.com.gamemods.nbtmanipulator.NbtByte
 import br.com.gamemods.nbtmanipulator.NbtCompound
 import br.com.gamemods.nbtmanipulator.NbtDouble
 import br.com.gamemods.nbtmanipulator.NbtFile
@@ -25,7 +26,6 @@ import org.bukkit.block.banner.PatternType
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.ItemFrame
 import org.bukkit.inventory.EquipmentSlot
-import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.BannerMeta
 import org.bukkit.inventory.meta.BlockStateMeta
@@ -371,10 +371,16 @@ class ImportInventoriesUseCase @Inject constructor(
                 }
                 if (tags.containsKey("EntityTag")) {
                     val entityTags = tags.getCompound("EntityTag")
-                    if (entityTags.containsKey("Invisible") && entityTags.getBooleanByte("Invisible")) {
-                        // For invisible item frames
+
+                    // For invisible item frames
+                    if (entityTags.containsKey("Invisible")) {
+                        val isInvisible = if (entityTags.get("Invisible") is NbtByte) {
+                            entityTags.getByte("Invisible").toInt() == 1
+                        } else {
+                            entityTags.getInt("Invisible") == 1
+                        }
                         if (stack is ItemFrame) {
-                            stack.isVisible = false
+                            stack.isVisible = isInvisible
                         }
                     }
                     logIfNotExpected(
@@ -399,6 +405,11 @@ class ImportInventoriesUseCase @Inject constructor(
                     stack.itemMeta?.isUnbreakable = true
                 }
 
+                if (tags.containsKey("HideFlags")) {
+                    // Normally this should be handled, but the majority of inventories I saw with this
+                    // are maliciously using it to hide items they shouldn't have
+                }
+
                 logIfNotExpected(
                     expected = listOf(
                         "AttributeModifiers",
@@ -409,6 +420,7 @@ class ImportInventoriesUseCase @Inject constructor(
                         "Enchantments",
                         "EntityTag",
                         "Fireworks",
+                        "HideFlags",
                         "Damage",
                         "display",
                         "SkullOwner",
@@ -450,16 +462,16 @@ class ImportInventoriesUseCase @Inject constructor(
             return
         }
         tags.getCompoundList("CustomPotionEffects").forEach {
-            val isAmbient = it.getBooleanByte("Ambient")
-            val amplifier = it.getByte("Amplifier")
+            val isAmbient = if (it.containsKey("Ambient")) it.getBooleanByte("Ambient") else false
+            val amplifier = if (it.containsKey("Amplifier")) it.getBooleanByte("Amplifier") else false
             val duration = it.getInt("Duration")
-            val id = it.getByte("Id")
-            val shouldShowIcon = it.getBooleanByte("ShowIcon")
-            val shouldShowParticles = it.getBooleanByte("ShowParticles")
+            val id = if (it.get("Id") is NbtByte) it.getByte("Id").toInt() else it.getInt("Id")
+            val shouldShowIcon = if (it.containsKey("ShowIcon")) it.getBooleanByte("ShowIcon") else false
+            val shouldShowParticles = if (it.containsKey("ShowParticles")) it.getBooleanByte("ShowParticles") else false
 
             val overwrite = true  // Overwrite what...?
 
-            val potionType = PotionEffectType.getById(id.toInt())
+            val potionType = PotionEffectType.getById(id)
             if (potionType == null) {
                 logger.fatal("Could not map PotionEffectType: ${id}")
                 return@forEach
@@ -467,7 +479,7 @@ class ImportInventoriesUseCase @Inject constructor(
             val effect = PotionEffect(
                 potionType,
                 duration,
-                amplifier.toInt(),
+                if (amplifier) 1 else 0,
                 isAmbient,
                 shouldShowParticles,
                 shouldShowIcon,
