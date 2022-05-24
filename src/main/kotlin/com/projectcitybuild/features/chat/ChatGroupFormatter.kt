@@ -97,11 +97,12 @@ class ChatGroupFormatter @Inject constructor(
     }
 
     private fun groupTextComponent(group: Pair<Int, String>): Array<out BaseComponent> {
-        val hoverName = config.get(path = "groups.appearance.${group.second}.hover_name") as? String
-        var displayName = config.get(path = "groups.appearance.${group.second}.display_name") as? String
-        if (displayName.isNullOrBlank()) {
-            displayName = permissions.getGroupDisplayName(group.second)
-        }
+        val groupName = group.second
+        val hoverName = permissions.getGroupMetaData(groupName = groupName, key = "chat_hover_name")
+        val displayName = permissions.getGroupMetaData(groupName = groupName, key = "chat_display_name")
+            ?: permissions.getGroupDisplayName(groupName)
+            ?: group.second
+
         return TextComponent
             .fromLegacyText(displayName)
             .onEach { c ->
