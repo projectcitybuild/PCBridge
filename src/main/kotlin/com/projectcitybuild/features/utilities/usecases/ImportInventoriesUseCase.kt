@@ -1,6 +1,7 @@
 package com.projectcitybuild.features.utilities.usecases
 
 import br.com.gamemods.nbtmanipulator.NbtCompound
+import br.com.gamemods.nbtmanipulator.NbtDouble
 import br.com.gamemods.nbtmanipulator.NbtFile
 import br.com.gamemods.nbtmanipulator.NbtIO
 import br.com.gamemods.nbtmanipulator.NbtInt
@@ -265,62 +266,10 @@ class ImportInventoriesUseCase @Inject constructor(
             if (compound.containsKey("tag")) {
                 val tags = compound.getCompound("tag")
 
-                if (tags.containsKey("Enchantments")) {
-                    val enchantments = tags.getCompoundList("Enchantments")
-                    enchantments.forEach { enchantmentCompound ->
-                        val id = enchantmentCompound.getString("id")
+                setEnchantments(stack, tags)
 
-                        // Some shulker boxes contain items with an NbtInt instead of an NbtShort...
-                        val unsafeLevel = if (enchantmentCompound.get("lvl") is NbtShort) {
-                            enchantmentCompound.getShort("lvl").toInt()
-                        } else if (enchantmentCompound.get("lvl") is NbtInt) {
-                            enchantmentCompound.getInt("lvl")
-                        } else {
-                            return@forEach
-                        }
+                setStoredEnchantments(stack, tags)
 
-                        try {
-                            val key = NamespacedKey.minecraft(id.removePrefix("minecraft:"))
-                            val mappedEnchant = Enchantment.getByKey(key)
-                            if (mappedEnchant != null) {
-                                // For some reason some people have enchantments with levels outside the allowed bounds.
-                                // It would cause an IllegalArgumentException
-                                val level = unsafeLevel
-                                    .let { min(it, mappedEnchant.maxLevel) }
-                                    .let { max(it, 0) }
-
-                                stack.addEnchantment(mappedEnchant, level)
-                            }
-                        } catch (e: IllegalArgumentException) {
-                            // Just throw out the enchantment if something goes wrong.
-                            // There's some enchantments that aren't allowed to be applied to the
-                            // given ItemStack, like imageonmap:___gloweffect___
-
-                            // Also ignore items that have had hacked-in enchantments applied
-                            if (e.message != "Specified enchantment cannot be applied to this itemstack") {
-                                logger.fatal("Could not map enchantment [$id]: ${e.message}")
-                            }
-                        }
-                    }
-                }
-                if (tags.containsKey("StoredEnchantments")) {
-                    val itemMeta = stack.itemMeta
-
-                    if (itemMeta != null && itemMeta is EnchantmentStorageMeta) {
-                        tags.getCompoundList("StoredEnchantments").forEach {
-                            val id = it.getString("id")
-                            val level = it.getShort("lvl").toInt()
-
-                            val key = NamespacedKey.minecraft(id.removePrefix("minecraft:"))
-                            val mappedEnchant = Enchantment.getByKey(key)
-                            if (mappedEnchant != null) {
-                                val ignoresLevelRestriction = false
-                                itemMeta.addStoredEnchant(mappedEnchant, level, ignoresLevelRestriction)
-                            }
-                        }
-                        stack.itemMeta = itemMeta
-                    }
-                }
                 if (tags.containsKey("Damage")) {
                     val itemMeta = stack.itemMeta
                     if (itemMeta != null && itemMeta is Damageable) {
@@ -361,113 +310,13 @@ class ImportInventoriesUseCase @Inject constructor(
                 }
                 // No idea why there's a few here... is this an old NBT?
                 if (tags.containsKey("lore")) {
-                    stack.itemMeta?.lore = tags.getStringList("lore").map { it.value }
+                    stack.itemMeta?.lore?.add(tags.getString("lore"))
                 }
-                if (tags.containsKey("pages")) {
-                    val pages = tags.getStringList("pages")
-                    val itemMeta = stack.itemMeta
-                    if (itemMeta != null && itemMeta is BookMeta) {
-                        pages.forEach {
-                            try {
-                                // Attempt to parse as JSON
-                                itemMeta.spigot().addPage(ComponentSerializer.parse(it.value))
-                            } catch (e: Exception) {
-                                // ... but not all pages are JSON
-                                itemMeta.addPage(it.value)
-                            }
-                        }
-                        stack.itemMeta = itemMeta
-                    }
-                }
-                if (tags.containsKey("author")) {
-                    val itemMeta = stack.itemMeta
-                    if (itemMeta != null && itemMeta is BookMeta) {
-                        itemMeta.author = tags.getString("author")
-                        stack.itemMeta = itemMeta
-                    }
-                }
-                if (tags.containsKey("title")) {
-                    val itemMeta = stack.itemMeta
-                    if (itemMeta != null && itemMeta is BookMeta) {
-                        itemMeta.title = tags.getString("title")
-                        stack.itemMeta = itemMeta
-                    }
-                }
-                if (tags.containsKey("generation")) {
-                    val itemMeta = stack.itemMeta
-                    if (itemMeta != null && itemMeta is BookMeta) {
-                        itemMeta.generation = when(tags.getInt("generation")) {
-                            0 -> BookMeta.Generation.ORIGINAL
-                            1 -> BookMeta.Generation.COPY_OF_ORIGINAL
-                            2 -> BookMeta.Generation.COPY_OF_COPY
-                            3 -> BookMeta.Generation.TATTERED
-                            else -> BookMeta.Generation.COPY_OF_ORIGINAL  // Just to be safe
-                        }
-                        stack.itemMeta = itemMeta
-                    }
-                }
-                if (tags.containsKey("SkullOwner")) {
-                    val skullOwner = tags.getCompound("SkullOwner")
 
-                    if (skullOwner.containsKey("Properties")) {
-                        val properties = skullOwner.getCompound("Properties")
+                setBookMeta(stack, tags)
 
-                        val itemMeta = stack.itemMeta
-                        if (itemMeta != null && itemMeta is SkullMeta) {
-                            if (properties.containsKey("Name")) {
-                                val name = properties.getString("Name")
-                                val offlinePlayer = plugin.server.getOfflinePlayer(name)
-                                itemMeta.owningPlayer = offlinePlayer
-                                stack.itemMeta = itemMeta
-                            } else {
-                                // We can try base64 decode the `Value`, which will (hopefully) contain the
-                                // original URL and profileName, like this:
-                                // {
-                                //  "timestamp" : 1640581383074,
-                                //  "profileId" : "d37fd212aad64aeb888764d615dbaea3",
-                                //  "profileName" : "Dicodaspace",
-                                //  "signatureRequired" : true,
-                                //  "textures" : {
-                                //    "SKIN" : {
-                                //      "url" : "http://textures.minecraft.net/texture/7ee5fbf3ef15bd5287c556014de1a77f8d082f9ea11aa03d2834175f74e9c2a2"
-                                //    }
-                                //  }
-                                //}
-                                val textures = properties.getCompoundList("textures")
-                                if (textures.size > 1) {
-                                    logger.fatal("More than 1 texture. Is this intended?")
-                                }
-                                val texture = textures.firstOrNull()
-                                if (texture != null) {
-                                    try {
-                                        val encoded = texture.getString("Value")
-                                        val decoded = String(Base64.getUrlDecoder().decode(encoded))
-                                        val json = JSONObject(decoded)
+                setSkullOwner(stack, tags)
 
-                                        if (json.has("profileName")) {
-                                            val name = json.getString("profileName")
-                                            itemMeta.setOwner(name)
-                                            stack.itemMeta = itemMeta
-                                        } else {
-                                            // We're out of options. Set the damn thing manually.
-                                            val textureURL = json.getJSONObject("textures").getJSONObject("SKIN").getString("url")
-                                            val encodedURL = Base64.getEncoder().encodeToString(textureURL.toByteArray())
-                                            val hashAsId = UUID(encodedURL.hashCode().toLong(), encodedURL.hashCode().toLong())
-                                            Bukkit.getUnsafe().modifyItemStack(stack, "{SkullOwner:{Id:\"" + hashAsId + "\",Properties:{textures:[{Value:\"" + encodedURL + "\"}]}}}")
-                                        }
-
-                                    } catch (e: Exception) {
-                                        logger.fatal("Failed to decode texture: ${e.message}")
-                                    }
-                                } else {
-                                    logger.fatal("Could not determine owner of Skull")
-                                }
-                            }
-                        }
-                    } else {
-                        logger.fatal("Properties key missing from SkullOwner")
-                    }
-                }
                 if (tags.containsKey("RepairCost")) {
                     val itemMeta = stack.itemMeta
                     if (itemMeta != null && itemMeta is Repairable) {
@@ -478,39 +327,7 @@ class ImportInventoriesUseCase @Inject constructor(
                 if (tags.containsKey("BlockEntityTag")) {
                     val blockEntities = tags.getCompound("BlockEntityTag")
 
-                    if (blockEntities.containsKey("Base")) {
-                        val itemMeta = stack.itemMeta
-                        if (itemMeta != null && itemMeta is BannerMeta) {
-                            val rawColor = blockEntities.getInt("Base")
-                            itemMeta.baseColor = DyeColor.getByDyeData(rawColor.toByte())
-                            stack.itemMeta = itemMeta
-                        }
-                    }
-                    if (blockEntities.containsKey("Patterns")) {
-                        val patterns = blockEntities.getCompoundList("Patterns")
-                        val itemMeta = stack.itemMeta
-
-                        if (itemMeta != null && itemMeta is BannerMeta) {
-                            patterns.forEach {
-                                val rawColor = it.getInt("Color")
-                                val rawPattern = it.getString("Pattern")
-
-                                val color = DyeColor.getByDyeData(rawColor.toByte())
-                                val patternType = PatternType.getByIdentifier(rawPattern)
-
-                                if (color != null && patternType != null) {
-                                    itemMeta.patterns.add(Pattern(color, patternType))
-                                } else {
-                                    logger.fatal("Pattern was missing data")
-                                    logger.fatal("color=$color")
-                                    logger.fatal("pattern=$patternType")
-                                    logger.fatal("rawColor=$rawColor")
-                                    logger.fatal("rawPattern=$rawPattern")
-                                }
-                            }
-                        }
-                        stack.itemMeta = itemMeta
-                    }
+                    setBanner(stack, blockEntities)
 
                     if (blockEntities.containsKey("Items")) {
                         val items = blockEntities.getCompoundList("Items")
@@ -533,7 +350,9 @@ class ImportInventoriesUseCase @Inject constructor(
                     }
 
                     if (blockEntities.containsKey("CustomName")) {
-                        stack.itemMeta?.setDisplayName(blockEntities.getString("CustomName"))
+                        val itemMeta = stack.itemMeta
+                        itemMeta?.setDisplayName(blockEntities.getString("CustomName"))
+                        stack.itemMeta = itemMeta
                     }
 
                     logIfNotExpected(
@@ -549,118 +368,18 @@ class ImportInventoriesUseCase @Inject constructor(
                         stack.itemMeta = itemMeta
                     }
                 }
-                if (tags.containsKey("Fireworks")) {
-                    val fireworks = tags.getCompound("Fireworks")
 
-                    val itemMeta = stack.itemMeta
-                    if (itemMeta != null && itemMeta is FireworkMeta) {
-                        if (fireworks.containsKey("Flight")) {
-                            itemMeta.power = fireworks.getByte("Flight").toInt()
-                        }
-                        if (fireworks.containsKey("Explosions")) {
-                            fireworks.getCompoundList("Explosions").forEach { explosion ->
-                                val builder = FireworkEffect.builder()
-                                if (explosion.containsKey("Flicker") && explosion.getBooleanByte("Flicker")) {
-                                    builder.withFlicker()
-                                }
-                                if (explosion.containsKey("Trail") && explosion.getBooleanByte("Trail")) {
-                                    builder.withTrail()
-                                }
-                                if (explosion.containsKey("Type")) {
-                                    builder.with(
-                                        when (explosion.getByte("Type").toInt()) {
-                                            0 -> FireworkEffect.Type.BALL
-                                            1 -> FireworkEffect.Type.BALL_LARGE
-                                            2 -> FireworkEffect.Type.STAR
-                                            3 -> FireworkEffect.Type.CREEPER
-                                            4 -> FireworkEffect.Type.BURST
-                                            else -> FireworkEffect.Type.BALL
-                                        }
-                                    )
-                                }
-                                if (explosion.containsKey("Colors")) {
-                                    explosion.getIntArray("Colors").forEach {
-                                        builder.withColor(Color.fromRGB(it))
-                                    }
-                                }
-                                if (explosion.containsKey("FadeColors")) {
-                                    explosion.getIntArray("FadeColors").forEach {
-                                        builder.withFade(Color.fromRGB(it))
-                                    }
-                                }
+                setFireworks(stack, tags)
 
-                                itemMeta.addEffect(builder.build())
-                            }
-                        }
-                        stack.itemMeta = itemMeta
-                    }
-                }
-                if (tags.containsKey("AttributeModifiers")) {
-                    tags.getCompoundList("AttributeModifiers").forEach {
-                        val attribute = when (it.getString("AttributeName")) {
-                            "generic.max_health" -> Attribute.GENERIC_MAX_HEALTH
-                            "generic.follow_range" -> Attribute.GENERIC_FOLLOW_RANGE
-                            "generic.knockback_resistance" -> Attribute.GENERIC_KNOCKBACK_RESISTANCE
-                            "generic.movement_speed" -> Attribute.GENERIC_MOVEMENT_SPEED
-                            "generic.flying_speed" -> Attribute.GENERIC_FLYING_SPEED
-                            "generic.attack_damage" -> Attribute.GENERIC_ATTACK_DAMAGE
-                            "generic.attack_knockback" -> Attribute.GENERIC_ATTACK_KNOCKBACK
-                            "generic.attack_speed" -> Attribute.GENERIC_ATTACK_SPEED
-                            "generic.armor" -> Attribute.GENERIC_ARMOR
-                            "generic.armor_toughness" -> Attribute.GENERIC_ARMOR_TOUGHNESS
-                            "generic.luck" -> Attribute.GENERIC_LUCK
-                            "horse.jump_strength" -> Attribute.HORSE_JUMP_STRENGTH
-                            "zombie.spawn_reinforcements" -> Attribute.ZOMBIE_SPAWN_REINFORCEMENTS
-                            else -> return@forEach
-                        }
-                        var slot: EquipmentSlot? = null
-                        if (it.containsKey("Slot")) {
-                            slot = when(it.getString("Slot")) {
-                                "mainhand" -> EquipmentSlot.HAND
-                                "offhand" -> EquipmentSlot.OFF_HAND
-                                "feet" -> EquipmentSlot.FEET
-                                "legs" -> EquipmentSlot.LEGS
-                                "chest" -> EquipmentSlot.CHEST
-                                "head" -> EquipmentSlot.HEAD
-                                else -> null
-                            }
-                        }
-                        val modifier = if (slot != null) {
-                            AttributeModifier(
-                                UUID.fromString(it.getIntArray("UUID").joinToString()),
-                                it.getString("Name"),
-                                it.getDouble("Amount"),
-                                when (it.getInt("Operation")) {
-                                    0 -> AttributeModifier.Operation.ADD_NUMBER
-                                    1 -> AttributeModifier.Operation.ADD_SCALAR
-                                    2 -> AttributeModifier.Operation.MULTIPLY_SCALAR_1
-                                    else -> return@forEach
-                                },
-                                slot,
-                            )
-                        } else {
-                            AttributeModifier(
-                                UUID.fromString(it.getIntArray("UUID").joinToString()),
-                                it.getString("Name"),
-                                it.getDouble("Amount"),
-                                when (it.getInt("Operation")) {
-                                    0 -> AttributeModifier.Operation.ADD_NUMBER
-                                    1 -> AttributeModifier.Operation.ADD_SCALAR
-                                    2 -> AttributeModifier.Operation.MULTIPLY_SCALAR_1
-                                    else -> return@forEach
-                                },
-                            )
-                        }
-                        stack.itemMeta?.addAttributeModifier(attribute, modifier)
-                    }
-                }
+                setAttributeModifiers(stack, tags)
+
                 if (tags.containsKey("Unbreakable") && tags.getBooleanByte("Unbreakable")) {
                     stack.itemMeta?.isUnbreakable = true
                 }
 
                 logIfNotExpected(
                     expected = listOf(
-                        "AttributeModifier",
+                        "AttributeModifiers",
                         "BlockEntityTag",
                         "Enchantments",
                         "Fireworks",
@@ -693,5 +412,311 @@ class ImportInventoriesUseCase @Inject constructor(
         compound.keys
             .filter { !expected.contains(it) }
             .forEach { logger.fatal("Unexpected $name: $it") }
+    }
+
+    private fun setEnchantments(stack: ItemStack, tags: NbtCompound) {
+        if (! tags.containsKey("Enchantments")) {
+            return
+        }
+        tags.getCompoundList("Enchantments").forEach { enchantmentCompound ->
+            val id = enchantmentCompound.getString("id")
+
+            // Some shulker boxes contain items with an NbtInt instead of an NbtShort...
+            val unsafeLevel = if (enchantmentCompound.get("lvl") is NbtShort) {
+                enchantmentCompound.getShort("lvl").toInt()
+            } else if (enchantmentCompound.get("lvl") is NbtInt) {
+                enchantmentCompound.getInt("lvl")
+            } else {
+                return@forEach
+            }
+
+            try {
+                val key = NamespacedKey.minecraft(id.removePrefix("minecraft:"))
+                val mappedEnchant = Enchantment.getByKey(key)
+                if (mappedEnchant != null) {
+                    // For some reason some people have enchantments with levels outside the allowed bounds.
+                    // It would cause an IllegalArgumentException
+                    val level = unsafeLevel
+                        .let { min(it, mappedEnchant.maxLevel) }
+                        .let { max(it, 0) }
+
+                    stack.addEnchantment(mappedEnchant, level)
+                }
+            } catch (e: IllegalArgumentException) {
+                // Just throw out the enchantment if something goes wrong.
+                // There's some enchantments that aren't allowed to be applied to the
+                // given ItemStack, like imageonmap:___gloweffect___
+
+                // Also ignore items that have had hacked-in enchantments applied
+                if (e.message != "Specified enchantment cannot be applied to this itemstack") {
+                    logger.fatal("Could not map enchantment [$id]: ${e.message}")
+                }
+            }
+        }
+    }
+
+    private fun setStoredEnchantments(stack: ItemStack, tags: NbtCompound) {
+        if (! tags.containsKey("StoredEnchantments")) {
+            return
+        }
+        val itemMeta = stack.itemMeta
+        if (itemMeta == null || itemMeta !is EnchantmentStorageMeta) {
+            return
+        }
+        tags.getCompoundList("StoredEnchantments").forEach {
+            val id = it.getString("id")
+            val level = it.getShort("lvl").toInt()
+
+            val key = NamespacedKey.minecraft(id.removePrefix("minecraft:"))
+            val mappedEnchant = Enchantment.getByKey(key)
+            if (mappedEnchant != null) {
+                val ignoresLevelRestriction = false
+                itemMeta.addStoredEnchant(mappedEnchant, level, ignoresLevelRestriction)
+            }
+        }
+        stack.itemMeta = itemMeta
+    }
+
+    private fun setBookMeta(stack: ItemStack, tags: NbtCompound) {
+        val itemMeta = stack.itemMeta
+        if (itemMeta == null || itemMeta !is BookMeta) {
+            return
+        }
+        if (tags.containsKey("pages")) {
+            tags.getStringList("pages").forEach {
+                try {
+                    // Attempt to parse as JSON
+                    itemMeta.spigot().addPage(ComponentSerializer.parse(it.value))
+                } catch (e: Exception) {
+                    // ... but not all pages are JSON
+                    itemMeta.addPage(it.value)
+                }
+            }
+        }
+        if (tags.containsKey("author")) {
+            itemMeta.author = tags.getString("author")
+            stack.itemMeta = itemMeta
+        }
+        if (tags.containsKey("title")) {
+            itemMeta.title = tags.getString("title")
+            stack.itemMeta = itemMeta
+        }
+        if (tags.containsKey("generation")) {
+            itemMeta.generation = when(tags.getInt("generation")) {
+                0 -> BookMeta.Generation.ORIGINAL
+                1 -> BookMeta.Generation.COPY_OF_ORIGINAL
+                2 -> BookMeta.Generation.COPY_OF_COPY
+                3 -> BookMeta.Generation.TATTERED
+                else -> BookMeta.Generation.COPY_OF_ORIGINAL  // Just to be safe
+            }
+        }
+        stack.itemMeta = itemMeta
+    }
+
+    private fun setBanner(stack: ItemStack, blockEntities: NbtCompound) {
+        val itemMeta = stack.itemMeta
+        if (itemMeta == null || itemMeta !is BannerMeta) {
+            return
+        }
+        if (blockEntities.containsKey("Base")) {
+            val rawColor = blockEntities.getInt("Base")
+            itemMeta.baseColor = DyeColor.getByDyeData(rawColor.toByte())
+        }
+        if (blockEntities.containsKey("Patterns")) {
+            blockEntities.getCompoundList("Patterns").forEach {
+                val rawColor = it.getInt("Color")
+                val rawPattern = it.getString("Pattern")
+
+                val color = DyeColor.getByDyeData(rawColor.toByte())
+                val patternType = PatternType.getByIdentifier(rawPattern)
+
+                if (color != null && patternType != null) {
+                    itemMeta.addPattern(Pattern(color, patternType))
+                } else {
+                    logger.fatal("Pattern was missing data")
+                    logger.fatal("color=$color")
+                    logger.fatal("pattern=$patternType")
+                    logger.fatal("rawColor=$rawColor")
+                    logger.fatal("rawPattern=$rawPattern")
+                }
+            }
+        }
+        stack.itemMeta = itemMeta
+    }
+
+    private fun setSkullOwner(stack: ItemStack, tags: NbtCompound) {
+        if (! tags.containsKey("SkullOwner")) {
+            return
+        }
+        val itemMeta = stack.itemMeta
+        if (itemMeta == null || itemMeta !is SkullMeta) {
+            return
+        }
+
+        val skullOwner = tags.getCompound("SkullOwner")
+        if (! skullOwner.containsKey("Properties")) {
+            return
+        }
+        val properties = skullOwner.getCompound("Properties")
+
+        if (properties.containsKey("Name")) {
+            val name = properties.getString("Name")
+            val offlinePlayer = plugin.server.getOfflinePlayer(name)
+            itemMeta.owningPlayer = offlinePlayer
+            stack.itemMeta = itemMeta
+            return
+        }
+
+        // We can try base64 decode the `Value`, which will (hopefully) contain the
+        // original URL and profileName, like this:
+        // {
+        //  "timestamp" : 1640581383074,
+        //  "profileId" : "d37fd212aad64aeb888764d615dbaea3",
+        //  "profileName" : "Dicodaspace",
+        //  "signatureRequired" : true,
+        //  "textures" : {
+        //    "SKIN" : {
+        //      "url" : "http://textures.minecraft.net/texture/7ee5fbf3ef15bd5287c556014de1a77f8d082f9ea11aa03d2834175f74e9c2a2"
+        //    }
+        //  }
+        //}
+        val textures = properties.getCompoundList("textures")
+        if (textures.size > 1) {
+            logger.fatal("More than 1 texture. Is this intended?")
+        }
+        val texture = textures.firstOrNull()
+        if (texture != null) {
+            try {
+                val encoded = texture.getString("Value")
+                val decoded = String(Base64.getUrlDecoder().decode(encoded))
+                val json = JSONObject(decoded)
+
+                if (json.has("profileName")) {
+                    val name = json.getString("profileName")
+                    itemMeta.setOwner(name)
+                    stack.itemMeta = itemMeta
+                } else {
+                    // We're out of options. Set the damn thing manually.
+                    val textureURL = json.getJSONObject("textures").getJSONObject("SKIN").getString("url")
+                    val encodedURL = Base64.getEncoder().encodeToString(textureURL.toByteArray())
+                    val hashAsId = UUID(encodedURL.hashCode().toLong(), encodedURL.hashCode().toLong())
+                    Bukkit.getUnsafe().modifyItemStack(stack, "{SkullOwner:{Id:\"" + hashAsId + "\",Properties:{textures:[{Value:\"" + encodedURL + "\"}]}}}")
+                }
+
+            } catch (e: Exception) {
+                logger.fatal("Failed to decode texture: ${e.message}")
+            }
+        } else {
+            logger.fatal("Could not determine owner of Skull")
+        }
+    }
+
+    private fun setFireworks(stack: ItemStack, tags: NbtCompound) {
+        if (! tags.containsKey("Fireworks")) {
+            return
+        }
+        val itemMeta = stack.itemMeta
+        if (itemMeta == null || itemMeta !is FireworkMeta) {
+            return
+        }
+        val fireworks = tags.getCompound("Fireworks")
+        if (fireworks.containsKey("Flight")) {
+            itemMeta.power = fireworks.getByte("Flight").toInt()
+        }
+        if (fireworks.containsKey("Explosions")) {
+            fireworks.getCompoundList("Explosions").forEach { explosion ->
+                val builder = FireworkEffect.builder()
+                if (explosion.containsKey("Flicker") && explosion.getBooleanByte("Flicker")) {
+                    builder.withFlicker()
+                }
+                if (explosion.containsKey("Trail") && explosion.getBooleanByte("Trail")) {
+                    builder.withTrail()
+                }
+                if (explosion.containsKey("Type")) {
+                    builder.with(
+                        when (explosion.getByte("Type").toInt()) {
+                            0 -> FireworkEffect.Type.BALL
+                            1 -> FireworkEffect.Type.BALL_LARGE
+                            2 -> FireworkEffect.Type.STAR
+                            3 -> FireworkEffect.Type.CREEPER
+                            4 -> FireworkEffect.Type.BURST
+                            else -> FireworkEffect.Type.BALL
+                        }
+                    )
+                }
+                if (explosion.containsKey("Colors")) {
+                    explosion.getIntArray("Colors").forEach {
+                        builder.withColor(Color.fromRGB(it))
+                    }
+                }
+                if (explosion.containsKey("FadeColors")) {
+                    explosion.getIntArray("FadeColors").forEach {
+                        builder.withFade(Color.fromRGB(it))
+                    }
+                }
+
+                itemMeta.addEffect(builder.build())
+            }
+        }
+        stack.itemMeta = itemMeta
+    }
+
+    private fun setAttributeModifiers(stack: ItemStack, tags: NbtCompound) {
+        if (! tags.containsKey("AttributeModifiers")) {
+            return
+        }
+        tags.getCompoundList("AttributeModifiers").forEach {
+            val attribute = when (it.getString("AttributeName")) {
+                "generic.max_health" -> Attribute.GENERIC_MAX_HEALTH
+                "generic.follow_range" -> Attribute.GENERIC_FOLLOW_RANGE
+                "generic.knockback_resistance" -> Attribute.GENERIC_KNOCKBACK_RESISTANCE
+                "generic.movement_speed" -> Attribute.GENERIC_MOVEMENT_SPEED
+                "generic.flying_speed" -> Attribute.GENERIC_FLYING_SPEED
+                "generic.attack_damage" -> Attribute.GENERIC_ATTACK_DAMAGE
+                "generic.attack_knockback" -> Attribute.GENERIC_ATTACK_KNOCKBACK
+                "generic.attack_speed" -> Attribute.GENERIC_ATTACK_SPEED
+                "generic.armor" -> Attribute.GENERIC_ARMOR
+                "generic.armor_toughness" -> Attribute.GENERIC_ARMOR_TOUGHNESS
+                "generic.luck" -> Attribute.GENERIC_LUCK
+                "horse.jump_strength" -> Attribute.HORSE_JUMP_STRENGTH
+                "zombie.spawn_reinforcements" -> Attribute.ZOMBIE_SPAWN_REINFORCEMENTS
+                else -> return@forEach
+            }
+            var slot: EquipmentSlot? = null
+            if (it.containsKey("Slot")) {
+                slot = when (it.getString("Slot")) {
+                    "mainhand" -> EquipmentSlot.HAND
+                    "offhand" -> EquipmentSlot.OFF_HAND
+                    "feet" -> EquipmentSlot.FEET
+                    "legs" -> EquipmentSlot.LEGS
+                    "chest" -> EquipmentSlot.CHEST
+                    "head" -> EquipmentSlot.HEAD
+                    else -> null
+                }
+            }
+
+            val uuid = UUID.randomUUID() // Doesn't need to match
+            val name = it.getString("Name")
+            val amount = if (it.get("Amount") is NbtDouble) {
+                it.getDouble("Amount")
+            } else {
+                it.getInt("Amount").toDouble()
+            }
+            val operation = when (it.getInt("Operation")) {
+                0 -> AttributeModifier.Operation.ADD_NUMBER
+                1 -> AttributeModifier.Operation.ADD_SCALAR
+                2 -> AttributeModifier.Operation.MULTIPLY_SCALAR_1
+                else -> return@forEach
+            }
+
+            val modifier = if (slot != null) {
+                AttributeModifier(uuid, name, amount, operation, slot)
+            } else {
+                AttributeModifier(uuid, name, amount, operation)
+            }
+            stack.itemMeta = stack.itemMeta?.apply {
+                addAttributeModifier(attribute, modifier)
+            }
+        }
     }
 }
