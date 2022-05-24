@@ -28,11 +28,19 @@ class ChatListener @Inject constructor(
             return
         }
 
-        // Super unsafe, but no other option as cancelling the event (as per the
-        // normal way) will interfere with a lot of other plugins
+        // Semi-dangerous workaround for other plugins not receiving chat.
+        //
+        // The typical way to format chat would be to modify the message in the event,
+        // however that doesn't support HoverText, which we need because all our groups
+        // are abbreviated and similar-looking.
+        //
+        // We can't cancel the chat event either, as that would prevent other plugins
+        // like DiscordSRV from receiving the message and sending it to Discord. This is a
+        // hack that lets the original message be sent (and seen by other plugins), but
+        // will essentially be cancelled for any online players.
         event.recipients.clear()
 
-        val format = chatGroupFormatter.format(event.player)
+        val format = chatGroupFormatter.get(playerUUID = event.player.uniqueId)
 
         val tc = TextComponent()
             .add(format.prefix)

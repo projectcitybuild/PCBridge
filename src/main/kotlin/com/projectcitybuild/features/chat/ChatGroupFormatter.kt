@@ -31,13 +31,18 @@ class ChatGroupFormatter @Inject constructor(
     private val groupPriorities: MutableMap<String, Pair<GroupType, Int>> = mutableMapOf()
     private val cache: MutableMap<UUID, Aggregate> = mutableMapOf()
 
-    fun format(playerUUID: UUID): Aggregate {
+    fun get(playerUUID: UUID): Aggregate {
         val cached = cache[playerUUID]
         if (cached != null) {
             return cached
         }
         return buildAggregate(playerUUID = playerUUID)
             .also { cache[playerUUID] = it }
+    }
+
+    fun flushCache() {
+        cache.clear()
+        groupPriorities.clear()
     }
 
     private fun buildAggregate(playerUUID: UUID): Aggregate {
