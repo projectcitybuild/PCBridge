@@ -3,9 +3,10 @@ package com.projectcitybuild.features.warps.usecases
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Result
 import com.projectcitybuild.core.utilities.Success
+import com.projectcitybuild.modules.eventbroadcast.LocalEventBroadcaster
 import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.modules.nameguesser.NameGuesser
-import com.projectcitybuild.repositories.LastKnownLocationRepository
+import com.projectcitybuild.plugin.events.PlayerPreWarpEvent
 import com.projectcitybuild.repositories.WarpRepository
 import org.bukkit.Location
 import org.bukkit.Server
@@ -16,10 +17,10 @@ class TeleportToWarpUseCase @Inject constructor(
     private val warpRepository: WarpRepository,
     private val nameGuesser: NameGuesser,
     private val logger: PlatformLogger,
-    private val lastKnownLocationRepository: LastKnownLocationRepository,
+    private val localEventBroadcaster: LocalEventBroadcaster,
     private val server: Server,
 ) {
-    data class WarpEvent(
+    data class Warp(
         val warpName: String,
     )
     enum class FailureReason {
@@ -30,7 +31,7 @@ class TeleportToWarpUseCase @Inject constructor(
     fun warp(
         player: Player,
         targetWarpName: String,
-    ): Result<WarpEvent, FailureReason> {
+    ): Result<Warp, FailureReason> {
         val availableWarpNames = warpRepository.names()
 
         val matchingWarpName = nameGuesser.guessClosest(targetWarpName, availableWarpNames)
@@ -45,7 +46,9 @@ class TeleportToWarpUseCase @Inject constructor(
             return Failure(FailureReason.WORLD_NOT_FOUND)
         }
 
-        lastKnownLocationRepository.updateLastKnownLocation(player = player)
+        localEventBroadcaster.emit(
+            PlayerPreWarpEvent(player = player)
+        )
 
         player.teleport(
             Location(
@@ -57,6 +60,6 @@ class TeleportToWarpUseCase @Inject constructor(
                 warp.location.pitch,
             )
         )
-        return Success(WarpEvent(warpName = warp.name))
+        return Success(Warp(warpName = warp.name))
     }
 }

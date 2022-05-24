@@ -1,7 +1,5 @@
 package com.projectcitybuild.plugin.commands
 
-import com.projectcitybuild.plugin.exceptions.CannotInvokeFromConsoleException
-import com.projectcitybuild.plugin.exceptions.InvalidCommandArgumentsException
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Success
 import com.projectcitybuild.features.ranksync.usecases.GenerateAccountVerificationURLUseCase
@@ -10,6 +8,8 @@ import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.platforms.bungeecord.extensions.add
 import com.projectcitybuild.plugin.environment.SpigotCommand
 import com.projectcitybuild.plugin.environment.SpigotCommandInput
+import com.projectcitybuild.plugin.exceptions.CannotInvokeFromConsoleException
+import com.projectcitybuild.plugin.exceptions.InvalidCommandArgumentsException
 import net.md_5.bungee.api.chat.ClickEvent
 import net.md_5.bungee.api.chat.HoverEvent
 import net.md_5.bungee.api.chat.TextComponent

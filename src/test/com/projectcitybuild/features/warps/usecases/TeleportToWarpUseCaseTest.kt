@@ -98,7 +98,7 @@ class TeleportToWarpUseCaseTest {
         )
 
         assertEquals(
-            Success(TeleportToWarpUseCase.WarpEvent(warpName = warp.name)),
+            Success(TeleportToWarpUseCase.Warp(warpName = warp.name)),
             result,
         )
     }

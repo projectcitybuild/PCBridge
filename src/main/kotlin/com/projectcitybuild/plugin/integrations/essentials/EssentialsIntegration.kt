@@ -2,10 +2,11 @@ package com.projectcitybuild.plugin.integrations.essentials
 
 import com.earth2me.essentials.Essentials
 import com.projectcitybuild.core.SpigotListener
-import com.projectcitybuild.plugin.SpigotIntegration
 import com.projectcitybuild.modules.logger.PlatformLogger
+import com.projectcitybuild.plugin.SpigotIntegration
+import com.projectcitybuild.plugin.events.PlayerPreWarpEvent
 import dagger.Reusable
-import org.bukkit.entity.Player
+import org.bukkit.event.EventHandler
 import org.bukkit.plugin.Plugin
 import javax.inject.Inject
 
@@ -45,11 +46,15 @@ class EssentialsIntegration @Inject constructor(
      * Sets the player's current position as their last known location
      * in Essentials
      */
-    fun updatePlayerLastLocation(player: Player) {
+    @EventHandler
+    fun onPlayerPreWarp(event: PlayerPreWarpEvent) {
         val essentials = essentials
             ?: return
 
-        val essentialsPlayer = essentials.getUser(player)
-        essentialsPlayer.setLastLocation()
+        essentials
+            .getUser(event.player)
+            .setLastLocation()
+
+        logger.verbose("Registered last location for ${event.player.name} with Essentials")
     }
 }
