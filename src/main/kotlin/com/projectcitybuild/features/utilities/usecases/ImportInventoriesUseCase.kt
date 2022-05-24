@@ -23,19 +23,25 @@ import org.bukkit.block.ShulkerBox
 import org.bukkit.block.banner.Pattern
 import org.bukkit.block.banner.PatternType
 import org.bukkit.enchantments.Enchantment
+import org.bukkit.entity.ItemFrame
 import org.bukkit.inventory.EquipmentSlot
+import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.BannerMeta
 import org.bukkit.inventory.meta.BlockStateMeta
 import org.bukkit.inventory.meta.BookMeta
+import org.bukkit.inventory.meta.CrossbowMeta
 import org.bukkit.inventory.meta.Damageable
 import org.bukkit.inventory.meta.EnchantmentStorageMeta
 import org.bukkit.inventory.meta.FireworkMeta
 import org.bukkit.inventory.meta.MapMeta
+import org.bukkit.inventory.meta.PotionMeta
 import org.bukkit.inventory.meta.Repairable
 import org.bukkit.inventory.meta.SkullMeta
 import org.bukkit.material.Colorable
 import org.bukkit.plugin.Plugin
+import org.bukkit.potion.PotionEffect
+import org.bukkit.potion.PotionEffectType
 import org.json.JSONObject
 import java.io.EOFException
 import java.io.File
@@ -313,6 +319,8 @@ class ImportInventoriesUseCase @Inject constructor(
                     stack.itemMeta?.lore?.add(tags.getString("lore"))
                 }
 
+                setPotionMeta(stack, tags)
+
                 setBookMeta(stack, tags)
 
                 setSkullOwner(stack, tags)
@@ -361,6 +369,20 @@ class ImportInventoriesUseCase @Inject constructor(
                         name = "BlockEntityTag",
                     )
                 }
+                if (tags.containsKey("EntityTag")) {
+                    val entityTags = tags.getCompound("EntityTag")
+                    if (entityTags.containsKey("Invisible") && entityTags.getBooleanByte("Invisible")) {
+                        // For invisible item frames
+                        if (stack is ItemFrame) {
+                            stack.isVisible = false
+                        }
+                    }
+                    logIfNotExpected(
+                        expected = listOf("Invisible"),
+                        compound = entityTags,
+                        name = "EntityTag",
+                    )
+                }
                 if (tags.containsKey("map")) {
                     val itemMeta = stack.itemMeta
                     if (itemMeta != null && itemMeta is MapMeta) {
@@ -381,7 +403,11 @@ class ImportInventoriesUseCase @Inject constructor(
                     expected = listOf(
                         "AttributeModifiers",
                         "BlockEntityTag",
+                        "ChargedProjectiles",
+                        "CustomPotionEffects",
+                        "CustomPotionColor",
                         "Enchantments",
+                        "EntityTag",
                         "Fireworks",
                         "Damage",
                         "display",
@@ -397,6 +423,7 @@ class ImportInventoriesUseCase @Inject constructor(
                         "lore",
                         "Unbreakable",
                         "StoredEnchantments",
+                        "Charged"  // Ignore
                     ),
                     compound = tags,
                     name = "tag",
@@ -412,6 +439,46 @@ class ImportInventoriesUseCase @Inject constructor(
         compound.keys
             .filter { !expected.contains(it) }
             .forEach { logger.fatal("Unexpected $name: $it") }
+    }
+
+    private fun setPotionMeta(stack: ItemStack, tags: NbtCompound) {
+        if (! tags.containsKey("CustomPotionEffects")) {
+            return
+        }
+        val itemMeta = stack.itemMeta
+        if (itemMeta == null || itemMeta !is PotionMeta) {
+            return
+        }
+        tags.getCompoundList("CustomPotionEffects").forEach {
+            val isAmbient = it.getBooleanByte("Ambient")
+            val amplifier = it.getByte("Amplifier")
+            val duration = it.getInt("Duration")
+            val id = it.getByte("Id")
+            val shouldShowIcon = it.getBooleanByte("ShowIcon")
+            val shouldShowParticles = it.getBooleanByte("ShowParticles")
+
+            val overwrite = true  // Overwrite what...?
+
+            val potionType = PotionEffectType.getById(id.toInt())
+            if (potionType == null) {
+                logger.fatal("Could not map PotionEffectType: ${id}")
+                return@forEach
+            }
+            val effect = PotionEffect(
+                potionType,
+                duration,
+                amplifier.toInt(),
+                isAmbient,
+                shouldShowParticles,
+                shouldShowIcon,
+            )
+            itemMeta.addCustomEffect(effect, overwrite)
+        }
+        if (tags.containsKey("CustomPotionColor")) {
+            val rawColor = tags.getInt("CustomPotionColor")
+            itemMeta.color = Color.fromRGB(rawColor)
+        }
+        stack.itemMeta = itemMeta
     }
 
     private fun setEnchantments(stack: ItemStack, tags: NbtCompound) {
@@ -657,6 +724,26 @@ class ImportInventoriesUseCase @Inject constructor(
 
                 itemMeta.addEffect(builder.build())
             }
+        }
+        stack.itemMeta = itemMeta
+    }
+
+    private fun setProjectiles(stack: ItemStack, tags: NbtCompound) {
+        val itemMeta = stack.itemMeta
+        if (itemMeta == null || itemMeta !is CrossbowMeta) {
+            return
+        }
+        if (tags.containsKey("ChargedProjectiles")) {
+            val items: MutableList<ItemStack> = mutableListOf()
+            tags.getCompoundList("ChargedProjectiles").forEach {
+                val material = Material.matchMaterial(it.getString("id"))
+                    ?: return@forEach
+
+                val amount = it.getByte("Count").toInt()
+                val newStack = ItemStack(material, amount)
+                items.add(newStack)
+            }
+            itemMeta.setChargedProjectiles(items)
         }
         stack.itemMeta = itemMeta
     }
