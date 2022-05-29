@@ -34,7 +34,7 @@ class CurrencyRepository @Inject constructor(
             return cached.balance
         }
 
-        // Causes thread death due if we don't queue the requests
+        // Causes thread death if we don't queue the requests
         if (!fetchQueue.contains(playerUUID)) {
             fetchQueue[playerUUID] = Unit
 
