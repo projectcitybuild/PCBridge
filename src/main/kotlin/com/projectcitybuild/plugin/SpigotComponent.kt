@@ -3,7 +3,6 @@ package com.projectcitybuild.plugin
 import com.projectcitybuild.core.database.DataSourceProvider
 import com.projectcitybuild.core.http.APIClient
 import com.projectcitybuild.core.http.NetworkProvider
-import com.projectcitybuild.core.redis.RedisProvider
 import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.modules.datetime.DateTimeProvider
 import com.projectcitybuild.modules.errorreporting.ErrorReporterProvider
@@ -12,7 +11,6 @@ import com.projectcitybuild.modules.kick.PlayerKicker
 import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.modules.permissions.PermissionsProvider
 import com.projectcitybuild.modules.scheduler.PlatformScheduler
-import com.projectcitybuild.modules.sharedcache.SharedCacheSetProvider
 import com.projectcitybuild.modules.timer.PlatformTimer
 import dagger.BindsInstance
 import dagger.Component
@@ -30,8 +28,6 @@ import javax.inject.Singleton
         ErrorReporterProvider::class,
         NetworkProvider::class,
         PermissionsProvider::class,
-        RedisProvider::class,
-        SharedCacheSetProvider::class,
     ]
 )
 interface SpigotComponent {

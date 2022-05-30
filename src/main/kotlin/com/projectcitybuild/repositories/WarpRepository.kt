@@ -3,16 +3,15 @@ package com.projectcitybuild.repositories
 import com.projectcitybuild.core.database.DataSource
 import com.projectcitybuild.entities.SerializableLocation
 import com.projectcitybuild.entities.Warp
-import com.projectcitybuild.modules.sharedcache.SharedCacheSetFactory
 import dagger.Reusable
 import javax.inject.Inject
 
 @Reusable
 class WarpRepository @Inject constructor(
     private val dataSource: DataSource,
-    sharedCacheSetFactory: SharedCacheSetFactory,
 ) {
-    private val sharedCacheSet = sharedCacheSetFactory.build("all_warp_names")
+    private val nameCache: MutableList<String> = mutableListOf()
+    private var hasBuiltNameCache = false
 
     fun exists(name: String): Boolean {
         return first(name) != null
@@ -38,16 +37,16 @@ class WarpRepository @Inject constructor(
     }
 
     fun names(): List<String> {
-        val cached = sharedCacheSet.all()
-        if (cached.isNotEmpty()) {
-            return cached.sorted()
+        if (hasBuiltNameCache) {
+            return nameCache
         }
-
         return dataSource.database()
             .getResults("SELECT `name` FROM `warps` ORDER BY `name` ASC")
             .map { row -> row.getString("name") }
             .also { warpNames ->
-                sharedCacheSet.add(warpNames)
+                nameCache.addAll(warpNames)
+                nameCache.sort()
+                hasBuiltNameCache = true
             }
     }
 
@@ -68,6 +67,12 @@ class WarpRepository @Inject constructor(
                     createdAt = row.get("created_at"),
                 )
             }
+            .also {
+                nameCache.clear()
+                nameCache.addAll(it.map { warp -> warp.name })
+                nameCache.sort()
+                hasBuiltNameCache = true
+            }
     }
 
     fun add(warp: Warp) {
@@ -84,13 +89,19 @@ class WarpRepository @Inject constructor(
             warp.createdAt,
         )
 
-        sharedCacheSet.removeAll()
+        nameCache.clear()
+        hasBuiltNameCache = false
     }
 
     fun delete(name: String) {
         dataSource.database()
             .executeUpdate("DELETE FROM `warps` WHERE `name`= ?", name)
 
-        sharedCacheSet.remove(name)
+        nameCache.remove(name)
+    }
+
+    fun flush() {
+        nameCache.clear()
+        hasBuiltNameCache = false
     }
 }

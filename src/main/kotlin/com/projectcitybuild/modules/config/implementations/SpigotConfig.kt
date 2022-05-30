@@ -28,14 +28,8 @@ class SpigotConfig(
             ConfigKey.DB_NAME,
             ConfigKey.DB_USERNAME,
             ConfigKey.DB_PASSWORD,
-            ConfigKey.REDIS_HOSTNAME,
-            ConfigKey.REDIS_PORT,
-            ConfigKey.REDIS_USERNAME,
-            ConfigKey.REDIS_PASSWORD,
             ConfigKey.ERROR_REPORTING_SENTRY_ENABLED,
             ConfigKey.ERROR_REPORTING_SENTRY_DSN,
-            ConfigKey.SHARED_CACHE_ADAPTER,
-            ConfigKey.SHARED_CACHE_FILE_RELATIVE_PATH,
             ConfigKey.INTEGRATION_DYNMAP_WARP_ICON,
         ).forEach { key ->
             config.addDefault(key.key, key.defaultValue)
