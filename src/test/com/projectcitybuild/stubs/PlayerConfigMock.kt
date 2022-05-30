@@ -9,7 +9,6 @@ fun PlayerConfigMock(uuid: UUID? = null): PlayerConfig {
         id = 1,
         uuid = uuid ?: UUID.randomUUID(),
         isMuted = false,
-        isAllowingTPs = true,
         firstSeen = LocalDateTime.now(),
     )
 }
