@@ -244,7 +244,8 @@ class ImportInventoriesUseCase @Inject constructor(
             }
             globalPlayerFile.let { configFile ->
                 JsonConfiguration.loadConfiguration(configFile).apply {
-                    set("playerData.lastWorld", profile.lastWorldName ?: "hub") // Default to `hub` if no world
+//                    set("playerData.lastWorld", profile.lastWorldName ?: "hub") // Default to `hub` if no world
+                    set("playerData.lastWorld", "hub") // Set to `hub` because it will be the "default" world folder that has all player data now
                     set("playerData.shouldLoad", true) // TODO: should this be false...?
                     set("playerData.lastKnownName", profile.lastKnownName)
 
