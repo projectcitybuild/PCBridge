@@ -2,7 +2,6 @@ package com.projectcitybuild.plugin.commands
 
 import com.projectcitybuild.features.warps.usecases.warplist.GetWarpListUseCase
 import com.projectcitybuild.modules.textcomponentbuilder.add
-import com.projectcitybuild.modules.textcomponentbuilder.addIf
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.plugin.environment.SpigotCommand
 import com.projectcitybuild.plugin.environment.SpigotCommandInput
@@ -38,30 +37,27 @@ class WarpsCommand @Inject constructor(
             return
         }
 
-        val clickableWarps = warpList.warps
-            .map { name ->
+        val tc = TextComponent()
+            .add("Warps (${warpList.totalWarps})") { it.isBold = true }
+            .add("\n---\n")
+
+        warpList.warps.withIndex().forEach { (index, name) ->
+            if (index != 0) {
+                tc.add(", ")
+            }
+            tc.add(
                 TextComponent(name).also {
                     it.clickEvent = ClickEvent(ClickEvent.Action.RUN_COMMAND, "/warp $name")
                     it.hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT, Text("/warp $name"))
                     it.isUnderlined = true
                 }
-            }
-
-        val clickableWarpList = TextComponent()
-        clickableWarps.forEachIndexed { index, tc ->
-            clickableWarpList.add(tc)
-            if (index < clickableWarps.size - 1) {
-                clickableWarpList.add(", ")
-            }
+            )
         }
 
-        val tc = TextComponent()
-            .add("Warps") { it.isBold = true }
-            .addIf(warpList.totalPages > 1, " ($page/${warpList.totalPages})") {
-                it.color = ChatColor.GRAY
-            }
-            .add("\n---\n")
-            .add(clickableWarpList)
+        if (warpList.totalPages > 1) {
+            tc.add("\n---\n")
+                .add("Page $page of ${warpList.totalPages}") { it.color = ChatColor.GRAY }
+        }
 
         input.sender.spigot().sendMessage(tc)
     }
