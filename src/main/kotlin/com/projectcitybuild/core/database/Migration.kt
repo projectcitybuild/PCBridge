@@ -15,6 +15,7 @@ object Migration {
         `20220207_add_teleport_message_silencing`(),
         `20220320_rename_queued_warps`(),
         `20220505_delete_queues`(),
+        `20220530_delete_bungeecord_cols`(),
     )
 
     fun executeIfNecessary(

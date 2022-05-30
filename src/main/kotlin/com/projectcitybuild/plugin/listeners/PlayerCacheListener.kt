@@ -34,7 +34,6 @@ class PlayerCacheListener @Inject constructor(
             playerConfigRepository.add(
                 uuid = uuid,
                 isMuted = false,
-                isAllowingTPs = true,
                 firstSeen = LocalDateTime.now(),
             )
         }

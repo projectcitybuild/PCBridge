@@ -72,9 +72,8 @@ class WarpRepository @Inject constructor(
 
     fun add(warp: Warp) {
         dataSource.database().executeInsert(
-            "INSERT INTO `warps` VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            "INSERT INTO `warps` VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
             warp.name,
-            "", // TODO: remove parameter via migration
             warp.location.worldName,
             warp.location.x,
             warp.location.y,

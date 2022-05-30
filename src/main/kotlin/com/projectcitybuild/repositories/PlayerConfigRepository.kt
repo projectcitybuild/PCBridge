@@ -26,7 +26,6 @@ class PlayerConfigRepository @Inject constructor(
                 id = row.get("id"),
                 uuid = UUID.fromString(row.get("uuid")),
                 isMuted = row.get("is_muted"),
-                isAllowingTPs = row.get("is_allowing_tp"),
                 firstSeen = row.get("first_seen"),
             )
             cache.put(uuid, deserializedPlayer)
@@ -36,19 +35,17 @@ class PlayerConfigRepository @Inject constructor(
         return null
     }
 
-    fun add(uuid: UUID, isMuted: Boolean, isAllowingTPs: Boolean, firstSeen: LocalDateTime): PlayerConfig {
+    fun add(uuid: UUID, isMuted: Boolean, firstSeen: LocalDateTime): PlayerConfig {
         val lastInsertedId = dataSource.database().executeInsert(
-            "INSERT INTO players VALUES (NULL, ?, ?, ?, ?)",
+            "INSERT INTO players VALUES (NULL, ?, ?, ?)",
             uuid.toString(),
             isMuted,
-            isAllowingTPs,
             firstSeen,
         )
         val playerConfig = PlayerConfig(
             id = lastInsertedId,
             uuid,
             isMuted,
-            isAllowingTPs,
             firstSeen,
         )
         cache.put(uuid, playerConfig)
@@ -60,10 +57,9 @@ class PlayerConfigRepository @Inject constructor(
         cache.put(player.uuid, player)
 
         dataSource.database().executeUpdate(
-            "UPDATE players SET `uuid` = ?, `is_muted` = ?, `is_allowing_tp` = ?, `first_seen` = ? WHERE `id`= ?",
+            "UPDATE players SET `uuid` = ?, `is_muted` = ?, `first_seen` = ? WHERE `id`= ?",
             player.uuid.toString(),
             player.isMuted,
-            player.isAllowingTPs,
             player.firstSeen,
             player.id,
         )
