@@ -40,31 +40,11 @@ class StorageBackedKeys constructor(
         get() = storage.get("database.password" defaultsTo super.DB_PASSWORD)
 
 
-    override val REDIS_HOSTNAME: String
-        get() = storage.get("redis.hostname" defaultsTo super.REDIS_HOSTNAME)
-
-    override val REDIS_PORT: Int
-        get() = storage.get("redis.port" defaultsTo super.REDIS_PORT)
-
-    override val REDIS_USERNAME: String
-        get() = storage.get("redis.username" defaultsTo super.REDIS_USERNAME)
-
-    override val REDIS_PASSWORD: String
-        get() = storage.get("redis.password" defaultsTo super.REDIS_PASSWORD)
-
-
     override val ERROR_REPORTING_SENTRY_ENABLED: Boolean
         get() = storage.get("error_reporting.sentry.enabled" defaultsTo super.ERROR_REPORTING_SENTRY_ENABLED)
 
     override val ERROR_REPORTING_SENTRY_DSN: String
         get() = storage.get("error_reporting.sentry.dsn" defaultsTo super.ERROR_REPORTING_SENTRY_DSN)
-
-
-    override val SHARED_CACHE_ADAPTER: String
-        get() = storage.get("shared_cache.adapter" defaultsTo super.SHARED_CACHE_ADAPTER)
-
-    override val SHARED_CACHE_FILE_RELATIVE_PATH: String
-        get() = storage.get("shared_cache.flatfile.relative_path" defaultsTo super.SHARED_CACHE_FILE_RELATIVE_PATH)
 
 
     override val TIME_TIMEZONE: String
@@ -93,8 +73,4 @@ class StorageBackedKeys constructor(
 
     override val GROUPS_DONOR_PRIORITY: List<String>
         get() = storage.get("groups.donor_priority" defaultsTo super.GROUPS_DONOR_PRIORITY)
-
-
-    override val SPIGOT_SERVER_NAME
-        get() = storage.get("spigot.server_name" defaultsTo super.SPIGOT_SERVER_NAME)
 }

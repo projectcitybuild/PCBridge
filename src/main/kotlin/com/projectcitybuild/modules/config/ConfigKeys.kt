@@ -34,32 +34,11 @@ interface ConfigKeys {
         get() = "password"
 
 
-    val REDIS_HOSTNAME: String
-        get() = "localhost"
-
-    val REDIS_PORT: Int
-        get() = 6379
-
-    val REDIS_USERNAME: String
-        get() = "root"
-
-    val REDIS_PASSWORD: String
-        get() = ""
-
-
     val ERROR_REPORTING_SENTRY_ENABLED: Boolean
         get() = false
 
     val ERROR_REPORTING_SENTRY_DSN: String
         get() = "https://<key>@sentry.io/<project>"
-
-
-    // Supports 'redis' or 'flatfile'
-    val SHARED_CACHE_ADAPTER: String
-        get() = "flatfile"
-
-    val SHARED_CACHE_FILE_RELATIVE_PATH: String
-        get() = "../../cache/pcbridge"
 
 
     val TIME_TIMEZONE: String
@@ -103,8 +82,4 @@ interface ConfigKeys {
             "donator",
             "legacy-donator",
         )
-
-    @Deprecated("Not needed anymore")
-    val SPIGOT_SERVER_NAME
-        get() = "main"
 }

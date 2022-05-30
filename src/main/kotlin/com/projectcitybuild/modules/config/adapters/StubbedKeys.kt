@@ -26,23 +26,9 @@ class StubbedKeys: ConfigKeys {
     override val DB_PASSWORD: String = null!!
 
 
-    override val REDIS_HOSTNAME: String = null!!
-
-    override val REDIS_PORT: Int = null!!
-
-    override val REDIS_USERNAME: String = null!!
-
-    override val REDIS_PASSWORD: String = null!!
-
-
     override val ERROR_REPORTING_SENTRY_ENABLED: Boolean = null!!
 
     override val ERROR_REPORTING_SENTRY_DSN: String = null!!
-
-
-    override val SHARED_CACHE_ADAPTER: String = null!!
-
-    override val SHARED_CACHE_FILE_RELATIVE_PATH: String = null!!
 
 
     override val TIME_TIMEZONE: String = null!!
@@ -63,7 +49,4 @@ class StubbedKeys: ConfigKeys {
     override val GROUPS_TRUST_PRIORITY: List<String> = null!!
 
     override val GROUPS_DONOR_PRIORITY: List<String> = null!!
-
-
-    override val SPIGOT_SERVER_NAME = null!!
 }
