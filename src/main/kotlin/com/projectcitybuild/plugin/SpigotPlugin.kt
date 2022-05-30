@@ -3,9 +3,6 @@ package com.projectcitybuild.plugin
 import com.github.shynixn.mccoroutine.bukkit.minecraftDispatcher
 import com.projectcitybuild.core.database.DataSource
 import com.projectcitybuild.core.http.APIClientImpl
-import com.projectcitybuild.core.redis.RedisConnection
-import com.projectcitybuild.modules.config.ConfigKey
-import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.modules.config.implementations.SpigotConfig
 import com.projectcitybuild.modules.errorreporting.ErrorReporter
 import com.projectcitybuild.modules.eventbroadcast.implementations.SpigotLocalEventBroadcaster
@@ -52,26 +49,17 @@ class SpigotPlugin : JavaPlugin() {
 class SpigotPluginContainer @Inject constructor(
     private val container: SpigotContainer,
     private val plugin: Plugin,
-    private val config: PlatformConfig,
     private val commandRegistry: SpigotCommandRegistry,
     private val listenerRegistry: SpigotListenerRegistry,
     private val dataSource: DataSource,
     private val errorReporter: ErrorReporter,
-    private val redisConnection: RedisConnection,
     private val permissions: Permissions,
 ) {
-    private val isRedisEnabled: Boolean
-        get() = config.get(ConfigKey.SHARED_CACHE_ADAPTER) == "redis"
-
     fun onEnable(server: Server) {
         errorReporter.bootstrap()
 
         runCatching {
             dataSource.connect()
-
-            if (isRedisEnabled) {
-                redisConnection.connect()
-            }
 
             permissions.connect()
 
@@ -90,10 +78,6 @@ class SpigotPluginContainer @Inject constructor(
 
             listenerRegistry.unregisterAll()
             dataSource.disconnect()
-
-            if (isRedisEnabled) {
-                redisConnection.disconnect()
-            }
         }.onFailure { reportError(it) }
     }
 
