@@ -65,20 +65,27 @@ class CurrencyRepository @Inject constructor(
         return cachedBalance.balance
     }
 
-    suspend fun deduct(playerUUID: UUID, amount: Int, reason: String) {
-        apiClient.execute {
-            apiRequestFactory.pcb.balanceApi.deduct(
-                uuid = playerUUID.toString(),
-                amount = amount,
-                reason = reason,
-            )
-            balanceCache.set(
-                key = playerUUID,
-                value = CachedBalance(
-                    balance = max(0, (balanceCache[playerUUID]?.balance ?: 0) - amount),
-                    fetchedAt = LocalDateTime.now(),
-                )
-            )
+    fun deduct(playerUUID: UUID, amount: Int, reason: String) : Boolean {
+        val cachedBalance = balanceCache[playerUUID]
+        if (cachedBalance == null || cachedBalance.balance - amount < 0) {
+            return false
         }
+        CoroutineScope(Dispatchers.IO).launch {
+            apiClient.execute {
+                apiRequestFactory.pcb.balanceApi.deduct(
+                    uuid = playerUUID.toString(),
+                    amount = amount,
+                    reason = reason,
+                )
+                balanceCache.set(
+                    key = playerUUID,
+                    value = CachedBalance(
+                        balance = max(0, (balanceCache[playerUUID]?.balance ?: 0) - amount),
+                        fetchedAt = LocalDateTime.now(),
+                    )
+                )
+            }
+        }
+        return true
     }
 }
