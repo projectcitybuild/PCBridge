@@ -17,6 +17,7 @@ class PlayerGroupRepository @Inject constructor(
 ) {
     class AccountNotLinkedException: Exception()
 
+    @Throws(AccountNotLinkedException::class)
     suspend fun getGroups(playerUUID: UUID): List<String> {
         val response = try {
             val authAPI = apiRequestFactory.pcb.authApi
@@ -35,6 +36,7 @@ class PlayerGroupRepository @Inject constructor(
             .ifEmpty { listOf(config.get(ConfigKey.GROUPS_GUEST)) }
     }
 
+    @Throws(AccountNotLinkedException::class)
     suspend fun getDonorTiers(playerUUID: UUID): List<String> {
         val response = try {
             val donorAPI = apiRequestFactory.pcb.donorApi
