@@ -65,7 +65,7 @@ class CurrencyRepository @Inject constructor(
         return cachedBalance.balance
     }
 
-    fun deduct(playerUUID: UUID, amount: Int, reason: String) : Boolean {
+    fun deduct(playerUUID: UUID, amount: Int, reason: String): Boolean {
         val cachedBalance = balanceCache[playerUUID]
         if (cachedBalance == null || cachedBalance.balance - amount < 0) {
             return false

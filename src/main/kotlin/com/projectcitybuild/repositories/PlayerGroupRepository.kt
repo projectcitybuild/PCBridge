@@ -15,7 +15,7 @@ class PlayerGroupRepository @Inject constructor(
     private val config: PlatformConfig,
     private val logger: PlatformLogger,
 ) {
-    class AccountNotLinkedException: Exception()
+    class AccountNotLinkedException : Exception()
 
     @Throws(AccountNotLinkedException::class)
     suspend fun getGroups(playerUUID: UUID): List<String> {
