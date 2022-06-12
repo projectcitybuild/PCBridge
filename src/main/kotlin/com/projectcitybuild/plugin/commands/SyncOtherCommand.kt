@@ -42,9 +42,6 @@ class SyncOtherCommand @Inject constructor(
                 when (result.reason) {
                     UpdatePlayerGroupsUseCase.FailureReason.ACCOUNT_NOT_LINKED
                     -> "Sync failed: Player does not have a linked PCB account"
-
-                    UpdatePlayerGroupsUseCase.FailureReason.PERMISSION_USER_NOT_FOUND
-                    -> "Permission user not found. Check that the user exists in the Permission plugin"
                 }
             )
             is Success -> {

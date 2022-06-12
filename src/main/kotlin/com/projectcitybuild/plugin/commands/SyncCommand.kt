@@ -70,9 +70,6 @@ class SyncCommand @Inject constructor(
             is Failure -> when (result.reason) {
                 UpdatePlayerGroupsUseCase.FailureReason.ACCOUNT_NOT_LINKED
                 -> player.send().error("Sync failed. Did you finish registering your account?")
-
-                UpdatePlayerGroupsUseCase.FailureReason.PERMISSION_USER_NOT_FOUND
-                -> player.send().error("Permission user not found. Check that the user exists in the Permission plugin")
             }
             is Success -> {
                 player.send().success("Account linked! Your rank will be automatically synchronized with the PCB network")
