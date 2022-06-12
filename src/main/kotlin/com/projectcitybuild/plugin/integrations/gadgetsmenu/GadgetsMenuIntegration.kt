@@ -7,6 +7,9 @@ import com.projectcitybuild.repositories.CurrencyRepository
 import com.yapzhenyie.GadgetsMenu.economy.GEconomyProvider
 import com.yapzhenyie.GadgetsMenu.player.OfflinePlayerManager
 import dagger.Reusable
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.bukkit.plugin.Plugin
 import javax.inject.Inject
 
@@ -21,7 +24,9 @@ class GadgetsMenuIntegration @Inject constructor(
 
     override fun onEnable() {
         if (plugin.server.pluginManager.isPluginEnabled("GadgetsMenu")) {
-            GEconomyProvider.setMysteryDustStorage(CurrencyProvider(plugin, logger, currencyRepository))
+            GEconomyProvider.setMysteryDustStorage(
+                CurrencyProvider(plugin, logger, currencyRepository)
+            )
         } else {
             logger.warning("Cannot find GadgetsMenu plugin. Disabling integration")
             return
@@ -70,11 +75,14 @@ class GadgetsMenuIntegration @Inject constructor(
                 logger.warning("Attempted to call removeMysteryDust with a null OfflinePlayerManager")
                 return false
             }
-            repository.deduct(
-                playerUUID = p0.uuid,
-                amount = p1,
-                reason = "Minecraft cosmetic purchase"
-            )
+            // GadgetMenu calls this function from a background thread
+            CoroutineScope(Dispatchers.IO).launch {
+                repository.deduct(
+                    playerUUID = p0.uuid,
+                    amount = p1,
+                    reason = "Minecraft cosmetic purchase"
+                )
+            }
             return true
         }
     }
