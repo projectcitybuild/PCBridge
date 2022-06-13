@@ -2,8 +2,6 @@ package com.projectcitybuild.repositories
 
 import com.projectcitybuild.core.http.APIClient
 import com.projectcitybuild.core.http.APIRequestFactory
-import com.projectcitybuild.entities.responses.Group
-import com.projectcitybuild.modules.config.ConfigKey
 import com.projectcitybuild.modules.config.PlatformConfig
 import com.projectcitybuild.modules.logger.PlatformLogger
 import java.util.UUID
@@ -29,11 +27,8 @@ class PlayerGroupRepository @Inject constructor(
             throw e
         }
 
-        val groups: List<Group> = response.data?.groups ?: listOf()
-
-        return groups
-            .mapNotNull { it.minecraftName }
-            .ifEmpty { listOf(config.get(ConfigKey.GROUPS_GUEST)) }
+        return response.data?.groups
+            ?.mapNotNull { it.minecraftName } ?: listOf()
     }
 
     @Throws(AccountNotLinkedException::class)
