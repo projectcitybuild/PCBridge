@@ -31,7 +31,6 @@ sealed class ConfigKey {
         val TIME_TIMEZONE = "time.timezone" defaultTo "UTC"
         val TIME_LOCALE = "time.locale" defaultTo "en-us"
 
-        val GROUPS_GUEST = "groups.guest" defaultTo "guest"
         val GROUPS_BUILD_PRIORITY = "groups.build_priority" defaultTo arrayListOf(
             "architect",
             "engineer",
