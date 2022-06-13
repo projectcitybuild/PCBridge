@@ -28,7 +28,8 @@ class PlayerGroupRepository @Inject constructor(
         }
 
         return response.data?.groups
-            ?.mapNotNull { it.minecraftName } ?: listOf()
+            ?.mapNotNull { it.minecraftName }
+            ?: listOf()
     }
 
     @Throws(AccountNotLinkedException::class)
