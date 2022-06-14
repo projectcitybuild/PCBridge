@@ -33,14 +33,22 @@ class PCBClient(
             .build()
     }
 
+    private fun token(url: String): String {
+        return if (url.contains("balance") || url.contains("telemetry")) {
+            authToken
+        } else {
+            oldAuthToken
+        }
+    }
+
     private fun makeAuthenticatedClient(): OkHttpClient {
         var clientFactory = OkHttpClient().newBuilder()
             .addInterceptor { chain ->
                 // Add access token as header to each API request
                 val request = chain.request()
 
-                val token = if (request.url.toString().contains("balance")) authToken else oldAuthToken
-                val requestBuilder = request.newBuilder().header("Authorization", "Bearer $token")
+                val authToken = token(url = request.url.toString())
+                val requestBuilder = request.newBuilder().header("Authorization", "Bearer $authToken")
                 val nextRequest = requestBuilder.build()
 
                 chain.proceed(nextRequest)
