@@ -12,15 +12,15 @@ class TelemetryListener @Inject constructor(
 ) : SpigotListener {
 
     @EventHandler
-    suspend fun onPlayerJoin(event: PlayerJoinEvent)
-        = telemetryRepository.playerSeen(
+    suspend fun onPlayerJoin(event: PlayerJoinEvent) =
+        telemetryRepository.playerSeen(
             playerUUID = event.player.uniqueId,
             playerName = event.player.name,
         )
 
     @EventHandler
-    suspend fun onPlayerLeave(event: PlayerQuitEvent)
-        = telemetryRepository.playerSeen(
+    suspend fun onPlayerLeave(event: PlayerQuitEvent) =
+        telemetryRepository.playerSeen(
             playerUUID = event.player.uniqueId,
             playerName = event.player.name,
         )
