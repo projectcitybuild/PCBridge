@@ -56,9 +56,6 @@ interface ConfigKeys {
         get() = "portal"
 
 
-    val GROUPS_GUEST: String
-        get() = "guest"
-
     val GROUPS_BUILD_PRIORITY: List<String>
         get() = listOf(
             "architect",

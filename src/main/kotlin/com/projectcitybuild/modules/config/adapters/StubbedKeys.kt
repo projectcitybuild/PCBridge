@@ -42,8 +42,6 @@ class StubbedKeys: ConfigKeys {
     override val INTEGRATION_DYNMAP_WARP_ICON: String = null!!
 
 
-    override val GROUPS_GUEST: String = null!!
-
     override val GROUPS_BUILD_PRIORITY: List<String> = null!!
 
     override val GROUPS_TRUST_PRIORITY: List<String> = null!!

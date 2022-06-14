@@ -62,9 +62,6 @@ class StorageBackedKeys constructor(
         get() = storage.get("integrations.dynmap.warp_icon" defaultsTo super.INTEGRATION_DYNMAP_WARP_ICON)
 
 
-    override val GROUPS_GUEST: String
-        get() = storage.get("groups.guest" defaultsTo super.GROUPS_GUEST)
-
     override val GROUPS_BUILD_PRIORITY: List<String>
         get() = storage.get("groups.build_priority" defaultsTo super.GROUPS_BUILD_PRIORITY)
 
