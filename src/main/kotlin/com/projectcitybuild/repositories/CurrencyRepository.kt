@@ -33,7 +33,7 @@ class CurrencyRepository @Inject constructor(
 
         CoroutineScope(Dispatchers.IO).launch {
             val response = apiClient.execute {
-                apiRequestFactory.pcb.balanceApi.get(
+                apiRequestFactory.pcb.balanceAPI.get(
                     uuid = playerUUID.toString(),
                 )
             }
@@ -72,7 +72,7 @@ class CurrencyRepository @Inject constructor(
         }
         CoroutineScope(Dispatchers.IO).launch {
             apiClient.execute {
-                apiRequestFactory.pcb.balanceApi.deduct(
+                apiRequestFactory.pcb.balanceAPI.deduct(
                     uuid = playerUUID.toString(),
                     amount = amount,
                     reason = reason,

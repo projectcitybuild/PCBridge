@@ -21,7 +21,7 @@ class GenerateAccountVerificationURLUseCase @Inject constructor(
 
     suspend fun generate(playerUUID: UUID): Result<VerificationURL, FailureReason> {
         try {
-            val authApi = apiRequestFactory.pcb.authApi
+            val authApi = apiRequestFactory.pcb.authAPI
             val response = apiClient.execute { authApi.getVerificationUrl(uuid = playerUUID.toString()) }
 
             return if (response.data == null || response.data.url.isEmpty()) {

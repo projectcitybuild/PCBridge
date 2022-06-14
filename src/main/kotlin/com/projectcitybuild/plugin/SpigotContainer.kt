@@ -27,6 +27,7 @@ import com.projectcitybuild.plugin.listeners.FirstTimeJoinMessageListener
 import com.projectcitybuild.plugin.listeners.PlayerCacheListener
 import com.projectcitybuild.plugin.listeners.ServerJoinMessageListener
 import com.projectcitybuild.plugin.listeners.SyncRankLoginListener
+import com.projectcitybuild.plugin.listeners.TelemetryListener
 import com.projectcitybuild.plugin.listeners.WelcomeMessageListener
 import javax.inject.Inject
 
@@ -101,6 +102,7 @@ class SpigotContainer @Inject constructor(
         playerCacheListener: PlayerCacheListener,
         serverJoinMessageListener: ServerJoinMessageListener,
         syncRankLoginListener: SyncRankLoginListener,
+        telemetryListener: TelemetryListener,
         welcomeMessageListener: WelcomeMessageListener,
     ) {
         val enabled: List<SpigotListener> = listOf(
@@ -110,6 +112,7 @@ class SpigotContainer @Inject constructor(
             playerCacheListener,
             serverJoinMessageListener,
             syncRankLoginListener,
+            telemetryListener,
             welcomeMessageListener,
         )
     }
