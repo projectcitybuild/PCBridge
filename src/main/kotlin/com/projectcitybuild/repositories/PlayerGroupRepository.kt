@@ -18,7 +18,7 @@ class PlayerGroupRepository @Inject constructor(
     @Throws(AccountNotLinkedException::class)
     suspend fun getGroups(playerUUID: UUID): List<String> {
         val response = try {
-            val authAPI = apiRequestFactory.pcb.authApi
+            val authAPI = apiRequestFactory.pcb.authAPI
             apiClient.execute { authAPI.getUserGroups(uuid = playerUUID.toString()) }
         } catch (e: APIClient.HTTPError) {
             if (e.errorBody?.id == "account_not_linked") {
@@ -35,7 +35,7 @@ class PlayerGroupRepository @Inject constructor(
     @Throws(AccountNotLinkedException::class)
     suspend fun getDonorTiers(playerUUID: UUID): List<String> {
         val response = try {
-            val donorAPI = apiRequestFactory.pcb.donorApi
+            val donorAPI = apiRequestFactory.pcb.donorAPI
             apiClient.execute { donorAPI.getDonationTier(playerUUID.toString()) }
         } catch (e: APIClient.HTTPError) {
             if (e.errorBody?.id == "account_not_linked") {

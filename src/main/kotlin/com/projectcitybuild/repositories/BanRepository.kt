@@ -22,7 +22,7 @@ class BanRepository @Inject constructor(
         reason: String?
     ) {
         try {
-            val banApi = apiRequestFactory.pcb.banApi
+            val banApi = apiRequestFactory.pcb.banAPI
             apiClient.execute {
                 banApi.storeBan(
                     playerId = targetPlayerUUID.toString(),
@@ -46,7 +46,7 @@ class BanRepository @Inject constructor(
     @Throws(PlayerNotBannedException::class)
     suspend fun unban(targetPlayerUUID: UUID, staffId: UUID?) {
         try {
-            val banApi = apiRequestFactory.pcb.banApi
+            val banApi = apiRequestFactory.pcb.banAPI
             apiClient.execute {
                 banApi.storeUnban(
                     playerId = targetPlayerUUID.toString(),
@@ -64,7 +64,7 @@ class BanRepository @Inject constructor(
     }
 
     suspend fun get(targetPlayerUUID: UUID): GameBan? {
-        val banApi = apiRequestFactory.pcb.banApi
+        val banApi = apiRequestFactory.pcb.banAPI
         val response = apiClient.execute {
             banApi.requestStatus(
                 playerId = targetPlayerUUID.toString(),

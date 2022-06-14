@@ -4,6 +4,7 @@ import com.projectcitybuild.entities.requests.pcb.AuthAPIRequest
 import com.projectcitybuild.entities.requests.pcb.BalanceAPIRequest
 import com.projectcitybuild.entities.requests.pcb.BanAPIRequest
 import com.projectcitybuild.entities.requests.pcb.DonorAPIRequest
+import com.projectcitybuild.entities.requests.pcb.TelemetryAPIRequest
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -17,10 +18,11 @@ class PCBClient(
 ) {
     private val instance: Retrofit = build()
 
-    val banApi: BanAPIRequest = instance.create(BanAPIRequest::class.java)
-    val authApi: AuthAPIRequest = instance.create(AuthAPIRequest::class.java)
-    val balanceApi: BalanceAPIRequest = instance.create(BalanceAPIRequest::class.java)
-    val donorApi: DonorAPIRequest = instance.create(DonorAPIRequest::class.java)
+    val banAPI: BanAPIRequest = instance.create(BanAPIRequest::class.java)
+    val authAPI: AuthAPIRequest = instance.create(AuthAPIRequest::class.java)
+    val balanceAPI: BalanceAPIRequest = instance.create(BalanceAPIRequest::class.java)
+    val donorAPI: DonorAPIRequest = instance.create(DonorAPIRequest::class.java)
+    val telemetryAPI: TelemetryAPIRequest = instance.create(TelemetryAPIRequest::class.java)
 
     private fun build(): Retrofit {
         val authenticatedClient = makeAuthenticatedClient()
