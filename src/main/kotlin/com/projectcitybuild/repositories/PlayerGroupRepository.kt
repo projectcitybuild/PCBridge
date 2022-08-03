@@ -1,6 +1,6 @@
 package com.projectcitybuild.repositories
 
-import com.projectcitybuild.core.http.APIClient
+import com.projectcitybuild.core.http.core.APIClient
 import com.projectcitybuild.core.http.APIRequestFactory
 import com.projectcitybuild.modules.config.Config
 import com.projectcitybuild.modules.config.ConfigStorageKey

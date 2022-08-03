@@ -1,4 +1,4 @@
-package com.projectcitybuild.modules.datetime.formatter
+package com.projectcitybuild.core.datetime.formatter
 
 import dagger.Reusable
 import java.time.Instant

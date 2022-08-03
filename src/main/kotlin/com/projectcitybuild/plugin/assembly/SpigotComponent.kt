@@ -1,18 +1,19 @@
-package com.projectcitybuild.plugin
+package com.projectcitybuild.plugin.assembly
 
 import com.projectcitybuild.core.database.DataSourceProvider
-import com.projectcitybuild.core.http.APIClient
-import com.projectcitybuild.core.http.NetworkProvider
+import com.projectcitybuild.core.http.core.APIClient
+import com.projectcitybuild.plugin.assembly.providers.HTTPProvider
 import com.projectcitybuild.core.storage.Storage
-import com.projectcitybuild.modules.config.ConfigProvider
-import com.projectcitybuild.modules.datetime.DateTimeProvider
-import com.projectcitybuild.modules.errorreporting.ErrorReporterProvider
+import com.projectcitybuild.plugin.assembly.providers.DateTimeProvider
+import com.projectcitybuild.plugin.assembly.providers.ErrorReporterProvider
 import com.projectcitybuild.modules.eventbroadcast.LocalEventBroadcaster
 import com.projectcitybuild.modules.kick.PlayerKicker
 import com.projectcitybuild.modules.logger.PlatformLogger
-import com.projectcitybuild.modules.permissions.PermissionsProvider
+import com.projectcitybuild.plugin.assembly.providers.PermissionsProvider
 import com.projectcitybuild.modules.scheduler.PlatformScheduler
 import com.projectcitybuild.modules.timer.PlatformTimer
+import com.projectcitybuild.plugin.SpigotPluginContainer
+import com.projectcitybuild.plugin.assembly.providers.ConfigProvider
 import dagger.BindsInstance
 import dagger.Component
 import org.bukkit.Server
@@ -28,7 +29,7 @@ import javax.inject.Singleton
         DateTimeProvider::class,
         DataSourceProvider::class,
         ErrorReporterProvider::class,
-        NetworkProvider::class,
+        HTTPProvider::class,
         PermissionsProvider::class,
         ConfigProvider::class,
     ]

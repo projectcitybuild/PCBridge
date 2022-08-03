@@ -1,6 +1,7 @@
-package com.projectcitybuild.plugin
+package com.projectcitybuild.plugin.assembly
 
 import com.projectcitybuild.core.SpigotListener
+import com.projectcitybuild.plugin.integrations.SpigotIntegration
 import com.projectcitybuild.plugin.commands.ACommand
 import com.projectcitybuild.plugin.commands.BanCommand
 import com.projectcitybuild.plugin.commands.BanIPCommand

@@ -3,7 +3,7 @@ package com.projectcitybuild.plugin.integrations.luckperms
 import com.projectcitybuild.core.SpigotListener
 import com.projectcitybuild.features.chat.ChatGroupFormatter
 import com.projectcitybuild.modules.logger.PlatformLogger
-import com.projectcitybuild.plugin.SpigotIntegration
+import com.projectcitybuild.plugin.integrations.SpigotIntegration
 import dagger.Reusable
 import net.luckperms.api.LuckPerms
 import net.luckperms.api.LuckPermsProvider

@@ -3,7 +3,7 @@ package com.projectcitybuild.plugin.integrations.essentials
 import com.earth2me.essentials.Essentials
 import com.projectcitybuild.core.SpigotListener
 import com.projectcitybuild.modules.logger.PlatformLogger
-import com.projectcitybuild.plugin.SpigotIntegration
+import com.projectcitybuild.plugin.integrations.SpigotIntegration
 import com.projectcitybuild.plugin.events.PlayerPreWarpEvent
 import dagger.Reusable
 import org.bukkit.event.EventHandler

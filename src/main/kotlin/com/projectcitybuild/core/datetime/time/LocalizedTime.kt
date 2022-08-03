@@ -1,4 +1,4 @@
-package com.projectcitybuild.modules.datetime.time
+package com.projectcitybuild.core.datetime.time
 
 import java.time.LocalDateTime
 

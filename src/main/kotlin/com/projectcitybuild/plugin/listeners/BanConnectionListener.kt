@@ -2,7 +2,7 @@ package com.projectcitybuild.plugin.listeners
 
 import com.projectcitybuild.core.SpigotListener
 import com.projectcitybuild.features.bans.usecases.AuthoriseConnectionUseCase
-import com.projectcitybuild.modules.datetime.formatter.DateTimeFormatter
+import com.projectcitybuild.core.datetime.formatter.DateTimeFormatter
 import com.projectcitybuild.modules.errorreporting.ErrorReporter
 import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.modules.textcomponentbuilder.add

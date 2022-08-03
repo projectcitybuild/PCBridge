@@ -6,7 +6,7 @@ import com.projectcitybuild.core.utilities.Result
 import com.projectcitybuild.core.utilities.Success
 import com.projectcitybuild.entities.IPBan
 import com.projectcitybuild.features.bans.Sanitizer
-import com.projectcitybuild.modules.datetime.time.Time
+import com.projectcitybuild.core.datetime.time.Time
 import com.projectcitybuild.modules.kick.PlayerKicker
 import com.projectcitybuild.repositories.IPBanRepository
 import javax.inject.Inject

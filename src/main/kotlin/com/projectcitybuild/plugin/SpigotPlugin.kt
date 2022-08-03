@@ -2,9 +2,8 @@ package com.projectcitybuild.plugin
 
 import com.github.shynixn.mccoroutine.bukkit.minecraftDispatcher
 import com.projectcitybuild.core.database.DataSource
-import com.projectcitybuild.core.http.APIClientImpl
+import com.projectcitybuild.core.http.core.APIClientImpl
 import com.projectcitybuild.core.storage.adapters.YamlStorage
-import com.projectcitybuild.modules.config.adapters.YamlKeyValueStorage
 import com.projectcitybuild.modules.errorreporting.ErrorReporter
 import com.projectcitybuild.modules.eventbroadcast.implementations.SpigotLocalEventBroadcaster
 import com.projectcitybuild.modules.kick.SpigotPlayerKicker
@@ -12,6 +11,8 @@ import com.projectcitybuild.modules.logger.implementations.SpigotLogger
 import com.projectcitybuild.modules.permissions.Permissions
 import com.projectcitybuild.modules.scheduler.implementations.SpigotScheduler
 import com.projectcitybuild.modules.timer.implementations.SpigotTimer
+import com.projectcitybuild.plugin.assembly.DaggerSpigotComponent
+import com.projectcitybuild.plugin.assembly.SpigotContainer
 import com.projectcitybuild.plugin.environment.SpigotCommandRegistry
 import com.projectcitybuild.plugin.environment.SpigotListenerRegistry
 import org.bukkit.Server

@@ -1,5 +1,6 @@
-package com.projectcitybuild.core.http
+package com.projectcitybuild.plugin.assembly.providers
 
+import com.projectcitybuild.core.http.APIRequestFactory
 import com.projectcitybuild.core.http.clients.MojangClient
 import com.projectcitybuild.core.http.clients.PCBClient
 import com.projectcitybuild.modules.config.Config
@@ -8,7 +9,7 @@ import dagger.Module
 import dagger.Provides
 
 @Module
-class NetworkProvider {
+class HTTPProvider {
 
     @Provides
     fun provideAPIRequestFactory(config: Config): APIRequestFactory {

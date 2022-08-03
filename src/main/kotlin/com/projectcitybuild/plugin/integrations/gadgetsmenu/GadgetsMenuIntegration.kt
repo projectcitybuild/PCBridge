@@ -2,7 +2,7 @@ package com.projectcitybuild.plugin.integrations.gadgetsmenu
 
 import com.projectcitybuild.core.SpigotListener
 import com.projectcitybuild.modules.logger.PlatformLogger
-import com.projectcitybuild.plugin.SpigotIntegration
+import com.projectcitybuild.plugin.integrations.SpigotIntegration
 import com.projectcitybuild.repositories.CurrencyRepository
 import com.yapzhenyie.GadgetsMenu.economy.GEconomyProvider
 import com.yapzhenyie.GadgetsMenu.player.OfflinePlayerManager
