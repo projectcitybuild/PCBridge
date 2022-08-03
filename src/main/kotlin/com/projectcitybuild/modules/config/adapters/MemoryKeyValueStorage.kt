@@ -9,7 +9,7 @@ class MemoryKeyValueStorage : KeyValueStorage {
 
     override fun <T> get(key: ConfigStorageKey<T>): T {
         return data[key.path]?.let { it as T }
-            ?: throw Exception("Value not mocked")
+            ?: key.defaultValue
     }
 
     override fun <T> set(key: ConfigStorageKey<T>, value: T) {
