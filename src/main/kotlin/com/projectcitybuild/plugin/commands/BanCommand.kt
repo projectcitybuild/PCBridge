@@ -9,8 +9,14 @@ import com.projectcitybuild.plugin.environment.SpigotCommandInput
 import com.projectcitybuild.plugin.exceptions.InvalidCommandArgumentsException
 import org.bukkit.Server
 import org.bukkit.command.CommandSender
+import org.bukkit.plugin.java.annotation.command.Command
 import javax.inject.Inject
 
+@Command(
+    name = "ban",
+    desc = "Bans a player from connecting to the server",
+    usage = "/ban <name> [reason]",
+)
 class BanCommand @Inject constructor(
     private val server: Server,
     private val banUUIDUseCase: BanUUIDUseCase,

@@ -10,8 +10,14 @@ import com.projectcitybuild.plugin.environment.SpigotCommandInput
 import com.projectcitybuild.plugin.exceptions.InvalidCommandArgumentsException
 import org.bukkit.Server
 import org.bukkit.command.CommandSender
+import org.bukkit.plugin.java.annotation.command.Command
 import javax.inject.Inject
 
+@Command(
+    name = "banip",
+    desc = "Bans an exact IP, preventing it from connecting to the server",
+    usage = "/banip <name|ip> [reason]",
+)
 class BanIPCommand @Inject constructor(
     private val server: Server,
     private val banIPUseCase: BanIPUseCase,

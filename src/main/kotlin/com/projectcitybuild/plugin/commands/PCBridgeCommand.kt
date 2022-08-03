@@ -10,8 +10,14 @@ import com.projectcitybuild.plugin.environment.SpigotCommand
 import com.projectcitybuild.plugin.environment.SpigotCommandInput
 import com.projectcitybuild.plugin.exceptions.InvalidCommandArgumentsException
 import org.bukkit.command.CommandSender
+import org.bukkit.plugin.java.annotation.command.Command
 import javax.inject.Inject
 
+@Command(
+    name = "pcbridge",
+    desc = "Shows the plugin version or runs utility commands",
+    usage = "/pcbridge [import|reload]",
+)
 class PCBridgeCommand @Inject constructor(
     private val getVersion: GetVersionUseCase,
     private val dataImport: DataImportUseCase,

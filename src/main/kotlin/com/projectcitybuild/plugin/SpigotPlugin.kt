@@ -18,8 +18,17 @@ import com.projectcitybuild.plugin.environment.SpigotListenerRegistry
 import org.bukkit.Server
 import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
+import org.bukkit.plugin.java.annotation.dependency.SoftDependency
+import org.bukkit.plugin.java.annotation.plugin.ApiVersion
 import javax.inject.Inject
+import org.bukkit.plugin.java.annotation.plugin.Plugin as SpigotPlugin
 
+@SpigotPlugin(name = "PCBridge", version = "4.1.1")
+@SoftDependency("LuckPerms")
+@SoftDependency("dynmap")
+@SoftDependency("GadgetsMenu")
+@SoftDependency("Essentials")
+@ApiVersion(ApiVersion.Target.v1_18)
 class SpigotPlugin : JavaPlugin() {
     private var container: SpigotPluginContainer? = null
 

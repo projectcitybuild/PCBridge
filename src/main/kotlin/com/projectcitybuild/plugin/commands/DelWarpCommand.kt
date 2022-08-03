@@ -9,8 +9,14 @@ import com.projectcitybuild.plugin.environment.SpigotCommandInput
 import com.projectcitybuild.plugin.exceptions.InvalidCommandArgumentsException
 import com.projectcitybuild.repositories.WarpRepository
 import org.bukkit.command.CommandSender
+import org.bukkit.plugin.java.annotation.command.Command
 import javax.inject.Inject
 
+@Command(
+    name = "delwarp",
+    desc = "Deletes a warp",
+    usage = "/delwarp <name>",
+)
 class DelWarpCommand @Inject constructor(
     private val deleteWarpUseCase: DeleteWarpUseCase,
     private val warpRepository: WarpRepository,

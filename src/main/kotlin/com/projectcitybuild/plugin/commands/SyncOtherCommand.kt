@@ -10,8 +10,14 @@ import com.projectcitybuild.plugin.environment.SpigotCommandInput
 import com.projectcitybuild.plugin.exceptions.InvalidCommandArgumentsException
 import org.bukkit.Server
 import org.bukkit.command.CommandSender
+import org.bukkit.plugin.java.annotation.command.Command
 import javax.inject.Inject
 
+@Command(
+    name = "syncother",
+    desc = "Syncs a given player's rank with the website",
+    usage = "/syncother <name>",
+)
 class SyncOtherCommand @Inject constructor(
     private val server: Server,
     private val updatePlayerGroupsUseCase: UpdatePlayerGroupsUseCase,

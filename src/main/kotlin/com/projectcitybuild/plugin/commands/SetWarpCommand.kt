@@ -9,8 +9,14 @@ import com.projectcitybuild.plugin.environment.SpigotCommand
 import com.projectcitybuild.plugin.environment.SpigotCommandInput
 import com.projectcitybuild.plugin.exceptions.InvalidCommandArgumentsException
 import org.bukkit.entity.Player
+import org.bukkit.plugin.java.annotation.command.Command
 import javax.inject.Inject
 
+@Command(
+    name = "setwarp",
+    desc = "Creates a warp at the current position and direction",
+    usage = "/setwarp <name>",
+)
 class SetWarpCommand @Inject constructor(
     private val createWarp: CreateWarpUseCase,
 ) : SpigotCommand {

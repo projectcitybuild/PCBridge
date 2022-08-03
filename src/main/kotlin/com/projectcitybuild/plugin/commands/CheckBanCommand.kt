@@ -10,8 +10,14 @@ import com.projectcitybuild.plugin.exceptions.InvalidCommandArgumentsException
 import net.md_5.bungee.api.ChatColor
 import org.bukkit.Server
 import org.bukkit.command.CommandSender
+import org.bukkit.plugin.java.annotation.command.Command
 import javax.inject.Inject
 
+@Command(
+    name = "checkban",
+    desc = "Checks whether a player is currently banned from the server",
+    usage = "/checkban <name>",
+)
 class CheckBanCommand @Inject constructor(
     private val server: Server,
     private val checkUUIDBanUseCase: CheckUUIDBanUseCase,

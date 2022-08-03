@@ -10,8 +10,14 @@ import com.projectcitybuild.plugin.exceptions.CannotInvokeFromConsoleException
 import com.projectcitybuild.plugin.exceptions.InvalidCommandArgumentsException
 import com.projectcitybuild.repositories.WarpRepository
 import org.bukkit.command.CommandSender
+import org.bukkit.plugin.java.annotation.command.Command
 import javax.inject.Inject
 
+@Command(
+    name = "warp",
+    desc = "Teleports to a pre-defined location",
+    usage = "/warp <name>",
+)
 class WarpCommand @Inject constructor(
     private val teleportToWarpUseCase: TeleportToWarpUseCase,
     private val warpRepository: WarpRepository,

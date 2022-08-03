@@ -11,8 +11,14 @@ import net.md_5.bungee.api.chat.ClickEvent
 import net.md_5.bungee.api.chat.HoverEvent
 import net.md_5.bungee.api.chat.TextComponent
 import net.md_5.bungee.api.chat.hover.content.Text
+import org.bukkit.plugin.java.annotation.command.Command
 import javax.inject.Inject
 
+@Command(
+    name = "warps",
+    desc = "Gets a list of all warps available",
+    usage = "/warps",
+)
 class WarpsCommand @Inject constructor(
     private val getWarpListUseCase: GetWarpListUseCase,
 ) : SpigotCommand {

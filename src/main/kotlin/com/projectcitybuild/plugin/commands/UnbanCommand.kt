@@ -8,8 +8,14 @@ import com.projectcitybuild.plugin.environment.SpigotCommandInput
 import com.projectcitybuild.plugin.exceptions.InvalidCommandArgumentsException
 import org.bukkit.Server
 import org.bukkit.command.CommandSender
+import org.bukkit.plugin.java.annotation.command.Command
 import javax.inject.Inject
 
+@Command(
+    name = "unban",
+    desc = "Allows a banned player to connect to the server",
+    usage = "/unban <name>",
+)
 class UnbanCommand @Inject constructor(
     private val server: Server,
     private val unbanUUIDUseCase: UnbanUUIDUseCase,

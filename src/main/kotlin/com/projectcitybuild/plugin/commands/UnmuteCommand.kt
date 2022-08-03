@@ -9,8 +9,14 @@ import com.projectcitybuild.plugin.environment.SpigotCommandInput
 import com.projectcitybuild.plugin.exceptions.InvalidCommandArgumentsException
 import org.bukkit.Server
 import org.bukkit.command.CommandSender
+import org.bukkit.plugin.java.annotation.command.Command
 import javax.inject.Inject
 
+@Command(
+    name = "unbanip",
+    desc = "Allows a muted player to talk in chat again",
+    usage = "/unmute <name>",
+)
 class UnmuteCommand @Inject constructor(
     private val server: Server,
     private val mute: MuteUseCase,

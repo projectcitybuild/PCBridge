@@ -7,8 +7,14 @@ import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.plugin.environment.SpigotCommand
 import com.projectcitybuild.plugin.environment.SpigotCommandInput
 import com.projectcitybuild.plugin.exceptions.InvalidCommandArgumentsException
+import org.bukkit.plugin.java.annotation.command.Command
 import javax.inject.Inject
 
+@Command(
+    name = "unbanip",
+    desc = "Allows the given IP to connect to the server",
+    usage = "/unbanip <ip>",
+)
 class UnbanIPCommand @Inject constructor(
     private val unbanIPUseCase: UnbanIPUseCase,
 ) : SpigotCommand {

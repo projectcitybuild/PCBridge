@@ -7,8 +7,14 @@ import com.projectcitybuild.plugin.exceptions.InvalidCommandArgumentsException
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.Server
+import org.bukkit.plugin.java.annotation.command.Command
 import javax.inject.Inject
 
+@Command(
+    name = "a",
+    desc = "Sends a message to all staff currently online",
+    usage = "/a <message>",
+)
 class ACommand @Inject constructor(
     private val server: Server
 ) : SpigotCommand {

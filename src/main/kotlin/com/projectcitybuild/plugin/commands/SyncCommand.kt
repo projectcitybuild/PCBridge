@@ -16,8 +16,14 @@ import net.md_5.bungee.api.chat.TextComponent
 import net.md_5.bungee.api.chat.hover.content.Text
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
+import org.bukkit.plugin.java.annotation.command.Command
 import javax.inject.Inject
 
+@Command(
+    name = "sync",
+    desc = "Syncs your rank with the website",
+    usage = "/sync [finish]",
+)
 class SyncCommand @Inject constructor(
     private val generateAccountVerificationURLUseCase: GenerateAccountVerificationURLUseCase,
     private val updatePlayerGroupsUseCase: UpdatePlayerGroupsUseCase,
