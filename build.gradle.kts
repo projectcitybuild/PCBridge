@@ -64,9 +64,6 @@ dependencies {
 
     compileOnly("org.spigotmc:spigot-api:1.12.2-R0.1-SNAPSHOT")
 
-    compileOnly("org.spigotmc:plugin-annotations:1.2.3-SNAPSHOT")
-    annotationProcessor("org.spigotmc:plugin-annotations:1.2.3-SNAPSHOT")
-
     compileOnly("net.md-5:bungeecord-api:1.16-R0.4")
 
     compileOnly("net.luckperms:api:5.4")
