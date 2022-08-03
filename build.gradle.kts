@@ -8,7 +8,7 @@ import java.util.Properties
 val generatedVersionDir = "$buildDir/generated-resources"
 
 group = "com.projectcitybuild"
-version = "4.1.1"
+version = "4.2.0"
 
 plugins {
     kotlin("jvm") version "1.6.10"
@@ -57,10 +57,10 @@ repositories {
 
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0-native-mt")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.6.0-native-mt")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.0-native-mt")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.3-native-mt")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.6.3-native-mt")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.3-native-mt")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.3")
 
     compileOnly("org.spigotmc:spigot-api:1.12.2-R0.1-SNAPSHOT")
 
@@ -79,29 +79,27 @@ dependencies {
 
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
-    implementation("com.squareup.okhttp3:logging-interceptor:4.9.3")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.10.0")
 
-    implementation("com.github.shynixn.mccoroutine:mccoroutine-bukkit-api:2.2.0")
-    implementation("com.github.shynixn.mccoroutine:mccoroutine-bukkit-core:2.2.0")
+    implementation("com.github.shynixn.mccoroutine:mccoroutine-bukkit-api:2.4.0")
+    implementation("com.github.shynixn.mccoroutine:mccoroutine-bukkit-core:2.4.0")
 
     implementation("com.zaxxer:HikariCP:5.0.1")
 
     implementation("co.aikar:idb-core:1.0.0-SNAPSHOT")
 
-    implementation("com.google.dagger:dagger:2.42")
-    kapt("com.google.dagger:dagger-compiler:2.42")
+    implementation("com.google.dagger:dagger:2.43")
+    kapt("com.google.dagger:dagger-compiler:2.43")
 
-    implementation("io.sentry:sentry:5.7.4")
+    implementation("io.sentry:sentry:6.1.2")
 
-    implementation("redis.clients:jedis:4.0.1")
-
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.2")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.0")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.0")
 
     testImplementation("org.mockito.kotlin:mockito-kotlin:4.0.0")
     testImplementation("org.powermock:powermock-module-junit4:2.0.9")
     testImplementation("org.powermock:powermock-api-mockito2:2.0.9")
-    testImplementation("org.mockito:mockito-inline:4.2.0")
+    testImplementation("org.mockito:mockito-inline:4.6.1")
 
     testImplementation("net.md-5:bungeecord-api:1.16-R0.4") // Needed for mocking in tests
     testImplementation("org.spigotmc:spigot-api:1.12.2-R0.1-SNAPSHOT") // Needed for mocking in tests
