@@ -1,47 +1,27 @@
 package com.projectcitybuild.modules.config
 
-import com.projectcitybuild.core.storage.Storage
-import com.projectcitybuild.core.storage.StoragePath
-import com.projectcitybuild.modules.config.adapters.StorageBackedKeys
 import javax.inject.Inject
 
 class Config @Inject constructor(
-    private val storage: Storage,
+    private val keyValueStorage: KeyValueStorage,
 ) {
-    class CachedStorage(
-        private val storage: Storage,
-    ): Storage {
-        val cache: MutableMap<String, Any> = mutableMapOf()
+    private val cache: MutableMap<String, Any> = mutableMapOf()
 
-        override fun <T> get(path: StoragePath<T>): T {
-            val cached = cache[path.key]
-            if (cached != null) {
-                return cached as T
-            }
-            return storage.get(path)
-                .also { cache[path.key] = it as Any }
+    fun <T: Any> get(key: ConfigStorageKey<T>): T {
+        val cached = cache[key.path]
+        if (cached != null) {
+            return cached as T
         }
-
-        override fun <T> set(path: StoragePath<T>, value: T) {
-            cache[path.key] = value as Any
-            storage.set(path, value)
-        }
-
-        override fun get(path: String): Any? {
-            val cached = cache[path]
-            if (cached != null) {
-                return cached
-            }
-            return storage.get(path)
-                .also { cache[path] = it as Any }
-        }
+        return keyValueStorage.get(key)
+            .also { cache[key.path] = it }
     }
 
-    private val cachedStorage = CachedStorage(storage)
-
-    val keys = StorageBackedKeys(storage = cachedStorage)
+    fun <T: Any> set(key: ConfigStorageKey<T>, value: T) {
+        keyValueStorage.set(key, value)
+        cache[key.path] = value
+    }
 
     fun flush() {
-        cachedStorage.cache.clear()
+        cache.clear()
     }
 }

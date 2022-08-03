@@ -3,8 +3,9 @@ package com.projectcitybuild.core.storage.adapters
 import com.projectcitybuild.core.storage.Storage
 import com.projectcitybuild.core.storage.StoragePath
 import org.bukkit.configuration.file.FileConfiguration
+import javax.inject.Inject
 
-class YmlStorage(
+class YamlStorage @Inject constructor(
     private val config: FileConfiguration
 ) : Storage {
 
@@ -20,6 +21,7 @@ class YmlStorage(
         config.set(path.key, value)
     }
 
+    @Deprecated("Avoid using if possible")
     override fun get(path: String): Any? {
         return config.get(path)
     }

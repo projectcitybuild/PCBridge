@@ -1,82 +1,46 @@
 package com.projectcitybuild.modules.config
 
-interface ConfigKeys {
+class ConfigKeys {
+    companion object {
+        val apiEnabled = "api.enabled" defaultsTo false
+        val apiKey = "api.key" defaultsTo "FILL_THIS_IN"
+        val apiToken = "api.token" defaultsTo "FILL_THIS_IN"
+        val apiBaseURL = "api.base_url" defaultsTo "https://projectcitybuild.com/api/"
+        val apiIsLoggingEnabled = "api.is_logging_enabled" defaultsTo false
 
-    val API_ENABLED: Boolean
-        get() = false
+        val dbHostName = "database.hostname" defaultsTo "127.0.0.1"
+        val dbPort = "database.port" defaultsTo 3306
+        val dbName = "database.name" defaultsTo "pcbridge"
+        val dbUsername = "database.username" defaultsTo "FILL_THIS_IN"
+        val dbPassword = "database.password" defaultsTo "FILL_THIS_IN"
 
-    val API_KEY: String
-        get() = "FILL_THIS_IN"
+        val errorReportingSentryEnabled = "error_reporting.sentry.enabled" defaultsTo false
+        val errorReportingSentryDSN = "error_reporting.sentry.dsn" defaultsTo "https://<key>@sentry.io/<project>"
 
-    val API_TOKEN: String
-        get() = "FILL_THIS_IN"
+        val timeTimezone = "time.timezone" defaultsTo "UTC"
+        val timeLocale = "time.locale" defaultsTo "en-us"
 
-    val API_BASE_URL: String
-        get() = "https://projectcitybuild.com/api/"
+        val warpsPerPage = "warps.warps_per_page" defaultsTo 15
 
-    val API_IS_LOGGING_ENABLED: Boolean
-        get() = false
+        val integrationDynmapWarpIcon = "integrations.dynmap.warp_icon" defaultsTo "portal"
 
-
-    val DB_HOSTNAME: String
-        get() = "127.0.0.1"
-
-    val DB_PORT: Int
-        get() = 3306
-
-    val DB_NAME: String
-        get() = "pcbridge"
-
-    val DB_USERNAME: String
-        get() = "username"
-
-    val DB_PASSWORD: String
-        get() = "password"
-
-
-    val ERROR_REPORTING_SENTRY_ENABLED: Boolean
-        get() = false
-
-    val ERROR_REPORTING_SENTRY_DSN: String
-        get() = "https://<key>@sentry.io/<project>"
-
-
-    val TIME_TIMEZONE: String
-        get() = "UTC"
-
-    val TIME_LOCALE: String
-        get() = "en-us"
-
-
-    val WARPS_PER_PAGE: Int
-        get() = 15
-
-
-    val INTEGRATION_DYNMAP_WARP_ICON: String
-        get() = "portal"
-
-
-    val GROUPS_BUILD_PRIORITY: List<String>
-        get() = listOf(
+        val groupsBuildPriority = "groups.build_priority" defaultsTo listOf(
             "architect",
             "engineer",
             "planner",
             "builder",
             "intern",
         )
-
-    val GROUPS_TRUST_PRIORITY: List<String>
-        get() = listOf(
+        val groupsTrustPriority = "groups.trust_priority" defaultsTo listOf(
             "developer",
             "moderator",
             "trusted+",
             "trusted",
             "member",
         )
-
-    val GROUPS_DONOR_PRIORITY: List<String>
-        get() = listOf(
+        val groupsDonorPriority = "groups.donor_priority" defaultsTo listOf(
             "donator",
             "legacy-donator",
         )
+    }
 }
