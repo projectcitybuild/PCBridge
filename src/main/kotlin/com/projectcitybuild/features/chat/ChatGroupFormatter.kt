@@ -1,7 +1,7 @@
 package com.projectcitybuild.features.chat
 
-import com.projectcitybuild.modules.config.ConfigKey
-import com.projectcitybuild.modules.config.PlatformConfig
+import com.projectcitybuild.modules.config.Config
+import com.projectcitybuild.modules.config.ConfigKeys
 import com.projectcitybuild.modules.permissions.Permissions
 import dagger.Reusable
 import net.md_5.bungee.api.chat.BaseComponent
@@ -14,7 +14,7 @@ import javax.inject.Inject
 @Reusable
 class ChatGroupFormatter @Inject constructor(
     private val permissions: Permissions,
-    private val config: PlatformConfig
+    private val config: Config,
 ) {
     data class Aggregate(
         val prefix: List<BaseComponent>,
@@ -110,16 +110,16 @@ class ChatGroupFormatter @Inject constructor(
         return TextComponent
             .fromLegacyText(displayName)
             .also { tc ->
-                if (hoverName != null && hoverName.isNotEmpty()) {
+                if (!hoverName.isNullOrEmpty()) {
                     tc.forEach { it.hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT, Text(hoverName)) }
                 }
             }
     }
 
     private fun buildGroupList() {
-        val trustedGroupPriority = config.get(ConfigKey.GROUPS_TRUST_PRIORITY)
-        val builderGroupPriority = config.get(ConfigKey.GROUPS_BUILD_PRIORITY)
-        val donorGroupPriority = config.get(ConfigKey.GROUPS_DONOR_PRIORITY)
+        val trustedGroupPriority = config.get(ConfigKeys.groupsTrustPriority)
+        val builderGroupPriority = config.get(ConfigKeys.groupsBuildPriority)
+        val donorGroupPriority = config.get(ConfigKeys.groupsDonorPriority)
 
         trustedGroupPriority.withIndex().forEach {
             groupPriorities[it.value.lowercase()] = Pair(GroupType.TRUST, it.index)

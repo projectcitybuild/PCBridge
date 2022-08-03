@@ -1,12 +1,12 @@
 package com.projectcitybuild.plugin.integrations.dynmap
 
 import com.projectcitybuild.core.SpigotListener
-import com.projectcitybuild.modules.config.ConfigKey
-import com.projectcitybuild.modules.config.PlatformConfig
+import com.projectcitybuild.modules.config.Config
+import com.projectcitybuild.modules.config.ConfigKeys
 import com.projectcitybuild.modules.logger.PlatformLogger
-import com.projectcitybuild.plugin.SpigotIntegration
 import com.projectcitybuild.plugin.events.WarpCreateEvent
 import com.projectcitybuild.plugin.events.WarpDeleteEvent
+import com.projectcitybuild.plugin.integrations.SpigotIntegration
 import com.projectcitybuild.repositories.WarpRepository
 import dagger.Reusable
 import org.bukkit.event.EventHandler
@@ -18,7 +18,7 @@ import javax.inject.Inject
 class DynmapMarkerIntegration @Inject constructor(
     private val plugin: Plugin,
     private val warpRepository: WarpRepository,
-    private val config: PlatformConfig,
+    private val config: Config,
     private val logger: PlatformLogger,
 ) : SpigotListener, SpigotIntegration {
 
@@ -91,7 +91,7 @@ class DynmapMarkerIntegration @Inject constructor(
             it.deleteMarker()
         }
 
-        val iconName = config.get(ConfigKey.INTEGRATION_DYNMAP_WARP_ICON)
+        val iconName = config.get(ConfigKeys.integrationDynmapWarpIcon)
         val icon = markerAPI.getMarkerIcon(iconName)
             ?: throw DynmapMarkerIconNotFoundException()
 

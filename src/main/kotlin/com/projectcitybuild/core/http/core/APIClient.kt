@@ -1,4 +1,4 @@
-package com.projectcitybuild.core.http
+package com.projectcitybuild.core.http.core
 
 import com.projectcitybuild.entities.responses.ApiError
 

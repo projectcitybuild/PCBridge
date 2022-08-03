@@ -1,20 +1,23 @@
-package com.projectcitybuild.plugin
+package com.projectcitybuild.plugin.assembly
 
 import com.projectcitybuild.core.database.DataSourceProvider
-import com.projectcitybuild.core.http.APIClient
-import com.projectcitybuild.core.http.NetworkProvider
-import com.projectcitybuild.modules.config.PlatformConfig
-import com.projectcitybuild.modules.datetime.DateTimeProvider
-import com.projectcitybuild.modules.errorreporting.ErrorReporterProvider
+import com.projectcitybuild.core.http.core.APIClient
+import com.projectcitybuild.core.storage.Storage
 import com.projectcitybuild.modules.eventbroadcast.LocalEventBroadcaster
 import com.projectcitybuild.modules.kick.PlayerKicker
 import com.projectcitybuild.modules.logger.PlatformLogger
-import com.projectcitybuild.modules.permissions.PermissionsProvider
 import com.projectcitybuild.modules.scheduler.PlatformScheduler
 import com.projectcitybuild.modules.timer.PlatformTimer
+import com.projectcitybuild.plugin.SpigotPluginContainer
+import com.projectcitybuild.plugin.assembly.providers.ConfigProvider
+import com.projectcitybuild.plugin.assembly.providers.DateTimeProvider
+import com.projectcitybuild.plugin.assembly.providers.ErrorReporterProvider
+import com.projectcitybuild.plugin.assembly.providers.HTTPProvider
+import com.projectcitybuild.plugin.assembly.providers.PermissionsProvider
 import dagger.BindsInstance
 import dagger.Component
 import org.bukkit.Server
+import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
 import java.io.File
@@ -26,8 +29,9 @@ import javax.inject.Singleton
         DateTimeProvider::class,
         DataSourceProvider::class,
         ErrorReporterProvider::class,
-        NetworkProvider::class,
+        HTTPProvider::class,
         PermissionsProvider::class,
+        ConfigProvider::class,
     ]
 )
 interface SpigotComponent {
@@ -46,7 +50,10 @@ interface SpigotComponent {
         fun server(server: Server): Builder
 
         @BindsInstance
-        fun config(config: PlatformConfig): Builder
+        fun storage(storage: Storage): Builder
+
+        @BindsInstance
+        fun fileConfiguration(fileConfiguration: FileConfiguration): Builder
 
         @BindsInstance
         fun logger(logger: PlatformLogger): Builder

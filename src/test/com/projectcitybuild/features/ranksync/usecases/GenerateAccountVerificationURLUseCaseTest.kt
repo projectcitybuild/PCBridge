@@ -1,9 +1,9 @@
 package com.projectcitybuild.features.ranksync.usecases
 
-import com.projectcitybuild.core.http.APIClient
-import com.projectcitybuild.core.http.APIClientMock
 import com.projectcitybuild.core.http.APIRequestFactory
 import com.projectcitybuild.core.http.clients.PCBClient
+import com.projectcitybuild.core.http.core.APIClient
+import com.projectcitybuild.core.http.core.APIClientMock
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Success
 import com.projectcitybuild.entities.responses.ApiError

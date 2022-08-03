@@ -1,8 +1,9 @@
 package com.projectcitybuild.repositories
 
-import com.projectcitybuild.core.http.APIClient
 import com.projectcitybuild.core.http.APIRequestFactory
-import com.projectcitybuild.modules.config.PlatformConfig
+import com.projectcitybuild.core.http.core.APIClient
+import com.projectcitybuild.modules.config.Config
+import com.projectcitybuild.modules.config.ConfigStorageKey
 import com.projectcitybuild.modules.logger.PlatformLogger
 import java.util.UUID
 import javax.inject.Inject
@@ -10,7 +11,7 @@ import javax.inject.Inject
 class PlayerGroupRepository @Inject constructor(
     private val apiRequestFactory: APIRequestFactory,
     private val apiClient: APIClient,
-    private val config: PlatformConfig,
+    private val config: Config,
     private val logger: PlatformLogger,
 ) {
     class AccountNotLinkedException : Exception()
@@ -47,8 +48,11 @@ class PlayerGroupRepository @Inject constructor(
         return response.data?.mapNotNull { donorPerk ->
             val tierName = donorPerk.donationTier.name
 
-            val configNode = "donors.tiers.$tierName.permission_group_name"
-            val permissionGroupName = config.get(configNode) as? String
+            val configNode = ConfigStorageKey<String?>(
+                path = "donors.tiers.$tierName.permission_group_name",
+                defaultValue = null
+            )
+            val permissionGroupName = config.get(configNode)
 
             if (permissionGroupName == null) {
                 logger.fatal("Missing config node for donor tier: $tierName")

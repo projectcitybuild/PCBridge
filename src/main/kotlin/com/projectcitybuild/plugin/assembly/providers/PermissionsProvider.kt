@@ -1,6 +1,7 @@
-package com.projectcitybuild.modules.permissions
+package com.projectcitybuild.plugin.assembly.providers
 
 import com.projectcitybuild.modules.logger.PlatformLogger
+import com.projectcitybuild.modules.permissions.Permissions
 import com.projectcitybuild.modules.permissions.adapters.LuckPermsPermissions
 import dagger.Module
 import dagger.Provides

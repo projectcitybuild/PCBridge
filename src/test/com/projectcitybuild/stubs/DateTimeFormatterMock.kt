@@ -1,6 +1,6 @@
 package com.projectcitybuild
 
-import com.projectcitybuild.modules.datetime.formatter.DateTimeFormatterImpl
+import com.projectcitybuild.core.datetime.formatter.DateTimeFormatterImpl
 import java.time.ZoneId
 import java.util.Locale
 
