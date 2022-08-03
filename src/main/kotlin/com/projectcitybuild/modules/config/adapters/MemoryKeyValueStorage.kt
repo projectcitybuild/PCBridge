@@ -3,7 +3,7 @@ package com.projectcitybuild.modules.config.adapters
 import com.projectcitybuild.modules.config.ConfigStorageKey
 import com.projectcitybuild.modules.config.KeyValueStorage
 
-class MemoryKeyValueStorage: KeyValueStorage {
+class MemoryKeyValueStorage : KeyValueStorage {
 
     private var data: MutableMap<String, Any> = mutableMapOf()
 
