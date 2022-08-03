@@ -20,10 +20,6 @@ class YamlKeyValueStorage @Inject constructor(
         )
     }
 
-    override fun <T : Any> get(type: KClass<out T>, path: String): T? {
-        return storage.get(path) as T
-    }
-
     override fun <T> set(key: ConfigStorageKey<T>, value: T) {
         storage.set(
             path = StoragePath(

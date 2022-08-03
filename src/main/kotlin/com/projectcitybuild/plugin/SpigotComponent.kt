@@ -4,6 +4,7 @@ import com.projectcitybuild.core.database.DataSourceProvider
 import com.projectcitybuild.core.http.APIClient
 import com.projectcitybuild.core.http.NetworkProvider
 import com.projectcitybuild.core.storage.Storage
+import com.projectcitybuild.modules.config.ConfigProvider
 import com.projectcitybuild.modules.datetime.DateTimeProvider
 import com.projectcitybuild.modules.errorreporting.ErrorReporterProvider
 import com.projectcitybuild.modules.eventbroadcast.LocalEventBroadcaster
@@ -15,6 +16,7 @@ import com.projectcitybuild.modules.timer.PlatformTimer
 import dagger.BindsInstance
 import dagger.Component
 import org.bukkit.Server
+import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
 import java.io.File
@@ -28,6 +30,7 @@ import javax.inject.Singleton
         ErrorReporterProvider::class,
         NetworkProvider::class,
         PermissionsProvider::class,
+        ConfigProvider::class,
     ]
 )
 interface SpigotComponent {
@@ -47,6 +50,9 @@ interface SpigotComponent {
 
         @BindsInstance
         fun storage(storage: Storage): Builder
+
+        @BindsInstance
+        fun fileConfiguration(fileConfiguration: FileConfiguration): Builder
 
         @BindsInstance
         fun logger(logger: PlatformLogger): Builder

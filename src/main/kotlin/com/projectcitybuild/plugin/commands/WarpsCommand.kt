@@ -1,6 +1,6 @@
 package com.projectcitybuild.plugin.commands
 
-import com.projectcitybuild.features.warps.usecases.warplist.GetWarpListUseCase
+import com.projectcitybuild.features.warps.usecases.GetWarpListUseCase
 import com.projectcitybuild.modules.textcomponentbuilder.add
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.plugin.environment.SpigotCommand

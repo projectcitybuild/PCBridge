@@ -7,13 +7,13 @@ class Config @Inject constructor(
 ) {
     private val cache: MutableMap<String, Any> = mutableMapOf()
 
-    fun <T: Any> get(key: ConfigStorageKey<T>): T {
+    fun <T> get(key: ConfigStorageKey<T>): T {
         val cached = cache[key.path]
         if (cached != null) {
             return cached as T
         }
         return keyValueStorage.get(key)
-            .also { cache[key.path] = it }
+            .also { cache[key.path] = it as Any }
     }
 
     fun <T: Any> set(key: ConfigStorageKey<T>, value: T) {

@@ -1,6 +1,7 @@
 package com.projectcitybuild.core.database
 
 import com.projectcitybuild.modules.config.Config
+import com.projectcitybuild.modules.config.ConfigKeys
 import com.projectcitybuild.modules.logger.PlatformLogger
 import dagger.Module
 import dagger.Provides
@@ -17,11 +18,11 @@ class DataSourceProvider {
     ): DataSource {
         return DataSource(
             logger = logger,
-            hostName = config.keys.DB_HOSTNAME,
-            port = config.keys.DB_PORT,
-            databaseName = config.keys.DB_NAME,
-            username = config.keys.DB_USERNAME,
-            password = config.keys.DB_PASSWORD,
+            hostName = config.get(ConfigKeys.dbName),
+            port = config.get(ConfigKeys.dbPort),
+            databaseName = config.get(ConfigKeys.dbName),
+            username = config.get(ConfigKeys.dbUsername),
+            password = config.get(ConfigKeys.dbPassword),
             shouldRunMigrations = true
         )
     }

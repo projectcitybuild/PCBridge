@@ -20,9 +20,4 @@ class YamlStorage @Inject constructor(
     override fun <T> set(path: StoragePath<T>, value: T) {
         config.set(path.key, value)
     }
-
-    @Deprecated("Avoid using if possible")
-    override fun get(path: String): Any? {
-        return config.get(path)
-    }
 }
