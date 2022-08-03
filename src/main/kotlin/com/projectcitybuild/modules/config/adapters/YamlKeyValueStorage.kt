@@ -5,11 +5,10 @@ import com.projectcitybuild.core.storage.adapters.YamlStorage
 import com.projectcitybuild.modules.config.ConfigStorageKey
 import com.projectcitybuild.modules.config.KeyValueStorage
 import javax.inject.Inject
-import kotlin.reflect.KClass
 
 class YamlKeyValueStorage @Inject constructor(
     private val storage: YamlStorage,
-): KeyValueStorage {
+) : KeyValueStorage {
 
     override fun <T> get(key: ConfigStorageKey<T>): T {
         return storage.get(

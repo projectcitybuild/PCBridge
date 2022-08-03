@@ -2,18 +2,18 @@ package com.projectcitybuild.plugin.assembly
 
 import com.projectcitybuild.core.database.DataSourceProvider
 import com.projectcitybuild.core.http.core.APIClient
-import com.projectcitybuild.plugin.assembly.providers.HTTPProvider
 import com.projectcitybuild.core.storage.Storage
-import com.projectcitybuild.plugin.assembly.providers.DateTimeProvider
-import com.projectcitybuild.plugin.assembly.providers.ErrorReporterProvider
 import com.projectcitybuild.modules.eventbroadcast.LocalEventBroadcaster
 import com.projectcitybuild.modules.kick.PlayerKicker
 import com.projectcitybuild.modules.logger.PlatformLogger
-import com.projectcitybuild.plugin.assembly.providers.PermissionsProvider
 import com.projectcitybuild.modules.scheduler.PlatformScheduler
 import com.projectcitybuild.modules.timer.PlatformTimer
 import com.projectcitybuild.plugin.SpigotPluginContainer
 import com.projectcitybuild.plugin.assembly.providers.ConfigProvider
+import com.projectcitybuild.plugin.assembly.providers.DateTimeProvider
+import com.projectcitybuild.plugin.assembly.providers.ErrorReporterProvider
+import com.projectcitybuild.plugin.assembly.providers.HTTPProvider
+import com.projectcitybuild.plugin.assembly.providers.PermissionsProvider
 import dagger.BindsInstance
 import dagger.Component
 import org.bukkit.Server

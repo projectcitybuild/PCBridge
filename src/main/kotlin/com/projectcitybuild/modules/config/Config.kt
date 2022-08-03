@@ -16,7 +16,7 @@ class Config @Inject constructor(
             .also { cache[key.path] = it as Any }
     }
 
-    fun <T: Any> set(key: ConfigStorageKey<T>, value: T) {
+    fun <T : Any> set(key: ConfigStorageKey<T>, value: T) {
         keyValueStorage.set(key, value)
         cache[key.path] = value
     }
