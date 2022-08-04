@@ -43,12 +43,6 @@ repositories {
         url = uri("https://papermc.io/repo/repository/maven-public/")
     }
 
-    // For JsonConfiguration - delete later
-    maven {
-        name = "onarandombox"
-        url = uri("https://repo.onarandombox.com/content/groups/public")
-    }
-
     maven { url = uri("https://hub.spigotmc.org/nexus/content/repositories/snapshots/") }
     maven { url = uri("https://oss.sonatype.org/content/repositories/snapshots") }
     maven { url = uri("https://nexus.hc.to/content/repositories/pub_releases") }
@@ -93,8 +87,6 @@ dependencies {
 
     implementation("io.sentry:sentry:5.7.4")
 
-    implementation("redis.clients:jedis:4.0.1")
-
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.2")
 
@@ -105,13 +97,6 @@ dependencies {
 
     testImplementation("net.md-5:bungeecord-api:1.16-R0.4") // Needed for mocking in tests
     testImplementation("org.spigotmc:spigot-api:1.12.2-R0.1-SNAPSHOT") // Needed for mocking in tests
-
-    // NBT reader for inventory importing
-    implementation("br.com.gamemods:nbt-manipulator:3.1.0")
-
-    // JSON serializer to match Multiverse-Inventory
-    implementation("com.dumptruckman.minecraft:JsonConfiguration:1.1")
-    implementation("net.minidev:json-smart:1.1.1")
 }
 
 sourceSets {

@@ -2,9 +2,7 @@ package com.projectcitybuild.plugin.commands
 
 import com.projectcitybuild.features.utilities.usecases.DataImportUseCase
 import com.projectcitybuild.features.utilities.usecases.GetVersionUseCase
-import com.projectcitybuild.features.utilities.usecases.ImportInventoriesUseCase
 import com.projectcitybuild.features.utilities.usecases.ReloadPluginUseCase
-import com.projectcitybuild.modules.scheduler.PlatformScheduler
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.plugin.environment.SpigotCommand
 import com.projectcitybuild.plugin.environment.SpigotCommandInput
@@ -15,9 +13,7 @@ import javax.inject.Inject
 class PCBridgeCommand @Inject constructor(
     private val getVersion: GetVersionUseCase,
     private val dataImport: DataImportUseCase,
-    private val importInventories: ImportInventoriesUseCase,
     private val reloadPlugin: ReloadPluginUseCase,
-    private val scheduler: PlatformScheduler,
 ) : SpigotCommand {
 
     override val label = "pcbridge"
@@ -28,7 +24,6 @@ class PCBridgeCommand @Inject constructor(
         when {
             input.args.isEmpty() -> showVersion(input.sender)
             input.args.first() == "import" -> dataImport.execute(sender = input.player, args = input.args)
-            input.args.first() == "import-inv" -> importInventories(input)
             input.args.first() == "reload" -> reloadPlugin(input)
             else -> throw InvalidCommandArgumentsException()
         }
@@ -37,12 +32,6 @@ class PCBridgeCommand @Inject constructor(
     private fun showVersion(sender: CommandSender) {
         val version = getVersion.execute()
         sender.send().info("Running PCBridge v${version.version} (${version.commitHash})")
-    }
-
-    private fun importInventories(input: SpigotCommandInput) {
-        scheduler.async<Unit> {
-            importInventories.execute(isDryRun = input.args.contains("--dry-run"))
-        }.start()
     }
 
     private fun reloadPlugin(input: SpigotCommandInput) {
