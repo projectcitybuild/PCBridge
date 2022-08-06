@@ -8,8 +8,8 @@ import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.plugin.environment.SpigotCommand
 import com.projectcitybuild.plugin.environment.SpigotCommandInput
 import com.projectcitybuild.plugin.exceptions.InvalidCommandArgumentsException
+import com.projectcitybuild.support.annotations.annotations.Command
 import org.bukkit.entity.Player
-import org.bukkit.plugin.java.annotation.command.Command
 import javax.inject.Inject
 
 @Command(

@@ -22,8 +22,8 @@ import javax.lang.model.util.ElementFilter
 import javax.tools.Diagnostic
 import javax.tools.StandardLocation
 
-@SupportedAnnotationTypes("org.bukkit.plugin.java.annotation.*")
-@SupportedSourceVersion(SourceVersion.RELEASE_8)
+//@SupportedAnnotationTypes("org.bukkit.plugin.java.annotation.*")
+@SupportedSourceVersion(SourceVersion.RELEASE_17)
 class PluginAnnotationProcessor : AbstractProcessor() {
     private var hasMainBeenFound = false
     override fun process(annots: Set<TypeElement>, rEnv: RoundEnvironment): Boolean {

@@ -4,10 +4,10 @@ import com.projectcitybuild.modules.textcomponentbuilder.add
 import com.projectcitybuild.plugin.environment.SpigotCommand
 import com.projectcitybuild.plugin.environment.SpigotCommandInput
 import com.projectcitybuild.plugin.exceptions.InvalidCommandArgumentsException
+import com.projectcitybuild.support.annotations.annotations.Command
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.Server
-import org.bukkit.plugin.java.annotation.command.Command
 import javax.inject.Inject
 
 @Command(

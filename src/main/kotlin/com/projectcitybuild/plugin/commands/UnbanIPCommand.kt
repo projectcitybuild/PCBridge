@@ -7,7 +7,7 @@ import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.plugin.environment.SpigotCommand
 import com.projectcitybuild.plugin.environment.SpigotCommandInput
 import com.projectcitybuild.plugin.exceptions.InvalidCommandArgumentsException
-import org.bukkit.plugin.java.annotation.command.Command
+import com.projectcitybuild.support.annotations.annotations.Command
 import javax.inject.Inject
 
 @Command(
