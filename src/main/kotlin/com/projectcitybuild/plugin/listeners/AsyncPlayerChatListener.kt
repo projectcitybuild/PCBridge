@@ -5,7 +5,6 @@ import com.projectcitybuild.features.chat.ChatGroupFormatter
 import com.projectcitybuild.modules.textcomponentbuilder.add
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.repositories.PlayerConfigRepository
-import com.yapzhenyie.GadgetsMenu.menu.test
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.chat.HoverEvent
 import net.md_5.bungee.api.chat.TextComponent
@@ -16,7 +15,7 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.player.AsyncPlayerChatEvent
 import javax.inject.Inject
 
-class ChatListener @Inject constructor(
+class AsyncPlayerChatListener @Inject constructor(
     private val server: Server,
     private val playerConfigRepository: PlayerConfigRepository,
     private val chatGroupFormatter: ChatGroupFormatter

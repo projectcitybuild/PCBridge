@@ -90,22 +90,20 @@ class SpigotContainer @Inject constructor(
     }
 
     class Listeners @Inject constructor(
-        chatListener: ChatListener,
-        firstTimeJoinMessageListener: FirstTimeJoinMessageListener,
-        playerCacheListener: PlayerCacheListener,
-        preLoginListener: PreLoginListener,
-        serverJoinMessageListener: ServerJoinMessageListener,
+        asyncPlayerChatListener: AsyncPlayerChatListener,
+        firstTimeJoinListener: FirstTimeJoinListener,
+        asyncPreLoginListener: AsyncPreLoginListener,
+        playerJoinListener: PlayerJoinListener,
+        playerQuitEvent: PlayerQuitEvent,
         telemetryListener: TelemetryListener,
-        welcomeMessageListener: WelcomeMessageListener,
     ) {
         val enabled: List<SpigotListener> = listOf(
-            chatListener,
-            firstTimeJoinMessageListener,
-            playerCacheListener,
-            preLoginListener,
-            serverJoinMessageListener,
+            asyncPlayerChatListener,
+            firstTimeJoinListener,
+            asyncPreLoginListener,
+            playerJoinListener,
+            playerQuitEvent,
             telemetryListener,
-            welcomeMessageListener,
         )
     }
 }

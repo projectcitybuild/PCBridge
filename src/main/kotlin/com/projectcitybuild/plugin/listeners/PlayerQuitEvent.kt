@@ -1,44 +1,44 @@
 package com.projectcitybuild.plugin.listeners
 
 import com.projectcitybuild.core.SpigotListener
+import com.projectcitybuild.features.chat.ChatGroupFormatter
+import com.projectcitybuild.modules.playercache.PlayerConfigCache
 import com.projectcitybuild.modules.textcomponentbuilder.add
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.Server
+import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
-import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import javax.inject.Inject
 
-class ServerJoinMessageListener @Inject constructor(
+class PlayerQuitEvent @Inject constructor(
     private val server: Server,
-) : SpigotListener {
+    private val playerCache: PlayerConfigCache,
+    private val chatGroupFormatter: ChatGroupFormatter,
+    ) : SpigotListener {
 
     @EventHandler
-    fun onPlayerJoin(event: PlayerJoinEvent) {
-        server.broadcastMessage(
-            TextComponent()
-                .add("+ ") {
-                    it.color = ChatColor.GREEN
-                    it.isBold = true
-                }
-                .add(event.player.name) { it.color = ChatColor.WHITE }
-                .add(" joined the server") { it.color = ChatColor.GRAY }
-                .toLegacyText()
-        )
+    fun onPlayerQuit(event: PlayerQuitEvent) {
+        announceLeave(player = event.player)
+        uncachePlayer(player = event.player)
     }
 
-    @EventHandler
-    fun onPlayerLeave(event: PlayerQuitEvent) {
+    private fun announceLeave(player: Player) {
         server.broadcastMessage(
             TextComponent()
                 .add("— ") {
                     it.color = ChatColor.RED
                     it.isBold = true
                 }
-                .add(event.player.name) { it.color = ChatColor.WHITE }
+                .add(player.name) { it.color = ChatColor.WHITE }
                 .add(" left the server") { it.color = ChatColor.GRAY }
                 .toLegacyText()
         )
+    }
+
+    private fun uncachePlayer(player: Player) {
+        playerCache.remove(player.uniqueId)
+        chatGroupFormatter.flush(player.uniqueId)
     }
 }
