@@ -1,6 +1,6 @@
 main: com.projectcitybuild.plugin.SpigotPlugin
 name: PCBridge
-version: 4.1.1
+version: 4.2.0
 softdepend:
   - LuckPerms
   - dynmap

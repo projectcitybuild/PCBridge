@@ -5,8 +5,11 @@ import com.projectcitybuild.features.chat.ChatGroupFormatter
 import com.projectcitybuild.modules.textcomponentbuilder.add
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.repositories.PlayerConfigRepository
+import com.yapzhenyie.GadgetsMenu.menu.test
 import net.md_5.bungee.api.ChatColor
+import net.md_5.bungee.api.chat.HoverEvent
 import net.md_5.bungee.api.chat.TextComponent
+import net.md_5.bungee.api.chat.hover.content.Text
 import org.bukkit.Server
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
@@ -42,7 +45,17 @@ class ChatListener @Inject constructor(
 
         val format = chatGroupFormatter.get(playerUUID = event.player.uniqueId)
 
+        val test = TextComponent("★").also {
+            it.color = ChatColor.GOLD
+            it.hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT, Text(
+                "${ChatColor.GOLD}★ ${ChatColor.WHITE}Blockbuster Build-Off Winner\n" +
+                "${ChatColor.GOLD}❈ ${ChatColor.WHITE}Blockbuster Build-Off Winner"
+            ))
+        }
+
         val tc = TextComponent()
+            .add(test)
+            .add(" ")
             .add(format.prefix)
             .add(format.groups)
             .add(" ") { it.color = ChatColor.RESET }

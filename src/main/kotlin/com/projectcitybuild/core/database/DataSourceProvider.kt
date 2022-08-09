@@ -18,7 +18,7 @@ class DataSourceProvider {
     ): DataSource {
         return DataSource(
             logger = logger,
-            hostName = config.get(ConfigKeys.dbName),
+            hostName = config.get(ConfigKeys.dbHostName),
             port = config.get(ConfigKeys.dbPort),
             databaseName = config.get(ConfigKeys.dbName),
             username = config.get(ConfigKeys.dbUsername),
