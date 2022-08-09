@@ -46,10 +46,13 @@ class AsyncPlayerChatListener @Inject constructor(
 
         val test = TextComponent("★").also {
             it.color = ChatColor.GOLD
-            it.hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT, Text(
-                "${ChatColor.GOLD}★ ${ChatColor.WHITE}Blockbuster Build-Off Winner\n" +
-                "${ChatColor.GOLD}❈ ${ChatColor.WHITE}Blockbuster Build-Off Winner"
-            ))
+            it.hoverEvent = HoverEvent(
+                HoverEvent.Action.SHOW_TEXT,
+                Text(
+                    "${ChatColor.GOLD}★ ${ChatColor.WHITE}Blockbuster Build-Off Winner\n" +
+                        "${ChatColor.GOLD}❈ ${ChatColor.WHITE}Blockbuster Build-Off Winner"
+                )
+            )
         }
 
         val tc = TextComponent()

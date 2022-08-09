@@ -1,7 +1,6 @@
 package com.projectcitybuild.entities.responses
 
 import DonationPerk
-import DonationTier
 import com.google.gson.annotations.SerializedName
 
 data class Aggregate(

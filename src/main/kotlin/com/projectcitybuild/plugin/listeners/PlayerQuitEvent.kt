@@ -16,7 +16,7 @@ class PlayerQuitEvent @Inject constructor(
     private val server: Server,
     private val playerCache: PlayerConfigCache,
     private val chatGroupFormatter: ChatGroupFormatter,
-    ) : SpigotListener {
+) : SpigotListener {
 
     @EventHandler
     fun onPlayerQuit(event: PlayerQuitEvent) {
