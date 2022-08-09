@@ -4,6 +4,7 @@ import com.projectcitybuild.core.SpigotListener
 import com.projectcitybuild.features.chat.ChatGroupFormatter
 import com.projectcitybuild.modules.playercache.PlayerConfigCache
 import com.projectcitybuild.modules.textcomponentbuilder.add
+import com.projectcitybuild.repositories.ChatBadgeRepository
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.Server
@@ -16,6 +17,7 @@ class PlayerQuitEvent @Inject constructor(
     private val server: Server,
     private val playerCache: PlayerConfigCache,
     private val chatGroupFormatter: ChatGroupFormatter,
+    private val chatBadgeRepository: ChatBadgeRepository,
 ) : SpigotListener {
 
     @EventHandler
@@ -38,7 +40,8 @@ class PlayerQuitEvent @Inject constructor(
     }
 
     private fun uncachePlayer(player: Player) {
-        playerCache.remove(player.uniqueId)
-        chatGroupFormatter.flush(player.uniqueId)
+        playerCache.remove(uuid = player.uniqueId)
+        chatGroupFormatter.flush(playerUUID = player.uniqueId)
+        chatBadgeRepository.remove(playerUUID = player.uniqueId)
     }
 }

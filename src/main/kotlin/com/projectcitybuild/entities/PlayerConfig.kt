@@ -7,5 +7,5 @@ data class PlayerConfig(
     val id: Long,
     val uuid: UUID,
     var isMuted: Boolean,
-    val firstSeen: LocalDateTime
+    val firstSeen: LocalDateTime,
 )

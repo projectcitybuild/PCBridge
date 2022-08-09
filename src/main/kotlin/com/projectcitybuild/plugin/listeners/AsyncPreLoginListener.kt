@@ -42,19 +42,18 @@ class AsyncPreLoginListener @Inject constructor(
                         result.ban.toMessage(dateTimeFormatter),
                     )
                 }
+            }.onFailure { throwable ->
+                throwable.message?.let { logger.fatal(it) }
+                throwable.printStackTrace()
+
+                errorReporter.report(throwable)
+
+                // If something goes wrong, better not to let players in
+                event.disallow(
+                    AsyncPlayerPreLoginEvent.Result.KICK_OTHER,
+                    "An error occurred while contacting the PCB authentication server. Please try again later"
+                )
             }
-                .onFailure { throwable ->
-                    throwable.message?.let { logger.fatal(it) }
-                    throwable.printStackTrace()
-
-                    errorReporter.report(throwable)
-
-                    // If something goes wrong, better not to let players in
-                    event.disallow(
-                        AsyncPlayerPreLoginEvent.Result.KICK_OTHER,
-                        "An error occurred while contacting the PCB authentication server. Please try again later"
-                    )
-                }
         }
     }
 }
