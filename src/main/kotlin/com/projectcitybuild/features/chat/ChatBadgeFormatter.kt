@@ -1,5 +1,7 @@
 package com.projectcitybuild.features.chat
 
+import com.projectcitybuild.modules.config.Config
+import com.projectcitybuild.modules.config.ConfigKeys
 import com.projectcitybuild.modules.textcomponentbuilder.add
 import com.projectcitybuild.modules.textcomponentbuilder.addIf
 import com.projectcitybuild.repositories.ChatBadgeRepository
@@ -11,9 +13,9 @@ import net.md_5.bungee.api.chat.hover.content.Text
 import java.util.UUID
 import javax.inject.Inject
 
-@Reusable
 class ChatBadgeFormatter @Inject constructor(
     private val chatBadgeRepository: ChatBadgeRepository,
+    private val config: Config,
 ) {
     fun get(playerUUID: UUID): TextComponent? {
         val badges = chatBadgeRepository.get(playerUUID)
@@ -30,14 +32,18 @@ class ChatBadgeFormatter @Inject constructor(
                 .toLegacyText()
         }
 
-        return TextComponent("✪")
-            .also {
-                it.color = ChatColor.GOLD
+        return TextComponent(
+            TextComponent()
+            .add(config.get(ConfigKeys.chatBadgeIcon)) {
                 it.hoverEvent = HoverEvent(
                     HoverEvent.Action.SHOW_TEXT,
                     Text(formattedBadges.joinToString(separator = ""))
                 )
             }
-            .add(" ")
+            .add(" ") {
+                it.color = ChatColor.RESET
+            }
+            .toLegacyText()
+        )
     }
 }

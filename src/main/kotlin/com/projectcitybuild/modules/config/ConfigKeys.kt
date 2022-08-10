@@ -21,6 +21,8 @@ class ConfigKeys {
         val timeTimezone = "time.timezone" defaultsTo "UTC"
         val timeLocale = "time.locale" defaultsTo "en-us"
 
+        val chatBadgeIcon = "chat.badge.icon" defaultsTo "§6★"
+
         val warpsPerPage = "warps.warps_per_page" defaultsTo 15
 
         val integrationDynmapWarpIcon = "integrations.dynmap.warp_icon" defaultsTo "portal"
