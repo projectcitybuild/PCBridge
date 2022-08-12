@@ -1,4 +1,4 @@
-package com.projectcitybuild.modules.datetime
+package com.projectcitybuild.core.datetime
 
 import com.projectcitybuild.core.datetime.formatter.DateTimeFormatterImpl
 import org.junit.jupiter.api.Assertions.assertEquals
