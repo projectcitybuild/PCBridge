@@ -5,7 +5,6 @@ import com.projectcitybuild.modules.config.ConfigKeys
 import com.projectcitybuild.modules.textcomponentbuilder.add
 import com.projectcitybuild.modules.textcomponentbuilder.addIf
 import com.projectcitybuild.repositories.ChatBadgeRepository
-import dagger.Reusable
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.chat.HoverEvent
 import net.md_5.bungee.api.chat.TextComponent
@@ -34,12 +33,12 @@ class ChatBadgeFormatter @Inject constructor(
 
         return TextComponent(
             TextComponent()
-            .add(config.get(ConfigKeys.chatBadgeIcon)) {
-                it.hoverEvent = HoverEvent(
-                    HoverEvent.Action.SHOW_TEXT,
-                    Text(formattedBadges.joinToString(separator = ""))
-                )
-            }
+                .add(config.get(ConfigKeys.chatBadgeIcon)) {
+                    it.hoverEvent = HoverEvent(
+                        HoverEvent.Action.SHOW_TEXT,
+                        Text(formattedBadges.joinToString(separator = ""))
+                    )
+                }
             .add(" ") {
                 it.color = ChatColor.RESET
             }

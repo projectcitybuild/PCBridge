@@ -6,7 +6,6 @@ import com.projectcitybuild.features.chat.ChatGroupFormatter
 import com.projectcitybuild.modules.textcomponentbuilder.add
 import com.projectcitybuild.modules.textcomponentbuilder.send
 import com.projectcitybuild.repositories.PlayerConfigRepository
-import com.yapzhenyie.GadgetsMenu.menu.test
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.Server

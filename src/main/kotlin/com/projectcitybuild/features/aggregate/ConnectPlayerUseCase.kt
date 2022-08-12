@@ -33,6 +33,7 @@ class ConnectPlayerUseCase @Inject constructor(
         data class IP(val value: IPBan) : Ban()
     }
 
+    @Throws(Exception::class)
     suspend fun execute(playerUUID: UUID, ip: String): ConnectResult {
         val aggregate = aggregateRepository.get(playerUUID = playerUUID)
             ?: return ConnectResult.Failed
