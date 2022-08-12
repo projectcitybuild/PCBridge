@@ -1,6 +1,11 @@
 package com.projectcitybuild.core.http.clients
 
-import com.projectcitybuild.entities.requests.pcb.*
+import com.projectcitybuild.entities.requests.pcb.AggregateAPIRequest
+import com.projectcitybuild.entities.requests.pcb.AuthAPIRequest
+import com.projectcitybuild.entities.requests.pcb.BalanceAPIRequest
+import com.projectcitybuild.entities.requests.pcb.BanAPIRequest
+import com.projectcitybuild.entities.requests.pcb.DonorAPIRequest
+import com.projectcitybuild.entities.requests.pcb.TelemetryAPIRequest
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
