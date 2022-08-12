@@ -3,7 +3,6 @@ package com.projectcitybuild.plugin.listeners
 import com.projectcitybuild.DateTimeFormatterMock
 import com.projectcitybuild.GameBanMock
 import com.projectcitybuild.features.aggregate.ConnectPlayerUseCase
-import com.projectcitybuild.features.bans.usecases.AuthoriseConnectionUseCase
 import com.projectcitybuild.modules.errorreporting.ErrorReporter
 import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.stubs.IPBanMock
