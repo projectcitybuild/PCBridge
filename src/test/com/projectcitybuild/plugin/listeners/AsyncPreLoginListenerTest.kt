@@ -4,8 +4,8 @@ import com.projectcitybuild.DateTimeFormatterMock
 import com.projectcitybuild.GameBanMock
 import com.projectcitybuild.features.aggregate.ConnectPlayerUseCase
 import com.projectcitybuild.modules.errorreporting.ErrorReporter
-import com.projectcitybuild.support.spigot.logger.Logger
 import com.projectcitybuild.stubs.IPBanMock
+import com.projectcitybuild.support.spigot.logger.Logger
 import kotlinx.coroutines.test.runTest
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent
 import org.junit.jupiter.api.BeforeEach
