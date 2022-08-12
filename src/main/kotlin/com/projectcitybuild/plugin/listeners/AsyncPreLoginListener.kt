@@ -1,11 +1,11 @@
 package com.projectcitybuild.plugin.listeners
 
 import com.projectcitybuild.core.SpigotListener
-import com.projectcitybuild.core.datetime.formatter.DateTimeFormatter
+import com.projectcitybuild.modules.datetime.formatter.DateTimeFormatter
 import com.projectcitybuild.features.aggregate.ConnectPlayerUseCase
 import com.projectcitybuild.modules.errorreporting.ErrorReporter
-import com.projectcitybuild.modules.logger.PlatformLogger
-import com.projectcitybuild.modules.textcomponentbuilder.add
+import com.projectcitybuild.support.spigot.logger.PlatformLogger
+import com.projectcitybuild.support.textcomponent.add
 import kotlinx.coroutines.runBlocking
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.chat.TextComponent

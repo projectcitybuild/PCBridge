@@ -1,6 +1,6 @@
 package com.projectcitybuild.features.bans.usecases
 
-import com.projectcitybuild.core.datetime.formatter.DateTimeFormatter
+import com.projectcitybuild.modules.datetime.formatter.DateTimeFormatter
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Result
 import com.projectcitybuild.core.utilities.Success

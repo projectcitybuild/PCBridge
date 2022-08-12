@@ -1,7 +1,7 @@
 package com.projectcitybuild.plugin.integrations.gadgetsmenu
 
 import com.projectcitybuild.core.SpigotListener
-import com.projectcitybuild.modules.logger.PlatformLogger
+import com.projectcitybuild.support.spigot.logger.PlatformLogger
 import com.projectcitybuild.plugin.integrations.SpigotIntegration
 import com.projectcitybuild.repositories.CurrencyRepository
 import com.yapzhenyie.GadgetsMenu.economy.GEconomyProvider

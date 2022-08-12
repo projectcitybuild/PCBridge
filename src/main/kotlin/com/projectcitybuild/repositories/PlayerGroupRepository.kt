@@ -4,7 +4,7 @@ import com.projectcitybuild.core.http.APIRequestFactory
 import com.projectcitybuild.core.http.core.APIClient
 import com.projectcitybuild.modules.config.Config
 import com.projectcitybuild.modules.config.ConfigStorageKey
-import com.projectcitybuild.modules.logger.PlatformLogger
+import com.projectcitybuild.support.spigot.logger.PlatformLogger
 import java.util.UUID
 import javax.inject.Inject
 

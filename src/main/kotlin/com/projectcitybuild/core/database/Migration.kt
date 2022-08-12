@@ -2,7 +2,7 @@ package com.projectcitybuild.core.database
 
 import co.aikar.idb.HikariPooledDatabase
 import com.projectcitybuild.entities.migrations.* // ktlint-disable no-wildcard-imports
-import com.projectcitybuild.modules.logger.PlatformLogger
+import com.projectcitybuild.support.spigot.logger.PlatformLogger
 
 object Migration {
 

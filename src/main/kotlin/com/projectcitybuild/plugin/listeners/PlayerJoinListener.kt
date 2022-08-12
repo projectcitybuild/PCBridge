@@ -1,9 +1,9 @@
 package com.projectcitybuild.plugin.listeners
 
 import com.projectcitybuild.core.SpigotListener
-import com.projectcitybuild.modules.eventbroadcast.LocalEventBroadcaster
-import com.projectcitybuild.modules.logger.PlatformLogger
-import com.projectcitybuild.modules.textcomponentbuilder.add
+import com.projectcitybuild.support.spigot.eventbroadcast.LocalEventBroadcaster
+import com.projectcitybuild.support.spigot.logger.PlatformLogger
+import com.projectcitybuild.support.textcomponent.add
 import com.projectcitybuild.plugin.events.FirstTimeJoinEvent
 import com.projectcitybuild.repositories.PlayerConfigRepository
 import net.md_5.bungee.api.ChatColor

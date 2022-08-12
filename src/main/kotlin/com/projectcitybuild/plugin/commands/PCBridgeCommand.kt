@@ -3,10 +3,10 @@ package com.projectcitybuild.plugin.commands
 import com.projectcitybuild.features.utilities.usecases.DataImportUseCase
 import com.projectcitybuild.features.utilities.usecases.GetVersionUseCase
 import com.projectcitybuild.features.utilities.usecases.ReloadPluginUseCase
-import com.projectcitybuild.modules.textcomponentbuilder.send
-import com.projectcitybuild.plugin.environment.SpigotCommand
-import com.projectcitybuild.plugin.environment.SpigotCommandInput
-import com.projectcitybuild.plugin.exceptions.InvalidCommandArgumentsException
+import com.projectcitybuild.support.textcomponent.send
+import com.projectcitybuild.support.spigot.commands.SpigotCommand
+import com.projectcitybuild.support.spigot.commands.SpigotCommandInput
+import com.projectcitybuild.support.spigot.commands.InvalidCommandArgumentsException
 import org.bukkit.command.CommandSender
 import javax.inject.Inject
 

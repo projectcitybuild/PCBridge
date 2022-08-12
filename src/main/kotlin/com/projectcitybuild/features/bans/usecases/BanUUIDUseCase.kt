@@ -3,7 +3,7 @@ package com.projectcitybuild.features.bans.usecases
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Result
 import com.projectcitybuild.core.utilities.Success
-import com.projectcitybuild.modules.kick.PlayerKicker
+import com.projectcitybuild.support.spigot.kick.PlayerKicker
 import com.projectcitybuild.repositories.BanRepository
 import com.projectcitybuild.repositories.PlayerUUIDRepository
 import net.md_5.bungee.api.ChatColor

@@ -1,0 +1,3 @@
+package com.projectcitybuild.support.spigot.eventbroadcast
+
+interface BroadcastableEvent

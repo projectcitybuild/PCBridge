@@ -1,7 +1,7 @@
 package com.projectcitybuild.features.bans.usecases
 
 import com.projectcitybuild.core.utilities.Failure
-import com.projectcitybuild.modules.kick.PlayerKicker
+import com.projectcitybuild.support.spigot.kick.PlayerKicker
 import com.projectcitybuild.repositories.BanRepository
 import com.projectcitybuild.repositories.PlayerUUIDRepository
 import kotlinx.coroutines.test.runTest

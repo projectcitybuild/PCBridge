@@ -1,10 +1,10 @@
 package com.projectcitybuild.features.bans.usecases
 
-import com.projectcitybuild.core.datetime.time.Time
+import com.projectcitybuild.modules.datetime.time.Time
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Success
 import com.projectcitybuild.entities.IPBan
-import com.projectcitybuild.modules.kick.PlayerKicker
+import com.projectcitybuild.support.spigot.kick.PlayerKicker
 import com.projectcitybuild.repositories.IPBanRepository
 import com.projectcitybuild.stubs.IPBanMock
 import kotlinx.coroutines.test.runTest

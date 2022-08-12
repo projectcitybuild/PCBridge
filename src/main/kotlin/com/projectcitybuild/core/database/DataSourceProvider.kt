@@ -2,7 +2,7 @@ package com.projectcitybuild.core.database
 
 import com.projectcitybuild.modules.config.Config
 import com.projectcitybuild.modules.config.ConfigKeys
-import com.projectcitybuild.modules.logger.PlatformLogger
+import com.projectcitybuild.support.spigot.logger.PlatformLogger
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton

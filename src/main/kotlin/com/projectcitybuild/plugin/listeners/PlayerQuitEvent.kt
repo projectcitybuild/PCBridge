@@ -3,7 +3,7 @@ package com.projectcitybuild.plugin.listeners
 import com.projectcitybuild.core.SpigotListener
 import com.projectcitybuild.features.chat.ChatGroupFormatter
 import com.projectcitybuild.modules.playercache.PlayerConfigCache
-import com.projectcitybuild.modules.textcomponentbuilder.add
+import com.projectcitybuild.support.textcomponent.add
 import com.projectcitybuild.repositories.ChatBadgeRepository
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.chat.TextComponent

@@ -3,7 +3,7 @@ package com.projectcitybuild.core.database
 import co.aikar.idb.DatabaseOptions
 import co.aikar.idb.HikariPooledDatabase
 import co.aikar.idb.PooledDatabaseOptions
-import com.projectcitybuild.modules.logger.PlatformLogger
+import com.projectcitybuild.support.spigot.logger.PlatformLogger
 import javax.inject.Singleton
 
 @Singleton

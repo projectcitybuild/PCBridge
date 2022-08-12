@@ -1,9 +1,9 @@
 package com.projectcitybuild.plugin.commands
 
-import com.projectcitybuild.modules.textcomponentbuilder.add
-import com.projectcitybuild.plugin.environment.SpigotCommand
-import com.projectcitybuild.plugin.environment.SpigotCommandInput
-import com.projectcitybuild.plugin.exceptions.InvalidCommandArgumentsException
+import com.projectcitybuild.support.textcomponent.add
+import com.projectcitybuild.support.spigot.commands.SpigotCommand
+import com.projectcitybuild.support.spigot.commands.SpigotCommandInput
+import com.projectcitybuild.support.spigot.commands.InvalidCommandArgumentsException
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.Server

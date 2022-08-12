@@ -16,7 +16,7 @@ import com.projectcitybuild.plugin.commands.UnbanIPCommand
 import com.projectcitybuild.plugin.commands.UnmuteCommand
 import com.projectcitybuild.plugin.commands.WarpCommand
 import com.projectcitybuild.plugin.commands.WarpsCommand
-import com.projectcitybuild.plugin.environment.SpigotCommand
+import com.projectcitybuild.support.spigot.commands.SpigotCommand
 import com.projectcitybuild.plugin.integrations.SpigotIntegration
 import com.projectcitybuild.plugin.integrations.dynmap.DynmapMarkerIntegration
 import com.projectcitybuild.plugin.integrations.essentials.EssentialsIntegration

@@ -3,11 +3,11 @@ package com.projectcitybuild.plugin.assembly
 import com.projectcitybuild.core.database.DataSourceProvider
 import com.projectcitybuild.core.http.core.APIClient
 import com.projectcitybuild.core.storage.Storage
-import com.projectcitybuild.modules.eventbroadcast.LocalEventBroadcaster
-import com.projectcitybuild.modules.kick.PlayerKicker
-import com.projectcitybuild.modules.logger.PlatformLogger
-import com.projectcitybuild.modules.scheduler.PlatformScheduler
-import com.projectcitybuild.modules.timer.PlatformTimer
+import com.projectcitybuild.support.spigot.eventbroadcast.LocalEventBroadcaster
+import com.projectcitybuild.support.spigot.kick.PlayerKicker
+import com.projectcitybuild.support.spigot.logger.PlatformLogger
+import com.projectcitybuild.support.spigot.scheduler.PlatformScheduler
+import com.projectcitybuild.support.spigot.timer.PlatformTimer
 import com.projectcitybuild.plugin.SpigotPluginContainer
 import com.projectcitybuild.plugin.assembly.providers.ConfigProvider
 import com.projectcitybuild.plugin.assembly.providers.DateTimeProvider
