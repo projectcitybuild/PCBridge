@@ -3,7 +3,7 @@ package com.projectcitybuild.plugin.integrations.luckperms
 import com.projectcitybuild.core.SpigotListener
 import com.projectcitybuild.features.chat.ChatGroupFormatter
 import com.projectcitybuild.plugin.integrations.SpigotIntegration
-import com.projectcitybuild.support.spigot.logger.PlatformLogger
+import com.projectcitybuild.support.spigot.logger.Logger
 import dagger.Reusable
 import net.luckperms.api.LuckPerms
 import net.luckperms.api.LuckPermsProvider
@@ -16,7 +16,7 @@ import javax.inject.Inject
 @Reusable
 class LuckPermsIntegration @Inject constructor(
     private val plugin: Plugin,
-    private val logger: PlatformLogger,
+    private val logger: Logger,
     private val chatGroupFormatter: ChatGroupFormatter,
 ) : SpigotListener, SpigotIntegration {
 

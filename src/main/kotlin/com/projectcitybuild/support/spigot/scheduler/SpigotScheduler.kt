@@ -1,11 +1,10 @@
-package com.projectcitybuild.support.spigot.scheduler.implementations
+package com.projectcitybuild.support.spigot.scheduler
 
 import com.projectcitybuild.core.utilities.AsyncTask
 import com.projectcitybuild.core.utilities.Cancellable
-import com.projectcitybuild.support.spigot.scheduler.PlatformScheduler
 import org.bukkit.plugin.java.JavaPlugin
 
-class SpigotScheduler(private val plugin: JavaPlugin) : PlatformScheduler {
+class SpigotScheduler(private val plugin: JavaPlugin) : Scheduler {
 
     override fun <T> async(task: ((T) -> Unit) -> Unit): AsyncTask<T> {
         // Bukkit/Spigot performs Asynchronous units of work via their internal Scheduler

@@ -3,7 +3,7 @@ package com.projectcitybuild.support.spigot.timer
 import com.projectcitybuild.core.utilities.Cancellable
 import java.util.concurrent.TimeUnit
 
-interface PlatformTimer {
+interface Timer {
 
     fun scheduleOnce(
         identifier: String,

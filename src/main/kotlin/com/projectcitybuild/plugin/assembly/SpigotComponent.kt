@@ -11,9 +11,9 @@ import com.projectcitybuild.plugin.assembly.providers.HTTPProvider
 import com.projectcitybuild.plugin.assembly.providers.PermissionsProvider
 import com.projectcitybuild.support.spigot.eventbroadcast.LocalEventBroadcaster
 import com.projectcitybuild.support.spigot.kick.PlayerKicker
-import com.projectcitybuild.support.spigot.logger.PlatformLogger
-import com.projectcitybuild.support.spigot.scheduler.PlatformScheduler
-import com.projectcitybuild.support.spigot.timer.PlatformTimer
+import com.projectcitybuild.support.spigot.logger.Logger
+import com.projectcitybuild.support.spigot.scheduler.Scheduler
+import com.projectcitybuild.support.spigot.timer.Timer
 import dagger.BindsInstance
 import dagger.Component
 import org.bukkit.Server
@@ -56,13 +56,13 @@ interface SpigotComponent {
         fun fileConfiguration(fileConfiguration: FileConfiguration): Builder
 
         @BindsInstance
-        fun logger(logger: PlatformLogger): Builder
+        fun logger(logger: Logger): Builder
 
         @BindsInstance
-        fun scheduler(scheduler: PlatformScheduler): Builder
+        fun scheduler(scheduler: Scheduler): Builder
 
         @BindsInstance
-        fun timer(timer: PlatformTimer): Builder
+        fun timer(timer: Timer): Builder
 
         @BindsInstance
         fun kicker(kicker: PlayerKicker): Builder

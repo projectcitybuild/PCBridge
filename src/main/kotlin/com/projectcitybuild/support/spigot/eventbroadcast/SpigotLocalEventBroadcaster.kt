@@ -1,7 +1,5 @@
-package com.projectcitybuild.support.spigot.eventbroadcast.implementations
+package com.projectcitybuild.support.spigot.eventbroadcast
 
-import com.projectcitybuild.support.spigot.eventbroadcast.BroadcastableEvent
-import com.projectcitybuild.support.spigot.eventbroadcast.LocalEventBroadcaster
 import org.bukkit.Bukkit
 import org.bukkit.event.Event
 import javax.inject.Inject

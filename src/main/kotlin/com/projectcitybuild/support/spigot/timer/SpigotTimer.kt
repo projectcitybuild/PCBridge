@@ -1,7 +1,6 @@
-package com.projectcitybuild.support.spigot.timer.implementations
+package com.projectcitybuild.support.spigot.timer
 
 import com.projectcitybuild.core.utilities.Cancellable
-import com.projectcitybuild.support.spigot.timer.PlatformTimer
 import org.bukkit.plugin.Plugin
 import org.bukkit.scheduler.BukkitTask
 import java.util.concurrent.TimeUnit
@@ -9,7 +8,7 @@ import javax.inject.Inject
 
 class SpigotTimer @Inject constructor(
     private val plugin: Plugin,
-) : PlatformTimer {
+) : Timer {
     private val tasks: HashMap<String, BukkitTask> = hashMapOf()
 
     override fun scheduleOnce(

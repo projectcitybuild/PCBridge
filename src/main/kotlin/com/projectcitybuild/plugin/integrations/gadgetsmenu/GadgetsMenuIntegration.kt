@@ -3,7 +3,7 @@ package com.projectcitybuild.plugin.integrations.gadgetsmenu
 import com.projectcitybuild.core.SpigotListener
 import com.projectcitybuild.plugin.integrations.SpigotIntegration
 import com.projectcitybuild.repositories.CurrencyRepository
-import com.projectcitybuild.support.spigot.logger.PlatformLogger
+import com.projectcitybuild.support.spigot.logger.Logger
 import com.yapzhenyie.GadgetsMenu.economy.GEconomyProvider
 import com.yapzhenyie.GadgetsMenu.player.OfflinePlayerManager
 import dagger.Reusable
@@ -13,7 +13,7 @@ import javax.inject.Inject
 @Reusable
 class GadgetsMenuIntegration @Inject constructor(
     private val plugin: Plugin,
-    private val logger: PlatformLogger,
+    private val logger: Logger,
     private val currencyRepository: CurrencyRepository,
 ) : SpigotListener, SpigotIntegration {
 
@@ -45,7 +45,7 @@ class GadgetsMenuIntegration @Inject constructor(
      */
     class CurrencyProvider constructor(
         plugin: Plugin,
-        private val logger: PlatformLogger,
+        private val logger: Logger,
         private val repository: CurrencyRepository,
     ) : GEconomyProvider(plugin, "pcbridge") {
 

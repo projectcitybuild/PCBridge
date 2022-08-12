@@ -4,7 +4,7 @@ import com.projectcitybuild.WarpMock
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Success
 import com.projectcitybuild.support.spigot.eventbroadcast.LocalEventBroadcaster
-import com.projectcitybuild.support.spigot.logger.PlatformLogger
+import com.projectcitybuild.support.spigot.logger.Logger
 import com.projectcitybuild.modules.nameguesser.NameGuesser
 import com.projectcitybuild.repositories.WarpRepository
 import kotlinx.coroutines.test.runTest
@@ -43,7 +43,7 @@ class TeleportToWarpUseCaseTest {
         useCase = TeleportToWarpUseCase(
             warpRepository = warpRepository,
             nameGuesser = nameGuesser,
-            logger = mock(PlatformLogger::class.java),
+            logger = mock(Logger::class.java),
             localEventBroadcaster = mock(LocalEventBroadcaster::class.java),
             server = server,
         )

@@ -1,7 +1,7 @@
 package com.projectcitybuild.modules.permissions.adapters
 
 import com.projectcitybuild.modules.permissions.Permissions
-import com.projectcitybuild.support.spigot.logger.PlatformLogger
+import com.projectcitybuild.support.spigot.logger.Logger
 import net.luckperms.api.LuckPerms
 import net.luckperms.api.LuckPermsProvider
 import net.luckperms.api.model.user.User
@@ -14,7 +14,7 @@ import javax.inject.Singleton
 
 @Singleton
 class LuckPermsPermissions @Inject constructor(
-    private val logger: PlatformLogger,
+    private val logger: Logger,
 ) : Permissions {
 
     class PermissionUserNotFoundException() : Exception()

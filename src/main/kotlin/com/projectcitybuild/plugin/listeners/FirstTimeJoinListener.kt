@@ -2,7 +2,7 @@ package com.projectcitybuild.plugin.listeners
 
 import com.projectcitybuild.core.SpigotListener
 import com.projectcitybuild.plugin.events.FirstTimeJoinEvent
-import com.projectcitybuild.support.spigot.logger.PlatformLogger
+import com.projectcitybuild.support.spigot.logger.Logger
 import com.projectcitybuild.support.textcomponent.add
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.chat.TextComponent
@@ -12,7 +12,7 @@ import javax.inject.Inject
 
 class FirstTimeJoinListener @Inject constructor(
     private val server: Server,
-    private val logger: PlatformLogger,
+    private val logger: Logger,
 ) : SpigotListener {
 
     @EventHandler

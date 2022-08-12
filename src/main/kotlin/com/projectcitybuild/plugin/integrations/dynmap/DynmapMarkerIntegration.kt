@@ -7,7 +7,7 @@ import com.projectcitybuild.plugin.events.WarpCreateEvent
 import com.projectcitybuild.plugin.events.WarpDeleteEvent
 import com.projectcitybuild.plugin.integrations.SpigotIntegration
 import com.projectcitybuild.repositories.WarpRepository
-import com.projectcitybuild.support.spigot.logger.PlatformLogger
+import com.projectcitybuild.support.spigot.logger.Logger
 import dagger.Reusable
 import org.bukkit.event.EventHandler
 import org.bukkit.plugin.Plugin
@@ -19,7 +19,7 @@ class DynmapMarkerIntegration @Inject constructor(
     private val plugin: Plugin,
     private val warpRepository: WarpRepository,
     private val config: Config,
-    private val logger: PlatformLogger,
+    private val logger: Logger,
 ) : SpigotListener, SpigotIntegration {
 
     class DynmapAPINotFoundException : Exception("Dynmap plugin not found")

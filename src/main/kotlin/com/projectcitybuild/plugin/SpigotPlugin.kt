@@ -9,12 +9,12 @@ import com.projectcitybuild.modules.permissions.Permissions
 import com.projectcitybuild.plugin.assembly.DaggerSpigotComponent
 import com.projectcitybuild.plugin.assembly.SpigotContainer
 import com.projectcitybuild.support.spigot.commands.SpigotCommandRegistry
-import com.projectcitybuild.support.spigot.eventbroadcast.implementations.SpigotLocalEventBroadcaster
+import com.projectcitybuild.support.spigot.eventbroadcast.SpigotLocalEventBroadcaster
 import com.projectcitybuild.support.spigot.kick.SpigotPlayerKicker
 import com.projectcitybuild.support.spigot.listeners.SpigotListenerRegistry
-import com.projectcitybuild.support.spigot.logger.implementations.SpigotLogger
-import com.projectcitybuild.support.spigot.scheduler.implementations.SpigotScheduler
-import com.projectcitybuild.support.spigot.timer.implementations.SpigotTimer
+import com.projectcitybuild.support.spigot.logger.SpigotLogger
+import com.projectcitybuild.support.spigot.scheduler.SpigotScheduler
+import com.projectcitybuild.support.spigot.timer.SpigotTimer
 import org.bukkit.Server
 import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin

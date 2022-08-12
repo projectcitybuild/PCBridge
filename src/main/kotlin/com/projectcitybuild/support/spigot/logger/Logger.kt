@@ -1,6 +1,6 @@
 package com.projectcitybuild.support.spigot.logger
 
-interface PlatformLogger {
+interface Logger {
 
     fun verbose(message: String)
     fun debug(message: String)
