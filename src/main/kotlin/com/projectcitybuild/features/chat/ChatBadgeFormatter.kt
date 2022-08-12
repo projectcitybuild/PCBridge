@@ -39,10 +39,10 @@ class ChatBadgeFormatter @Inject constructor(
                         Text(formattedBadges.joinToString(separator = ""))
                     )
                 }
-            .add(" ") {
-                it.color = ChatColor.RESET
-            }
-            .toLegacyText()
+                .add(" ") {
+                    it.color = ChatColor.RESET
+                }
+                .toLegacyText()
         )
     }
 }
