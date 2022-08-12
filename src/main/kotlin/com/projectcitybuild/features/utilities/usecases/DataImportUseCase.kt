@@ -3,10 +3,10 @@ package com.projectcitybuild.features.utilities.usecases
 import com.projectcitybuild.core.Regex
 import com.projectcitybuild.core.database.DataSource
 import com.projectcitybuild.entities.IPBan
-import com.projectcitybuild.modules.logger.PlatformLogger
-import com.projectcitybuild.modules.textcomponentbuilder.send
-import com.projectcitybuild.plugin.exceptions.InvalidCommandArgumentsException
 import com.projectcitybuild.repositories.IPBanRepository
+import com.projectcitybuild.support.spigot.commands.InvalidCommandArgumentsException
+import com.projectcitybuild.support.spigot.logger.Logger
+import com.projectcitybuild.support.textcomponent.send
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
@@ -20,7 +20,7 @@ import javax.inject.Inject
 class DataImportUseCase @Inject constructor(
     private val plugin: Plugin,
     private val dataSource: DataSource,
-    private val logger: PlatformLogger,
+    private val logger: Logger,
 ) {
     @Serializable
     data class SpigotBannedIP(

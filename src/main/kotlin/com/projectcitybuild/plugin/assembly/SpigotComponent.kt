@@ -3,17 +3,17 @@ package com.projectcitybuild.plugin.assembly
 import com.projectcitybuild.core.database.DataSourceProvider
 import com.projectcitybuild.core.http.core.APIClient
 import com.projectcitybuild.core.storage.Storage
-import com.projectcitybuild.modules.eventbroadcast.LocalEventBroadcaster
-import com.projectcitybuild.modules.kick.PlayerKicker
-import com.projectcitybuild.modules.logger.PlatformLogger
-import com.projectcitybuild.modules.scheduler.PlatformScheduler
-import com.projectcitybuild.modules.timer.PlatformTimer
 import com.projectcitybuild.plugin.SpigotPluginContainer
 import com.projectcitybuild.plugin.assembly.providers.ConfigProvider
 import com.projectcitybuild.plugin.assembly.providers.DateTimeProvider
 import com.projectcitybuild.plugin.assembly.providers.ErrorReporterProvider
 import com.projectcitybuild.plugin.assembly.providers.HTTPProvider
 import com.projectcitybuild.plugin.assembly.providers.PermissionsProvider
+import com.projectcitybuild.support.spigot.eventbroadcast.LocalEventBroadcaster
+import com.projectcitybuild.support.spigot.kick.PlayerKicker
+import com.projectcitybuild.support.spigot.logger.Logger
+import com.projectcitybuild.support.spigot.scheduler.Scheduler
+import com.projectcitybuild.support.spigot.timer.Timer
 import dagger.BindsInstance
 import dagger.Component
 import org.bukkit.Server
@@ -56,13 +56,13 @@ interface SpigotComponent {
         fun fileConfiguration(fileConfiguration: FileConfiguration): Builder
 
         @BindsInstance
-        fun logger(logger: PlatformLogger): Builder
+        fun logger(logger: Logger): Builder
 
         @BindsInstance
-        fun scheduler(scheduler: PlatformScheduler): Builder
+        fun scheduler(scheduler: Scheduler): Builder
 
         @BindsInstance
-        fun timer(timer: PlatformTimer): Builder
+        fun timer(timer: Timer): Builder
 
         @BindsInstance
         fun kicker(kicker: PlayerKicker): Builder

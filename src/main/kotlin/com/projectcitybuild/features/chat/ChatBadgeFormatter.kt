@@ -2,9 +2,9 @@ package com.projectcitybuild.features.chat
 
 import com.projectcitybuild.modules.config.Config
 import com.projectcitybuild.modules.config.ConfigKeys
-import com.projectcitybuild.modules.textcomponentbuilder.add
-import com.projectcitybuild.modules.textcomponentbuilder.addIf
 import com.projectcitybuild.repositories.ChatBadgeRepository
+import com.projectcitybuild.support.textcomponent.add
+import com.projectcitybuild.support.textcomponent.addIf
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.chat.HoverEvent
 import net.md_5.bungee.api.chat.TextComponent

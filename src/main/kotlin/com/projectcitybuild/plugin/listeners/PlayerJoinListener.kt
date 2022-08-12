@@ -1,11 +1,11 @@
 package com.projectcitybuild.plugin.listeners
 
 import com.projectcitybuild.core.SpigotListener
-import com.projectcitybuild.modules.eventbroadcast.LocalEventBroadcaster
-import com.projectcitybuild.modules.logger.PlatformLogger
-import com.projectcitybuild.modules.textcomponentbuilder.add
 import com.projectcitybuild.plugin.events.FirstTimeJoinEvent
 import com.projectcitybuild.repositories.PlayerConfigRepository
+import com.projectcitybuild.support.spigot.eventbroadcast.LocalEventBroadcaster
+import com.projectcitybuild.support.spigot.logger.Logger
+import com.projectcitybuild.support.textcomponent.add
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.Server
@@ -19,7 +19,7 @@ class PlayerJoinListener @Inject constructor(
     private val server: Server,
     private val localEventBroadcaster: LocalEventBroadcaster,
     private val playerConfigRepository: PlayerConfigRepository,
-    private val logger: PlatformLogger,
+    private val logger: Logger,
 ) : SpigotListener {
 
     @EventHandler

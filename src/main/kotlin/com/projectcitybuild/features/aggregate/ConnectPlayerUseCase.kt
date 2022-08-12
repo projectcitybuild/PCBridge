@@ -6,11 +6,11 @@ import com.projectcitybuild.entities.responses.GameBan
 import com.projectcitybuild.features.bans.Sanitizer
 import com.projectcitybuild.modules.config.Config
 import com.projectcitybuild.modules.config.ConfigStorageKey
-import com.projectcitybuild.modules.logger.PlatformLogger
 import com.projectcitybuild.modules.permissions.Permissions
 import com.projectcitybuild.repositories.AggregateRepository
 import com.projectcitybuild.repositories.ChatBadgeRepository
 import com.projectcitybuild.repositories.IPBanRepository
+import com.projectcitybuild.support.spigot.logger.Logger
 import java.util.UUID
 import javax.inject.Inject
 
@@ -20,7 +20,7 @@ class ConnectPlayerUseCase @Inject constructor(
     private val ipBanRepository: IPBanRepository,
     private val chatBadgeRepository: ChatBadgeRepository,
     private val config: Config,
-    private val logger: PlatformLogger,
+    private val logger: Logger,
 ) {
     sealed class ConnectResult {
         object Allowed : ConnectResult()

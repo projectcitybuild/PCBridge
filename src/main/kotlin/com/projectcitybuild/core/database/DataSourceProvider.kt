@@ -2,7 +2,7 @@ package com.projectcitybuild.core.database
 
 import com.projectcitybuild.modules.config.Config
 import com.projectcitybuild.modules.config.ConfigKeys
-import com.projectcitybuild.modules.logger.PlatformLogger
+import com.projectcitybuild.support.spigot.logger.Logger
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
@@ -13,7 +13,7 @@ class DataSourceProvider {
     @Provides
     @Singleton
     fun providesDataSource(
-        logger: PlatformLogger,
+        logger: Logger,
         config: Config
     ): DataSource {
         return DataSource(

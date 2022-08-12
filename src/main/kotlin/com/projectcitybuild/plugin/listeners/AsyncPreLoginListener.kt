@@ -1,11 +1,11 @@
 package com.projectcitybuild.plugin.listeners
 
 import com.projectcitybuild.core.SpigotListener
-import com.projectcitybuild.core.datetime.formatter.DateTimeFormatter
 import com.projectcitybuild.features.aggregate.ConnectPlayerUseCase
+import com.projectcitybuild.modules.datetime.formatter.DateTimeFormatter
 import com.projectcitybuild.modules.errorreporting.ErrorReporter
-import com.projectcitybuild.modules.logger.PlatformLogger
-import com.projectcitybuild.modules.textcomponentbuilder.add
+import com.projectcitybuild.support.spigot.logger.Logger
+import com.projectcitybuild.support.textcomponent.add
 import kotlinx.coroutines.runBlocking
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.chat.TextComponent
@@ -17,7 +17,7 @@ import javax.inject.Inject
 
 class AsyncPreLoginListener @Inject constructor(
     private val connectPlayerUseCase: ConnectPlayerUseCase,
-    private val logger: PlatformLogger,
+    private val logger: Logger,
     private val dateTimeFormatter: DateTimeFormatter,
     private val errorReporter: ErrorReporter,
 ) : SpigotListener {

@@ -1,6 +1,6 @@
 package com.projectcitybuild.plugin.events
 
-import com.projectcitybuild.modules.eventbroadcast.BroadcastableEvent
+import com.projectcitybuild.support.spigot.eventbroadcast.BroadcastableEvent
 import org.bukkit.entity.Player
 import org.bukkit.event.Event
 import org.bukkit.event.HandlerList
