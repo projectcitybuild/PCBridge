@@ -2,8 +2,8 @@ package com.projectcitybuild.plugin.integrations.luckperms
 
 import com.projectcitybuild.core.SpigotListener
 import com.projectcitybuild.features.chat.ChatGroupFormatter
-import com.projectcitybuild.support.spigot.logger.PlatformLogger
 import com.projectcitybuild.plugin.integrations.SpigotIntegration
+import com.projectcitybuild.support.spigot.logger.PlatformLogger
 import dagger.Reusable
 import net.luckperms.api.LuckPerms
 import net.luckperms.api.LuckPermsProvider

@@ -1,9 +1,9 @@
 package com.projectcitybuild.plugin.listeners
 
 import com.projectcitybuild.core.SpigotListener
+import com.projectcitybuild.plugin.events.FirstTimeJoinEvent
 import com.projectcitybuild.support.spigot.logger.PlatformLogger
 import com.projectcitybuild.support.textcomponent.add
-import com.projectcitybuild.plugin.events.FirstTimeJoinEvent
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.Server

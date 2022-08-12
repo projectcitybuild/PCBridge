@@ -4,10 +4,10 @@ import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Success
 import com.projectcitybuild.features.ranksync.usecases.UpdatePlayerGroupsUseCase
 import com.projectcitybuild.modules.nameguesser.NameGuesser
-import com.projectcitybuild.support.textcomponent.send
+import com.projectcitybuild.support.spigot.commands.InvalidCommandArgumentsException
 import com.projectcitybuild.support.spigot.commands.SpigotCommand
 import com.projectcitybuild.support.spigot.commands.SpigotCommandInput
-import com.projectcitybuild.support.spigot.commands.InvalidCommandArgumentsException
+import com.projectcitybuild.support.textcomponent.send
 import org.bukkit.Server
 import org.bukkit.command.CommandSender
 import javax.inject.Inject

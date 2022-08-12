@@ -1,7 +1,7 @@
 package com.projectcitybuild.modules.permissions.adapters
 
-import com.projectcitybuild.support.spigot.logger.PlatformLogger
 import com.projectcitybuild.modules.permissions.Permissions
+import com.projectcitybuild.support.spigot.logger.PlatformLogger
 import net.luckperms.api.LuckPerms
 import net.luckperms.api.LuckPermsProvider
 import net.luckperms.api.model.user.User

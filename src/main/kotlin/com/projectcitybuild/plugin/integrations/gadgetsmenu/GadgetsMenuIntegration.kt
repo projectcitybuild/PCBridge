@@ -1,9 +1,9 @@
 package com.projectcitybuild.plugin.integrations.gadgetsmenu
 
 import com.projectcitybuild.core.SpigotListener
-import com.projectcitybuild.support.spigot.logger.PlatformLogger
 import com.projectcitybuild.plugin.integrations.SpigotIntegration
 import com.projectcitybuild.repositories.CurrencyRepository
+import com.projectcitybuild.support.spigot.logger.PlatformLogger
 import com.yapzhenyie.GadgetsMenu.economy.GEconomyProvider
 import com.yapzhenyie.GadgetsMenu.player.OfflinePlayerManager
 import dagger.Reusable

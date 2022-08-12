@@ -4,12 +4,12 @@ import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Success
 import com.projectcitybuild.features.ranksync.usecases.GenerateAccountVerificationURLUseCase
 import com.projectcitybuild.features.ranksync.usecases.UpdatePlayerGroupsUseCase
-import com.projectcitybuild.support.textcomponent.add
-import com.projectcitybuild.support.textcomponent.send
-import com.projectcitybuild.support.spigot.commands.SpigotCommand
-import com.projectcitybuild.support.spigot.commands.SpigotCommandInput
 import com.projectcitybuild.support.spigot.commands.CannotInvokeFromConsoleException
 import com.projectcitybuild.support.spigot.commands.InvalidCommandArgumentsException
+import com.projectcitybuild.support.spigot.commands.SpigotCommand
+import com.projectcitybuild.support.spigot.commands.SpigotCommandInput
+import com.projectcitybuild.support.textcomponent.add
+import com.projectcitybuild.support.textcomponent.send
 import net.md_5.bungee.api.chat.ClickEvent
 import net.md_5.bungee.api.chat.HoverEvent
 import net.md_5.bungee.api.chat.TextComponent
