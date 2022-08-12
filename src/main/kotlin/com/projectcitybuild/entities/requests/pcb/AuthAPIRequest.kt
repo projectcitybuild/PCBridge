@@ -1,7 +1,7 @@
 package com.projectcitybuild.entities.requests.pcb
 
+import com.projectcitybuild.entities.responses.Account
 import com.projectcitybuild.entities.responses.ApiResponse
-import com.projectcitybuild.entities.responses.AuthPlayerGroups
 import com.projectcitybuild.entities.responses.AuthURL
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
@@ -27,5 +27,5 @@ interface AuthAPIRequest {
     @GET("auth/minecraft/{uuid}")
     suspend fun getUserGroups(
         @Path(value = "uuid") uuid: String
-    ): ApiResponse<AuthPlayerGroups>
+    ): ApiResponse<Account>
 }

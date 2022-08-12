@@ -10,7 +10,7 @@ import org.bukkit.Server
 import org.bukkit.event.EventHandler
 import javax.inject.Inject
 
-class FirstTimeJoinMessageListener @Inject constructor(
+class FirstTimeJoinListener @Inject constructor(
     private val server: Server,
     private val logger: PlatformLogger,
 ) : SpigotListener {

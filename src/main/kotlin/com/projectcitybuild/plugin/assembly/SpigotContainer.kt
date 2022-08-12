@@ -22,14 +22,12 @@ import com.projectcitybuild.plugin.integrations.dynmap.DynmapMarkerIntegration
 import com.projectcitybuild.plugin.integrations.essentials.EssentialsIntegration
 import com.projectcitybuild.plugin.integrations.gadgetsmenu.GadgetsMenuIntegration
 import com.projectcitybuild.plugin.integrations.luckperms.LuckPermsIntegration
-import com.projectcitybuild.plugin.listeners.BanConnectionListener
-import com.projectcitybuild.plugin.listeners.ChatListener
-import com.projectcitybuild.plugin.listeners.FirstTimeJoinMessageListener
-import com.projectcitybuild.plugin.listeners.PlayerCacheListener
-import com.projectcitybuild.plugin.listeners.ServerJoinMessageListener
-import com.projectcitybuild.plugin.listeners.SyncRankLoginListener
+import com.projectcitybuild.plugin.listeners.AsyncPlayerChatListener
+import com.projectcitybuild.plugin.listeners.AsyncPreLoginListener
+import com.projectcitybuild.plugin.listeners.FirstTimeJoinListener
+import com.projectcitybuild.plugin.listeners.PlayerJoinListener
+import com.projectcitybuild.plugin.listeners.PlayerQuitEvent
 import com.projectcitybuild.plugin.listeners.TelemetryListener
-import com.projectcitybuild.plugin.listeners.WelcomeMessageListener
 import javax.inject.Inject
 
 class SpigotContainer @Inject constructor(
@@ -97,24 +95,20 @@ class SpigotContainer @Inject constructor(
     }
 
     class Listeners @Inject constructor(
-        banConnectionListener: BanConnectionListener,
-        chatListener: ChatListener,
-        firstTimeJoinMessageListener: FirstTimeJoinMessageListener,
-        playerCacheListener: PlayerCacheListener,
-        serverJoinMessageListener: ServerJoinMessageListener,
-        syncRankLoginListener: SyncRankLoginListener,
+        asyncPlayerChatListener: AsyncPlayerChatListener,
+        firstTimeJoinListener: FirstTimeJoinListener,
+        asyncPreLoginListener: AsyncPreLoginListener,
+        playerJoinListener: PlayerJoinListener,
+        playerQuitEvent: PlayerQuitEvent,
         telemetryListener: TelemetryListener,
-        welcomeMessageListener: WelcomeMessageListener,
     ) {
         val enabled: List<SpigotListener> = listOf(
-            banConnectionListener,
-            chatListener,
-            firstTimeJoinMessageListener,
-            playerCacheListener,
-            serverJoinMessageListener,
-            syncRankLoginListener,
+            asyncPlayerChatListener,
+            firstTimeJoinListener,
+            asyncPreLoginListener,
+            playerJoinListener,
+            playerQuitEvent,
             telemetryListener,
-            welcomeMessageListener,
         )
     }
 }

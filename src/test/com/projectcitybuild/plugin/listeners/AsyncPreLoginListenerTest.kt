@@ -1,11 +1,10 @@
-package com.projectcitybuild.features.bans.listeners
+package com.projectcitybuild.plugin.listeners
 
 import com.projectcitybuild.DateTimeFormatterMock
 import com.projectcitybuild.GameBanMock
-import com.projectcitybuild.features.bans.usecases.AuthoriseConnectionUseCase
+import com.projectcitybuild.features.aggregate.ConnectPlayerUseCase
 import com.projectcitybuild.modules.errorreporting.ErrorReporter
 import com.projectcitybuild.modules.logger.PlatformLogger
-import com.projectcitybuild.plugin.listeners.BanConnectionListener
 import com.projectcitybuild.stubs.IPBanMock
 import kotlinx.coroutines.test.runTest
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent
@@ -21,20 +20,20 @@ import org.powermock.api.mockito.PowerMockito.`when`
 import java.net.InetAddress
 import java.util.UUID
 
-class BanConnectionListenerTest {
+class AsyncPreLoginListenerTest {
 
-    private lateinit var listener: BanConnectionListener
+    private lateinit var listener: AsyncPreLoginListener
 
-    private lateinit var authoriseConnectionListener: AuthoriseConnectionUseCase
+    private lateinit var connectPlayerUseCase: ConnectPlayerUseCase
     private lateinit var errorReporter: ErrorReporter
 
     @BeforeEach
     fun setUp() {
-        authoriseConnectionListener = mock(AuthoriseConnectionUseCase::class.java)
+        connectPlayerUseCase = mock(ConnectPlayerUseCase::class.java)
         errorReporter = mock(ErrorReporter::class.java)
 
-        listener = BanConnectionListener(
-            authoriseConnectionListener,
+        listener = AsyncPreLoginListener(
+            connectPlayerUseCase = connectPlayerUseCase,
             mock(PlatformLogger::class.java),
             DateTimeFormatterMock(),
             errorReporter,
@@ -54,14 +53,15 @@ class BanConnectionListenerTest {
     @Test
     fun `cancels login event if player is banned`() = runTest {
         arrayOf(
-            AuthoriseConnectionUseCase.Ban.UUID(GameBanMock()),
-            AuthoriseConnectionUseCase.Ban.IP(IPBanMock()),
+            ConnectPlayerUseCase.Ban.UUID(GameBanMock()),
+            ConnectPlayerUseCase.Ban.IP(IPBanMock()),
         ).forEach { ban ->
             val uuid = UUID.randomUUID()
             val ip = "127.0.0.1"
             val event = loginEvent(uuid, ip)
 
-            `when`(authoriseConnectionListener.getBan(uuid, ip)).thenReturn(ban)
+            `when`(connectPlayerUseCase.execute(uuid, ip))
+                .thenReturn(ConnectPlayerUseCase.ConnectResult.Denied(ban))
 
             listener.onAsyncPreLogin(event)
 
@@ -75,7 +75,8 @@ class BanConnectionListenerTest {
         val ip = "127.0.0.1"
         val event = loginEvent(uuid, ip)
 
-        `when`(authoriseConnectionListener.getBan(uuid, ip)).thenReturn(null)
+        `when`(connectPlayerUseCase.execute(uuid, ip))
+            .thenReturn(null)
 
         listener.onAsyncPreLogin(event)
 
@@ -88,7 +89,8 @@ class BanConnectionListenerTest {
         val ip = "127.0.0.1"
         val event = loginEvent(uuid, ip)
 
-        `when`(authoriseConnectionListener.getBan(uuid, ip)).thenThrow(Exception())
+        `when`(connectPlayerUseCase.execute(uuid, ip))
+            .thenThrow(Exception())
 
         listener.onAsyncPreLogin(event)
 
@@ -102,7 +104,8 @@ class BanConnectionListenerTest {
         val event = loginEvent(uuid, ip)
         val exception = Exception()
 
-        `when`(authoriseConnectionListener.getBan(uuid, ip)).thenThrow(exception)
+        `when`(connectPlayerUseCase.execute(uuid, ip))
+            .thenThrow(exception)
 
         listener.onAsyncPreLogin(event)
 

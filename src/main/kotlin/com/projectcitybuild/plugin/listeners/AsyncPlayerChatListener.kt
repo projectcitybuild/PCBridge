@@ -1,6 +1,7 @@
 package com.projectcitybuild.plugin.listeners
 
 import com.projectcitybuild.core.SpigotListener
+import com.projectcitybuild.features.chat.ChatBadgeFormatter
 import com.projectcitybuild.features.chat.ChatGroupFormatter
 import com.projectcitybuild.modules.textcomponentbuilder.add
 import com.projectcitybuild.modules.textcomponentbuilder.send
@@ -13,10 +14,11 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.player.AsyncPlayerChatEvent
 import javax.inject.Inject
 
-class ChatListener @Inject constructor(
+class AsyncPlayerChatListener @Inject constructor(
     private val server: Server,
     private val playerConfigRepository: PlayerConfigRepository,
-    private val chatGroupFormatter: ChatGroupFormatter
+    private val chatGroupFormatter: ChatGroupFormatter,
+    private val chatBadgeFormatter: ChatBadgeFormatter,
 ) : SpigotListener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -41,8 +43,10 @@ class ChatListener @Inject constructor(
         event.recipients.clear()
 
         val format = chatGroupFormatter.get(playerUUID = event.player.uniqueId)
+        val badges = chatBadgeFormatter.get(playerUUID = event.player.uniqueId)
 
         val tc = TextComponent()
+            .add(badges)
             .add(format.prefix)
             .add(format.groups)
             .add(" ") { it.color = ChatColor.RESET }

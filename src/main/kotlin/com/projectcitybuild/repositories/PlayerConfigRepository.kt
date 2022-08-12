@@ -44,9 +44,9 @@ class PlayerConfigRepository @Inject constructor(
         )
         val playerConfig = PlayerConfig(
             id = lastInsertedId,
-            uuid,
-            isMuted,
-            firstSeen,
+            uuid = uuid,
+            isMuted = isMuted,
+            firstSeen = firstSeen,
         )
         cache.put(uuid, playerConfig)
 

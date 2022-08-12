@@ -13,7 +13,7 @@ class SpigotScheduler(private val plugin: JavaPlugin) : PlatformScheduler {
             val runnable = Runnable {
                 task { result -> resolve(result) }
             }
-            val bukkitTask = plugin.server?.scheduler?.runTaskAsynchronously(plugin, runnable)
+            val bukkitTask = plugin.server.scheduler.runTaskAsynchronously(plugin, runnable)
 
             Cancellable {
                 bukkitTask?.cancel()
@@ -23,6 +23,6 @@ class SpigotScheduler(private val plugin: JavaPlugin) : PlatformScheduler {
 
     override fun sync(task: () -> Unit) {
         val runnable = Runnable { task() }
-        plugin.server?.scheduler?.scheduleSyncDelayedTask(plugin, runnable)
+        plugin.server.scheduler.scheduleSyncDelayedTask(plugin, runnable)
     }
 }
