@@ -31,18 +31,21 @@ class ChatBadgeFormatter @Inject constructor(
                 .toLegacyText()
         }
 
-        return TextComponent(
-            TextComponent()
-                .add(config.get(ConfigKeys.chatBadgeIcon)) {
+        val tc = TextComponent()
+        TextComponent
+            .fromLegacyText(config.get(ConfigKeys.chatBadgeIcon))
+            .forEach { c ->
+                tc.add(c) {
                     it.hoverEvent = HoverEvent(
                         HoverEvent.Action.SHOW_TEXT,
                         Text(formattedBadges.joinToString(separator = ""))
                     )
                 }
-                .add(" ") {
-                    it.color = ChatColor.RESET
-                }
-                .toLegacyText()
-        )
+            }
+
+        tc.add(" ") {
+            it.color = ChatColor.RESET
+        }
+        return tc
     }
 }
