@@ -1,6 +1,6 @@
 main: com.projectcitybuild.plugin.SpigotPlugin
 name: PCBridge
-version: 4.2.1
+version: 4.3.0
 softdepend:
   - LuckPerms
   - dynmap
@@ -16,6 +16,9 @@ commands:
   ban:
     description: "Bans a player from connecting to the server"
     usage: "/ban <name> [reason]"
+  badge:
+    description: "Toggles on/off your chat badge"
+    usage: "/badge <on|off>"
   banip:
     description: "Bans an exact IP, preventing it from connecting to the server"
     usage: "/ban <ip>"

@@ -26,6 +26,7 @@ class PlayerConfigRepository @Inject constructor(
                 id = row.get("id"),
                 uuid = UUID.fromString(row.get("uuid")),
                 isMuted = row.get("is_muted"),
+                isChatBadgeDisabled = row.get("is_badge_disabled"),
                 firstSeen = row.get("first_seen"),
             )
             cache.put(uuid, deserializedPlayer)
@@ -35,7 +36,12 @@ class PlayerConfigRepository @Inject constructor(
         return null
     }
 
-    fun add(uuid: UUID, isMuted: Boolean, firstSeen: LocalDateTime): PlayerConfig {
+    fun add(
+        uuid: UUID,
+        isMuted: Boolean,
+        isChatBadgeDisabled: Boolean,
+        firstSeen: LocalDateTime,
+    ): PlayerConfig {
         val lastInsertedId = dataSource.database().executeInsert(
             "INSERT INTO players VALUES (NULL, ?, ?, ?)",
             uuid.toString(),
@@ -46,6 +52,7 @@ class PlayerConfigRepository @Inject constructor(
             id = lastInsertedId,
             uuid = uuid,
             isMuted = isMuted,
+            isChatBadgeDisabled = isChatBadgeDisabled,
             firstSeen = firstSeen,
         )
         cache.put(uuid, playerConfig)
@@ -57,10 +64,11 @@ class PlayerConfigRepository @Inject constructor(
         cache.put(player.uuid, player)
 
         dataSource.database().executeUpdate(
-            "UPDATE players SET `uuid` = ?, `is_muted` = ?, `first_seen` = ? WHERE `id`= ?",
+            "UPDATE players SET `uuid` = ?, `is_muted` = ?, `is_badge_disabled` = ?, `first_seen` = ? WHERE `id`= ?",
             player.uuid.toString(),
             player.isMuted,
             player.firstSeen,
+            player.isChatBadgeDisabled,
             player.id,
         )
     }
