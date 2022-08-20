@@ -3,6 +3,7 @@ package com.projectcitybuild.features.chat
 import com.projectcitybuild.modules.config.Config
 import com.projectcitybuild.modules.config.ConfigKeys
 import com.projectcitybuild.repositories.ChatBadgeRepository
+import com.projectcitybuild.repositories.PlayerConfigRepository
 import com.projectcitybuild.support.textcomponent.add
 import com.projectcitybuild.support.textcomponent.addIf
 import net.md_5.bungee.api.ChatColor
@@ -13,10 +14,16 @@ import java.util.UUID
 import javax.inject.Inject
 
 class ChatBadgeFormatter @Inject constructor(
+    private val playerConfigRepository: PlayerConfigRepository,
     private val chatBadgeRepository: ChatBadgeRepository,
     private val config: Config,
 ) {
     fun get(playerUUID: UUID): TextComponent? {
+        val playerConfig = playerConfigRepository.get(playerUUID)
+        if (playerConfig != null && playerConfig.isChatBadgeDisabled) {
+            return null
+        }
+
         val badges = chatBadgeRepository.get(playerUUID)
         if (badges.isEmpty()) {
             return null

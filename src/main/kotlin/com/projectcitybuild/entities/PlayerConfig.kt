@@ -7,5 +7,6 @@ data class PlayerConfig(
     val id: Long,
     val uuid: UUID,
     var isMuted: Boolean,
+    var isChatBadgeDisabled: Boolean,
     val firstSeen: LocalDateTime,
 )

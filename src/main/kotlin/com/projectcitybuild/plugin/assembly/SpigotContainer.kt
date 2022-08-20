@@ -2,6 +2,7 @@ package com.projectcitybuild.plugin.assembly
 
 import com.projectcitybuild.core.SpigotListener
 import com.projectcitybuild.plugin.commands.ACommand
+import com.projectcitybuild.plugin.commands.BadgeCommand
 import com.projectcitybuild.plugin.commands.BanCommand
 import com.projectcitybuild.plugin.commands.BanIPCommand
 import com.projectcitybuild.plugin.commands.CheckBanCommand
@@ -60,6 +61,7 @@ class SpigotContainer @Inject constructor(
 
     class Commands @Inject constructor(
         aCommand: ACommand,
+        badgeCommand: BadgeCommand,
         banCommand: BanCommand,
         banIPCommand: BanIPCommand,
         checkBanCommand: CheckBanCommand,
@@ -77,6 +79,7 @@ class SpigotContainer @Inject constructor(
     ) {
         val enabled: List<SpigotCommand> = listOf(
             aCommand,
+            badgeCommand,
             banCommand,
             banIPCommand,
             checkBanCommand,

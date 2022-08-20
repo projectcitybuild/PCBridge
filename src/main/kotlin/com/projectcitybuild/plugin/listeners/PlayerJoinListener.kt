@@ -74,6 +74,7 @@ class PlayerJoinListener @Inject constructor(
             playerConfigRepository.add(
                 uuid = uuid,
                 isMuted = false,
+                isChatBadgeDisabled = false,
                 firstSeen = LocalDateTime.now(),
             )
         }

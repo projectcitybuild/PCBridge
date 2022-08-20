@@ -8,7 +8,7 @@ import java.util.Properties
 val generatedVersionDir = "$buildDir/generated-resources"
 
 group = "com.projectcitybuild"
-version = "4.2.1"
+version = "4.3.0"
 
 java.sourceCompatibility = JavaVersion.VERSION_17
 
