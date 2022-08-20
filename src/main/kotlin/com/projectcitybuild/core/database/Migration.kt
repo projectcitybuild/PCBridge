@@ -16,6 +16,7 @@ object Migration {
         `20220320_rename_queued_warps`(),
         `20220505_delete_queues`(),
         `20220530_delete_bungeecord_cols`(),
+        `202200821_add_badge_toggle`(),
     )
 
     fun executeIfNecessary(

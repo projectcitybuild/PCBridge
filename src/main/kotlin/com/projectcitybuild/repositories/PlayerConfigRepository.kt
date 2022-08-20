@@ -43,7 +43,7 @@ class PlayerConfigRepository @Inject constructor(
         firstSeen: LocalDateTime,
     ): PlayerConfig {
         val lastInsertedId = dataSource.database().executeInsert(
-            "INSERT INTO players VALUES (NULL, ?, ?, ?)",
+            "INSERT INTO players VALUES (NULL, ?, ?, ?, ?)",
             uuid.toString(),
             isMuted,
             firstSeen,
@@ -67,8 +67,8 @@ class PlayerConfigRepository @Inject constructor(
             "UPDATE players SET `uuid` = ?, `is_muted` = ?, `is_badge_disabled` = ?, `first_seen` = ? WHERE `id`= ?",
             player.uuid.toString(),
             player.isMuted,
-            player.firstSeen,
             player.isChatBadgeDisabled,
+            player.firstSeen,
             player.id,
         )
     }
