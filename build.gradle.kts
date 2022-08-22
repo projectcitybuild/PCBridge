@@ -10,8 +10,6 @@ val generatedVersionDir = "$buildDir/generated-resources"
 group = "com.projectcitybuild"
 version = "4.3.0"
 
-java.sourceCompatibility = JavaVersion.VERSION_17
-
 plugins {
     kotlin("jvm") version "1.6.10"
     id("com.github.johnrengelman.shadow") version "7.0.0"
