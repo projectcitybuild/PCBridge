@@ -12,7 +12,6 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 class PCBClient(
-    private val oldAuthToken: String, // Deprecated
     private val authToken: String,
     private val baseUrl: String,
     private val withLogging: Boolean
@@ -35,21 +34,11 @@ class PCBClient(
             .build()
     }
 
-    private fun token(url: String): String {
-        return if (url.contains("balance") || url.contains("telemetry")) {
-            authToken
-        } else {
-            oldAuthToken
-        }
-    }
-
     private fun makeAuthenticatedClient(): OkHttpClient {
         var clientFactory = OkHttpClient().newBuilder()
             .addInterceptor { chain ->
                 // Add access token as header to each API request
                 val request = chain.request()
-
-                val authToken = token(url = request.url.toString())
                 val requestBuilder = request.newBuilder().header("Authorization", "Bearer $authToken")
                 val nextRequest = requestBuilder.build()
 

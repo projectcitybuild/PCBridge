@@ -2,9 +2,6 @@ package com.projectcitybuild.modules.config
 
 class ConfigKeys {
     companion object {
-        val apiEnabled = "api.enabled" defaultsTo false
-        @Deprecated("Will be deleted when Ban API v2 releases")
-        val apiKey = "api.key" defaultsTo "FILL_THIS_IN"
         val apiToken = "api.token" defaultsTo "FILL_THIS_IN"
         val apiBaseURL = "api.base_url" defaultsTo "https://projectcitybuild.com/api/"
         val apiIsLoggingEnabled = "api.is_logging_enabled" defaultsTo false
