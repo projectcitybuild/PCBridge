@@ -61,7 +61,7 @@ class BanUUIDUseCaseTest {
         val staffUUID = UUID.randomUUID()
 
         `when`(playerUUIDRepository.get(playerName)).thenReturn(playerUUID)
-        `when`(banRepository.ban(playerUUID, playerName, staffUUID, null))
+        `when`(banRepository.ban(playerUUID, playerName, staffUUID, staffName, null))
             .thenThrow(BanRepository.PlayerAlreadyBannedException())
 
         val result = useCase.ban(playerName, staffUUID, staffName, null)
@@ -74,6 +74,7 @@ class BanUUIDUseCaseTest {
         val playerName = "banned_player"
         val playerUUID = UUID.randomUUID()
         val staffUUID = UUID.randomUUID()
+        val staffName = "staff_player"
         val reason = "reason"
 
         `when`(playerUUIDRepository.get(playerName)).thenReturn(playerUUID)
@@ -81,7 +82,7 @@ class BanUUIDUseCaseTest {
         useCase.ban(playerName, staffUUID, "staff_player", reason)
 
         verify(banRepository, times(1))
-            .ban(playerUUID, playerName, staffUUID, reason)
+            .ban(playerUUID, playerName, staffUUID, staffName, reason)
     }
 
     @Test
