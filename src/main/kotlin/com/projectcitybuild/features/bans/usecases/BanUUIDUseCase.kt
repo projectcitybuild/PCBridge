@@ -36,7 +36,8 @@ class BanUUIDUseCase @Inject constructor(
             banRepository.ban(
                 targetPlayerUUID = targetPlayerUUID,
                 targetPlayerName = targetPlayerName,
-                staffId = bannerUUID,
+                bannerPlayerUUID = bannerUUID,
+                bannerPlayerName = bannerName,
                 reason = reason
             )
 

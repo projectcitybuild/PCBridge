@@ -18,21 +18,20 @@ class BanRepository @Inject constructor(
     suspend fun ban(
         targetPlayerUUID: UUID,
         targetPlayerName: String,
-        staffId: UUID?,
+        bannerPlayerUUID: UUID?,
+        bannerPlayerName: String,
         reason: String?
     ) {
         try {
             val banApi = apiRequestFactory.pcb.banAPI
             apiClient.execute {
-                banApi.storeBan(
-                    playerId = targetPlayerUUID.toString(),
-                    playerIdType = "minecraft_uuid",
-                    playerAlias = targetPlayerName,
-                    staffId = staffId.toString(),
-                    staffIdType = "minecraft_uuid",
-                    reason = if (reason != null && reason.isNotEmpty()) reason else null,
+                banApi.ban(
+                    bannedPlayerId = targetPlayerUUID.toString(),
+                    bannedPlayerAlias = targetPlayerName,
+                    bannerPlayerId = bannerPlayerUUID.toString(),
+                    bannerPlayerAlias = bannerPlayerName,
+                    reason = reason,
                     expiresAt = null,
-                    isGlobalBan = 1
                 )
             }
         } catch (e: APIClient.HTTPError) {
@@ -48,11 +47,9 @@ class BanRepository @Inject constructor(
         try {
             val banApi = apiRequestFactory.pcb.banAPI
             apiClient.execute {
-                banApi.storeUnban(
-                    playerId = targetPlayerUUID.toString(),
-                    playerIdType = "minecraft_uuid",
-                    staffId = staffId.toString(),
-                    staffIdType = "minecraft_uuid"
+                banApi.unban(
+                    bannedPlayerId = targetPlayerUUID.toString(),
+                    unbannerPlayerId = staffId.toString(),
                 )
             }
         } catch (e: APIClient.HTTPError) {
@@ -66,10 +63,7 @@ class BanRepository @Inject constructor(
     suspend fun get(targetPlayerUUID: UUID): GameBan? {
         val banApi = apiRequestFactory.pcb.banAPI
         val response = apiClient.execute {
-            banApi.requestStatus(
-                playerId = targetPlayerUUID.toString(),
-                playerType = "minecraft_uuid"
-            )
+            banApi.status(playerId = targetPlayerUUID.toString())
         }
         val ban = response.data
         if (ban != null) {

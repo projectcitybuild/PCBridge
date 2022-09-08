@@ -17,7 +17,6 @@ class HTTPProvider {
 
         return APIRequestFactory(
             pcb = PCBClient(
-                oldAuthToken = config.get(ConfigKeys.apiKey),
                 authToken = config.get(ConfigKeys.apiToken),
                 baseUrl = config.get(ConfigKeys.apiBaseURL),
                 withLogging = isLoggingEnabled
