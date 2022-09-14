@@ -56,16 +56,15 @@ class CheckBanUUIDUseCaseTest {
                 id = 1,
                 serverId = 2,
                 bannedPlayerId = playerUUID.toString(),
-                playerType = "minecraft_uuid",
                 bannedPlayerAlias = playerName,
                 bannerPlayerId = staffUUID.toString(),
-                staffType = "minecraft_uuid",
                 reason = "griefing",
-                isActive = true,
-                isGlobalBan = true,
                 expiresAt = null,
                 createdAt = 1642953972,
                 updatedAt = 1642953972,
+                unbannedAt = null,
+                unbannerPlayerId = null,
+                unbanType = null,
             )
         )
 
@@ -91,16 +90,15 @@ class CheckBanUUIDUseCaseTest {
                 id = 1,
                 serverId = 2,
                 bannedPlayerId = playerUUID.toString(),
-                playerType = "minecraft_uuid",
                 bannedPlayerAlias = playerName,
                 bannerPlayerId = staffUUID.toString(),
-                staffType = "minecraft_uuid",
                 reason = "griefing",
-                isActive = true,
-                isGlobalBan = true,
                 expiresAt = 1643108765,
                 createdAt = 1642953972,
                 updatedAt = 1642953972,
+                unbannedAt = null,
+                unbannerPlayerId = null,
+                unbanType = null,
             )
         )
 
