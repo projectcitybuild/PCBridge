@@ -59,3 +59,6 @@ commands:
   warps:
     description: "Gets a list of all warps available"
     usage: "/warps"
+  warning:
+    description: "Acknowledges a given warning"
+    usage: "/warning acknowledge <id>"

@@ -80,22 +80,27 @@ class PlayerJoinListener @Inject constructor(
             }
             val tc = TextComponent()
                 .add("You have ") { it.color = ChatColor.RED }
-                .add(warnings.count()) { it.isBold = true }
-                .add(" unacknowledged warning\n") { it.color = ChatColor.RED }
+                .add(warnings.size) { it.isBold = true }
+                .add(" unacknowledged warnings\n") { it.color = ChatColor.RED }
                 .add("---\n")
 
             warnings.forEach { warning ->
                 tc.add("${warning.reason}\n")
                 tc.add("Date: ") { it.color = ChatColor.GRAY }
-                tc.add("${warning.createdAt}\n")
+                tc.add("${warning.createdAt}\n\n")
                 tc.add("[I ACKNOWLEDGE]") {
                     it.isUnderlined = true
                     it.isBold = true
                     it.color = ChatColor.GOLD
-                    it.clickEvent = ClickEvent(ClickEvent.Action.RUN_COMMAND, "/warning acknowledge {$warning.id}")
+                    it.clickEvent = ClickEvent(ClickEvent.Action.RUN_COMMAND, "/warning acknowledge ${warning.id}")
                 }
                 tc.add("\n")
                 tc.add("---\n")
+            }
+
+            tc.add("Click the 'acknowledge' button to mark it as read and hide it") {
+                it.color = ChatColor.GRAY
+                it.isItalic = true
             }
 
             player.spigot().sendMessage(tc)

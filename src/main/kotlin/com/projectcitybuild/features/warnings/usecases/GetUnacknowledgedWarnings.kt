@@ -11,7 +11,6 @@ class GetUnacknowledgedWarnings @Inject constructor(
 ) {
     data class FormattedWarning(
         val id: Int,
-        val warnerAlias: String,
         val reason: String,
         val isAcknowledged: Boolean,
         val createdAt: String,
@@ -27,10 +26,11 @@ class GetUnacknowledgedWarnings @Inject constructor(
             .map {
                 FormattedWarning(
                     id = it.id,
-                    warnerAlias = it.warnerPlayer?.aliases?.lastOrNull()?.alias ?: "System",
                     reason = it.reason,
                     isAcknowledged = it.isAcknowledged,
-                    createdAt = it.createdAt.let { dateTimeFormatter.convert(it) },
+                    createdAt = it.createdAt.let { createdAt ->
+                        dateTimeFormatter.convert(createdAt)
+                    },
                 )
             }
     }

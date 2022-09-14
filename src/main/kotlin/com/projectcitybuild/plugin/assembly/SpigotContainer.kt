@@ -15,6 +15,7 @@ import com.projectcitybuild.plugin.commands.SyncOtherCommand
 import com.projectcitybuild.plugin.commands.UnbanCommand
 import com.projectcitybuild.plugin.commands.UnbanIPCommand
 import com.projectcitybuild.plugin.commands.UnmuteCommand
+import com.projectcitybuild.plugin.commands.WarningAcknowledgeCommand
 import com.projectcitybuild.plugin.commands.WarpCommand
 import com.projectcitybuild.plugin.commands.WarpsCommand
 import com.projectcitybuild.plugin.integrations.SpigotIntegration
@@ -74,6 +75,7 @@ class SpigotContainer @Inject constructor(
         unbanCommand: UnbanCommand,
         unbanIPCommand: UnbanIPCommand,
         unmuteCommand: UnmuteCommand,
+        warningAcknowledgeCommand: WarningAcknowledgeCommand,
         warpCommand: WarpCommand,
         warpsCommand: WarpsCommand,
     ) {
@@ -92,6 +94,7 @@ class SpigotContainer @Inject constructor(
             unbanCommand,
             unbanIPCommand,
             unmuteCommand,
+            warningAcknowledgeCommand,
             warpCommand,
             warpsCommand,
         )

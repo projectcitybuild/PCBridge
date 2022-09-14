@@ -39,10 +39,10 @@ class PlayerWarningRepository @Inject constructor(
         return response.data
     }
 
-    suspend fun acknowledge(warning: PlayerWarning): PlayerWarning? {
+    suspend fun acknowledge(warningId: Int): PlayerWarning? {
         val response = apiClient.execute {
             apiRequestFactory.pcb.warningAPI.acknowledge(
-                warningId = warning.id,
+                warningId = warningId,
             )
         }
         return response.data
