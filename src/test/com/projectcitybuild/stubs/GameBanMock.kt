@@ -7,16 +7,15 @@ fun GameBanMock(): GameBan {
     return GameBan(
         id = 1,
         serverId = 2,
-        playerId = UUID.randomUUID().toString(),
-        playerType = "minecraft_player",
-        playerAlias = "alias",
-        staffId = UUID.randomUUID().toString(),
-        staffType = "minecraft_player",
+        bannedPlayerId = UUID.randomUUID().toString(),
+        bannedPlayerAlias = "alias",
+        bannerPlayerId = UUID.randomUUID().toString(),
         reason = "reason",
-        isActive = true,
-        isGlobalBan = true,
         createdAt = 1642958606,
         updatedAt = 1642958606,
         expiresAt = null,
+        unbannedAt = null,
+        unbannerPlayerId = null,
+        unbanType = null,
     )
 }

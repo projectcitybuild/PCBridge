@@ -2,7 +2,6 @@ package com.projectcitybuild.entities.requests.pcb
 
 import com.projectcitybuild.entities.responses.ApiResponse
 import com.projectcitybuild.entities.responses.GameBan
-import com.projectcitybuild.entities.responses.GameUnban
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.POST
@@ -29,7 +28,7 @@ interface BanAPIRequest {
         @Field("banned_player_type") bannedPlayerType: String = "minecraft_uuid",
         @Field("unbanner_player_id") unbannerPlayerId: String?,
         @Field("unbanner_player_type") unbannerPlayerType: String = "minecraft_uuid"
-    ): ApiResponse<GameUnban>
+    ): ApiResponse<GameBan>
 
     @FormUrlEncoded
     @POST("v2/bans/status")

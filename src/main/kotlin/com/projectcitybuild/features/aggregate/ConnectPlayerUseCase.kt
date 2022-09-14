@@ -50,7 +50,7 @@ class ConnectPlayerUseCase @Inject constructor(
     }
 
     private fun getBan(ip: String, aggregate: Aggregate): Ban? {
-        if (aggregate.ban != null) {
+        if (aggregate.ban !== null && aggregate.ban.unbannedAt == null) {
             return Ban.UUID(aggregate.ban)
         }
         val sanitizedIP = Sanitizer().sanitizedIP(ip)
