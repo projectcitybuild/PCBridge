@@ -3,7 +3,6 @@ package com.projectcitybuild.repositories
 import com.projectcitybuild.core.http.APIRequestFactory
 import com.projectcitybuild.core.http.core.APIClient
 import com.projectcitybuild.entities.responses.GameBan
-import java.util.Date
 import java.util.UUID
 import javax.inject.Inject
 
@@ -65,11 +64,8 @@ class BanRepository @Inject constructor(
             )
         }
         val ban = response.data
-        if (ban != null) {
-            if (!ban.isActive) return null
-
-            val hasExpired = ban.expiresAt != null && ban.expiresAt <= Date().time
-            if (hasExpired) return null
+        if (ban?.unbannedAt != null) {
+            return null
         }
         return ban
     }
