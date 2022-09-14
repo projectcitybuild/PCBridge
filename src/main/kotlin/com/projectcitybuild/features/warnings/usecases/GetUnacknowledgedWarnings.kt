@@ -2,7 +2,7 @@ package com.projectcitybuild.features.warnings.usecases
 
 import com.projectcitybuild.modules.datetime.formatter.DateTimeFormatter
 import com.projectcitybuild.repositories.PlayerWarningRepository
-import java.util.*
+import java.util.UUID
 import javax.inject.Inject
 
 class GetUnacknowledgedWarnings @Inject constructor(
