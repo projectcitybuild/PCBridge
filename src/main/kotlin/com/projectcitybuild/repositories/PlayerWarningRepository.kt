@@ -10,13 +10,14 @@ class PlayerWarningRepository @Inject constructor(
     private val apiRequestFactory: APIRequestFactory,
     private val apiClient: APIClient,
 ) {
-    suspend fun get(playerUUID: UUID, playerName: String) {
-        apiClient.execute {
+    suspend fun get(playerUUID: UUID, playerName: String): List<PlayerWarning> {
+        val response = apiClient.execute {
             apiRequestFactory.pcb.warningAPI.get(
                 bannedPlayerId = playerUUID.toString(),
                 bannedPlayerAlias = playerName,
             )
         }
+        return response.data ?: listOf()
     }
 
     suspend fun create(
@@ -25,8 +26,8 @@ class PlayerWarningRepository @Inject constructor(
         warnerPlayerUUID: UUID,
         warnerPlayerName: String,
         reason: String,
-    ) {
-        apiClient.execute {
+    ): PlayerWarning? {
+        val response = apiClient.execute {
             apiRequestFactory.pcb.warningAPI.create(
                 warnedPlayerId = warnedPlayerUUID.toString(),
                 warnedPlayerAlias = warnedPlayerName,
@@ -35,13 +36,15 @@ class PlayerWarningRepository @Inject constructor(
                 reason = reason,
             )
         }
+        return response.data
     }
 
-    suspend fun acknowledge(warning: PlayerWarning) {
-        apiClient.execute {
+    suspend fun acknowledge(warning: PlayerWarning): PlayerWarning? {
+        val response = apiClient.execute {
             apiRequestFactory.pcb.warningAPI.acknowledge(
                 warningId = warning.id,
             )
         }
+        return response.data
     }
 }

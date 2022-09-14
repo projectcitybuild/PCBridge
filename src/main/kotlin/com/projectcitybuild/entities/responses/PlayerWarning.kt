@@ -13,4 +13,5 @@ data class PlayerWarning(
     @SerializedName("created_at") val createdAt: Long,
     @SerializedName("updated_at") val updatedAt: Long,
     @SerializedName("acknowledged_at") val acknowledgedAt: Long?,
+    @SerializedName("warner_player") val warnerPlayer: Player?,
 )

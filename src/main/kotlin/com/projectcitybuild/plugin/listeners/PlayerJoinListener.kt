@@ -1,12 +1,17 @@
 package com.projectcitybuild.plugin.listeners
 
 import com.projectcitybuild.core.SpigotListener
+import com.projectcitybuild.features.warnings.usecases.GetUnacknowledgedWarnings
 import com.projectcitybuild.plugin.events.FirstTimeJoinEvent
 import com.projectcitybuild.repositories.PlayerConfigRepository
 import com.projectcitybuild.support.spigot.eventbroadcast.LocalEventBroadcaster
 import com.projectcitybuild.support.spigot.logger.Logger
 import com.projectcitybuild.support.textcomponent.add
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import net.md_5.bungee.api.ChatColor
+import net.md_5.bungee.api.chat.ClickEvent
 import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.Server
 import org.bukkit.entity.Player
@@ -19,6 +24,7 @@ class PlayerJoinListener @Inject constructor(
     private val server: Server,
     private val localEventBroadcaster: LocalEventBroadcaster,
     private val playerConfigRepository: PlayerConfigRepository,
+    private val getUnacknowledgedWarnings: GetUnacknowledgedWarnings,
     private val logger: Logger,
 ) : SpigotListener {
 
@@ -27,6 +33,7 @@ class PlayerJoinListener @Inject constructor(
         announceJoin(player = event.player)
         sendServerOverview(player = event.player)
         cachePlayer(player = event.player)
+        getUnacknowledgedWarnings(player = event.player)
     }
 
     private fun announceJoin(player: Player) {
@@ -60,6 +67,39 @@ class PlayerJoinListener @Inject constructor(
                 )
             )
         )
+    }
+
+    private fun getUnacknowledgedWarnings(player: Player) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val warnings = getUnacknowledgedWarnings.execute(
+                playerUUID = player.uniqueId,
+                playerName = player.name,
+            )
+            if (warnings.isEmpty()) {
+                return@launch
+            }
+            val tc = TextComponent()
+                .add("You have ") { it.color = ChatColor.RED }
+                .add(warnings.count()) { it.isBold = true }
+                .add(" unacknowledged warning\n") { it.color = ChatColor.RED }
+                .add("---\n")
+
+            warnings.forEach { warning ->
+                tc.add("${warning.reason}\n")
+                tc.add("Date: ") { it.color = ChatColor.GRAY }
+                tc.add("${warning.createdAt}\n")
+                tc.add("[I ACKNOWLEDGE]") {
+                    it.isUnderlined = true
+                    it.isBold = true
+                    it.color = ChatColor.GOLD
+                    it.clickEvent = ClickEvent(ClickEvent.Action.RUN_COMMAND, "/warning acknowledge {$warning.id}")
+                }
+                tc.add("\n")
+                tc.add("---\n")
+            }
+
+            player.spigot().sendMessage(tc)
+        }
     }
 
     private fun cachePlayer(player: Player) {

@@ -1,20 +1,21 @@
 package com.projectcitybuild.entities.requests.pcb
 
 import com.projectcitybuild.entities.responses.ApiResponse
+import com.projectcitybuild.entities.responses.Player
 import com.projectcitybuild.entities.responses.PlayerWarning
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.Query
 
 interface WarningAPIRequest {
 
-    @FormUrlEncoded
     @GET("v2/warnings")
     suspend fun get(
-        @Field("player_id") bannedPlayerId: String,
-        @Field("player_type") bannedPlayerType: String = "minecraft_uuid",
-        @Field("player_alias") bannedPlayerAlias: String,
+        @Query("player_id") bannedPlayerId: String,
+        @Query("player_type") bannedPlayerType: String = "minecraft_uuid",
+        @Query("player_alias") bannedPlayerAlias: String,
     ): ApiResponse<List<PlayerWarning>>
 
     @FormUrlEncoded
