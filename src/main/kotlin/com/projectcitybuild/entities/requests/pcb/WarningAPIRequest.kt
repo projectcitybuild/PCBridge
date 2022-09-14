@@ -32,7 +32,7 @@ interface WarningAPIRequest {
 
     @FormUrlEncoded
     @POST("v2/warnings/acknowledge")
-    suspend fun all(
+    suspend fun acknowledge(
         @Field("warning_id") warningId: Int,
     ): ApiResponse<PlayerWarning>
 }
