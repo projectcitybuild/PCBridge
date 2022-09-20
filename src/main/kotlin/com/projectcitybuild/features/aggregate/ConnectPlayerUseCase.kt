@@ -1,15 +1,14 @@
 package com.projectcitybuild.features.aggregate
 
-import com.projectcitybuild.entities.IPBan
 import com.projectcitybuild.entities.responses.Aggregate
-import com.projectcitybuild.entities.responses.GameBan
+import com.projectcitybuild.entities.responses.IPBan
+import com.projectcitybuild.entities.responses.PlayerBan
 import com.projectcitybuild.features.bans.Sanitizer
 import com.projectcitybuild.modules.config.Config
 import com.projectcitybuild.modules.config.ConfigStorageKey
 import com.projectcitybuild.modules.permissions.Permissions
 import com.projectcitybuild.repositories.AggregateRepository
 import com.projectcitybuild.repositories.ChatBadgeRepository
-import com.projectcitybuild.repositories.IPBanRepository
 import com.projectcitybuild.support.spigot.logger.Logger
 import java.util.UUID
 import javax.inject.Inject
@@ -17,7 +16,6 @@ import javax.inject.Inject
 class ConnectPlayerUseCase @Inject constructor(
     private val permissions: Permissions,
     private val aggregateRepository: AggregateRepository,
-    private val ipBanRepository: IPBanRepository,
     private val chatBadgeRepository: ChatBadgeRepository,
     private val config: Config,
     private val logger: Logger,
@@ -29,16 +27,18 @@ class ConnectPlayerUseCase @Inject constructor(
     }
 
     sealed class Ban {
-        data class UUID(val value: GameBan) : Ban()
+        data class UUID(val value: PlayerBan) : Ban()
         data class IP(val value: IPBan) : Ban()
     }
 
     @Throws(Exception::class)
     suspend fun execute(playerUUID: UUID, ip: String): ConnectResult {
-        val aggregate = aggregateRepository.get(playerUUID = playerUUID)
-            ?: return ConnectResult.Failed
+        val aggregate = aggregateRepository.get(
+            playerUUID = playerUUID,
+            ip = Sanitizer().sanitizedIP(ip),
+        ) ?: return ConnectResult.Failed
 
-        val ban = getBan(ip, aggregate)
+        val ban = getBan(aggregate)
         if (ban != null) {
             return ConnectResult.Denied(ban = ban)
         }
@@ -49,14 +49,12 @@ class ConnectPlayerUseCase @Inject constructor(
         return ConnectResult.Allowed
     }
 
-    private fun getBan(ip: String, aggregate: Aggregate): Ban? {
-        if (aggregate.ban !== null && aggregate.ban.unbannedAt == null) {
-            return Ban.UUID(aggregate.ban)
+    private fun getBan(aggregate: Aggregate): Ban? {
+        if (aggregate.playerBan !== null && aggregate.playerBan.unbannedAt == null) {
+            return Ban.UUID(aggregate.playerBan)
         }
-        val sanitizedIP = Sanitizer().sanitizedIP(ip)
-        val ipBan = ipBanRepository.get(sanitizedIP)
-        if (ipBan != null) {
-            return Ban.IP(ipBan)
+        if (aggregate.ipBan !== null && aggregate.ipBan.unbannedAt == null) {
+            return Ban.IP(aggregate.ipBan)
         }
         return null
     }

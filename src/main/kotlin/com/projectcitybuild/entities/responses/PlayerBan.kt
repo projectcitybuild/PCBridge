@@ -2,7 +2,7 @@ package com.projectcitybuild.entities.responses
 
 import com.google.gson.annotations.SerializedName
 
-data class GameBan(
+data class PlayerBan(
     @SerializedName("id") val id: Int,
     @SerializedName("server_id") val serverId: Int,
     @SerializedName("banned_player_id") val bannedPlayerId: String,

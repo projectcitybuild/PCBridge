@@ -3,7 +3,7 @@ package com.projectcitybuild.features.bans.usecases
 import com.projectcitybuild.DateTimeFormatterMock
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Success
-import com.projectcitybuild.entities.responses.GameBan
+import com.projectcitybuild.entities.responses.PlayerBan
 import com.projectcitybuild.repositories.BanRepository
 import com.projectcitybuild.repositories.PlayerUUIDRepository
 import kotlinx.coroutines.test.runTest
@@ -52,7 +52,7 @@ class CheckBanUUIDUseCaseTest {
 
         `when`(playerUUIDRepository.get(playerName)).thenReturn(playerUUID)
         `when`(banRepository.get(playerUUID)).thenReturn(
-            GameBan(
+            PlayerBan(
                 id = 1,
                 serverId = 2,
                 bannedPlayerId = playerUUID.toString(),
@@ -86,7 +86,7 @@ class CheckBanUUIDUseCaseTest {
 
         `when`(playerUUIDRepository.get(playerName)).thenReturn(playerUUID)
         `when`(banRepository.get(playerUUID)).thenReturn(
-            GameBan(
+            PlayerBan(
                 id = 1,
                 serverId = 2,
                 bannedPlayerId = playerUUID.toString(),

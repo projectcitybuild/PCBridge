@@ -1,10 +1,10 @@
 package com.projectcitybuild
 
-import com.projectcitybuild.entities.responses.GameBan
+import com.projectcitybuild.entities.responses.PlayerBan
 import java.util.UUID
 
-fun GameBanMock(): GameBan {
-    return GameBan(
+fun PlayerBanMock(): PlayerBan {
+    return PlayerBan(
         id = 1,
         serverId = 2,
         bannedPlayerId = UUID.randomUUID().toString(),

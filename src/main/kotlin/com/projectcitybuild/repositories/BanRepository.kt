@@ -2,7 +2,7 @@ package com.projectcitybuild.repositories
 
 import com.projectcitybuild.core.http.APIRequestFactory
 import com.projectcitybuild.core.http.core.APIClient
-import com.projectcitybuild.entities.responses.GameBan
+import com.projectcitybuild.entities.responses.PlayerBan
 import java.util.UUID
 import javax.inject.Inject
 
@@ -19,7 +19,8 @@ class BanRepository @Inject constructor(
         targetPlayerName: String,
         bannerPlayerUUID: UUID?,
         bannerPlayerName: String,
-        reason: String?
+        reason: String?,
+        expiryDate: Long? = null,
     ) {
         try {
             apiClient.execute {
@@ -29,7 +30,7 @@ class BanRepository @Inject constructor(
                     bannerPlayerId = bannerPlayerUUID.toString(),
                     bannerPlayerAlias = bannerPlayerName,
                     reason = reason,
-                    expiresAt = null,
+                    expiresAt = expiryDate,
                 )
             }
         } catch (e: APIClient.HTTPError) {
@@ -57,7 +58,7 @@ class BanRepository @Inject constructor(
         }
     }
 
-    suspend fun get(targetPlayerUUID: UUID): GameBan? {
+    suspend fun get(targetPlayerUUID: UUID): PlayerBan? {
         val response = apiClient.execute {
             apiRequestFactory.pcb.banAPI.status(
                 playerId = targetPlayerUUID.toString(),

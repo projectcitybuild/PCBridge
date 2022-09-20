@@ -10,9 +10,12 @@ class AggregateRepository @Inject constructor(
     private val apiClient: APIClient,
     private val apiRequestFactory: APIRequestFactory,
 ) {
-    suspend fun get(playerUUID: UUID): Aggregate? {
+    suspend fun get(playerUUID: UUID, ip: String): Aggregate? {
         val aggregate = apiClient.execute {
-            apiRequestFactory.pcb.aggregateAPI.get(uuid = playerUUID.toString())
+            apiRequestFactory.pcb.aggregateAPI.get(
+                uuid = playerUUID.toString(),
+                ip = ip,
+            )
         }
         return aggregate.data
     }
