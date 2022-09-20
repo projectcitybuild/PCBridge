@@ -1,7 +1,7 @@
 package com.projectcitybuild.entities.responses
 
 import com.google.gson.annotations.SerializedName
-import java.util.*
+import java.util.UUID
 
 data class Account(
     @SerializedName("account_id") val id: String = UUID.randomUUID().toString(),

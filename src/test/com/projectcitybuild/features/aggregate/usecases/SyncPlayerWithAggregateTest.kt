@@ -14,12 +14,11 @@ import com.projectcitybuild.modules.permissions.Permissions
 import com.projectcitybuild.repositories.ChatBadgeRepository
 import com.projectcitybuild.support.spigot.logger.Logger
 import kotlinx.coroutines.test.runTest
-import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.verify
-import java.util.*
+import java.util.UUID
 
 class SyncPlayerWithAggregateTest {
 
@@ -55,7 +54,7 @@ class SyncPlayerWithAggregateTest {
         val uuid = UUID.randomUUID()
 
         keyValueStorage.set(
-            key = ConfigStorageKey(path = "donors.tiers.copper_tier.permission_group_name", defaultValue =  "default"),
+            key = ConfigStorageKey(path = "donors.tiers.copper_tier.permission_group_name", defaultValue = "default"),
             value = "tier1",
         )
 
