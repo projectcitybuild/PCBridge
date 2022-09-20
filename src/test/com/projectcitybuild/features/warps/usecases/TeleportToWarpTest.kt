@@ -1,8 +1,8 @@
 package com.projectcitybuild.features.warps.usecases
 
-import com.projectcitybuild.WarpMock
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Success
+import com.projectcitybuild.entities.Warp
 import com.projectcitybuild.modules.nameguesser.NameGuesser
 import com.projectcitybuild.repositories.WarpRepository
 import com.projectcitybuild.support.spigot.eventbroadcast.LocalEventBroadcaster
@@ -61,7 +61,7 @@ class TeleportToWarpTest {
     @Test
     fun `should fail if world not found`() = runTest {
         val warpName = "warp"
-        val warp = WarpMock(warpName)
+        val warp = Warp(name = warpName)
 
         `when`(warpRepository.names()).thenReturn(listOf(warp.name))
         `when`(warpRepository.first(warpName)).thenReturn(warp)
@@ -76,7 +76,7 @@ class TeleportToWarpTest {
     @Test
     fun `should teleport player if possible`() = runTest {
         val warpName = "warp"
-        val warp = WarpMock(warpName)
+        val warp = Warp(name = warpName)
         val world = mock(World::class.java)
 
         `when`(warpRepository.names()).thenReturn(listOf(warp.name))

@@ -1,13 +1,13 @@
 package com.projectcitybuild.plugin.listeners
 
 import com.projectcitybuild.DateTimeFormatterMock
-import com.projectcitybuild.PlayerBanMock
 import com.projectcitybuild.entities.responses.Aggregate
+import com.projectcitybuild.entities.responses.IPBan
+import com.projectcitybuild.entities.responses.PlayerBan
 import com.projectcitybuild.features.aggregate.AuthoriseConnection
 import com.projectcitybuild.features.aggregate.GetAggregate
 import com.projectcitybuild.features.aggregate.SyncPlayerWithAggregate
 import com.projectcitybuild.modules.errorreporting.ErrorReporter
-import com.projectcitybuild.stubs.IPBanMock
 import com.projectcitybuild.support.spigot.logger.Logger
 import kotlinx.coroutines.test.runTest
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent
@@ -62,8 +62,8 @@ class AsyncPreLoginListenerTest {
     @Test
     fun `cancels login event if player is banned`() = runTest {
         arrayOf(
-            AuthoriseConnection.Ban.UUID(PlayerBanMock()),
-            AuthoriseConnection.Ban.IP(IPBanMock()),
+            AuthoriseConnection.Ban.UUID(PlayerBan()),
+            AuthoriseConnection.Ban.IP(IPBan()),
         ).forEach { ban ->
             val uuid = UUID.randomUUID()
             val ip = "127.0.0.1"

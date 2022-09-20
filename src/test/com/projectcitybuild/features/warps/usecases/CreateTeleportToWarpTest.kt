@@ -1,8 +1,8 @@
 package com.projectcitybuild.features.warps.usecases
 
-import com.projectcitybuild.CrossServerLocationMock
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Success
+import com.projectcitybuild.entities.SerializableLocation
 import com.projectcitybuild.entities.Warp
 import com.projectcitybuild.modules.datetime.time.Time
 import com.projectcitybuild.repositories.WarpRepository
@@ -40,7 +40,7 @@ class CreateTeleportToWarpTest {
         val warpName = "warp"
         `when`(warpRepository.exists(warpName)).thenReturn(true)
 
-        val result = useCase.createWarp(warpName, CrossServerLocationMock())
+        val result = useCase.createWarp(warpName, SerializableLocation())
 
         assertEquals(result, Failure(CreateWarp.FailureReason.WARP_ALREADY_EXISTS))
     }
@@ -48,7 +48,7 @@ class CreateTeleportToWarpTest {
     @Test
     fun `should create new warp`() = runTest {
         val warpName = "warp"
-        val location = CrossServerLocationMock()
+        val location = SerializableLocation()
         val now = LocalDateTime.now()
 
         `when`(warpRepository.exists(warpName)).thenReturn(false)
@@ -69,7 +69,7 @@ class CreateTeleportToWarpTest {
     @Test
     fun `should emit an event when a warp is created`() = runTest {
         val warpName = "warp"
-        val location = CrossServerLocationMock()
+        val location = SerializableLocation()
         val now = LocalDateTime.now()
 
         `when`(warpRepository.exists(warpName)).thenReturn(false)
