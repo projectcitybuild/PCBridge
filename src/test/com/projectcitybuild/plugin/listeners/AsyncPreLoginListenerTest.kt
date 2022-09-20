@@ -70,9 +70,9 @@ class AsyncPreLoginListenerTest {
             val event = loginEvent(uuid, ip)
 
             `when`(getAggregate.execute(uuid, ip))
-                .thenReturn(Aggregate.stub)
+                .thenReturn(Aggregate())
 
-            `when`(authoriseConnection.execute(Aggregate.stub))
+            `when`(authoriseConnection.execute(Aggregate()))
                 .thenReturn(AuthoriseConnection.ConnectResult.Denied(ban))
 
             listener.onAsyncPreLogin(event)
@@ -88,9 +88,9 @@ class AsyncPreLoginListenerTest {
         val event = loginEvent(uuid, ip)
 
         `when`(getAggregate.execute(uuid, ip))
-            .thenReturn(Aggregate.stub)
+            .thenReturn(Aggregate())
 
-        `when`(authoriseConnection.execute(Aggregate.stub))
+        `when`(authoriseConnection.execute(Aggregate()))
             .thenReturn(null)
 
         listener.onAsyncPreLogin(event)
@@ -105,9 +105,9 @@ class AsyncPreLoginListenerTest {
         val event = loginEvent(uuid, ip)
 
         `when`(getAggregate.execute(uuid, ip))
-            .thenReturn(Aggregate.stub)
+            .thenReturn(Aggregate())
 
-        `when`(authoriseConnection.execute(Aggregate.stub))
+        `when`(authoriseConnection.execute(Aggregate()))
             .thenThrow(Exception())
 
         listener.onAsyncPreLogin(event)
@@ -123,9 +123,9 @@ class AsyncPreLoginListenerTest {
         val exception = Exception()
 
         `when`(getAggregate.execute(uuid, ip))
-            .thenReturn(Aggregate.stub)
+            .thenReturn(Aggregate())
 
-        `when`(authoriseConnection.execute(Aggregate.stub))
+        `when`(authoriseConnection.execute(Aggregate()))
             .thenThrow(exception)
 
         listener.onAsyncPreLogin(event)
