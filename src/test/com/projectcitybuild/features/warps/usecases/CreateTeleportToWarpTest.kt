@@ -18,9 +18,9 @@ import org.powermock.api.mockito.PowerMockito.mock
 import org.powermock.api.mockito.PowerMockito.`when`
 import java.time.LocalDateTime
 
-class CreateTeleportToWarpUseCaseTest {
+class CreateTeleportToWarpTest {
 
-    private lateinit var useCase: CreateWarpUseCase
+    private lateinit var useCase: CreateWarp
 
     private lateinit var warpRepository: WarpRepository
     private lateinit var localEventBroadcaster: LocalEventBroadcaster
@@ -32,7 +32,7 @@ class CreateTeleportToWarpUseCaseTest {
         localEventBroadcaster = mock(LocalEventBroadcaster::class.java)
         time = mock(Time::class.java)
 
-        useCase = CreateWarpUseCase(warpRepository, localEventBroadcaster, time)
+        useCase = CreateWarp(warpRepository, localEventBroadcaster, time)
     }
 
     @Test
@@ -42,7 +42,7 @@ class CreateTeleportToWarpUseCaseTest {
 
         val result = useCase.createWarp(warpName, CrossServerLocationMock())
 
-        assertEquals(result, Failure(CreateWarpUseCase.FailureReason.WARP_ALREADY_EXISTS))
+        assertEquals(result, Failure(CreateWarp.FailureReason.WARP_ALREADY_EXISTS))
     }
 
     @Test

@@ -12,9 +12,9 @@ import org.junit.jupiter.api.Test
 import org.powermock.api.mockito.PowerMockito.mock
 import org.powermock.api.mockito.PowerMockito.`when`
 
-class GetWarpListUseCaseTest {
+class GetWarpListTest {
 
-    private lateinit var useCase: GetWarpListUseCase
+    private lateinit var useCase: GetWarpList
     private lateinit var keyValueStorage: MemoryKeyValueStorage
     private lateinit var config: Config
 
@@ -24,7 +24,7 @@ class GetWarpListUseCaseTest {
     fun setUp() {
         keyValueStorage = MemoryKeyValueStorage()
         config = Config(keyValueStorage)
-        useCase = GetWarpListUseCase(
+        useCase = GetWarpList(
             warpRepository,
             config,
         )

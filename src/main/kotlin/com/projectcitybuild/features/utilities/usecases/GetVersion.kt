@@ -3,7 +3,7 @@ package com.projectcitybuild.features.utilities.usecases
 import java.util.Properties
 import javax.inject.Inject
 
-class GetVersionUseCase @Inject constructor() {
+class GetVersion @Inject constructor() {
 
     data class Version(
         val version: String,

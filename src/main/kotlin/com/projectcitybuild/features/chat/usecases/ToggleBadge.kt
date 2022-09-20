@@ -4,7 +4,7 @@ import com.projectcitybuild.repositories.PlayerConfigRepository
 import java.util.UUID
 import javax.inject.Inject
 
-class ToggleBadgeUseCase @Inject constructor(
+class ToggleBadge @Inject constructor(
     private val playerConfigRepository: PlayerConfigRepository,
 ) {
     fun execute(willBeDisabled: Boolean, playerUUID: UUID) {

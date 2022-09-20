@@ -1,6 +1,6 @@
 package com.projectcitybuild.plugin.commands
 
-import com.projectcitybuild.features.chat.usecases.ToggleBadgeUseCase
+import com.projectcitybuild.features.chat.usecases.ToggleBadge
 import com.projectcitybuild.support.spigot.commands.InvalidCommandArgumentsException
 import com.projectcitybuild.support.spigot.commands.SpigotCommand
 import com.projectcitybuild.support.spigot.commands.SpigotCommandInput
@@ -9,7 +9,7 @@ import org.bukkit.command.CommandSender
 import javax.inject.Inject
 
 class BadgeCommand @Inject constructor(
-    private val toggleBadgeUseCase: ToggleBadgeUseCase,
+    private val toggleBadge: ToggleBadge,
 ) : SpigotCommand {
 
     override val label = "badge"
@@ -26,7 +26,7 @@ class BadgeCommand @Inject constructor(
             "off" -> true
             else -> throw InvalidCommandArgumentsException()
         }
-        toggleBadgeUseCase.execute(
+        toggleBadge.execute(
             willBeDisabled = shouldDisableBadge,
             playerUUID = input.player.uniqueId,
         )

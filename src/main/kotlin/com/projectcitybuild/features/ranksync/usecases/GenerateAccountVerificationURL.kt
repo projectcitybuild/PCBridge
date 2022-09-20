@@ -8,7 +8,7 @@ import com.projectcitybuild.core.utilities.Success
 import java.util.UUID
 import javax.inject.Inject
 
-class GenerateAccountVerificationURLUseCase @Inject constructor(
+class GenerateAccountVerificationURL @Inject constructor(
     private val apiRequestFactory: APIRequestFactory,
     private val apiClient: APIClient,
 ) {

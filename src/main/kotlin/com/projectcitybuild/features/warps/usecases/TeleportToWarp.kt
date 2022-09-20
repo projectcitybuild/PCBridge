@@ -13,7 +13,7 @@ import org.bukkit.Server
 import org.bukkit.entity.Player
 import javax.inject.Inject
 
-class TeleportToWarpUseCase @Inject constructor(
+class TeleportToWarp @Inject constructor(
     private val warpRepository: WarpRepository,
     private val nameGuesser: NameGuesser,
     private val logger: Logger,

@@ -3,7 +3,7 @@ package com.projectcitybuild.plugin.commands
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Success
 import com.projectcitybuild.entities.SerializableLocation
-import com.projectcitybuild.features.warps.usecases.CreateWarpUseCase
+import com.projectcitybuild.features.warps.usecases.CreateWarp
 import com.projectcitybuild.support.spigot.commands.InvalidCommandArgumentsException
 import com.projectcitybuild.support.spigot.commands.SpigotCommand
 import com.projectcitybuild.support.spigot.commands.SpigotCommandInput
@@ -12,7 +12,7 @@ import org.bukkit.entity.Player
 import javax.inject.Inject
 
 class SetWarpCommand @Inject constructor(
-    private val createWarp: CreateWarpUseCase,
+    private val createWarp: CreateWarp,
 ) : SpigotCommand {
 
     override val label = "setwarp"
@@ -38,7 +38,7 @@ class SetWarpCommand @Inject constructor(
             is Success -> input.sender.send().success("Created warp for $warpName")
             is Failure -> input.sender.send().error(
                 when (result.reason) {
-                    CreateWarpUseCase.FailureReason.WARP_ALREADY_EXISTS -> "A warp for $warpName already exists"
+                    CreateWarp.FailureReason.WARP_ALREADY_EXISTS -> "A warp for $warpName already exists"
                 }
             )
         }
