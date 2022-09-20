@@ -24,7 +24,7 @@ class UnbanIPCommand @Inject constructor(
 
         val targetIP = input.args.first()
 
-        val result = unbanIP.unbanIP(
+        val result = unbanIP.execute(
             ip = targetIP,
             unbannerUUID = input.player.uniqueId,
             unbannerName = input.player.name,
