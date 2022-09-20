@@ -2,7 +2,10 @@ package com.projectcitybuild.plugin.listeners
 
 import com.projectcitybuild.DateTimeFormatterMock
 import com.projectcitybuild.PlayerBanMock
+import com.projectcitybuild.entities.responses.Aggregate
 import com.projectcitybuild.features.aggregate.AuthoriseConnection
+import com.projectcitybuild.features.aggregate.GetAggregate
+import com.projectcitybuild.features.aggregate.SyncPlayerWithAggregate
 import com.projectcitybuild.modules.errorreporting.ErrorReporter
 import com.projectcitybuild.stubs.IPBanMock
 import com.projectcitybuild.support.spigot.logger.Logger
@@ -24,16 +27,22 @@ class AsyncPreLoginListenerTest {
 
     private lateinit var listener: AsyncPreLoginListener
 
+    private lateinit var getAggregate: GetAggregate
     private lateinit var authoriseConnection: AuthoriseConnection
+    private lateinit var syncPlayerWithAggregate: SyncPlayerWithAggregate
     private lateinit var errorReporter: ErrorReporter
 
     @BeforeEach
     fun setUp() {
+        getAggregate = mock(GetAggregate::class.java)
         authoriseConnection = mock(AuthoriseConnection::class.java)
+        syncPlayerWithAggregate = mock(SyncPlayerWithAggregate::class.java)
         errorReporter = mock(ErrorReporter::class.java)
 
         listener = AsyncPreLoginListener(
-            authoriseConnection = authoriseConnection,
+            getAggregate,
+            authoriseConnection,
+            syncPlayerWithAggregate,
             mock(Logger::class.java),
             DateTimeFormatterMock(),
             errorReporter,
@@ -60,7 +69,10 @@ class AsyncPreLoginListenerTest {
             val ip = "127.0.0.1"
             val event = loginEvent(uuid, ip)
 
-            `when`(authoriseConnection.execute(uuid, ip))
+            `when`(getAggregate.execute(uuid, ip))
+                .thenReturn(Aggregate.stub)
+
+            `when`(authoriseConnection.execute(Aggregate.stub))
                 .thenReturn(AuthoriseConnection.ConnectResult.Denied(ban))
 
             listener.onAsyncPreLogin(event)
@@ -75,7 +87,10 @@ class AsyncPreLoginListenerTest {
         val ip = "127.0.0.1"
         val event = loginEvent(uuid, ip)
 
-        `when`(authoriseConnection.execute(uuid, ip))
+        `when`(getAggregate.execute(uuid, ip))
+            .thenReturn(Aggregate.stub)
+
+        `when`(authoriseConnection.execute(Aggregate.stub))
             .thenReturn(null)
 
         listener.onAsyncPreLogin(event)
@@ -89,7 +104,10 @@ class AsyncPreLoginListenerTest {
         val ip = "127.0.0.1"
         val event = loginEvent(uuid, ip)
 
-        `when`(authoriseConnection.execute(uuid, ip))
+        `when`(getAggregate.execute(uuid, ip))
+            .thenReturn(Aggregate.stub)
+
+        `when`(authoriseConnection.execute(Aggregate.stub))
             .thenThrow(Exception())
 
         listener.onAsyncPreLogin(event)
@@ -104,7 +122,10 @@ class AsyncPreLoginListenerTest {
         val event = loginEvent(uuid, ip)
         val exception = Exception()
 
-        `when`(authoriseConnection.execute(uuid, ip))
+        `when`(getAggregate.execute(uuid, ip))
+            .thenReturn(Aggregate.stub)
+
+        `when`(authoriseConnection.execute(Aggregate.stub))
             .thenThrow(exception)
 
         listener.onAsyncPreLogin(event)

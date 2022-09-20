@@ -9,4 +9,15 @@ data class Aggregate(
     @SerializedName("ip_ban") val ipBan: IPBan?,
     @SerializedName("badges") val badges: List<Badge>,
     @SerializedName("donation_tiers") val donationPerks: List<DonationPerk>,
-)
+) {
+    companion object {
+        val stub: Aggregate
+            get() = Aggregate(
+                account = null,
+                playerBan = null,
+                ipBan = null,
+                badges = emptyList(),
+                donationPerks = emptyList(),
+            )
+    }
+}

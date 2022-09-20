@@ -9,7 +9,7 @@ import com.projectcitybuild.support.spigot.logger.Logger
 import java.util.UUID
 import javax.inject.Inject
 
-class SyncConnectionWithPlayer @Inject constructor(
+class SyncPlayerWithAggregate @Inject constructor(
     private val permissions: Permissions,
     private val chatBadgeRepository: ChatBadgeRepository,
     private val config: Config,

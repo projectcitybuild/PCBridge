@@ -3,7 +3,7 @@ package com.projectcitybuild.plugin.listeners
 import com.projectcitybuild.core.SpigotListener
 import com.projectcitybuild.features.aggregate.AuthoriseConnection
 import com.projectcitybuild.features.aggregate.GetAggregate
-import com.projectcitybuild.features.aggregate.SyncConnectionWithPlayer
+import com.projectcitybuild.features.aggregate.SyncPlayerWithAggregate
 import com.projectcitybuild.modules.datetime.formatter.DateTimeFormatter
 import com.projectcitybuild.modules.errorreporting.ErrorReporter
 import com.projectcitybuild.support.spigot.logger.Logger
@@ -20,7 +20,7 @@ import javax.inject.Inject
 class AsyncPreLoginListener @Inject constructor(
     private val getAggregate: GetAggregate,
     private val authoriseConnection: AuthoriseConnection,
-    private val syncPlayerWithAggregate: SyncConnectionWithPlayer,
+    private val syncPlayerWithAggregate: SyncPlayerWithAggregate,
     private val logger: Logger,
     private val dateTimeFormatter: DateTimeFormatter,
     private val errorReporter: ErrorReporter,

@@ -16,6 +16,7 @@ class AuthoriseConnection @Inject constructor() {
         data class IP(val value: IPBan) : Ban()
     }
 
+    @Throws(Exception::class)
     fun execute(aggregate: Aggregate): ConnectResult {
         val ban = getBan(aggregate)
         if (ban != null) {
