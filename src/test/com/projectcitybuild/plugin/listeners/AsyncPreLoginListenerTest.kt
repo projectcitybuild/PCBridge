@@ -1,10 +1,13 @@
 package com.projectcitybuild.plugin.listeners
 
 import com.projectcitybuild.DateTimeFormatterMock
-import com.projectcitybuild.PlayerBanMock
-import com.projectcitybuild.features.aggregate.ConnectPlayer
+import com.projectcitybuild.entities.responses.Aggregate
+import com.projectcitybuild.entities.responses.IPBan
+import com.projectcitybuild.entities.responses.PlayerBan
+import com.projectcitybuild.features.aggregate.AuthoriseConnection
+import com.projectcitybuild.features.aggregate.GetAggregate
+import com.projectcitybuild.features.aggregate.SyncPlayerWithAggregate
 import com.projectcitybuild.modules.errorreporting.ErrorReporter
-import com.projectcitybuild.stubs.IPBanMock
 import com.projectcitybuild.support.spigot.logger.Logger
 import kotlinx.coroutines.test.runTest
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent
@@ -24,16 +27,22 @@ class AsyncPreLoginListenerTest {
 
     private lateinit var listener: AsyncPreLoginListener
 
-    private lateinit var connectPlayer: ConnectPlayer
+    private lateinit var getAggregate: GetAggregate
+    private lateinit var authoriseConnection: AuthoriseConnection
+    private lateinit var syncPlayerWithAggregate: SyncPlayerWithAggregate
     private lateinit var errorReporter: ErrorReporter
 
     @BeforeEach
     fun setUp() {
-        connectPlayer = mock(ConnectPlayer::class.java)
+        getAggregate = mock(GetAggregate::class.java)
+        authoriseConnection = mock(AuthoriseConnection::class.java)
+        syncPlayerWithAggregate = mock(SyncPlayerWithAggregate::class.java)
         errorReporter = mock(ErrorReporter::class.java)
 
         listener = AsyncPreLoginListener(
-            connectPlayer = connectPlayer,
+            getAggregate,
+            authoriseConnection,
+            syncPlayerWithAggregate,
             mock(Logger::class.java),
             DateTimeFormatterMock(),
             errorReporter,
@@ -53,15 +62,18 @@ class AsyncPreLoginListenerTest {
     @Test
     fun `cancels login event if player is banned`() = runTest {
         arrayOf(
-            ConnectPlayer.Ban.UUID(PlayerBanMock()),
-            ConnectPlayer.Ban.IP(IPBanMock()),
+            AuthoriseConnection.Ban.UUID(PlayerBan()),
+            AuthoriseConnection.Ban.IP(IPBan()),
         ).forEach { ban ->
             val uuid = UUID.randomUUID()
             val ip = "127.0.0.1"
             val event = loginEvent(uuid, ip)
 
-            `when`(connectPlayer.execute(uuid, ip))
-                .thenReturn(ConnectPlayer.ConnectResult.Denied(ban))
+            `when`(getAggregate.execute(uuid, ip))
+                .thenReturn(Aggregate())
+
+            `when`(authoriseConnection.execute(Aggregate()))
+                .thenReturn(AuthoriseConnection.ConnectResult.Denied(ban))
 
             listener.onAsyncPreLogin(event)
 
@@ -75,7 +87,10 @@ class AsyncPreLoginListenerTest {
         val ip = "127.0.0.1"
         val event = loginEvent(uuid, ip)
 
-        `when`(connectPlayer.execute(uuid, ip))
+        `when`(getAggregate.execute(uuid, ip))
+            .thenReturn(Aggregate())
+
+        `when`(authoriseConnection.execute(Aggregate()))
             .thenReturn(null)
 
         listener.onAsyncPreLogin(event)
@@ -89,7 +104,10 @@ class AsyncPreLoginListenerTest {
         val ip = "127.0.0.1"
         val event = loginEvent(uuid, ip)
 
-        `when`(connectPlayer.execute(uuid, ip))
+        `when`(getAggregate.execute(uuid, ip))
+            .thenReturn(Aggregate())
+
+        `when`(authoriseConnection.execute(Aggregate()))
             .thenThrow(Exception())
 
         listener.onAsyncPreLogin(event)
@@ -104,7 +122,10 @@ class AsyncPreLoginListenerTest {
         val event = loginEvent(uuid, ip)
         val exception = Exception()
 
-        `when`(connectPlayer.execute(uuid, ip))
+        `when`(getAggregate.execute(uuid, ip))
+            .thenReturn(Aggregate())
+
+        `when`(authoriseConnection.execute(Aggregate()))
             .thenThrow(exception)
 
         listener.onAsyncPreLogin(event)

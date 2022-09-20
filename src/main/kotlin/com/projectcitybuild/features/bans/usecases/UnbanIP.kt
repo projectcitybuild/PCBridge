@@ -17,7 +17,7 @@ class UnbanIP @Inject constructor(
         INVALID_IP,
     }
 
-    suspend fun unbanIP(
+    suspend fun execute(
         ip: String,
         unbannerUUID: UUID,
         unbannerName: String,
