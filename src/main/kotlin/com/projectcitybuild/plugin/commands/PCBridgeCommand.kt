@@ -1,6 +1,5 @@
 package com.projectcitybuild.plugin.commands
 
-import com.projectcitybuild.features.utilities.usecases.DataImportUseCase
 import com.projectcitybuild.features.utilities.usecases.GetVersionUseCase
 import com.projectcitybuild.features.utilities.usecases.ReloadPluginUseCase
 import com.projectcitybuild.support.spigot.commands.InvalidCommandArgumentsException
@@ -12,7 +11,6 @@ import javax.inject.Inject
 
 class PCBridgeCommand @Inject constructor(
     private val getVersion: GetVersionUseCase,
-    private val dataImport: DataImportUseCase,
     private val reloadPlugin: ReloadPluginUseCase,
 ) : SpigotCommand {
 
@@ -23,7 +21,6 @@ class PCBridgeCommand @Inject constructor(
     override suspend fun execute(input: SpigotCommandInput) {
         when {
             input.args.isEmpty() -> showVersion(input.sender)
-            input.args.first() == "import" -> dataImport.execute(sender = input.player, args = input.args)
             input.args.first() == "reload" -> reloadPlugin(input)
             else -> throw InvalidCommandArgumentsException()
         }

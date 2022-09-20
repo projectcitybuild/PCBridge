@@ -3,8 +3,8 @@ package com.projectcitybuild.features.bans.usecases
 import com.projectcitybuild.DateTimeFormatterMock
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Success
-import com.projectcitybuild.entities.responses.GameBan
-import com.projectcitybuild.repositories.BanRepository
+import com.projectcitybuild.entities.responses.PlayerBan
+import com.projectcitybuild.repositories.PlayerBanRepository
 import com.projectcitybuild.repositories.PlayerUUIDRepository
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -14,20 +14,20 @@ import org.powermock.api.mockito.PowerMockito.mock
 import org.powermock.api.mockito.PowerMockito.`when`
 import java.util.UUID
 
-class CheckBanUUIDUseCaseTest {
+class CheckBanUUIDTest {
 
-    private lateinit var useCase: CheckUUIDBanUseCase
+    private lateinit var useCase: CheckUUIDBan
 
-    private lateinit var banRepository: BanRepository
+    private lateinit var playerBanRepository: PlayerBanRepository
     private lateinit var playerUUIDRepository: PlayerUUIDRepository
 
     @BeforeEach
     fun setUp() {
-        banRepository = mock(BanRepository::class.java)
+        playerBanRepository = mock(PlayerBanRepository::class.java)
         playerUUIDRepository = mock(PlayerUUIDRepository::class.java)
 
-        useCase = CheckUUIDBanUseCase(
-            banRepository,
+        useCase = CheckUUIDBan(
+            playerBanRepository,
             playerUUIDRepository,
             DateTimeFormatterMock()
         )
@@ -41,7 +41,7 @@ class CheckBanUUIDUseCaseTest {
 
         val result = useCase.getBan(playerName)
 
-        assertEquals(result, Failure(CheckUUIDBanUseCase.FailureReason.PLAYER_DOES_NOT_EXIST))
+        assertEquals(result, Failure(CheckUUIDBan.FailureReason.PLAYER_DOES_NOT_EXIST))
     }
 
     @Test
@@ -51,8 +51,8 @@ class CheckBanUUIDUseCaseTest {
         val staffUUID = UUID.randomUUID()
 
         `when`(playerUUIDRepository.get(playerName)).thenReturn(playerUUID)
-        `when`(banRepository.get(playerUUID)).thenReturn(
-            GameBan(
+        `when`(playerBanRepository.get(playerUUID)).thenReturn(
+            PlayerBan(
                 id = 1,
                 serverId = 2,
                 bannedPlayerId = playerUUID.toString(),
@@ -69,7 +69,7 @@ class CheckBanUUIDUseCaseTest {
         )
 
         val result = useCase.getBan(playerName)
-        val expected = CheckUUIDBanUseCase.BanRecord(
+        val expected = CheckUUIDBan.BanRecord(
             reason = "griefing",
             dateOfBan = "Jan 23, 2022, 4:06:12 PM",
             expiryDate = "Never"
@@ -85,8 +85,8 @@ class CheckBanUUIDUseCaseTest {
         val staffUUID = UUID.randomUUID()
 
         `when`(playerUUIDRepository.get(playerName)).thenReturn(playerUUID)
-        `when`(banRepository.get(playerUUID)).thenReturn(
-            GameBan(
+        `when`(playerBanRepository.get(playerUUID)).thenReturn(
+            PlayerBan(
                 id = 1,
                 serverId = 2,
                 bannedPlayerId = playerUUID.toString(),
@@ -103,7 +103,7 @@ class CheckBanUUIDUseCaseTest {
         )
 
         val result = useCase.getBan(playerName)
-        val expected = CheckUUIDBanUseCase.BanRecord(
+        val expected = CheckUUIDBan.BanRecord(
             reason = "griefing",
             dateOfBan = "Jan 23, 2022, 4:06:12 PM",
             expiryDate = "Jan 25, 2022, 11:06:05 AM"

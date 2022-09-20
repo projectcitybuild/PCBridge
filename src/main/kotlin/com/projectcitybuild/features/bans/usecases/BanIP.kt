@@ -4,27 +4,26 @@ import com.projectcitybuild.core.Regex
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Result
 import com.projectcitybuild.core.utilities.Success
-import com.projectcitybuild.entities.IPBan
 import com.projectcitybuild.features.bans.Sanitizer
-import com.projectcitybuild.modules.datetime.time.Time
 import com.projectcitybuild.repositories.IPBanRepository
 import com.projectcitybuild.support.spigot.kick.PlayerKicker
+import java.util.UUID
 import javax.inject.Inject
 
-class BanIPUseCase @Inject constructor(
+class BanIP @Inject constructor(
     private val ipBanRepository: IPBanRepository,
     private val playerKicker: PlayerKicker,
-    private val time: Time,
 ) {
     enum class FailureReason {
         IP_ALREADY_BANNED,
         INVALID_IP,
     }
 
-    fun banIP(
+    suspend fun execute(
         ip: String,
-        bannerName: String?,
-        reason: String?
+        bannerUUID: UUID,
+        bannerName: String,
+        reason: String,
     ): Result<Unit, FailureReason> {
         val sanitizedIP = Sanitizer().sanitizedIP(ip)
 
@@ -33,18 +32,16 @@ class BanIPUseCase @Inject constructor(
             return Failure(FailureReason.INVALID_IP)
         }
 
-        val existingBan = ipBanRepository.get(sanitizedIP)
-        if (existingBan != null) {
+        try {
+            ipBanRepository.ban(
+                ip = sanitizedIP,
+                bannerUUID = bannerUUID,
+                bannerName = bannerName,
+                reason = reason,
+            )
+        } catch (e: IPBanRepository.IPAlreadyBannedException) {
             return Failure(FailureReason.IP_ALREADY_BANNED)
         }
-
-        val ban = IPBan(
-            ip = sanitizedIP,
-            bannerName = bannerName,
-            reason = reason ?: "",
-            createdAt = time.now(),
-        )
-        ipBanRepository.put(ban)
 
         playerKicker.kickByIP(
             ip = ip,

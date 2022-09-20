@@ -2,11 +2,11 @@ package com.projectcitybuild.repositories
 
 import com.projectcitybuild.core.http.APIRequestFactory
 import com.projectcitybuild.core.http.core.APIClient
-import com.projectcitybuild.entities.responses.GameBan
+import com.projectcitybuild.entities.responses.PlayerBan
 import java.util.UUID
 import javax.inject.Inject
 
-class BanRepository @Inject constructor(
+class PlayerBanRepository @Inject constructor(
     private val apiRequestFactory: APIRequestFactory,
     private val apiClient: APIClient,
 ) {
@@ -19,17 +19,18 @@ class BanRepository @Inject constructor(
         targetPlayerName: String,
         bannerPlayerUUID: UUID?,
         bannerPlayerName: String,
-        reason: String?
+        reason: String?,
+        expiryDate: Long? = null,
     ) {
         try {
             apiClient.execute {
-                apiRequestFactory.pcb.banAPI.ban(
+                apiRequestFactory.pcb.playerBanAPI.ban(
                     bannedPlayerId = targetPlayerUUID.toString(),
                     bannedPlayerAlias = targetPlayerName,
                     bannerPlayerId = bannerPlayerUUID.toString(),
                     bannerPlayerAlias = bannerPlayerName,
                     reason = reason,
-                    expiresAt = null,
+                    expiresAt = expiryDate,
                 )
             }
         } catch (e: APIClient.HTTPError) {
@@ -44,7 +45,7 @@ class BanRepository @Inject constructor(
     suspend fun unban(targetPlayerUUID: UUID, staffId: UUID?) {
         try {
             apiClient.execute {
-                apiRequestFactory.pcb.banAPI.unban(
+                apiRequestFactory.pcb.playerBanAPI.unban(
                     bannedPlayerId = targetPlayerUUID.toString(),
                     unbannerPlayerId = staffId.toString(),
                 )
@@ -57,9 +58,9 @@ class BanRepository @Inject constructor(
         }
     }
 
-    suspend fun get(targetPlayerUUID: UUID): GameBan? {
+    suspend fun get(targetPlayerUUID: UUID): PlayerBan? {
         val response = apiClient.execute {
-            apiRequestFactory.pcb.banAPI.status(
+            apiRequestFactory.pcb.playerBanAPI.status(
                 playerId = targetPlayerUUID.toString(),
             )
         }

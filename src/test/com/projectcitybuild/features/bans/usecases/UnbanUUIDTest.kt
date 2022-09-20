@@ -1,7 +1,7 @@
 package com.projectcitybuild.features.bans.usecases
 
 import com.projectcitybuild.core.utilities.Failure
-import com.projectcitybuild.repositories.BanRepository
+import com.projectcitybuild.repositories.PlayerBanRepository
 import com.projectcitybuild.repositories.PlayerUUIDRepository
 import kotlinx.coroutines.test.runTest
 import org.bukkit.Server
@@ -15,22 +15,22 @@ import org.powermock.api.mockito.PowerMockito.mock
 import org.powermock.api.mockito.PowerMockito.`when`
 import java.util.UUID
 
-class UnbanUUIDUseCaseTest {
+class UnbanUUIDTest {
 
-    private lateinit var useCase: UnbanUUIDUseCase
+    private lateinit var useCase: UnbanUUID
 
-    private lateinit var banRepository: BanRepository
+    private lateinit var playerBanRepository: PlayerBanRepository
     private lateinit var playerUUIDRepository: PlayerUUIDRepository
     private lateinit var server: Server
 
     @BeforeEach
     fun setUp() {
-        banRepository = mock(BanRepository::class.java)
+        playerBanRepository = mock(PlayerBanRepository::class.java)
         playerUUIDRepository = mock(PlayerUUIDRepository::class.java)
         server = mock(Server::class.java)
 
-        useCase = UnbanUUIDUseCase(
-            banRepository,
+        useCase = UnbanUUID(
+            playerBanRepository,
             playerUUIDRepository,
             server,
         )
@@ -44,7 +44,7 @@ class UnbanUUIDUseCaseTest {
 
         val result = useCase.unban(playerName, null)
 
-        assertEquals(result, Failure(UnbanUUIDUseCase.FailureReason.PlayerDoesNotExist))
+        assertEquals(result, Failure(UnbanUUID.FailureReason.PlayerDoesNotExist))
     }
 
     @Test
@@ -54,12 +54,12 @@ class UnbanUUIDUseCaseTest {
         val staffUUID = UUID.randomUUID()
 
         `when`(playerUUIDRepository.get(playerName)).thenReturn(playerUUID)
-        `when`(banRepository.unban(playerUUID, staffUUID))
-            .thenThrow(BanRepository.PlayerNotBannedException())
+        `when`(playerBanRepository.unban(playerUUID, staffUUID))
+            .thenThrow(PlayerBanRepository.PlayerNotBannedException())
 
         val result = useCase.unban(playerName, staffUUID)
 
-        assertEquals(result, Failure(UnbanUUIDUseCase.FailureReason.PlayerNotBanned))
+        assertEquals(result, Failure(UnbanUUID.FailureReason.PlayerNotBanned))
     }
 
     @Test
@@ -72,7 +72,7 @@ class UnbanUUIDUseCaseTest {
 
         useCase.unban(playerName, staffUUID)
 
-        verify(banRepository, times(1))
+        verify(playerBanRepository, times(1))
             .unban(playerUUID, staffUUID)
     }
 

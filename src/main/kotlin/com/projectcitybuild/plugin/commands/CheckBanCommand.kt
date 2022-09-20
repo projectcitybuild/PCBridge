@@ -2,7 +2,7 @@ package com.projectcitybuild.plugin.commands
 
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Success
-import com.projectcitybuild.features.bans.usecases.CheckUUIDBanUseCase
+import com.projectcitybuild.features.bans.usecases.CheckUUIDBan
 import com.projectcitybuild.support.spigot.commands.InvalidCommandArgumentsException
 import com.projectcitybuild.support.spigot.commands.SpigotCommand
 import com.projectcitybuild.support.spigot.commands.SpigotCommandInput
@@ -14,7 +14,7 @@ import javax.inject.Inject
 
 class CheckBanCommand @Inject constructor(
     private val server: Server,
-    private val checkUUIDBanUseCase: CheckUUIDBanUseCase,
+    private val checkUUIDBan: CheckUUIDBan,
 ) : SpigotCommand {
 
     override val label = "checkban"
@@ -27,11 +27,11 @@ class CheckBanCommand @Inject constructor(
         }
 
         val targetPlayerName = input.args.first()
-        val result = checkUUIDBanUseCase.getBan(targetPlayerName)
+        val result = checkUUIDBan.getBan(targetPlayerName)
 
         when (result) {
             is Failure -> {
-                if (result.reason == CheckUUIDBanUseCase.FailureReason.PLAYER_DOES_NOT_EXIST) {
+                if (result.reason == CheckUUIDBan.FailureReason.PLAYER_DOES_NOT_EXIST) {
                     input.sender.send().error("Could not find UUID for $targetPlayerName. This player likely doesn't exist")
                 }
             }

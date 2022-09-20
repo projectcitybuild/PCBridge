@@ -1,40 +1,67 @@
 package com.projectcitybuild.repositories
 
-import com.projectcitybuild.core.database.DataSource
-import com.projectcitybuild.entities.IPBan
+import com.projectcitybuild.core.http.APIRequestFactory
+import com.projectcitybuild.core.http.core.APIClient
+import com.projectcitybuild.entities.responses.IPBan
+import java.util.UUID
 import javax.inject.Inject
 
 class IPBanRepository @Inject constructor(
-    private val dataSource: DataSource,
+    private val apiClient: APIClient,
+    private val apiRequestFactory: APIRequestFactory,
 ) {
-    fun get(ip: String): IPBan? {
-        val row = dataSource.database().getFirstRow(
-            "SELECT * FROM `ip_bans` WHERE `ip` = ?",
-            ip,
-        ) ?: return null
+    class IPAlreadyBannedException : Exception()
+    class IPNotBannedException : Exception()
 
-        return IPBan(
-            ip = row.get("ip"),
-            bannerName = row.get("banner_name"),
-            reason = row.get("reason") ?: "",
-            createdAt = row.get("created_at"),
-        )
+    suspend fun get(ip: String): IPBan? {
+        return apiClient.execute {
+            apiRequestFactory.pcb.ipBanAPI.status(ip = ip)
+        }.data
     }
 
-    fun put(ipBan: IPBan) {
-        dataSource.database().executeInsert(
-            "INSERT INTO `ip_bans` VALUES (?, ?, ?, ?)",
-            ipBan.ip,
-            ipBan.bannerName,
-            ipBan.reason.ifEmpty { null },
-            ipBan.createdAt,
-        )
+    @Throws(IPAlreadyBannedException::class)
+    suspend fun ban(
+        ip: String,
+        bannerUUID: UUID,
+        bannerName: String,
+        reason: String,
+    ) {
+        try {
+            apiClient.execute {
+                apiRequestFactory.pcb.ipBanAPI.ban(
+                    ip = ip,
+                    bannerPlayerId = bannerUUID.toString(),
+                    bannerPlayerAlias = bannerName,
+                    reason = reason,
+                )
+            }
+        } catch (e: APIClient.HTTPError) {
+            if (e.errorBody?.id == "ip_already_banned") {
+                throw IPAlreadyBannedException()
+            }
+            throw e
+        }
     }
 
-    fun delete(ip: String) {
-        dataSource.database().executeUpdate(
-            "DELETE FROM `ip_bans` WHERE `ip` = ?",
-            ip,
-        )
+    @Throws(IPNotBannedException::class)
+    suspend fun unban(
+        ip: String,
+        unbannerUUID: UUID,
+        unbannerName: String,
+    ) {
+        try {
+            apiClient.execute {
+                apiRequestFactory.pcb.ipBanAPI.unban(
+                    ip = ip,
+                    unbannerPlayerId = unbannerUUID.toString(),
+                    unbannerPlayerAlias = unbannerName,
+                )
+            }
+        } catch (e: APIClient.HTTPError) {
+            if (e.errorBody?.id == "ip_not_banned") {
+                throw IPNotBannedException()
+            }
+            throw e
+        }
     }
 }

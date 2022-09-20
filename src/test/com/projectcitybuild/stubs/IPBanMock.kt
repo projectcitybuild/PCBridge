@@ -1,13 +1,17 @@
 package com.projectcitybuild.stubs
 
-import com.projectcitybuild.entities.IPBan
-import java.time.LocalDateTime
+import com.projectcitybuild.entities.responses.IPBan
+import java.util.UUID
 
-fun IPBanMock(ip: String? = null): IPBan {
+fun IPBanMock(): IPBan {
     return IPBan(
-        ip = ip ?: "127.0.0.1",
-        bannerName = "banner_name",
+        id = Math.random().toInt(),
+        bannerPlayerId = UUID.randomUUID().toString(),
         reason = "reason",
-        createdAt = LocalDateTime.now(),
+        createdAt = 1642958606,
+        updatedAt = 1642958606,
+        unbannedAt = null,
+        unbannerPlayerId = null,
+        unbanType = null,
     )
 }

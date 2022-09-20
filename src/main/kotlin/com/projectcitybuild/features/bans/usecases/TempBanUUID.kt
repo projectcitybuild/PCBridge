@@ -3,7 +3,7 @@ package com.projectcitybuild.features.bans.usecases
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Result
 import com.projectcitybuild.core.utilities.Success
-import com.projectcitybuild.repositories.BanRepository
+import com.projectcitybuild.repositories.PlayerBanRepository
 import com.projectcitybuild.repositories.PlayerUUIDRepository
 import com.projectcitybuild.support.spigot.kick.PlayerKicker
 import net.md_5.bungee.api.ChatColor
@@ -12,8 +12,8 @@ import org.bukkit.Server
 import java.util.UUID
 import javax.inject.Inject
 
-class BanUUIDUseCase @Inject constructor(
-    private val banRepository: BanRepository,
+class TempBanUUID @Inject constructor(
+    private val playerBanRepository: PlayerBanRepository,
     private val playerUUIDRepository: PlayerUUIDRepository,
     private val server: Server,
     private val playerKicker: PlayerKicker,
@@ -27,18 +27,20 @@ class BanUUIDUseCase @Inject constructor(
         targetPlayerName: String,
         bannerUUID: UUID?,
         bannerName: String,
-        reason: String?
+        reason: String?,
+        expiryDate: Long,
     ): Result<Unit, FailureReason> {
         try {
             val targetPlayerUUID = playerUUIDRepository.get(targetPlayerName)
                 ?: return Failure(FailureReason.PlayerDoesNotExist)
 
-            banRepository.ban(
+            playerBanRepository.ban(
                 targetPlayerUUID = targetPlayerUUID,
                 targetPlayerName = targetPlayerName,
                 bannerPlayerUUID = bannerUUID,
                 bannerPlayerName = bannerName,
-                reason = reason
+                reason = reason,
+                expiryDate = expiryDate,
             )
 
             playerKicker.kickByUUID(
@@ -48,14 +50,14 @@ class BanUUIDUseCase @Inject constructor(
             )
 
             server.broadcastMessage(
-                TextComponent("$targetPlayerName has been banned by $bannerName: ${reason ?: "No reason given"}").apply {
+                TextComponent("$targetPlayerName has been temporarily banned by $bannerName: ${reason ?: "No reason given"}").apply {
                     color = ChatColor.GRAY
                     isItalic = true
                 }.toLegacyText()
             )
 
             return Success(Unit)
-        } catch (e: BanRepository.PlayerAlreadyBannedException) {
+        } catch (e: PlayerBanRepository.PlayerAlreadyBannedException) {
             return Failure(FailureReason.PlayerAlreadyBanned)
         }
     }

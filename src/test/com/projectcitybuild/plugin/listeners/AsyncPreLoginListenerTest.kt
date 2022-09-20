@@ -1,7 +1,7 @@
 package com.projectcitybuild.plugin.listeners
 
 import com.projectcitybuild.DateTimeFormatterMock
-import com.projectcitybuild.GameBanMock
+import com.projectcitybuild.PlayerBanMock
 import com.projectcitybuild.features.aggregate.ConnectPlayerUseCase
 import com.projectcitybuild.modules.errorreporting.ErrorReporter
 import com.projectcitybuild.stubs.IPBanMock
@@ -53,7 +53,7 @@ class AsyncPreLoginListenerTest {
     @Test
     fun `cancels login event if player is banned`() = runTest {
         arrayOf(
-            ConnectPlayerUseCase.Ban.UUID(GameBanMock()),
+            ConnectPlayerUseCase.Ban.UUID(PlayerBanMock()),
             ConnectPlayerUseCase.Ban.IP(IPBanMock()),
         ).forEach { ban ->
             val uuid = UUID.randomUUID()

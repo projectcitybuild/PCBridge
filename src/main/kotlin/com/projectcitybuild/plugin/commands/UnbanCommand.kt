@@ -1,7 +1,7 @@
 package com.projectcitybuild.plugin.commands
 
 import com.projectcitybuild.core.utilities.Failure
-import com.projectcitybuild.features.bans.usecases.UnbanUUIDUseCase
+import com.projectcitybuild.features.bans.usecases.UnbanUUID
 import com.projectcitybuild.support.spigot.commands.InvalidCommandArgumentsException
 import com.projectcitybuild.support.spigot.commands.SpigotCommand
 import com.projectcitybuild.support.spigot.commands.SpigotCommandInput
@@ -12,7 +12,7 @@ import javax.inject.Inject
 
 class UnbanCommand @Inject constructor(
     private val server: Server,
-    private val unbanUUIDUseCase: UnbanUUIDUseCase,
+    private val unbanUUID: UnbanUUID,
 ) : SpigotCommand {
 
     override val label = "unban"
@@ -27,12 +27,12 @@ class UnbanCommand @Inject constructor(
         val targetPlayerName = input.args.first()
         val staffPlayer = if (input.isConsole) null else input.player
 
-        val result = unbanUUIDUseCase.unban(targetPlayerName, staffPlayer?.uniqueId)
+        val result = unbanUUID.unban(targetPlayerName, staffPlayer?.uniqueId)
         if (result is Failure) {
             input.sender.send().error(
                 when (result.reason) {
-                    UnbanUUIDUseCase.FailureReason.PlayerDoesNotExist -> "Could not find UUID for $targetPlayerName. This player likely doesn't exist"
-                    UnbanUUIDUseCase.FailureReason.PlayerNotBanned -> "$targetPlayerName is not currently banned"
+                    UnbanUUID.FailureReason.PlayerDoesNotExist -> "Could not find UUID for $targetPlayerName. This player likely doesn't exist"
+                    UnbanUUID.FailureReason.PlayerNotBanned -> "$targetPlayerName is not currently banned"
                 }
             )
         }
