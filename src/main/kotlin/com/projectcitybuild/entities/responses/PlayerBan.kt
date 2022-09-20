@@ -15,4 +15,7 @@ data class PlayerBan(
     @SerializedName("unbanned_at") val unbannedAt: Long?,
     @SerializedName("unbanner_player_id") val unbannerPlayerId: String?,
     @SerializedName("unban_type") val unbanType: String?,
-)
+) {
+    val isActive: Boolean
+        get() = unbannedAt == null
+}

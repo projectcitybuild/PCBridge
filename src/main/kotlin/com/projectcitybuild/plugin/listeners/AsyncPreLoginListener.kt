@@ -1,7 +1,9 @@
 package com.projectcitybuild.plugin.listeners
 
 import com.projectcitybuild.core.SpigotListener
-import com.projectcitybuild.features.aggregate.ConnectPlayer
+import com.projectcitybuild.features.aggregate.AuthoriseConnection
+import com.projectcitybuild.features.aggregate.GetAggregate
+import com.projectcitybuild.features.aggregate.SyncConnectionWithPlayer
 import com.projectcitybuild.modules.datetime.formatter.DateTimeFormatter
 import com.projectcitybuild.modules.errorreporting.ErrorReporter
 import com.projectcitybuild.support.spigot.logger.Logger
@@ -16,7 +18,9 @@ import java.time.format.FormatStyle
 import javax.inject.Inject
 
 class AsyncPreLoginListener @Inject constructor(
-    private val connectPlayer: ConnectPlayer,
+    private val getAggregate: GetAggregate,
+    private val authoriseConnection: AuthoriseConnection,
+    private val syncPlayerWithAggregate: SyncConnectionWithPlayer,
     private val logger: Logger,
     private val dateTimeFormatter: DateTimeFormatter,
     private val errorReporter: ErrorReporter,
@@ -32,16 +36,23 @@ class AsyncPreLoginListener @Inject constructor(
         // See https://github.com/Shynixn/MCCoroutine/issues/43
         runBlocking {
             runCatching {
-                val result = connectPlayer.execute(
+                val aggregate = getAggregate.execute(
                     playerUUID = event.uniqueId,
                     ip = event.address.toString(),
-                )
-                if (result is ConnectPlayer.ConnectResult.Denied) {
+                ) ?: return@runBlocking
+
+                val result = authoriseConnection.execute(aggregate)
+                if (result is AuthoriseConnection.ConnectResult.Denied) {
                     event.disallow(
                         AsyncPlayerPreLoginEvent.Result.KICK_BANNED,
                         result.ban.toMessage(dateTimeFormatter),
                     )
                 }
+
+                syncPlayerWithAggregate.execute(
+                    playerUUID = event.uniqueId,
+                    aggregate = aggregate,
+                )
             }.onFailure { throwable ->
                 throwable.message?.let { logger.fatal(it) }
                 throwable.printStackTrace()
@@ -58,11 +69,11 @@ class AsyncPreLoginListener @Inject constructor(
     }
 }
 
-private fun ConnectPlayer.Ban.toMessage(
+private fun AuthoriseConnection.Ban.toMessage(
     dateTimeFormatter: DateTimeFormatter,
 ): String {
     return when (this) {
-        is ConnectPlayer.Ban.UUID -> TextComponent()
+        is AuthoriseConnection.Ban.UUID -> TextComponent()
             .add("You are currently banned.\n\n") {
                 it.color = ChatColor.RED
                 it.isBold = true
@@ -74,7 +85,7 @@ private fun ConnectPlayer.Ban.toMessage(
             .add((value.expiresAt?.let { dateTimeFormatter.convert(it, FormatStyle.SHORT) } ?: "Never") + "\n\n") { it.color = ChatColor.WHITE }
             .add("Appeal @ https://projectcitybuild.com") { it.color = ChatColor.AQUA }
 
-        is ConnectPlayer.Ban.IP -> TextComponent()
+        is AuthoriseConnection.Ban.IP -> TextComponent()
             .add("You are currently IP banned.\n\n") {
                 it.color = ChatColor.RED
                 it.isBold = true
