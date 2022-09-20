@@ -1,7 +1,7 @@
 package com.projectcitybuild.stubs
 
 import com.projectcitybuild.entities.responses.IPBan
-import java.util.*
+import java.util.UUID
 
 fun IPBanMock(): IPBan {
     return IPBan(
