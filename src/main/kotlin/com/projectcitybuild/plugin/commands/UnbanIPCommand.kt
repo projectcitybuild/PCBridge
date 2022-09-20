@@ -24,7 +24,11 @@ class UnbanIPCommand @Inject constructor(
 
         val targetIP = input.args.first()
 
-        val result = unbanIPUseCase.unbanIP(targetIP)
+        val result = unbanIPUseCase.unbanIP(
+            ip = targetIP,
+            unbannerUUID = input.player.uniqueId,
+            unbannerName = input.player.name,
+        )
 
         when (result) {
             is Failure -> input.sender.send().error(

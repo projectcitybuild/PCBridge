@@ -3,7 +3,7 @@ package com.projectcitybuild.features.bans.usecases
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Result
 import com.projectcitybuild.core.utilities.Success
-import com.projectcitybuild.repositories.BanRepository
+import com.projectcitybuild.repositories.PlayerBanRepository
 import com.projectcitybuild.repositories.PlayerUUIDRepository
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.chat.TextComponent
@@ -12,7 +12,7 @@ import java.util.UUID
 import javax.inject.Inject
 
 class UnbanUUIDUseCase @Inject constructor(
-    private val banRepository: BanRepository,
+    private val playerBanRepository: PlayerBanRepository,
     private val playerUUIDRepository: PlayerUUIDRepository,
     private val server: Server,
 ) {
@@ -29,7 +29,7 @@ class UnbanUUIDUseCase @Inject constructor(
             val targetPlayerUUID = playerUUIDRepository.get(targetPlayerName)
                 ?: return Failure(FailureReason.PlayerDoesNotExist)
 
-            banRepository.unban(
+            playerBanRepository.unban(
                 targetPlayerUUID = targetPlayerUUID,
                 staffId = bannerUUID,
             )
@@ -42,7 +42,7 @@ class UnbanUUIDUseCase @Inject constructor(
             )
 
             return Success(Unit)
-        } catch (e: BanRepository.PlayerNotBannedException) {
+        } catch (e: PlayerBanRepository.PlayerNotBannedException) {
             return Failure(FailureReason.PlayerNotBanned)
         }
     }

@@ -6,10 +6,10 @@ import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.POST
 
-interface BanAPIRequest {
+interface PlayerBanAPIRequest {
 
     @FormUrlEncoded
-    @POST("v2/bans/ban")
+    @POST("v2/bans/player/ban")
     suspend fun ban(
         @Field("banned_player_id") bannedPlayerId: String,
         @Field("banned_player_type") bannedPlayerType: String = "minecraft_uuid",
@@ -22,7 +22,7 @@ interface BanAPIRequest {
     ): ApiResponse<PlayerBan>
 
     @FormUrlEncoded
-    @POST("v2/bans/unban")
+    @POST("v2/bans/player/unban")
     suspend fun unban(
         @Field("banned_player_id") bannedPlayerId: String,
         @Field("banned_player_type") bannedPlayerType: String = "minecraft_uuid",
@@ -31,21 +31,21 @@ interface BanAPIRequest {
     ): ApiResponse<PlayerBan>
 
     @FormUrlEncoded
-    @POST("v2/bans/status")
+    @POST("v2/bans/player/status")
     suspend fun status(
         @Field("player_id") playerId: String,
         @Field("player_type") playerType: String = "minecraft_uuid"
     ): ApiResponse<PlayerBan>
 
     @FormUrlEncoded
-    @POST("v2/bans/all")
+    @POST("v2/bans/player/all")
     suspend fun all(
         @Field("player_id") playerId: String,
         @Field("player_id_type") playerType: String = "minecraft_uuid"
     ): ApiResponse<List<PlayerBan>>
 
     @FormUrlEncoded
-    @POST("v2/bans/ban")
+    @POST("v2/bans/player/ban")
     suspend fun convertToPermanentBan(
         @Field("ban_id") bannedPlayerId: String,
         @Field("banner_player_id") bannerPlayerId: String,

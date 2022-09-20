@@ -3,7 +3,7 @@ package com.projectcitybuild.features.bans.usecases
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Result
 import com.projectcitybuild.core.utilities.Success
-import com.projectcitybuild.repositories.BanRepository
+import com.projectcitybuild.repositories.PlayerBanRepository
 import com.projectcitybuild.repositories.PlayerUUIDRepository
 import com.projectcitybuild.support.spigot.kick.PlayerKicker
 import net.md_5.bungee.api.ChatColor
@@ -13,7 +13,7 @@ import java.util.UUID
 import javax.inject.Inject
 
 class BanUUIDUseCase @Inject constructor(
-    private val banRepository: BanRepository,
+    private val playerBanRepository: PlayerBanRepository,
     private val playerUUIDRepository: PlayerUUIDRepository,
     private val server: Server,
     private val playerKicker: PlayerKicker,
@@ -33,7 +33,7 @@ class BanUUIDUseCase @Inject constructor(
             val targetPlayerUUID = playerUUIDRepository.get(targetPlayerName)
                 ?: return Failure(FailureReason.PlayerDoesNotExist)
 
-            banRepository.ban(
+            playerBanRepository.ban(
                 targetPlayerUUID = targetPlayerUUID,
                 targetPlayerName = targetPlayerName,
                 bannerPlayerUUID = bannerUUID,
@@ -55,7 +55,7 @@ class BanUUIDUseCase @Inject constructor(
             )
 
             return Success(Unit)
-        } catch (e: BanRepository.PlayerAlreadyBannedException) {
+        } catch (e: PlayerBanRepository.PlayerAlreadyBannedException) {
             return Failure(FailureReason.PlayerAlreadyBanned)
         }
     }

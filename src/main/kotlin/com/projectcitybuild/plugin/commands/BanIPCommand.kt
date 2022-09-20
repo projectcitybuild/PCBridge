@@ -4,6 +4,7 @@ import com.projectcitybuild.core.extensions.joinWithWhitespaces
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Success
 import com.projectcitybuild.features.bans.usecases.BanIPUseCase
+import com.projectcitybuild.support.spigot.commands.CannotInvokeFromConsoleException
 import com.projectcitybuild.support.spigot.commands.InvalidCommandArgumentsException
 import com.projectcitybuild.support.spigot.commands.SpigotCommand
 import com.projectcitybuild.support.spigot.commands.SpigotCommandInput
@@ -22,7 +23,10 @@ class BanIPCommand @Inject constructor(
     override val usageHelp = "/banip <name|ip> [reason]"
 
     override suspend fun execute(input: SpigotCommandInput) {
-        if (input.args.isEmpty()) {
+        if (input.isConsole) {
+            throw CannotInvokeFromConsoleException()
+        }
+        if (input.args.isEmpty() || input.args.size < 2) {
             throw InvalidCommandArgumentsException()
         }
 
@@ -31,10 +35,11 @@ class BanIPCommand @Inject constructor(
             ?.address?.toString()
             ?: input.args.first()
 
-        val result = banIPUseCase.banIP(
+        val result = banIPUseCase.execute(
             ip = targetIP,
-            bannerName = if (input.isConsole) null else input.sender.name,
-            reason = input.args.joinWithWhitespaces(1 until input.args.size),
+            bannerUUID = input.player.uniqueId,
+            bannerName = input.sender.name,
+            reason = input.args.joinWithWhitespaces(1 until input.args.size) ?: "No reason given",
         )
         when (result) {
             is Failure -> input.sender.send().error(

@@ -6,6 +6,7 @@ import com.projectcitybuild.core.utilities.Result
 import com.projectcitybuild.core.utilities.Success
 import com.projectcitybuild.features.bans.Sanitizer
 import com.projectcitybuild.repositories.IPBanRepository
+import java.util.UUID
 import javax.inject.Inject
 
 class UnbanIPUseCase @Inject constructor(
@@ -16,7 +17,11 @@ class UnbanIPUseCase @Inject constructor(
         INVALID_IP,
     }
 
-    fun unbanIP(ip: String): Result<Unit, FailureReason> {
+    suspend fun unbanIP(
+        ip: String,
+        unbannerUUID: UUID,
+        unbannerName: String,
+    ): Result<Unit, FailureReason> {
         val sanitizedIP = Sanitizer().sanitizedIP(ip)
 
         val isValidIP = Regex.IP.matcher(sanitizedIP).matches()
@@ -24,10 +29,15 @@ class UnbanIPUseCase @Inject constructor(
             return Failure(FailureReason.INVALID_IP)
         }
 
-        ipBanRepository.get(sanitizedIP)
-            ?: return Failure(FailureReason.IP_NOT_BANNED)
-
-        ipBanRepository.delete(sanitizedIP)
+        try {
+            ipBanRepository.unban(
+                ip = ip,
+                unbannerUUID = unbannerUUID,
+                unbannerName = unbannerName,
+            )
+        } catch (e: IPBanRepository.IPNotBannedException) {
+            return Failure(FailureReason.IP_NOT_BANNED)
+        }
 
         return Success(Unit)
     }

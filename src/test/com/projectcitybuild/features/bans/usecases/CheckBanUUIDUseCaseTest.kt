@@ -4,7 +4,7 @@ import com.projectcitybuild.DateTimeFormatterMock
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Success
 import com.projectcitybuild.entities.responses.PlayerBan
-import com.projectcitybuild.repositories.BanRepository
+import com.projectcitybuild.repositories.PlayerBanRepository
 import com.projectcitybuild.repositories.PlayerUUIDRepository
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -18,16 +18,16 @@ class CheckBanUUIDUseCaseTest {
 
     private lateinit var useCase: CheckUUIDBanUseCase
 
-    private lateinit var banRepository: BanRepository
+    private lateinit var playerBanRepository: PlayerBanRepository
     private lateinit var playerUUIDRepository: PlayerUUIDRepository
 
     @BeforeEach
     fun setUp() {
-        banRepository = mock(BanRepository::class.java)
+        playerBanRepository = mock(PlayerBanRepository::class.java)
         playerUUIDRepository = mock(PlayerUUIDRepository::class.java)
 
         useCase = CheckUUIDBanUseCase(
-            banRepository,
+            playerBanRepository,
             playerUUIDRepository,
             DateTimeFormatterMock()
         )
@@ -51,7 +51,7 @@ class CheckBanUUIDUseCaseTest {
         val staffUUID = UUID.randomUUID()
 
         `when`(playerUUIDRepository.get(playerName)).thenReturn(playerUUID)
-        `when`(banRepository.get(playerUUID)).thenReturn(
+        `when`(playerBanRepository.get(playerUUID)).thenReturn(
             PlayerBan(
                 id = 1,
                 serverId = 2,
@@ -85,7 +85,7 @@ class CheckBanUUIDUseCaseTest {
         val staffUUID = UUID.randomUUID()
 
         `when`(playerUUIDRepository.get(playerName)).thenReturn(playerUUID)
-        `when`(banRepository.get(playerUUID)).thenReturn(
+        `when`(playerBanRepository.get(playerUUID)).thenReturn(
             PlayerBan(
                 id = 1,
                 serverId = 2,

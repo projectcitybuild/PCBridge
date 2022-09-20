@@ -3,8 +3,9 @@ package com.projectcitybuild.core.http.clients
 import com.projectcitybuild.entities.requests.pcb.AggregateAPIRequest
 import com.projectcitybuild.entities.requests.pcb.AuthAPIRequest
 import com.projectcitybuild.entities.requests.pcb.BalanceAPIRequest
-import com.projectcitybuild.entities.requests.pcb.BanAPIRequest
+import com.projectcitybuild.entities.requests.pcb.PlayerBanAPIRequest
 import com.projectcitybuild.entities.requests.pcb.DonorAPIRequest
+import com.projectcitybuild.entities.requests.pcb.IPBanAPIRequest
 import com.projectcitybuild.entities.requests.pcb.TelemetryAPIRequest
 import com.projectcitybuild.entities.requests.pcb.WarningAPIRequest
 import okhttp3.OkHttpClient
@@ -20,7 +21,8 @@ class PCBClient(
     private val instance: Retrofit = build()
 
     val aggregateAPI: AggregateAPIRequest = instance.create(AggregateAPIRequest::class.java)
-    val banAPI: BanAPIRequest = instance.create(BanAPIRequest::class.java)
+    val playerBanAPI: PlayerBanAPIRequest = instance.create(PlayerBanAPIRequest::class.java)
+    val ipBanAPI: IPBanAPIRequest = instance.create(IPBanAPIRequest::class.java)
     val authAPI: AuthAPIRequest = instance.create(AuthAPIRequest::class.java)
     val balanceAPI: BalanceAPIRequest = instance.create(BalanceAPIRequest::class.java)
     val donorAPI: DonorAPIRequest = instance.create(DonorAPIRequest::class.java)

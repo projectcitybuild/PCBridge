@@ -4,12 +4,12 @@ import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Result
 import com.projectcitybuild.core.utilities.Success
 import com.projectcitybuild.modules.datetime.formatter.DateTimeFormatter
-import com.projectcitybuild.repositories.BanRepository
+import com.projectcitybuild.repositories.PlayerBanRepository
 import com.projectcitybuild.repositories.PlayerUUIDRepository
 import javax.inject.Inject
 
 class CheckUUIDBanUseCase @Inject constructor(
-    private val banRepository: BanRepository,
+    private val playerBanRepository: PlayerBanRepository,
     private val playerUUIDRepository: PlayerUUIDRepository,
     private val dateTimeFormatter: DateTimeFormatter,
 ) {
@@ -29,7 +29,7 @@ class CheckUUIDBanUseCase @Inject constructor(
         val targetPlayerUUID = playerUUIDRepository.get(targetPlayerName)
             ?: return Failure(FailureReason.PLAYER_DOES_NOT_EXIST)
 
-        val ban = banRepository.get(targetPlayerUUID = targetPlayerUUID)
+        val ban = playerBanRepository.get(targetPlayerUUID = targetPlayerUUID)
             ?: return Success(null)
 
         val banRecord = BanRecord(
