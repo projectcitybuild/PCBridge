@@ -21,7 +21,7 @@ commands:
     usage: "/badge <on|off>"
   banip:
     description: "Bans an exact IP, preventing it from connecting to the server"
-    usage: "/ban <ip>"
+    usage: "/ban <ip|name> <reason>"
   checkban:
     description: "Checks whether a player is currently banned from the server"
     usage: "/checkban <name>"

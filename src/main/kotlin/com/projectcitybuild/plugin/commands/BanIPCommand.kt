@@ -20,7 +20,7 @@ class BanIPCommand @Inject constructor(
 
     override val label = "banip"
     override val permission = "pcbridge.ban.banip"
-    override val usageHelp = "/banip <name|ip> [reason]"
+    override val usageHelp = "/banip <name|ip> <reason>"
 
     override suspend fun execute(input: SpigotCommandInput) {
         if (input.isConsole) {
