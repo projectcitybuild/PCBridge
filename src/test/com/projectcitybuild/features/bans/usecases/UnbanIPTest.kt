@@ -1,6 +1,6 @@
 package com.projectcitybuild.features.bans.usecases
 
-class UnbanIPUseCaseTest {
+class UnbanIPTest {
 
 //    private lateinit var useCase: UnbanIPUseCase
 //

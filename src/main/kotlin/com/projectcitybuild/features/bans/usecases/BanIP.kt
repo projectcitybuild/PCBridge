@@ -6,21 +6,24 @@ import com.projectcitybuild.core.utilities.Result
 import com.projectcitybuild.core.utilities.Success
 import com.projectcitybuild.features.bans.Sanitizer
 import com.projectcitybuild.repositories.IPBanRepository
+import com.projectcitybuild.support.spigot.kick.PlayerKicker
 import java.util.UUID
 import javax.inject.Inject
 
-class UnbanIPUseCase @Inject constructor(
+class BanIP @Inject constructor(
     private val ipBanRepository: IPBanRepository,
+    private val playerKicker: PlayerKicker,
 ) {
     enum class FailureReason {
-        IP_NOT_BANNED,
+        IP_ALREADY_BANNED,
         INVALID_IP,
     }
 
-    suspend fun unbanIP(
+    suspend fun execute(
         ip: String,
-        unbannerUUID: UUID,
-        unbannerName: String,
+        bannerUUID: UUID,
+        bannerName: String,
+        reason: String,
     ): Result<Unit, FailureReason> {
         val sanitizedIP = Sanitizer().sanitizedIP(ip)
 
@@ -30,14 +33,21 @@ class UnbanIPUseCase @Inject constructor(
         }
 
         try {
-            ipBanRepository.unban(
-                ip = ip,
-                unbannerUUID = unbannerUUID,
-                unbannerName = unbannerName,
+            ipBanRepository.ban(
+                ip = sanitizedIP,
+                bannerUUID = bannerUUID,
+                bannerName = bannerName,
+                reason = reason,
             )
-        } catch (e: IPBanRepository.IPNotBannedException) {
-            return Failure(FailureReason.IP_NOT_BANNED)
+        } catch (e: IPBanRepository.IPAlreadyBannedException) {
+            return Failure(FailureReason.IP_ALREADY_BANNED)
         }
+
+        playerKicker.kickByIP(
+            ip = ip,
+            reason = "You have been banned.\n\nAppeal @ projectcitybuild.com",
+            context = PlayerKicker.KickContext.FATAL,
+        )
 
         return Success(Unit)
     }

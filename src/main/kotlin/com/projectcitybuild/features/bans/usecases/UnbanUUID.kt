@@ -11,7 +11,7 @@ import org.bukkit.Server
 import java.util.UUID
 import javax.inject.Inject
 
-class UnbanUUIDUseCase @Inject constructor(
+class UnbanUUID @Inject constructor(
     private val playerBanRepository: PlayerBanRepository,
     private val playerUUIDRepository: PlayerUUIDRepository,
     private val server: Server,

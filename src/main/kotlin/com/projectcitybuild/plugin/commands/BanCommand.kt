@@ -2,7 +2,7 @@ package com.projectcitybuild.plugin.commands
 
 import com.projectcitybuild.core.extensions.joinWithWhitespaces
 import com.projectcitybuild.core.utilities.Failure
-import com.projectcitybuild.features.bans.usecases.BanUUIDUseCase
+import com.projectcitybuild.features.bans.usecases.BanUUID
 import com.projectcitybuild.support.spigot.commands.InvalidCommandArgumentsException
 import com.projectcitybuild.support.spigot.commands.SpigotCommand
 import com.projectcitybuild.support.spigot.commands.SpigotCommandInput
@@ -13,7 +13,7 @@ import javax.inject.Inject
 
 class BanCommand @Inject constructor(
     private val server: Server,
-    private val banUUIDUseCase: BanUUIDUseCase,
+    private val banUUID: BanUUID,
 ) : SpigotCommand {
 
     override val label = "ban"
@@ -29,7 +29,7 @@ class BanCommand @Inject constructor(
         val reason = input.args.joinWithWhitespaces(1 until input.args.size)
         val targetPlayerName = input.args.first()
 
-        val result = banUUIDUseCase.ban(
+        val result = banUUID.ban(
             targetPlayerName,
             bannerUUID = staffPlayer?.uniqueId,
             bannerName = input.sender.name ?: "CONSOLE",
@@ -38,8 +38,8 @@ class BanCommand @Inject constructor(
         if (result is Failure) {
             input.sender.send().error(
                 when (result.reason) {
-                    BanUUIDUseCase.FailureReason.PlayerDoesNotExist -> "Could not find UUID for $targetPlayerName. This player likely doesn't exist"
-                    BanUUIDUseCase.FailureReason.PlayerAlreadyBanned -> "$targetPlayerName is already banned"
+                    BanUUID.FailureReason.PlayerDoesNotExist -> "Could not find UUID for $targetPlayerName. This player likely doesn't exist"
+                    BanUUID.FailureReason.PlayerAlreadyBanned -> "$targetPlayerName is already banned"
                 }
             )
         }

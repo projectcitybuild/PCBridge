@@ -3,7 +3,7 @@ package com.projectcitybuild.plugin.commands
 import com.projectcitybuild.core.extensions.joinWithWhitespaces
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Success
-import com.projectcitybuild.features.bans.usecases.BanIPUseCase
+import com.projectcitybuild.features.bans.usecases.BanIP
 import com.projectcitybuild.support.spigot.commands.CannotInvokeFromConsoleException
 import com.projectcitybuild.support.spigot.commands.InvalidCommandArgumentsException
 import com.projectcitybuild.support.spigot.commands.SpigotCommand
@@ -15,7 +15,7 @@ import javax.inject.Inject
 
 class BanIPCommand @Inject constructor(
     private val server: Server,
-    private val banIPUseCase: BanIPUseCase,
+    private val banIP: BanIP,
 ) : SpigotCommand {
 
     override val label = "banip"
@@ -35,7 +35,7 @@ class BanIPCommand @Inject constructor(
             ?.address?.toString()
             ?: input.args.first()
 
-        val result = banIPUseCase.execute(
+        val result = banIP.execute(
             ip = targetIP,
             bannerUUID = input.player.uniqueId,
             bannerName = input.sender.name,
@@ -44,8 +44,8 @@ class BanIPCommand @Inject constructor(
         when (result) {
             is Failure -> input.sender.send().error(
                 when (result.reason) {
-                    BanIPUseCase.FailureReason.IP_ALREADY_BANNED -> "$targetIP is already banned"
-                    BanIPUseCase.FailureReason.INVALID_IP -> "$targetIP is not a valid IP"
+                    BanIP.FailureReason.IP_ALREADY_BANNED -> "$targetIP is already banned"
+                    BanIP.FailureReason.INVALID_IP -> "$targetIP is not a valid IP"
                 }
             )
             is Success -> input.sender.send().success("IP $targetIP has been banned")

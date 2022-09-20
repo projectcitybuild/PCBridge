@@ -1,12 +1,6 @@
 package com.projectcitybuild.features.bans.usecases
 
-import com.projectcitybuild.modules.datetime.time.Time
-import com.projectcitybuild.repositories.IPBanRepository
-import com.projectcitybuild.support.spigot.kick.PlayerKicker
-import org.junit.jupiter.api.BeforeEach
-import org.powermock.api.mockito.PowerMockito.mock
-
-class BanIPUseCaseTest {
+class BanIPTest {
 
 //    private lateinit var useCase: BanIPUseCase
 //

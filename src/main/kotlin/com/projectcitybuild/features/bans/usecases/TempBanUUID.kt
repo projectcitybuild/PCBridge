@@ -12,7 +12,7 @@ import org.bukkit.Server
 import java.util.UUID
 import javax.inject.Inject
 
-class TempBanUUIDUseCase @Inject constructor(
+class TempBanUUID @Inject constructor(
     private val playerBanRepository: PlayerBanRepository,
     private val playerUUIDRepository: PlayerUUIDRepository,
     private val server: Server,

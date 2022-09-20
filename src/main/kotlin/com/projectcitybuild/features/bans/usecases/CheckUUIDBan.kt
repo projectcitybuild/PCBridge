@@ -8,7 +8,7 @@ import com.projectcitybuild.repositories.PlayerBanRepository
 import com.projectcitybuild.repositories.PlayerUUIDRepository
 import javax.inject.Inject
 
-class CheckUUIDBanUseCase @Inject constructor(
+class CheckUUIDBan @Inject constructor(
     private val playerBanRepository: PlayerBanRepository,
     private val playerUUIDRepository: PlayerUUIDRepository,
     private val dateTimeFormatter: DateTimeFormatter,
