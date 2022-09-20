@@ -1,7 +1,7 @@
 package com.projectcitybuild.plugin.commands
 
-import com.projectcitybuild.features.utilities.usecases.GetVersionUseCase
-import com.projectcitybuild.features.utilities.usecases.ReloadPluginUseCase
+import com.projectcitybuild.features.utilities.usecases.GetVersion
+import com.projectcitybuild.features.utilities.usecases.ReloadPlugin
 import com.projectcitybuild.support.spigot.commands.InvalidCommandArgumentsException
 import com.projectcitybuild.support.spigot.commands.SpigotCommand
 import com.projectcitybuild.support.spigot.commands.SpigotCommandInput
@@ -10,8 +10,8 @@ import org.bukkit.command.CommandSender
 import javax.inject.Inject
 
 class PCBridgeCommand @Inject constructor(
-    private val getVersion: GetVersionUseCase,
-    private val reloadPlugin: ReloadPluginUseCase,
+    private val getVersion: GetVersion,
+    private val reloadPlugin: ReloadPlugin,
 ) : SpigotCommand {
 
     override val label = "pcbridge"

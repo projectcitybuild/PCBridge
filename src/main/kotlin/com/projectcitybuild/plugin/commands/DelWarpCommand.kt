@@ -2,7 +2,7 @@ package com.projectcitybuild.plugin.commands
 
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Success
-import com.projectcitybuild.features.warps.usecases.DeleteWarpUseCase
+import com.projectcitybuild.features.warps.usecases.DeleteWarp
 import com.projectcitybuild.repositories.WarpRepository
 import com.projectcitybuild.support.spigot.commands.InvalidCommandArgumentsException
 import com.projectcitybuild.support.spigot.commands.SpigotCommand
@@ -12,7 +12,7 @@ import org.bukkit.command.CommandSender
 import javax.inject.Inject
 
 class DelWarpCommand @Inject constructor(
-    private val deleteWarpUseCase: DeleteWarpUseCase,
+    private val deleteWarp: DeleteWarp,
     private val warpRepository: WarpRepository,
 ) : SpigotCommand {
 
@@ -27,12 +27,12 @@ class DelWarpCommand @Inject constructor(
 
         val warpName = input.args.first()
 
-        val result = deleteWarpUseCase.deleteWarp(warpName)
+        val result = deleteWarp.deleteWarp(warpName)
         when (result) {
             is Failure -> {
                 input.sender.send().error(
                     when (result.reason) {
-                        DeleteWarpUseCase.FailureReason.WARP_NOT_FOUND -> "Warp $warpName does not exist"
+                        DeleteWarp.FailureReason.WARP_NOT_FOUND -> "Warp $warpName does not exist"
                     }
                 )
             }

@@ -2,7 +2,7 @@ package com.projectcitybuild.plugin.commands
 
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Success
-import com.projectcitybuild.features.ranksync.usecases.UpdatePlayerGroupsUseCase
+import com.projectcitybuild.features.ranksync.usecases.UpdatePlayerGroups
 import com.projectcitybuild.modules.nameguesser.NameGuesser
 import com.projectcitybuild.support.spigot.commands.InvalidCommandArgumentsException
 import com.projectcitybuild.support.spigot.commands.SpigotCommand
@@ -14,7 +14,7 @@ import javax.inject.Inject
 
 class SyncOtherCommand @Inject constructor(
     private val server: Server,
-    private val updatePlayerGroupsUseCase: UpdatePlayerGroupsUseCase,
+    private val updatePlayerGroups: UpdatePlayerGroups,
     private val nameGuesser: NameGuesser
 ) : SpigotCommand {
 
@@ -35,12 +35,12 @@ class SyncOtherCommand @Inject constructor(
             return
         }
 
-        val result = updatePlayerGroupsUseCase.sync(targetPlayer.uniqueId)
+        val result = updatePlayerGroups.sync(targetPlayer.uniqueId)
 
         when (result) {
             is Failure -> input.sender.send().error(
                 when (result.reason) {
-                    UpdatePlayerGroupsUseCase.FailureReason.ACCOUNT_NOT_LINKED
+                    UpdatePlayerGroups.FailureReason.ACCOUNT_NOT_LINKED
                     -> "Sync failed: Player does not have a linked PCB account"
                 }
             )

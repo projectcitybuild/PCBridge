@@ -8,7 +8,7 @@ import com.projectcitybuild.repositories.PlayerConfigRepository
 import org.bukkit.entity.Player
 import javax.inject.Inject
 
-class MuteUseCase @Inject constructor(
+class MutePlayer @Inject constructor(
     private val playerConfigRepository: PlayerConfigRepository,
     private val nameGuesser: NameGuesser,
 ) {

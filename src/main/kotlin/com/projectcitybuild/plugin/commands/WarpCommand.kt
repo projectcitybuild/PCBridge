@@ -2,7 +2,7 @@ package com.projectcitybuild.plugin.commands
 
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Success
-import com.projectcitybuild.features.warps.usecases.TeleportToWarpUseCase
+import com.projectcitybuild.features.warps.usecases.TeleportToWarp
 import com.projectcitybuild.repositories.WarpRepository
 import com.projectcitybuild.support.spigot.commands.CannotInvokeFromConsoleException
 import com.projectcitybuild.support.spigot.commands.InvalidCommandArgumentsException
@@ -13,7 +13,7 @@ import org.bukkit.command.CommandSender
 import javax.inject.Inject
 
 class WarpCommand @Inject constructor(
-    private val teleportToWarpUseCase: TeleportToWarpUseCase,
+    private val teleportToWarp: TeleportToWarp,
     private val warpRepository: WarpRepository,
 ) : SpigotCommand {
 
@@ -30,7 +30,7 @@ class WarpCommand @Inject constructor(
         }
 
         val targetWarpName = input.args.first()
-        val result = teleportToWarpUseCase.warp(
+        val result = teleportToWarp.warp(
             player = input.player,
             targetWarpName = targetWarpName,
         )
@@ -38,8 +38,8 @@ class WarpCommand @Inject constructor(
         when (result) {
             is Failure -> input.sender.send().error(
                 when (result.reason) {
-                    TeleportToWarpUseCase.FailureReason.WARP_NOT_FOUND -> "Warp $targetWarpName does not exist"
-                    TeleportToWarpUseCase.FailureReason.WORLD_NOT_FOUND -> "The target server is either offline or invalid"
+                    TeleportToWarp.FailureReason.WARP_NOT_FOUND -> "Warp $targetWarpName does not exist"
+                    TeleportToWarp.FailureReason.WORLD_NOT_FOUND -> "The target server is either offline or invalid"
                 }
             )
             is Success -> input.sender.send().action("Warped to ${result.value.warpName}")

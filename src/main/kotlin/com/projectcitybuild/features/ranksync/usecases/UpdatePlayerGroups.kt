@@ -8,7 +8,7 @@ import com.projectcitybuild.repositories.PlayerGroupRepository
 import java.util.UUID
 import javax.inject.Inject
 
-class UpdatePlayerGroupsUseCase @Inject constructor(
+class UpdatePlayerGroups @Inject constructor(
     private val permissions: Permissions,
     private val playerGroupRepository: PlayerGroupRepository,
 ) {

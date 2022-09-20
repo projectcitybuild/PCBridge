@@ -13,7 +13,7 @@ import com.projectcitybuild.support.spigot.logger.Logger
 import java.util.UUID
 import javax.inject.Inject
 
-class ConnectPlayerUseCase @Inject constructor(
+class ConnectPlayer @Inject constructor(
     private val permissions: Permissions,
     private val aggregateRepository: AggregateRepository,
     private val chatBadgeRepository: ChatBadgeRepository,

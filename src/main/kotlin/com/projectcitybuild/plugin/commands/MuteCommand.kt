@@ -2,7 +2,7 @@ package com.projectcitybuild.plugin.commands
 
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Success
-import com.projectcitybuild.features.chat.usecases.MuteUseCase
+import com.projectcitybuild.features.chat.usecases.MutePlayer
 import com.projectcitybuild.support.spigot.commands.InvalidCommandArgumentsException
 import com.projectcitybuild.support.spigot.commands.SpigotCommand
 import com.projectcitybuild.support.spigot.commands.SpigotCommandInput
@@ -13,7 +13,7 @@ import javax.inject.Inject
 
 class MuteCommand @Inject constructor(
     private val server: Server,
-    private val mute: MuteUseCase,
+    private val mute: MutePlayer,
 ) : SpigotCommand {
 
     override val label = "mute"
@@ -35,7 +35,7 @@ class MuteCommand @Inject constructor(
         when (result) {
             is Failure -> input.sender.send().error(
                 when (result.reason) {
-                    MuteUseCase.FailureReason.PLAYER_NOT_ONLINE -> "$targetPlayerName is not online"
+                    MutePlayer.FailureReason.PLAYER_NOT_ONLINE -> "$targetPlayerName is not online"
                 }
             )
             is Success -> {

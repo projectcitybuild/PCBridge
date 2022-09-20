@@ -17,9 +17,9 @@ import org.powermock.api.mockito.PowerMockito.mock
 import org.powermock.api.mockito.PowerMockito.`when`
 import java.util.UUID
 
-class GenerateAccountVerificationURLUseCaseTest {
+class GenerateAccountVerificationURLTest {
 
-    private lateinit var useCase: GenerateAccountVerificationURLUseCase
+    private lateinit var useCase: GenerateAccountVerificationURL
 
     private lateinit var apiRequestFactory: APIRequestFactory
     private lateinit var apiClient: APIClientMock
@@ -31,7 +31,7 @@ class GenerateAccountVerificationURLUseCaseTest {
 
         `when`(apiRequestFactory.pcb).thenReturn(mock(PCBClient::class.java))
 
-        useCase = GenerateAccountVerificationURLUseCase(
+        useCase = GenerateAccountVerificationURL(
             apiRequestFactory,
             apiClient,
         )
@@ -49,7 +49,7 @@ class GenerateAccountVerificationURLUseCaseTest {
 
         val result = useCase.generate(playerUUID)
 
-        val expectedURL = GenerateAccountVerificationURLUseCase.VerificationURL(url)
+        val expectedURL = GenerateAccountVerificationURL.VerificationURL(url)
         assertEquals(result, Success(expectedURL))
     }
 
@@ -64,7 +64,7 @@ class GenerateAccountVerificationURLUseCaseTest {
 
         val result = useCase.generate(playerUUID)
 
-        assertEquals(result, Failure(GenerateAccountVerificationURLUseCase.FailureReason.EMPTY_RESPONSE))
+        assertEquals(result, Failure(GenerateAccountVerificationURL.FailureReason.EMPTY_RESPONSE))
     }
 
     @Test
@@ -82,6 +82,6 @@ class GenerateAccountVerificationURLUseCaseTest {
 
         val result = useCase.generate(playerUUID)
 
-        assertEquals(result, Failure(GenerateAccountVerificationURLUseCase.FailureReason.ALREADY_LINKED))
+        assertEquals(result, Failure(GenerateAccountVerificationURL.FailureReason.ALREADY_LINKED))
     }
 }

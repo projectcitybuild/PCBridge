@@ -15,9 +15,9 @@ import org.powermock.api.mockito.PowerMockito.mock
 import org.powermock.api.mockito.PowerMockito.`when`
 import java.util.UUID
 
-class UpdatePlayerGroupsUseCaseTest {
+class UpdatePlayerGroupsTest {
 
-    private lateinit var useCase: UpdatePlayerGroupsUseCase
+    private lateinit var useCase: UpdatePlayerGroups
 
     private lateinit var permissions: Permissions
     private lateinit var playerGroupRepository: PlayerGroupRepository
@@ -27,7 +27,7 @@ class UpdatePlayerGroupsUseCaseTest {
         permissions = mock(Permissions::class.java)
         playerGroupRepository = mock(PlayerGroupRepository::class.java)
 
-        useCase = UpdatePlayerGroupsUseCase(
+        useCase = UpdatePlayerGroups(
             permissions,
             playerGroupRepository,
         )
@@ -62,6 +62,6 @@ class UpdatePlayerGroupsUseCaseTest {
         val result = useCase.sync(playerUUID)
 
         verifyNoInteractions(permissions)
-        assertEquals(result, Failure(UpdatePlayerGroupsUseCase.FailureReason.ACCOUNT_NOT_LINKED))
+        assertEquals(result, Failure(UpdatePlayerGroups.FailureReason.ACCOUNT_NOT_LINKED))
     }
 }

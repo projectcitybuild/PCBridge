@@ -2,7 +2,7 @@ package com.projectcitybuild.plugin.listeners
 
 import com.projectcitybuild.DateTimeFormatterMock
 import com.projectcitybuild.PlayerBanMock
-import com.projectcitybuild.features.aggregate.ConnectPlayerUseCase
+import com.projectcitybuild.features.aggregate.ConnectPlayer
 import com.projectcitybuild.modules.errorreporting.ErrorReporter
 import com.projectcitybuild.stubs.IPBanMock
 import com.projectcitybuild.support.spigot.logger.Logger
@@ -24,16 +24,16 @@ class AsyncPreLoginListenerTest {
 
     private lateinit var listener: AsyncPreLoginListener
 
-    private lateinit var connectPlayerUseCase: ConnectPlayerUseCase
+    private lateinit var connectPlayer: ConnectPlayer
     private lateinit var errorReporter: ErrorReporter
 
     @BeforeEach
     fun setUp() {
-        connectPlayerUseCase = mock(ConnectPlayerUseCase::class.java)
+        connectPlayer = mock(ConnectPlayer::class.java)
         errorReporter = mock(ErrorReporter::class.java)
 
         listener = AsyncPreLoginListener(
-            connectPlayerUseCase = connectPlayerUseCase,
+            connectPlayer = connectPlayer,
             mock(Logger::class.java),
             DateTimeFormatterMock(),
             errorReporter,
@@ -53,15 +53,15 @@ class AsyncPreLoginListenerTest {
     @Test
     fun `cancels login event if player is banned`() = runTest {
         arrayOf(
-            ConnectPlayerUseCase.Ban.UUID(PlayerBanMock()),
-            ConnectPlayerUseCase.Ban.IP(IPBanMock()),
+            ConnectPlayer.Ban.UUID(PlayerBanMock()),
+            ConnectPlayer.Ban.IP(IPBanMock()),
         ).forEach { ban ->
             val uuid = UUID.randomUUID()
             val ip = "127.0.0.1"
             val event = loginEvent(uuid, ip)
 
-            `when`(connectPlayerUseCase.execute(uuid, ip))
-                .thenReturn(ConnectPlayerUseCase.ConnectResult.Denied(ban))
+            `when`(connectPlayer.execute(uuid, ip))
+                .thenReturn(ConnectPlayer.ConnectResult.Denied(ban))
 
             listener.onAsyncPreLogin(event)
 
@@ -75,7 +75,7 @@ class AsyncPreLoginListenerTest {
         val ip = "127.0.0.1"
         val event = loginEvent(uuid, ip)
 
-        `when`(connectPlayerUseCase.execute(uuid, ip))
+        `when`(connectPlayer.execute(uuid, ip))
             .thenReturn(null)
 
         listener.onAsyncPreLogin(event)
@@ -89,7 +89,7 @@ class AsyncPreLoginListenerTest {
         val ip = "127.0.0.1"
         val event = loginEvent(uuid, ip)
 
-        `when`(connectPlayerUseCase.execute(uuid, ip))
+        `when`(connectPlayer.execute(uuid, ip))
             .thenThrow(Exception())
 
         listener.onAsyncPreLogin(event)
@@ -104,7 +104,7 @@ class AsyncPreLoginListenerTest {
         val event = loginEvent(uuid, ip)
         val exception = Exception()
 
-        `when`(connectPlayerUseCase.execute(uuid, ip))
+        `when`(connectPlayer.execute(uuid, ip))
             .thenThrow(exception)
 
         listener.onAsyncPreLogin(event)

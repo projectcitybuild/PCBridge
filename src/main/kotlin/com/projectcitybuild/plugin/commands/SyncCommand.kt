@@ -2,8 +2,8 @@ package com.projectcitybuild.plugin.commands
 
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Success
-import com.projectcitybuild.features.ranksync.usecases.GenerateAccountVerificationURLUseCase
-import com.projectcitybuild.features.ranksync.usecases.UpdatePlayerGroupsUseCase
+import com.projectcitybuild.features.ranksync.usecases.GenerateAccountVerificationURL
+import com.projectcitybuild.features.ranksync.usecases.UpdatePlayerGroups
 import com.projectcitybuild.support.spigot.commands.CannotInvokeFromConsoleException
 import com.projectcitybuild.support.spigot.commands.InvalidCommandArgumentsException
 import com.projectcitybuild.support.spigot.commands.SpigotCommand
@@ -19,8 +19,8 @@ import org.bukkit.entity.Player
 import javax.inject.Inject
 
 class SyncCommand @Inject constructor(
-    private val generateAccountVerificationURLUseCase: GenerateAccountVerificationURLUseCase,
-    private val updatePlayerGroupsUseCase: UpdatePlayerGroupsUseCase,
+    private val generateAccountVerificationURL: GenerateAccountVerificationURL,
+    private val updatePlayerGroups: UpdatePlayerGroups,
 ) : SpigotCommand {
 
     override val label = "sync"
@@ -39,14 +39,14 @@ class SyncCommand @Inject constructor(
     }
 
     private suspend fun generateVerificationURL(player: Player) {
-        val result = generateAccountVerificationURLUseCase.generate(player.uniqueId)
+        val result = generateAccountVerificationURL.generate(player.uniqueId)
 
         when (result) {
             is Failure -> when (result.reason) {
-                GenerateAccountVerificationURLUseCase.FailureReason.ALREADY_LINKED
+                GenerateAccountVerificationURL.FailureReason.ALREADY_LINKED
                 -> syncGroups(player)
 
-                GenerateAccountVerificationURLUseCase.FailureReason.EMPTY_RESPONSE
+                GenerateAccountVerificationURL.FailureReason.EMPTY_RESPONSE
                 -> player.send().error("Failed to generate verification URL: No URL received from server")
             }
             is Success -> player.spigot().sendMessage(
@@ -64,11 +64,11 @@ class SyncCommand @Inject constructor(
     }
 
     private suspend fun syncGroups(player: Player) {
-        val result = updatePlayerGroupsUseCase.sync(player.uniqueId)
+        val result = updatePlayerGroups.sync(player.uniqueId)
 
         when (result) {
             is Failure -> when (result.reason) {
-                UpdatePlayerGroupsUseCase.FailureReason.ACCOUNT_NOT_LINKED
+                UpdatePlayerGroups.FailureReason.ACCOUNT_NOT_LINKED
                 -> player.send().error("Sync failed. Did you finish registering your account?")
             }
             is Success -> {

@@ -11,7 +11,7 @@ import com.projectcitybuild.repositories.WarpRepository
 import com.projectcitybuild.support.spigot.eventbroadcast.LocalEventBroadcaster
 import javax.inject.Inject
 
-class CreateWarpUseCase @Inject constructor(
+class CreateWarp @Inject constructor(
     private val warpRepository: WarpRepository,
     private val localEventBroadcaster: LocalEventBroadcaster,
     private val time: Time,

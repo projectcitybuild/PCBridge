@@ -14,9 +14,9 @@ import org.mockito.kotlin.any
 import org.powermock.api.mockito.PowerMockito.mock
 import org.powermock.api.mockito.PowerMockito.`when`
 
-class DeleteTeleportToWarpUseCaseTest {
+class DeleteTeleportToWarpTest {
 
-    private lateinit var useCase: DeleteWarpUseCase
+    private lateinit var useCase: DeleteWarp
 
     private lateinit var warpRepository: WarpRepository
     private lateinit var localEventBroadcaster: LocalEventBroadcaster
@@ -26,7 +26,7 @@ class DeleteTeleportToWarpUseCaseTest {
         warpRepository = mock(WarpRepository::class.java)
         localEventBroadcaster = mock(LocalEventBroadcaster::class.java)
 
-        useCase = DeleteWarpUseCase(warpRepository, localEventBroadcaster)
+        useCase = DeleteWarp(warpRepository, localEventBroadcaster)
     }
 
     @Test
@@ -36,7 +36,7 @@ class DeleteTeleportToWarpUseCaseTest {
 
         val result = useCase.deleteWarp(warpName)
 
-        assertEquals(result, Failure(DeleteWarpUseCase.FailureReason.WARP_NOT_FOUND))
+        assertEquals(result, Failure(DeleteWarp.FailureReason.WARP_NOT_FOUND))
     }
 
     @Test
