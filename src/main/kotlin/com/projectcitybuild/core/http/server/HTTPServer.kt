@@ -1,11 +1,14 @@
 package com.projectcitybuild.core.http.server
 
 import com.projectcitybuild.core.utilities.Cancellable
+import com.projectcitybuild.core.utilities.Failure
+import com.projectcitybuild.core.utilities.Success
 import com.projectcitybuild.features.ranksync.usecases.UpdatePlayerGroups
 import com.projectcitybuild.modules.config.Config
 import com.projectcitybuild.modules.config.ConfigKeys
 import com.projectcitybuild.support.spigot.logger.Logger
 import com.projectcitybuild.support.spigot.scheduler.Scheduler
+import com.projectcitybuild.support.textcomponent.send
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.call
 import io.ktor.server.engine.embeddedServer
@@ -59,11 +62,27 @@ class HTTPServer @Inject constructor(
                         scheduler.sync {
                             val player = minecraftServer.onlinePlayers.firstOrNull {
                                 it.uniqueId.toString().unformatted() == rawUUID.unformatted()
-                            } ?: return@sync
+                            }
+                            if (player == null) {
+                                logger.info("No matching player found for sync request UUID: $rawUUID")
+                                return@sync
+                            }
+
+                            logger.info("Syncing player: $rawUUID")
 
                             scheduler.async<Unit> {
                                 CoroutineScope(Dispatchers.IO).launch {
-                                    updatePlayerGroups.execute(playerUUID = player.uniqueId)
+                                    val result = updatePlayerGroups.execute(playerUUID = player.uniqueId)
+
+                                    when (result) {
+                                        is Failure -> when (result.reason) {
+                                            UpdatePlayerGroups.FailureReason.ACCOUNT_NOT_LINKED
+                                            -> player.send().error("Your rank failed to be updated. Please contact a staff member")
+                                        }
+                                        is Success -> {
+                                            player.send().success("Your rank has been updated")
+                                        }
+                                    }
                                 }
                             }
                         }
