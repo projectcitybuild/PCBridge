@@ -16,12 +16,7 @@ import com.projectcitybuild.support.spigot.listeners.SpigotListenerRegistry
 import com.projectcitybuild.support.spigot.logger.SpigotLogger
 import com.projectcitybuild.support.spigot.scheduler.SpigotScheduler
 import com.projectcitybuild.support.spigot.timer.SpigotTimer
-import io.ktor.server.application.call
-import io.ktor.server.engine.embeddedServer
-import io.ktor.server.netty.Netty
-import io.ktor.server.response.respondText
 import io.ktor.server.routing.get
-import io.ktor.server.routing.routing
 import org.bukkit.Server
 import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
@@ -79,7 +74,6 @@ class SpigotPluginContainer @Inject constructor(
             container.listeners.forEach { listenerRegistry.register(it) }
 
             httpServer.run()
-
         }.onFailure {
             reportError(it)
             server.pluginManager.disablePlugin(plugin)
@@ -94,7 +88,6 @@ class SpigotPluginContainer @Inject constructor(
             dataSource.disconnect()
 
             httpServer.stop()
-
         }.onFailure { reportError(it) }
     }
 
