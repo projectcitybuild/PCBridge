@@ -3,6 +3,7 @@ package com.projectcitybuild.plugin
 import com.github.shynixn.mccoroutine.bukkit.minecraftDispatcher
 import com.projectcitybuild.core.database.DataSource
 import com.projectcitybuild.core.http.core.APIClientImpl
+import com.projectcitybuild.core.http.server.HTTPServer
 import com.projectcitybuild.core.storage.adapters.YamlStorage
 import com.projectcitybuild.modules.errorreporting.ErrorReporter
 import com.projectcitybuild.modules.permissions.Permissions
@@ -15,6 +16,12 @@ import com.projectcitybuild.support.spigot.listeners.SpigotListenerRegistry
 import com.projectcitybuild.support.spigot.logger.SpigotLogger
 import com.projectcitybuild.support.spigot.scheduler.SpigotScheduler
 import com.projectcitybuild.support.spigot.timer.SpigotTimer
+import io.ktor.server.application.call
+import io.ktor.server.engine.embeddedServer
+import io.ktor.server.netty.Netty
+import io.ktor.server.response.respondText
+import io.ktor.server.routing.get
+import io.ktor.server.routing.routing
 import org.bukkit.Server
 import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
@@ -57,6 +64,7 @@ class SpigotPluginContainer @Inject constructor(
     private val dataSource: DataSource,
     private val errorReporter: ErrorReporter,
     private val permissions: Permissions,
+    private val httpServer: HTTPServer,
 ) {
     fun onEnable(server: Server) {
         errorReporter.bootstrap()
@@ -69,6 +77,9 @@ class SpigotPluginContainer @Inject constructor(
             container.integrations.forEach { it.onEnable() }
             container.commands.forEach { commandRegistry.register(it) }
             container.listeners.forEach { listenerRegistry.register(it) }
+
+            httpServer.run()
+
         }.onFailure {
             reportError(it)
             server.pluginManager.disablePlugin(plugin)
@@ -81,6 +92,9 @@ class SpigotPluginContainer @Inject constructor(
 
             listenerRegistry.unregisterAll()
             dataSource.disconnect()
+
+            httpServer.stop()
+
         }.onFailure { reportError(it) }
     }
 
