@@ -2,6 +2,7 @@ package com.projectcitybuild.core.http.server
 
 import com.projectcitybuild.core.utilities.Cancellable
 import com.projectcitybuild.core.utilities.Failure
+import com.projectcitybuild.core.utilities.Result
 import com.projectcitybuild.core.utilities.Success
 import com.projectcitybuild.features.ranksync.usecases.UpdatePlayerGroups
 import com.projectcitybuild.modules.config.Config
@@ -59,33 +60,7 @@ class HTTPServer @Inject constructor(
                             return@get
                         }
 
-                        scheduler.sync {
-                            val player = minecraftServer.onlinePlayers.firstOrNull {
-                                it.uniqueId.toString().unformatted() == rawUUID.unformatted()
-                            }
-                            if (player == null) {
-                                logger.info("No matching player found for sync request UUID: $rawUUID")
-                                return@sync
-                            }
-
-                            logger.info("Syncing player: $rawUUID")
-
-                            scheduler.async<Unit> {
-                                CoroutineScope(Dispatchers.IO).launch {
-                                    val result = updatePlayerGroups.execute(playerUUID = player.uniqueId)
-
-                                    when (result) {
-                                        is Failure -> when (result.reason) {
-                                            UpdatePlayerGroups.FailureReason.ACCOUNT_NOT_LINKED
-                                            -> player.send().error("Your rank failed to be updated. Please contact a staff member")
-                                        }
-                                        is Success -> {
-                                            player.send().success("Your rank has been updated")
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                        syncUUID(rawUUID)
 
                         call.respond(HttpStatusCode.OK)
                     }
@@ -97,6 +72,36 @@ class HTTPServer @Inject constructor(
 
     fun stop() {
         cancellable?.cancel()
+    }
+
+    private fun syncUUID(rawUUID: String) = scheduler.sync {
+        val player = minecraftServer.onlinePlayers.firstOrNull {
+            it.uniqueId.toString().unformatted() == rawUUID.unformatted()
+        }
+        if (player == null) {
+            logger.info("No matching player found for sync request UUID: $rawUUID")
+            return@sync
+        }
+
+        logger.info("Syncing player: $rawUUID")
+
+        scheduler.async<Result<Unit, UpdatePlayerGroups.FailureReason>> { resolver ->
+            CoroutineScope(Dispatchers.IO).launch {
+                val result = updatePlayerGroups.execute(playerUUID = player.uniqueId)
+                resolver(result)
+            }
+        }.startAndSubscribe { result ->
+            when (result) {
+                is Failure -> when (result.reason) {
+                    UpdatePlayerGroups.FailureReason.ACCOUNT_NOT_LINKED
+                    -> player.send().error("Your rank failed to be updated. Please contact a staff member")
+                }
+
+                is Success -> {
+                    player.send().success("Your rank has been updated")
+                }
+            }
+        }
     }
 }
 
