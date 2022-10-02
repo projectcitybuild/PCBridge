@@ -15,7 +15,7 @@ class SpigotScheduler(private val plugin: JavaPlugin) : Scheduler {
             val bukkitTask = plugin.server.scheduler.runTaskAsynchronously(plugin, runnable)
 
             Cancellable {
-                bukkitTask?.cancel()
+                bukkitTask.cancel()
             }
         }
     }

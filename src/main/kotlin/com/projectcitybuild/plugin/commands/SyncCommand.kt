@@ -64,7 +64,7 @@ class SyncCommand @Inject constructor(
     }
 
     private suspend fun syncGroups(player: Player) {
-        val result = updatePlayerGroups.sync(player.uniqueId)
+        val result = updatePlayerGroups.execute(player.uniqueId)
 
         when (result) {
             is Failure -> when (result.reason) {

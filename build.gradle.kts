@@ -8,10 +8,11 @@ import java.util.Properties
 val generatedVersionDir = "$buildDir/generated-resources"
 
 group = "com.projectcitybuild"
-version = "4.6.1"
+version = "4.7.0"
 
 plugins {
     kotlin("jvm") version "1.6.10"
+
     id("com.github.johnrengelman.shadow") version "7.0.0"
     id("org.jetbrains.kotlin.plugin.serialization") version "1.6.10"
     id("org.jetbrains.kotlin.kapt") version "1.6.10"
@@ -22,6 +23,8 @@ plugins {
     // klint integration with Idea
     // https://github.com/jlleitschuh/ktlint-gradle#additional-helper-tasks
     id("org.jlleitschuh.gradle.ktlint-idea") version "10.2.1"
+
+    application
 }
 
 apply(plugin = "com.github.johnrengelman.shadow")
@@ -95,8 +98,17 @@ dependencies {
     testImplementation("org.powermock:powermock-api-mockito2:2.0.9")
     testImplementation("org.mockito:mockito-inline:4.2.0")
 
-    testImplementation("net.md-5:bungeecord-api:1.16-R0.4") // Needed for mocking in tests
-    testImplementation("org.spigotmc:spigot-api:1.12.2-R0.1-SNAPSHOT") // Needed for mocking in tests
+    // Needed for mocking in tests
+    testImplementation("net.md-5:bungeecord-api:1.16-R0.4")
+    testImplementation("org.spigotmc:spigot-api:1.12.2-R0.1-SNAPSHOT")
+
+    // Ktor
+    implementation("io.ktor:ktor-server-core:2.1.2")
+    implementation("io.ktor:ktor-server-netty:2.1.2")
+}
+
+application {
+    mainClass.set("com.projectcitybuild.pcbridge.ApplicationKt")
 }
 
 sourceSets {
