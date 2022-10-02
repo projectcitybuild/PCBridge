@@ -16,7 +16,7 @@ class UpdatePlayerGroups @Inject constructor(
         ACCOUNT_NOT_LINKED,
     }
 
-    suspend fun sync(playerUUID: UUID): Result<Unit, FailureReason> {
+    suspend fun execute(playerUUID: UUID): Result<Unit, FailureReason> {
         val groupSet = mutableSetOf<String>()
 
         try {

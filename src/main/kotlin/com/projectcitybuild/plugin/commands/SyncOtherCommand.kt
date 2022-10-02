@@ -35,7 +35,7 @@ class SyncOtherCommand @Inject constructor(
             return
         }
 
-        val result = updatePlayerGroups.sync(targetPlayer.uniqueId)
+        val result = updatePlayerGroups.execute(targetPlayer.uniqueId)
 
         when (result) {
             is Failure -> input.sender.send().error(

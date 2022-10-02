@@ -44,7 +44,7 @@ class UpdatePlayerGroupsTest {
             listOf("donor_tier1")
         )
 
-        val result = useCase.sync(playerUUID)
+        val result = useCase.execute(playerUUID)
 
         verify(permissions).setUserGroups(playerUUID, listOf("group1", "group2", "donor_tier1"))
         assertEquals(result, Success(Unit))
@@ -59,7 +59,7 @@ class UpdatePlayerGroupsTest {
         )
         `when`(playerGroupRepository.getDonorTiers(any())).thenReturn(emptyList())
 
-        val result = useCase.sync(playerUUID)
+        val result = useCase.execute(playerUUID)
 
         verifyNoInteractions(permissions)
         assertEquals(result, Failure(UpdatePlayerGroups.FailureReason.ACCOUNT_NOT_LINKED))
