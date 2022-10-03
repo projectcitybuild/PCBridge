@@ -19,7 +19,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           WITH_V: true
-          INITIAL_VERSION: 3.13.3
+          INITIAL_VERSION: 4.7.1
           RELEASE_BRANCHES: release
 
       - name: Set up JDK
