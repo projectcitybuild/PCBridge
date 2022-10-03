@@ -13,6 +13,7 @@ class ConfigKeys {
         val dbPassword = "database.password" defaultsTo "FILL_THIS_IN"
 
         val internalWebServerToken = "webserver.bearer" defaultsTo "FILL_THIS_IN"
+        val internalWebServerPort = "webserver.port" defaultsTo 8080
 
         val errorReportingSentryEnabled = "error_reporting.sentry.enabled" defaultsTo false
         val errorReportingSentryDSN = "error_reporting.sentry.dsn" defaultsTo "https://<key>@sentry.io/<project>"
