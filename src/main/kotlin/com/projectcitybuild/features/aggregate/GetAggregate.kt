@@ -9,10 +9,10 @@ import javax.inject.Inject
 class GetAggregate @Inject constructor(
     private val aggregateRepository: AggregateRepository,
 ) {
-    suspend fun execute(playerUUID: UUID, ip: String): Aggregate? {
+    suspend fun execute(playerUUID: UUID, ip: String): Aggregate {
         return aggregateRepository.get(
             playerUUID = playerUUID,
             ip = Sanitizer().sanitizedIP(ip),
-        )
+        ) ?: Aggregate()
     }
 }
