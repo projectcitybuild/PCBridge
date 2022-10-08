@@ -39,7 +39,7 @@ class AsyncPreLoginListener @Inject constructor(
                 val aggregate = getAggregate.execute(
                     playerUUID = event.uniqueId,
                     ip = event.address.toString(),
-                ) ?: return@runBlocking
+                )
 
                 val result = authoriseConnection.execute(aggregate)
                 if (result is AuthoriseConnection.ConnectResult.Denied) {
@@ -47,6 +47,7 @@ class AsyncPreLoginListener @Inject constructor(
                         AsyncPlayerPreLoginEvent.Result.KICK_BANNED,
                         result.ban.toMessage(dateTimeFormatter),
                     )
+                    return@runBlocking
                 }
 
                 syncPlayerWithAggregate.execute(
