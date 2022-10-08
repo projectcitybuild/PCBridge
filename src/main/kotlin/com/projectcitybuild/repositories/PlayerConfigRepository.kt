@@ -46,6 +46,7 @@ class PlayerConfigRepository @Inject constructor(
             "INSERT INTO players VALUES (NULL, ?, ?, ?, ?)",
             uuid.toString(),
             isMuted,
+            isChatBadgeDisabled,
             firstSeen,
         )
         val playerConfig = PlayerConfig(
