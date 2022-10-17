@@ -25,6 +25,7 @@ import com.projectcitybuild.plugin.integrations.gadgetsmenu.GadgetsMenuIntegrati
 import com.projectcitybuild.plugin.integrations.luckperms.LuckPermsIntegration
 import com.projectcitybuild.plugin.listeners.AsyncPlayerChatListener
 import com.projectcitybuild.plugin.listeners.AsyncPreLoginListener
+import com.projectcitybuild.plugin.listeners.ExceptionListener
 import com.projectcitybuild.plugin.listeners.FirstTimeJoinListener
 import com.projectcitybuild.plugin.listeners.PlayerJoinListener
 import com.projectcitybuild.plugin.listeners.PlayerQuitEvent
@@ -102,6 +103,7 @@ class SpigotContainer @Inject constructor(
 
     class Listeners @Inject constructor(
         asyncPlayerChatListener: AsyncPlayerChatListener,
+        exceptionListener: ExceptionListener,
         firstTimeJoinListener: FirstTimeJoinListener,
         asyncPreLoginListener: AsyncPreLoginListener,
         playerJoinListener: PlayerJoinListener,
@@ -110,6 +112,7 @@ class SpigotContainer @Inject constructor(
     ) {
         val enabled: List<SpigotListener> = listOf(
             asyncPlayerChatListener,
+            exceptionListener,
             firstTimeJoinListener,
             asyncPreLoginListener,
             playerJoinListener,
