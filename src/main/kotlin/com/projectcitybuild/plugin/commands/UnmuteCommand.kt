@@ -9,7 +9,6 @@ import com.projectcitybuild.support.spigot.commands.SpigotCommandInput
 import com.projectcitybuild.support.textcomponent.send
 import org.bukkit.Server
 import org.bukkit.command.CommandSender
-import javax.inject.Inject
 
 class UnmuteCommand(
     private val server: Server,
