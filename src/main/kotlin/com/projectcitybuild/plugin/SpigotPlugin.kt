@@ -11,8 +11,8 @@ class SpigotPlugin : JavaPlugin() {
     private var container: DependencyContainer? = null
     private var integrations: Array<SpigotIntegration> = emptyArray()
 
-    private fun commands(container: DependencyContainer): Array<SpigotCommand>
-        = container.run {
+    private fun commands(container: DependencyContainer): Array<SpigotCommand> =
+        container.run {
             arrayOf(
                 aCommand,
                 badgeCommand,
@@ -34,8 +34,8 @@ class SpigotPlugin : JavaPlugin() {
             )
         }
 
-    private fun listeners(container: DependencyContainer): Array<SpigotListener>
-        = container.run {
+    private fun listeners(container: DependencyContainer): Array<SpigotListener> =
+        container.run {
             arrayOf(
                 asyncPlayerChatListener,
                 asyncPreLoginListener,
@@ -47,8 +47,8 @@ class SpigotPlugin : JavaPlugin() {
             )
         }
 
-    private fun integrations(container: DependencyContainer): Array<SpigotIntegration>
-        = container.run {
+    private fun integrations(container: DependencyContainer): Array<SpigotIntegration> =
+        container.run {
             arrayOf(
                 dynmapIntegration,
                 essentialsIntegration,
@@ -78,7 +78,6 @@ class SpigotPlugin : JavaPlugin() {
 
                 integrations = integrations(this)
                 integrations.forEach { it.onEnable() }
-
             }.onFailure {
                 reportError(it, errorReporter)
                 server.pluginManager.disablePlugin(plugin)

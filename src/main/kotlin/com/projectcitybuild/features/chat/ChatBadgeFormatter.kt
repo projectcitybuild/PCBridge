@@ -12,7 +12,7 @@ import net.md_5.bungee.api.chat.TextComponent
 import net.md_5.bungee.api.chat.hover.content.Text
 import java.util.UUID
 
-class ChatBadgeFormatter (
+class ChatBadgeFormatter(
     private val playerConfigRepository: PlayerConfigRepository,
     private val chatBadgeRepository: ChatBadgeRepository,
     private val config: Config,

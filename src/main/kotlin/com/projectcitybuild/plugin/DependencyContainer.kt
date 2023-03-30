@@ -88,17 +88,17 @@ import com.projectcitybuild.support.spigot.eventbroadcast.SpigotLocalEventBroadc
 import com.projectcitybuild.support.spigot.kick.PlayerKicker
 import com.projectcitybuild.support.spigot.kick.SpigotPlayerKicker
 import com.projectcitybuild.support.spigot.listeners.SpigotListenerRegistry
+import com.projectcitybuild.support.spigot.logger.Logger
 import com.projectcitybuild.support.spigot.logger.SpigotLogger
+import com.projectcitybuild.support.spigot.scheduler.Scheduler
+import com.projectcitybuild.support.spigot.scheduler.SpigotScheduler
 import org.bukkit.Server
 import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.plugin.java.JavaPlugin
 import java.time.ZoneId
 import java.util.Locale
-import java.util.logging.Logger as JavaLogger
-import com.projectcitybuild.support.spigot.logger.Logger
-import com.projectcitybuild.support.spigot.scheduler.Scheduler
-import com.projectcitybuild.support.spigot.scheduler.SpigotScheduler
 import kotlin.coroutines.CoroutineContext
+import java.util.logging.Logger as JavaLogger
 
 class DependencyContainer(
     val plugin: JavaPlugin,
@@ -108,8 +108,10 @@ class DependencyContainer(
     val minecraftDispatcher: CoroutineContext,
 ) {
     val config: Config by lazy {
-        Config(YamlKeyValueStorage(
-            storage = YamlStorage(spigotConfig))
+        Config(
+            YamlKeyValueStorage(
+                storage = YamlStorage(spigotConfig)
+            )
         )
     }
 
