@@ -13,7 +13,7 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.player.PlayerQuitEvent
 import javax.inject.Inject
 
-class PlayerQuitEvent @Inject constructor(
+class PlayerQuitListener @Inject constructor(
     private val server: Server,
     private val playerCache: PlayerConfigCache,
     private val chatGroupFormatter: ChatGroupFormatter,

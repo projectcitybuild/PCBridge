@@ -23,9 +23,15 @@ import org.bukkit.plugin.java.JavaPlugin
 import javax.inject.Inject
 
 class SpigotPlugin : JavaPlugin() {
-    private var container: SpigotPluginContainer? = null
+    private lateinit var container: DependencyContainer
 
     override fun onEnable() {
+        container = DependencyContainer(
+            plugin = this,
+            server = server,
+            logger = logger,
+        )
+
         container = DaggerSpigotComponent.builder()
             .plugin(this)
             .javaPlugin(this)

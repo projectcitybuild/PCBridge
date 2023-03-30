@@ -8,7 +8,7 @@ import java.util.Properties
 val generatedVersionDir = "$buildDir/generated-resources"
 
 group = "com.projectcitybuild"
-version = "4.7.2"
+version = "4.8.0"
 
 plugins {
     kotlin("jvm") version "1.6.10"
@@ -84,9 +84,6 @@ dependencies {
     implementation("com.zaxxer:HikariCP:5.0.1")
 
     implementation("co.aikar:idb-core:1.0.0-SNAPSHOT")
-
-    implementation("com.google.dagger:dagger:2.42")
-    kapt("com.google.dagger:dagger-compiler:2.42")
 
     implementation("io.sentry:sentry:5.7.4")
 

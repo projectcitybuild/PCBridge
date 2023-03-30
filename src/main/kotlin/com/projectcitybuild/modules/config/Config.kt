@@ -1,8 +1,6 @@
 package com.projectcitybuild.modules.config
 
-import javax.inject.Inject
-
-class Config @Inject constructor(
+class Config(
     private val keyValueStorage: KeyValueStorage,
 ) {
     private val cache: MutableMap<String, Any> = mutableMapOf()

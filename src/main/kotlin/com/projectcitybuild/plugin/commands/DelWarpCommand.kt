@@ -9,9 +9,8 @@ import com.projectcitybuild.support.spigot.commands.SpigotCommand
 import com.projectcitybuild.support.spigot.commands.SpigotCommandInput
 import com.projectcitybuild.support.textcomponent.send
 import org.bukkit.command.CommandSender
-import javax.inject.Inject
 
-class DelWarpCommand @Inject constructor(
+class DelWarpCommand(
     private val deleteWarp: DeleteWarp,
     private val warpRepository: WarpRepository,
 ) : SpigotCommand {

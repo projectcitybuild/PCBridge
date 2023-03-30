@@ -11,7 +11,7 @@ import org.bukkit.Server
 import org.bukkit.command.CommandSender
 import javax.inject.Inject
 
-class UnmuteCommand @Inject constructor(
+class UnmuteCommand(
     private val server: Server,
     private val mute: MutePlayer,
 ) : SpigotCommand {

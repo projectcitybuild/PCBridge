@@ -28,9 +28,10 @@ import com.projectcitybuild.plugin.listeners.AsyncPreLoginListener
 import com.projectcitybuild.plugin.listeners.ExceptionListener
 import com.projectcitybuild.plugin.listeners.FirstTimeJoinListener
 import com.projectcitybuild.plugin.listeners.PlayerJoinListener
-import com.projectcitybuild.plugin.listeners.PlayerQuitEvent
+import com.projectcitybuild.plugin.listeners.PlayerQuitListener
 import com.projectcitybuild.plugin.listeners.TelemetryListener
 import com.projectcitybuild.support.spigot.commands.SpigotCommand
+import net.md_5.bungee.protocol.packet.Commands
 import javax.inject.Inject
 
 class SpigotContainer @Inject constructor(
@@ -58,66 +59,6 @@ class SpigotContainer @Inject constructor(
             essentialsIntegration,
             gadgetsMenuIntegration,
             luckPermsIntegration,
-        )
-    }
-
-    class Commands @Inject constructor(
-        aCommand: ACommand,
-        badgeCommand: BadgeCommand,
-        banCommand: BanCommand,
-        banIPCommand: BanIPCommand,
-        checkBanCommand: CheckBanCommand,
-        delWarpCommand: DelWarpCommand,
-        muteCommand: MuteCommand,
-        pcbridgeCommand: PCBridgeCommand,
-        setWarpCommand: SetWarpCommand,
-        syncCommand: SyncCommand,
-        syncOtherCommand: SyncOtherCommand,
-        unbanCommand: UnbanCommand,
-        unbanIPCommand: UnbanIPCommand,
-        unmuteCommand: UnmuteCommand,
-        warningAcknowledgeCommand: WarningAcknowledgeCommand,
-        warpCommand: WarpCommand,
-        warpsCommand: WarpsCommand,
-    ) {
-        val enabled: List<SpigotCommand> = listOf(
-            aCommand,
-            badgeCommand,
-            banCommand,
-            banIPCommand,
-            checkBanCommand,
-            delWarpCommand,
-            muteCommand,
-            pcbridgeCommand,
-            setWarpCommand,
-            syncCommand,
-            syncOtherCommand,
-            unbanCommand,
-            unbanIPCommand,
-            unmuteCommand,
-            warningAcknowledgeCommand,
-            warpCommand,
-            warpsCommand,
-        )
-    }
-
-    class Listeners @Inject constructor(
-        asyncPlayerChatListener: AsyncPlayerChatListener,
-        exceptionListener: ExceptionListener,
-        firstTimeJoinListener: FirstTimeJoinListener,
-        asyncPreLoginListener: AsyncPreLoginListener,
-        playerJoinListener: PlayerJoinListener,
-        playerQuitEvent: PlayerQuitEvent,
-        telemetryListener: TelemetryListener,
-    ) {
-        val enabled: List<SpigotListener> = listOf(
-            asyncPlayerChatListener,
-            exceptionListener,
-            firstTimeJoinListener,
-            asyncPreLoginListener,
-            playerJoinListener,
-            playerQuitEvent,
-            telemetryListener,
         )
     }
 }
