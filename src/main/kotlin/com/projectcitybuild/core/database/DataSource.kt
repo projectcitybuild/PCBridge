@@ -4,9 +4,7 @@ import co.aikar.idb.DatabaseOptions
 import co.aikar.idb.HikariPooledDatabase
 import co.aikar.idb.PooledDatabaseOptions
 import com.projectcitybuild.support.spigot.logger.Logger
-import javax.inject.Singleton
 
-@Singleton
 class DataSource(
     private val logger: Logger,
     private val hostName: String,

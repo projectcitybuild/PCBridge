@@ -1,8 +1,5 @@
 package com.projectcitybuild.core.http.core
 
-import dagger.Reusable
-
-@Reusable
 class APIClientMock : APIClient {
 
     var result: Any? = null
