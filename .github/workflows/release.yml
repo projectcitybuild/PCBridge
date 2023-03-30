@@ -1,6 +1,7 @@
 name: Create release
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - release
@@ -13,50 +14,35 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Bump version and push tag
-        uses: anothrNick/github-tag-action@1.36.0
-        id: tag
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          WITH_V: true
-          INITIAL_VERSION: 4.7.1
-          RELEASE_BRANCHES: release
+      - uses: ./.github/actions/setup-java
 
-      - name: Set up JDK
-        uses: actions/setup-java@v2
-        with:
-          java-version: '16'
-          distribution: 'temurin'
-
-      - uses: actions/cache@v2
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
+      - name: Get version from build.gradle.kts
+        id: plugin_version
+        run: |
+          version="$(gradle properties -q | grep "version:" | awk '{print $2}')"
+          echo "PLUGIN_VERSION=$version" >> $GITHUB_OUTPUT
 
       - name: Build with Gradle
         run: gradle shadowJar
 
-      - name: Stop Daemon
-        run: gradle --stop
-
-      - name: Upload a Build Artifact
+      - name: Upload jar file as artifact
         uses: actions/upload-artifact@v2.2.4
         with:
           path: build/release/pcbridge*.jar
           if-no-files-found: warn
 
+      - name: Create git tag
+        id: tag
+        run: |
+          new_tag="${{ steps.plugin_version.outputs.PLUGIN_VERSION }}"
+          git tag $new_tag
+          git push origin $new_tag
+          echo "::set-output name=TAG::$new_tag"
+
       - name: Create release
         uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
         with:
           tag_name: ${{ steps.tag.outputs.new_tag }}
           files: build/release/pcbridge*.jar
           fail_on_unmatched_files: true
-          prerelease: false
           generate_release_notes: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
