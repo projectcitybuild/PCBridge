@@ -12,9 +12,8 @@ import org.bukkit.Server
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.player.AsyncPlayerChatEvent
-import javax.inject.Inject
 
-class AsyncPlayerChatListener @Inject constructor(
+class AsyncPlayerChatListener(
     private val server: Server,
     private val playerConfigRepository: PlayerConfigRepository,
     private val chatGroupFormatter: ChatGroupFormatter,

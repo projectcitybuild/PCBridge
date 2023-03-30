@@ -6,6 +6,7 @@ import com.projectcitybuild.core.http.clients.MojangClient
 import com.projectcitybuild.core.http.clients.PCBClient
 import com.projectcitybuild.core.http.core.APIClient
 import com.projectcitybuild.core.http.core.APIClientImpl
+import com.projectcitybuild.core.http.server.HTTPServer
 import com.projectcitybuild.core.storage.adapters.YamlStorage
 import com.projectcitybuild.features.aggregate.AuthoriseConnection
 import com.projectcitybuild.features.aggregate.GetAggregate
@@ -52,8 +53,10 @@ import com.projectcitybuild.plugin.commands.MuteCommand
 import com.projectcitybuild.plugin.commands.PCBridgeCommand
 import com.projectcitybuild.plugin.commands.SetWarpCommand
 import com.projectcitybuild.plugin.commands.SyncCommand
+import com.projectcitybuild.plugin.commands.SyncOtherCommand
 import com.projectcitybuild.plugin.commands.UnbanCommand
 import com.projectcitybuild.plugin.commands.UnbanIPCommand
+import com.projectcitybuild.plugin.commands.UnmuteCommand
 import com.projectcitybuild.plugin.commands.WarningAcknowledgeCommand
 import com.projectcitybuild.plugin.commands.WarpCommand
 import com.projectcitybuild.plugin.commands.WarpsCommand
@@ -79,10 +82,12 @@ import com.projectcitybuild.repositories.PlayerUUIDRepository
 import com.projectcitybuild.repositories.PlayerWarningRepository
 import com.projectcitybuild.repositories.TelemetryRepository
 import com.projectcitybuild.repositories.WarpRepository
+import com.projectcitybuild.support.spigot.commands.SpigotCommandRegistry
 import com.projectcitybuild.support.spigot.eventbroadcast.LocalEventBroadcaster
 import com.projectcitybuild.support.spigot.eventbroadcast.SpigotLocalEventBroadcaster
 import com.projectcitybuild.support.spigot.kick.PlayerKicker
 import com.projectcitybuild.support.spigot.kick.SpigotPlayerKicker
+import com.projectcitybuild.support.spigot.listeners.SpigotListenerRegistry
 import com.projectcitybuild.support.spigot.logger.SpigotLogger
 import org.bukkit.Server
 import org.bukkit.configuration.file.FileConfiguration
@@ -91,14 +96,16 @@ import java.time.ZoneId
 import java.util.Locale
 import java.util.logging.Logger as JavaLogger
 import com.projectcitybuild.support.spigot.logger.Logger
-import kotlinx.coroutines.CoroutineDispatcher
+import com.projectcitybuild.support.spigot.scheduler.Scheduler
+import com.projectcitybuild.support.spigot.scheduler.SpigotScheduler
+import kotlin.coroutines.CoroutineContext
 
 class DependencyContainer(
-    private val plugin: JavaPlugin,
-    private val server: Server,
-    private val spigotConfig: FileConfiguration,
-    private val spigotLogger: JavaLogger,
-    private val minecraftDispatcher: CoroutineDispatcher,
+    val plugin: JavaPlugin,
+    val server: Server,
+    val spigotConfig: FileConfiguration,
+    val spigotLogger: JavaLogger,
+    val minecraftDispatcher: CoroutineContext,
 ) {
     val config: Config by lazy {
         Config(YamlKeyValueStorage(
@@ -121,6 +128,10 @@ class DependencyContainer(
 
     val logger: Logger by lazy {
         SpigotLogger(spigotLogger)
+    }
+
+    val scheduler: Scheduler by lazy {
+        SpigotScheduler(plugin)
     }
 
     val errorReporter: ErrorReporter by lazy {
@@ -158,6 +169,21 @@ class DependencyContainer(
         APIClientImpl { minecraftDispatcher }
     }
 
+    val listenerRegistry by lazy {
+        SpigotListenerRegistry(
+            plugin,
+            logger,
+        )
+    }
+
+    val commandRegistry by lazy {
+        SpigotCommandRegistry(
+            plugin,
+            logger,
+            errorReporter,
+        )
+    }
+
     val localEventBroadcaster: LocalEventBroadcaster
         get() = SpigotLocalEventBroadcaster()
 
@@ -183,6 +209,19 @@ class DependencyContainer(
             playerConfigRepository,
             chatBadgeRepository,
             config,
+        )
+    }
+
+    val httpServer: HTTPServer by lazy {
+        HTTPServer(
+            scheduler,
+            server,
+            config,
+            logger,
+            UpdatePlayerGroups(
+                permissions,
+                playerGroupRepository,
+            ),
         )
     }
 
@@ -347,6 +386,15 @@ class DependencyContainer(
         )
     )
 
+    val syncOtherCommand get() = SyncOtherCommand(
+        server,
+        UpdatePlayerGroups(
+            permissions,
+            playerGroupRepository,
+        ),
+        nameGuesser,
+    )
+
     val unbanCommand get() = UnbanCommand(
         server,
         UnbanUUID(
@@ -358,6 +406,14 @@ class DependencyContainer(
 
     val unbanIPCommand get() = UnbanIPCommand(
         UnbanIP(ipBanRepository)
+    )
+
+    val unmuteCommand get() = UnmuteCommand(
+        server,
+        MutePlayer(
+            playerConfigRepository,
+            nameGuesser,
+        ),
     )
 
     val warningAcknowledgeCommand get() = WarningAcknowledgeCommand(

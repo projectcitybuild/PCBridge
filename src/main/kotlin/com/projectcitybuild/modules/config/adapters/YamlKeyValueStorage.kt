@@ -4,9 +4,8 @@ import com.projectcitybuild.core.storage.StoragePath
 import com.projectcitybuild.core.storage.adapters.YamlStorage
 import com.projectcitybuild.modules.config.ConfigStorageKey
 import com.projectcitybuild.modules.config.KeyValueStorage
-import javax.inject.Inject
 
-class YamlKeyValueStorage @Inject constructor(
+class YamlKeyValueStorage(
     private val storage: YamlStorage,
 ) : KeyValueStorage {
 

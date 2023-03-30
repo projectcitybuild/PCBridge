@@ -22,9 +22,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.bukkit.Server
-import javax.inject.Inject
 
-class HTTPServer @Inject constructor(
+class HTTPServer(
     private val scheduler: Scheduler,
     private val minecraftServer: Server,
     private val config: Config,

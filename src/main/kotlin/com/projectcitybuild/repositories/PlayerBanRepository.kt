@@ -4,9 +4,8 @@ import com.projectcitybuild.core.http.APIRequestFactory
 import com.projectcitybuild.core.http.core.APIClient
 import com.projectcitybuild.entities.responses.PlayerBan
 import java.util.UUID
-import javax.inject.Inject
 
-class PlayerBanRepository @Inject constructor(
+class PlayerBanRepository(
     private val apiRequestFactory: APIRequestFactory,
     private val apiClient: APIClient,
 ) {

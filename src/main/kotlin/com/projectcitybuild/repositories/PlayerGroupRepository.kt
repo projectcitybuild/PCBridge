@@ -6,9 +6,8 @@ import com.projectcitybuild.modules.config.Config
 import com.projectcitybuild.modules.config.ConfigStorageKey
 import com.projectcitybuild.support.spigot.logger.Logger
 import java.util.UUID
-import javax.inject.Inject
 
-class PlayerGroupRepository @Inject constructor(
+class PlayerGroupRepository(
     private val apiRequestFactory: APIRequestFactory,
     private val apiClient: APIClient,
     private val config: Config,

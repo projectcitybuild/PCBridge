@@ -9,9 +9,8 @@ import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.Server
 import java.util.UUID
-import javax.inject.Inject
 
-class UnbanUUID @Inject constructor(
+class UnbanUUID(
     private val playerBanRepository: PlayerBanRepository,
     private val playerUUIDRepository: PlayerUUIDRepository,
     private val server: Server,

@@ -3,12 +3,11 @@ package com.projectcitybuild.features.warps.usecases
 import com.projectcitybuild.modules.config.Config
 import com.projectcitybuild.modules.config.ConfigKeys
 import com.projectcitybuild.repositories.WarpRepository
-import javax.inject.Inject
 import kotlin.math.ceil
 import kotlin.math.max
 import kotlin.math.min
 
-class GetWarpList @Inject constructor(
+class GetWarpList(
     private val warpRepository: WarpRepository,
     private val config: Config
 ) {

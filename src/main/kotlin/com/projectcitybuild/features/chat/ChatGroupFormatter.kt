@@ -3,16 +3,13 @@ package com.projectcitybuild.features.chat
 import com.projectcitybuild.modules.config.Config
 import com.projectcitybuild.modules.config.ConfigKeys
 import com.projectcitybuild.modules.permissions.Permissions
-import dagger.Reusable
 import net.md_5.bungee.api.chat.BaseComponent
 import net.md_5.bungee.api.chat.HoverEvent
 import net.md_5.bungee.api.chat.TextComponent
 import net.md_5.bungee.api.chat.hover.content.Text
 import java.util.UUID
-import javax.inject.Inject
 
-@Reusable
-class ChatGroupFormatter @Inject constructor(
+class ChatGroupFormatter(
     private val permissions: Permissions,
     private val config: Config,
 ) {

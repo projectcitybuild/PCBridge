@@ -6,9 +6,8 @@ import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Result
 import com.projectcitybuild.core.utilities.Success
 import java.util.UUID
-import javax.inject.Inject
 
-class GenerateAccountVerificationURL @Inject constructor(
+class GenerateAccountVerificationURL(
     private val apiRequestFactory: APIRequestFactory,
     private val apiClient: APIClient,
 ) {

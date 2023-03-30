@@ -7,9 +7,8 @@ import com.projectcitybuild.modules.permissions.Permissions
 import com.projectcitybuild.repositories.ChatBadgeRepository
 import com.projectcitybuild.support.spigot.logger.Logger
 import java.util.UUID
-import javax.inject.Inject
 
-class SyncPlayerWithAggregate @Inject constructor(
+class SyncPlayerWithAggregate(
     private val permissions: Permissions,
     private val chatBadgeRepository: ChatBadgeRepository,
     private val config: Config,

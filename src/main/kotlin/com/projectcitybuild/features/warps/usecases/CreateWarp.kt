@@ -9,9 +9,8 @@ import com.projectcitybuild.modules.datetime.time.Time
 import com.projectcitybuild.plugin.events.WarpCreateEvent
 import com.projectcitybuild.repositories.WarpRepository
 import com.projectcitybuild.support.spigot.eventbroadcast.LocalEventBroadcaster
-import javax.inject.Inject
 
-class CreateWarp @Inject constructor(
+class CreateWarp(
     private val warpRepository: WarpRepository,
     private val localEventBroadcaster: LocalEventBroadcaster,
     private val time: Time,

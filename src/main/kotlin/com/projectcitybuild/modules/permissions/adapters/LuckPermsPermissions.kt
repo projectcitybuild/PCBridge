@@ -9,11 +9,8 @@ import net.luckperms.api.node.NodeType
 import net.luckperms.api.node.types.InheritanceNode
 import java.util.UUID
 import java.util.stream.Collectors
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
-class LuckPermsPermissions @Inject constructor(
+class LuckPermsPermissions(
     private val logger: Logger,
 ) : Permissions {
 

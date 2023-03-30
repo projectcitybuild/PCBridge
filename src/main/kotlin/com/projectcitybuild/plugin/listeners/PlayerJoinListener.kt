@@ -18,9 +18,8 @@ import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.player.PlayerJoinEvent
 import java.time.LocalDateTime
-import javax.inject.Inject
 
-class PlayerJoinListener @Inject constructor(
+class PlayerJoinListener(
     private val server: Server,
     private val localEventBroadcaster: LocalEventBroadcaster,
     private val playerConfigRepository: PlayerConfigRepository,
