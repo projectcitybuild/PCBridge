@@ -1,8 +1,6 @@
 package com.projectcitybuild.modules.nameguesser
 
-import javax.inject.Inject
-
-class NameGuesser @Inject constructor() {
+class NameGuesser {
 
     /**
      * Returns the closest matching String inside a collection.

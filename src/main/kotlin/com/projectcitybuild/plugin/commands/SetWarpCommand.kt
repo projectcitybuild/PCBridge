@@ -9,9 +9,8 @@ import com.projectcitybuild.support.spigot.commands.SpigotCommand
 import com.projectcitybuild.support.spigot.commands.SpigotCommandInput
 import com.projectcitybuild.support.textcomponent.send
 import org.bukkit.entity.Player
-import javax.inject.Inject
 
-class SetWarpCommand @Inject constructor(
+class SetWarpCommand(
     private val createWarp: CreateWarp,
 ) : SpigotCommand {
 

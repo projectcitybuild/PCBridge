@@ -4,9 +4,8 @@ import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.Server
 import java.util.UUID
-import javax.inject.Inject
 
-class SpigotPlayerKicker @Inject constructor(
+class SpigotPlayerKicker(
     private val server: Server,
 ) : PlayerKicker {
 

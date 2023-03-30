@@ -4,9 +4,8 @@ import com.projectcitybuild.core.http.APIRequestFactory
 import com.projectcitybuild.core.http.core.APIClient
 import com.projectcitybuild.entities.responses.IPBan
 import java.util.UUID
-import javax.inject.Inject
 
-class IPBanRepository @Inject constructor(
+class IPBanRepository(
     private val apiClient: APIClient,
     private val apiRequestFactory: APIRequestFactory,
 ) {

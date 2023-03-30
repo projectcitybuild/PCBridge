@@ -10,9 +10,8 @@ import com.projectcitybuild.support.textcomponent.send
 import net.md_5.bungee.api.ChatColor
 import org.bukkit.Server
 import org.bukkit.command.CommandSender
-import javax.inject.Inject
 
-class CheckBanCommand @Inject constructor(
+class CheckBanCommand(
     private val server: Server,
     private val checkUUIDBan: CheckUUIDBan,
 ) : SpigotCommand {

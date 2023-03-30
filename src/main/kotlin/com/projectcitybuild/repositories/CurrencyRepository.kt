@@ -8,12 +8,9 @@ import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
-import javax.inject.Inject
-import javax.inject.Singleton
 import kotlin.math.max
 
-@Singleton
-class CurrencyRepository @Inject constructor(
+class CurrencyRepository(
     private val apiRequestFactory: APIRequestFactory,
     private val apiClient: APIClient,
 ) {

@@ -6,12 +6,9 @@ import com.projectcitybuild.repositories.CurrencyRepository
 import com.projectcitybuild.support.spigot.logger.Logger
 import com.yapzhenyie.GadgetsMenu.economy.GEconomyProvider
 import com.yapzhenyie.GadgetsMenu.player.OfflinePlayerManager
-import dagger.Reusable
 import org.bukkit.plugin.Plugin
-import javax.inject.Inject
 
-@Reusable
-class GadgetsMenuIntegration @Inject constructor(
+class GadgetsMenuIntegration(
     private val plugin: Plugin,
     private val logger: Logger,
     private val currencyRepository: CurrencyRepository,

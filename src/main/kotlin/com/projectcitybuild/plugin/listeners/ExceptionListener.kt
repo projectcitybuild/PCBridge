@@ -5,9 +5,8 @@ import com.projectcitybuild.core.SpigotListener
 import com.projectcitybuild.modules.errorreporting.ErrorReporter
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
-import javax.inject.Inject
 
-class ExceptionListener @Inject constructor(
+class ExceptionListener(
     private val errorReporter: ErrorReporter,
 ) : SpigotListener {
 

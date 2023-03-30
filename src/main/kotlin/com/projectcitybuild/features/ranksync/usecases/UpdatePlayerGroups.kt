@@ -6,9 +6,8 @@ import com.projectcitybuild.core.utilities.Success
 import com.projectcitybuild.modules.permissions.Permissions
 import com.projectcitybuild.repositories.PlayerGroupRepository
 import java.util.UUID
-import javax.inject.Inject
 
-class UpdatePlayerGroups @Inject constructor(
+class UpdatePlayerGroups(
     private val permissions: Permissions,
     private val playerGroupRepository: PlayerGroupRepository,
 ) {

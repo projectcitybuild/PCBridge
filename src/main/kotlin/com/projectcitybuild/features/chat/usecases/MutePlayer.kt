@@ -6,9 +6,8 @@ import com.projectcitybuild.core.utilities.Success
 import com.projectcitybuild.modules.nameguesser.NameGuesser
 import com.projectcitybuild.repositories.PlayerConfigRepository
 import org.bukkit.entity.Player
-import javax.inject.Inject
 
-class MutePlayer @Inject constructor(
+class MutePlayer(
     private val playerConfigRepository: PlayerConfigRepository,
     private val nameGuesser: NameGuesser,
 ) {

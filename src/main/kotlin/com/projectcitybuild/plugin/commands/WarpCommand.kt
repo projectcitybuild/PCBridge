@@ -10,9 +10,8 @@ import com.projectcitybuild.support.spigot.commands.SpigotCommand
 import com.projectcitybuild.support.spigot.commands.SpigotCommandInput
 import com.projectcitybuild.support.textcomponent.send
 import org.bukkit.command.CommandSender
-import javax.inject.Inject
 
-class WarpCommand @Inject constructor(
+class WarpCommand(
     private val teleportToWarp: TeleportToWarp,
     private val warpRepository: WarpRepository,
 ) : SpigotCommand {

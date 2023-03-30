@@ -6,9 +6,8 @@ import com.projectcitybuild.core.utilities.Success
 import com.projectcitybuild.plugin.events.WarpDeleteEvent
 import com.projectcitybuild.repositories.WarpRepository
 import com.projectcitybuild.support.spigot.eventbroadcast.LocalEventBroadcaster
-import javax.inject.Inject
 
-class DeleteWarp @Inject constructor(
+class DeleteWarp(
     private val warpRepository: WarpRepository,
     private val localEventBroadcaster: LocalEventBroadcaster,
 ) {

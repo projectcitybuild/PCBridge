@@ -10,9 +10,8 @@ import com.projectcitybuild.support.spigot.commands.SpigotCommandInput
 import com.projectcitybuild.support.textcomponent.send
 import org.bukkit.Server
 import org.bukkit.command.CommandSender
-import javax.inject.Inject
 
-class SyncOtherCommand @Inject constructor(
+class SyncOtherCommand(
     private val server: Server,
     private val updatePlayerGroups: UpdatePlayerGroups,
     private val nameGuesser: NameGuesser

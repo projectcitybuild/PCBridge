@@ -15,9 +15,8 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent
 import java.time.format.FormatStyle
-import javax.inject.Inject
 
-class AsyncPreLoginListener @Inject constructor(
+class AsyncPreLoginListener(
     private val getAggregate: GetAggregate,
     private val authoriseConnection: AuthoriseConnection,
     private val syncPlayerWithAggregate: SyncPlayerWithAggregate,

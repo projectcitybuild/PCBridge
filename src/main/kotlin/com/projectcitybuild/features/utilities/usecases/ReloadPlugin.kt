@@ -4,9 +4,8 @@ import com.projectcitybuild.features.chat.ChatGroupFormatter
 import com.projectcitybuild.modules.config.Config
 import com.projectcitybuild.modules.playercache.PlayerConfigCache
 import com.projectcitybuild.repositories.WarpRepository
-import javax.inject.Inject
 
-class ReloadPlugin @Inject constructor(
+class ReloadPlugin(
     private val chatGroupFormatter: ChatGroupFormatter,
     private val playerConfigCache: PlayerConfigCache,
     private val warpRepository: WarpRepository,

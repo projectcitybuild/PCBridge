@@ -4,10 +4,8 @@ import com.projectcitybuild.modules.config.Config
 import com.projectcitybuild.modules.config.ConfigKeys
 import com.projectcitybuild.modules.errorreporting.ErrorReporter
 import com.projectcitybuild.support.spigot.logger.Logger
-import dagger.Reusable
 import io.sentry.Sentry
 
-@Reusable
 class SentryErrorReporter(
     private val config: Config,
     private val logger: Logger,

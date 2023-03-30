@@ -8,9 +8,8 @@ import com.projectcitybuild.features.bans.Sanitizer
 import com.projectcitybuild.repositories.IPBanRepository
 import com.projectcitybuild.support.spigot.kick.PlayerKicker
 import java.util.UUID
-import javax.inject.Inject
 
-class BanIP @Inject constructor(
+class BanIP(
     private val ipBanRepository: IPBanRepository,
     private val playerKicker: PlayerKicker,
 ) {

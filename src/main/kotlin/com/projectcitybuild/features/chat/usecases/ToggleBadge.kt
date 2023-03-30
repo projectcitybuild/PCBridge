@@ -2,9 +2,8 @@ package com.projectcitybuild.features.chat.usecases
 
 import com.projectcitybuild.repositories.PlayerConfigRepository
 import java.util.UUID
-import javax.inject.Inject
 
-class ToggleBadge @Inject constructor(
+class ToggleBadge(
     private val playerConfigRepository: PlayerConfigRepository,
 ) {
     fun execute(willBeDisabled: Boolean, playerUUID: UUID) {

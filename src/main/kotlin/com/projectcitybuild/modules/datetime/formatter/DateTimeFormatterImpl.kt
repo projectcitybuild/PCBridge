@@ -1,15 +1,12 @@
 package com.projectcitybuild.modules.datetime.formatter
 
-import dagger.Reusable
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.FormatStyle
 import java.util.Locale
 import java.util.concurrent.TimeUnit
-import javax.inject.Inject
 
-@Reusable
-class DateTimeFormatterImpl @Inject constructor(
+class DateTimeFormatterImpl(
     private val locale: Locale,
     private val timezone: ZoneId,
 ) : DateTimeFormatter {
