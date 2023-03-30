@@ -1,4 +1,4 @@
-name: Tests
+name: tests
 
 on:
   push:
@@ -8,16 +8,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - uses: ./github/actions/setup-java
+    - uses: ./.github/actions/setup-java
 
     - name: Check code formatting
       run: gradle ktlintCheck --scan
       
-  tests:
+  unit-tests:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: ./github/actions/setup-java
+      - uses: ./.github/actions/setup-java
 
       - name: Build with Gradle
         run: gradle shadowJar
