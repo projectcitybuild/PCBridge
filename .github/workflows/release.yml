@@ -21,7 +21,7 @@ jobs:
         id: plugin_version
         run: |
           version="$(gradle properties -q | grep "version:" | awk '{print $2}')"
-          echo "PLUGIN_VERSION=$version" >> $GITHUB_OUTPUT
+          echo "plugin_version=$version" >> $GITHUB_OUTPUT
 
       - name: Build with Gradle
         run: gradle shadowJar
@@ -35,15 +35,15 @@ jobs:
       - name: Create git tag
         id: tag
         run: |
-          new_tag="${{ steps.plugin_version.outputs.PLUGIN_VERSION }}"
+          new_tag="${{ steps.plugin_version.outputs.plugin_version }}"
           git tag $new_tag
           git push origin $new_tag
-          echo "::set-output name=TAG::$new_tag"
+          echo "tag=$new_tag >> $GITHUB_OUTPUT"
 
       - name: Create release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ steps.tag.outputs.new_tag }}
+          tag_name: ${{ steps.tag.outputs.tag }}
           files: build/release/pcbridge*.jar
           fail_on_unmatched_files: true
           generate_release_notes: true
@@ -63,11 +63,12 @@ jobs:
         id: plugin_version
         run: |
           version="$(gradle properties -q | grep "version:" | awk '{print $2}')"
-          echo "PLUGIN_VERSION=$version" >> $GITHUB_OUTPUT
+          echo "plugin_version=$version" >> $GITHUB_OUTPUT
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v4.2.4
         with:
           branch: bump-version
           branch-suffix: short-commit-hash
-          commit-message: "Bump version to ${{ steps.plugin_version.outputs.PLUGIN_VERSION }}"
+          commit-message: "Bump version to v${{ steps.plugin_version.outputs.plugin_version }}"
+          title: "Bump version to v${{ steps.plugin_version.outputs.plugin_version }}"
