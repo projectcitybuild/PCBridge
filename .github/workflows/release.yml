@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - release
+      - update-release-workflow
 
 jobs:
   build:
@@ -46,3 +47,27 @@ jobs:
           files: build/release/pcbridge*.jar
           fail_on_unmatched_files: true
           generate_release_notes: true
+
+  bump-version:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          ref: master
+
+      - name: Bump minor version
+        run: gradle incrementVersion
+
+      - name: Get the new version from build.gradle.kts
+        id: plugin_version
+        run: |
+          version="$(gradle properties -q | grep "version:" | awk '{print $2}')"
+          echo "PLUGIN_VERSION=$version" >> $GITHUB_OUTPUT
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v4.2.4
+        with:
+          branch: bump-version
+          branch-suffix: short-commit-hash
+          commit-message: "Bump version to ${{ steps.plugin_version.outputs.PLUGIN_VERSION }}"
