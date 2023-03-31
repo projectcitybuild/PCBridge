@@ -7,6 +7,10 @@ on:
       - release
       - update-release-workflow
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -35,7 +39,7 @@ jobs:
       - name: Create git tag
         id: tag
         run: |
-          new_tag="${{ steps.plugin_version.outputs.plugin_version }}"
+          new_tag="v${{ steps.plugin_version.outputs.plugin_version }}"
           git tag $new_tag
           git push origin $new_tag
           echo "tag=$new_tag >> $GITHUB_OUTPUT"
