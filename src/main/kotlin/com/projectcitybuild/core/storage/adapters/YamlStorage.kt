@@ -3,9 +3,8 @@ package com.projectcitybuild.core.storage.adapters
 import com.projectcitybuild.core.storage.Storage
 import com.projectcitybuild.core.storage.StoragePath
 import org.bukkit.configuration.file.FileConfiguration
-import javax.inject.Inject
 
-class YamlStorage @Inject constructor(
+class YamlStorage(
     private val config: FileConfiguration
 ) : Storage {
 

@@ -4,17 +4,14 @@ import com.projectcitybuild.core.SpigotListener
 import com.projectcitybuild.features.chat.ChatGroupFormatter
 import com.projectcitybuild.plugin.integrations.SpigotIntegration
 import com.projectcitybuild.support.spigot.logger.Logger
-import dagger.Reusable
 import net.luckperms.api.LuckPerms
 import net.luckperms.api.LuckPermsProvider
 import net.luckperms.api.event.EventSubscription
 import net.luckperms.api.event.node.NodeMutateEvent
 import net.luckperms.api.event.user.UserDataRecalculateEvent
 import org.bukkit.plugin.Plugin
-import javax.inject.Inject
 
-@Reusable
-class LuckPermsIntegration @Inject constructor(
+class LuckPermsIntegration(
     private val plugin: Plugin,
     private val logger: Logger,
     private val chatGroupFormatter: ChatGroupFormatter,
@@ -46,14 +43,12 @@ class LuckPermsIntegration @Inject constructor(
     private fun listenForCacheInvalidation() {
         eventSubscriptions.add(
             luckPerms.eventBus.subscribe(plugin, UserDataRecalculateEvent::class.java) { event ->
-                logger.verbose("Flushing player's chat group cache due to player node mutation: ${event.user.uniqueId}")
                 chatGroupFormatter.flush(playerUUID = event.user.uniqueId)
             }
         )
         eventSubscriptions.add(
             luckPerms.eventBus.subscribe(plugin, NodeMutateEvent::class.java) { event ->
                 if (event.isGroup) {
-                    logger.verbose("Flushing entire chat group cache due to node mutation: ${event.target}")
                     chatGroupFormatter.flushAllCaches()
                 }
             }

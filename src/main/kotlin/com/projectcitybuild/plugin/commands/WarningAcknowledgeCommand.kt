@@ -6,9 +6,8 @@ import com.projectcitybuild.support.spigot.commands.SpigotCommand
 import com.projectcitybuild.support.spigot.commands.SpigotCommandInput
 import com.projectcitybuild.support.textcomponent.send
 import org.bukkit.command.CommandSender
-import javax.inject.Inject
 
-class WarningAcknowledgeCommand @Inject constructor(
+class WarningAcknowledgeCommand(
     private val acknowledgeWarning: AcknowledgeWarning,
 ) : SpigotCommand {
 

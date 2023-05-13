@@ -5,9 +5,8 @@ import com.projectcitybuild.entities.PlayerConfig
 import com.projectcitybuild.modules.playercache.PlayerConfigCache
 import java.time.LocalDateTime
 import java.util.UUID
-import javax.inject.Inject
 
-class PlayerConfigRepository @Inject constructor(
+class PlayerConfigRepository(
     private val cache: PlayerConfigCache,
     private val dataSource: DataSource
 ) {

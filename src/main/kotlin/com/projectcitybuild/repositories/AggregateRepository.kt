@@ -4,9 +4,8 @@ import com.projectcitybuild.core.http.APIRequestFactory
 import com.projectcitybuild.core.http.core.APIClient
 import com.projectcitybuild.entities.responses.Aggregate
 import java.util.UUID
-import javax.inject.Inject
 
-class AggregateRepository @Inject constructor(
+class AggregateRepository(
     private val apiClient: APIClient,
     private val apiRequestFactory: APIRequestFactory,
 ) {

@@ -7,9 +7,8 @@ import com.projectcitybuild.core.utilities.Success
 import com.projectcitybuild.features.bans.Sanitizer
 import com.projectcitybuild.repositories.IPBanRepository
 import java.util.UUID
-import javax.inject.Inject
 
-class UnbanIP @Inject constructor(
+class UnbanIP(
     private val ipBanRepository: IPBanRepository,
 ) {
     enum class FailureReason {

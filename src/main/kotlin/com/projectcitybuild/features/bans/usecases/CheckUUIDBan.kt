@@ -6,9 +6,8 @@ import com.projectcitybuild.core.utilities.Success
 import com.projectcitybuild.modules.datetime.formatter.DateTimeFormatter
 import com.projectcitybuild.repositories.PlayerBanRepository
 import com.projectcitybuild.repositories.PlayerUUIDRepository
-import javax.inject.Inject
 
-class CheckUUIDBan @Inject constructor(
+class CheckUUIDBan(
     private val playerBanRepository: PlayerBanRepository,
     private val playerUUIDRepository: PlayerUUIDRepository,
     private val dateTimeFormatter: DateTimeFormatter,

@@ -1,20 +1,14 @@
-name: Code Formatting
+name: setup-java
 
-on: [push]
+description: Installs Java and Gradle, then restores the Gradle dependencies from cache
 
-jobs:
-  linter:
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/checkout@v2
-      with:
-        fetch-depth: 0
-
+runs:
+  using: "composite"
+  steps:
     - name: Set up JDK
       uses: actions/setup-java@v2
       with:
-        java-version: '16'
+        java-version: '17'
         distribution: 'temurin'
 
     - name: Cache Gradle packages
@@ -23,6 +17,3 @@ jobs:
         path: ~/.gradle/caches
         key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
         restore-keys: ${{ runner.os }}-gradle
-
-    - name: Check code formatting
-      run: gradle ktlintCheck --scan

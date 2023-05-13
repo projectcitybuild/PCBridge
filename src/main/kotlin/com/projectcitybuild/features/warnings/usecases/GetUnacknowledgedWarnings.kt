@@ -3,9 +3,8 @@ package com.projectcitybuild.features.warnings.usecases
 import com.projectcitybuild.modules.datetime.formatter.DateTimeFormatter
 import com.projectcitybuild.repositories.PlayerWarningRepository
 import java.util.UUID
-import javax.inject.Inject
 
-class GetUnacknowledgedWarnings @Inject constructor(
+class GetUnacknowledgedWarnings(
     private val playerWarningRepository: PlayerWarningRepository,
     private val dateTimeFormatter: DateTimeFormatter,
 ) {

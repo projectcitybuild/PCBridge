@@ -7,9 +7,8 @@ import com.projectcitybuild.support.spigot.commands.InvalidCommandArgumentsExcep
 import com.projectcitybuild.support.spigot.commands.SpigotCommand
 import com.projectcitybuild.support.spigot.commands.SpigotCommandInput
 import com.projectcitybuild.support.textcomponent.send
-import javax.inject.Inject
 
-class UnbanIPCommand @Inject constructor(
+class UnbanIPCommand(
     private val unbanIP: UnbanIP,
 ) : SpigotCommand {
 

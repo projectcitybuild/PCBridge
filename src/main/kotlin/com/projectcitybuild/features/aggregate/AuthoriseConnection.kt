@@ -3,9 +3,8 @@ package com.projectcitybuild.features.aggregate
 import com.projectcitybuild.entities.responses.Aggregate
 import com.projectcitybuild.entities.responses.IPBan
 import com.projectcitybuild.entities.responses.PlayerBan
-import javax.inject.Inject
 
-class AuthoriseConnection @Inject constructor() {
+class AuthoriseConnection {
     sealed class ConnectResult {
         object Allowed : ConnectResult()
         data class Denied(val ban: Ban) : ConnectResult()

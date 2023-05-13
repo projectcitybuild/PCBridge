@@ -8,14 +8,11 @@ import com.projectcitybuild.plugin.events.WarpDeleteEvent
 import com.projectcitybuild.plugin.integrations.SpigotIntegration
 import com.projectcitybuild.repositories.WarpRepository
 import com.projectcitybuild.support.spigot.logger.Logger
-import dagger.Reusable
 import org.bukkit.event.EventHandler
 import org.bukkit.plugin.Plugin
 import org.dynmap.DynmapAPI
-import javax.inject.Inject
 
-@Reusable
-class DynmapMarkerIntegration @Inject constructor(
+class DynmapMarkerIntegration(
     private val plugin: Plugin,
     private val warpRepository: WarpRepository,
     private val config: Config,

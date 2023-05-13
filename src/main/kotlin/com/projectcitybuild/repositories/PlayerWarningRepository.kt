@@ -4,9 +4,8 @@ import com.projectcitybuild.core.http.APIRequestFactory
 import com.projectcitybuild.core.http.core.APIClient
 import com.projectcitybuild.entities.responses.PlayerWarning
 import java.util.UUID
-import javax.inject.Inject
 
-class PlayerWarningRepository @Inject constructor(
+class PlayerWarningRepository(
     private val apiRequestFactory: APIRequestFactory,
     private val apiClient: APIClient,
 ) {

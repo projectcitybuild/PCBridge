@@ -8,9 +8,8 @@ import com.projectcitybuild.support.spigot.commands.SpigotCommandInput
 import com.projectcitybuild.support.textcomponent.send
 import org.bukkit.Server
 import org.bukkit.command.CommandSender
-import javax.inject.Inject
 
-class UnbanCommand @Inject constructor(
+class UnbanCommand(
     private val server: Server,
     private val unbanUUID: UnbanUUID,
 ) : SpigotCommand {

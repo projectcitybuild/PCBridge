@@ -3,11 +3,8 @@ package com.projectcitybuild.repositories
 import com.projectcitybuild.core.database.DataSource
 import com.projectcitybuild.entities.SerializableLocation
 import com.projectcitybuild.entities.Warp
-import dagger.Reusable
-import javax.inject.Inject
 
-@Reusable
-class WarpRepository @Inject constructor(
+class WarpRepository(
     private val dataSource: DataSource,
 ) {
     private val nameCache: MutableList<String> = mutableListOf()

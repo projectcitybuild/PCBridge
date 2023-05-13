@@ -8,9 +8,8 @@ import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.Server
 import org.bukkit.event.EventHandler
-import javax.inject.Inject
 
-class FirstTimeJoinListener @Inject constructor(
+class FirstTimeJoinListener(
     private val server: Server,
     private val logger: Logger,
 ) : SpigotListener {

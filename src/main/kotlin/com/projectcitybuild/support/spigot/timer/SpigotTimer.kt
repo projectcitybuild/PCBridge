@@ -4,9 +4,8 @@ import com.projectcitybuild.core.utilities.Cancellable
 import org.bukkit.plugin.Plugin
 import org.bukkit.scheduler.BukkitTask
 import java.util.concurrent.TimeUnit
-import javax.inject.Inject
 
-class SpigotTimer @Inject constructor(
+class SpigotTimer(
     private val plugin: Plugin,
 ) : Timer {
     private val tasks: HashMap<String, BukkitTask> = hashMapOf()

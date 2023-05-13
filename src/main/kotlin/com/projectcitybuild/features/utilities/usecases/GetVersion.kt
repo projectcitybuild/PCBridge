@@ -1,9 +1,8 @@
 package com.projectcitybuild.features.utilities.usecases
 
 import java.util.Properties
-import javax.inject.Inject
 
-class GetVersion @Inject constructor() {
+class GetVersion {
 
     data class Version(
         val version: String,

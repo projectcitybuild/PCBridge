@@ -5,9 +5,8 @@ import com.projectcitybuild.repositories.TelemetryRepository
 import org.bukkit.event.EventHandler
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
-import javax.inject.Inject
 
-class TelemetryListener @Inject constructor(
+class TelemetryListener(
     private val telemetryRepository: TelemetryRepository,
 ) : SpigotListener {
 

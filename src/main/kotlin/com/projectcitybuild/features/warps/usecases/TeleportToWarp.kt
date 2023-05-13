@@ -11,9 +11,8 @@ import com.projectcitybuild.support.spigot.logger.Logger
 import org.bukkit.Location
 import org.bukkit.Server
 import org.bukkit.entity.Player
-import javax.inject.Inject
 
-class TeleportToWarp @Inject constructor(
+class TeleportToWarp(
     private val warpRepository: WarpRepository,
     private val nameGuesser: NameGuesser,
     private val logger: Logger,

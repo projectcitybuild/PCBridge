@@ -7,9 +7,8 @@ import com.projectcitybuild.support.textcomponent.add
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.Server
-import javax.inject.Inject
 
-class ACommand @Inject constructor(
+class ACommand(
     private val server: Server
 ) : SpigotCommand {
 

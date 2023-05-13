@@ -1,16 +1,13 @@
 package com.projectcitybuild.modules.playercache
 
 import com.projectcitybuild.entities.PlayerConfig
-import dagger.Reusable
 import java.util.UUID
-import javax.inject.Inject
 
 /**
  * A PlayerConfig memory cache for players currently online
  * on any of the connected servers
  */
-@Reusable
-class PlayerConfigCache @Inject constructor() {
+class PlayerConfigCache {
     private val cache = HashMap<UUID, PlayerConfig>()
 
     fun get(uuid: UUID): PlayerConfig? {

@@ -22,9 +22,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.bukkit.Server
-import javax.inject.Inject
 
-class HTTPServer @Inject constructor(
+class HTTPServer(
     private val scheduler: Scheduler,
     private val minecraftServer: Server,
     private val config: Config,
@@ -41,7 +40,7 @@ class HTTPServer @Inject constructor(
         }
 
         val task = scheduler.async<Unit> {
-            embeddedServer(Netty, port = config.get(ConfigKeys.internalWebServerPort)) {
+            val server = embeddedServer(Netty, port = config.get(ConfigKeys.internalWebServerPort)) {
                 routing {
                     get("player/{uuid}/sync") {
                         logger.info("Received HTTP connection: ${call.request.uri}")
@@ -66,6 +65,10 @@ class HTTPServer @Inject constructor(
                     }
                 }
             }.start(wait = true)
+
+            Cancellable {
+                server.stop(gracePeriodMillis = 1500, timeoutMillis = 3500)
+            }
         }
         cancellable = task.start()
     }

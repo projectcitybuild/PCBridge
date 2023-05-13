@@ -9,9 +9,8 @@ import com.projectcitybuild.support.spigot.commands.SpigotCommandInput
 import com.projectcitybuild.support.textcomponent.send
 import org.bukkit.Server
 import org.bukkit.command.CommandSender
-import javax.inject.Inject
 
-class BanCommand @Inject constructor(
+class BanCommand(
     private val server: Server,
     private val banUUID: BanUUID,
 ) : SpigotCommand {

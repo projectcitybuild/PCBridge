@@ -6,9 +6,8 @@ import com.projectcitybuild.core.http.core.APIClient
 import com.projectcitybuild.entities.responses.MojangPlayer
 import org.bukkit.Server
 import java.util.UUID
-import javax.inject.Inject
 
-open class PlayerUUIDRepository @Inject constructor(
+open class PlayerUUIDRepository(
     private val server: Server,
     private val apiRequestFactory: APIRequestFactory,
     private val apiClient: APIClient,
