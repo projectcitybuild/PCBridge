@@ -8,7 +8,7 @@ import java.util.Properties
 val generatedVersionDir = "$buildDir/generated-resources"
 
 group = "com.projectcitybuild"
-version = "4.9.0"
+version = "4.9.1"
 
 plugins {
     kotlin("jvm") version "1.6.10"

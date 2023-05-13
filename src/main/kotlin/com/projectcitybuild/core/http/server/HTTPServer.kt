@@ -1,6 +1,5 @@
 package com.projectcitybuild.core.http.server
 
-import com.projectcitybuild.core.utilities.Cancellable
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Result
 import com.projectcitybuild.core.utilities.Success
@@ -14,6 +13,7 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.call
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
+import io.ktor.server.netty.NettyApplicationEngine
 import io.ktor.server.request.uri
 import io.ktor.server.response.respond
 import io.ktor.server.routing.get
@@ -30,7 +30,7 @@ class HTTPServer(
     private val logger: Logger,
     private val updatePlayerGroups: UpdatePlayerGroups,
 ) {
-    private var cancellable: Cancellable? = null
+    private var server: NettyApplicationEngine? = null
 
     fun run() {
         val bearer = config.get(ConfigKeys.internalWebServerToken)
@@ -39,42 +39,36 @@ class HTTPServer(
             return
         }
 
-        val task = scheduler.async<Unit> {
-            val server = embeddedServer(Netty, port = config.get(ConfigKeys.internalWebServerPort)) {
-                routing {
-                    get("player/{uuid}/sync") {
-                        logger.info("Received HTTP connection: ${call.request.uri}")
+        server = embeddedServer(Netty, port = config.get(ConfigKeys.internalWebServerPort)) {
+            routing {
+                get("player/{uuid}/sync") {
+                    logger.info("Received HTTP connection: ${call.request.uri}")
 
-                        val token = call.request.headers.get("Authorization")
-                        if (token.isNullOrEmpty() || token != "Bearer $bearer") {
-                            logger.info("401 Unauthorized: No token or invalid token provided")
-                            call.respond(HttpStatusCode.Unauthorized)
-                            return@get
-                        }
-
-                        val rawUUID = call.parameters.get("uuid")
-                        if (rawUUID.isNullOrEmpty()) {
-                            logger.info("400 Bad Request: No UUID provided")
-                            call.respond(HttpStatusCode.BadRequest, "UUID cannot be empty")
-                            return@get
-                        }
-
-                        syncUUID(rawUUID)
-
-                        call.respond(HttpStatusCode.OK)
+                    val token = call.request.headers.get("Authorization")
+                    if (token.isNullOrEmpty() || token != "Bearer $bearer") {
+                        logger.info("401 Unauthorized: No token or invalid token provided")
+                        call.respond(HttpStatusCode.Unauthorized)
+                        return@get
                     }
-                }
-            }.start(wait = true)
 
-            Cancellable {
-                server.stop(gracePeriodMillis = 1500, timeoutMillis = 3500)
+                    val rawUUID = call.parameters.get("uuid")
+                    if (rawUUID.isNullOrEmpty()) {
+                        logger.info("400 Bad Request: No UUID provided")
+                        call.respond(HttpStatusCode.BadRequest, "UUID cannot be empty")
+                        return@get
+                    }
+
+                    syncUUID(rawUUID)
+
+                    call.respond(HttpStatusCode.OK)
+                }
             }
-        }
-        cancellable = task.start()
+        }.start(wait = false)
     }
 
     fun stop() {
-        cancellable?.cancel()
+        server?.stop(gracePeriodMillis = 0, timeoutMillis = 0)
+        server = null
     }
 
     private fun syncUUID(rawUUID: String) = scheduler.sync {
