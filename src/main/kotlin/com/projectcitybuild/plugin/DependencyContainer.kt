@@ -128,13 +128,11 @@ class DependencyContainer(
     val time: Time
         get() = LocalizedTime()
 
-    val logger: Logger by lazy {
-        SpigotLogger(spigotLogger)
-    }
+    val logger: Logger
+        get() = SpigotLogger(spigotLogger)
 
-    val scheduler: Scheduler by lazy {
-        SpigotScheduler(plugin)
-    }
+    val scheduler: Scheduler
+        get() = SpigotScheduler(plugin)
 
     val errorReporter: ErrorReporter by lazy {
         SentryErrorReporter(config, logger)
@@ -152,10 +150,10 @@ class DependencyContainer(
         )
     }
 
-    val apiRequestFactory by lazy {
+    val apiRequestFactory: APIRequestFactory get() {
         val isLoggingEnabled = config.get(ConfigKeys.apiIsLoggingEnabled)
 
-        APIRequestFactory(
+        return APIRequestFactory(
             pcb = PCBClient(
                 authToken = config.get(ConfigKeys.apiToken),
                 baseUrl = config.get(ConfigKeys.apiBaseURL),
