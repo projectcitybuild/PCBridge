@@ -8,7 +8,7 @@ import java.util.Properties
 val generatedVersionDir = "$buildDir/generated-resources"
 
 group = "com.projectcitybuild"
-version = "4.8.0"
+version = "4.9.0"
 
 plugins {
     kotlin("jvm") version "1.6.10"
@@ -78,8 +78,8 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.9.3")
 
-    implementation("com.github.shynixn.mccoroutine:mccoroutine-bukkit-api:2.2.0")
-    implementation("com.github.shynixn.mccoroutine:mccoroutine-bukkit-core:2.2.0")
+    implementation("com.github.shynixn.mccoroutine:mccoroutine-bukkit-api:2.11.0")
+    implementation("com.github.shynixn.mccoroutine:mccoroutine-bukkit-core:2.11.0")
 
     implementation("com.zaxxer:HikariCP:5.0.1")
 

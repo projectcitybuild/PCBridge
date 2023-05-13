@@ -43,14 +43,12 @@ class LuckPermsIntegration(
     private fun listenForCacheInvalidation() {
         eventSubscriptions.add(
             luckPerms.eventBus.subscribe(plugin, UserDataRecalculateEvent::class.java) { event ->
-                logger.verbose("Flushing player's chat group cache due to player node mutation: ${event.user.uniqueId}")
                 chatGroupFormatter.flush(playerUUID = event.user.uniqueId)
             }
         )
         eventSubscriptions.add(
             luckPerms.eventBus.subscribe(plugin, NodeMutateEvent::class.java) { event ->
                 if (event.isGroup) {
-                    logger.verbose("Flushing entire chat group cache due to node mutation: ${event.target}")
                     chatGroupFormatter.flushAllCaches()
                 }
             }
