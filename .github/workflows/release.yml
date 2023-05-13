@@ -41,7 +41,7 @@ jobs:
           new_tag="v${{ steps.plugin_version.outputs.plugin_version }}"
           git tag $new_tag
           git push origin $new_tag
-          echo "tag=$new_tag >> $GITHUB_OUTPUT"
+          echo "tag=$new_tag" >> "$GITHUB_OUTPUT"
 
       - name: Create release
         uses: softprops/action-gh-release@v1
