@@ -1,6 +1,5 @@
 package com.projectcitybuild.core.http.server
 
-import com.projectcitybuild.core.utilities.Cancellable
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Result
 import com.projectcitybuild.core.utilities.Success
