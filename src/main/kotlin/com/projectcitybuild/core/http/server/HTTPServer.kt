@@ -40,7 +40,7 @@ class HTTPServer(
         }
 
         val task = scheduler.async<Unit> {
-            embeddedServer(Netty, port = config.get(ConfigKeys.internalWebServerPort)) {
+            val server = embeddedServer(Netty, port = config.get(ConfigKeys.internalWebServerPort)) {
                 routing {
                     get("player/{uuid}/sync") {
                         logger.info("Received HTTP connection: ${call.request.uri}")
@@ -65,6 +65,10 @@ class HTTPServer(
                     }
                 }
             }.start(wait = true)
+
+            Cancellable {
+                server.stop(gracePeriodMillis = 1500, timeoutMillis = 3500)
+            }
         }
         cancellable = task.start()
     }
