@@ -55,7 +55,7 @@ dependencies {
     compileOnly("us.dynmap:DynmapCoreAPI:3.3")
 
     // GadgetsMenu
-    compileOnly(files("${rootDir}/libs/GadgetsMenu.jar"))
+    compileOnly(files("${projectDir}/libs/GadgetsMenu.jar"))
 
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
