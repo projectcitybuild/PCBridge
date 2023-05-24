@@ -2,10 +2,12 @@ package com.projectcitybuild.plugin
 
 import com.github.shynixn.mccoroutine.bukkit.minecraftDispatcher
 import com.projectcitybuild.core.SpigotListener
+import com.projectcitybuild.features.utilities.usecases.GetVersion
 import com.projectcitybuild.modules.errorreporting.ErrorReporter
 import com.projectcitybuild.plugin.integrations.SpigotIntegration
 import com.projectcitybuild.support.spigot.commands.SpigotCommand
 import org.bukkit.plugin.java.JavaPlugin
+import java.util.Properties
 
 class SpigotPlugin : JavaPlugin() {
     private var container: DependencyContainer? = null
@@ -58,6 +60,8 @@ class SpigotPlugin : JavaPlugin() {
         }
 
     override fun onEnable() {
+        printLogo()
+
         container = DependencyContainer(
             plugin = this,
             server = server,
@@ -102,5 +106,22 @@ class SpigotPlugin : JavaPlugin() {
     private fun reportError(throwable: Throwable, errorReporter: ErrorReporter) {
         throwable.printStackTrace()
         errorReporter.report(throwable)
+    }
+
+    private fun printLogo() {
+        val properties = Properties().apply {
+            load(object {}.javaClass.getResourceAsStream("/version.properties"))
+        }
+        val version = properties.getProperty("version")
+
+        logger.info("""
+            ██████╗  ██████╗██████╗ ██████╗ ██╗██████╗  ██████╗ ███████╗
+            ██╔══██╗██╔════╝██╔══██╗██╔══██╗██║██╔══██╗██╔════╝ ██╔════╝
+            ██████╔╝██║     ██████╔╝██████╔╝██║██║  ██║██║  ███╗█████╗  
+            ██╔═══╝ ██║     ██╔══██╗██╔══██╗██║██║  ██║██║   ██║██╔══╝  
+            ██║     ╚██████╗██████╔╝██║  ██║██║██████╔╝╚██████╔╝███████╗
+            ╚═╝      ╚═════╝╚═════╝ ╚═╝  ╚═╝╚═╝╚═════╝  ╚═════╝ ╚══════╝
+            Running v${version}...
+        """.trimIndent())
     }
 }

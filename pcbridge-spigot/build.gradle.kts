@@ -3,10 +3,10 @@ import java.io.ByteArrayOutputStream
 import java.io.FileOutputStream
 import java.util.Properties
 
-val generatedVersionDir = "$buildDir/generated-resources"
-
 group = "com.projectcitybuild"
 version = "5.0.0"
+
+val generatedResourcesDir = "${buildDir}/generated-resources"
 
 plugins {
     id("com.github.johnrengelman.shadow") version "7.0.0"
@@ -42,11 +42,6 @@ repositories {
 dependencies {
     project(":pcbridge-core")
 
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0-native-mt")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.6.0-native-mt")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.0-native-mt")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
-
     compileOnly("org.spigotmc:spigot-api:1.12.2-R0.1-SNAPSHOT")
 
     compileOnly("net.md-5:bungeecord-api:1.16-R0.4")
@@ -60,7 +55,7 @@ dependencies {
     compileOnly("us.dynmap:DynmapCoreAPI:3.3")
 
     // GadgetsMenu
-    compileOnly(files("libs/GadgetsMenu.jar"))
+    compileOnly(files("${rootDir}/libs/GadgetsMenu.jar"))
 
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
@@ -74,14 +69,6 @@ dependencies {
     implementation("co.aikar:idb-core:1.0.0-SNAPSHOT")
 
     implementation("io.sentry:sentry:5.7.4")
-
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.2")
-
-    testImplementation("org.mockito.kotlin:mockito-kotlin:4.0.0")
-    testImplementation("org.powermock:powermock-module-junit4:2.0.9")
-    testImplementation("org.powermock:powermock-api-mockito2:2.0.9")
-    testImplementation("org.mockito:mockito-inline:4.2.0")
 
     // Needed for mocking in tests
     testImplementation("net.md-5:bungeecord-api:1.16-R0.4")
@@ -98,16 +85,9 @@ application {
 
 sourceSets {
     main {
-        java {
-            srcDirs("src/main/kotlin")
-        }
         kotlin {
-            output.dir(generatedVersionDir)
-        }
-    }
-    test {
-        java {
-            srcDirs("src/test")
+            // Bundle generated resources with the output jar
+            output.dir(generatedResourcesDir)
         }
     }
 }
@@ -121,34 +101,6 @@ tasks {
 tasks.withType<ShadowJar> {
     destinationDirectory.set(File("build/release"))
     archiveVersion.set(project.version.toString())
-}
-
-tasks.test {
-    useJUnitPlatform()
-}
-
-tasks.create("incrementVersion") {
-    group = "automation"
-    description = "Increments the output plugin version"
-
-    fun generateVersion(): String {
-        val updateMode = properties["mode"] ?: "minor"
-        val currentVersion = version.toString()
-        val (oldMajor, oldMinor, oldPatch) = currentVersion.split(".").map(String::toInt)
-        var (newMajor, newMinor, newPatch) = arrayOf(oldMajor, oldMinor, 0)
-        when (updateMode) {
-            "major" -> newMajor = (oldMajor + 1).also { newMinor = 0 }
-            "minor" -> newMinor = oldMinor + 1
-            else -> newPatch = oldPatch + 1
-        }
-        return "$newMajor.$newMinor.$newPatch"
-    }
-    doLast {
-        val newVersion = properties["overrideVersion"] as String? ?: generateVersion()
-        val oldContent = buildFile.readText()
-        val newContent = oldContent.replace("""= "$version"""", """= "$newVersion"""")
-        buildFile.writeText(newContent)
-    }
 }
 
 tasks.create("generateVersionResource") {
@@ -165,7 +117,7 @@ tasks.create("generateVersionResource") {
             .replace("-g", "-") // Remove `g` for `git` in the commit id
     }
     doLast {
-        val propertiesFile = file("$generatedVersionDir/version.properties")
+        val propertiesFile = file("${generatedResourcesDir}/version.properties")
         propertiesFile.parentFile.mkdirs()
         val properties = Properties().apply {
             setProperty("version", version.toString())
