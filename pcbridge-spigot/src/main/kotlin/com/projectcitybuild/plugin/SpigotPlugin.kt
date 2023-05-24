@@ -2,12 +2,10 @@ package com.projectcitybuild.plugin
 
 import com.github.shynixn.mccoroutine.bukkit.minecraftDispatcher
 import com.projectcitybuild.core.SpigotListener
-import com.projectcitybuild.features.utilities.usecases.GetVersion
 import com.projectcitybuild.modules.errorreporting.ErrorReporter
 import com.projectcitybuild.plugin.integrations.SpigotIntegration
 import com.projectcitybuild.support.spigot.commands.SpigotCommand
 import org.bukkit.plugin.java.JavaPlugin
-import java.util.Properties
 
 class SpigotPlugin : JavaPlugin() {
     private var container: DependencyContainer? = null
@@ -109,19 +107,17 @@ class SpigotPlugin : JavaPlugin() {
     }
 
     private fun printLogo() {
-        val properties = Properties().apply {
-            load(object {}.javaClass.getResourceAsStream("/version.properties"))
-        }
-        val version = properties.getProperty("version")
-
-        logger.info("""
+        val enableMessage = """
+            
             ██████╗  ██████╗██████╗ ██████╗ ██╗██████╗  ██████╗ ███████╗
             ██╔══██╗██╔════╝██╔══██╗██╔══██╗██║██╔══██╗██╔════╝ ██╔════╝
             ██████╔╝██║     ██████╔╝██████╔╝██║██║  ██║██║  ███╗█████╗  
             ██╔═══╝ ██║     ██╔══██╗██╔══██╗██║██║  ██║██║   ██║██╔══╝  
             ██║     ╚██████╗██████╔╝██║  ██║██║██████╔╝╚██████╔╝███████╗
             ╚═╝      ╚═════╝╚═════╝ ╚═╝  ╚═╝╚═╝╚═════╝  ╚═════╝ ╚══════╝
-            Running v${version}...
-        """.trimIndent())
+            
+        """.trimIndent()
+
+        enableMessage.split("\n").forEach(logger::info)
     }
 }
