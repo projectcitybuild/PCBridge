@@ -11,6 +11,7 @@ plugins {
 
 subprojects {
     apply(plugin = "org.jetbrains.kotlin.jvm")
+    apply(plugin = "org.jlleitschuh.gradle.ktlint")
 
     dependencies {
         implementation(kotlin("stdlib-jdk8"))
