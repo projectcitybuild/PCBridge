@@ -1,6 +1,6 @@
 package com.projectcitybuild.repositories
 
-import com.projectcitybuild.core.database.DataSource
+import com.projectcitybuild.modules.database.DataSource
 import com.projectcitybuild.entities.SerializableLocation
 import com.projectcitybuild.entities.Warp
 

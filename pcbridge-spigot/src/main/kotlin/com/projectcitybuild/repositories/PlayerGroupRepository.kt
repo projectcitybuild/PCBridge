@@ -2,7 +2,7 @@ package com.projectcitybuild.repositories
 
 import com.projectcitybuild.modules.config.Config
 import com.projectcitybuild.modules.config.ConfigStorageKey
-import com.projectcitybuild.pcbridge.core.PlatformLogger
+import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger
 import com.projectcitybuild.pcbridge.http.clients.PCBClient
 import com.projectcitybuild.pcbridge.http.core.APIClient
 import java.util.UUID

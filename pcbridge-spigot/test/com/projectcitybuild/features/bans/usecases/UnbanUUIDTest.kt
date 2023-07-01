@@ -1,6 +1,6 @@
 package com.projectcitybuild.features.bans.usecases
 
-import com.projectcitybuild.core.utilities.Failure
+import com.projectcitybuild.pcbridge.core.utils.Failure
 import com.projectcitybuild.repositories.PlayerBanRepository
 import com.projectcitybuild.repositories.PlayerUUIDRepository
 import kotlinx.coroutines.test.runTest

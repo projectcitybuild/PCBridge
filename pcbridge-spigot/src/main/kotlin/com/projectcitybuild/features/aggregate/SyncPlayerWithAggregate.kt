@@ -3,7 +3,7 @@ package com.projectcitybuild.features.aggregate
 import com.projectcitybuild.modules.config.Config
 import com.projectcitybuild.modules.config.ConfigStorageKey
 import com.projectcitybuild.modules.permissions.Permissions
-import com.projectcitybuild.pcbridge.core.PlatformLogger
+import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger
 import com.projectcitybuild.pcbridge.http.responses.Aggregate
 import com.projectcitybuild.repositories.ChatBadgeRepository
 import java.util.UUID

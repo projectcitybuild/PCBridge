@@ -5,7 +5,7 @@ import com.projectcitybuild.modules.config.Config
 import com.projectcitybuild.modules.config.ConfigStorageKey
 import com.projectcitybuild.modules.config.adapters.MemoryKeyValueStorage
 import com.projectcitybuild.modules.permissions.Permissions
-import com.projectcitybuild.pcbridge.core.PlatformLogger
+import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger
 import com.projectcitybuild.pcbridge.http.responses.Account
 import com.projectcitybuild.pcbridge.http.responses.Aggregate
 import com.projectcitybuild.pcbridge.http.responses.Badge

@@ -1,7 +1,7 @@
 package com.projectcitybuild.entities.migrations
 
 import co.aikar.idb.HikariPooledDatabase
-import com.projectcitybuild.core.database.DatabaseMigration
+import com.projectcitybuild.modules.database.DatabaseMigration
 
 class `202200821_add_badge_toggle` : DatabaseMigration {
     override val description = "Add a column to toggle the chat badge on/off"

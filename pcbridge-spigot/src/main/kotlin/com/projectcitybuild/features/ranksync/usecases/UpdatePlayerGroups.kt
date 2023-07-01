@@ -1,8 +1,8 @@
 package com.projectcitybuild.features.ranksync.usecases
 
-import com.projectcitybuild.core.utilities.Failure
-import com.projectcitybuild.core.utilities.Result
-import com.projectcitybuild.core.utilities.Success
+import com.projectcitybuild.pcbridge.core.utils.Failure
+import com.projectcitybuild.pcbridge.core.utils.Result
+import com.projectcitybuild.pcbridge.core.utils.Success
 import com.projectcitybuild.modules.permissions.Permissions
 import com.projectcitybuild.repositories.PlayerGroupRepository
 import java.util.UUID

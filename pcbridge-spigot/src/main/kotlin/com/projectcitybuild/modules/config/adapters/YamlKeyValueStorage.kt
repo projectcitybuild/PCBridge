@@ -1,7 +1,7 @@
 package com.projectcitybuild.modules.config.adapters
 
-import com.projectcitybuild.core.storage.StoragePath
-import com.projectcitybuild.core.storage.adapters.YamlStorage
+import com.projectcitybuild.modules.storage.StoragePath
+import com.projectcitybuild.modules.storage.adapters.YamlStorage
 import com.projectcitybuild.modules.config.ConfigStorageKey
 import com.projectcitybuild.modules.config.KeyValueStorage
 

@@ -1,7 +1,7 @@
 package com.projectcitybuild.support.spigot.listeners
 
 import com.github.shynixn.mccoroutine.bukkit.registerSuspendingEvents
-import com.projectcitybuild.pcbridge.core.PlatformLogger
+import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger
 import org.bukkit.event.HandlerList
 import org.bukkit.event.Listener
 import org.bukkit.plugin.java.JavaPlugin

@@ -4,8 +4,9 @@ import com.projectcitybuild.DateTimeFormatterMock
 import com.projectcitybuild.features.aggregate.AuthoriseConnection
 import com.projectcitybuild.features.aggregate.GetAggregate
 import com.projectcitybuild.features.aggregate.SyncPlayerWithAggregate
+import com.projectcitybuild.listeners.AsyncPreLoginListener
 import com.projectcitybuild.modules.errorreporting.ErrorReporter
-import com.projectcitybuild.pcbridge.core.PlatformLogger
+import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger
 import com.projectcitybuild.pcbridge.http.responses.Aggregate
 import com.projectcitybuild.pcbridge.http.responses.IPBan
 import com.projectcitybuild.pcbridge.http.responses.PlayerBan

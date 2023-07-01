@@ -1,12 +1,12 @@
 package com.projectcitybuild
 
-import com.projectcitybuild.core.utilities.Failure
-import com.projectcitybuild.core.utilities.Result
-import com.projectcitybuild.core.utilities.Success
+import com.projectcitybuild.pcbridge.core.utils.Failure
+import com.projectcitybuild.pcbridge.core.utils.Result
+import com.projectcitybuild.pcbridge.core.utils.Success
 import com.projectcitybuild.features.ranksync.usecases.UpdatePlayerGroups
-import com.projectcitybuild.pcbridge.core.PlatformLogger
+import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger
 import com.projectcitybuild.pcbridge.webserver.HttpServerDelegate
-import com.projectcitybuild.support.spigot.scheduler.Scheduler
+import com.projectcitybuild.pcbridge.core.contracts.PlatformScheduler
 import com.projectcitybuild.support.textcomponent.send
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 import org.bukkit.Server
 
 class WebServerDelegate(
-    private val scheduler: Scheduler,
+    private val scheduler: PlatformScheduler,
     private val minecraftServer: Server,
     private val logger: PlatformLogger,
     private val updatePlayerGroups: UpdatePlayerGroups,

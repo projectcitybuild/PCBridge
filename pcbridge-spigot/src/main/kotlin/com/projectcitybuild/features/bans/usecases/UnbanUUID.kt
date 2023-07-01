@@ -1,8 +1,8 @@
 package com.projectcitybuild.features.bans.usecases
 
-import com.projectcitybuild.core.utilities.Failure
-import com.projectcitybuild.core.utilities.Result
-import com.projectcitybuild.core.utilities.Success
+import com.projectcitybuild.pcbridge.core.utils.Failure
+import com.projectcitybuild.pcbridge.core.utils.Result
+import com.projectcitybuild.pcbridge.core.utils.Success
 import com.projectcitybuild.repositories.PlayerBanRepository
 import com.projectcitybuild.repositories.PlayerUUIDRepository
 import net.md_5.bungee.api.ChatColor

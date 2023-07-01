@@ -1,7 +1,7 @@
 package com.projectcitybuild
 
-import com.projectcitybuild.core.database.DataSource
-import com.projectcitybuild.core.storage.adapters.YamlStorage
+import com.projectcitybuild.modules.database.DataSource
+import com.projectcitybuild.modules.storage.adapters.YamlStorage
 import com.projectcitybuild.features.aggregate.AuthoriseConnection
 import com.projectcitybuild.features.aggregate.GetAggregate
 import com.projectcitybuild.features.aggregate.SyncPlayerWithAggregate
@@ -37,41 +37,41 @@ import com.projectcitybuild.modules.nameguesser.NameGuesser
 import com.projectcitybuild.modules.permissions.Permissions
 import com.projectcitybuild.modules.permissions.adapters.LuckPermsPermissions
 import com.projectcitybuild.modules.playercache.PlayerConfigCache
-import com.projectcitybuild.pcbridge.core.PlatformLogger
+import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger
 import com.projectcitybuild.pcbridge.http.clients.MojangClient
 import com.projectcitybuild.pcbridge.http.clients.PCBClient
 import com.projectcitybuild.pcbridge.http.core.APIClient
 import com.projectcitybuild.pcbridge.http.core.APIClientImpl
 import com.projectcitybuild.pcbridge.webserver.HttpServer
 import com.projectcitybuild.pcbridge.webserver.HttpServerConfig
-import com.projectcitybuild.plugin.commands.ACommand
-import com.projectcitybuild.plugin.commands.BadgeCommand
-import com.projectcitybuild.plugin.commands.BanCommand
-import com.projectcitybuild.plugin.commands.BanIPCommand
-import com.projectcitybuild.plugin.commands.CheckBanCommand
-import com.projectcitybuild.plugin.commands.DelWarpCommand
-import com.projectcitybuild.plugin.commands.MuteCommand
-import com.projectcitybuild.plugin.commands.PCBridgeCommand
-import com.projectcitybuild.plugin.commands.SetWarpCommand
-import com.projectcitybuild.plugin.commands.SyncCommand
-import com.projectcitybuild.plugin.commands.SyncOtherCommand
-import com.projectcitybuild.plugin.commands.UnbanCommand
-import com.projectcitybuild.plugin.commands.UnbanIPCommand
-import com.projectcitybuild.plugin.commands.UnmuteCommand
-import com.projectcitybuild.plugin.commands.WarningAcknowledgeCommand
-import com.projectcitybuild.plugin.commands.WarpCommand
-import com.projectcitybuild.plugin.commands.WarpsCommand
-import com.projectcitybuild.plugin.integrations.dynmap.DynmapMarkerIntegration
-import com.projectcitybuild.plugin.integrations.essentials.EssentialsIntegration
-import com.projectcitybuild.plugin.integrations.gadgetsmenu.GadgetsMenuIntegration
-import com.projectcitybuild.plugin.integrations.luckperms.LuckPermsIntegration
-import com.projectcitybuild.plugin.listeners.AsyncPlayerChatListener
-import com.projectcitybuild.plugin.listeners.AsyncPreLoginListener
-import com.projectcitybuild.plugin.listeners.ExceptionListener
-import com.projectcitybuild.plugin.listeners.FirstTimeJoinListener
-import com.projectcitybuild.plugin.listeners.PlayerJoinListener
-import com.projectcitybuild.plugin.listeners.PlayerQuitListener
-import com.projectcitybuild.plugin.listeners.TelemetryListener
+import com.projectcitybuild.commands.ACommand
+import com.projectcitybuild.commands.BadgeCommand
+import com.projectcitybuild.commands.BanCommand
+import com.projectcitybuild.commands.BanIPCommand
+import com.projectcitybuild.commands.CheckBanCommand
+import com.projectcitybuild.commands.DelWarpCommand
+import com.projectcitybuild.commands.MuteCommand
+import com.projectcitybuild.commands.PCBridgeCommand
+import com.projectcitybuild.commands.SetWarpCommand
+import com.projectcitybuild.commands.SyncCommand
+import com.projectcitybuild.commands.SyncOtherCommand
+import com.projectcitybuild.commands.UnbanCommand
+import com.projectcitybuild.commands.UnbanIPCommand
+import com.projectcitybuild.commands.UnmuteCommand
+import com.projectcitybuild.commands.WarningAcknowledgeCommand
+import com.projectcitybuild.commands.WarpCommand
+import com.projectcitybuild.commands.WarpsCommand
+import com.projectcitybuild.integrations.dynmap.DynmapMarkerIntegration
+import com.projectcitybuild.integrations.essentials.EssentialsIntegration
+import com.projectcitybuild.integrations.gadgetsmenu.GadgetsMenuIntegration
+import com.projectcitybuild.integrations.luckperms.LuckPermsIntegration
+import com.projectcitybuild.listeners.AsyncPlayerChatListener
+import com.projectcitybuild.listeners.AsyncPreLoginListener
+import com.projectcitybuild.listeners.ExceptionListener
+import com.projectcitybuild.listeners.FirstTimeJoinListener
+import com.projectcitybuild.listeners.PlayerJoinListener
+import com.projectcitybuild.listeners.PlayerQuitListener
+import com.projectcitybuild.listeners.TelemetryListener
 import com.projectcitybuild.repositories.AggregateRepository
 import com.projectcitybuild.repositories.ChatBadgeRepository
 import com.projectcitybuild.repositories.CurrencyRepository
@@ -89,9 +89,9 @@ import com.projectcitybuild.support.spigot.eventbroadcast.SpigotLocalEventBroadc
 import com.projectcitybuild.support.spigot.kick.PlayerKicker
 import com.projectcitybuild.support.spigot.kick.SpigotPlayerKicker
 import com.projectcitybuild.support.spigot.listeners.SpigotListenerRegistry
-import com.projectcitybuild.support.spigot.logger.SpigotLogger
-import com.projectcitybuild.support.spigot.scheduler.Scheduler
-import com.projectcitybuild.support.spigot.scheduler.SpigotScheduler
+import com.projectcitybuild.support.spigot.SpigotLogger
+import com.projectcitybuild.pcbridge.core.contracts.PlatformScheduler
+import com.projectcitybuild.support.spigot.SpigotScheduler
 import org.bukkit.Server
 import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.plugin.java.JavaPlugin
@@ -131,7 +131,7 @@ class DependencyContainer(
     val logger: PlatformLogger
         get() = SpigotLogger(spigotLogger)
 
-    val scheduler: Scheduler
+    val scheduler: PlatformScheduler
         get() = SpigotScheduler(plugin)
 
     val errorReporter: ErrorReporter by lazy {
