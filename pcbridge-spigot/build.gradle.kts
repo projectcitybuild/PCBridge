@@ -6,7 +6,7 @@ import java.util.Properties
 group = "com.projectcitybuild"
 version = "5.0.0"
 
-val generatedResourcesDir = "${buildDir}/generated-resources"
+val generatedResourcesDir = "$buildDir/generated-resources"
 
 plugins {
     id("com.github.johnrengelman.shadow") version "7.0.0"
@@ -55,7 +55,7 @@ dependencies {
     compileOnly("us.dynmap:DynmapCoreAPI:3.3")
 
     // GadgetsMenu
-    compileOnly(files("${projectDir}/libs/GadgetsMenu.jar"))
+    compileOnly(files("$projectDir/libs/GadgetsMenu.jar"))
 
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
@@ -117,7 +117,7 @@ tasks.create("generateVersionResource") {
             .replace("-g", "-") // Remove `g` for `git` in the commit id
     }
     doLast {
-        val propertiesFile = file("${generatedResourcesDir}/version.properties")
+        val propertiesFile = file("$generatedResourcesDir/version.properties")
         propertiesFile.parentFile.mkdirs()
         val properties = Properties().apply {
             setProperty("version", version.toString())
