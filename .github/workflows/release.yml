@@ -28,9 +28,11 @@ jobs:
 
       - name: Build with Gradle
         run: gradle shadowJar
+        working-directory: pcbridge-spigot
 
       - name: Upload jar file as artifact
         uses: actions/upload-artifact@v2.2.4
+        working-directory: pcbridge-spigot
         with:
           path: build/release/pcbridge*.jar
           if-no-files-found: warn
@@ -45,6 +47,7 @@ jobs:
 
       - name: Create release
         uses: softprops/action-gh-release@v1
+        working-directory: pcbridge-spigot
         with:
           tag_name: ${{ steps.tag.outputs.tag }}
           files: build/release/pcbridge*.jar
@@ -61,9 +64,11 @@ jobs:
 
       - name: Bump minor version
         run: gradle incrementVersion
+        working-directory: pcbridge-spigot
 
       - name: Get the new version from build.gradle.kts
         id: plugin_version
+        working-directory: pcbridge-spigot
         run: |
           version="$(gradle properties -q | grep "version:" | awk '{print $2}')"
           echo "plugin_version=$version" >> $GITHUB_OUTPUT

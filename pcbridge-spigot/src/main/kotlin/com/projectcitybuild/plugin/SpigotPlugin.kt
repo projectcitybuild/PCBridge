@@ -58,6 +58,8 @@ class SpigotPlugin : JavaPlugin() {
         }
 
     override fun onEnable() {
+        printLogo()
+
         container = DependencyContainer(
             plugin = this,
             server = server,
@@ -102,5 +104,20 @@ class SpigotPlugin : JavaPlugin() {
     private fun reportError(throwable: Throwable, errorReporter: ErrorReporter) {
         throwable.printStackTrace()
         errorReporter.report(throwable)
+    }
+
+    private fun printLogo() {
+        val enableMessage = """
+            
+            ██████╗  ██████╗██████╗ ██████╗ ██╗██████╗  ██████╗ ███████╗
+            ██╔══██╗██╔════╝██╔══██╗██╔══██╗██║██╔══██╗██╔════╝ ██╔════╝
+            ██████╔╝██║     ██████╔╝██████╔╝██║██║  ██║██║  ███╗█████╗  
+            ██╔═══╝ ██║     ██╔══██╗██╔══██╗██║██║  ██║██║   ██║██╔══╝  
+            ██║     ╚██████╗██████╔╝██║  ██║██║██████╔╝╚██████╔╝███████╗
+            ╚═╝      ╚═════╝╚═════╝ ╚═╝  ╚═╝╚═╝╚═════╝  ╚═════╝ ╚══════╝
+            
+        """.trimIndent()
+
+        enableMessage.split("\n").forEach(logger::info)
     }
 }
