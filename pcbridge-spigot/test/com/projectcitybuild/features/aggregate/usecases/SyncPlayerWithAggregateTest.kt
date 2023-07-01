@@ -1,16 +1,16 @@
 package com.projectcitybuild.features.aggregate.usecases
 
-import DonationPerk
-import DonationTier
-import com.projectcitybuild.entities.responses.Account
-import com.projectcitybuild.entities.responses.Aggregate
-import com.projectcitybuild.entities.responses.Badge
-import com.projectcitybuild.entities.responses.Group
 import com.projectcitybuild.features.aggregate.SyncPlayerWithAggregate
 import com.projectcitybuild.modules.config.Config
 import com.projectcitybuild.modules.config.ConfigStorageKey
 import com.projectcitybuild.modules.config.adapters.MemoryKeyValueStorage
 import com.projectcitybuild.modules.permissions.Permissions
+import com.projectcitybuild.pcbridge.http.responses.Account
+import com.projectcitybuild.pcbridge.http.responses.Aggregate
+import com.projectcitybuild.pcbridge.http.responses.Badge
+import com.projectcitybuild.pcbridge.http.responses.DonationPerk
+import com.projectcitybuild.pcbridge.http.responses.DonationTier
+import com.projectcitybuild.pcbridge.http.responses.Group
 import com.projectcitybuild.repositories.ChatBadgeRepository
 import com.projectcitybuild.support.spigot.logger.Logger
 import kotlinx.coroutines.test.runTest

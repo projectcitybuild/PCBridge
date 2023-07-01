@@ -1,6 +1,5 @@
 package com.projectcitybuild.pcbridge.http.responses
 
-import DonationPerk
 import com.google.gson.annotations.SerializedName
 
 data class Aggregate(

@@ -1,7 +1,7 @@
 package com.projectcitybuild.pcbridge.http.requests.pcb
 
-import DonationPerk
 import com.projectcitybuild.pcbridge.http.responses.ApiResponse
+import com.projectcitybuild.pcbridge.http.responses.DonationPerk
 import retrofit2.http.GET
 import retrofit2.http.Path
 
