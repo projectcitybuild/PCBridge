@@ -3,7 +3,7 @@ package com.projectcitybuild.features.bans.usecases
 import com.projectcitybuild.DateTimeFormatterMock
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Success
-import com.projectcitybuild.entities.responses.PlayerBan
+import com.projectcitybuild.pcbridge.http.responses.PlayerBan
 import com.projectcitybuild.repositories.PlayerBanRepository
 import com.projectcitybuild.repositories.PlayerUUIDRepository
 import kotlinx.coroutines.test.runTest

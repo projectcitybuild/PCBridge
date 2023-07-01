@@ -1,9 +1,9 @@
 package com.projectcitybuild.features.aggregate
 
-import com.projectcitybuild.entities.responses.Aggregate
 import com.projectcitybuild.modules.config.Config
 import com.projectcitybuild.modules.config.ConfigStorageKey
 import com.projectcitybuild.modules.permissions.Permissions
+import com.projectcitybuild.pcbridge.http.responses.Aggregate
 import com.projectcitybuild.repositories.ChatBadgeRepository
 import com.projectcitybuild.support.spigot.logger.Logger
 import java.util.UUID
@@ -20,12 +20,11 @@ class SyncPlayerWithAggregate(
     }
 
     private fun syncGroups(playerUUID: UUID, aggregate: Aggregate) {
-        if (aggregate.account == null) {
-            return
-        }
+        val account = aggregate.account ?: return
+
         val groupSet = mutableSetOf<String>()
         groupSet.addAll(
-            aggregate.account.groups.mapNotNull { it.minecraftName }
+            account.groups.mapNotNull { it.minecraftName }
         )
         groupSet.addAll(
             aggregate.donationPerks.mapNotNull { donorPerk ->

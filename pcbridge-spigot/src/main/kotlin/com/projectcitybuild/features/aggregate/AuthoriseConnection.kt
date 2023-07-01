@@ -1,8 +1,8 @@
 package com.projectcitybuild.features.aggregate
 
-import com.projectcitybuild.entities.responses.Aggregate
-import com.projectcitybuild.entities.responses.IPBan
-import com.projectcitybuild.entities.responses.PlayerBan
+import com.projectcitybuild.pcbridge.http.responses.Aggregate
+import com.projectcitybuild.pcbridge.http.responses.IPBan
+import com.projectcitybuild.pcbridge.http.responses.PlayerBan
 
 class AuthoriseConnection {
     sealed class ConnectResult {
@@ -21,16 +21,17 @@ class AuthoriseConnection {
         if (ban != null) {
             return ConnectResult.Denied(ban = ban)
         }
-
         return ConnectResult.Allowed
     }
 
     private fun getBan(aggregate: Aggregate): Ban? {
-        if (aggregate.playerBan !== null && aggregate.playerBan.isActive) {
-            return Ban.UUID(aggregate.playerBan)
+        val playerBan = aggregate.playerBan
+        if (playerBan != null && playerBan.isActive) {
+            return Ban.UUID(playerBan)
         }
-        if (aggregate.ipBan !== null && aggregate.ipBan.isActive) {
-            return Ban.IP(aggregate.ipBan)
+        val ipBan = aggregate.ipBan
+        if (ipBan != null && ipBan.isActive) {
+            return Ban.IP(ipBan)
         }
         return null
     }

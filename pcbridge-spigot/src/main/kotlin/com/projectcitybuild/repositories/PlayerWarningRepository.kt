@@ -1,17 +1,17 @@
 package com.projectcitybuild.repositories
 
-import com.projectcitybuild.core.http.APIRequestFactory
-import com.projectcitybuild.core.http.core.APIClient
-import com.projectcitybuild.entities.responses.PlayerWarning
+import com.projectcitybuild.pcbridge.http.clients.PCBClient
+import com.projectcitybuild.pcbridge.http.core.APIClient
+import com.projectcitybuild.pcbridge.http.responses.PlayerWarning
 import java.util.UUID
 
 class PlayerWarningRepository(
-    private val apiRequestFactory: APIRequestFactory,
+    private val pcbClient: PCBClient,
     private val apiClient: APIClient,
 ) {
     suspend fun get(playerUUID: UUID, playerName: String): List<PlayerWarning> {
         val response = apiClient.execute {
-            apiRequestFactory.pcb.warningAPI.get(
+            pcbClient.warningAPI.get(
                 bannedPlayerId = playerUUID.toString(),
                 bannedPlayerAlias = playerName,
             )
@@ -27,7 +27,7 @@ class PlayerWarningRepository(
         reason: String,
     ): PlayerWarning? {
         val response = apiClient.execute {
-            apiRequestFactory.pcb.warningAPI.create(
+            pcbClient.warningAPI.create(
                 warnedPlayerId = warnedPlayerUUID.toString(),
                 warnedPlayerAlias = warnedPlayerName,
                 warnerPlayerId = warnerPlayerUUID.toString(),
@@ -40,7 +40,7 @@ class PlayerWarningRepository(
 
     suspend fun acknowledge(warningId: Int): PlayerWarning? {
         val response = apiClient.execute {
-            apiRequestFactory.pcb.warningAPI.acknowledge(
+            pcbClient.warningAPI.acknowledge(
                 warningId = warningId,
             )
         }

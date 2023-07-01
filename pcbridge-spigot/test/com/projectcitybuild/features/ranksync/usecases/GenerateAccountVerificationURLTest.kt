@@ -1,38 +1,34 @@
 package com.projectcitybuild.features.ranksync.usecases
 
-import com.projectcitybuild.core.http.APIRequestFactory
-import com.projectcitybuild.core.http.clients.PCBClient
-import com.projectcitybuild.core.http.core.APIClient
-import com.projectcitybuild.core.http.core.APIClientMock
 import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Success
-import com.projectcitybuild.entities.responses.ApiError
-import com.projectcitybuild.entities.responses.ApiResponse
-import com.projectcitybuild.entities.responses.AuthURL
+import com.projectcitybuild.pcbridge.http.clients.PCBClient
+import com.projectcitybuild.pcbridge.http.core.APIClient
+import com.projectcitybuild.pcbridge.http.core.APIClientMock
+import com.projectcitybuild.pcbridge.http.responses.ApiError
+import com.projectcitybuild.pcbridge.http.responses.ApiResponse
+import com.projectcitybuild.pcbridge.http.responses.AuthURL
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.powermock.api.mockito.PowerMockito.mock
-import org.powermock.api.mockito.PowerMockito.`when`
 import java.util.UUID
 
 class GenerateAccountVerificationURLTest {
 
     private lateinit var useCase: GenerateAccountVerificationURL
 
-    private lateinit var apiRequestFactory: APIRequestFactory
+    private lateinit var pcbClient: PCBClient
     private lateinit var apiClient: APIClientMock
 
     @BeforeEach
     fun setUp() {
-        apiRequestFactory = mock(APIRequestFactory::class.java)
+        pcbClient = mock(PCBClient::class.java)
         apiClient = APIClientMock()
 
-        `when`(apiRequestFactory.pcb).thenReturn(mock(PCBClient::class.java))
-
         useCase = GenerateAccountVerificationURL(
-            apiRequestFactory,
+            pcbClient,
             apiClient,
         )
     }

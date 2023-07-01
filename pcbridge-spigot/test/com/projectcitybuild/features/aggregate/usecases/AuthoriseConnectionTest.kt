@@ -1,9 +1,9 @@
 package com.projectcitybuild.features.aggregate.usecases
 
-import com.projectcitybuild.entities.responses.Aggregate
-import com.projectcitybuild.entities.responses.IPBan
-import com.projectcitybuild.entities.responses.PlayerBan
 import com.projectcitybuild.features.aggregate.AuthoriseConnection
+import com.projectcitybuild.pcbridge.http.responses.Aggregate
+import com.projectcitybuild.pcbridge.http.responses.IPBan
+import com.projectcitybuild.pcbridge.http.responses.PlayerBan
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach

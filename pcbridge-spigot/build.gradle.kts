@@ -3,9 +3,6 @@ import java.io.ByteArrayOutputStream
 import java.io.FileOutputStream
 import java.util.Properties
 
-group = "com.projectcitybuild"
-version = "5.0.0"
-
 val generatedResourcesDir = "$buildDir/generated-resources"
 
 plugins {
@@ -40,7 +37,8 @@ repositories {
 }
 
 dependencies {
-    project(":pcbridge-core")
+    implementation(project(":pcbridge-core"))
+    implementation(project(":pcbridge-http"))
 
     compileOnly("org.spigotmc:spigot-api:1.12.2-R0.1-SNAPSHOT")
 
@@ -56,10 +54,6 @@ dependencies {
 
     // GadgetsMenu
     compileOnly(files("$projectDir/libs/GadgetsMenu.jar"))
-
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
-    implementation("com.squareup.okhttp3:logging-interceptor:4.9.3")
 
     implementation("com.github.shynixn.mccoroutine:mccoroutine-bukkit-api:2.11.0")
     implementation("com.github.shynixn.mccoroutine:mccoroutine-bukkit-core:2.11.0")

@@ -1,7 +1,7 @@
 package com.projectcitybuild.repositories
 
-import com.projectcitybuild.core.http.APIRequestFactory
-import com.projectcitybuild.core.http.core.APIClient
+import com.projectcitybuild.pcbridge.http.clients.PCBClient
+import com.projectcitybuild.pcbridge.http.core.APIClient
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -11,7 +11,7 @@ import java.util.concurrent.ConcurrentHashMap
 import kotlin.math.max
 
 class CurrencyRepository(
-    private val apiRequestFactory: APIRequestFactory,
+    private val pcbClient: PCBClient,
     private val apiClient: APIClient,
 ) {
     private data class CachedBalance(
@@ -30,7 +30,7 @@ class CurrencyRepository(
 
         CoroutineScope(Dispatchers.IO).launch {
             val response = apiClient.execute {
-                apiRequestFactory.pcb.balanceAPI.get(
+                pcbClient.balanceAPI.get(
                     uuid = playerUUID.toString(),
                 )
             }
@@ -69,7 +69,7 @@ class CurrencyRepository(
         }
         CoroutineScope(Dispatchers.IO).launch {
             apiClient.execute {
-                apiRequestFactory.pcb.balanceAPI.deduct(
+                pcbClient.balanceAPI.deduct(
                     uuid = playerUUID.toString(),
                     amount = amount,
                     reason = reason,

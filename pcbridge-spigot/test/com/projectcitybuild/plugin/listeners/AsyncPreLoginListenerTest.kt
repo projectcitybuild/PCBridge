@@ -1,13 +1,13 @@
 package com.projectcitybuild.plugin.listeners
 
 import com.projectcitybuild.DateTimeFormatterMock
-import com.projectcitybuild.entities.responses.Aggregate
-import com.projectcitybuild.entities.responses.IPBan
-import com.projectcitybuild.entities.responses.PlayerBan
 import com.projectcitybuild.features.aggregate.AuthoriseConnection
 import com.projectcitybuild.features.aggregate.GetAggregate
 import com.projectcitybuild.features.aggregate.SyncPlayerWithAggregate
 import com.projectcitybuild.modules.errorreporting.ErrorReporter
+import com.projectcitybuild.pcbridge.http.responses.Aggregate
+import com.projectcitybuild.pcbridge.http.responses.IPBan
+import com.projectcitybuild.pcbridge.http.responses.PlayerBan
 import com.projectcitybuild.support.spigot.logger.Logger
 import kotlinx.coroutines.test.runTest
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent

@@ -1,5 +1,8 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
+group = "com.projectcitybuild.pcbridge"
+version = "5.0.0"
+
 plugins {
     kotlin("jvm") version "1.6.10"
 
@@ -16,19 +19,28 @@ subprojects {
     dependencies {
         implementation(kotlin("stdlib-jdk8"))
 
-        // Main
         implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0-native-mt")
         implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.6.0-native-mt")
-        testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.0-native-mt")
         implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
 
-        // Testing
+        testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.0-native-mt")
         testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
         testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.2")
         testImplementation("org.mockito.kotlin:mockito-kotlin:4.0.0")
         testImplementation("org.powermock:powermock-module-junit4:2.0.9")
         testImplementation("org.powermock:powermock-api-mockito2:2.0.9")
         testImplementation("org.mockito:mockito-inline:4.2.0")
+    }
+
+    sourceSets {
+        test {
+            java {
+                srcDir("test")
+                resources {
+                    srcDir("test/resources")
+                }
+            }
+        }
     }
 
     tasks.withType<KotlinCompile> {
