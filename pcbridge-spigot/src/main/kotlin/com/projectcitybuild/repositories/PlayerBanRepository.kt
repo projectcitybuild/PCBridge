@@ -1,12 +1,12 @@
 package com.projectcitybuild.repositories
 
-import com.projectcitybuild.core.http.APIRequestFactory
-import com.projectcitybuild.core.http.core.APIClient
-import com.projectcitybuild.entities.responses.PlayerBan
+import com.projectcitybuild.pcbridge.http.clients.PCBClient
+import com.projectcitybuild.pcbridge.http.core.APIClient
+import com.projectcitybuild.pcbridge.http.responses.PlayerBan
 import java.util.UUID
 
 class PlayerBanRepository(
-    private val apiRequestFactory: APIRequestFactory,
+    private val pcbClient: PCBClient,
     private val apiClient: APIClient,
 ) {
     class PlayerAlreadyBannedException : Exception()
@@ -23,7 +23,7 @@ class PlayerBanRepository(
     ) {
         try {
             apiClient.execute {
-                apiRequestFactory.pcb.playerBanAPI.ban(
+                pcbClient.playerBanAPI.ban(
                     bannedPlayerId = targetPlayerUUID.toString(),
                     bannedPlayerAlias = targetPlayerName,
                     bannerPlayerId = bannerPlayerUUID.toString(),
@@ -44,7 +44,7 @@ class PlayerBanRepository(
     suspend fun unban(targetPlayerUUID: UUID, staffId: UUID?) {
         try {
             apiClient.execute {
-                apiRequestFactory.pcb.playerBanAPI.unban(
+                pcbClient.playerBanAPI.unban(
                     bannedPlayerId = targetPlayerUUID.toString(),
                     unbannerPlayerId = staffId.toString(),
                 )
@@ -59,7 +59,7 @@ class PlayerBanRepository(
 
     suspend fun get(targetPlayerUUID: UUID): PlayerBan? {
         val response = apiClient.execute {
-            apiRequestFactory.pcb.playerBanAPI.status(
+            pcbClient.playerBanAPI.status(
                 playerId = targetPlayerUUID.toString(),
             )
         }

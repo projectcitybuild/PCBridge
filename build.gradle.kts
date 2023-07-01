@@ -1,5 +1,8 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
+group = "com.projectcitybuild.pcbridge"
+version = "5.0.0"
+
 plugins {
     kotlin("jvm") version "1.6.10"
 

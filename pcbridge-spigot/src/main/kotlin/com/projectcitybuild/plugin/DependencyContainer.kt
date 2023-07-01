@@ -1,11 +1,6 @@
 package com.projectcitybuild.plugin
 
 import com.projectcitybuild.core.database.DataSource
-import com.projectcitybuild.core.http.APIRequestFactory
-import com.projectcitybuild.core.http.clients.MojangClient
-import com.projectcitybuild.core.http.clients.PCBClient
-import com.projectcitybuild.core.http.core.APIClient
-import com.projectcitybuild.core.http.core.APIClientImpl
 import com.projectcitybuild.core.http.server.HTTPServer
 import com.projectcitybuild.core.storage.adapters.YamlStorage
 import com.projectcitybuild.features.aggregate.AuthoriseConnection
@@ -43,6 +38,10 @@ import com.projectcitybuild.modules.nameguesser.NameGuesser
 import com.projectcitybuild.modules.permissions.Permissions
 import com.projectcitybuild.modules.permissions.adapters.LuckPermsPermissions
 import com.projectcitybuild.modules.playercache.PlayerConfigCache
+import com.projectcitybuild.pcbridge.http.clients.MojangClient
+import com.projectcitybuild.pcbridge.http.clients.PCBClient
+import com.projectcitybuild.pcbridge.http.core.APIClient
+import com.projectcitybuild.pcbridge.http.core.APIClientImpl
 import com.projectcitybuild.plugin.commands.ACommand
 import com.projectcitybuild.plugin.commands.BadgeCommand
 import com.projectcitybuild.plugin.commands.BanCommand
@@ -150,18 +149,17 @@ class DependencyContainer(
         )
     }
 
-    val apiRequestFactory: APIRequestFactory get() {
-        val isLoggingEnabled = config.get(ConfigKeys.apiIsLoggingEnabled)
+    val pcbClient by lazy {
+        PCBClient(
+            authToken = config.get(ConfigKeys.apiToken),
+            baseUrl = config.get(ConfigKeys.apiBaseURL),
+            withLogging = config.get(ConfigKeys.apiIsLoggingEnabled)
+        )
+    }
 
-        return APIRequestFactory(
-            pcb = PCBClient(
-                authToken = config.get(ConfigKeys.apiToken),
-                baseUrl = config.get(ConfigKeys.apiBaseURL),
-                withLogging = isLoggingEnabled
-            ),
-            mojang = MojangClient(
-                withLogging = isLoggingEnabled
-            )
+    val mojangClient by lazy {
+        MojangClient(
+            withLogging = config.get(ConfigKeys.apiIsLoggingEnabled)
         )
     }
 
@@ -246,7 +244,7 @@ class DependencyContainer(
 
     val playerBanRepository by lazy {
         PlayerBanRepository(
-            apiRequestFactory,
+            pcbClient,
             apiClient,
         )
     }
@@ -254,14 +252,14 @@ class DependencyContainer(
     val playerUUIDRepository by lazy {
         PlayerUUIDRepository(
             server,
-            apiRequestFactory,
+            mojangClient,
             apiClient,
         )
     }
 
     val playerGroupRepository by lazy {
         PlayerGroupRepository(
-            apiRequestFactory,
+            pcbClient,
             apiClient,
             config,
             logger,
@@ -270,15 +268,15 @@ class DependencyContainer(
 
     val playerWarningRepository by lazy {
         PlayerWarningRepository(
-            apiRequestFactory,
+            pcbClient,
             apiClient,
         )
     }
 
     val ipBanRepository by lazy {
         IPBanRepository(
+            pcbClient,
             apiClient,
-            apiRequestFactory,
         )
     }
 
@@ -288,21 +286,21 @@ class DependencyContainer(
 
     val aggregateRepository by lazy {
         AggregateRepository(
+            pcbClient,
             apiClient,
-            apiRequestFactory,
         )
     }
 
     val telemetryRepository by lazy {
         TelemetryRepository(
-            apiRequestFactory,
+            pcbClient,
             apiClient,
         )
     }
 
     val currencyRepository by lazy {
         CurrencyRepository(
-            apiRequestFactory,
+            pcbClient,
             apiClient,
         )
     }
@@ -377,7 +375,7 @@ class DependencyContainer(
 
     val syncCommand get() = SyncCommand(
         GenerateAccountVerificationURL(
-            apiRequestFactory,
+            pcbClient,
             apiClient
         ),
         UpdatePlayerGroups(

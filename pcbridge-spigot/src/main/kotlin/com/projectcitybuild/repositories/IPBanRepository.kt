@@ -1,20 +1,20 @@
 package com.projectcitybuild.repositories
 
-import com.projectcitybuild.core.http.APIRequestFactory
-import com.projectcitybuild.core.http.core.APIClient
-import com.projectcitybuild.entities.responses.IPBan
+import com.projectcitybuild.pcbridge.http.clients.PCBClient
+import com.projectcitybuild.pcbridge.http.core.APIClient
+import com.projectcitybuild.pcbridge.http.responses.IPBan
 import java.util.UUID
 
 class IPBanRepository(
+    private val pcbClient: PCBClient,
     private val apiClient: APIClient,
-    private val apiRequestFactory: APIRequestFactory,
 ) {
     class IPAlreadyBannedException : Exception()
     class IPNotBannedException : Exception()
 
     suspend fun get(ip: String): IPBan? {
         return apiClient.execute {
-            apiRequestFactory.pcb.ipBanAPI.status(ip = ip)
+            pcbClient.ipBanAPI.status(ip = ip)
         }.data
     }
 
@@ -27,7 +27,7 @@ class IPBanRepository(
     ) {
         try {
             apiClient.execute {
-                apiRequestFactory.pcb.ipBanAPI.ban(
+                pcbClient.ipBanAPI.ban(
                     ip = ip,
                     bannerPlayerId = bannerUUID.toString(),
                     bannerPlayerAlias = bannerName,
@@ -50,7 +50,7 @@ class IPBanRepository(
     ) {
         try {
             apiClient.execute {
-                apiRequestFactory.pcb.ipBanAPI.unban(
+                pcbClient.ipBanAPI.unban(
                     ip = ip,
                     unbannerPlayerId = unbannerUUID.toString(),
                     unbannerPlayerAlias = unbannerName,

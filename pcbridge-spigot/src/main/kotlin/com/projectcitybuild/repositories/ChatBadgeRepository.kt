@@ -1,6 +1,6 @@
 package com.projectcitybuild.repositories
 
-import com.projectcitybuild.entities.responses.Badge
+import com.projectcitybuild.pcbridge.http.responses.Badge
 import java.util.UUID
 
 class ChatBadgeRepository {

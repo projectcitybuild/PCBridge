@@ -1,14 +1,14 @@
 package com.projectcitybuild.repositories
 
-import com.projectcitybuild.core.http.APIRequestFactory
-import com.projectcitybuild.core.http.core.APIClient
 import com.projectcitybuild.modules.config.Config
 import com.projectcitybuild.modules.config.ConfigStorageKey
+import com.projectcitybuild.pcbridge.http.clients.PCBClient
+import com.projectcitybuild.pcbridge.http.core.APIClient
 import com.projectcitybuild.support.spigot.logger.Logger
 import java.util.UUID
 
 class PlayerGroupRepository(
-    private val apiRequestFactory: APIRequestFactory,
+    private val pcbClient: PCBClient,
     private val apiClient: APIClient,
     private val config: Config,
     private val logger: Logger,
@@ -18,7 +18,7 @@ class PlayerGroupRepository(
     @Throws(AccountNotLinkedException::class)
     suspend fun getGroups(playerUUID: UUID): List<String> {
         val response = try {
-            val authAPI = apiRequestFactory.pcb.authAPI
+            val authAPI = pcbClient.authAPI
             apiClient.execute { authAPI.getUserGroups(uuid = playerUUID.toString()) }
         } catch (e: APIClient.HTTPError) {
             if (e.errorBody?.id == "account_not_linked") {
@@ -35,7 +35,7 @@ class PlayerGroupRepository(
     @Throws(AccountNotLinkedException::class)
     suspend fun getDonorTiers(playerUUID: UUID): List<String> {
         val response = try {
-            val donorAPI = apiRequestFactory.pcb.donorAPI
+            val donorAPI = pcbClient.donorAPI
             apiClient.execute { donorAPI.getDonationTier(playerUUID.toString()) }
         } catch (e: APIClient.HTTPError) {
             if (e.errorBody?.id == "account_not_linked") {

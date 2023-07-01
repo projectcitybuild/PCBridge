@@ -1,7 +1,7 @@
 package com.projectcitybuild.features.aggregate
 
-import com.projectcitybuild.entities.responses.Aggregate
 import com.projectcitybuild.features.bans.Sanitizer
+import com.projectcitybuild.pcbridge.http.responses.Aggregate
 import com.projectcitybuild.repositories.AggregateRepository
 import java.util.UUID
 
