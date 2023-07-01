@@ -20,7 +20,7 @@ class SyncPlayerWithAggregate(
     }
 
     private fun syncGroups(playerUUID: UUID, aggregate: Aggregate) {
-        val account = aggregate.account ?: return;
+        val account = aggregate.account ?: return
 
         val groupSet = mutableSetOf<String>()
         groupSet.addAll(

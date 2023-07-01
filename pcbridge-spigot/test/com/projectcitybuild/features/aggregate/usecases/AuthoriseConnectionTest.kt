@@ -1,7 +1,6 @@
 package com.projectcitybuild.features.aggregate.usecases
 
 import com.projectcitybuild.features.aggregate.AuthoriseConnection
-import com.projectcitybuild.features.chat.ChatGroupFormatter
 import com.projectcitybuild.pcbridge.http.responses.Aggregate
 import com.projectcitybuild.pcbridge.http.responses.IPBan
 import com.projectcitybuild.pcbridge.http.responses.PlayerBan
