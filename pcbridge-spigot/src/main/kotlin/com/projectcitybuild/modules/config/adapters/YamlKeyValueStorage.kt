@@ -1,9 +1,9 @@
 package com.projectcitybuild.modules.config.adapters
 
-import com.projectcitybuild.modules.storage.StoragePath
-import com.projectcitybuild.modules.storage.adapters.YamlStorage
 import com.projectcitybuild.modules.config.ConfigStorageKey
 import com.projectcitybuild.modules.config.KeyValueStorage
+import com.projectcitybuild.modules.storage.StoragePath
+import com.projectcitybuild.modules.storage.adapters.YamlStorage
 
 class YamlKeyValueStorage(
     private val storage: YamlStorage,

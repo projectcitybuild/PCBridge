@@ -1,8 +1,8 @@
 package com.projectcitybuild.integrations.gadgetsmenu
 
 import com.projectcitybuild.core.SpigotListener
-import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger
 import com.projectcitybuild.integrations.SpigotIntegration
+import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger
 import com.projectcitybuild.repositories.CurrencyRepository
 import com.yapzhenyie.GadgetsMenu.economy.GEconomyProvider
 import com.yapzhenyie.GadgetsMenu.player.OfflinePlayerManager

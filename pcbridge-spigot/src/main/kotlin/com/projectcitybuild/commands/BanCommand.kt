@@ -1,8 +1,8 @@
 package com.projectcitybuild.commands
 
 import com.projectcitybuild.extensions.joinWithWhitespaces
-import com.projectcitybuild.pcbridge.core.utils.Failure
 import com.projectcitybuild.features.bans.usecases.BanUUID
+import com.projectcitybuild.pcbridge.core.utils.Failure
 import com.projectcitybuild.support.spigot.commands.InvalidCommandArgumentsException
 import com.projectcitybuild.support.spigot.commands.SpigotCommand
 import com.projectcitybuild.support.spigot.commands.SpigotCommandInput

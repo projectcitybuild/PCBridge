@@ -1,12 +1,12 @@
 package com.projectcitybuild
 
+import com.projectcitybuild.features.ranksync.usecases.UpdatePlayerGroups
+import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger
+import com.projectcitybuild.pcbridge.core.contracts.PlatformScheduler
 import com.projectcitybuild.pcbridge.core.utils.Failure
 import com.projectcitybuild.pcbridge.core.utils.Result
 import com.projectcitybuild.pcbridge.core.utils.Success
-import com.projectcitybuild.features.ranksync.usecases.UpdatePlayerGroups
-import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger
 import com.projectcitybuild.pcbridge.webserver.HttpServerDelegate
-import com.projectcitybuild.pcbridge.core.contracts.PlatformScheduler
 import com.projectcitybuild.support.textcomponent.send
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -18,7 +18,7 @@ class WebServerDelegate(
     private val minecraftServer: Server,
     private val logger: PlatformLogger,
     private val updatePlayerGroups: UpdatePlayerGroups,
-): HttpServerDelegate {
+) : HttpServerDelegate {
 
     override fun syncPlayer(uuid: String) {
         val player = minecraftServer.onlinePlayers.firstOrNull {

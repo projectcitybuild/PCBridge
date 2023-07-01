@@ -1,9 +1,9 @@
 package com.projectcitybuild.listeners
 
 import com.projectcitybuild.core.SpigotListener
+import com.projectcitybuild.events.FirstTimeJoinEvent
 import com.projectcitybuild.features.warnings.usecases.GetUnacknowledgedWarnings
 import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger
-import com.projectcitybuild.events.FirstTimeJoinEvent
 import com.projectcitybuild.repositories.PlayerConfigRepository
 import com.projectcitybuild.support.spigot.eventbroadcast.LocalEventBroadcaster
 import com.projectcitybuild.support.textcomponent.add

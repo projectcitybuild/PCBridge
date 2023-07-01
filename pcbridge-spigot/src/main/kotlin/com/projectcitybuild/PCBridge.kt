@@ -2,8 +2,8 @@ package com.projectcitybuild
 
 import com.github.shynixn.mccoroutine.bukkit.minecraftDispatcher
 import com.projectcitybuild.core.SpigotListener
-import com.projectcitybuild.modules.errorreporting.ErrorReporter
 import com.projectcitybuild.integrations.SpigotIntegration
+import com.projectcitybuild.modules.errorreporting.ErrorReporter
 import com.projectcitybuild.support.spigot.commands.SpigotCommand
 import org.bukkit.plugin.java.JavaPlugin
 

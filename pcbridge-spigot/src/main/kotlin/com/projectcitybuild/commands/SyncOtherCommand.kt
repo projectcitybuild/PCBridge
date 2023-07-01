@@ -1,9 +1,9 @@
 package com.projectcitybuild.commands
 
-import com.projectcitybuild.pcbridge.core.utils.Failure
-import com.projectcitybuild.pcbridge.core.utils.Success
 import com.projectcitybuild.features.ranksync.usecases.UpdatePlayerGroups
 import com.projectcitybuild.modules.nameguesser.NameGuesser
+import com.projectcitybuild.pcbridge.core.utils.Failure
+import com.projectcitybuild.pcbridge.core.utils.Success
 import com.projectcitybuild.support.spigot.commands.InvalidCommandArgumentsException
 import com.projectcitybuild.support.spigot.commands.SpigotCommand
 import com.projectcitybuild.support.spigot.commands.SpigotCommandInput

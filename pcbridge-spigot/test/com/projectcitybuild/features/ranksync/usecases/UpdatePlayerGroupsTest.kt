@@ -1,8 +1,8 @@
 package com.projectcitybuild.features.ranksync.usecases
 
+import com.projectcitybuild.modules.permissions.Permissions
 import com.projectcitybuild.pcbridge.core.utils.Failure
 import com.projectcitybuild.pcbridge.core.utils.Success
-import com.projectcitybuild.modules.permissions.Permissions
 import com.projectcitybuild.repositories.PlayerGroupRepository
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals

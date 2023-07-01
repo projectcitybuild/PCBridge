@@ -1,9 +1,9 @@
 package com.projectcitybuild.commands
 
 import com.projectcitybuild.extensions.joinWithWhitespaces
+import com.projectcitybuild.features.bans.usecases.BanIP
 import com.projectcitybuild.pcbridge.core.utils.Failure
 import com.projectcitybuild.pcbridge.core.utils.Success
-import com.projectcitybuild.features.bans.usecases.BanIP
 import com.projectcitybuild.support.spigot.commands.CannotInvokeFromConsoleException
 import com.projectcitybuild.support.spigot.commands.InvalidCommandArgumentsException
 import com.projectcitybuild.support.spigot.commands.SpigotCommand

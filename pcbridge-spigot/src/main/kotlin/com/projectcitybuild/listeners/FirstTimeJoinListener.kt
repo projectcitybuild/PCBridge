@@ -1,8 +1,8 @@
 package com.projectcitybuild.listeners
 
 import com.projectcitybuild.core.SpigotListener
-import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger
 import com.projectcitybuild.events.FirstTimeJoinEvent
+import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger
 import com.projectcitybuild.support.textcomponent.add
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.chat.TextComponent

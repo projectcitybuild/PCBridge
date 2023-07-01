@@ -1,9 +1,9 @@
 package com.projectcitybuild.features.chat.usecases
 
+import com.projectcitybuild.modules.nameguesser.NameGuesser
 import com.projectcitybuild.pcbridge.core.utils.Failure
 import com.projectcitybuild.pcbridge.core.utils.Result
 import com.projectcitybuild.pcbridge.core.utils.Success
-import com.projectcitybuild.modules.nameguesser.NameGuesser
 import com.projectcitybuild.repositories.PlayerConfigRepository
 import org.bukkit.entity.Player
 

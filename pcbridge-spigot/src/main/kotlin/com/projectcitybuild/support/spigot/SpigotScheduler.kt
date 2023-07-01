@@ -1,8 +1,8 @@
 package com.projectcitybuild.support.spigot
 
+import com.projectcitybuild.pcbridge.core.contracts.PlatformScheduler
 import com.projectcitybuild.pcbridge.core.utils.AsyncTask
 import com.projectcitybuild.pcbridge.core.utils.Cancellable
-import com.projectcitybuild.pcbridge.core.contracts.PlatformScheduler
 import org.bukkit.plugin.java.JavaPlugin
 
 class SpigotScheduler(private val plugin: JavaPlugin) : PlatformScheduler {
