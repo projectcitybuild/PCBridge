@@ -2,10 +2,10 @@ package com.projectcitybuild.plugin.listeners
 
 import com.projectcitybuild.core.SpigotListener
 import com.projectcitybuild.features.warnings.usecases.GetUnacknowledgedWarnings
+import com.projectcitybuild.pcbridge.core.PlatformLogger
 import com.projectcitybuild.plugin.events.FirstTimeJoinEvent
 import com.projectcitybuild.repositories.PlayerConfigRepository
 import com.projectcitybuild.support.spigot.eventbroadcast.LocalEventBroadcaster
-import com.projectcitybuild.support.spigot.logger.Logger
 import com.projectcitybuild.support.textcomponent.add
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -24,7 +24,7 @@ class PlayerJoinListener(
     private val localEventBroadcaster: LocalEventBroadcaster,
     private val playerConfigRepository: PlayerConfigRepository,
     private val getUnacknowledgedWarnings: GetUnacknowledgedWarnings,
-    private val logger: Logger,
+    private val logger: PlatformLogger,
 ) : SpigotListener {
 
     @EventHandler

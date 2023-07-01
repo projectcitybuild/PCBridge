@@ -2,15 +2,15 @@ package com.projectcitybuild.plugin.integrations.essentials
 
 import com.earth2me.essentials.Essentials
 import com.projectcitybuild.core.SpigotListener
+import com.projectcitybuild.pcbridge.core.PlatformLogger
 import com.projectcitybuild.plugin.events.PlayerPreWarpEvent
 import com.projectcitybuild.plugin.integrations.SpigotIntegration
-import com.projectcitybuild.support.spigot.logger.Logger
 import org.bukkit.event.EventHandler
 import org.bukkit.plugin.Plugin
 
 class EssentialsIntegration(
     private val plugin: Plugin,
-    private val logger: Logger,
+    private val logger: PlatformLogger,
 ) : SpigotListener, SpigotIntegration {
 
     class EssentialsAPINotFoundException : Exception("Essentials plugin not found")

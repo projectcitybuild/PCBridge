@@ -1,7 +1,6 @@
-package com.projectcitybuild.support.spigot.logger
+package com.projectcitybuild.pcbridge.core
 
-interface Logger {
-
+interface PlatformLogger {
     fun verbose(message: String)
     fun debug(message: String)
     fun info(message: String)

@@ -1,7 +1,6 @@
-package com.projectcitybuild.plugin
+package com.projectcitybuild
 
 import com.projectcitybuild.core.database.DataSource
-import com.projectcitybuild.core.http.server.HTTPServer
 import com.projectcitybuild.core.storage.adapters.YamlStorage
 import com.projectcitybuild.features.aggregate.AuthoriseConnection
 import com.projectcitybuild.features.aggregate.GetAggregate
@@ -38,10 +37,13 @@ import com.projectcitybuild.modules.nameguesser.NameGuesser
 import com.projectcitybuild.modules.permissions.Permissions
 import com.projectcitybuild.modules.permissions.adapters.LuckPermsPermissions
 import com.projectcitybuild.modules.playercache.PlayerConfigCache
+import com.projectcitybuild.pcbridge.core.PlatformLogger
 import com.projectcitybuild.pcbridge.http.clients.MojangClient
 import com.projectcitybuild.pcbridge.http.clients.PCBClient
 import com.projectcitybuild.pcbridge.http.core.APIClient
 import com.projectcitybuild.pcbridge.http.core.APIClientImpl
+import com.projectcitybuild.pcbridge.webserver.HttpServer
+import com.projectcitybuild.pcbridge.webserver.HttpServerConfig
 import com.projectcitybuild.plugin.commands.ACommand
 import com.projectcitybuild.plugin.commands.BadgeCommand
 import com.projectcitybuild.plugin.commands.BanCommand
@@ -87,7 +89,6 @@ import com.projectcitybuild.support.spigot.eventbroadcast.SpigotLocalEventBroadc
 import com.projectcitybuild.support.spigot.kick.PlayerKicker
 import com.projectcitybuild.support.spigot.kick.SpigotPlayerKicker
 import com.projectcitybuild.support.spigot.listeners.SpigotListenerRegistry
-import com.projectcitybuild.support.spigot.logger.Logger
 import com.projectcitybuild.support.spigot.logger.SpigotLogger
 import com.projectcitybuild.support.spigot.scheduler.Scheduler
 import com.projectcitybuild.support.spigot.scheduler.SpigotScheduler
@@ -127,7 +128,7 @@ class DependencyContainer(
     val time: Time
         get() = LocalizedTime()
 
-    val logger: Logger
+    val logger: PlatformLogger
         get() = SpigotLogger(spigotLogger)
 
     val scheduler: Scheduler
@@ -210,16 +211,22 @@ class DependencyContainer(
         )
     }
 
-    val httpServer: HTTPServer by lazy {
-        HTTPServer(
-            scheduler,
-            server,
-            config,
-            logger,
-            UpdatePlayerGroups(
-                permissions,
-                playerGroupRepository,
+    val httpServer: HttpServer by lazy {
+        HttpServer(
+            config = HttpServerConfig(
+                authToken = config.get(ConfigKeys.internalWebServerToken),
+                port = config.get(ConfigKeys.internalWebServerPort),
             ),
+            delegate = WebServerDelegate(
+                scheduler,
+                server,
+                logger,
+                UpdatePlayerGroups(
+                    permissions,
+                    playerGroupRepository,
+                ),
+            ),
+            logger = logger,
         )
     }
 

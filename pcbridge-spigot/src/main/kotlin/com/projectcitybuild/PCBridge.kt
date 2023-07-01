@@ -1,4 +1,4 @@
-package com.projectcitybuild.plugin
+package com.projectcitybuild
 
 import com.github.shynixn.mccoroutine.bukkit.minecraftDispatcher
 import com.projectcitybuild.core.SpigotListener
@@ -7,7 +7,7 @@ import com.projectcitybuild.plugin.integrations.SpigotIntegration
 import com.projectcitybuild.support.spigot.commands.SpigotCommand
 import org.bukkit.plugin.java.JavaPlugin
 
-class SpigotPlugin : JavaPlugin() {
+class PCBridge : JavaPlugin() {
     private var container: DependencyContainer? = null
     private var integrations: Array<SpigotIntegration> = emptyArray()
 
@@ -73,7 +73,7 @@ class SpigotPlugin : JavaPlugin() {
             runCatching {
                 dataSource.connect()
                 permissions.connect()
-                httpServer.run()
+                httpServer.start()
 
                 commands(this).forEach { commandRegistry.register(it) }
                 listeners(this).forEach { listenerRegistry.register(it) }

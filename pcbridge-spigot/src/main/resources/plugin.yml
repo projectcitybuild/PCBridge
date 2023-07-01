@@ -1,4 +1,4 @@
-main: com.projectcitybuild.plugin.SpigotPlugin
+main: com.projectcitybuild.PCBridge
 name: PCBridge
 author: Andy
 version: 5.0.0

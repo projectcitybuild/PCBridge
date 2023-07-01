@@ -4,10 +4,10 @@ import com.projectcitybuild.core.utilities.Failure
 import com.projectcitybuild.core.utilities.Result
 import com.projectcitybuild.core.utilities.Success
 import com.projectcitybuild.modules.nameguesser.NameGuesser
+import com.projectcitybuild.pcbridge.core.PlatformLogger
 import com.projectcitybuild.plugin.events.PlayerPreWarpEvent
 import com.projectcitybuild.repositories.WarpRepository
 import com.projectcitybuild.support.spigot.eventbroadcast.LocalEventBroadcaster
-import com.projectcitybuild.support.spigot.logger.Logger
 import org.bukkit.Location
 import org.bukkit.Server
 import org.bukkit.entity.Player
@@ -15,7 +15,7 @@ import org.bukkit.entity.Player
 class TeleportToWarp(
     private val warpRepository: WarpRepository,
     private val nameGuesser: NameGuesser,
-    private val logger: Logger,
+    private val logger: PlatformLogger,
     private val localEventBroadcaster: LocalEventBroadcaster,
     private val server: Server,
 ) {

@@ -6,7 +6,7 @@ import com.projectcitybuild.features.aggregate.GetAggregate
 import com.projectcitybuild.features.aggregate.SyncPlayerWithAggregate
 import com.projectcitybuild.modules.datetime.formatter.DateTimeFormatter
 import com.projectcitybuild.modules.errorreporting.ErrorReporter
-import com.projectcitybuild.support.spigot.logger.Logger
+import com.projectcitybuild.pcbridge.core.PlatformLogger
 import com.projectcitybuild.support.textcomponent.add
 import kotlinx.coroutines.runBlocking
 import net.md_5.bungee.api.ChatColor
@@ -20,7 +20,7 @@ class AsyncPreLoginListener(
     private val getAggregate: GetAggregate,
     private val authoriseConnection: AuthoriseConnection,
     private val syncPlayerWithAggregate: SyncPlayerWithAggregate,
-    private val logger: Logger,
+    private val logger: PlatformLogger,
     private val dateTimeFormatter: DateTimeFormatter,
     private val errorReporter: ErrorReporter,
 ) : SpigotListener {

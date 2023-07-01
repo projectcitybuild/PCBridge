@@ -1,8 +1,9 @@
 package com.projectcitybuild.support.spigot.logger
 
+import com.projectcitybuild.pcbridge.core.PlatformLogger
 import java.util.logging.Logger
 
-class SpigotLogger(private val logger: Logger) : com.projectcitybuild.support.spigot.logger.Logger {
+class SpigotLogger(private val logger: Logger) : PlatformLogger {
 
     override fun verbose(message: String) {
         logger.info(message) // spigot doesn't log FINEST level properly

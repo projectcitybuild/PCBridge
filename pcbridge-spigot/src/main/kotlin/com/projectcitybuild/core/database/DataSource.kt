@@ -3,10 +3,10 @@ package com.projectcitybuild.core.database
 import co.aikar.idb.DatabaseOptions
 import co.aikar.idb.HikariPooledDatabase
 import co.aikar.idb.PooledDatabaseOptions
-import com.projectcitybuild.support.spigot.logger.Logger
+import com.projectcitybuild.pcbridge.core.PlatformLogger
 
 class DataSource(
-    private val logger: Logger,
+    private val logger: PlatformLogger,
     private val hostName: String,
     private val port: Int = 3306,
     private val databaseName: String,

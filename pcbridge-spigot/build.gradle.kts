@@ -7,8 +7,6 @@ val generatedResourcesDir = "$buildDir/generated-resources"
 
 plugins {
     id("com.github.johnrengelman.shadow") version "7.0.0"
-
-    application
 }
 
 apply(plugin = "com.github.johnrengelman.shadow")
@@ -39,6 +37,7 @@ repositories {
 dependencies {
     implementation(project(":pcbridge-core"))
     implementation(project(":pcbridge-http"))
+    implementation(project(":pcbridge-web-server"))
 
     compileOnly("org.spigotmc:spigot-api:1.12.2-R0.1-SNAPSHOT")
 
@@ -67,14 +66,6 @@ dependencies {
     // Needed for mocking in tests
     testImplementation("net.md-5:bungeecord-api:1.16-R0.4")
     testImplementation("org.spigotmc:spigot-api:1.12.2-R0.1-SNAPSHOT")
-
-    // Ktor
-    implementation("io.ktor:ktor-server-core:2.1.2")
-    implementation("io.ktor:ktor-server-netty:2.1.2")
-}
-
-application {
-    mainClass.set("com.projectcitybuild.pcbridge.ApplicationKt")
 }
 
 sourceSets {

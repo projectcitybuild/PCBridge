@@ -2,7 +2,7 @@ package com.projectcitybuild.core.database
 
 import co.aikar.idb.HikariPooledDatabase
 import com.projectcitybuild.entities.migrations.* // ktlint-disable no-wildcard-imports
-import com.projectcitybuild.support.spigot.logger.Logger
+import com.projectcitybuild.pcbridge.core.PlatformLogger
 
 object Migration {
 
@@ -21,7 +21,7 @@ object Migration {
 
     fun executeIfNecessary(
         database: HikariPooledDatabase,
-        logger: Logger,
+        logger: PlatformLogger,
         currentVersion: Int
     ) {
         var version = currentVersion

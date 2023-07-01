@@ -1,8 +1,8 @@
 package com.projectcitybuild.plugin.listeners
 
 import com.projectcitybuild.core.SpigotListener
+import com.projectcitybuild.pcbridge.core.PlatformLogger
 import com.projectcitybuild.plugin.events.FirstTimeJoinEvent
-import com.projectcitybuild.support.spigot.logger.Logger
 import com.projectcitybuild.support.textcomponent.add
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.chat.TextComponent
@@ -11,7 +11,7 @@ import org.bukkit.event.EventHandler
 
 class FirstTimeJoinListener(
     private val server: Server,
-    private val logger: Logger,
+    private val logger: PlatformLogger,
 ) : SpigotListener {
 
     @EventHandler
