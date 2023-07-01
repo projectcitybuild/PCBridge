@@ -40,28 +40,3 @@ subprojects {
         useJUnitPlatform()
     }
 }
-
-// tasks.create("incrementVersion") {
-//     group = "automation"
-//     description = "Increments the output plugin version"
-//
-//     fun generateVersion(): String {
-//         val updateMode = properties["mode"] ?: "minor"
-//         val currentVersion = version.toString()
-//         val (oldMajor, oldMinor, oldPatch) = currentVersion.split(".").map(String::toInt)
-//         var (newMajor, newMinor, newPatch) = arrayOf(oldMajor, oldMinor, 0)
-//         when (updateMode) {
-//             "major" -> newMajor = (oldMajor + 1).also { newMinor = 0 }
-//             "minor" -> newMinor = oldMinor + 1
-//             else -> newPatch = oldPatch + 1
-//         }
-//         return "$newMajor.$newMinor.$newPatch"
-//     }
-//     doLast {
-//         val newVersion = properties["overrideVersion"] as String? ?: generateVersion()
-//         val oldContent = buildFile.readText()
-//         val newContent = oldContent.replace("""= "$version"""", """= "$newVersion"""")
-//         buildFile.writeText(newContent)
-//     }
-// }
-//
