@@ -5,6 +5,7 @@ import com.projectcitybuild.modules.config.Config
 import com.projectcitybuild.modules.config.ConfigStorageKey
 import com.projectcitybuild.modules.config.adapters.MemoryKeyValueStorage
 import com.projectcitybuild.modules.permissions.Permissions
+import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger
 import com.projectcitybuild.pcbridge.http.responses.Account
 import com.projectcitybuild.pcbridge.http.responses.Aggregate
 import com.projectcitybuild.pcbridge.http.responses.Badge
@@ -12,7 +13,6 @@ import com.projectcitybuild.pcbridge.http.responses.DonationPerk
 import com.projectcitybuild.pcbridge.http.responses.DonationTier
 import com.projectcitybuild.pcbridge.http.responses.Group
 import com.projectcitybuild.repositories.ChatBadgeRepository
-import com.projectcitybuild.support.spigot.logger.Logger
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -37,7 +37,7 @@ class SyncPlayerWithAggregateTest {
             permissions = permissions,
             config = Config(keyValueStorage),
             chatBadgeRepository = chatBadgeRepository,
-            logger = mock(Logger::class.java),
+            logger = mock(PlatformLogger::class.java),
         )
     }
 

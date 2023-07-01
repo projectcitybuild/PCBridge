@@ -2,16 +2,16 @@ package com.projectcitybuild.repositories
 
 import com.projectcitybuild.modules.config.Config
 import com.projectcitybuild.modules.config.ConfigStorageKey
+import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger
 import com.projectcitybuild.pcbridge.http.clients.PCBClient
 import com.projectcitybuild.pcbridge.http.core.APIClient
-import com.projectcitybuild.support.spigot.logger.Logger
 import java.util.UUID
 
 class PlayerGroupRepository(
     private val pcbClient: PCBClient,
     private val apiClient: APIClient,
     private val config: Config,
-    private val logger: Logger,
+    private val logger: PlatformLogger,
 ) {
     class AccountNotLinkedException : Exception()
 

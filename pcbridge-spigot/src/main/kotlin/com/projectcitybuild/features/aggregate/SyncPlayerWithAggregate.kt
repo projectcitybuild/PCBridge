@@ -3,16 +3,16 @@ package com.projectcitybuild.features.aggregate
 import com.projectcitybuild.modules.config.Config
 import com.projectcitybuild.modules.config.ConfigStorageKey
 import com.projectcitybuild.modules.permissions.Permissions
+import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger
 import com.projectcitybuild.pcbridge.http.responses.Aggregate
 import com.projectcitybuild.repositories.ChatBadgeRepository
-import com.projectcitybuild.support.spigot.logger.Logger
 import java.util.UUID
 
 class SyncPlayerWithAggregate(
     private val permissions: Permissions,
     private val chatBadgeRepository: ChatBadgeRepository,
     private val config: Config,
-    private val logger: Logger,
+    private val logger: PlatformLogger,
 ) {
     fun execute(playerUUID: UUID, aggregate: Aggregate) {
         syncGroups(playerUUID, aggregate)

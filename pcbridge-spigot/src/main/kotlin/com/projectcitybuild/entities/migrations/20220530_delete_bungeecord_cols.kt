@@ -1,7 +1,7 @@
 package com.projectcitybuild.entities.migrations
 
 import co.aikar.idb.HikariPooledDatabase
-import com.projectcitybuild.core.database.DatabaseMigration
+import com.projectcitybuild.modules.database.DatabaseMigration
 
 class `20220530_delete_bungeecord_cols` : DatabaseMigration {
     override val description = "Delete columns that were previously needed for Bungeecord"

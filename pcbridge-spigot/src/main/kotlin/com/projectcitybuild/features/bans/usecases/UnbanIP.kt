@@ -1,10 +1,10 @@
 package com.projectcitybuild.features.bans.usecases
 
-import com.projectcitybuild.core.Regex
-import com.projectcitybuild.core.utilities.Failure
-import com.projectcitybuild.core.utilities.Result
-import com.projectcitybuild.core.utilities.Success
+import com.projectcitybuild.Regex
 import com.projectcitybuild.features.bans.Sanitizer
+import com.projectcitybuild.pcbridge.core.utils.Failure
+import com.projectcitybuild.pcbridge.core.utils.Result
+import com.projectcitybuild.pcbridge.core.utils.Success
 import com.projectcitybuild.repositories.IPBanRepository
 import java.util.UUID
 

@@ -3,7 +3,7 @@ package com.projectcitybuild.support.spigot.commands
 import com.github.shynixn.mccoroutine.bukkit.SuspendingCommandExecutor
 import com.github.shynixn.mccoroutine.bukkit.setSuspendingExecutor
 import com.projectcitybuild.modules.errorreporting.ErrorReporter
-import com.projectcitybuild.support.spigot.logger.Logger
+import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger
 import com.projectcitybuild.support.textcomponent.send
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.chat.TextComponent
@@ -15,7 +15,7 @@ import org.bukkit.plugin.java.JavaPlugin
 
 class SpigotCommandRegistry(
     private val plugin: JavaPlugin,
-    private val logger: Logger,
+    private val logger: PlatformLogger,
     private val errorReporter: ErrorReporter,
 ) {
     fun register(spigotCommand: SpigotCommand) {

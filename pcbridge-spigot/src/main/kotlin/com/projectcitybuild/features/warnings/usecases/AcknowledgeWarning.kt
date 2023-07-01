@@ -1,7 +1,7 @@
 package com.projectcitybuild.features.warnings.usecases
 
-import com.projectcitybuild.core.utilities.Result
-import com.projectcitybuild.core.utilities.Success
+import com.projectcitybuild.pcbridge.core.utils.Result
+import com.projectcitybuild.pcbridge.core.utils.Success
 import com.projectcitybuild.repositories.PlayerWarningRepository
 
 class AcknowledgeWarning(

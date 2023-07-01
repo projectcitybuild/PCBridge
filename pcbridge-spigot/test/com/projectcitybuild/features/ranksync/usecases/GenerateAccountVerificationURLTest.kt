@@ -1,7 +1,7 @@
 package com.projectcitybuild.features.ranksync.usecases
 
-import com.projectcitybuild.core.utilities.Failure
-import com.projectcitybuild.core.utilities.Success
+import com.projectcitybuild.pcbridge.core.utils.Failure
+import com.projectcitybuild.pcbridge.core.utils.Success
 import com.projectcitybuild.pcbridge.http.clients.PCBClient
 import com.projectcitybuild.pcbridge.http.core.APIClient
 import com.projectcitybuild.pcbridge.http.core.APIClientMock

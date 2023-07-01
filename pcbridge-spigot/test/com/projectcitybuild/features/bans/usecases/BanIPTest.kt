@@ -1,7 +1,7 @@
 package com.projectcitybuild.features.bans.usecases
 
-import com.projectcitybuild.core.utilities.Failure
-import com.projectcitybuild.core.utilities.Success
+import com.projectcitybuild.pcbridge.core.utils.Failure
+import com.projectcitybuild.pcbridge.core.utils.Success
 import com.projectcitybuild.repositories.IPBanRepository
 import com.projectcitybuild.support.spigot.kick.PlayerKicker
 import kotlinx.coroutines.test.runTest

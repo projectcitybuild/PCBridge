@@ -1,7 +1,7 @@
 package com.projectcitybuild.modules.permissions.adapters
 
 import com.projectcitybuild.modules.permissions.Permissions
-import com.projectcitybuild.support.spigot.logger.Logger
+import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger
 import net.luckperms.api.LuckPerms
 import net.luckperms.api.LuckPermsProvider
 import net.luckperms.api.model.user.User
@@ -11,7 +11,7 @@ import java.util.UUID
 import java.util.stream.Collectors
 
 class LuckPermsPermissions(
-    private val logger: Logger,
+    private val logger: PlatformLogger,
 ) : Permissions {
 
     class PermissionUserNotFoundException() : Exception()

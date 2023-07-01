@@ -1,6 +1,6 @@
 package com.projectcitybuild.repositories
 
-import com.projectcitybuild.core.extensions.toDashFormattedUUID
+import com.projectcitybuild.extensions.toDashFormattedUUID
 import com.projectcitybuild.pcbridge.http.clients.MojangClient
 import com.projectcitybuild.pcbridge.http.core.APIClient
 import com.projectcitybuild.pcbridge.http.responses.MojangPlayer
