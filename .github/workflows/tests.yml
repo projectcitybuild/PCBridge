@@ -16,8 +16,7 @@ jobs:
 
     - name: Check code formatting
       run: gradle ktlintCheck --scan
-      working-directory: pcbridge-spigot
-      
+
   unit-tests:
     runs-on: ubuntu-latest
     steps:
