@@ -67,18 +67,7 @@ import com.projectcitybuild.modules.playercache.PlayerConfigCache
 import com.projectcitybuild.modules.storage.adapters.YamlStorage
 import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger
 import com.projectcitybuild.pcbridge.core.contracts.PlatformScheduler
-import com.projectcitybuild.pcbridge.http.clients.MojangClient
-import com.projectcitybuild.pcbridge.http.clients.PCBClientFactory
-import com.projectcitybuild.pcbridge.http.parsing.ResponseParser
-import com.projectcitybuild.pcbridge.http.services.mojang.PlayerUUIDHttpService
-import com.projectcitybuild.pcbridge.http.services.pcb.AccountLinkHTTPService
-import com.projectcitybuild.pcbridge.http.services.pcb.AggregateHttpService
-import com.projectcitybuild.pcbridge.http.services.pcb.CurrencyHttpService
-import com.projectcitybuild.pcbridge.http.services.pcb.IPBanHttpService
-import com.projectcitybuild.pcbridge.http.services.pcb.PlayerGroupHttpService
-import com.projectcitybuild.pcbridge.http.services.pcb.PlayerWarningHttpService
-import com.projectcitybuild.pcbridge.http.services.pcb.TelemetryHttpService
-import com.projectcitybuild.pcbridge.http.services.pcb.UUIDBanHttpService
+import com.projectcitybuild.pcbridge.http.HttpService
 import com.projectcitybuild.pcbridge.webserver.HttpServer
 import com.projectcitybuild.pcbridge.webserver.HttpServerConfig
 import com.projectcitybuild.repositories.AggregateRepository
@@ -202,7 +191,16 @@ class DependencyContainer(
         )
     }
 
-    val httpServer: HttpServer by lazy {
+    private val httpService by lazy {
+        HttpService(
+            authToken = config.get(ConfigKeys.apiToken),
+            baseURL = config.get(ConfigKeys.apiBaseURL),
+            withLogging = config.get(ConfigKeys.apiIsLoggingEnabled),
+            contextBuilder = { minecraftDispatcher },
+        )
+    }
+
+    val webServer by lazy {
         HttpServer(
             config = HttpServerConfig(
                 authToken = config.get(ConfigKeys.internalWebServerToken),
@@ -219,28 +217,6 @@ class DependencyContainer(
             ),
             logger = logger,
         )
-    }
-
-    /**
-     * HTTP
-     */
-
-    private val pcbClient by lazy {
-        PCBClientFactory(
-            authToken = config.get(ConfigKeys.apiToken),
-            baseUrl = config.get(ConfigKeys.apiBaseURL),
-            withLogging = config.get(ConfigKeys.apiIsLoggingEnabled)
-        ).build()
-    }
-
-    private val mojangClient by lazy {
-        MojangClient(
-            withLogging = config.get(ConfigKeys.apiIsLoggingEnabled)
-        ).build()
-    }
-
-    private val responseParser: ResponseParser by lazy {
-        ResponseParser { minecraftDispatcher }
     }
 
     /**
@@ -263,21 +239,19 @@ class DependencyContainer(
     }
 
     private val playerBanRepository by lazy {
-        PlayerBanRepository(
-            UUIDBanHttpService(pcbClient, responseParser),
-        )
+        PlayerBanRepository(httpService.uuidBan)
     }
 
     private val playerUUIDRepository by lazy {
         PlayerUUIDRepository(
             server,
-            PlayerUUIDHttpService(mojangClient, responseParser),
+            httpService.playerUuid,
         )
     }
 
     private val playerGroupRepository by lazy {
         PlayerGroupRepository(
-            PlayerGroupHttpService(pcbClient, responseParser),
+            httpService.playerGroup,
             config,
             logger,
         )
@@ -285,13 +259,13 @@ class DependencyContainer(
 
     private val playerWarningRepository by lazy {
         PlayerWarningRepository(
-            PlayerWarningHttpService(pcbClient, responseParser),
+            httpService.playerWarning,
         )
     }
 
     private val ipBanRepository by lazy {
         IPBanRepository(
-            IPBanHttpService(pcbClient, responseParser),
+            httpService.ipBan,
         )
     }
 
@@ -301,25 +275,25 @@ class DependencyContainer(
 
     private val aggregateRepository by lazy {
         AggregateRepository(
-            AggregateHttpService(pcbClient, responseParser),
+            httpService.aggregate,
         )
     }
 
     private val telemetryRepository by lazy {
         TelemetryRepository(
-            TelemetryHttpService(pcbClient, responseParser),
+            httpService.telemetry,
         )
     }
 
     private val currencyRepository by lazy {
         CurrencyRepository(
-            CurrencyHttpService(pcbClient, responseParser),
+            httpService.currency,
         )
     }
 
     private val verificationURLRepository by lazy {
         VerificationURLRepository(
-            AccountLinkHTTPService(pcbClient, responseParser),
+            httpService.verificationURL,
         )
     }
 

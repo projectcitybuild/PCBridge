@@ -4,6 +4,7 @@ import com.projectcitybuild.modules.permissions.Permissions
 import com.projectcitybuild.pcbridge.core.utils.Failure
 import com.projectcitybuild.pcbridge.core.utils.Result
 import com.projectcitybuild.pcbridge.core.utils.Success
+import com.projectcitybuild.pcbridge.http.services.pcb.PlayerGroupHttpService
 import com.projectcitybuild.repositories.PlayerGroupRepository
 import java.util.UUID
 
@@ -21,7 +22,7 @@ class UpdatePlayerGroups(
         try {
             groupSet.addAll(playerGroupRepository.getGroups(playerUUID = playerUUID))
             groupSet.addAll(playerGroupRepository.getDonorTiers(playerUUID = playerUUID))
-        } catch (e: PlayerGroupRepository.AccountNotLinkedException) {
+        } catch (e: PlayerGroupHttpService.NoLinkedAccountException) {
             return Failure(FailureReason.ACCOUNT_NOT_LINKED)
         }
 

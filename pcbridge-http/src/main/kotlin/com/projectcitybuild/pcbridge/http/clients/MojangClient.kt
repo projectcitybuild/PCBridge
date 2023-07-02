@@ -5,7 +5,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class MojangClient(
+internal class MojangClient(
     private val withLogging: Boolean,
 ) {
     fun build(): Retrofit {

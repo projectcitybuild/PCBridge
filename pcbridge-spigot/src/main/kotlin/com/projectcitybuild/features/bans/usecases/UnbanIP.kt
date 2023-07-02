@@ -5,6 +5,7 @@ import com.projectcitybuild.features.bans.Sanitizer
 import com.projectcitybuild.pcbridge.core.utils.Failure
 import com.projectcitybuild.pcbridge.core.utils.Result
 import com.projectcitybuild.pcbridge.core.utils.Success
+import com.projectcitybuild.pcbridge.http.services.pcb.IPBanHttpService
 import com.projectcitybuild.repositories.IPBanRepository
 import java.util.UUID
 
@@ -34,7 +35,7 @@ class UnbanIP(
                 unbannerUUID = unbannerUUID,
                 unbannerName = unbannerName,
             )
-        } catch (e: IPBanRepository.IPNotBannedException) {
+        } catch (e: IPBanHttpService.IPNotBannedException) {
             return Failure(FailureReason.IP_NOT_BANNED)
         }
 

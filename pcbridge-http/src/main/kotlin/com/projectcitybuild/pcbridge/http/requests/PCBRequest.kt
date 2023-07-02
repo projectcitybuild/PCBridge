@@ -16,7 +16,7 @@ import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
 
-interface PCBRequest {
+internal interface PCBRequest {
     /**
      * Begins the authentication flow by exchanging a player's UUID
      * for a URL that they can click and login with

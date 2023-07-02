@@ -5,6 +5,7 @@ import com.projectcitybuild.features.bans.Sanitizer
 import com.projectcitybuild.pcbridge.core.utils.Failure
 import com.projectcitybuild.pcbridge.core.utils.Result
 import com.projectcitybuild.pcbridge.core.utils.Success
+import com.projectcitybuild.pcbridge.http.services.pcb.IPBanHttpService
 import com.projectcitybuild.repositories.IPBanRepository
 import com.projectcitybuild.support.spigot.kick.PlayerKicker
 import java.util.UUID
@@ -38,7 +39,7 @@ class BanIP(
                 bannerName = bannerName,
                 reason = reason,
             )
-        } catch (e: IPBanRepository.IPAlreadyBannedException) {
+        } catch (e: IPBanHttpService.IPAlreadyBannedException) {
             return Failure(FailureReason.IP_ALREADY_BANNED)
         }
 

@@ -5,7 +5,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class PCBClientFactory(
+internal class PCBClientFactory(
     private val authToken: String,
     private val baseUrl: String,
     private val withLogging: Boolean

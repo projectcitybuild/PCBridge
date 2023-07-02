@@ -73,7 +73,7 @@ class PCBridge : JavaPlugin() {
             runCatching {
                 dataSource.connect()
                 permissions.connect()
-                httpServer.start()
+                webServer.start()
 
                 commands(this).forEach { commandRegistry.register(it) }
                 listeners(this).forEach { listenerRegistry.register(it) }
@@ -95,7 +95,7 @@ class PCBridge : JavaPlugin() {
             runCatching {
                 listenerRegistry.unregisterAll()
                 dataSource.disconnect()
-                httpServer.stop()
+                webServer.stop()
             }.onFailure { reportError(it, errorReporter) }
         }
         container = null
