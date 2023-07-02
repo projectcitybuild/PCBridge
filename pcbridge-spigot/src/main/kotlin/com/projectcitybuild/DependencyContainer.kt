@@ -68,9 +68,8 @@ import com.projectcitybuild.modules.storage.adapters.YamlStorage
 import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger
 import com.projectcitybuild.pcbridge.core.contracts.PlatformScheduler
 import com.projectcitybuild.pcbridge.http.clients.MojangClient
-import com.projectcitybuild.pcbridge.http.clients.PCBClient
-import com.projectcitybuild.pcbridge.http.core.APIClient
-import com.projectcitybuild.pcbridge.http.core.APIClientImpl
+import com.projectcitybuild.pcbridge.http.clients.PCBClientFactory
+import com.projectcitybuild.pcbridge.http.parsing.ResponseParser
 import com.projectcitybuild.pcbridge.webserver.HttpServer
 import com.projectcitybuild.pcbridge.webserver.HttpServerConfig
 import com.projectcitybuild.repositories.AggregateRepository
@@ -151,7 +150,7 @@ class DependencyContainer(
     }
 
     val pcbClient by lazy {
-        PCBClient(
+        PCBClientFactory(
             authToken = config.get(ConfigKeys.apiToken),
             baseUrl = config.get(ConfigKeys.apiBaseURL),
             withLogging = config.get(ConfigKeys.apiIsLoggingEnabled)
@@ -164,8 +163,8 @@ class DependencyContainer(
         )
     }
 
-    val apiClient: APIClient by lazy {
-        APIClientImpl { minecraftDispatcher }
+    val apiClient: ResponseParser by lazy {
+        ResponseParser { minecraftDispatcher }
     }
 
     val listenerRegistry by lazy {
@@ -251,7 +250,7 @@ class DependencyContainer(
 
     val playerBanRepository by lazy {
         PlayerBanRepository(
-            pcbClient,
+            uspcbClient,
             apiClient,
         )
     }

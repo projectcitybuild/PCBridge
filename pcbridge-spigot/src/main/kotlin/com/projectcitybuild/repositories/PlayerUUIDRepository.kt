@@ -2,7 +2,7 @@ package com.projectcitybuild.repositories
 
 import com.projectcitybuild.extensions.toDashFormattedUUID
 import com.projectcitybuild.pcbridge.http.clients.MojangClient
-import com.projectcitybuild.pcbridge.http.core.APIClient
+import com.projectcitybuild.pcbridge.http.parsing.ResponseParser
 import com.projectcitybuild.pcbridge.http.responses.MojangPlayer
 import org.bukkit.Server
 import java.util.UUID
@@ -10,7 +10,7 @@ import java.util.UUID
 open class PlayerUUIDRepository(
     private val server: Server,
     private val mojangClient: MojangClient,
-    private val apiClient: APIClient,
+    private val apiClient: ResponseParser,
 ) {
     class PlayerNotFoundException : Exception()
 
@@ -38,7 +38,7 @@ open class PlayerUUIDRepository(
 
         val mojangApi = mojangClient.mojangApi
 
-        return apiClient.execute {
+        return apiClient.parse {
             try {
                 val player = mojangApi.getMojangPlayer(playerName, timestamp = at)
                     ?: throw PlayerNotFoundException()

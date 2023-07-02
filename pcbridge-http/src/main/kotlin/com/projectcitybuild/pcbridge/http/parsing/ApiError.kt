@@ -1,4 +1,4 @@
-package com.projectcitybuild.pcbridge.http.responses
+package com.projectcitybuild.pcbridge.http.parsing
 
 data class ApiError(
     val id: String,

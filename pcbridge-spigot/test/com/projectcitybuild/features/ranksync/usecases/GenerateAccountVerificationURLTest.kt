@@ -2,11 +2,11 @@ package com.projectcitybuild.features.ranksync.usecases
 
 import com.projectcitybuild.pcbridge.core.utils.Failure
 import com.projectcitybuild.pcbridge.core.utils.Success
-import com.projectcitybuild.pcbridge.http.clients.PCBClient
-import com.projectcitybuild.pcbridge.http.core.APIClient
-import com.projectcitybuild.pcbridge.http.core.APIClientMock
-import com.projectcitybuild.pcbridge.http.responses.ApiError
-import com.projectcitybuild.pcbridge.http.responses.ApiResponse
+import com.projectcitybuild.pcbridge.http.clients.PCBClientFactory
+import com.projectcitybuild.pcbridge.http.parsing.ResponseParser
+import com.projectcitybuild.pcbridge.http.parsing.MockResponseParser
+import com.projectcitybuild.pcbridge.http.parsing.ApiError
+import com.projectcitybuild.pcbridge.http.parsing.ApiResponse
 import com.projectcitybuild.pcbridge.http.responses.AuthURL
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -19,13 +19,13 @@ class GenerateAccountVerificationURLTest {
 
     private lateinit var useCase: GenerateAccountVerificationURL
 
-    private lateinit var pcbClient: PCBClient
-    private lateinit var apiClient: APIClientMock
+    private lateinit var pcbClient: PCBClientFactory
+    private lateinit var apiClient: MockResponseParser
 
     @BeforeEach
     fun setUp() {
-        pcbClient = mock(PCBClient::class.java)
-        apiClient = APIClientMock()
+        pcbClient = mock(PCBClientFactory::class.java)
+        apiClient = MockResponseParser()
 
         useCase = GenerateAccountVerificationURL(
             pcbClient,
@@ -67,7 +67,7 @@ class GenerateAccountVerificationURLTest {
     fun `should return failure if account already linked`() = runTest {
         val playerUUID = UUID.randomUUID()
 
-        apiClient.exception = APIClient.HTTPError(
+        apiClient.exception = ResponseParser.HTTPError(
             errorBody = ApiError(
                 id = "already_authenticated",
                 title = "",

@@ -1,25 +1,34 @@
-package com.projectcitybuild.pcbridge.http.core
+package com.projectcitybuild.pcbridge.http.parsing
 
 import com.google.gson.Gson
-import com.projectcitybuild.pcbridge.http.responses.ApiError
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 import java.io.IOException
 import kotlin.coroutines.CoroutineContext
 
-class APIClientImpl(
+class ResponseParser(
     private val getCoroutineContext: () -> CoroutineContext
-) : APIClient {
+) {
+    data class ErrorBody(val error: ApiError)
 
-    override suspend fun <T> execute(apiCall: suspend () -> T): T {
+    class HTTPError(val errorBody: ApiError?) : Exception(
+        if (errorBody != null) "Bad response received from the server: ${errorBody.detail}"
+        else "Bad response received from the server (no error given)"
+    )
+
+    class NetworkError : Exception(
+        "Failed to contact PCB auth server"
+    )
+
+    suspend fun <T> parse(apiCall: suspend () -> T): T {
         return withContext(getCoroutineContext()) {
             try {
                 apiCall.invoke()
             } catch (_: IOException) {
-                throw APIClient.NetworkError()
+                throw NetworkError()
             } catch (e: HttpException) {
                 val code = e.code()
-                throw APIClient.HTTPError(errorBody = convertErrorBody(e, code))
+                throw HTTPError(errorBody = convertErrorBody(e, code))
             } catch (e: Exception) {
                 throw e
             }
@@ -28,7 +37,7 @@ class APIClientImpl(
 
     private fun convertErrorBody(e: HttpException, code: Int): ApiError? {
         e.response()?.errorBody()?.string().let {
-            val errorBody = Gson().fromJson(it, APIClient.ErrorBody::class.java).error
+            val errorBody = Gson().fromJson(it, ErrorBody::class.java).error
             errorBody.status = code
             return errorBody
         }

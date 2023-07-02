@@ -3,48 +3,23 @@ package com.projectcitybuild.repositories
 import com.projectcitybuild.modules.config.Config
 import com.projectcitybuild.modules.config.ConfigStorageKey
 import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger
-import com.projectcitybuild.pcbridge.http.clients.PCBClient
-import com.projectcitybuild.pcbridge.http.core.APIClient
+import com.projectcitybuild.pcbridge.http.services.PlayerGroupHttpService
 import java.util.UUID
 
 class PlayerGroupRepository(
-    private val pcbClient: PCBClient,
-    private val apiClient: APIClient,
+    private val playerGroupHttpService: PlayerGroupHttpService,
     private val config: Config,
     private val logger: PlatformLogger,
 ) {
-    class AccountNotLinkedException : Exception()
-
-    @Throws(AccountNotLinkedException::class)
     suspend fun getGroups(playerUUID: UUID): List<String> {
-        val response = try {
-            val authAPI = pcbClient.authAPI
-            apiClient.execute { authAPI.getUserGroups(uuid = playerUUID.toString()) }
-        } catch (e: APIClient.HTTPError) {
-            if (e.errorBody?.id == "account_not_linked") {
-                throw AccountNotLinkedException()
-            }
-            throw e
-        }
-
-        return response.data?.groups
-            ?.mapNotNull { it.minecraftName }
-            ?: listOf()
+        return playerGroupHttpService.getGroups(playerUUID)
+            .mapNotNull { it.minecraftName }
     }
 
-    @Throws(AccountNotLinkedException::class)
     suspend fun getDonorTiers(playerUUID: UUID): List<String> {
-        val response = try {
-            val donorAPI = pcbClient.donorAPI
-            apiClient.execute { donorAPI.getDonationTier(playerUUID.toString()) }
-        } catch (e: APIClient.HTTPError) {
-            if (e.errorBody?.id == "account_not_linked") {
-                throw AccountNotLinkedException()
-            }
-            throw e
-        }
+        val perks = playerGroupHttpService.getDonorPerks(playerUUID)
 
-        return response.data?.mapNotNull { donorPerk ->
+        return perks.mapNotNull { donorPerk ->
             val tierName = donorPerk.donationTier.name
 
             val configNode = ConfigStorageKey<String?>(
@@ -59,6 +34,6 @@ class PlayerGroupRepository(
             }
 
             return@mapNotNull permissionGroupName
-        } ?: emptyList()
+        }
     }
 }

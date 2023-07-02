@@ -1,7 +1,6 @@
 package com.projectcitybuild.repositories
 
-import com.projectcitybuild.pcbridge.http.clients.PCBClient
-import com.projectcitybuild.pcbridge.http.core.APIClient
+import com.projectcitybuild.pcbridge.http.services.CurrencyHttpService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -11,8 +10,7 @@ import java.util.concurrent.ConcurrentHashMap
 import kotlin.math.max
 
 class CurrencyRepository(
-    private val pcbClient: PCBClient,
-    private val apiClient: APIClient,
+    private val currencyHttpService: CurrencyHttpService,
 ) {
     private data class CachedBalance(
         val balance: Int,
@@ -29,15 +27,13 @@ class CurrencyRepository(
         fetchQueue[playerUUID] = true
 
         CoroutineScope(Dispatchers.IO).launch {
-            val response = apiClient.execute {
-                pcbClient.balanceAPI.get(
-                    uuid = playerUUID.toString(),
-                )
-            }
+            val balance = currencyHttpService.get(
+                playerUUID = playerUUID,
+            )
             balanceCache.set(
                 key = playerUUID,
                 value = CachedBalance(
-                    balance = response.data?.balance ?: 0,
+                    balance = balance?.balance ?: 0,
                     fetchedAt = LocalDateTime.now(),
                 )
             )
@@ -68,20 +64,18 @@ class CurrencyRepository(
             return false
         }
         CoroutineScope(Dispatchers.IO).launch {
-            apiClient.execute {
-                pcbClient.balanceAPI.deduct(
-                    uuid = playerUUID.toString(),
-                    amount = amount,
-                    reason = reason,
+            currencyHttpService.deduct(
+                playerUUID = playerUUID,
+                amount = amount,
+                reason = reason,
+            )
+            balanceCache.set(
+                key = playerUUID,
+                value = CachedBalance(
+                    balance = max(0, (balanceCache[playerUUID]?.balance ?: 0) - amount),
+                    fetchedAt = LocalDateTime.now(),
                 )
-                balanceCache.set(
-                    key = playerUUID,
-                    value = CachedBalance(
-                        balance = max(0, (balanceCache[playerUUID]?.balance ?: 0) - amount),
-                        fetchedAt = LocalDateTime.now(),
-                    )
-                )
-            }
+            )
         }
         return true
     }
