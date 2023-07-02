@@ -10,11 +10,11 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentMatchers.anyString
+import org.mockito.Mockito.mock
 import org.mockito.Mockito.verify
 import org.mockito.kotlin.any
 import org.mockito.kotlin.eq
-import org.powermock.api.mockito.PowerMockito.mock
-import org.powermock.api.mockito.PowerMockito.`when`
+import org.mockito.kotlin.whenever
 import java.util.UUID
 
 class BanIPTest {
@@ -38,7 +38,7 @@ class BanIPTest {
     fun `should fail if IP is already banned`() = runTest {
         val ip = "127.0.0.1"
 
-        `when`(ipBanRepository.ban(eq(ip), any(), any(), any()))
+        whenever(ipBanRepository.ban(eq(ip), any(), any(), any()))
             .thenThrow(IPBanHttpService.IPAlreadyBannedException::class.java)
 
         val result = useCase.execute(

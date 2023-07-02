@@ -11,11 +11,11 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.mockito.Mockito.mock
 import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
 import org.mockito.kotlin.any
-import org.powermock.api.mockito.PowerMockito.mock
-import org.powermock.api.mockito.PowerMockito.`when`
+import org.mockito.kotlin.whenever
 import java.time.LocalDateTime
 
 class CreateTeleportToWarpTest {
@@ -38,7 +38,7 @@ class CreateTeleportToWarpTest {
     @Test
     fun `should fail if warp already exists`() = runTest {
         val warpName = "warp"
-        `when`(warpRepository.exists(warpName)).thenReturn(true)
+        whenever(warpRepository.exists(warpName)).thenReturn(true)
 
         val result = useCase.createWarp(warpName, SerializableLocation())
 
@@ -51,8 +51,8 @@ class CreateTeleportToWarpTest {
         val location = SerializableLocation()
         val now = LocalDateTime.now()
 
-        `when`(warpRepository.exists(warpName)).thenReturn(false)
-        `when`(time.now()).thenReturn(now)
+        whenever(warpRepository.exists(warpName)).thenReturn(false)
+        whenever(time.now()).thenReturn(now)
 
         val result = useCase.createWarp(warpName, location)
 
@@ -72,8 +72,8 @@ class CreateTeleportToWarpTest {
         val location = SerializableLocation()
         val now = LocalDateTime.now()
 
-        `when`(warpRepository.exists(warpName)).thenReturn(false)
-        `when`(time.now()).thenReturn(now)
+        whenever(warpRepository.exists(warpName)).thenReturn(false)
+        whenever(time.now()).thenReturn(now)
 
         val result = useCase.createWarp(warpName, location)
 

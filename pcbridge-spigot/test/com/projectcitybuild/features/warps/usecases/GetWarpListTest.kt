@@ -9,8 +9,8 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.powermock.api.mockito.PowerMockito.mock
-import org.powermock.api.mockito.PowerMockito.`when`
+import org.mockito.Mockito.mock
+import org.mockito.kotlin.whenever
 
 class GetWarpListTest {
 
@@ -33,7 +33,7 @@ class GetWarpListTest {
     @Test
     fun `should return all warps sorted`() = runTest {
         val warps = listOf("b", "c", "a",)
-        `when`(warpRepository.names()).thenReturn(warps)
+        whenever(warpRepository.names()).thenReturn(warps)
         keyValueStorage.set(ConfigKeys.warpsPerPage, warps.size)
 
         val received = useCase.getList(page = 1)
@@ -46,7 +46,7 @@ class GetWarpListTest {
     fun `should return all warps when less than page max`() = runTest {
         val warps = MutableList(3) { index -> "warp_$index" }
 
-        `when`(warpRepository.names()).thenReturn(warps)
+        whenever(warpRepository.names()).thenReturn(warps)
         keyValueStorage.set(ConfigKeys.warpsPerPage, 3)
 
         val received = useCase.getList(page = 1)
@@ -63,7 +63,7 @@ class GetWarpListTest {
     fun `should return warps paginated when more than page max`() = runTest {
         val warps = MutableList(5) { index -> "warp_$index" }
 
-        `when`(warpRepository.names()).thenReturn(warps)
+        whenever(warpRepository.names()).thenReturn(warps)
         keyValueStorage.set(ConfigKeys.warpsPerPage, 2)
 
         val firstPage = useCase.getList(page = 1)

@@ -10,8 +10,8 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.powermock.api.mockito.PowerMockito.mock
-import org.powermock.api.mockito.PowerMockito.`when`
+import org.mockito.Mockito.mock
+import org.mockito.kotlin.whenever
 import java.util.UUID
 
 class CheckBanUUIDTest {
@@ -37,7 +37,7 @@ class CheckBanUUIDTest {
     fun `getBan should fail when player doesn't exist`() = runTest {
         val playerName = "banned_player"
 
-        `when`(playerUUIDRepository.get(playerName)).thenReturn(null)
+        whenever(playerUUIDRepository.get(playerName)).thenReturn(null)
 
         val result = useCase.getBan(playerName)
 
@@ -50,8 +50,8 @@ class CheckBanUUIDTest {
         val playerUUID = UUID.randomUUID()
         val staffUUID = UUID.randomUUID()
 
-        `when`(playerUUIDRepository.get(playerName)).thenReturn(playerUUID)
-        `when`(playerBanRepository.get(playerUUID)).thenReturn(
+        whenever(playerUUIDRepository.get(playerName)).thenReturn(playerUUID)
+        whenever(playerBanRepository.get(playerUUID)).thenReturn(
             PlayerBan(
                 id = 1,
                 serverId = 2,
@@ -84,8 +84,8 @@ class CheckBanUUIDTest {
         val playerUUID = UUID.randomUUID()
         val staffUUID = UUID.randomUUID()
 
-        `when`(playerUUIDRepository.get(playerName)).thenReturn(playerUUID)
-        `when`(playerBanRepository.get(playerUUID)).thenReturn(
+        whenever(playerUUIDRepository.get(playerName)).thenReturn(playerUUID)
+        whenever(playerBanRepository.get(playerUUID)).thenReturn(
             PlayerBan(
                 id = 1,
                 serverId = 2,

@@ -12,7 +12,7 @@ import org.mockito.Mockito.mock
 import org.mockito.Mockito.verify
 import org.mockito.kotlin.any
 import org.mockito.kotlin.eq
-import org.powermock.api.mockito.PowerMockito.`when`
+import org.mockito.kotlin.whenever
 import java.util.UUID
 
 class UnbanIPTest {
@@ -30,7 +30,7 @@ class UnbanIPTest {
     fun `should fail if IP is not banned`() = runTest {
         val ip = "127.0.0.1"
 
-        `when`(ipBanRepository.unban(eq(ip), any(), any()))
+        whenever(ipBanRepository.unban(eq(ip), any(), any()))
             .thenThrow(IPBanHttpService.IPNotBannedException::class.java)
 
         val result = useCase.execute(
