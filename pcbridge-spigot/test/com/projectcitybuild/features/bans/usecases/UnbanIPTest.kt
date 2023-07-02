@@ -2,6 +2,7 @@ package com.projectcitybuild.features.bans.usecases
 
 import com.projectcitybuild.pcbridge.core.utils.Failure
 import com.projectcitybuild.pcbridge.core.utils.Success
+import com.projectcitybuild.pcbridge.http.services.pcb.IPBanHttpService
 import com.projectcitybuild.repositories.IPBanRepository
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -30,7 +31,7 @@ class UnbanIPTest {
         val ip = "127.0.0.1"
 
         `when`(ipBanRepository.unban(eq(ip), any(), any()))
-            .thenThrow(IPBanRepository.IPNotBannedException::class.java)
+            .thenThrow(IPBanHttpService.IPNotBannedException::class.java)
 
         val result = useCase.execute(
             ip = ip,

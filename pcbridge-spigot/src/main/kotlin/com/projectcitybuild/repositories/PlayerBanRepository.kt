@@ -1,18 +1,17 @@
 package com.projectcitybuild.repositories
 
-import com.projectcitybuild.pcbridge.http.clients.PCBClient
-import com.projectcitybuild.pcbridge.http.core.APIClient
 import com.projectcitybuild.pcbridge.http.responses.PlayerBan
+import com.projectcitybuild.pcbridge.http.services.pcb.UUIDBanHttpService
 import java.util.UUID
 
 class PlayerBanRepository(
-    private val pcbClient: PCBClient,
-    private val apiClient: APIClient,
+    private val uuidBanHttpService: UUIDBanHttpService,
 ) {
-    class PlayerAlreadyBannedException : Exception()
-    class PlayerNotBannedException : Exception()
+    suspend fun get(targetPlayerUUID: UUID): PlayerBan? {
+        return uuidBanHttpService.get(targetPlayerUUID)
+    }
 
-    @Throws(PlayerAlreadyBannedException::class)
+    @Throws(UUIDBanHttpService.UUIDAlreadyBannedException::class)
     suspend fun ban(
         targetPlayerUUID: UUID,
         targetPlayerName: String,
@@ -21,52 +20,24 @@ class PlayerBanRepository(
         reason: String?,
         expiryDate: Long? = null,
     ) {
-        try {
-            apiClient.execute {
-                pcbClient.playerBanAPI.ban(
-                    bannedPlayerId = targetPlayerUUID.toString(),
-                    bannedPlayerAlias = targetPlayerName,
-                    bannerPlayerId = bannerPlayerUUID.toString(),
-                    bannerPlayerAlias = bannerPlayerName,
-                    reason = reason,
-                    expiresAt = expiryDate,
-                )
-            }
-        } catch (e: APIClient.HTTPError) {
-            if (e.errorBody?.id == "player_already_banned") {
-                throw PlayerAlreadyBannedException()
-            }
-            throw e
-        }
+        uuidBanHttpService.ban(
+            targetPlayerUUID = targetPlayerUUID,
+            targetPlayerName = targetPlayerName,
+            bannerPlayerUUID = bannerPlayerUUID,
+            bannerPlayerName = bannerPlayerName,
+            reason = reason,
+            expiryDate = expiryDate,
+        )
     }
 
-    @Throws(PlayerNotBannedException::class)
-    suspend fun unban(targetPlayerUUID: UUID, staffId: UUID?) {
-        try {
-            apiClient.execute {
-                pcbClient.playerBanAPI.unban(
-                    bannedPlayerId = targetPlayerUUID.toString(),
-                    unbannerPlayerId = staffId.toString(),
-                )
-            }
-        } catch (e: APIClient.HTTPError) {
-            if (e.errorBody?.id == "player_not_banned") {
-                throw PlayerNotBannedException()
-            }
-            throw e
-        }
-    }
-
-    suspend fun get(targetPlayerUUID: UUID): PlayerBan? {
-        val response = apiClient.execute {
-            pcbClient.playerBanAPI.status(
-                playerId = targetPlayerUUID.toString(),
-            )
-        }
-        val ban = response.data
-        if (ban?.unbannedAt != null) {
-            return null
-        }
-        return ban
+    @Throws(UUIDBanHttpService.UUIDNotBannedException::class)
+    suspend fun unban(
+        targetPlayerUUID: UUID,
+        unbannerUUID: UUID?,
+    ) {
+        uuidBanHttpService.unban(
+            targetPlayerUUID = targetPlayerUUID,
+            unbannerUUID = unbannerUUID,
+        )
     }
 }

@@ -1,6 +1,7 @@
 package com.projectcitybuild.features.bans.usecases
 
 import com.projectcitybuild.pcbridge.core.utils.Failure
+import com.projectcitybuild.pcbridge.http.services.pcb.UUIDBanHttpService
 import com.projectcitybuild.repositories.PlayerBanRepository
 import com.projectcitybuild.repositories.PlayerUUIDRepository
 import com.projectcitybuild.support.spigot.kick.PlayerKicker
@@ -62,7 +63,7 @@ class BanUUIDTest {
 
         `when`(playerUUIDRepository.get(playerName)).thenReturn(playerUUID)
         `when`(playerBanRepository.ban(playerUUID, playerName, staffUUID, staffName, null))
-            .thenThrow(PlayerBanRepository.PlayerAlreadyBannedException())
+            .thenThrow(UUIDBanHttpService.UUIDAlreadyBannedException())
 
         val result = useCase.ban(playerName, staffUUID, staffName, null)
 

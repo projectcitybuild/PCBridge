@@ -3,6 +3,7 @@ package com.projectcitybuild.features.bans.usecases
 import com.projectcitybuild.pcbridge.core.utils.Failure
 import com.projectcitybuild.pcbridge.core.utils.Result
 import com.projectcitybuild.pcbridge.core.utils.Success
+import com.projectcitybuild.pcbridge.http.services.pcb.UUIDBanHttpService
 import com.projectcitybuild.repositories.PlayerBanRepository
 import com.projectcitybuild.repositories.PlayerUUIDRepository
 import net.md_5.bungee.api.ChatColor
@@ -30,7 +31,7 @@ class UnbanUUID(
 
             playerBanRepository.unban(
                 targetPlayerUUID = targetPlayerUUID,
-                staffId = bannerUUID,
+                unbannerUUID = bannerUUID,
             )
 
             server.broadcastMessage(
@@ -41,7 +42,7 @@ class UnbanUUID(
             )
 
             return Success(Unit)
-        } catch (e: PlayerBanRepository.PlayerNotBannedException) {
+        } catch (e: UUIDBanHttpService.UUIDNotBannedException) {
             return Failure(FailureReason.PlayerNotBanned)
         }
     }

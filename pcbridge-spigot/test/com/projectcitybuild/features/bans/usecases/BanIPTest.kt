@@ -2,6 +2,7 @@ package com.projectcitybuild.features.bans.usecases
 
 import com.projectcitybuild.pcbridge.core.utils.Failure
 import com.projectcitybuild.pcbridge.core.utils.Success
+import com.projectcitybuild.pcbridge.http.services.pcb.IPBanHttpService
 import com.projectcitybuild.repositories.IPBanRepository
 import com.projectcitybuild.support.spigot.kick.PlayerKicker
 import kotlinx.coroutines.test.runTest
@@ -38,7 +39,7 @@ class BanIPTest {
         val ip = "127.0.0.1"
 
         `when`(ipBanRepository.ban(eq(ip), any(), any(), any()))
-            .thenThrow(IPBanRepository.IPAlreadyBannedException::class.java)
+            .thenThrow(IPBanHttpService.IPAlreadyBannedException::class.java)
 
         val result = useCase.execute(
             ip = ip,

@@ -67,10 +67,7 @@ import com.projectcitybuild.modules.playercache.PlayerConfigCache
 import com.projectcitybuild.modules.storage.adapters.YamlStorage
 import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger
 import com.projectcitybuild.pcbridge.core.contracts.PlatformScheduler
-import com.projectcitybuild.pcbridge.http.clients.MojangClient
-import com.projectcitybuild.pcbridge.http.clients.PCBClient
-import com.projectcitybuild.pcbridge.http.core.APIClient
-import com.projectcitybuild.pcbridge.http.core.APIClientImpl
+import com.projectcitybuild.pcbridge.http.HttpService
 import com.projectcitybuild.pcbridge.webserver.HttpServer
 import com.projectcitybuild.pcbridge.webserver.HttpServerConfig
 import com.projectcitybuild.repositories.AggregateRepository
@@ -83,6 +80,7 @@ import com.projectcitybuild.repositories.PlayerGroupRepository
 import com.projectcitybuild.repositories.PlayerUUIDRepository
 import com.projectcitybuild.repositories.PlayerWarningRepository
 import com.projectcitybuild.repositories.TelemetryRepository
+import com.projectcitybuild.repositories.VerificationURLRepository
 import com.projectcitybuild.repositories.WarpRepository
 import com.projectcitybuild.support.spigot.SpigotLogger
 import com.projectcitybuild.support.spigot.SpigotScheduler
@@ -150,24 +148,6 @@ class DependencyContainer(
         )
     }
 
-    val pcbClient by lazy {
-        PCBClient(
-            authToken = config.get(ConfigKeys.apiToken),
-            baseUrl = config.get(ConfigKeys.apiBaseURL),
-            withLogging = config.get(ConfigKeys.apiIsLoggingEnabled)
-        )
-    }
-
-    val mojangClient by lazy {
-        MojangClient(
-            withLogging = config.get(ConfigKeys.apiIsLoggingEnabled)
-        )
-    }
-
-    val apiClient: APIClient by lazy {
-        APIClientImpl { minecraftDispatcher }
-    }
-
     val listenerRegistry by lazy {
         SpigotListenerRegistry(
             plugin,
@@ -183,27 +163,27 @@ class DependencyContainer(
         )
     }
 
-    val localEventBroadcaster: LocalEventBroadcaster
+    private val localEventBroadcaster: LocalEventBroadcaster
         get() = SpigotLocalEventBroadcaster()
 
-    val playerKicker: PlayerKicker
+    private val playerKicker: PlayerKicker
         get() = SpigotPlayerKicker(server)
 
-    val nameGuesser
+    private val nameGuesser
         get() = NameGuesser()
 
     val permissions: Permissions by lazy {
         LuckPermsPermissions(logger)
     }
 
-    val chatGroupFormatter by lazy {
+    private val chatGroupFormatter by lazy {
         ChatGroupFormatter(
             permissions,
             config,
         )
     }
 
-    val chatBadgeFormatter by lazy {
+    private val chatBadgeFormatter by lazy {
         ChatBadgeFormatter(
             playerConfigRepository,
             chatBadgeRepository,
@@ -211,7 +191,16 @@ class DependencyContainer(
         )
     }
 
-    val httpServer: HttpServer by lazy {
+    private val httpService by lazy {
+        HttpService(
+            authToken = config.get(ConfigKeys.apiToken),
+            baseURL = config.get(ConfigKeys.apiBaseURL),
+            withLogging = config.get(ConfigKeys.apiIsLoggingEnabled),
+            contextBuilder = { minecraftDispatcher },
+        )
+    }
+
+    val webServer by lazy {
         HttpServer(
             config = HttpServerConfig(
                 authToken = config.get(ConfigKeys.internalWebServerToken),
@@ -234,81 +223,77 @@ class DependencyContainer(
      * Repositories
      */
 
-    val chatBadgeRepository by lazy {
+    private val chatBadgeRepository by lazy {
         ChatBadgeRepository()
     }
 
-    val playerConfigCache by lazy {
+    private val playerConfigCache by lazy {
         PlayerConfigCache()
     }
 
-    val playerConfigRepository by lazy {
+    private val playerConfigRepository by lazy {
         PlayerConfigRepository(
             cache = playerConfigCache,
             dataSource,
         )
     }
 
-    val playerBanRepository by lazy {
-        PlayerBanRepository(
-            pcbClient,
-            apiClient,
-        )
+    private val playerBanRepository by lazy {
+        PlayerBanRepository(httpService.uuidBan)
     }
 
-    val playerUUIDRepository by lazy {
+    private val playerUUIDRepository by lazy {
         PlayerUUIDRepository(
             server,
-            mojangClient,
-            apiClient,
+            httpService.playerUuid,
         )
     }
 
-    val playerGroupRepository by lazy {
+    private val playerGroupRepository by lazy {
         PlayerGroupRepository(
-            pcbClient,
-            apiClient,
+            httpService.playerGroup,
             config,
             logger,
         )
     }
 
-    val playerWarningRepository by lazy {
+    private val playerWarningRepository by lazy {
         PlayerWarningRepository(
-            pcbClient,
-            apiClient,
+            httpService.playerWarning,
         )
     }
 
-    val ipBanRepository by lazy {
+    private val ipBanRepository by lazy {
         IPBanRepository(
-            pcbClient,
-            apiClient,
+            httpService.ipBan,
         )
     }
 
-    val warpRepository by lazy {
+    private val warpRepository by lazy {
         WarpRepository(dataSource)
     }
 
-    val aggregateRepository by lazy {
+    private val aggregateRepository by lazy {
         AggregateRepository(
-            pcbClient,
-            apiClient,
+            httpService.aggregate,
         )
     }
 
-    val telemetryRepository by lazy {
+    private val telemetryRepository by lazy {
         TelemetryRepository(
-            pcbClient,
-            apiClient,
+            httpService.telemetry,
         )
     }
 
-    val currencyRepository by lazy {
+    private val currencyRepository by lazy {
         CurrencyRepository(
-            pcbClient,
-            apiClient,
+            httpService.currency,
+        )
+    }
+
+    private val verificationURLRepository by lazy {
+        VerificationURLRepository(
+            httpService.verificationURL,
         )
     }
 
@@ -382,8 +367,7 @@ class DependencyContainer(
 
     val syncCommand get() = SyncCommand(
         GenerateAccountVerificationURL(
-            pcbClient,
-            apiClient
+            verificationURLRepository,
         ),
         UpdatePlayerGroups(
             permissions,

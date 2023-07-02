@@ -3,6 +3,7 @@ package com.projectcitybuild.features.bans.usecases
 import com.projectcitybuild.pcbridge.core.utils.Failure
 import com.projectcitybuild.pcbridge.core.utils.Result
 import com.projectcitybuild.pcbridge.core.utils.Success
+import com.projectcitybuild.pcbridge.http.services.pcb.UUIDBanHttpService
 import com.projectcitybuild.repositories.PlayerBanRepository
 import com.projectcitybuild.repositories.PlayerUUIDRepository
 import com.projectcitybuild.support.spigot.kick.PlayerKicker
@@ -54,7 +55,7 @@ class BanUUID(
             )
 
             return Success(Unit)
-        } catch (e: PlayerBanRepository.PlayerAlreadyBannedException) {
+        } catch (e: UUIDBanHttpService.UUIDAlreadyBannedException) {
             return Failure(FailureReason.PlayerAlreadyBanned)
         }
     }

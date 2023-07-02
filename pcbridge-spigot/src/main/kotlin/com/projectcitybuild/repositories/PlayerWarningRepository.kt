@@ -1,22 +1,17 @@
 package com.projectcitybuild.repositories
 
-import com.projectcitybuild.pcbridge.http.clients.PCBClient
-import com.projectcitybuild.pcbridge.http.core.APIClient
 import com.projectcitybuild.pcbridge.http.responses.PlayerWarning
+import com.projectcitybuild.pcbridge.http.services.pcb.PlayerWarningHttpService
 import java.util.UUID
 
 class PlayerWarningRepository(
-    private val pcbClient: PCBClient,
-    private val apiClient: APIClient,
+    private val playerWarningHttpService: PlayerWarningHttpService,
 ) {
     suspend fun get(playerUUID: UUID, playerName: String): List<PlayerWarning> {
-        val response = apiClient.execute {
-            pcbClient.warningAPI.get(
-                bannedPlayerId = playerUUID.toString(),
-                bannedPlayerAlias = playerName,
-            )
-        }
-        return response.data ?: listOf()
+        return playerWarningHttpService.get(
+            playerUUID = playerUUID,
+            playerName = playerName,
+        )
     }
 
     suspend fun create(
@@ -26,24 +21,16 @@ class PlayerWarningRepository(
         warnerPlayerName: String,
         reason: String,
     ): PlayerWarning? {
-        val response = apiClient.execute {
-            pcbClient.warningAPI.create(
-                warnedPlayerId = warnedPlayerUUID.toString(),
-                warnedPlayerAlias = warnedPlayerName,
-                warnerPlayerId = warnerPlayerUUID.toString(),
-                warnerPlayerAlias = warnerPlayerName,
-                reason = reason,
-            )
-        }
-        return response.data
+        return playerWarningHttpService.create(
+            warnedPlayerUUID = warnedPlayerUUID,
+            warnedPlayerName = warnedPlayerName,
+            warnerPlayerUUID = warnerPlayerUUID,
+            warnerPlayerName = warnerPlayerName,
+            reason = reason,
+        )
     }
 
     suspend fun acknowledge(warningId: Int): PlayerWarning? {
-        val response = apiClient.execute {
-            pcbClient.warningAPI.acknowledge(
-                warningId = warningId,
-            )
-        }
-        return response.data
+        return playerWarningHttpService.acknowledge(warningId)
     }
 }

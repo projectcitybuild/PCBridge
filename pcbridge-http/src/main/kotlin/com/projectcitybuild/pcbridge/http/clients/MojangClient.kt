@@ -1,15 +1,20 @@
 package com.projectcitybuild.pcbridge.http.clients
 
-import com.projectcitybuild.pcbridge.http.requests.mojang.MojangAPIRequest
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class MojangClient(
+internal class MojangClient(
     private val withLogging: Boolean,
 ) {
-    private val instance: Retrofit = build()
+    fun build(): Retrofit {
+        return Retrofit.Builder()
+            .client(client)
+            .baseUrl("https://api.mojang.com/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+    }
 
     private val client: OkHttpClient
         get() {
@@ -24,14 +29,4 @@ class MojangClient(
 
             return clientBuilder.build()
         }
-
-    val mojangApi = instance.create(MojangAPIRequest::class.java)
-
-    private fun build(): Retrofit {
-        return Retrofit.Builder()
-            .client(client)
-            .baseUrl("https://api.mojang.com/")
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-    }
 }

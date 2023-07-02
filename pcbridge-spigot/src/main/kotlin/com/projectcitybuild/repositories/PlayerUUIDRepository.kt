@@ -1,19 +1,15 @@
 package com.projectcitybuild.repositories
 
 import com.projectcitybuild.extensions.toDashFormattedUUID
-import com.projectcitybuild.pcbridge.http.clients.MojangClient
-import com.projectcitybuild.pcbridge.http.core.APIClient
 import com.projectcitybuild.pcbridge.http.responses.MojangPlayer
+import com.projectcitybuild.pcbridge.http.services.mojang.PlayerUUIDHttpService
 import org.bukkit.Server
 import java.util.UUID
 
 open class PlayerUUIDRepository(
     private val server: Server,
-    private val mojangClient: MojangClient,
-    private val apiClient: APIClient,
+    private val playerUUIDHttpService: PlayerUUIDHttpService,
 ) {
-    class PlayerNotFoundException : Exception()
-
     // TODO: cache with expiry time
     private val mojangPlayerCache = HashMap<String, MojangPlayer>()
 
@@ -22,33 +18,20 @@ open class PlayerUUIDRepository(
         if (onlinePlayerUUID != null) {
             return onlinePlayerUUID
         }
-        return try {
-            val mojangPlayer = getMojangPlayer(playerName = playerName)
-            UUID.fromString(mojangPlayer.uuid.toDashFormattedUUID())
-        } catch (e: PlayerNotFoundException) {
-            null
+        return fetchFromMojang(playerName = playerName)?.let {
+            UUID.fromString(it.uuid.toDashFormattedUUID())
         }
     }
 
-    private suspend fun getMojangPlayer(playerName: String, at: Long? = null): MojangPlayer {
+    private suspend fun fetchFromMojang(playerName: String): MojangPlayer? {
         val cacheHit = mojangPlayerCache[playerName]
         if (cacheHit != null) {
             return cacheHit
         }
-
-        val mojangApi = mojangClient.mojangApi
-
-        return apiClient.execute {
-            try {
-                val player = mojangApi.getMojangPlayer(playerName, timestamp = at)
-                    ?: throw PlayerNotFoundException()
-
-                mojangPlayerCache[playerName] = player
-                player
-            } catch (e: KotlinNullPointerException) {
-                // Hacky workaround to catch 204 HTTP errors (username not found)
-                throw PlayerNotFoundException()
-            }
+        return try {
+            playerUUIDHttpService.get(playerName)
+        } catch (e: PlayerUUIDHttpService.PlayerNotFoundException) {
+            null
         }
     }
 }
