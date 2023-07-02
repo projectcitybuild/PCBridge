@@ -8,11 +8,11 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.mockito.Mockito.mock
 import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
 import org.mockito.kotlin.any
-import org.powermock.api.mockito.PowerMockito.mock
-import org.powermock.api.mockito.PowerMockito.`when`
+import org.mockito.kotlin.whenever
 
 class DeleteTeleportToWarpTest {
 
@@ -32,7 +32,7 @@ class DeleteTeleportToWarpTest {
     @Test
     fun `should fail if warp doesn't exists`() = runTest {
         val warpName = "warp"
-        `when`(warpRepository.exists(warpName)).thenReturn(false)
+        whenever(warpRepository.exists(warpName)).thenReturn(false)
 
         val result = useCase.deleteWarp(warpName)
 
@@ -42,7 +42,7 @@ class DeleteTeleportToWarpTest {
     @Test
     fun `should delete existing warp`() = runTest {
         val warpName = "warp"
-        `when`(warpRepository.exists(warpName)).thenReturn(true)
+        whenever(warpRepository.exists(warpName)).thenReturn(true)
 
         val result = useCase.deleteWarp(warpName)
 
@@ -53,7 +53,7 @@ class DeleteTeleportToWarpTest {
     @Test
     fun `should emit an event when a warp is deleted`() = runTest {
         val warpName = "warp"
-        `when`(warpRepository.exists(warpName)).thenReturn(true)
+        whenever(warpRepository.exists(warpName)).thenReturn(true)
 
         val result = useCase.deleteWarp(warpName)
 

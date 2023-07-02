@@ -8,8 +8,8 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.powermock.api.mockito.PowerMockito.mock
-import org.powermock.api.mockito.PowerMockito.`when`
+import org.mockito.Mockito.mock
+import org.mockito.kotlin.whenever
 import java.util.UUID
 
 class GenerateAccountVerificationURLTest {
@@ -31,7 +31,7 @@ class GenerateAccountVerificationURLTest {
         val playerUUID = UUID.randomUUID()
         val url = "https://pcbmc.co"
 
-        `when`(verificationURLRepository.generateVerificationURL(playerUUID))
+        whenever(verificationURLRepository.generateVerificationURL(playerUUID))
             .thenReturn(url)
 
         val result = useCase.generate(playerUUID)
@@ -44,7 +44,7 @@ class GenerateAccountVerificationURLTest {
     fun `should return failure if verification URL is null`() = runTest {
         val playerUUID = UUID.randomUUID()
 
-        `when`(verificationURLRepository.generateVerificationURL(playerUUID))
+        whenever(verificationURLRepository.generateVerificationURL(playerUUID))
             .thenReturn(null)
 
         val result = useCase.generate(playerUUID)
@@ -56,7 +56,7 @@ class GenerateAccountVerificationURLTest {
     fun `should return failure if verification URL is empty`() = runTest {
         val playerUUID = UUID.randomUUID()
 
-        `when`(verificationURLRepository.generateVerificationURL(playerUUID))
+        whenever(verificationURLRepository.generateVerificationURL(playerUUID))
             .thenReturn("")
 
         val result = useCase.generate(playerUUID)
@@ -68,7 +68,7 @@ class GenerateAccountVerificationURLTest {
     fun `should return failure if account already linked`() = runTest {
         val playerUUID = UUID.randomUUID()
 
-        `when`(verificationURLRepository.generateVerificationURL(playerUUID))
+        whenever(verificationURLRepository.generateVerificationURL(playerUUID))
             .thenThrow(AccountLinkHTTPService.AlreadyLinkedException::class.java)
 
         val result = useCase.generate(playerUUID)

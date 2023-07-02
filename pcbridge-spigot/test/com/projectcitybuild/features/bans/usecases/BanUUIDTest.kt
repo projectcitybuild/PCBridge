@@ -11,12 +11,12 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentMatchers.anyString
+import org.mockito.Mockito.mock
 import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
 import org.mockito.kotlin.any
 import org.mockito.kotlin.eq
-import org.powermock.api.mockito.PowerMockito.mock
-import org.powermock.api.mockito.PowerMockito.`when`
+import org.mockito.kotlin.whenever
 import java.util.UUID
 
 class BanUUIDTest {
@@ -47,7 +47,7 @@ class BanUUIDTest {
     fun `ban should fail when player doesn't exist`() = runTest {
         val playerName = "banned_player"
 
-        `when`(playerUUIDRepository.get(playerName)).thenReturn(null)
+        whenever(playerUUIDRepository.get(playerName)).thenReturn(null)
 
         val result = useCase.ban(playerName, null, "staff_player", null)
 
@@ -61,8 +61,8 @@ class BanUUIDTest {
         val staffName = "staff_player"
         val staffUUID = UUID.randomUUID()
 
-        `when`(playerUUIDRepository.get(playerName)).thenReturn(playerUUID)
-        `when`(playerBanRepository.ban(playerUUID, playerName, staffUUID, staffName, null))
+        whenever(playerUUIDRepository.get(playerName)).thenReturn(playerUUID)
+        whenever(playerBanRepository.ban(playerUUID, playerName, staffUUID, staffName, null))
             .thenThrow(UUIDBanHttpService.UUIDAlreadyBannedException())
 
         val result = useCase.ban(playerName, staffUUID, staffName, null)
@@ -78,7 +78,7 @@ class BanUUIDTest {
         val staffName = "staff_player"
         val reason = "reason"
 
-        `when`(playerUUIDRepository.get(playerName)).thenReturn(playerUUID)
+        whenever(playerUUIDRepository.get(playerName)).thenReturn(playerUUID)
 
         useCase.ban(playerName, staffUUID, "staff_player", reason)
 
@@ -90,7 +90,7 @@ class BanUUIDTest {
     fun `ban should be broadcasted to all online players`() = runTest {
         val playerName = "banned_player"
 
-        `when`(playerUUIDRepository.get(playerName)).thenReturn(UUID.randomUUID())
+        whenever(playerUUIDRepository.get(playerName)).thenReturn(UUID.randomUUID())
 
         useCase.ban(playerName, UUID.randomUUID(), "staff_player", "reason")
 
@@ -102,7 +102,7 @@ class BanUUIDTest {
         val playerName = "banned_player"
         val playerUUID = UUID.randomUUID()
 
-        `when`(playerUUIDRepository.get(playerName)).thenReturn(playerUUID)
+        whenever(playerUUIDRepository.get(playerName)).thenReturn(playerUUID)
 
         useCase.ban(playerName, UUID.randomUUID(), "staff_player", "reason")
 

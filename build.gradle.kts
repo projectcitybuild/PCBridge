@@ -29,9 +29,7 @@ subprojects {
         testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.0-native-mt")
         testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
         testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.2")
-        testImplementation("org.mockito.kotlin:mockito-kotlin:4.0.0")
-        testImplementation("org.powermock:powermock-module-junit4:2.0.9")
-        testImplementation("org.powermock:powermock-api-mockito2:2.0.9")
+        testImplementation("org.mockito.kotlin:mockito-kotlin:5.0.0")
         testImplementation("org.mockito:mockito-inline:4.2.0")
     }
 

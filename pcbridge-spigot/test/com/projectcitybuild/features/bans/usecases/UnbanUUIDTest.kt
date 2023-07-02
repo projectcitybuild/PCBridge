@@ -9,11 +9,11 @@ import org.bukkit.Server
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.mockito.Mockito.mock
 import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
 import org.mockito.kotlin.any
-import org.powermock.api.mockito.PowerMockito.mock
-import org.powermock.api.mockito.PowerMockito.`when`
+import org.mockito.kotlin.whenever
 import java.util.UUID
 
 class UnbanUUIDTest {
@@ -41,7 +41,7 @@ class UnbanUUIDTest {
     fun `unban should fail when player doesn't exist`() = runTest {
         val playerName = "banned_player"
 
-        `when`(playerUUIDRepository.get(playerName)).thenReturn(null)
+        whenever(playerUUIDRepository.get(playerName)).thenReturn(null)
 
         val result = useCase.unban(playerName, null)
 
@@ -54,8 +54,8 @@ class UnbanUUIDTest {
         val playerUUID = UUID.randomUUID()
         val staffUUID = UUID.randomUUID()
 
-        `when`(playerUUIDRepository.get(playerName)).thenReturn(playerUUID)
-        `when`(playerBanRepository.unban(playerUUID, staffUUID))
+        whenever(playerUUIDRepository.get(playerName)).thenReturn(playerUUID)
+        whenever(playerBanRepository.unban(playerUUID, staffUUID))
             .thenThrow(UUIDBanHttpService.UUIDNotBannedException())
 
         val result = useCase.unban(playerName, staffUUID)
@@ -69,7 +69,7 @@ class UnbanUUIDTest {
         val playerUUID = UUID.randomUUID()
         val staffUUID = UUID.randomUUID()
 
-        `when`(playerUUIDRepository.get(playerName)).thenReturn(playerUUID)
+        whenever(playerUUIDRepository.get(playerName)).thenReturn(playerUUID)
 
         useCase.unban(playerName, staffUUID)
 
@@ -81,7 +81,7 @@ class UnbanUUIDTest {
     fun `unban should be broadcasted to all online players`() = runTest {
         val playerName = "banned_player"
 
-        `when`(playerUUIDRepository.get(playerName)).thenReturn(UUID.randomUUID())
+        whenever(playerUUIDRepository.get(playerName)).thenReturn(UUID.randomUUID())
 
         useCase.unban(playerName, UUID.randomUUID())
 

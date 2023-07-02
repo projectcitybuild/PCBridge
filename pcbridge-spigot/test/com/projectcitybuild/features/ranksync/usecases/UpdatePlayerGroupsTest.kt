@@ -9,11 +9,11 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.mockito.Mockito.mock
 import org.mockito.kotlin.any
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.verifyNoInteractions
-import org.powermock.api.mockito.PowerMockito.mock
-import org.powermock.api.mockito.PowerMockito.`when`
+import org.mockito.kotlin.whenever
 import java.util.UUID
 
 class UpdatePlayerGroupsTest {
@@ -38,10 +38,10 @@ class UpdatePlayerGroupsTest {
     fun `should assign player to groups and donor tiers`() = runTest {
         val playerUUID = UUID.randomUUID()
 
-        `when`(playerGroupRepository.getGroups(any())).thenReturn(
+        whenever(playerGroupRepository.getGroups(any())).thenReturn(
             listOf("group1", "group2")
         )
-        `when`(playerGroupRepository.getDonorTiers(any())).thenReturn(
+        whenever(playerGroupRepository.getDonorTiers(any())).thenReturn(
             listOf("donor_tier1")
         )
 
@@ -55,10 +55,10 @@ class UpdatePlayerGroupsTest {
     fun `should return failure if account not linked`() = runTest {
         val playerUUID = UUID.randomUUID()
 
-        `when`(playerGroupRepository.getGroups(any())).thenThrow(
+        whenever(playerGroupRepository.getGroups(any())).thenThrow(
             PlayerGroupHttpService.NoLinkedAccountException::class.java
         )
-        `when`(playerGroupRepository.getDonorTiers(any())).thenReturn(emptyList())
+        whenever(playerGroupRepository.getDonorTiers(any())).thenReturn(emptyList())
 
         val result = useCase.execute(playerUUID)
 

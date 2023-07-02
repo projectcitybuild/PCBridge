@@ -16,10 +16,10 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentMatchers.anyString
+import org.mockito.Mockito.mock
 import org.mockito.kotlin.any
 import org.mockito.kotlin.verify
-import org.powermock.api.mockito.PowerMockito.mock
-import org.powermock.api.mockito.PowerMockito.`when`
+import org.mockito.kotlin.whenever
 
 class TeleportToWarpTest {
 
@@ -37,7 +37,7 @@ class TeleportToWarpTest {
         server = mock(Server::class.java)
 
         player = mock(Player::class.java).also {
-            `when`(it.location).thenReturn(mock(Location::class.java))
+            whenever(it.location).thenReturn(mock(Location::class.java))
         }
 
         useCase = TeleportToWarp(
@@ -51,7 +51,7 @@ class TeleportToWarpTest {
 
     @Test
     fun `should fail if warp doesn't exist`() = runTest {
-        `when`(warpRepository.names()).thenReturn(emptyList())
+        whenever(warpRepository.names()).thenReturn(emptyList())
 
         val result = useCase.warp(player, "warp")
 
@@ -63,10 +63,10 @@ class TeleportToWarpTest {
         val warpName = "warp"
         val warp = Warp(name = warpName)
 
-        `when`(warpRepository.names()).thenReturn(listOf(warp.name))
-        `when`(warpRepository.first(warpName)).thenReturn(warp)
-        `when`(nameGuesser.guessClosest(any(), any())).thenReturn(warpName)
-        `when`(server.getWorld(anyString())).thenReturn(null)
+        whenever(warpRepository.names()).thenReturn(listOf(warp.name))
+        whenever(warpRepository.first(warpName)).thenReturn(warp)
+        whenever(nameGuesser.guessClosest(any(), any())).thenReturn(warpName)
+        whenever(server.getWorld(anyString())).thenReturn(null)
 
         val result = useCase.warp(player, warpName)
 
@@ -79,10 +79,10 @@ class TeleportToWarpTest {
         val warp = Warp(name = warpName)
         val world = mock(World::class.java)
 
-        `when`(warpRepository.names()).thenReturn(listOf(warp.name))
-        `when`(warpRepository.first(warpName)).thenReturn(warp)
-        `when`(nameGuesser.guessClosest(any(), any())).thenReturn(warpName)
-        `when`(server.getWorld(warp.location.worldName)).thenReturn(world)
+        whenever(warpRepository.names()).thenReturn(listOf(warp.name))
+        whenever(warpRepository.first(warpName)).thenReturn(warp)
+        whenever(nameGuesser.guessClosest(any(), any())).thenReturn(warpName)
+        whenever(server.getWorld(warp.location.worldName)).thenReturn(world)
 
         val result = useCase.warp(player, warpName)
 
