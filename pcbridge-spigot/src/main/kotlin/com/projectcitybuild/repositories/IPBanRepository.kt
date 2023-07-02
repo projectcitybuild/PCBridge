@@ -11,6 +11,7 @@ class IPBanRepository(
         return ipBanHttpService.get(ip)
     }
 
+    @Throws(IPBanHttpService.IPAlreadyBannedException::class)
     suspend fun ban(
         ip: String,
         bannerUUID: UUID,
@@ -25,6 +26,7 @@ class IPBanRepository(
         )
     }
 
+    @Throws(IPBanHttpService.IPNotBannedException::class)
     suspend fun unban(
         ip: String,
         unbannerUUID: UUID,

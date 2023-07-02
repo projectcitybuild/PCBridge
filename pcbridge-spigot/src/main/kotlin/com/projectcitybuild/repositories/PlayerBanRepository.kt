@@ -11,6 +11,7 @@ class PlayerBanRepository(
         return uuidBanHttpService.get(targetPlayerUUID)
     }
 
+    @Throws(UUIDBanHttpService.UUIDAlreadyBannedException::class)
     suspend fun ban(
         targetPlayerUUID: UUID,
         targetPlayerName: String,
@@ -29,6 +30,7 @@ class PlayerBanRepository(
         )
     }
 
+    @Throws(UUIDBanHttpService.UUIDNotBannedException::class)
     suspend fun unban(
         targetPlayerUUID: UUID,
         unbannerUUID: UUID?,

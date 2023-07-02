@@ -11,11 +11,13 @@ class PlayerGroupRepository(
     private val config: Config,
     private val logger: PlatformLogger,
 ) {
+    @Throws(PlayerGroupHttpService.NoLinkedAccountException::class)
     suspend fun getGroups(playerUUID: UUID): List<String> {
         return playerGroupHttpService.getGroups(playerUUID)
             .mapNotNull { it.minecraftName }
     }
 
+    @Throws(PlayerGroupHttpService.NoLinkedAccountException::class)
     suspend fun getDonorTiers(playerUUID: UUID): List<String> {
         val perks = playerGroupHttpService.getDonorPerks(playerUUID)
 

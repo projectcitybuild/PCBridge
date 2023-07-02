@@ -4,6 +4,7 @@ import com.projectcitybuild.pcbridge.http.parsing.ResponseParser
 import com.projectcitybuild.pcbridge.http.pcb
 import retrofit2.Retrofit
 import java.util.UUID
+import kotlin.jvm.Throws
 
 class AccountLinkHTTPService(
     private val retrofit: Retrofit,
@@ -11,6 +12,7 @@ class AccountLinkHTTPService(
 ) {
     class AlreadyLinkedException: Exception()
 
+    @Throws(AlreadyLinkedException::class)
     suspend fun generateVerificationURL(playerUUID: UUID): String? {
         try {
             val response = responseParser.parse {

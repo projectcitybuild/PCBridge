@@ -13,6 +13,7 @@ class PlayerGroupHttpService(
 ) {
     class NoLinkedAccountException : Exception()
 
+    @Throws(NoLinkedAccountException::class)
     suspend fun getGroups(playerUUID: UUID): List<Group> {
         val response = try {
             responseParser.parse {
@@ -30,6 +31,7 @@ class PlayerGroupHttpService(
         return response.data?.groups ?: listOf()
     }
 
+    @Throws(NoLinkedAccountException::class)
     suspend fun getDonorPerks(playerUUID: UUID): List<DonationPerk> {
         val response = try {
             responseParser.parse {

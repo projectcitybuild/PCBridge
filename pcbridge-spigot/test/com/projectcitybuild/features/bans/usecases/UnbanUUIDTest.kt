@@ -1,6 +1,7 @@
 package com.projectcitybuild.features.bans.usecases
 
 import com.projectcitybuild.pcbridge.core.utils.Failure
+import com.projectcitybuild.pcbridge.http.services.pcb.UUIDBanHttpService
 import com.projectcitybuild.repositories.PlayerBanRepository
 import com.projectcitybuild.repositories.PlayerUUIDRepository
 import kotlinx.coroutines.test.runTest
@@ -55,7 +56,7 @@ class UnbanUUIDTest {
 
         `when`(playerUUIDRepository.get(playerName)).thenReturn(playerUUID)
         `when`(playerBanRepository.unban(playerUUID, staffUUID))
-            .thenThrow(PlayerBanRepository.PlayerNotBannedException())
+            .thenThrow(UUIDBanHttpService.UUIDNotBannedException())
 
         val result = useCase.unban(playerName, staffUUID)
 

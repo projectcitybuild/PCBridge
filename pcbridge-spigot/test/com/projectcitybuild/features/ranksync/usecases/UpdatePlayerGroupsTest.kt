@@ -3,6 +3,7 @@ package com.projectcitybuild.features.ranksync.usecases
 import com.projectcitybuild.modules.permissions.Permissions
 import com.projectcitybuild.pcbridge.core.utils.Failure
 import com.projectcitybuild.pcbridge.core.utils.Success
+import com.projectcitybuild.pcbridge.http.services.pcb.PlayerGroupHttpService
 import com.projectcitybuild.repositories.PlayerGroupRepository
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -55,7 +56,7 @@ class UpdatePlayerGroupsTest {
         val playerUUID = UUID.randomUUID()
 
         `when`(playerGroupRepository.getGroups(any())).thenThrow(
-            PlayerGroupRepository.AccountNotLinkedException::class.java
+            PlayerGroupHttpService.NoLinkedAccountException::class.java
         )
         `when`(playerGroupRepository.getDonorTiers(any())).thenReturn(emptyList())
 
