@@ -1,7 +1,7 @@
 package com.projectcitybuild.repositories
 
 import com.projectcitybuild.pcbridge.http.responses.PlayerBan
-import com.projectcitybuild.pcbridge.http.services.UUIDBanHttpService
+import com.projectcitybuild.pcbridge.http.services.pcb.UUIDBanHttpService
 import java.util.UUID
 
 class PlayerBanRepository(

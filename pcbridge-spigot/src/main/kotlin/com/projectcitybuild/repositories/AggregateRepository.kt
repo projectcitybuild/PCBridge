@@ -1,7 +1,7 @@
 package com.projectcitybuild.repositories
 
 import com.projectcitybuild.pcbridge.http.responses.Aggregate
-import com.projectcitybuild.pcbridge.http.services.AggregateHttpService
+import com.projectcitybuild.pcbridge.http.services.pcb.AggregateHttpService
 import java.util.UUID
 
 class AggregateRepository(

@@ -1,6 +1,6 @@
 package com.projectcitybuild.repositories
 
-import com.projectcitybuild.pcbridge.http.services.CurrencyHttpService
+import com.projectcitybuild.pcbridge.http.services.pcb.CurrencyHttpService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

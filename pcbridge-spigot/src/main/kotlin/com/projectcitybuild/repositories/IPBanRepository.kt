@@ -1,7 +1,7 @@
 package com.projectcitybuild.repositories
 
 import com.projectcitybuild.pcbridge.http.responses.IPBan
-import com.projectcitybuild.pcbridge.http.services.IPBanHttpService
+import com.projectcitybuild.pcbridge.http.services.pcb.IPBanHttpService
 import java.util.UUID
 
 class IPBanRepository(

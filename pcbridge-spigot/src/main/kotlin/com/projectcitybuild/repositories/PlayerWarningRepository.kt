@@ -1,7 +1,7 @@
 package com.projectcitybuild.repositories
 
 import com.projectcitybuild.pcbridge.http.responses.PlayerWarning
-import com.projectcitybuild.pcbridge.http.services.PlayerWarningHttpService
+import com.projectcitybuild.pcbridge.http.services.pcb.PlayerWarningHttpService
 import java.util.UUID
 
 class PlayerWarningRepository(
