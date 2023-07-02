@@ -11,7 +11,7 @@ class SentryErrorReporter(
     private val logger: PlatformLogger,
 ) : ErrorReporter {
 
-    override fun bootstrap() {
+    override fun start() {
         val isEnabled = config.get(ConfigKeys.errorReportingSentryEnabled)
         if (!isEnabled) return
 

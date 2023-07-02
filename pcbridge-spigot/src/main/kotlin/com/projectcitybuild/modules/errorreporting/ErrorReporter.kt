@@ -1,6 +1,6 @@
 package com.projectcitybuild.modules.errorreporting
 
 interface ErrorReporter {
-    fun bootstrap()
+    fun start()
     fun report(throwable: Throwable)
 }

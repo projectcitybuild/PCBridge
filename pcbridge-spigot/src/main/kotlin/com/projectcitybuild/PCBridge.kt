@@ -68,7 +68,7 @@ class PCBridge : JavaPlugin() {
             minecraftDispatcher = minecraftDispatcher
         )
         container!!.apply {
-            errorReporter.bootstrap()
+            errorReporter.start()
 
             runCatching {
                 dataSource.connect()
