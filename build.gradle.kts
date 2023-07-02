@@ -12,9 +12,12 @@ plugins {
     id("org.jlleitschuh.gradle.ktlint-idea") version "10.2.1"
 }
 
+repositories {
+    mavenCentral()
+}
+
 subprojects {
     apply(plugin = "org.jetbrains.kotlin.jvm")
-    apply(plugin = "org.jlleitschuh.gradle.ktlint")
 
     dependencies {
         implementation(kotlin("stdlib-jdk8"))

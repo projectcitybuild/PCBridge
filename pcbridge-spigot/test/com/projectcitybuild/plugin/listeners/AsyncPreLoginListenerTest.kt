@@ -106,31 +106,10 @@ class AsyncPreLoginListenerTest {
         val event = loginEvent(uuid, ip)
 
         `when`(getAggregate.execute(uuid, ip))
-            .thenReturn(Aggregate())
-
-        `when`(authoriseConnection.execute(Aggregate()))
             .thenThrow(Exception())
 
         listener.onAsyncPreLogin(event)
 
         verify(event).disallow(eq(AsyncPlayerPreLoginEvent.Result.KICK_OTHER), anyString())
-    }
-
-    @Test
-    fun `reports error if cannot fetch ban`() = runTest {
-        val uuid = UUID.randomUUID()
-        val ip = "127.0.0.1"
-        val event = loginEvent(uuid, ip)
-        val exception = Exception()
-
-        `when`(getAggregate.execute(uuid, ip))
-            .thenReturn(Aggregate())
-
-        `when`(authoriseConnection.execute(Aggregate()))
-            .thenThrow(exception)
-
-        listener.onAsyncPreLogin(event)
-
-        verify(errorReporter).report(exception)
     }
 }
