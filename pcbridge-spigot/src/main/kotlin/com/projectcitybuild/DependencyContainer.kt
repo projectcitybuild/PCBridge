@@ -52,6 +52,7 @@ import com.projectcitybuild.listeners.PlayerQuitListener
 import com.projectcitybuild.listeners.TelemetryListener
 import com.projectcitybuild.modules.config.Config
 import com.projectcitybuild.modules.config.ConfigKeys
+import com.projectcitybuild.modules.config.KeyValueStorage
 import com.projectcitybuild.modules.config.adapters.YamlKeyValueStorage
 import com.projectcitybuild.modules.database.DataSource
 import com.projectcitybuild.modules.datetime.formatter.DateTimeFormatter
@@ -93,28 +94,27 @@ import com.projectcitybuild.support.spigot.listeners.SpigotListenerRegistry
 import org.bukkit.Server
 import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.plugin.java.JavaPlugin
+import org.koin.core.module.dsl.factoryOf
+import org.koin.dsl.bind
+import org.koin.dsl.module
 import java.time.ZoneId
 import java.util.Locale
 import kotlin.coroutines.CoroutineContext
 import java.util.logging.Logger as JavaLogger
 
-class DependencyContainer(
-    val plugin: JavaPlugin,
-    val server: Server,
-    val spigotConfig: FileConfiguration,
-    val spigotLogger: JavaLogger,
-    val minecraftDispatcher: CoroutineContext,
-) {
-    val config: Config by lazy {
+val container = module {
+    factoryOf(::LocalizedTime) bind Time::class
+
+    single {
         Config(
             YamlKeyValueStorage(
-                storage = YamlStorage(spigotConfig)
+                storage = YamlStorage(getProperty("spigot_config"))
             )
         )
     }
 
-    val dateTimeFormatter: DateTimeFormatter
-        get() = DateTimeFormatterImpl(
+    factory { (config: Config) ->
+        DateTimeFormatterImpl(
             locale = Locale.forLanguageTag(
                 config.get(ConfigKeys.timeLocale)
             ),
@@ -122,21 +122,19 @@ class DependencyContainer(
                 config.get(ConfigKeys.timeTimezone)
             ),
         )
+    } bind DateTimeFormatter::class
 
-    val time: Time
-        get() = LocalizedTime()
+    factory {
+        SpigotLogger(getProperty("spigot_logger"))
+    } bind PlatformLogger::class
 
-    val logger: PlatformLogger
-        get() = SpigotLogger(spigotLogger)
+    factory {
+        SpigotScheduler(getProperty("spigot_plugin"))
+    } bind PlatformScheduler::class
 
-    val scheduler: PlatformScheduler
-        get() = SpigotScheduler(plugin)
+    factoryOf(::SentryErrorReporter) bind ErrorReporter::class
 
-    val errorReporter: ErrorReporter by lazy {
-        SentryErrorReporter(config, logger)
-    }
-
-    val dataSource by lazy {
+    single { (config: Config, logger: PlatformLogger) ->
         DataSource(
             logger = logger,
             hostName = config.get(ConfigKeys.dbHostName),
@@ -147,7 +145,15 @@ class DependencyContainer(
             shouldRunMigrations = true
         )
     }
+}
 
+class DependencyContainer(
+    val plugin: JavaPlugin,
+    val server: Server,
+    val spigotConfig: FileConfiguration,
+    val spigotLogger: JavaLogger,
+    val minecraftDispatcher: CoroutineContext,
+) {
     val listenerRegistry by lazy {
         SpigotListenerRegistry(
             plugin,

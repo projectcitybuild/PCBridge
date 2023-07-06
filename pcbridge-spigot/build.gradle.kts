@@ -57,6 +57,8 @@ dependencies {
     implementation("com.github.shynixn.mccoroutine:mccoroutine-bukkit-api:2.11.0")
     implementation("com.github.shynixn.mccoroutine:mccoroutine-bukkit-core:2.11.0")
 
+    compileOnly("io.insert-koin:koin-core:3.4.2")
+
     implementation("com.zaxxer:HikariCP:5.0.1")
 
     implementation("co.aikar:idb-core:1.0.0-SNAPSHOT")
