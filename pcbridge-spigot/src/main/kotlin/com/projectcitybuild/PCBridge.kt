@@ -20,6 +20,7 @@ class PCBridge : JavaPlugin() {
                 banIPCommand,
                 checkBanCommand,
                 delWarpCommand,
+                invisItemFrameCommand,
                 muteCommand,
                 nightVisionCommand,
                 pcbridgeCommand,

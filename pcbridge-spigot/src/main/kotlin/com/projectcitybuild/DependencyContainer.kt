@@ -6,6 +6,7 @@ import com.projectcitybuild.commands.BanCommand
 import com.projectcitybuild.commands.BanIPCommand
 import com.projectcitybuild.commands.CheckBanCommand
 import com.projectcitybuild.commands.DelWarpCommand
+import com.projectcitybuild.commands.InvisItemFrameCommand
 import com.projectcitybuild.commands.MuteCommand
 import com.projectcitybuild.commands.NightVisionCommand
 import com.projectcitybuild.commands.PCBridgeCommand
@@ -84,6 +85,7 @@ import com.projectcitybuild.repositories.TelemetryRepository
 import com.projectcitybuild.repositories.VerificationURLRepository
 import com.projectcitybuild.repositories.WarpRepository
 import com.projectcitybuild.support.spigot.SpigotLogger
+import com.projectcitybuild.support.spigot.SpigotNamespace
 import com.projectcitybuild.support.spigot.SpigotScheduler
 import com.projectcitybuild.support.spigot.commands.SpigotCommandRegistry
 import com.projectcitybuild.support.spigot.eventbroadcast.LocalEventBroadcaster
@@ -338,6 +340,10 @@ class DependencyContainer(
             localEventBroadcaster,
         ),
         warpRepository,
+    )
+
+    val invisItemFrameCommand get() = InvisItemFrameCommand(
+        SpigotNamespace(plugin),
     )
 
     val muteCommand get() = MuteCommand(

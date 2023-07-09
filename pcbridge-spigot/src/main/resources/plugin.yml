@@ -29,6 +29,9 @@ commands:
   delwarp:
     description: "Deletes a warp"
     usage: "/delwarp <name>"
+  invisframe:
+    description: "Gives you an invisible item frame"
+    usage: "/invisframe [glowing]"
   mute:
     description: "Prevents a player from talking in chat"
     usage: "/mute <name>"
