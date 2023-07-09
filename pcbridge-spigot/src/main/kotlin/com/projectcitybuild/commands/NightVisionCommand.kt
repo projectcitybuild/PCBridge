@@ -20,7 +20,7 @@ class NightVisionCommand : SpigotCommand {
         if (input.args.size > 1) {
             throw InvalidCommandArgumentsException()
         }
-        if (input.args.isNotEmpty() && !listOf("on", "off").contains(input.args.firstOrNull())) {
+        if (input.args.isNotEmpty() && !listOf("on", "off").contains(input.args.firstOrNull()?.lowercase())) {
             throw InvalidCommandArgumentsException()
         }
 
@@ -31,7 +31,7 @@ class NightVisionCommand : SpigotCommand {
 
         val player = input.player
         val toggleOn = if (input.args.isNotEmpty()) {
-            input.args.first() == "on"
+            input.args.first().lowercase() == "on"
         } else {
             !player.hasPotionEffect(potionEffectType)
         }

@@ -1,6 +1,8 @@
 package com.projectcitybuild.plugin.commands
 
 import com.projectcitybuild.commands.NightVisionCommand
+import com.projectcitybuild.support.spigot.commands.CannotInvokeFromConsoleException
+import com.projectcitybuild.support.spigot.commands.InvalidCommandArgumentsException
 import com.projectcitybuild.support.spigot.commands.SpigotCommandInput
 import kotlinx.coroutines.test.runTest
 import org.bukkit.entity.Player
@@ -8,9 +10,12 @@ import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertDoesNotThrow
+import org.junit.jupiter.api.assertThrows
 import org.mockito.Mockito.mock
 import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
+import org.mockito.kotlin.verifyNoMoreInteractions
 import org.mockito.kotlin.whenever
 
 class NightVisionCommandTest {
@@ -36,6 +41,54 @@ class NightVisionCommandTest {
     }
 
     @Test
+    fun `throws exception if console uses command`() = runTest {
+        val input = SpigotCommandInput(
+            sender = player,
+            args = emptyList(),
+            isConsole = true,
+        )
+        assertThrows<CannotInvokeFromConsoleException> {
+            NightVisionCommand().execute(input)
+        }
+    }
+
+    @Test
+    fun `throws exception if too many arguments`() = runTest {
+        val input = SpigotCommandInput(
+            sender = player,
+            args = listOf("on", "off"),
+            isConsole = true,
+        )
+        assertThrows<InvalidCommandArgumentsException> {
+            NightVisionCommand().execute(input)
+        }
+    }
+
+    @Test
+    fun `throws exception if invalid toggle option`() = runTest {
+        listOf("bad", "1", "true").forEach { invalidOption ->
+            val input = SpigotCommandInput(
+                sender = player,
+                args = listOf(invalidOption),
+                isConsole = false,
+            )
+            assertThrows<InvalidCommandArgumentsException> {
+                NightVisionCommand().execute(input)
+            }
+        }
+        listOf("on", "ON", "off", "OFF").forEach { invalidOption ->
+            val input = SpigotCommandInput(
+                sender = player,
+                args = listOf(invalidOption),
+                isConsole = false,
+            )
+            assertDoesNotThrow {
+                NightVisionCommand().execute(input)
+            }
+        }
+    }
+
+    @Test
     fun `forces on nightvision when specified`() = runTest {
         val input = SpigotCommandInput(
             sender = player,
@@ -46,6 +99,7 @@ class NightVisionCommandTest {
 
         verify(player).removePotionEffect(PotionEffectType.NIGHT_VISION)
         verify(player).addPotionEffect(potionEffect)
+        verifyNoMoreInteractions(player)
     }
 
     @Test
@@ -59,6 +113,7 @@ class NightVisionCommandTest {
 
         verify(player).removePotionEffect(PotionEffectType.NIGHT_VISION)
         verify(player, never()).addPotionEffect(potionEffect)
+        verifyNoMoreInteractions(player)
     }
 
     @Test
@@ -75,6 +130,7 @@ class NightVisionCommandTest {
 
         verify(player).removePotionEffect(PotionEffectType.NIGHT_VISION)
         verify(player).addPotionEffect(potionEffect)
+        verifyNoMoreInteractions(player)
     }
 
     @Test
@@ -91,5 +147,6 @@ class NightVisionCommandTest {
 
         verify(player).removePotionEffect(PotionEffectType.NIGHT_VISION)
         verify(player, never()).addPotionEffect(potionEffect)
+        verifyNoMoreInteractions(player)
     }
 }
