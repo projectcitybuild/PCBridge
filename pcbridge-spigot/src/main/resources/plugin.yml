@@ -32,6 +32,9 @@ commands:
   mute:
     description: "Prevents a player from talking in chat"
     usage: "/mute <name>"
+  nv:
+    description: "Toggles on or off nightvision mode"
+    usage: "/nv [on|off]"
   pcbridge:
     description: "Shows the plugin version or runs utility commands"
     usage: "/pcbridge <version|import>"

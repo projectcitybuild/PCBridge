@@ -21,6 +21,7 @@ class PCBridge : JavaPlugin() {
                 checkBanCommand,
                 delWarpCommand,
                 muteCommand,
+                nightVisionCommand,
                 pcbridgeCommand,
                 setWarpCommand,
                 syncCommand,

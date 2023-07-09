@@ -7,6 +7,7 @@ import com.projectcitybuild.commands.BanIPCommand
 import com.projectcitybuild.commands.CheckBanCommand
 import com.projectcitybuild.commands.DelWarpCommand
 import com.projectcitybuild.commands.MuteCommand
+import com.projectcitybuild.commands.NightVisionCommand
 import com.projectcitybuild.commands.PCBridgeCommand
 import com.projectcitybuild.commands.SetWarpCommand
 import com.projectcitybuild.commands.SyncCommand
@@ -346,6 +347,8 @@ class DependencyContainer(
             nameGuesser,
         )
     )
+
+    val nightVisionCommand get() = NightVisionCommand()
 
     val pcbridgeCommand get() = PCBridgeCommand(
         GetVersion(),
