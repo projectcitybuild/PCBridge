@@ -43,6 +43,7 @@ class PCBridge : JavaPlugin() {
                 asyncPreLoginListener,
                 exceptionListener,
                 firstTimeJoinListener,
+                hangingPlaceListener,
                 playerJoinListener,
                 playerQuitListener,
                 telemetryListener,

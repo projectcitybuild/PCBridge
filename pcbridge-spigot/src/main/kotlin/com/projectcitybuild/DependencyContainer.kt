@@ -49,6 +49,7 @@ import com.projectcitybuild.listeners.AsyncPlayerChatListener
 import com.projectcitybuild.listeners.AsyncPreLoginListener
 import com.projectcitybuild.listeners.ExceptionListener
 import com.projectcitybuild.listeners.FirstTimeJoinListener
+import com.projectcitybuild.listeners.HangingPlaceListener
 import com.projectcitybuild.listeners.PlayerJoinListener
 import com.projectcitybuild.listeners.PlayerQuitListener
 import com.projectcitybuild.listeners.TelemetryListener
@@ -222,6 +223,8 @@ class DependencyContainer(
         )
     }
 
+    val spigotNamespace get() = SpigotNamespace(plugin)
+
     /**
      * Repositories
      */
@@ -343,7 +346,7 @@ class DependencyContainer(
     )
 
     val invisItemFrameCommand get() = InvisItemFrameCommand(
-        SpigotNamespace(plugin),
+        spigotNamespace,
     )
 
     val muteCommand get() = MuteCommand(
@@ -468,6 +471,10 @@ class DependencyContainer(
     val firstTimeJoinListener get() = FirstTimeJoinListener(
         server,
         logger,
+    )
+
+    val hangingPlaceListener get() = HangingPlaceListener(
+        spigotNamespace,
     )
 
     val playerJoinListener get() = PlayerJoinListener(

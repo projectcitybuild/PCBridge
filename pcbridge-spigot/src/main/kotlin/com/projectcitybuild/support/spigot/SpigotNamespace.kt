@@ -4,7 +4,7 @@ import org.bukkit.NamespacedKey
 import org.bukkit.plugin.java.JavaPlugin
 
 class SpigotNamespace(
-    private val plugin: JavaPlugin,
+    plugin: JavaPlugin,
 ) {
-    val invisibleKey get() = NamespacedKey(plugin, "invisible")
+    val invisibleKey = NamespacedKey(plugin, "invisible")
 }

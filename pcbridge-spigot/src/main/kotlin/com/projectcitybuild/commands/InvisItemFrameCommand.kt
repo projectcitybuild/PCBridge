@@ -46,16 +46,14 @@ class InvisItemFrameCommand(
         val player = input.player
         player.inventory.addItem(itemStack.apply {
             if(itemMeta == null) throw Exception("ItemMeta cannot be null")
-            val newItemMeta = itemMeta?.apply {
+            itemMeta = itemMeta?.apply {
                 setDisplayName(itemName)
-
                 persistentDataContainer.set(
                     spigotNamespace.invisibleKey,
                     PersistentDataType.BYTE,
                     1,
                 )
             }
-            itemMeta = newItemMeta
         })
 
         if (wantsGlowEffect) {
