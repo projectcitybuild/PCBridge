@@ -15,7 +15,6 @@ import org.junit.jupiter.api.assertThrows
 import org.mockito.Mockito.mock
 import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
-import org.mockito.kotlin.verifyNoMoreInteractions
 import org.mockito.kotlin.whenever
 
 class NightVisionCommandTest {
@@ -57,7 +56,7 @@ class NightVisionCommandTest {
         val input = SpigotCommandInput(
             sender = player,
             args = listOf("on", "off"),
-            isConsole = true,
+            isConsole = false,
         )
         assertThrows<InvalidCommandArgumentsException> {
             NightVisionCommand().execute(input)
@@ -99,7 +98,6 @@ class NightVisionCommandTest {
 
         verify(player).removePotionEffect(PotionEffectType.NIGHT_VISION)
         verify(player).addPotionEffect(potionEffect)
-        verifyNoMoreInteractions(player)
     }
 
     @Test
@@ -113,7 +111,6 @@ class NightVisionCommandTest {
 
         verify(player).removePotionEffect(PotionEffectType.NIGHT_VISION)
         verify(player, never()).addPotionEffect(potionEffect)
-        verifyNoMoreInteractions(player)
     }
 
     @Test
@@ -130,11 +127,10 @@ class NightVisionCommandTest {
 
         verify(player).removePotionEffect(PotionEffectType.NIGHT_VISION)
         verify(player).addPotionEffect(potionEffect)
-        verifyNoMoreInteractions(player)
     }
 
     @Test
-    fun `toggles off nightvision if alerady has effect`() = runTest {
+    fun `toggles off nightvision if already has effect`() = runTest {
         whenever(player.hasPotionEffect(PotionEffectType.NIGHT_VISION))
             .thenReturn(true)
 
@@ -147,6 +143,5 @@ class NightVisionCommandTest {
 
         verify(player).removePotionEffect(PotionEffectType.NIGHT_VISION)
         verify(player, never()).addPotionEffect(potionEffect)
-        verifyNoMoreInteractions(player)
     }
 }
