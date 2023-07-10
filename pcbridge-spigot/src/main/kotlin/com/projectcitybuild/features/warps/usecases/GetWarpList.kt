@@ -1,7 +1,7 @@
 package com.projectcitybuild.features.warps.usecases
 
-import com.projectcitybuild.modules.config.Config
-import com.projectcitybuild.modules.config.ConfigKeys
+import com.projectcitybuild.libs.config.Config
+import com.projectcitybuild.libs.config.ConfigKeys
 import com.projectcitybuild.repositories.WarpRepository
 import kotlin.math.ceil
 import kotlin.math.max

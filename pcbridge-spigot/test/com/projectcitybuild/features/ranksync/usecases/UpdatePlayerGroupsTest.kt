@@ -1,6 +1,6 @@
 package com.projectcitybuild.features.ranksync.usecases
 
-import com.projectcitybuild.modules.permissions.Permissions
+import com.projectcitybuild.libs.permissions.Permissions
 import com.projectcitybuild.pcbridge.core.utils.Failure
 import com.projectcitybuild.pcbridge.core.utils.Success
 import com.projectcitybuild.pcbridge.http.services.pcb.PlayerGroupHttpService

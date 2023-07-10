@@ -2,7 +2,7 @@ package com.projectcitybuild.support.spigot.commands
 
 import com.github.shynixn.mccoroutine.bukkit.SuspendingCommandExecutor
 import com.github.shynixn.mccoroutine.bukkit.setSuspendingExecutor
-import com.projectcitybuild.modules.errorreporting.ErrorReporter
+import com.projectcitybuild.libs.errorreporting.ErrorReporter
 import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger
 import com.projectcitybuild.support.textcomponent.send
 import net.md_5.bungee.api.ChatColor

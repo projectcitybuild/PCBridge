@@ -1,10 +1,10 @@
 package com.projectcitybuild.features.aggregate.usecases
 
 import com.projectcitybuild.features.aggregate.SyncPlayerWithAggregate
-import com.projectcitybuild.modules.config.Config
-import com.projectcitybuild.modules.config.ConfigStorageKey
-import com.projectcitybuild.modules.config.adapters.MemoryKeyValueStorage
-import com.projectcitybuild.modules.permissions.Permissions
+import com.projectcitybuild.libs.config.Config
+import com.projectcitybuild.libs.config.ConfigStorageKey
+import com.projectcitybuild.libs.config.adapters.MemoryKeyValueStorage
+import com.projectcitybuild.libs.permissions.Permissions
 import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger
 import com.projectcitybuild.pcbridge.http.responses.Account
 import com.projectcitybuild.pcbridge.http.responses.Aggregate

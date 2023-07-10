@@ -1,6 +1,6 @@
 package com.projectcitybuild.plugin.commands
 
-import com.projectcitybuild.commands.InvisFrameCommand
+import com.projectcitybuild.modules.buildtools.invisframes.commands.InvisFrameCommand
 import com.projectcitybuild.support.spigot.SpigotNamespace
 import com.projectcitybuild.support.spigot.commands.CannotInvokeFromConsoleException
 import com.projectcitybuild.support.spigot.commands.InvalidCommandArgumentsException
@@ -11,7 +11,6 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.PlayerInventory
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import org.mockito.Mockito.mock
 import org.mockito.kotlin.whenever

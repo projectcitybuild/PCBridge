@@ -1,6 +1,6 @@
 package com.projectcitybuild.plugin.commands
 
-import com.projectcitybuild.commands.NightVisionCommand
+import com.projectcitybuild.modules.buildtools.nightvision.commands.NightVisionCommand
 import com.projectcitybuild.support.spigot.commands.CannotInvokeFromConsoleException
 import com.projectcitybuild.support.spigot.commands.InvalidCommandArgumentsException
 import com.projectcitybuild.support.spigot.commands.SpigotCommandInput

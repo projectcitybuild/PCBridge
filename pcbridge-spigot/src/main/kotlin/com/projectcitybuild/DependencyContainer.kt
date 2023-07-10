@@ -1,74 +1,27 @@
 package com.projectcitybuild
 
-import com.projectcitybuild.commands.ACommand
-import com.projectcitybuild.commands.BadgeCommand
-import com.projectcitybuild.commands.BanCommand
-import com.projectcitybuild.commands.BanIPCommand
-import com.projectcitybuild.commands.CheckBanCommand
-import com.projectcitybuild.commands.DelWarpCommand
-import com.projectcitybuild.commands.InvisFrameCommand
-import com.projectcitybuild.commands.MuteCommand
-import com.projectcitybuild.commands.NightVisionCommand
-import com.projectcitybuild.commands.PCBridgeCommand
-import com.projectcitybuild.commands.SetWarpCommand
-import com.projectcitybuild.commands.SyncCommand
-import com.projectcitybuild.commands.SyncOtherCommand
-import com.projectcitybuild.commands.UnbanCommand
-import com.projectcitybuild.commands.UnbanIPCommand
-import com.projectcitybuild.commands.UnmuteCommand
-import com.projectcitybuild.commands.WarningAcknowledgeCommand
-import com.projectcitybuild.commands.WarpCommand
-import com.projectcitybuild.commands.WarpsCommand
-import com.projectcitybuild.features.aggregate.AuthoriseConnection
-import com.projectcitybuild.features.aggregate.GetAggregate
-import com.projectcitybuild.features.aggregate.SyncPlayerWithAggregate
-import com.projectcitybuild.features.bans.usecases.BanIP
-import com.projectcitybuild.features.bans.usecases.BanUUID
-import com.projectcitybuild.features.bans.usecases.CheckUUIDBan
-import com.projectcitybuild.features.bans.usecases.UnbanIP
-import com.projectcitybuild.features.bans.usecases.UnbanUUID
 import com.projectcitybuild.features.chat.ChatBadgeFormatter
 import com.projectcitybuild.features.chat.ChatGroupFormatter
-import com.projectcitybuild.features.chat.usecases.MutePlayer
-import com.projectcitybuild.features.chat.usecases.ToggleBadge
-import com.projectcitybuild.features.ranksync.usecases.GenerateAccountVerificationURL
 import com.projectcitybuild.features.ranksync.usecases.UpdatePlayerGroups
-import com.projectcitybuild.features.utilities.usecases.GetVersion
-import com.projectcitybuild.features.utilities.usecases.ReloadPlugin
-import com.projectcitybuild.features.warnings.usecases.AcknowledgeWarning
-import com.projectcitybuild.features.warnings.usecases.GetUnacknowledgedWarnings
-import com.projectcitybuild.features.warps.usecases.CreateWarp
-import com.projectcitybuild.features.warps.usecases.DeleteWarp
-import com.projectcitybuild.features.warps.usecases.GetWarpList
-import com.projectcitybuild.features.warps.usecases.TeleportToWarp
 import com.projectcitybuild.integrations.dynmap.DynmapMarkerIntegration
 import com.projectcitybuild.integrations.essentials.EssentialsIntegration
 import com.projectcitybuild.integrations.gadgetsmenu.GadgetsMenuIntegration
 import com.projectcitybuild.integrations.luckperms.LuckPermsIntegration
-import com.projectcitybuild.listeners.AsyncPlayerChatListener
-import com.projectcitybuild.listeners.AsyncPreLoginListener
-import com.projectcitybuild.listeners.EmojiChatListener
-import com.projectcitybuild.listeners.InvisFrameListener
-import com.projectcitybuild.listeners.ExceptionListener
-import com.projectcitybuild.listeners.FirstTimeJoinListener
-import com.projectcitybuild.listeners.PlayerJoinListener
-import com.projectcitybuild.listeners.PlayerQuitListener
-import com.projectcitybuild.listeners.TelemetryListener
-import com.projectcitybuild.modules.config.Config
-import com.projectcitybuild.modules.config.ConfigKeys
-import com.projectcitybuild.modules.config.adapters.YamlKeyValueStorage
-import com.projectcitybuild.modules.database.DataSource
-import com.projectcitybuild.modules.datetime.formatter.DateTimeFormatter
-import com.projectcitybuild.modules.datetime.formatter.DateTimeFormatterImpl
-import com.projectcitybuild.modules.datetime.time.LocalizedTime
-import com.projectcitybuild.modules.datetime.time.Time
-import com.projectcitybuild.modules.errorreporting.ErrorReporter
-import com.projectcitybuild.modules.errorreporting.adapters.SentryErrorReporter
-import com.projectcitybuild.modules.nameguesser.NameGuesser
-import com.projectcitybuild.modules.permissions.Permissions
-import com.projectcitybuild.modules.permissions.adapters.LuckPermsPermissions
-import com.projectcitybuild.modules.playercache.PlayerConfigCache
-import com.projectcitybuild.modules.storage.adapters.YamlStorage
+import com.projectcitybuild.libs.config.Config
+import com.projectcitybuild.libs.config.ConfigKeys
+import com.projectcitybuild.libs.config.adapters.YamlKeyValueStorage
+import com.projectcitybuild.libs.database.DataSource
+import com.projectcitybuild.libs.datetime.formatter.DateTimeFormatter
+import com.projectcitybuild.libs.datetime.formatter.DateTimeFormatterImpl
+import com.projectcitybuild.libs.datetime.time.LocalizedTime
+import com.projectcitybuild.libs.datetime.time.Time
+import com.projectcitybuild.libs.errorreporting.ErrorReporter
+import com.projectcitybuild.libs.errorreporting.adapters.SentryErrorReporter
+import com.projectcitybuild.libs.nameguesser.NameGuesser
+import com.projectcitybuild.libs.permissions.Permissions
+import com.projectcitybuild.libs.permissions.adapters.LuckPermsPermissions
+import com.projectcitybuild.libs.playercache.PlayerConfigCache
+import com.projectcitybuild.libs.storage.adapters.YamlStorage
 import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger
 import com.projectcitybuild.pcbridge.core.contracts.PlatformScheduler
 import com.projectcitybuild.pcbridge.http.HttpService
@@ -168,27 +121,27 @@ class DependencyContainer(
         )
     }
 
-    private val localEventBroadcaster: LocalEventBroadcaster
+    val localEventBroadcaster: LocalEventBroadcaster
         get() = SpigotLocalEventBroadcaster()
 
-    private val playerKicker: PlayerKicker
+    val playerKicker: PlayerKicker
         get() = SpigotPlayerKicker(server)
 
-    private val nameGuesser
+    val nameGuesser
         get() = NameGuesser()
 
     val permissions: Permissions by lazy {
         LuckPermsPermissions(logger)
     }
 
-    private val chatGroupFormatter by lazy {
+    val chatGroupFormatter by lazy {
         ChatGroupFormatter(
             permissions,
             config,
         )
     }
 
-    private val chatBadgeFormatter by lazy {
+    val chatBadgeFormatter by lazy {
         ChatBadgeFormatter(
             playerConfigRepository,
             chatBadgeRepository,
@@ -230,33 +183,33 @@ class DependencyContainer(
      * Repositories
      */
 
-    private val chatBadgeRepository by lazy {
+    val chatBadgeRepository by lazy {
         ChatBadgeRepository()
     }
 
-    private val playerConfigCache by lazy {
+    val playerConfigCache by lazy {
         PlayerConfigCache()
     }
 
-    private val playerConfigRepository by lazy {
+    val playerConfigRepository by lazy {
         PlayerConfigRepository(
             cache = playerConfigCache,
             dataSource,
         )
     }
 
-    private val playerBanRepository by lazy {
+    val playerBanRepository by lazy {
         PlayerBanRepository(httpService.uuidBan)
     }
 
-    private val playerUUIDRepository by lazy {
+    val playerUUIDRepository by lazy {
         PlayerUUIDRepository(
             server,
             httpService.playerUuid,
         )
     }
 
-    private val playerGroupRepository by lazy {
+    val playerGroupRepository by lazy {
         PlayerGroupRepository(
             httpService.playerGroup,
             config,
@@ -264,19 +217,19 @@ class DependencyContainer(
         )
     }
 
-    private val playerWarningRepository by lazy {
+    val playerWarningRepository by lazy {
         PlayerWarningRepository(
             httpService.playerWarning,
         )
     }
 
-    private val ipBanRepository by lazy {
+    val ipBanRepository by lazy {
         IPBanRepository(
             httpService.ipBan,
         )
     }
 
-    private val warpRepository by lazy {
+    val warpRepository by lazy {
         WarpRepository(dataSource)
     }
 
@@ -286,7 +239,7 @@ class DependencyContainer(
         )
     }
 
-    private val telemetryRepository by lazy {
+    val telemetryRepository by lazy {
         TelemetryRepository(
             httpService.telemetry,
         )
@@ -298,209 +251,11 @@ class DependencyContainer(
         )
     }
 
-    private val verificationURLRepository by lazy {
+    val verificationURLRepository by lazy {
         VerificationURLRepository(
             httpService.verificationURL,
         )
     }
-
-    /**
-     * Commands
-     */
-
-    val aCommand get() = ACommand(server)
-
-    val badgeCommand get() = BadgeCommand(
-        ToggleBadge(playerConfigRepository)
-    )
-
-    val banCommand get() = BanCommand(
-        server,
-        BanUUID(
-            playerBanRepository,
-            playerUUIDRepository,
-            server,
-            playerKicker,
-        ),
-    )
-
-    val banIPCommand get() = BanIPCommand(
-        server,
-        BanIP(ipBanRepository, playerKicker),
-    )
-
-    val checkBanCommand get() = CheckBanCommand(
-        server,
-        CheckUUIDBan(
-            playerBanRepository,
-            playerUUIDRepository,
-            dateTimeFormatter,
-        ),
-    )
-
-    val delWarpCommand get() = DelWarpCommand(
-        DeleteWarp(
-            warpRepository,
-            localEventBroadcaster,
-        ),
-        warpRepository,
-    )
-
-    val invisFrameCommand get() = InvisFrameCommand(
-        spigotNamespace,
-    )
-
-    val muteCommand get() = MuteCommand(
-        server,
-        MutePlayer(
-            playerConfigRepository,
-            nameGuesser,
-        )
-    )
-
-    val nightVisionCommand get() = NightVisionCommand()
-
-    val pcbridgeCommand get() = PCBridgeCommand(
-        GetVersion(),
-        ReloadPlugin(
-            chatGroupFormatter,
-            playerConfigCache,
-            warpRepository,
-            config,
-        )
-    )
-
-    val setWarpCommand get() = SetWarpCommand(
-        CreateWarp(
-            warpRepository,
-            localEventBroadcaster,
-            time,
-        )
-    )
-
-    val syncCommand get() = SyncCommand(
-        GenerateAccountVerificationURL(
-            verificationURLRepository,
-        ),
-        UpdatePlayerGroups(
-            permissions,
-            playerGroupRepository,
-        )
-    )
-
-    val syncOtherCommand get() = SyncOtherCommand(
-        server,
-        UpdatePlayerGroups(
-            permissions,
-            playerGroupRepository,
-        ),
-        nameGuesser,
-    )
-
-    val unbanCommand get() = UnbanCommand(
-        server,
-        UnbanUUID(
-            playerBanRepository,
-            playerUUIDRepository,
-            server,
-        )
-    )
-
-    val unbanIPCommand get() = UnbanIPCommand(
-        UnbanIP(ipBanRepository)
-    )
-
-    val unmuteCommand get() = UnmuteCommand(
-        server,
-        MutePlayer(
-            playerConfigRepository,
-            nameGuesser,
-        ),
-    )
-
-    val warningAcknowledgeCommand get() = WarningAcknowledgeCommand(
-        AcknowledgeWarning(playerWarningRepository)
-    )
-
-    val warpCommand get() = WarpCommand(
-        TeleportToWarp(
-            warpRepository,
-            nameGuesser,
-            logger,
-            localEventBroadcaster,
-            server,
-        ),
-        warpRepository,
-    )
-
-    val warpsCommand get() = WarpsCommand(
-        GetWarpList(
-            warpRepository,
-            config,
-        )
-    )
-
-    /**
-     * Listeners
-     */
-
-    val asyncPlayerChatListener get() = AsyncPlayerChatListener(
-        server,
-        playerConfigRepository,
-        chatGroupFormatter,
-        chatBadgeFormatter,
-    )
-
-    val asyncPreLoginListener get() = AsyncPreLoginListener(
-        GetAggregate(aggregateRepository),
-        AuthoriseConnection(),
-        SyncPlayerWithAggregate(
-            permissions,
-            chatBadgeRepository,
-            config,
-            logger,
-        ),
-        logger,
-        dateTimeFormatter,
-        errorReporter,
-    )
-
-    val emojiChatListener get() = EmojiChatListener()
-
-    val exceptionListener get() = ExceptionListener(
-        errorReporter,
-    )
-
-    val firstTimeJoinListener get() = FirstTimeJoinListener(
-        server,
-        logger,
-    )
-
-    val invisFrameListener get() = InvisFrameListener(
-        spigotNamespace,
-    )
-
-    val playerJoinListener get() = PlayerJoinListener(
-        server,
-        localEventBroadcaster,
-        playerConfigRepository,
-        GetUnacknowledgedWarnings(
-            playerWarningRepository,
-            dateTimeFormatter,
-        ),
-        logger,
-    )
-
-    val playerQuitListener get() = PlayerQuitListener(
-        server,
-        playerConfigCache,
-        chatGroupFormatter,
-        chatBadgeRepository,
-    )
-
-    val telemetryListener get() = TelemetryListener(
-        telemetryRepository,
-    )
 
     /**
      * Integrations

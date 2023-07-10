@@ -2,7 +2,7 @@ package com.projectcitybuild.repositories
 
 import com.projectcitybuild.entities.SerializableLocation
 import com.projectcitybuild.entities.Warp
-import com.projectcitybuild.modules.database.DataSource
+import com.projectcitybuild.libs.database.DataSource
 
 class WarpRepository(
     private val dataSource: DataSource,

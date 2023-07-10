@@ -1,6 +1,6 @@
 package com.projectcitybuild.features.warnings.usecases
 
-import com.projectcitybuild.modules.datetime.formatter.DateTimeFormatter
+import com.projectcitybuild.libs.datetime.formatter.DateTimeFormatter
 import com.projectcitybuild.repositories.PlayerWarningRepository
 import java.util.UUID
 
