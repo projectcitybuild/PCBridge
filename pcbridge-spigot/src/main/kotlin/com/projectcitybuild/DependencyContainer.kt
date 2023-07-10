@@ -47,6 +47,7 @@ import com.projectcitybuild.integrations.gadgetsmenu.GadgetsMenuIntegration
 import com.projectcitybuild.integrations.luckperms.LuckPermsIntegration
 import com.projectcitybuild.listeners.AsyncPlayerChatListener
 import com.projectcitybuild.listeners.AsyncPreLoginListener
+import com.projectcitybuild.listeners.EmojiChatListener
 import com.projectcitybuild.listeners.InvisFrameListener
 import com.projectcitybuild.listeners.ExceptionListener
 import com.projectcitybuild.listeners.FirstTimeJoinListener
@@ -463,6 +464,8 @@ class DependencyContainer(
         dateTimeFormatter,
         errorReporter,
     )
+
+    val emojiChatListener get() = EmojiChatListener()
 
     val exceptionListener get() = ExceptionListener(
         errorReporter,

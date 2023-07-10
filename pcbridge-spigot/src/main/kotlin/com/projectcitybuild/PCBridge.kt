@@ -41,6 +41,7 @@ class PCBridge : JavaPlugin() {
             arrayOf(
                 asyncPlayerChatListener,
                 asyncPreLoginListener,
+                emojiChatListener,
                 exceptionListener,
                 firstTimeJoinListener,
                 invisFrameListener,
