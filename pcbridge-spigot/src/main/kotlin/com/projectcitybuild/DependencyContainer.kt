@@ -6,6 +6,7 @@ import com.projectcitybuild.commands.BanCommand
 import com.projectcitybuild.commands.BanIPCommand
 import com.projectcitybuild.commands.CheckBanCommand
 import com.projectcitybuild.commands.DelWarpCommand
+import com.projectcitybuild.commands.InvisFrameCommand
 import com.projectcitybuild.commands.MuteCommand
 import com.projectcitybuild.commands.NightVisionCommand
 import com.projectcitybuild.commands.PCBridgeCommand
@@ -46,6 +47,7 @@ import com.projectcitybuild.integrations.gadgetsmenu.GadgetsMenuIntegration
 import com.projectcitybuild.integrations.luckperms.LuckPermsIntegration
 import com.projectcitybuild.listeners.AsyncPlayerChatListener
 import com.projectcitybuild.listeners.AsyncPreLoginListener
+import com.projectcitybuild.listeners.InvisFrameListener
 import com.projectcitybuild.listeners.ExceptionListener
 import com.projectcitybuild.listeners.FirstTimeJoinListener
 import com.projectcitybuild.listeners.PlayerJoinListener
@@ -84,6 +86,7 @@ import com.projectcitybuild.repositories.TelemetryRepository
 import com.projectcitybuild.repositories.VerificationURLRepository
 import com.projectcitybuild.repositories.WarpRepository
 import com.projectcitybuild.support.spigot.SpigotLogger
+import com.projectcitybuild.support.spigot.SpigotNamespace
 import com.projectcitybuild.support.spigot.SpigotScheduler
 import com.projectcitybuild.support.spigot.commands.SpigotCommandRegistry
 import com.projectcitybuild.support.spigot.eventbroadcast.LocalEventBroadcaster
@@ -220,6 +223,8 @@ class DependencyContainer(
         )
     }
 
+    val spigotNamespace get() = SpigotNamespace(plugin)
+
     /**
      * Repositories
      */
@@ -338,6 +343,10 @@ class DependencyContainer(
             localEventBroadcaster,
         ),
         warpRepository,
+    )
+
+    val invisFrameCommand get() = InvisFrameCommand(
+        spigotNamespace,
     )
 
     val muteCommand get() = MuteCommand(
@@ -462,6 +471,10 @@ class DependencyContainer(
     val firstTimeJoinListener get() = FirstTimeJoinListener(
         server,
         logger,
+    )
+
+    val invisFrameListener get() = InvisFrameListener(
+        spigotNamespace,
     )
 
     val playerJoinListener get() = PlayerJoinListener(

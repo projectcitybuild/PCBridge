@@ -75,10 +75,10 @@ class NightVisionCommandTest {
                 NightVisionCommand().execute(input)
             }
         }
-        listOf("on", "ON", "off", "OFF").forEach { invalidOption ->
+        listOf("on", "ON", "off", "OFF").forEach { validOption ->
             val input = SpigotCommandInput(
                 sender = player,
-                args = listOf(invalidOption),
+                args = listOf(validOption),
                 isConsole = false,
             )
             assertDoesNotThrow {
