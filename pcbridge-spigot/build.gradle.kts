@@ -39,33 +39,21 @@ dependencies {
     implementation(project(":pcbridge-http"))
     implementation(project(":pcbridge-web-server"))
 
-    compileOnly("org.spigotmc:spigot-api:1.12.2-R0.1-SNAPSHOT")
-
+    compileOnly("org.spigotmc:spigot-api:1.19.2-R0.1-SNAPSHOT")
     compileOnly("net.md-5:bungeecord-api:1.16-R0.4")
-
     compileOnly("net.luckperms:api:5.4")
-
     compileOnly("net.essentialsx:EssentialsX:2.19.0")
-
-    // dynmap
     compileOnly("us.dynmap:dynmap-api:3.3")
     compileOnly("us.dynmap:DynmapCoreAPI:3.3")
-
-    // GadgetsMenu
     compileOnly(files("$projectDir/libs/GadgetsMenu.jar"))
-
     implementation("com.github.shynixn.mccoroutine:mccoroutine-bukkit-api:2.11.0")
     implementation("com.github.shynixn.mccoroutine:mccoroutine-bukkit-core:2.11.0")
-
     implementation("com.zaxxer:HikariCP:5.0.1")
-
     implementation("co.aikar:idb-core:1.0.0-SNAPSHOT")
-
     implementation("io.sentry:sentry:5.7.4")
 
-    // Needed for mocking in tests
     testImplementation("net.md-5:bungeecord-api:1.16-R0.4")
-    testImplementation("org.spigotmc:spigot-api:1.12.2-R0.1-SNAPSHOT")
+    testImplementation("org.spigotmc:spigot-api:1.19.2-R0.1-SNAPSHOT")
 }
 
 sourceSets {

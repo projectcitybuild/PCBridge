@@ -10,7 +10,7 @@ import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataType
 
-class InvisItemFrameCommand(
+class InvisFrameCommand(
     private val spigotNamespace: SpigotNamespace,
 ) : SpigotCommand {
     override val label = "invisframe"

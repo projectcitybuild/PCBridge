@@ -6,7 +6,7 @@ import com.projectcitybuild.commands.BanCommand
 import com.projectcitybuild.commands.BanIPCommand
 import com.projectcitybuild.commands.CheckBanCommand
 import com.projectcitybuild.commands.DelWarpCommand
-import com.projectcitybuild.commands.InvisItemFrameCommand
+import com.projectcitybuild.commands.InvisFrameCommand
 import com.projectcitybuild.commands.MuteCommand
 import com.projectcitybuild.commands.NightVisionCommand
 import com.projectcitybuild.commands.PCBridgeCommand
@@ -345,7 +345,7 @@ class DependencyContainer(
         warpRepository,
     )
 
-    val invisItemFrameCommand get() = InvisItemFrameCommand(
+    val invisFrameCommand get() = InvisFrameCommand(
         spigotNamespace,
     )
 
