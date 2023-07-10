@@ -47,9 +47,9 @@ import com.projectcitybuild.integrations.gadgetsmenu.GadgetsMenuIntegration
 import com.projectcitybuild.integrations.luckperms.LuckPermsIntegration
 import com.projectcitybuild.listeners.AsyncPlayerChatListener
 import com.projectcitybuild.listeners.AsyncPreLoginListener
+import com.projectcitybuild.listeners.InvisFrameListener
 import com.projectcitybuild.listeners.ExceptionListener
 import com.projectcitybuild.listeners.FirstTimeJoinListener
-import com.projectcitybuild.listeners.HangingPlaceListener
 import com.projectcitybuild.listeners.PlayerJoinListener
 import com.projectcitybuild.listeners.PlayerQuitListener
 import com.projectcitybuild.listeners.TelemetryListener
@@ -473,7 +473,7 @@ class DependencyContainer(
         logger,
     )
 
-    val hangingPlaceListener get() = HangingPlaceListener(
+    val invisFrameListener get() = InvisFrameListener(
         spigotNamespace,
     )
 
