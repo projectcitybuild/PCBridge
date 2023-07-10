@@ -28,7 +28,7 @@ class EmojiChatListenerTest {
             val recipients = emptySet<Player>()
 
             val event = AsyncPlayerChatEvent(async, sender, original, recipients)
-            EmojiChatListener().onAsyncPlayerChatEvent(event)
+            EmojiChatListener().handle(event)
 
             assertEquals(event.message, expected)
         }
