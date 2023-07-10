@@ -233,7 +233,7 @@ class DependencyContainer(
         WarpRepository(dataSource)
     }
 
-    private val aggregateRepository by lazy {
+    val aggregateRepository by lazy {
         AggregateRepository(
             httpService.aggregate,
         )

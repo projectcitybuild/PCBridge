@@ -56,7 +56,8 @@ class PCBridge : JavaPlugin() {
             spigotLogger = logger,
             spigotConfig = config,
             minecraftDispatcher = minecraftDispatcher
-        ).apply {
+        )
+        container!!.apply {
             errorReporter.start()
 
             runCatching {
