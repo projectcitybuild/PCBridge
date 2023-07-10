@@ -1,6 +1,5 @@
-package com.projectcitybuild.plugin.listeners
+package com.projectcitybuild.modules.chat.listeners
 
-import com.projectcitybuild.modules.chat.listeners.EmojiChatListener
 import kotlinx.coroutines.test.runTest
 import org.bukkit.entity.Player
 import org.bukkit.event.player.AsyncPlayerChatEvent

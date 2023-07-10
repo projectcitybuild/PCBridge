@@ -11,7 +11,6 @@ import com.projectcitybuild.support.textcomponent.add
 import kotlinx.coroutines.runBlocking
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.chat.TextComponent
-import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent
 import java.time.format.FormatStyle
@@ -26,14 +25,16 @@ class AsyncPreLoginListener(
     private val errorReporter: ErrorReporter,
 ) : SpigotListener<AsyncPlayerPreLoginEvent> {
 
-    @EventHandler(priority = EventPriority.HIGHEST)
-    fun onAsyncPreLogin(event: AsyncPlayerPreLoginEvent) {
+    override val priority: EventPriority = EventPriority.HIGHEST
 
-        // Events cannot be mutated (i.e. we cannot kick the connecting player) inside a
-        // suspended function due to the way the code compiles, so we need to block.
-        // Blocking isn't a problem here because the event observation is already running asynchronously
-        //
-        // See https://github.com/Shynixn/MCCoroutine/issues/43
+    override suspend fun handle(event: AsyncPlayerPreLoginEvent) {
+        /**
+         * Events cannot be mutated (i.e. we cannot kick the connecting player) inside a
+         * suspended function due to the way the code compiles, so we need to block.
+         * Blocking isn't a problem here because the event observation is already running asynchronously
+         *
+         * See https://github.com/Shynixn/MCCoroutine/issues/43
+         */
         runBlocking {
             runCatching {
                 val aggregate = getAggregate.execute(

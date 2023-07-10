@@ -1,6 +1,5 @@
-package com.projectcitybuild.plugin.commands
+package com.projectcitybuild.modules.buildtools.nightvision.commands
 
-import com.projectcitybuild.modules.buildtools.nightvision.commands.NightVisionCommand
 import com.projectcitybuild.support.spigot.commands.CannotInvokeFromConsoleException
 import com.projectcitybuild.support.spigot.commands.InvalidCommandArgumentsException
 import com.projectcitybuild.support.spigot.commands.SpigotCommandInput
@@ -12,7 +11,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
-import org.mockito.Mockito.mock
+import org.mockito.Mockito
 import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
@@ -34,9 +33,9 @@ class NightVisionCommandTest {
 
     @BeforeEach
     fun setUp() {
-        player = mock(Player::class.java)
+        player = Mockito.mock(Player::class.java)
 
-        whenever(player.spigot()).thenReturn(mock(Player.Spigot::class.java))
+        whenever(player.spigot()).thenReturn(Mockito.mock(Player.Spigot::class.java))
     }
 
     @Test

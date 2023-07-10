@@ -5,7 +5,7 @@ import org.bukkit.event.player.AsyncPlayerChatEvent
 
 class EmojiChatListener: SpigotListener<AsyncPlayerChatEvent> {
 
-    override fun handle(event: AsyncPlayerChatEvent) {
+    override suspend fun handle(event: AsyncPlayerChatEvent) {
         event.message = event.message
             .replace(oldValue = ":skull:", newValue = "☠", ignoreCase = true)
     }

@@ -11,7 +11,7 @@ class ItemInsertListener(
     private val spigotNamespace: SpigotNamespace,
 ) : SpigotListener<PlayerInteractEntityEvent> {
 
-    override fun handle(event: PlayerInteractEntityEvent) {
+    override suspend fun handle(event: PlayerInteractEntityEvent) {
         val entity = event.rightClicked
 
         val isItemFrame = entity is ItemFrame

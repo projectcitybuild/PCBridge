@@ -15,7 +15,7 @@ import com.projectcitybuild.modules.pluginutils.PluginUtilsModule
 import com.projectcitybuild.modules.ranksync.RankSyncModule
 import com.projectcitybuild.modules.telemetry.TelemetryModule
 import com.projectcitybuild.modules.warps.WarpsModule
-import com.projectcitybuild.support.modules.ModuleRegister
+import com.projectcitybuild.support.modules.ModuleRegisterDSL
 import org.bukkit.plugin.java.JavaPlugin
 
 class PCBridge : JavaPlugin() {
@@ -66,7 +66,7 @@ class PCBridge : JavaPlugin() {
 
                 modules.forEach { module ->
                     val container = container!!
-                    val builder = ModuleRegister(commandRegistry, listenerRegistry, container)
+                    val builder = ModuleRegisterDSL(commandRegistry, listenerRegistry, container)
                     module.register(builder::apply)
                 }
 

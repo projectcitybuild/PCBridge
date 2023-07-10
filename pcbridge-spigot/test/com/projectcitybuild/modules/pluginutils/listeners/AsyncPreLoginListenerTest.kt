@@ -1,4 +1,4 @@
-package com.projectcitybuild.plugin.listeners
+package com.projectcitybuild.modules.pluginutils.listeners
 
 import com.projectcitybuild.DateTimeFormatterMock
 import com.projectcitybuild.features.aggregate.AuthoriseConnection
@@ -74,7 +74,7 @@ class AsyncPreLoginListenerTest {
             whenever(authoriseConnection.execute(Aggregate()))
                 .thenReturn(AuthoriseConnection.ConnectResult.Denied(ban))
 
-            listener.onAsyncPreLogin(event)
+            listener.handle(event)
 
             verify(event).disallow(eq(AsyncPlayerPreLoginEvent.Result.KICK_BANNED), anyString())
         }
@@ -92,7 +92,7 @@ class AsyncPreLoginListenerTest {
         whenever(authoriseConnection.execute(Aggregate()))
             .thenReturn(null)
 
-        listener.onAsyncPreLogin(event)
+        listener.handle(event)
 
         verify(event, never()).disallow(any(AsyncPlayerPreLoginEvent.Result::class.java), any())
     }
@@ -106,7 +106,7 @@ class AsyncPreLoginListenerTest {
         whenever(getAggregate.execute(uuid, ip))
             .thenThrow(Exception::class.java)
 
-        listener.onAsyncPreLogin(event)
+        listener.handle(event)
 
         verify(event).disallow(eq(AsyncPlayerPreLoginEvent.Result.KICK_OTHER), anyString())
     }

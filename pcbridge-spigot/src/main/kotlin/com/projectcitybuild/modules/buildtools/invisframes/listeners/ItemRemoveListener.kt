@@ -11,7 +11,7 @@ class ItemRemoveListener(
     private val spigotNamespace: SpigotNamespace,
 ) : SpigotListener<EntityDamageByEntityEvent> {
 
-    override fun handle(event: EntityDamageByEntityEvent) {
+    override suspend fun handle(event: EntityDamageByEntityEvent) {
         val entity = event.entity
 
         val isItemFrame = entity is ItemFrame

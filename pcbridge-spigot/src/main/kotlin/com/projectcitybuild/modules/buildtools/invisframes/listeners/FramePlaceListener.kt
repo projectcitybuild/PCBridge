@@ -10,7 +10,7 @@ class FramePlaceListener(
     private val spigotNamespace: SpigotNamespace,
 ) : SpigotListener<HangingPlaceEvent> {
 
-    override fun handle(event: HangingPlaceEvent) {
+    override suspend fun handle(event: HangingPlaceEvent) {
         val entity = event.entity
 
         val isItemFrame = entity is ItemFrame

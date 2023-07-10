@@ -1,6 +1,5 @@
-package com.projectcitybuild.plugin.commands
+package com.projectcitybuild.modules.buildtools.invisframes.commands
 
-import com.projectcitybuild.modules.buildtools.invisframes.commands.InvisFrameCommand
 import com.projectcitybuild.support.spigot.SpigotNamespace
 import com.projectcitybuild.support.spigot.commands.CannotInvokeFromConsoleException
 import com.projectcitybuild.support.spigot.commands.InvalidCommandArgumentsException
@@ -12,7 +11,7 @@ import org.bukkit.inventory.PlayerInventory
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import org.mockito.Mockito.mock
+import org.mockito.Mockito
 import org.mockito.kotlin.whenever
 
 class InvisFrameCommandTest {
@@ -23,20 +22,20 @@ class InvisFrameCommandTest {
 
     @BeforeEach
     fun setUp() {
-        val spigotNamespace = mock(SpigotNamespace::class.java)
+        val spigotNamespace = Mockito.mock(SpigotNamespace::class.java)
 
-        inventory = mock(PlayerInventory::class.java)
-        player = mock(Player::class.java)
+        inventory = Mockito.mock(PlayerInventory::class.java)
+        player = Mockito.mock(Player::class.java)
         command = InvisFrameCommand(spigotNamespace)
 
         whenever(player.spigot())
-            .thenReturn(mock(Player.Spigot::class.java))
+            .thenReturn(Mockito.mock(Player.Spigot::class.java))
 
         whenever(player.inventory)
             .thenReturn(inventory)
 
         whenever(spigotNamespace.invisibleKey)
-            .thenReturn(mock(NamespacedKey::class.java))
+            .thenReturn(Mockito.mock(NamespacedKey::class.java))
     }
 
     @Test

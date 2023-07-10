@@ -7,7 +7,7 @@ import com.projectcitybuild.support.spigot.listeners.SpigotListener
 import com.projectcitybuild.support.spigot.listeners.SpigotListenerRegistry
 import org.bukkit.event.Event
 
-class ModuleRegister(
+class ModuleRegisterDSL(
     private val commandRegistry: SpigotCommandRegistry,
     private val listenerRegistry: SpigotListenerRegistry,
     val container: DependencyContainer,
@@ -21,6 +21,6 @@ class ModuleRegister(
     }
 }
 
-private typealias ModuleBuilder = ModuleRegister.() -> Unit
+private typealias ModuleBuilder = ModuleRegisterDSL.() -> Unit
 
 typealias ModuleDeclaration = (ModuleBuilder) -> Unit

@@ -1,6 +1,5 @@
 package com.projectcitybuild.modules.chat.listeners
 
-import com.projectcitybuild.core.SpigotListener
 import com.projectcitybuild.features.chat.ChatBadgeFormatter
 import com.projectcitybuild.features.chat.ChatGroupFormatter
 import com.projectcitybuild.repositories.PlayerConfigRepository
@@ -10,7 +9,6 @@ import com.projectcitybuild.support.textcomponent.send
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.Server
-import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.player.AsyncPlayerChatEvent
 
@@ -22,8 +20,9 @@ class AsyncPlayerChatListener(
     private val chatBadgeFormatter: ChatBadgeFormatter,
 ) : SpigotListener<AsyncPlayerChatEvent> {
 
-    @EventHandler(priority = EventPriority.HIGHEST)
-    fun onAsyncPlayerChatEvent(event: AsyncPlayerChatEvent) {
+    override val priority: EventPriority = EventPriority.HIGHEST
+
+    override suspend fun handle(event: AsyncPlayerChatEvent) {
         val senderConfig = playerConfigRepository.get(event.player.uniqueId)!!
         if (senderConfig.isMuted) {
             event.player.send().error("You cannot talk while muted")
