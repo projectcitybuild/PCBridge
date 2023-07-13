@@ -1,8 +1,8 @@
 package com.projectcitybuild.modules.pluginutils
 
 import com.projectcitybuild.modules.pluginutils.commands.PCBridgeCommand
-import com.projectcitybuild.features.utilities.usecases.GetVersion
-import com.projectcitybuild.features.utilities.usecases.ReloadPlugin
+import com.projectcitybuild.modules.pluginutils.actions.GetVersion
+import com.projectcitybuild.modules.pluginutils.actions.ReloadPlugin
 import com.projectcitybuild.modules.pluginutils.listeners.CachePlayerOnJoinListener
 import com.projectcitybuild.modules.pluginutils.listeners.ExceptionListener
 import com.projectcitybuild.modules.pluginutils.listeners.UncachePlayerOnQuitListener

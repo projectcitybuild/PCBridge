@@ -1,19 +1,17 @@
 package com.projectcitybuild.modules.moderation.bans
 
-import com.projectcitybuild.features.aggregate.AuthoriseConnection
-import com.projectcitybuild.features.aggregate.GetAggregate
-import com.projectcitybuild.features.aggregate.SyncPlayerWithAggregate
-import com.projectcitybuild.features.bans.usecases.BanIP
-import com.projectcitybuild.features.bans.usecases.BanUUID
-import com.projectcitybuild.features.bans.usecases.CheckUUIDBan
-import com.projectcitybuild.features.bans.usecases.UnbanIP
-import com.projectcitybuild.features.bans.usecases.UnbanUUID
+import com.projectcitybuild.modules.moderation.bans.actions.AuthoriseConnection
+import com.projectcitybuild.modules.moderation.bans.actions.BanIP
+import com.projectcitybuild.modules.moderation.bans.actions.BanUUID
+import com.projectcitybuild.modules.moderation.bans.actions.CheckUUIDBan
+import com.projectcitybuild.modules.moderation.bans.actions.UnbanIP
+import com.projectcitybuild.modules.moderation.bans.actions.UnbanUUID
 import com.projectcitybuild.modules.moderation.bans.commands.BanCommand
 import com.projectcitybuild.modules.moderation.bans.commands.BanIPCommand
 import com.projectcitybuild.modules.moderation.bans.commands.CheckBanCommand
 import com.projectcitybuild.modules.moderation.bans.commands.UnbanCommand
 import com.projectcitybuild.modules.moderation.bans.commands.UnbanIPCommand
-import com.projectcitybuild.modules.moderation.bans.listeners.AsyncPreLoginListener
+import com.projectcitybuild.modules.moderation.bans.listeners.CheckBanOnConnectListener
 import com.projectcitybuild.support.modules.ModuleDeclaration
 import com.projectcitybuild.support.modules.PluginModule
 
@@ -66,18 +64,13 @@ class BansModule: PluginModule {
                 ),
             )
             listener(
-                AsyncPreLoginListener(
-                    GetAggregate(container.aggregateRepository),
+                CheckBanOnConnectListener(
+                    container.aggregateRepository,
                     AuthoriseConnection(),
-                    SyncPlayerWithAggregate(
-                        container.permissions,
-                        container.chatBadgeRepository,
-                        container.config,
-                        container.logger,
-                    ),
                     container.logger,
                     container.dateTimeFormatter,
                     container.errorReporter,
+                    container.localEventBroadcaster,
                 ),
             )
         }

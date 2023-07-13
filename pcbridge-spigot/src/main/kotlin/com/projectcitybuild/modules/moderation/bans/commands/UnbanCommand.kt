@@ -1,6 +1,6 @@
 package com.projectcitybuild.modules.moderation.bans.commands
 
-import com.projectcitybuild.features.bans.usecases.UnbanUUID
+import com.projectcitybuild.modules.moderation.bans.actions.UnbanUUID
 import com.projectcitybuild.pcbridge.core.utils.Failure
 import com.projectcitybuild.support.spigot.commands.InvalidCommandArgumentsException
 import com.projectcitybuild.support.spigot.commands.SpigotCommand

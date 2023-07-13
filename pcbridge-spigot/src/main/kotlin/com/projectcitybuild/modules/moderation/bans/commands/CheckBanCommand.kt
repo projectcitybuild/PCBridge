@@ -1,6 +1,6 @@
 package com.projectcitybuild.modules.moderation.bans.commands
 
-import com.projectcitybuild.features.bans.usecases.CheckUUIDBan
+import com.projectcitybuild.modules.moderation.bans.actions.CheckUUIDBan
 import com.projectcitybuild.pcbridge.core.utils.Failure
 import com.projectcitybuild.pcbridge.core.utils.Success
 import com.projectcitybuild.support.spigot.commands.InvalidCommandArgumentsException

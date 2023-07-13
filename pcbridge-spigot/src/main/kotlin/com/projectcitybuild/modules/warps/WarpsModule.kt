@@ -1,9 +1,9 @@
 package com.projectcitybuild.modules.warps
 
-import com.projectcitybuild.features.warps.usecases.CreateWarp
-import com.projectcitybuild.features.warps.usecases.DeleteWarp
-import com.projectcitybuild.features.warps.usecases.GetWarpList
-import com.projectcitybuild.features.warps.usecases.TeleportToWarp
+import com.projectcitybuild.modules.warps.actions.CreateWarp
+import com.projectcitybuild.modules.warps.actions.DeleteWarp
+import com.projectcitybuild.modules.warps.actions.GetWarpList
+import com.projectcitybuild.modules.warps.actions.TeleportToWarp
 import com.projectcitybuild.modules.warps.commands.DelWarpCommand
 import com.projectcitybuild.modules.warps.commands.SetWarpCommand
 import com.projectcitybuild.modules.warps.commands.WarpCommand

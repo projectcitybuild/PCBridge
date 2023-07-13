@@ -1,6 +1,6 @@
 package com.projectcitybuild.modules.moderation.warnings.commands
 
-import com.projectcitybuild.features.warnings.usecases.AcknowledgeWarning
+import com.projectcitybuild.modules.moderation.warnings.actions.AcknowledgeWarning
 import com.projectcitybuild.support.spigot.commands.InvalidCommandArgumentsException
 import com.projectcitybuild.support.spigot.commands.SpigotCommand
 import com.projectcitybuild.support.spigot.commands.SpigotCommandInput
