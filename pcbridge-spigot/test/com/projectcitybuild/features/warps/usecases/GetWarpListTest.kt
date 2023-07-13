@@ -1,8 +1,8 @@
 package com.projectcitybuild.features.warps.usecases
 
-import com.projectcitybuild.modules.config.Config
-import com.projectcitybuild.modules.config.ConfigKeys
-import com.projectcitybuild.modules.config.adapters.MemoryKeyValueStorage
+import com.projectcitybuild.libs.config.Config
+import com.projectcitybuild.libs.config.ConfigKeys
+import com.projectcitybuild.libs.config.adapters.MemoryKeyValueStorage
 import com.projectcitybuild.repositories.WarpRepository
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals

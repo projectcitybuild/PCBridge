@@ -1,6 +1,6 @@
 package com.projectcitybuild.features.chat.usecases
 
-import com.projectcitybuild.modules.nameguesser.NameGuesser
+import com.projectcitybuild.libs.nameguesser.NameGuesser
 import com.projectcitybuild.pcbridge.core.utils.Failure
 import com.projectcitybuild.pcbridge.core.utils.Result
 import com.projectcitybuild.pcbridge.core.utils.Success

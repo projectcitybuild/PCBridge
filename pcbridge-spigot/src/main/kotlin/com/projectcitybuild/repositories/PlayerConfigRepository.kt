@@ -1,8 +1,8 @@
 package com.projectcitybuild.repositories
 
 import com.projectcitybuild.entities.PlayerConfig
-import com.projectcitybuild.modules.database.DataSource
-import com.projectcitybuild.modules.playercache.PlayerConfigCache
+import com.projectcitybuild.libs.database.DataSource
+import com.projectcitybuild.libs.playercache.PlayerConfigCache
 import java.time.LocalDateTime
 import java.util.UUID
 

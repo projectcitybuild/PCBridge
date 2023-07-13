@@ -1,7 +1,7 @@
 package com.projectcitybuild.entities.migrations
 
 import co.aikar.idb.HikariPooledDatabase
-import com.projectcitybuild.modules.database.DatabaseMigration
+import com.projectcitybuild.libs.database.DatabaseMigration
 
 class `20220115_player_configs_warps` : DatabaseMigration {
     override val description = "Add player configs and warps"

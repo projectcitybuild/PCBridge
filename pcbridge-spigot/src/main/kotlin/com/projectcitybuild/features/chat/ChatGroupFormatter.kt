@@ -1,8 +1,8 @@
 package com.projectcitybuild.features.chat
 
-import com.projectcitybuild.modules.config.Config
-import com.projectcitybuild.modules.config.ConfigKeys
-import com.projectcitybuild.modules.permissions.Permissions
+import com.projectcitybuild.libs.config.Config
+import com.projectcitybuild.libs.config.ConfigKeys
+import com.projectcitybuild.libs.permissions.Permissions
 import net.md_5.bungee.api.chat.BaseComponent
 import net.md_5.bungee.api.chat.HoverEvent
 import net.md_5.bungee.api.chat.TextComponent

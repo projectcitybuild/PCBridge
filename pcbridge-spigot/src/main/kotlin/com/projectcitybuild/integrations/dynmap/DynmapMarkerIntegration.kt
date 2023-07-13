@@ -1,14 +1,14 @@
 package com.projectcitybuild.integrations.dynmap
 
-import com.projectcitybuild.core.SpigotListener
 import com.projectcitybuild.events.WarpCreateEvent
 import com.projectcitybuild.events.WarpDeleteEvent
 import com.projectcitybuild.integrations.SpigotIntegration
-import com.projectcitybuild.modules.config.Config
-import com.projectcitybuild.modules.config.ConfigKeys
+import com.projectcitybuild.libs.config.Config
+import com.projectcitybuild.libs.config.ConfigKeys
 import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger
 import com.projectcitybuild.repositories.WarpRepository
 import org.bukkit.event.EventHandler
+import org.bukkit.event.Listener
 import org.bukkit.plugin.Plugin
 import org.dynmap.DynmapAPI
 
@@ -17,7 +17,7 @@ class DynmapMarkerIntegration(
     private val warpRepository: WarpRepository,
     private val config: Config,
     private val logger: PlatformLogger,
-) : SpigotListener, SpigotIntegration {
+) : Listener, SpigotIntegration {
 
     class DynmapAPINotFoundException : Exception("Dynmap plugin not found")
     class DynmapMarkerIconNotFoundException : Exception()

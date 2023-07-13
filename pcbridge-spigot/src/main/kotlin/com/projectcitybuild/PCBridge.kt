@@ -1,55 +1,41 @@
 package com.projectcitybuild
 
 import com.github.shynixn.mccoroutine.bukkit.minecraftDispatcher
-import com.projectcitybuild.core.SpigotListener
 import com.projectcitybuild.integrations.SpigotIntegration
-import com.projectcitybuild.modules.errorreporting.ErrorReporter
-import com.projectcitybuild.support.spigot.commands.SpigotCommand
+import com.projectcitybuild.libs.errorreporting.ErrorReporter
+import com.projectcitybuild.modules.buildtools.invisframes.InvisFramesModule
+import com.projectcitybuild.modules.buildtools.nightvision.NightVisionModule
+import com.projectcitybuild.modules.chat.ChatModule
+import com.projectcitybuild.modules.joinmessages.JoinMessagesModule
+import com.projectcitybuild.modules.moderation.bans.BansModule
+import com.projectcitybuild.modules.moderation.mutes.MutesModule
+import com.projectcitybuild.modules.moderation.staffchat.StaffChatModule
+import com.projectcitybuild.modules.moderation.warnings.WarningsModule
+import com.projectcitybuild.modules.pluginutils.PluginUtilsModule
+import com.projectcitybuild.modules.ranksync.RankSyncModule
+import com.projectcitybuild.modules.telemetry.TelemetryModule
+import com.projectcitybuild.modules.warps.WarpsModule
+import com.projectcitybuild.support.modules.ModuleRegisterDSL
 import org.bukkit.plugin.java.JavaPlugin
 
 class PCBridge : JavaPlugin() {
     private var container: DependencyContainer? = null
     private var integrations: Array<SpigotIntegration> = emptyArray()
 
-    private fun commands(container: DependencyContainer): Array<SpigotCommand> =
-        container.run {
-            arrayOf(
-                aCommand,
-                badgeCommand,
-                banCommand,
-                banIPCommand,
-                checkBanCommand,
-                delWarpCommand,
-                invisFrameCommand,
-                muteCommand,
-                nightVisionCommand,
-                pcbridgeCommand,
-                setWarpCommand,
-                syncCommand,
-                syncOtherCommand,
-                unbanCommand,
-                unbanIPCommand,
-                unmuteCommand,
-                warningAcknowledgeCommand,
-                warpCommand,
-                warpsCommand,
-            )
-        }
-
-    private fun listeners(container: DependencyContainer): Array<SpigotListener> =
-        container.run {
-            arrayOf(
-                asyncPlayerChatListener,
-                asyncPreLoginListener,
-                emojiChatListener,
-                exceptionListener,
-                firstTimeJoinListener,
-                invisFrameListener,
-                playerJoinListener,
-                playerQuitListener,
-                telemetryListener,
-            )
-        }
+    private val modules get() = listOf(
+        BansModule(),
+        ChatModule(),
+        InvisFramesModule(),
+        JoinMessagesModule(),
+        MutesModule(),
+        NightVisionModule(),
+        PluginUtilsModule(),
+        RankSyncModule(),
+        StaffChatModule(),
+        TelemetryModule(),
+        WarningsModule(),
+        WarpsModule(),
+    )
 
     private fun integrations(container: DependencyContainer): Array<SpigotIntegration> =
         container.run {
@@ -79,8 +65,11 @@ class PCBridge : JavaPlugin() {
                 permissions.connect()
                 webServer.start()
 
-                commands(this).forEach { commandRegistry.register(it) }
-                listeners(this).forEach { listenerRegistry.register(it) }
+                modules.forEach { module ->
+                    val container = container!!
+                    val builder = ModuleRegisterDSL(commandRegistry, listenerRegistry, container)
+                    module.register(builder::apply)
+                }
 
                 integrations = integrations(this)
                 integrations.forEach { it.onEnable() }

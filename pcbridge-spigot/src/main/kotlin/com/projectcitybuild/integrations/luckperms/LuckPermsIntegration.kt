@@ -1,6 +1,5 @@
 package com.projectcitybuild.integrations.luckperms
 
-import com.projectcitybuild.core.SpigotListener
 import com.projectcitybuild.features.chat.ChatGroupFormatter
 import com.projectcitybuild.integrations.SpigotIntegration
 import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger
@@ -9,13 +8,14 @@ import net.luckperms.api.LuckPermsProvider
 import net.luckperms.api.event.EventSubscription
 import net.luckperms.api.event.node.NodeMutateEvent
 import net.luckperms.api.event.user.UserDataRecalculateEvent
+import org.bukkit.event.Listener
 import org.bukkit.plugin.Plugin
 
 class LuckPermsIntegration(
     private val plugin: Plugin,
     private val logger: PlatformLogger,
     private val chatGroupFormatter: ChatGroupFormatter,
-) : SpigotListener, SpigotIntegration {
+) : Listener, SpigotIntegration {
 
     private var isEnabled = false
     private val eventSubscriptions: MutableList<EventSubscription<*>> = mutableListOf()

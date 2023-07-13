@@ -1,7 +1,7 @@
 package com.projectcitybuild.features.warps.usecases
 
 import com.projectcitybuild.entities.Warp
-import com.projectcitybuild.modules.nameguesser.NameGuesser
+import com.projectcitybuild.libs.nameguesser.NameGuesser
 import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger
 import com.projectcitybuild.pcbridge.core.utils.Failure
 import com.projectcitybuild.pcbridge.core.utils.Success
