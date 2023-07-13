@@ -5,6 +5,7 @@ import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger
 import com.projectcitybuild.repositories.PlayerConfigRepository
 import com.projectcitybuild.support.spigot.eventbroadcast.LocalEventBroadcaster
 import com.projectcitybuild.support.spigot.listeners.SpigotListener
+import org.bukkit.event.EventHandler
 import org.bukkit.event.player.PlayerJoinEvent
 import java.time.LocalDateTime
 
@@ -15,6 +16,7 @@ class CachePlayerOnJoinListener(
     private val logger: PlatformLogger,
 ) : SpigotListener<PlayerJoinEvent> {
 
+    @EventHandler
     override suspend fun handle(event: PlayerJoinEvent) {
         val player = event.player
         val uuid = player.uniqueId

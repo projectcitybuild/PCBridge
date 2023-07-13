@@ -4,6 +4,7 @@ import com.projectcitybuild.features.chat.ChatGroupFormatter
 import com.projectcitybuild.libs.playercache.PlayerConfigCache
 import com.projectcitybuild.repositories.ChatBadgeRepository
 import com.projectcitybuild.support.spigot.listeners.SpigotListener
+import org.bukkit.event.EventHandler
 import org.bukkit.event.player.PlayerQuitEvent
 
 class UncachePlayerOnQuitListener(
@@ -12,6 +13,7 @@ class UncachePlayerOnQuitListener(
     private val chatBadgeRepository: ChatBadgeRepository,
 ) : SpigotListener<PlayerQuitEvent> {
 
+    @EventHandler
     override suspend fun handle(event: PlayerQuitEvent) {
         val player = event.player
 

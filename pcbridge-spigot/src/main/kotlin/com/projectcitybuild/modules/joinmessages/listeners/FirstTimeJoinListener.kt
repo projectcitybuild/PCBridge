@@ -7,12 +7,14 @@ import com.projectcitybuild.support.textcomponent.add
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.Server
+import org.bukkit.event.EventHandler
 
 class FirstTimeJoinListener(
     private val server: Server,
     private val logger: PlatformLogger,
 ) : SpigotListener<FirstTimeJoinEvent> {
 
+    @EventHandler
     override suspend fun handle(event: FirstTimeJoinEvent) {
         logger.debug("Sending first-time welcome message for ${event.player.name}")
 

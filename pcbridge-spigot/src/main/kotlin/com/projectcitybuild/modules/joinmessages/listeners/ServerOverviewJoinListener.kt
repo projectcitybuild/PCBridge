@@ -4,12 +4,14 @@ import com.projectcitybuild.support.spigot.listeners.SpigotListener
 import com.projectcitybuild.support.textcomponent.add
 import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.Server
+import org.bukkit.event.EventHandler
 import org.bukkit.event.player.PlayerJoinEvent
 
 class ServerOverviewJoinListener(
     private val server: Server,
 ) : SpigotListener<PlayerJoinEvent> {
 
+    @EventHandler
     override suspend fun handle(event: PlayerJoinEvent) {
         val onlinePlayerCount = server.onlinePlayers.size
 

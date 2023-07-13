@@ -4,6 +4,7 @@ import com.projectcitybuild.support.spigot.SpigotNamespace
 import com.projectcitybuild.support.spigot.listeners.SpigotListener
 import org.bukkit.entity.GlowItemFrame
 import org.bukkit.entity.ItemFrame
+import org.bukkit.event.EventHandler
 import org.bukkit.event.player.PlayerInteractEntityEvent
 import org.bukkit.persistence.PersistentDataType
 
@@ -11,6 +12,7 @@ class ItemInsertListener(
     private val spigotNamespace: SpigotNamespace,
 ) : SpigotListener<PlayerInteractEntityEvent> {
 
+    @EventHandler
     override suspend fun handle(event: PlayerInteractEntityEvent) {
         val entity = event.rightClicked
 

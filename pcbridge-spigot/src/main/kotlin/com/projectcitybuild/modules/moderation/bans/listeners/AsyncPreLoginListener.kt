@@ -11,6 +11,7 @@ import com.projectcitybuild.support.textcomponent.add
 import kotlinx.coroutines.runBlocking
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.chat.TextComponent
+import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent
 import java.time.format.FormatStyle
@@ -25,8 +26,7 @@ class AsyncPreLoginListener(
     private val errorReporter: ErrorReporter,
 ) : SpigotListener<AsyncPlayerPreLoginEvent> {
 
-    override val priority: EventPriority = EventPriority.HIGHEST
-
+    @EventHandler(priority = EventPriority.HIGHEST)
     override suspend fun handle(event: AsyncPlayerPreLoginEvent) {
         /**
          * Events cannot be mutated (i.e. we cannot kick the connecting player) inside a

@@ -9,12 +9,14 @@ import kotlinx.coroutines.launch
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.chat.ClickEvent
 import net.md_5.bungee.api.chat.TextComponent
+import org.bukkit.event.EventHandler
 import org.bukkit.event.player.PlayerJoinEvent
 
 class NotifyWarningsOnJoinListener(
     private val getUnacknowledgedWarnings: GetUnacknowledgedWarnings,
 ) : SpigotListener<PlayerJoinEvent> {
 
+    @EventHandler
     override suspend fun handle(event: PlayerJoinEvent) {
         val player = event.player
 

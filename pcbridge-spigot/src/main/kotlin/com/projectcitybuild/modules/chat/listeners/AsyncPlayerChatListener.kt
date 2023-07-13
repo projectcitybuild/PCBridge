@@ -9,6 +9,7 @@ import com.projectcitybuild.support.textcomponent.send
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.Server
+import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.player.AsyncPlayerChatEvent
 
@@ -20,8 +21,7 @@ class AsyncPlayerChatListener(
     private val chatBadgeFormatter: ChatBadgeFormatter,
 ) : SpigotListener<AsyncPlayerChatEvent> {
 
-    override val priority: EventPriority = EventPriority.HIGHEST
-
+    @EventHandler(priority = EventPriority.HIGHEST)
     override suspend fun handle(event: AsyncPlayerChatEvent) {
         val senderConfig = playerConfigRepository.get(event.player.uniqueId)!!
         if (senderConfig.isMuted) {

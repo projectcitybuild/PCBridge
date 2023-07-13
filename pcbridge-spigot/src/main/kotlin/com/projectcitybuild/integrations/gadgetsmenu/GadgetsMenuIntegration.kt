@@ -1,18 +1,18 @@
 package com.projectcitybuild.integrations.gadgetsmenu
 
-import com.projectcitybuild.core.SpigotListener
 import com.projectcitybuild.integrations.SpigotIntegration
 import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger
 import com.projectcitybuild.repositories.CurrencyRepository
 import com.yapzhenyie.GadgetsMenu.economy.GEconomyProvider
 import com.yapzhenyie.GadgetsMenu.player.OfflinePlayerManager
+import org.bukkit.event.Listener
 import org.bukkit.plugin.Plugin
 
 class GadgetsMenuIntegration(
     private val plugin: Plugin,
     private val logger: PlatformLogger,
     private val currencyRepository: CurrencyRepository,
-) : SpigotListener, SpigotIntegration {
+) : Listener, SpigotIntegration {
 
     private var isEnabled = false
 

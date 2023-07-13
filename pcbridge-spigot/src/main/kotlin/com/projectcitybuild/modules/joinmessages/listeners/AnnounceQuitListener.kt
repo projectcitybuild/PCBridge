@@ -5,12 +5,14 @@ import com.projectcitybuild.support.textcomponent.add
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.Server
+import org.bukkit.event.EventHandler
 import org.bukkit.event.player.PlayerQuitEvent
 
 class AnnounceQuitListener(
     private val server: Server,
 ) : SpigotListener<PlayerQuitEvent> {
 
+    @EventHandler
     override suspend fun handle(event: PlayerQuitEvent) {
         server.broadcastMessage(
             TextComponent()
