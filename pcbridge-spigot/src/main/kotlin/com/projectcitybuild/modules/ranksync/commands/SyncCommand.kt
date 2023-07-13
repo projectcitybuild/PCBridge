@@ -1,7 +1,7 @@
 package com.projectcitybuild.modules.ranksync.commands
 
-import com.projectcitybuild.features.ranksync.usecases.GenerateAccountVerificationURL
-import com.projectcitybuild.features.ranksync.usecases.UpdatePlayerGroups
+import com.projectcitybuild.modules.ranksync.actions.GenerateAccountVerificationURL
+import com.projectcitybuild.modules.ranksync.actions.UpdatePlayerGroups
 import com.projectcitybuild.pcbridge.core.utils.Failure
 import com.projectcitybuild.pcbridge.core.utils.Success
 import com.projectcitybuild.support.spigot.commands.CannotInvokeFromConsoleException

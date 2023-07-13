@@ -1,6 +1,6 @@
 package com.projectcitybuild.modules.chat.commands
 
-import com.projectcitybuild.features.chat.usecases.ToggleBadge
+import com.projectcitybuild.modules.chat.actions.ToggleBadge
 import com.projectcitybuild.support.spigot.commands.InvalidCommandArgumentsException
 import com.projectcitybuild.support.spigot.commands.SpigotCommand
 import com.projectcitybuild.support.spigot.commands.SpigotCommandInput

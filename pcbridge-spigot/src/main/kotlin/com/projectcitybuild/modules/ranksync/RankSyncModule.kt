@@ -1,9 +1,11 @@
 package com.projectcitybuild.modules.ranksync
 
-import com.projectcitybuild.features.ranksync.usecases.GenerateAccountVerificationURL
-import com.projectcitybuild.features.ranksync.usecases.UpdatePlayerGroups
+import com.projectcitybuild.modules.ranksync.actions.GenerateAccountVerificationURL
+import com.projectcitybuild.modules.ranksync.actions.SyncPlayerGroupsWithAggregate
+import com.projectcitybuild.modules.ranksync.actions.UpdatePlayerGroups
 import com.projectcitybuild.modules.ranksync.commands.SyncCommand
 import com.projectcitybuild.modules.ranksync.commands.SyncOtherCommand
+import com.projectcitybuild.modules.ranksync.listener.SyncPlayerGroupsOnJoinListener
 import com.projectcitybuild.support.modules.ModuleDeclaration
 import com.projectcitybuild.support.modules.PluginModule
 
@@ -30,6 +32,15 @@ class RankSyncModule: PluginModule {
                     ),
                     container.nameGuesser,
                 ),
+            )
+            listener(
+                SyncPlayerGroupsOnJoinListener(
+                    SyncPlayerGroupsWithAggregate(
+                        container.permissions,
+                        container.config,
+                        container.logger,
+                    ),
+                )
             )
         }
     }

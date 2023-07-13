@@ -1,6 +1,6 @@
 package com.projectcitybuild.modules.moderation.mutes.commands
 
-import com.projectcitybuild.features.chat.usecases.MutePlayer
+import com.projectcitybuild.modules.moderation.mutes.actions.MutePlayer
 import com.projectcitybuild.pcbridge.core.utils.Failure
 import com.projectcitybuild.pcbridge.core.utils.Success
 import com.projectcitybuild.support.spigot.commands.InvalidCommandArgumentsException

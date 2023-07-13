@@ -1,7 +1,7 @@
 package com.projectcitybuild.modules.warps.commands
 
 import com.projectcitybuild.entities.SerializableLocation
-import com.projectcitybuild.features.warps.usecases.CreateWarp
+import com.projectcitybuild.modules.warps.actions.CreateWarp
 import com.projectcitybuild.pcbridge.core.utils.Failure
 import com.projectcitybuild.pcbridge.core.utils.Success
 import com.projectcitybuild.support.spigot.commands.InvalidCommandArgumentsException

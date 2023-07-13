@@ -1,6 +1,6 @@
 package com.projectcitybuild.modules.pluginutils.listeners
 
-import com.projectcitybuild.features.chat.ChatGroupFormatter
+import com.projectcitybuild.modules.chat.ChatGroupFormatter
 import com.projectcitybuild.libs.playercache.PlayerConfigCache
 import com.projectcitybuild.repositories.ChatBadgeRepository
 import com.projectcitybuild.support.spigot.listeners.SpigotListener

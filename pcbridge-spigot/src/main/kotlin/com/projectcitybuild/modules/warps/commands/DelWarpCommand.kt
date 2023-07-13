@@ -1,6 +1,6 @@
 package com.projectcitybuild.modules.warps.commands
 
-import com.projectcitybuild.features.warps.usecases.DeleteWarp
+import com.projectcitybuild.modules.warps.actions.DeleteWarp
 import com.projectcitybuild.pcbridge.core.utils.Failure
 import com.projectcitybuild.pcbridge.core.utils.Success
 import com.projectcitybuild.repositories.WarpRepository

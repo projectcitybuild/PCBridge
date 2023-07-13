@@ -1,8 +1,8 @@
 package com.projectcitybuild
 
-import com.projectcitybuild.features.chat.ChatBadgeFormatter
-import com.projectcitybuild.features.chat.ChatGroupFormatter
-import com.projectcitybuild.features.ranksync.usecases.UpdatePlayerGroups
+import com.projectcitybuild.modules.chat.ChatBadgeFormatter
+import com.projectcitybuild.modules.chat.ChatGroupFormatter
+import com.projectcitybuild.modules.ranksync.actions.UpdatePlayerGroups
 import com.projectcitybuild.integrations.dynmap.DynmapMarkerIntegration
 import com.projectcitybuild.integrations.essentials.EssentialsIntegration
 import com.projectcitybuild.integrations.gadgetsmenu.GadgetsMenuIntegration

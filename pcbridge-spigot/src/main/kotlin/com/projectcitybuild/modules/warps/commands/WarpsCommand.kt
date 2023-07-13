@@ -1,6 +1,6 @@
 package com.projectcitybuild.modules.warps.commands
 
-import com.projectcitybuild.features.warps.usecases.GetWarpList
+import com.projectcitybuild.modules.warps.actions.GetWarpList
 import com.projectcitybuild.support.spigot.commands.InvalidCommandArgumentsException
 import com.projectcitybuild.support.spigot.commands.SpigotCommand
 import com.projectcitybuild.support.spigot.commands.SpigotCommandInput

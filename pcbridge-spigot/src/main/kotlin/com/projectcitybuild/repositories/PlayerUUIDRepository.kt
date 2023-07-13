@@ -1,6 +1,6 @@
 package com.projectcitybuild.repositories
 
-import com.projectcitybuild.extensions.toDashFormattedUUID
+import com.projectcitybuild.utilities.extensions.toDashFormattedUUID
 import com.projectcitybuild.pcbridge.http.responses.MojangPlayer
 import com.projectcitybuild.pcbridge.http.services.mojang.PlayerUUIDHttpService
 import org.bukkit.Server

@@ -1,7 +1,7 @@
 package com.projectcitybuild.modules.pluginutils.commands
 
-import com.projectcitybuild.features.utilities.usecases.GetVersion
-import com.projectcitybuild.features.utilities.usecases.ReloadPlugin
+import com.projectcitybuild.modules.pluginutils.actions.GetVersion
+import com.projectcitybuild.modules.pluginutils.actions.ReloadPlugin
 import com.projectcitybuild.support.spigot.commands.InvalidCommandArgumentsException
 import com.projectcitybuild.support.spigot.commands.SpigotCommand
 import com.projectcitybuild.support.spigot.commands.SpigotCommandInput

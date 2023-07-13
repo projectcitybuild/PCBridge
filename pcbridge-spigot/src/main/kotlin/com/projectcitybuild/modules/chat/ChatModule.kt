@@ -1,9 +1,10 @@
 package com.projectcitybuild.modules.chat
 
-import com.projectcitybuild.features.chat.usecases.ToggleBadge
+import com.projectcitybuild.modules.chat.actions.ToggleBadge
 import com.projectcitybuild.modules.chat.commands.BadgeCommand
 import com.projectcitybuild.modules.chat.listeners.AsyncPlayerChatListener
 import com.projectcitybuild.modules.chat.listeners.EmojiChatListener
+import com.projectcitybuild.modules.chat.listeners.SyncBadgesOnJoinListener
 import com.projectcitybuild.support.modules.ModuleDeclaration
 import com.projectcitybuild.support.modules.PluginModule
 
@@ -24,6 +25,11 @@ class ChatModule: PluginModule {
                 ),
             )
             listener(EmojiChatListener())
+            listener(
+                SyncBadgesOnJoinListener(
+                    container.chatBadgeRepository,
+                )
+            )
         }
     }
 }

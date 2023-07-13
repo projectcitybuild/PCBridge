@@ -1,6 +1,6 @@
 package com.projectcitybuild
 
-import com.projectcitybuild.features.ranksync.usecases.UpdatePlayerGroups
+import com.projectcitybuild.modules.ranksync.actions.UpdatePlayerGroups
 import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger
 import com.projectcitybuild.pcbridge.core.contracts.PlatformScheduler
 import com.projectcitybuild.pcbridge.core.utils.Failure

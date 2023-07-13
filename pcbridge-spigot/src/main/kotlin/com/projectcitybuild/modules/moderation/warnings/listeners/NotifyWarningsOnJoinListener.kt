@@ -1,6 +1,6 @@
 package com.projectcitybuild.modules.moderation.warnings.listeners
 
-import com.projectcitybuild.features.warnings.usecases.GetUnacknowledgedWarnings
+import com.projectcitybuild.modules.moderation.warnings.actions.GetUnacknowledgedWarnings
 import com.projectcitybuild.support.spigot.listeners.SpigotListener
 import com.projectcitybuild.support.textcomponent.add
 import kotlinx.coroutines.CoroutineScope
