@@ -1,6 +1,11 @@
-# PCBridge
+<div align="center">
+<img src="logo.jpg" alt="PCBridge" width="500">
 
-![CI](https://github.com/projectcitybuild/PCBridge/workflows/CI/badge.svg?branch=master)
+![GitHub](https://img.shields.io/github/license/projectcitybuild/pcbridge)
+![GitHub CI tests](https://github.com/projectcitybuild/PCBridge/workflows/tests/badge.svg?branch=dev)
+![GitHub CI releases](https://github.com/projectcitybuild/PCBridge/workflows/Create%20release/badge.svg?branch=release)
+[![Join us on Discord](https://img.shields.io/discord/161649330799902720.svg?label=&logo=discord&logoColor=ffffff&color=7389D8&labelColor=6A7EC2)](https://discord.gg/pcb)
+</div>
 
 A Spigot plugin to bridge [Project City Build](https://projectcitybuild.com) and its Minecraft server
 
