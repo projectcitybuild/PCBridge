@@ -1,19 +1,15 @@
 package com.projectcitybuild.modules.pluginutils.actions
 
+import com.projectcitybuild.entities.PluginVersion
 import java.util.Properties
 
 class GetVersion {
 
-    data class Version(
-        val version: String,
-        val commitHash: String,
-    )
-
-    fun execute(): Version {
+    fun execute(): PluginVersion {
         val properties = Properties().apply {
             load(object {}.javaClass.getResourceAsStream("/version.properties"))
         }
-        return Version(
+        return PluginVersion(
             version = properties.getProperty("version"),
             commitHash = properties.getProperty("commit"),
         )

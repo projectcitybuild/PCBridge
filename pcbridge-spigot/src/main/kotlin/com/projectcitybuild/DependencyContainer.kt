@@ -42,7 +42,6 @@ import com.projectcitybuild.repositories.WarpRepository
 import com.projectcitybuild.support.spigot.SpigotLogger
 import com.projectcitybuild.support.spigot.SpigotNamespace
 import com.projectcitybuild.support.spigot.SpigotScheduler
-import com.projectcitybuild.support.spigot.commands.SpigotCommandRegistry
 import com.projectcitybuild.support.spigot.eventbroadcast.LocalEventBroadcaster
 import com.projectcitybuild.support.spigot.eventbroadcast.SpigotLocalEventBroadcaster
 import com.projectcitybuild.support.spigot.listeners.SpigotListenerRegistry
@@ -114,14 +113,6 @@ class DependencyContainer(
         SpigotListenerRegistry(
             plugin,
             logger,
-        )
-    }
-
-    val commandRegistry by lazy {
-        SpigotCommandRegistry(
-            plugin,
-            logger,
-            errorReporter,
         )
     }
 

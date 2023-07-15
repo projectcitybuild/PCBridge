@@ -59,8 +59,6 @@ class PCBridge : JavaPlugin() {
     override fun onEnable() {
         printLogo()
 
-        CommandAPI.onEnable()
-
         container = DependencyContainer(
             plugin = this,
             server = server,
@@ -72,13 +70,15 @@ class PCBridge : JavaPlugin() {
             errorReporter.start()
 
             runCatching {
+                CommandAPI.onEnable()
+
                 dataSource.connect()
                 permissions.connect()
                 webServer.start()
 
                 modules.forEach { module ->
                     val container = container!!
-                    val builder = ModuleRegisterDSL(commandRegistry, listenerRegistry, container)
+                    val builder = ModuleRegisterDSL(listenerRegistry, container)
                     module.register(builder::apply)
                 }
 
@@ -92,20 +92,22 @@ class PCBridge : JavaPlugin() {
     }
 
     override fun onDisable() {
-        integrations.forEach { it.onDisable() }
-        integrations = emptyArray()
-
-        CommandAPI.onDisable()
-        CommandAPI.getRegisteredCommands().forEach {
-            CommandAPI.unregister(it.commandName)
-        }
-
         container?.apply {
             runCatching {
+                integrations.forEach { it.onDisable() }
+                integrations = emptyArray()
+
                 listenerRegistry.unregisterAll()
                 dataSource.disconnect()
                 webServer.stop()
-            }.onFailure { reportError(it, errorReporter) }
+
+                CommandAPI.onDisable()
+                CommandAPI.getRegisteredCommands().forEach {
+                    CommandAPI.unregister(it.commandName)
+                }
+            }.onFailure {
+                reportError(it, errorReporter)
+            }
         }
         container = null
     }
