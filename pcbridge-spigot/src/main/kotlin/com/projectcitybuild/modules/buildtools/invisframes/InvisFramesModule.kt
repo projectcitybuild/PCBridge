@@ -11,32 +11,31 @@ import dev.jorel.commandapi.arguments.MultiLiteralArgument
 import dev.jorel.commandapi.executors.PlayerCommandExecutor
 
 class InvisFramesModule: PluginModule {
-    override fun register(module: ModuleDeclaration) {
-        module {
-            command("invisframe") {
-                withPermission(Permissions.COMMAND_BUILD_INVIS_FRAME)
-                withShortDescription("Gives you an invisible item frame")
-                withOptionalArguments(
-                    MultiLiteralArgument("type", listOf("glowing"))
-                )
-                executesPlayer(PlayerCommandExecutor { player, args ->
-                    val isGlowingFrame = args.get("type") == "glowing"
+    
+    override fun register(module: ModuleDeclaration) = module {
+        command("invisframe") {
+            withPermission(Permissions.COMMAND_BUILD_INVIS_FRAME)
+            withShortDescription("Gives you an invisible item frame")
+            withOptionalArguments(
+                MultiLiteralArgument("type", listOf("glowing"))
+            )
+            executesPlayer(PlayerCommandExecutor { player, args ->
+                val isGlowingFrame = args.get("type") == "glowing"
 
-                    InvisFrameCommand(
-                        container.spigotNamespace
-                    ).execute(player, isGlowingFrame)
-                })
-            }
-
-            listener(
-                FramePlaceListener(container.spigotNamespace),
-            )
-            listener(
-                ItemInsertListener(container.spigotNamespace),
-            )
-            listener(
-                ItemRemoveListener(container.spigotNamespace),
-            )
+                InvisFrameCommand(
+                    container.spigotNamespace
+                ).execute(player, isGlowingFrame)
+            })
         }
+
+        listener(
+            FramePlaceListener(container.spigotNamespace),
+        )
+        listener(
+            ItemInsertListener(container.spigotNamespace),
+        )
+        listener(
+            ItemRemoveListener(container.spigotNamespace),
+        )
     }
 }

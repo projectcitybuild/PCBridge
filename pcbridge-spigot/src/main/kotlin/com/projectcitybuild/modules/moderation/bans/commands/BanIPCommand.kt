@@ -1,61 +1,40 @@
 package com.projectcitybuild.modules.moderation.bans.commands
 
-import com.projectcitybuild.utilities.extensions.joinWithWhitespaces
 import com.projectcitybuild.modules.moderation.bans.actions.BanIP
 import com.projectcitybuild.pcbridge.core.utils.Failure
 import com.projectcitybuild.pcbridge.core.utils.Success
-import com.projectcitybuild.support.spigot.commands.CannotInvokeFromConsoleException
-import com.projectcitybuild.support.spigot.commands.InvalidCommandArgumentsException
-import com.projectcitybuild.support.spigot.commands.SpigotCommand
-import com.projectcitybuild.support.spigot.commands.SpigotCommandInput
 import com.projectcitybuild.support.textcomponent.send
 import org.bukkit.Server
-import org.bukkit.command.CommandSender
+import org.bukkit.entity.Player
 
 class BanIPCommand(
     private val server: Server,
     private val banIP: BanIP,
-) : SpigotCommand {
-
-    override val label = "banip"
-    override val permission = "pcbridge.ban.banip"
-    override val usageHelp = "/banip <name|ip> <reason>"
-
-    override suspend fun execute(input: SpigotCommandInput) {
-        if (input.isConsole) {
-            throw CannotInvokeFromConsoleException()
-        }
-        if (input.args.isEmpty() || input.args.size < 2) {
-            throw InvalidCommandArgumentsException()
-        }
-
+) {
+    suspend fun execute(
+        commandSender: Player,
+        target: String,
+        reason: String?,
+    ) {
         val targetIP = server.onlinePlayers
-            .firstOrNull { it.name.lowercase() == input.args.first().lowercase() }
+            .firstOrNull { it.name.lowercase() == target.lowercase() }
             ?.address?.toString()
-            ?: input.args.first()
+            ?: target
 
         val result = banIP.execute(
             ip = targetIP,
-            bannerUUID = input.player.uniqueId,
-            bannerName = input.sender.name,
-            reason = input.args.joinWithWhitespaces(1 until input.args.size) ?: "No reason given",
+            bannerUUID = commandSender.uniqueId,
+            bannerName = commandSender.name,
+            reason = if (reason.isNullOrEmpty()) "No reason given" else reason,
         )
         when (result) {
-            is Failure -> input.sender.send().error(
+            is Failure -> commandSender.send().error(
                 when (result.reason) {
                     BanIP.FailureReason.IP_ALREADY_BANNED -> "$targetIP is already banned"
                     BanIP.FailureReason.INVALID_IP -> "$targetIP is not a valid IP"
                 }
             )
-            is Success -> input.sender.send().success("IP $targetIP has been banned")
-        }
-    }
-
-    override fun onTabComplete(sender: CommandSender?, args: List<String>): Iterable<String>? {
-        return when {
-            args.isEmpty() -> server.onlinePlayers.map { it.name }
-            args.size == 1 -> server.onlinePlayers.map { it.name }.filter { it.lowercase().startsWith(args.first().lowercase()) }
-            else -> null
+            is Success -> commandSender.send().success("IP $targetIP has been banned")
         }
     }
 }

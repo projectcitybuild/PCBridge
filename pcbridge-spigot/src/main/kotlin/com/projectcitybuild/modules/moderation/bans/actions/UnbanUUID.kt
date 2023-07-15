@@ -23,7 +23,7 @@ class UnbanUUID(
 
     suspend fun unban(
         targetPlayerName: String,
-        bannerUUID: UUID?,
+        unbannerUUID: UUID?,
     ): Result<Unit, FailureReason> {
         try {
             val targetPlayerUUID = playerUUIDRepository.get(targetPlayerName)
@@ -31,7 +31,7 @@ class UnbanUUID(
 
             playerBanRepository.unban(
                 targetPlayerUUID = targetPlayerUUID,
-                unbannerUUID = bannerUUID,
+                unbannerUUID = unbannerUUID,
             )
 
             server.broadcastMessage(

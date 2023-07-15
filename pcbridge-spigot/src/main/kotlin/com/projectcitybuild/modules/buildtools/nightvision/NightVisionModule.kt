@@ -9,6 +9,7 @@ import dev.jorel.commandapi.arguments.MultiLiteralArgument
 import dev.jorel.commandapi.executors.PlayerCommandExecutor
 
 class NightVisionModule: PluginModule {
+
     override fun register(module: ModuleDeclaration) = module {
         command("nv") {
             withPermission(Permissions.COMMAND_BUILD_NIGHTVISION)

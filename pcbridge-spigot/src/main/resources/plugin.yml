@@ -14,15 +14,6 @@ commands:
   a:
     description: "Sends a message to all staff currently online"
     usage: "/a"
-  ban:
-    description: "Bans a player from connecting to the server"
-    usage: "/ban <name> [reason]"
-  banip:
-    description: "Bans an exact IP, preventing it from connecting to the server"
-    usage: "/ban <ip|name> <reason>"
-  checkban:
-    description: "Checks whether a player is currently banned from the server"
-    usage: "/checkban <name>"
   delwarp:
     description: "Deletes a warp"
     usage: "/delwarp <name>"
@@ -42,12 +33,6 @@ commands:
   syncother:
     description: "Syncs a given player's rank with the website"
     usage: "/syncother <name>"
-  unban:
-    description: "Allows a banned player to connect to the server"
-    usage: "/unban <name>"
-  unbanip:
-    description: "Allows the given IP to connect to the server"
-    usage: "/unbanip <ip>"
   unmute:
     description: "Allows a muted player to talk in chat again"
     usage: "/unmute"

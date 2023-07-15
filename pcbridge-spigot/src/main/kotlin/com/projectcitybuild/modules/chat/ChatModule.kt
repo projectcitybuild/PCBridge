@@ -12,40 +12,39 @@ import dev.jorel.commandapi.arguments.MultiLiteralArgument
 import dev.jorel.commandapi.executors.PlayerCommandExecutor
 
 class ChatModule: PluginModule {
-    override fun register(module: ModuleDeclaration) {
-        module {
-            command("badge") {
-                withPermission(Permissions.COMMAND_CHAT_TOGGLE_BADGE)
-                withShortDescription("Shows or hides your chat badge")
-                withOptionalArguments(
-                    MultiLiteralArgument("toggle", listOf("on", "off"))
-                )
-                executesPlayer(PlayerCommandExecutor { player, args ->
-                    val desiredState = when(args.get("toggle")) {
-                        "on" -> ToggleOption.ON
-                        "off" -> ToggleOption.OFF
-                        else -> ToggleOption.UNSPECIFIED
-                    }
-                    BadgeCommand(
-                        container.playerConfigRepository,
-                    ).execute(player, desiredState)
-                })
-            }
-
-            listener(
-                AsyncPlayerChatListener(
-                    container.server,
+    
+    override fun register(module: ModuleDeclaration) = module {
+        command("badge") {
+            withPermission(Permissions.COMMAND_CHAT_TOGGLE_BADGE)
+            withShortDescription("Shows or hides your chat badge")
+            withOptionalArguments(
+                MultiLiteralArgument("toggle", listOf("on", "off"))
+            )
+            executesPlayer(PlayerCommandExecutor { player, args ->
+                val desiredState = when(args.get("toggle")) {
+                    "on" -> ToggleOption.ON
+                    "off" -> ToggleOption.OFF
+                    else -> ToggleOption.UNSPECIFIED
+                }
+                BadgeCommand(
                     container.playerConfigRepository,
-                    container.chatGroupFormatter,
-                    container.chatBadgeFormatter,
-                ),
-            )
-            listener(EmojiChatListener())
-            listener(
-                SyncBadgesOnJoinListener(
-                    container.chatBadgeRepository,
-                )
-            )
+                ).execute(player, desiredState)
+            })
         }
+
+        listener(
+            AsyncPlayerChatListener(
+                container.server,
+                container.playerConfigRepository,
+                container.chatGroupFormatter,
+                container.chatBadgeFormatter,
+            ),
+        )
+        listener(EmojiChatListener())
+        listener(
+            SyncBadgesOnJoinListener(
+                container.chatBadgeRepository,
+            )
+        )
     }
 }
