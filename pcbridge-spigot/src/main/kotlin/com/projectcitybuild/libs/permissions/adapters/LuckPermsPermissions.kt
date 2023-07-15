@@ -27,7 +27,7 @@ class LuckPermsPermissions(
     private fun getUser(playerUUID: UUID): User {
         val user = luckPerms.userManager.getUser(playerUUID)
         if (user == null) {
-            logger.fatal("Could not load user ($playerUUID) from permissions manager")
+            logger.severe("Could not load user ($playerUUID) from permissions manager")
             throw PermissionUserNotFoundException()
         }
         return user

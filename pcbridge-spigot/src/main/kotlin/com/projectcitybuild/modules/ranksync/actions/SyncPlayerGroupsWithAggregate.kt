@@ -30,7 +30,7 @@ class SyncPlayerGroupsWithAggregate(
                 val permissionGroupName = config.get(configNode)
 
                 if (permissionGroupName == null) {
-                    logger.fatal("Missing config node for donor tier: $tierName")
+                    logger.severe("Missing config node for donor tier: $tierName")
                     return@mapNotNull null
                 }
 

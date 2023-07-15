@@ -6,17 +6,15 @@ import com.projectcitybuild.pcbridge.core.utils.Success
 import com.projectcitybuild.pcbridge.http.services.pcb.UUIDBanHttpService
 import com.projectcitybuild.repositories.PlayerBanRepository
 import com.projectcitybuild.repositories.PlayerUUIDRepository
-import com.projectcitybuild.support.spigot.kick.PlayerKicker
+import com.projectcitybuild.support.spigot.SpigotServer
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.chat.TextComponent
-import org.bukkit.Server
 import java.util.UUID
 
 class TempBanUUID(
     private val playerBanRepository: PlayerBanRepository,
     private val playerUUIDRepository: PlayerUUIDRepository,
-    private val server: Server,
-    private val playerKicker: PlayerKicker,
+    private val server: SpigotServer,
 ) {
     enum class FailureReason {
         PlayerDoesNotExist,
@@ -43,17 +41,17 @@ class TempBanUUID(
                 expiryDate = expiryDate,
             )
 
-            playerKicker.kickByUUID(
+            server.kickByUUID(
                 playerUUID = targetPlayerUUID,
                 reason = "You have been banned.\n\nAppeal @ projectcitybuild.com",
-                context = PlayerKicker.KickContext.FATAL,
+                context = SpigotServer.KickContext.FATAL,
             )
 
             server.broadcastMessage(
                 TextComponent("$targetPlayerName has been temporarily banned by $bannerName: ${reason ?: "No reason given"}").apply {
                     color = ChatColor.GRAY
                     isItalic = true
-                }.toLegacyText()
+                }
             )
 
             return Success(Unit)

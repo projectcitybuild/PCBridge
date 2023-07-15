@@ -5,5 +5,5 @@ interface PlatformLogger {
     fun debug(message: String)
     fun info(message: String)
     fun warning(message: String)
-    fun fatal(message: String)
+    fun severe(message: String)
 }

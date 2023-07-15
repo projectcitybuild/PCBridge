@@ -24,8 +24,7 @@ class BansModule: PluginModule {
                     BanUUID(
                         container.playerBanRepository,
                         container.playerUUIDRepository,
-                        container.server,
-                        container.playerKicker,
+                        container.spigotServer,
                     ),
                 ),
             )
@@ -34,7 +33,7 @@ class BansModule: PluginModule {
                     container.server,
                     BanIP(
                         container.ipBanRepository,
-                        container.playerKicker,
+                        container.spigotServer,
                     ),
                 ),
             )

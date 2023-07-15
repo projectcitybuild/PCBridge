@@ -4,7 +4,7 @@ import com.projectcitybuild.pcbridge.core.utils.Failure
 import com.projectcitybuild.pcbridge.core.utils.Success
 import com.projectcitybuild.pcbridge.http.services.pcb.IPBanHttpService
 import com.projectcitybuild.repositories.IPBanRepository
-import com.projectcitybuild.support.spigot.kick.PlayerKicker
+import com.projectcitybuild.support.spigot.SpigotServer
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
@@ -21,16 +21,16 @@ class BanIPTest {
 
     private lateinit var useCase: BanIP
     private lateinit var ipBanRepository: IPBanRepository
-    private lateinit var playerKicker: PlayerKicker
+    private lateinit var server: SpigotServer
 
     @BeforeEach
     fun setUp() {
         ipBanRepository = mock(IPBanRepository::class.java)
-        playerKicker = mock(PlayerKicker::class.java)
+        server = mock(SpigotServer::class.java)
 
         useCase = BanIP(
             ipBanRepository,
-            playerKicker,
+            server,
         )
     }
 
@@ -102,10 +102,10 @@ class BanIPTest {
             reason = "reason",
         )
 
-        verify(playerKicker).kickByIP(
+        verify(server).kickByIP(
             eq(ip),
             anyString(),
-            eq(PlayerKicker.KickContext.FATAL),
+            eq(SpigotServer.KickContext.FATAL),
         )
         assertEquals(Success(Unit), result)
     }

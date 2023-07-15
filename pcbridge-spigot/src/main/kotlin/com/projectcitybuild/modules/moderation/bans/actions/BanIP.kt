@@ -7,12 +7,12 @@ import com.projectcitybuild.pcbridge.core.utils.Result
 import com.projectcitybuild.pcbridge.core.utils.Success
 import com.projectcitybuild.pcbridge.http.services.pcb.IPBanHttpService
 import com.projectcitybuild.repositories.IPBanRepository
-import com.projectcitybuild.support.spigot.kick.PlayerKicker
+import com.projectcitybuild.support.spigot.SpigotServer
 import java.util.UUID
 
 class BanIP(
     private val ipBanRepository: IPBanRepository,
-    private val playerKicker: PlayerKicker,
+    private val server: SpigotServer,
 ) {
     enum class FailureReason {
         IP_ALREADY_BANNED,
@@ -43,10 +43,10 @@ class BanIP(
             return Failure(FailureReason.IP_ALREADY_BANNED)
         }
 
-        playerKicker.kickByIP(
+        server.kickByIP(
             ip = ip,
             reason = "You have been banned.\n\nAppeal @ projectcitybuild.com",
-            context = PlayerKicker.KickContext.FATAL,
+            context = SpigotServer.KickContext.FATAL,
         )
 
         return Success(Unit)

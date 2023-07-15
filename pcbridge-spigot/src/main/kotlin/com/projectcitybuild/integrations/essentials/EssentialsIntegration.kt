@@ -20,11 +20,11 @@ class EssentialsIntegration(
     override fun onEnable() {
         val anyPlugin = plugin.server.pluginManager.getPlugin("Essentials")
         if (anyPlugin == null) {
-            logger.fatal("Cannot find EssentialsX plugin. Disabling integration")
+            logger.severe("Cannot find EssentialsX plugin. Disabling integration")
             return
         }
         if (anyPlugin !is Essentials) {
-            logger.fatal("Found EssentialsX plugin but cannot access API")
+            logger.severe("Found EssentialsX plugin but cannot access API")
             throw EssentialsAPINotFoundException()
         }
 

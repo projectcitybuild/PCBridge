@@ -45,9 +45,8 @@ import com.projectcitybuild.support.spigot.SpigotScheduler
 import com.projectcitybuild.support.spigot.commands.SpigotCommandRegistry
 import com.projectcitybuild.support.spigot.eventbroadcast.LocalEventBroadcaster
 import com.projectcitybuild.support.spigot.eventbroadcast.SpigotLocalEventBroadcaster
-import com.projectcitybuild.support.spigot.kick.PlayerKicker
-import com.projectcitybuild.support.spigot.kick.SpigotPlayerKicker
 import com.projectcitybuild.support.spigot.listeners.SpigotListenerRegistry
+import com.projectcitybuild.support.spigot.SpigotServer
 import org.bukkit.Server
 import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.plugin.java.JavaPlugin
@@ -124,8 +123,8 @@ class DependencyContainer(
     val localEventBroadcaster: LocalEventBroadcaster
         get() = SpigotLocalEventBroadcaster()
 
-    val playerKicker: PlayerKicker
-        get() = SpigotPlayerKicker(server)
+    val spigotServer: SpigotServer
+        get() = SpigotServer(server)
 
     val nameGuesser
         get() = NameGuesser()

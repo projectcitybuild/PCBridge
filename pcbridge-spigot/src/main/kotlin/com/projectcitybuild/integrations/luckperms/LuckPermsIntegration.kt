@@ -26,7 +26,7 @@ class LuckPermsIntegration(
         try {
             luckPerms = LuckPermsProvider.get()
         } catch (e: Exception) {
-            logger.fatal("Failed to hook into LuckPerms plugin")
+            logger.severe("Failed to hook into LuckPerms plugin")
             return
         }
         logger.info("LuckPerms integration enabled")

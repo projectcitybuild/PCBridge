@@ -24,7 +24,7 @@ class HttpServer(
 
     fun start() {
         if (config.authToken.isEmpty()) {
-            logger.fatal("Internal web server token not set in config. Web server will not be started")
+            logger.severe("Internal web server token not set in config. Web server will not be started")
             return
         }
 
