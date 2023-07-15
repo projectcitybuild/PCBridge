@@ -7,7 +7,7 @@ import com.projectcitybuild.pcbridge.core.utils.Success
 import com.projectcitybuild.support.textcomponent.send
 import org.bukkit.entity.Player
 
-class SetWarpCommand(
+class CreateWarpCommand(
     private val createWarp: CreateWarp,
 ) {
     fun execute(commandSender: Player, warpName: String) {

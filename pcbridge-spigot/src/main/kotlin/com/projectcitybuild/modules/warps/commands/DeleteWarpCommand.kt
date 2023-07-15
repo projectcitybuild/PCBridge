@@ -6,7 +6,7 @@ import com.projectcitybuild.pcbridge.core.utils.Success
 import com.projectcitybuild.support.textcomponent.send
 import org.bukkit.entity.Player
 
-class DelWarpCommand(
+class DeleteWarpCommand(
     private val deleteWarp: DeleteWarp,
 ) {
     fun execute(commandSender: Player, warpName: String) {

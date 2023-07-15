@@ -10,7 +10,7 @@ import net.md_5.bungee.api.chat.TextComponent
 import net.md_5.bungee.api.chat.hover.content.Text
 import org.bukkit.entity.Player
 
-class WarpsCommand(
+class ListWarpsCommand(
     private val getWarpList: GetWarpList,
 ) {
     fun execute(commandSender: Player, pageIndex: Int?) {

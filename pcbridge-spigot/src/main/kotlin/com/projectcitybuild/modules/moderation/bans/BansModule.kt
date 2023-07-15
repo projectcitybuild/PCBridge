@@ -16,8 +16,8 @@ import com.projectcitybuild.modules.moderation.bans.listeners.CheckBanOnConnectL
 import com.projectcitybuild.support.commandapi.suspendExecutesPlayer
 import com.projectcitybuild.support.modules.ModuleDeclaration
 import com.projectcitybuild.support.modules.PluginModule
+import dev.jorel.commandapi.arguments.ArgumentSuggestions
 import dev.jorel.commandapi.arguments.GreedyStringArgument
-import dev.jorel.commandapi.arguments.PlayerArgument
 import dev.jorel.commandapi.arguments.StringArgument
 
 class BansModule: PluginModule {
@@ -27,7 +27,10 @@ class BansModule: PluginModule {
             withPermission(Permissions.COMMAND_BANS_BAN)
             withShortDescription("Bans a player from connecting to the server")
             withArguments(
-                PlayerArgument("player"),
+                StringArgument("player")
+                    .replaceSuggestions(
+                        ArgumentSuggestions.strings(container.server.onlinePlayers.map { it.name })
+                    ),
                 GreedyStringArgument("reason"),
             )
             suspendExecutesPlayer(container.plugin) { player, args ->
@@ -49,7 +52,11 @@ class BansModule: PluginModule {
             withPermission(Permissions.COMMAND_BANS_BAN_IP)
             withShortDescription("Bans an IP address from connecting to the server")
             withArguments(
-                StringArgument("player"),
+                StringArgument("player")
+                    .replaceSuggestions(
+                        ArgumentSuggestions.strings(container.server.onlinePlayers.map { it.name })
+                    )
+                ,
                 GreedyStringArgument("reason"),
             )
             suspendExecutesPlayer(container.plugin) { player, args ->

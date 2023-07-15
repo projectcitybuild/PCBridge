@@ -6,8 +6,9 @@ import com.projectcitybuild.modules.moderation.mutes.commands.UnmuteCommand
 import com.projectcitybuild.modules.moderation.mutes.actions.MutePlayer
 import com.projectcitybuild.support.modules.ModuleDeclaration
 import com.projectcitybuild.support.modules.PluginModule
-import dev.jorel.commandapi.arguments.PlayerArgument
+import dev.jorel.commandapi.arguments.EntitySelectorArgument
 import dev.jorel.commandapi.executors.PlayerCommandExecutor
+import org.bukkit.entity.Player
 
 class MutesModule: PluginModule {
 
@@ -16,18 +17,14 @@ class MutesModule: PluginModule {
             withPermission(Permissions.COMMAND_MUTES_MUTE)
             withShortDescription("Prevents a player from talking in chat")
             withArguments(
-                PlayerArgument("player"),
+                EntitySelectorArgument.OnePlayer("player"),
             )
             executesPlayer(PlayerCommandExecutor { player, args ->
                 MuteCommand(
-                    container.server,
-                    MutePlayer(
-                        container.playerConfigRepository,
-                        container.nameGuesser,
-                    )
+                    MutePlayer(container.playerConfigRepository),
                 ).execute(
                     commandSender = player,
-                    targetPlayerName = args.get("player") as String,
+                    targetPlayer = args.get("player") as Player,
                 )
             })
         }
@@ -36,18 +33,14 @@ class MutesModule: PluginModule {
             withPermission(Permissions.COMMAND_MUTES_UNMUTE)
             withShortDescription("Allows a muted player to talk in chat again")
             withArguments(
-                PlayerArgument("player"),
+                EntitySelectorArgument.OnePlayer("player"),
             )
             executesPlayer(PlayerCommandExecutor { player, args ->
                 UnmuteCommand(
-                    container.server,
-                    MutePlayer(
-                        container.playerConfigRepository,
-                        container.nameGuesser,
-                    ),
+                    MutePlayer(container.playerConfigRepository),
                 ).execute(
                     commandSender = player,
-                    targetPlayerName = args.get("player") as String,
+                    targetPlayer = args.get("player") as Player,
                 )
             })
         }

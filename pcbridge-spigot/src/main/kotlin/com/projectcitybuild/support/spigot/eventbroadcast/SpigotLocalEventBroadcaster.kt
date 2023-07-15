@@ -1,18 +1,20 @@
 package com.projectcitybuild.support.spigot.eventbroadcast
 
-import com.github.shynixn.mccoroutine.bukkit.callSuspendingEvent
+import com.projectcitybuild.pcbridge.core.contracts.PlatformScheduler
 import org.bukkit.Bukkit
 import org.bukkit.event.Event
-import org.bukkit.plugin.java.JavaPlugin
 
 class SpigotLocalEventBroadcaster(
-    private val plugin: JavaPlugin,
+    private val scheduler: PlatformScheduler,
 ): LocalEventBroadcaster {
 
     override fun emit(event: BroadcastableEvent) {
         if (event !is Event) {
             throw Exception("Cannot cast event to Spigot Event [$event]")
         }
-        Bukkit.getPluginManager().callSuspendingEvent(event, plugin)
+        // TODO: refactor this to not be blocking
+        scheduler.sync {
+            Bukkit.getPluginManager().callEvent(event)
+        }
     }
 }

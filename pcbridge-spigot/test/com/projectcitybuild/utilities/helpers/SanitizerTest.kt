@@ -12,7 +12,7 @@ class SanitizerTest {
             "/127.0.0.1",
             "/127.0.0.1:12345",
         ).forEach {
-            val sanitized = Sanitizer().sanitizedIP(it)
+            val sanitized = Sanitizer.sanitizedIP(it)
             assertEquals("127.0.0.1", sanitized)
         }
     }

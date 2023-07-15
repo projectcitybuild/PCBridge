@@ -10,8 +10,9 @@ import com.projectcitybuild.modules.ranksync.listener.SyncPlayerGroupsOnJoinList
 import com.projectcitybuild.support.commandapi.suspendExecutesPlayer
 import com.projectcitybuild.support.modules.ModuleDeclaration
 import com.projectcitybuild.support.modules.PluginModule
+import dev.jorel.commandapi.arguments.EntitySelectorArgument
 import dev.jorel.commandapi.arguments.MultiLiteralArgument
-import dev.jorel.commandapi.arguments.PlayerArgument
+import org.bukkit.entity.Player
 
 class RankSyncModule: PluginModule {
 
@@ -42,19 +43,17 @@ class RankSyncModule: PluginModule {
             withPermission(Permissions.COMMAND_RANKSYNC_SYNC_OTHER)
             withShortDescription("Syncs a given player's rank with the website")
             withArguments(
-                PlayerArgument("player"),
+                EntitySelectorArgument.OnePlayer("player"),
             )
             suspendExecutesPlayer(container.plugin) { player, args ->
                 SyncOtherCommand(
-                    container.server,
                     UpdatePlayerGroups(
                         container.permissions,
                         container.playerGroupRepository,
                     ),
-                    container.nameGuesser,
                 ).execute(
                     commandSender = player,
-                    targetPlayerName = args.get("player") as String,
+                    targetPlayer = args.get("player") as Player,
                 )
             }
         }

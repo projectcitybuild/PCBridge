@@ -8,8 +8,8 @@ import org.bukkit.entity.Player
 class BadgeCommand(
     private val playerConfigRepository: PlayerConfigRepository,
 ) {
-    fun execute(player: Player, desiredState: ToggleOption) {
-        val playerConfig = playerConfigRepository.get(player.uniqueId)!!
+    fun execute(commandSender: Player, desiredState: ToggleOption) {
+        val playerConfig = playerConfigRepository.get(commandSender.uniqueId)!!
 
         val shouldHideBadge = if (desiredState == ToggleOption.UNSPECIFIED) {
             !playerConfig.isChatBadgeDisabled
@@ -20,9 +20,9 @@ class BadgeCommand(
         playerConfigRepository.save(playerConfig)
 
         if (shouldHideBadge) {
-            player.send().success("Your chat badge has been turned off")
+            commandSender.send().success("Your chat badge has been turned off")
         } else {
-            player.send().success("Your chat badge has been turned on")
+            commandSender.send().success("Your chat badge has been turned on")
         }
     }
 }
