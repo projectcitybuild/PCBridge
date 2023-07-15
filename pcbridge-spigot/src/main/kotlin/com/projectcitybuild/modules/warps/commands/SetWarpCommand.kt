@@ -4,38 +4,20 @@ import com.projectcitybuild.entities.SerializableLocation
 import com.projectcitybuild.modules.warps.actions.CreateWarp
 import com.projectcitybuild.pcbridge.core.utils.Failure
 import com.projectcitybuild.pcbridge.core.utils.Success
-import com.projectcitybuild.support.spigot.commands.InvalidCommandArgumentsException
-import com.projectcitybuild.support.spigot.commands.SpigotCommand
-import com.projectcitybuild.support.spigot.commands.SpigotCommandInput
 import com.projectcitybuild.support.textcomponent.send
 import org.bukkit.entity.Player
 
 class SetWarpCommand(
     private val createWarp: CreateWarp,
-) : SpigotCommand {
-
-    override val label = "setwarp"
-    override val permission = "pcbridge.warp.create"
-    override val usageHelp = "/setwarp <name>"
-
-    override suspend fun execute(input: SpigotCommandInput) {
-        if (input.args.size != 1) {
-            throw InvalidCommandArgumentsException()
-        }
-        val player = input.sender as? Player
-        if (player == null) {
-            input.sender.send().error("Console cannot use this command")
-            return
-        }
-
-        val warpName = input.args.first()
+) {
+    fun execute(commandSender: Player, warpName: String) {
         val result = createWarp.createWarp(
             name = warpName,
-            location = SerializableLocation.fromLocation(player.location)
+            location = SerializableLocation.fromLocation(commandSender.location)
         )
         when (result) {
-            is Success -> input.sender.send().success("Created warp for $warpName")
-            is Failure -> input.sender.send().error(
+            is Success -> commandSender.send().success("Created warp for $warpName")
+            is Failure -> commandSender.send().error(
                 when (result.reason) {
                     CreateWarp.FailureReason.WARP_ALREADY_EXISTS -> "A warp for $warpName already exists"
                 }

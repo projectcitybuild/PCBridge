@@ -4,36 +4,23 @@ import com.projectcitybuild.modules.ranksync.actions.GenerateAccountVerification
 import com.projectcitybuild.modules.ranksync.actions.UpdatePlayerGroups
 import com.projectcitybuild.pcbridge.core.utils.Failure
 import com.projectcitybuild.pcbridge.core.utils.Success
-import com.projectcitybuild.support.spigot.commands.CannotInvokeFromConsoleException
-import com.projectcitybuild.support.spigot.commands.InvalidCommandArgumentsException
-import com.projectcitybuild.support.spigot.commands.SpigotCommand
-import com.projectcitybuild.support.spigot.commands.SpigotCommandInput
 import com.projectcitybuild.support.textcomponent.add
 import com.projectcitybuild.support.textcomponent.send
 import net.md_5.bungee.api.chat.ClickEvent
 import net.md_5.bungee.api.chat.HoverEvent
 import net.md_5.bungee.api.chat.TextComponent
 import net.md_5.bungee.api.chat.hover.content.Text
-import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
 class SyncCommand(
     private val generateAccountVerificationURL: GenerateAccountVerificationURL,
     private val updatePlayerGroups: UpdatePlayerGroups,
-) : SpigotCommand {
-
-    override val label = "sync"
-    override val permission = "pcbridge.sync.login"
-    override val usageHelp = "/sync [finish]"
-
-    override suspend fun execute(input: SpigotCommandInput) {
-        if (input.isConsole) {
-            throw CannotInvokeFromConsoleException()
-        }
-        when {
-            input.args.isEmpty() -> generateVerificationURL(input.player)
-            input.args.size == 1 && input.args.first() == "finish" -> syncGroups(input.player)
-            else -> throw InvalidCommandArgumentsException()
+) {
+    // TODO: clean up this horrible mess...
+    suspend fun execute(commandSender: Player, finishSyncing: Boolean) {
+        when (finishSyncing) {
+            false -> generateVerificationURL(commandSender)
+            true -> syncGroups(commandSender)
         }
     }
 
@@ -73,13 +60,6 @@ class SyncCommand(
             is Success -> {
                 player.send().success("Account linked! Your rank will be automatically synchronized with the PCB network")
             }
-        }
-    }
-
-    override fun onTabComplete(sender: CommandSender?, args: List<String>): Iterable<String>? {
-        return when {
-            args.isEmpty() -> listOf("finish")
-            else -> null
         }
     }
 }
