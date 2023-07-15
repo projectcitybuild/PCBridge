@@ -36,7 +36,7 @@ class DynmapMarkerIntegration(
                 return
             }
             if (anyPlugin !is DynmapAPI) {
-                logger.fatal("Found dynmap plugin but cannot access dynmap-api")
+                logger.severe("Found dynmap plugin but cannot access dynmap-api")
                 throw DynmapAPINotFoundException()
             }
 

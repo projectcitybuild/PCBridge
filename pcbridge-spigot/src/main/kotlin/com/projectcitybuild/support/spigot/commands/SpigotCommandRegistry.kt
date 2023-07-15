@@ -52,7 +52,7 @@ class SpigotCommandRegistry(
                         true
                     } catch (error: Exception) {
                         sender.send().error("An internal error occurred performing your command")
-                        error.localizedMessage?.let { message -> logger.fatal(message) }
+                        error.localizedMessage?.let { message -> logger.severe(message) }
                         error.printStackTrace()
                         errorReporter.report(error)
                         true
@@ -73,7 +73,7 @@ class SpigotCommandRegistry(
             }
             plugin.getCommand(alias).let {
                 if (it == null) {
-                    logger.fatal("Missing $alias command in plugin.yml file")
+                    logger.severe("Missing $alias command in plugin.yml file")
                     return@let
                 }
                 val command = BridgedCommand(spigotCommand)

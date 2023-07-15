@@ -60,7 +60,7 @@ class CheckBanOnConnectListener(
                 )
 
             }.onFailure { throwable ->
-                throwable.message?.let { logger.fatal(it) }
+                throwable.message?.let { logger.severe(it) }
                 throwable.printStackTrace()
 
                 errorReporter.report(throwable)

@@ -4,9 +4,8 @@ import com.projectcitybuild.pcbridge.core.utils.Failure
 import com.projectcitybuild.pcbridge.http.services.pcb.UUIDBanHttpService
 import com.projectcitybuild.repositories.PlayerBanRepository
 import com.projectcitybuild.repositories.PlayerUUIDRepository
-import com.projectcitybuild.support.spigot.kick.PlayerKicker
+import com.projectcitybuild.support.spigot.SpigotServer
 import kotlinx.coroutines.test.runTest
-import org.bukkit.Server
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -25,21 +24,18 @@ class BanUUIDTest {
 
     private lateinit var playerBanRepository: PlayerBanRepository
     private lateinit var playerUUIDRepository: PlayerUUIDRepository
-    private lateinit var playerKicker: PlayerKicker
-    private lateinit var server: Server
+    private lateinit var server: SpigotServer
 
     @BeforeEach
     fun setUp() {
         playerBanRepository = mock(PlayerBanRepository::class.java)
         playerUUIDRepository = mock(PlayerUUIDRepository::class.java)
-        playerKicker = mock(PlayerKicker::class.java)
-        server = mock(Server::class.java)
+        server = mock(SpigotServer::class.java)
 
         useCase = BanUUID(
             playerBanRepository,
             playerUUIDRepository,
             server,
-            playerKicker,
         )
     }
 
@@ -106,7 +102,7 @@ class BanUUIDTest {
 
         useCase.ban(playerName, UUID.randomUUID(), "staff_player", "reason")
 
-        verify(playerKicker, times(1))
-            .kickByUUID(eq(playerUUID), anyString(), eq(PlayerKicker.KickContext.FATAL))
+        verify(server, times(1))
+            .kickByUUID(eq(playerUUID), anyString(), eq(SpigotServer.KickContext.FATAL))
     }
 }
