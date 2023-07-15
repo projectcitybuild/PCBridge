@@ -10,7 +10,7 @@ import com.projectcitybuild.support.modules.PluginModule
 class WarningsModule: PluginModule {
     override fun register(module: ModuleDeclaration) {
         module {
-            command(
+            legacyCommand(
                 WarningAcknowledgeCommand(
                     AcknowledgeWarning(container.playerWarningRepository)
                 ),

@@ -10,7 +10,7 @@ import dev.jorel.commandapi.executors.PlayerCommandExecutor
 
 class NightVisionModule: PluginModule {
     override fun register(module: ModuleDeclaration) = module {
-        commandAPI("nv") {
+        command("nv") {
             withPermission(Permissions.COMMAND_BUILD_NIGHTVISION)
             withAliases("nightvision")
             withShortDescription("Toggles nightvision mode on or off")

@@ -9,7 +9,7 @@ import com.projectcitybuild.support.modules.PluginModule
 class MutesModule: PluginModule {
     override fun register(module: ModuleDeclaration) {
         module {
-            command(
+            legacyCommand(
                 MuteCommand(
                     container.server,
                     MutePlayer(
@@ -18,7 +18,7 @@ class MutesModule: PluginModule {
                     )
                 ),
             )
-            command(
+            legacyCommand(
                 UnmuteCommand(
                     container.server,
                     MutePlayer(

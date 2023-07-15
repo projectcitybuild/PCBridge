@@ -7,7 +7,7 @@ import com.projectcitybuild.support.modules.PluginModule
 class StaffChatModule: PluginModule {
     override fun register(module: ModuleDeclaration) {
         module {
-            command(
+            legacyCommand(
                 ACommand(container.server),
             )
         }

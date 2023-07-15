@@ -18,7 +18,7 @@ import com.projectcitybuild.support.modules.PluginModule
 class BansModule: PluginModule {
     override fun register(module: ModuleDeclaration) {
         module {
-            command(
+            legacyCommand(
                 BanCommand(
                     container.server,
                     BanUUID(
@@ -28,7 +28,7 @@ class BansModule: PluginModule {
                     ),
                 ),
             )
-            command(
+            legacyCommand(
                 BanIPCommand(
                     container.server,
                     BanIP(
@@ -37,7 +37,7 @@ class BansModule: PluginModule {
                     ),
                 ),
             )
-            command(
+            legacyCommand(
                 CheckBanCommand(
                     container.server,
                     CheckUUIDBan(
@@ -47,7 +47,7 @@ class BansModule: PluginModule {
                     ),
                 ),
             )
-            command(
+            legacyCommand(
                 UnbanCommand(
                     container.server,
                     UnbanUUID(
@@ -57,7 +57,7 @@ class BansModule: PluginModule {
                     )
                 ),
             )
-            command(
+            legacyCommand(
                 UnbanIPCommand(
                     UnbanIP(container.ipBanRepository)
                 ),

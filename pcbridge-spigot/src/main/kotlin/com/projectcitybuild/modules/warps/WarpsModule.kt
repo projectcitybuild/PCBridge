@@ -14,7 +14,7 @@ import com.projectcitybuild.support.modules.PluginModule
 class WarpsModule: PluginModule {
     override fun register(module: ModuleDeclaration) {
         module {
-            command(
+            legacyCommand(
                 DelWarpCommand(
                     DeleteWarp(
                         container.warpRepository,
@@ -23,7 +23,7 @@ class WarpsModule: PluginModule {
                     container.warpRepository,
                 ),
             )
-            command(
+            legacyCommand(
                 SetWarpCommand(
                     CreateWarp(
                         container.warpRepository,
@@ -32,7 +32,7 @@ class WarpsModule: PluginModule {
                     )
                 ),
             )
-            command(
+            legacyCommand(
                 WarpsCommand(
                     GetWarpList(
                         container.warpRepository,
@@ -40,7 +40,7 @@ class WarpsModule: PluginModule {
                     )
                 ),
             )
-            command(
+            legacyCommand(
                 WarpCommand(
                     TeleportToWarp(
                         container.warpRepository,

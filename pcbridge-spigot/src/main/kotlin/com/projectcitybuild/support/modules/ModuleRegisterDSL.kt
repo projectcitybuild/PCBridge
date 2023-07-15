@@ -13,13 +13,13 @@ class ModuleRegisterDSL(
     private val listenerRegistry: SpigotListenerRegistry,
     val container: DependencyContainer,
 ) {
-    fun commandAPI(label: String, declaration: ModuleCommandBuilder) {
+    fun command(label: String, declaration: ModuleCommandBuilder) {
         val command = CommandAPICommand(label)
         declaration(command)
         command.register()
     }
 
-    fun command(command: SpigotCommand) {
+    fun legacyCommand(command: SpigotCommand) {
         commandRegistry.register(command)
     }
 

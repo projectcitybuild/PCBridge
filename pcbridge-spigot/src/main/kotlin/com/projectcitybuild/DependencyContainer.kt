@@ -126,7 +126,7 @@ class DependencyContainer(
     }
 
     val localEventBroadcaster: LocalEventBroadcaster
-        get() = SpigotLocalEventBroadcaster(scheduler)
+        get() = SpigotLocalEventBroadcaster(plugin)
 
     val spigotServer: SpigotServer
         get() = SpigotServer(server)

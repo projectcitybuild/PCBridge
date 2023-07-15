@@ -12,7 +12,7 @@ import com.projectcitybuild.support.modules.PluginModule
 class RankSyncModule: PluginModule {
     override fun register(module: ModuleDeclaration) {
         module {
-            command(
+            legacyCommand(
                 SyncCommand(
                     GenerateAccountVerificationURL(
                         container.verificationURLRepository,
@@ -23,7 +23,7 @@ class RankSyncModule: PluginModule {
                     )
                 ),
             )
-            command(
+            legacyCommand(
                 SyncOtherCommand(
                     container.server,
                     UpdatePlayerGroups(

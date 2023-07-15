@@ -11,7 +11,7 @@ import com.projectcitybuild.support.modules.PluginModule
 class ChatModule: PluginModule {
     override fun register(module: ModuleDeclaration) {
         module {
-            command(
+            legacyCommand(
                 BadgeCommand(
                     ToggleBadge(container.playerConfigRepository),
                 ),

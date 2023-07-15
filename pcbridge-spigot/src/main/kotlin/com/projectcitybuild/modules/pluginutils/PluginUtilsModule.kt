@@ -12,7 +12,7 @@ import com.projectcitybuild.support.modules.PluginModule
 class PluginUtilsModule: PluginModule {
     override fun register(module: ModuleDeclaration) {
         module {
-            command(
+            legacyCommand(
                 PCBridgeCommand(
                     GetVersion(),
                     ReloadPlugin(
