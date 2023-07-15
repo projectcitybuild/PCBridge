@@ -1,6 +1,6 @@
 package com.projectcitybuild.modules.moderation.warnings.actions
 
-import com.projectcitybuild.libs.datetime.formatter.DateTimeFormatter
+import com.projectcitybuild.pcbridge.core.modules.datetime.formatter.DateTimeFormatter
 import com.projectcitybuild.repositories.PlayerWarningRepository
 import java.util.UUID
 

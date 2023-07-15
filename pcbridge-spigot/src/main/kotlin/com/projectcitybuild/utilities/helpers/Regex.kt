@@ -1,4 +1,4 @@
-package com.projectcitybuild
+package com.projectcitybuild.utilities.helpers
 
 import java.util.regex.Pattern
 

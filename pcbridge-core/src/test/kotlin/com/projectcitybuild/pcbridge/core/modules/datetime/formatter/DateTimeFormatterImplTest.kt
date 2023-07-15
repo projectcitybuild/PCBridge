@@ -1,6 +1,5 @@
-package com.projectcitybuild.libs.datetime
+package com.projectcitybuild.pcbridge.core.modules.datetime.formatter
 
-import com.projectcitybuild.libs.datetime.formatter.DateTimeFormatterImpl
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import java.time.ZoneId

@@ -1,5 +1,6 @@
-package com.projectcitybuild.libs.datetime.formatter
+package com.projectcitybuild.pcbridge.core.modules.datetime.formatter
 
+import org.jetbrains.annotations.TestOnly
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.FormatStyle
@@ -11,7 +12,10 @@ class DateTimeFormatterImpl(
     private val timezone: ZoneId,
 ) : DateTimeFormatter {
 
-    override fun convert(timestampInSeconds: Long, formatStyle: FormatStyle): String {
+    override fun convert(
+        timestampInSeconds: Long,
+        formatStyle: FormatStyle,
+    ): String {
         val formatter = java.time.format.DateTimeFormatter
             .ofLocalizedDateTime(formatStyle)
             .withLocale(locale)
@@ -20,5 +24,13 @@ class DateTimeFormatterImpl(
         val dateTime = Instant.ofEpochSecond(secondsSince1970).atZone(timezone)
 
         return dateTime.format(formatter)
+    }
+
+    companion object {
+        @TestOnly
+        fun mock() = DateTimeFormatterImpl(
+            Locale.forLanguageTag("en-us"),
+            ZoneId.of("UTC"),
+        )
     }
 }

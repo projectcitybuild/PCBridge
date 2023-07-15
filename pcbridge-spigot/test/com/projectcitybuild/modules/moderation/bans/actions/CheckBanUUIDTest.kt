@@ -1,6 +1,6 @@
 package com.projectcitybuild.modules.moderation.bans.actions
 
-import com.projectcitybuild.DateTimeFormatterMock
+import com.projectcitybuild.pcbridge.core.modules.datetime.formatter.DateTimeFormatterImpl
 import com.projectcitybuild.pcbridge.core.utils.Failure
 import com.projectcitybuild.pcbridge.core.utils.Success
 import com.projectcitybuild.pcbridge.http.responses.PlayerBan
@@ -12,6 +12,8 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.mock
 import org.mockito.kotlin.whenever
+import java.time.ZoneId
+import java.util.Locale
 import java.util.UUID
 
 class CheckBanUUIDTest {
@@ -29,7 +31,7 @@ class CheckBanUUIDTest {
         useCase = CheckUUIDBan(
             playerBanRepository,
             playerUUIDRepository,
-            DateTimeFormatterMock()
+            DateTimeFormatterImpl.mock(),
         )
     }
 
