@@ -51,7 +51,7 @@ dependencies {
     implementation("com.zaxxer:HikariCP:5.0.1")
     implementation("co.aikar:idb-core:1.0.0-SNAPSHOT")
     implementation("io.sentry:sentry:5.7.4")
-    implementation("dev.jorel:commandapi-bukkit-core:9.0.2")
+    implementation("dev.jorel:commandapi-bukkit-shade:9.0.2")
 
     testImplementation("net.md-5:bungeecord-api:1.16-R0.4")
     testImplementation("org.spigotmc:spigot-api:1.19.2-R0.1-SNAPSHOT")

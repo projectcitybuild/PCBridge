@@ -1,7 +1,10 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-group = "com.projectcitybuild.pcbridge"
-version = "5.0.0"
+val sharedGroup = "com.projectcitybuild.pcbridge"
+val sharedVersion = "5.0.0"
+
+group = sharedGroup
+version = sharedVersion
 
 plugins {
     kotlin("jvm") version "1.6.10"
@@ -17,6 +20,9 @@ repositories {
 }
 
 subprojects {
+    group = sharedGroup
+    version = sharedVersion
+
     apply(plugin = "org.jetbrains.kotlin.jvm")
 
     dependencies {

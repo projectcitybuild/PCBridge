@@ -1,39 +1,25 @@
 package com.projectcitybuild.modules.buildtools.nightvision.commands
 
-import com.projectcitybuild.support.spigot.commands.CannotInvokeFromConsoleException
-import com.projectcitybuild.support.spigot.commands.InvalidCommandArgumentsException
-import com.projectcitybuild.support.spigot.commands.SpigotCommand
-import com.projectcitybuild.support.spigot.commands.SpigotCommandInput
+import com.projectcitybuild.support.commandapi.ToggleOption
 import com.projectcitybuild.support.textcomponent.send
+import org.bukkit.entity.Player
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 
-class NightVisionCommand : SpigotCommand {
-    override val label = "nv"
-    override val permission = "pcbridge.build.nightvision"
-    override val usageHelp = "/nv [on|off]"
-
-    override suspend fun execute(input: SpigotCommandInput) {
-        if (input.isConsole) {
-            throw CannotInvokeFromConsoleException()
-        }
-        if (input.args.size > 1) {
-            throw InvalidCommandArgumentsException()
-        }
-        if (input.args.isNotEmpty() && !listOf("on", "off").contains(input.args.firstOrNull()?.lowercase())) {
-            throw InvalidCommandArgumentsException()
-        }
-
+class NightVisionCommand {
+    fun execute(
+        player: Player,
+        desiredState: ToggleOption,
+    ) {
         val duration = Integer.MAX_VALUE
         val amplifier = 1
         val potionEffectType = PotionEffectType.NIGHT_VISION
         val potionEffect = PotionEffect(potionEffectType, duration, amplifier)
 
-        val player = input.player
-        val toggleOn = if (input.args.isNotEmpty()) {
-            input.args.first().lowercase() == "on"
-        } else {
+        val toggleOn = if (desiredState == ToggleOption.UNSPECIFIED) {
             !player.hasPotionEffect(potionEffectType)
+        } else {
+            desiredState == ToggleOption.ON
         }
 
         player.removePotionEffect(potionEffectType)

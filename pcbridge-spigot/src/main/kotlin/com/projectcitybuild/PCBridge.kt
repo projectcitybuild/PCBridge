@@ -18,7 +18,6 @@ import com.projectcitybuild.modules.warps.WarpsModule
 import com.projectcitybuild.support.modules.ModuleRegisterDSL
 import dev.jorel.commandapi.CommandAPI
 import dev.jorel.commandapi.CommandAPIBukkitConfig
-import dev.jorel.commandapi.CommandAPIConfig
 import org.bukkit.plugin.java.JavaPlugin
 
 class PCBridge : JavaPlugin() {
