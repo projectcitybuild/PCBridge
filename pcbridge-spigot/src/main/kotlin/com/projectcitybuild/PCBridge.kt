@@ -16,6 +16,9 @@ import com.projectcitybuild.modules.ranksync.RankSyncModule
 import com.projectcitybuild.modules.telemetry.TelemetryModule
 import com.projectcitybuild.modules.warps.WarpsModule
 import com.projectcitybuild.support.modules.ModuleRegisterDSL
+import dev.jorel.commandapi.CommandAPI
+import dev.jorel.commandapi.CommandAPIBukkitConfig
+import dev.jorel.commandapi.CommandAPIConfig
 import org.bukkit.plugin.java.JavaPlugin
 
 class PCBridge : JavaPlugin() {
@@ -47,8 +50,17 @@ class PCBridge : JavaPlugin() {
             )
         }
 
+    override fun onLoad() {
+        CommandAPI.onLoad(
+            CommandAPIBukkitConfig(this)
+                .verboseOutput(true)
+        )
+    }
+
     override fun onEnable() {
         printLogo()
+
+        CommandAPI.onEnable()
 
         container = DependencyContainer(
             plugin = this,
@@ -83,6 +95,11 @@ class PCBridge : JavaPlugin() {
     override fun onDisable() {
         integrations.forEach { it.onDisable() }
         integrations = emptyArray()
+
+        CommandAPI.onDisable()
+        CommandAPI.getRegisteredCommands().forEach {
+            CommandAPI.unregister(it.commandName)
+        }
 
         container?.apply {
             runCatching {
