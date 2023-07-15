@@ -2,7 +2,7 @@ package com.projectcitybuild.modules.moderation.bans.listeners
 
 import com.projectcitybuild.events.ConnectionPermittedEvent
 import com.projectcitybuild.modules.moderation.bans.actions.AuthoriseConnection
-import com.projectcitybuild.libs.datetime.formatter.DateTimeFormatter
+import com.projectcitybuild.pcbridge.core.modules.datetime.formatter.DateTimeFormatter
 import com.projectcitybuild.libs.errorreporting.ErrorReporter
 import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger
 import com.projectcitybuild.pcbridge.http.responses.Aggregate

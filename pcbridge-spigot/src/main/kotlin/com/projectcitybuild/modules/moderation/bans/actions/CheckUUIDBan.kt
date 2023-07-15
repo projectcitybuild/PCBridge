@@ -1,6 +1,6 @@
 package com.projectcitybuild.modules.moderation.bans.actions
 
-import com.projectcitybuild.libs.datetime.formatter.DateTimeFormatter
+import com.projectcitybuild.pcbridge.core.modules.datetime.formatter.DateTimeFormatter
 import com.projectcitybuild.pcbridge.core.utils.Failure
 import com.projectcitybuild.pcbridge.core.utils.Result
 import com.projectcitybuild.pcbridge.core.utils.Success

@@ -1,11 +1,11 @@
 package com.projectcitybuild.modules.pluginutils.listeners
 
-import com.projectcitybuild.DateTimeFormatterMock
 import com.projectcitybuild.events.ConnectionPermittedEvent
 import com.projectcitybuild.libs.errorreporting.ErrorReporter
 import com.projectcitybuild.modules.moderation.bans.actions.AuthoriseConnection
 import com.projectcitybuild.modules.moderation.bans.listeners.CheckBanOnConnectListener
 import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger
+import com.projectcitybuild.pcbridge.core.modules.datetime.formatter.DateTimeFormatterImpl
 import com.projectcitybuild.pcbridge.http.responses.Aggregate
 import com.projectcitybuild.pcbridge.http.responses.IPBan
 import com.projectcitybuild.pcbridge.http.responses.PlayerBan
@@ -45,7 +45,7 @@ class CheckBanOnConnectListenerTest {
             aggregateRepository,
             authoriseConnection,
             mock(PlatformLogger::class.java),
-            DateTimeFormatterMock(),
+            DateTimeFormatterImpl.mock(),
             errorReporter,
             localEventBroadcaster,
         )

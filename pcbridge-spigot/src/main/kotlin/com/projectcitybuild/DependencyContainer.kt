@@ -11,10 +11,10 @@ import com.projectcitybuild.libs.config.Config
 import com.projectcitybuild.libs.config.ConfigKeys
 import com.projectcitybuild.libs.config.adapters.YamlKeyValueStorage
 import com.projectcitybuild.libs.database.DataSource
-import com.projectcitybuild.libs.datetime.formatter.DateTimeFormatter
-import com.projectcitybuild.libs.datetime.formatter.DateTimeFormatterImpl
-import com.projectcitybuild.libs.datetime.time.LocalizedTime
-import com.projectcitybuild.libs.datetime.time.Time
+import com.projectcitybuild.pcbridge.core.modules.datetime.formatter.DateTimeFormatter
+import com.projectcitybuild.pcbridge.core.modules.datetime.formatter.DateTimeFormatterImpl
+import com.projectcitybuild.pcbridge.core.modules.datetime.time.LocalizedTime
+import com.projectcitybuild.pcbridge.core.modules.datetime.time.Time
 import com.projectcitybuild.libs.errorreporting.ErrorReporter
 import com.projectcitybuild.libs.errorreporting.adapters.SentryErrorReporter
 import com.projectcitybuild.libs.nameguesser.NameGuesser
@@ -50,6 +50,7 @@ import com.projectcitybuild.support.spigot.SpigotServer
 import org.bukkit.Server
 import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.plugin.java.JavaPlugin
+import java.time.Clock
 import java.time.ZoneId
 import java.util.Locale
 import kotlin.coroutines.CoroutineContext
@@ -81,7 +82,11 @@ class DependencyContainer(
         )
 
     val time: Time
-        get() = LocalizedTime()
+        get() = LocalizedTime(
+            clock = Clock.system(
+                ZoneId.of(config.get(ConfigKeys.timeTimezone))
+            ),
+        )
 
     val logger: PlatformLogger
         get() = SpigotLogger(spigotLogger)

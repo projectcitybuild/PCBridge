@@ -1,6 +1,6 @@
 package com.projectcitybuild.modules.moderation.bans.actions
 
-import com.projectcitybuild.Regex
+import com.projectcitybuild.utilities.helpers.Regex
 import com.projectcitybuild.utilities.helpers.Sanitizer
 import com.projectcitybuild.pcbridge.core.utils.Failure
 import com.projectcitybuild.pcbridge.core.utils.Result
