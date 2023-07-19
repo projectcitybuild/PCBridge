@@ -18,7 +18,7 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.whenever
 import java.time.LocalDateTime
 
-class CreateTeleportToWarpTest {
+class CreateWarpTest {
 
     private lateinit var useCase: CreateWarp
 

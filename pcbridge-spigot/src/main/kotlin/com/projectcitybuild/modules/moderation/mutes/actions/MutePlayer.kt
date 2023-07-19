@@ -1,17 +1,17 @@
 package com.projectcitybuild.modules.moderation.mutes.actions
 
 import com.projectcitybuild.repositories.PlayerConfigRepository
-import org.bukkit.entity.Player
+import java.util.UUID
 
 class MutePlayer(
     private val playerConfigRepository: PlayerConfigRepository,
 ) {
     fun execute(
-        targetPlayer: Player,
+        targetPlayerUUID: UUID,
         shouldMute: Boolean,
     ) {
         val targetPlayerConfig = playerConfigRepository
-            .get(targetPlayer.uniqueId)!!
+            .get(targetPlayerUUID)!!
             .also { it.isMuted = shouldMute }
 
         playerConfigRepository.save(targetPlayerConfig)

@@ -1,6 +1,5 @@
 package com.projectcitybuild.modules.warps.actions
 
-import com.projectcitybuild.modules.warps.actions.DeleteWarp
 import com.projectcitybuild.pcbridge.core.utils.Failure
 import com.projectcitybuild.pcbridge.core.utils.Success
 import com.projectcitybuild.repositories.WarpRepository
@@ -15,7 +14,7 @@ import org.mockito.Mockito.verify
 import org.mockito.kotlin.any
 import org.mockito.kotlin.whenever
 
-class DeleteTeleportToWarpTest {
+class DeleteWarpTest {
 
     private lateinit var useCase: DeleteWarp
 

@@ -9,7 +9,7 @@ class MuteCommand(
 ) {
     fun execute(commandSender: Player, targetPlayer: Player) {
         mute.execute(
-            targetPlayer = targetPlayer,
+            targetPlayerUUID = targetPlayer.uniqueId,
             shouldMute = true,
         )
         commandSender.send().success("${targetPlayer.name} has been muted")
