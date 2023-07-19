@@ -8,7 +8,9 @@ import com.projectcitybuild.support.modules.PluginModule
 import dev.jorel.commandapi.arguments.MultiLiteralArgument
 import dev.jorel.commandapi.executors.PlayerCommandExecutor
 
-class NightVisionModule: PluginModule {
+class NightVisionModule(
+    private val nightVisionCommandFactory: () -> NightVisionCommand,
+): PluginModule {
 
     override fun register(module: ModuleDeclaration) = module {
         command("nv") {
@@ -24,7 +26,7 @@ class NightVisionModule: PluginModule {
                     "off" -> ToggleOption.OFF
                     else -> ToggleOption.UNSPECIFIED
                 }
-                NightVisionCommand().execute(player, desiredState)
+                nightVisionCommandFactory().execute(player, desiredState)
             })
         }
     }

@@ -2,9 +2,7 @@ package com.projectcitybuild
 
 import com.github.shynixn.mccoroutine.bukkit.minecraftDispatcher
 import com.projectcitybuild.integrations.SpigotIntegration
-import com.projectcitybuild.libs.errorreporting.ErrorReporter
 import com.projectcitybuild.modules.buildtools.invisframes.InvisFramesModule
-import com.projectcitybuild.modules.buildtools.nightvision.NightVisionModule
 import com.projectcitybuild.modules.chat.ChatModule
 import com.projectcitybuild.modules.joinmessages.JoinMessagesModule
 import com.projectcitybuild.modules.moderation.bans.BansModule
@@ -22,39 +20,12 @@ import org.bukkit.plugin.java.JavaPlugin
 
 class PCBridge : JavaPlugin() {
     private var container: DependencyContainer? = null
-    private var integrations: Array<SpigotIntegration> = emptyArray()
+    private var containerLifecycle: ContainerLifecycle? = null
 
-    private val modules get() = listOf(
-        BansModule(),
-        ChatModule(),
-        InvisFramesModule(),
-        JoinMessagesModule(),
-        MutesModule(),
-        NightVisionModule(),
-        PluginUtilsModule(),
-        RankSyncModule(),
-        StaffChatModule(),
-        TelemetryModule(),
-        WarningsModule(),
-        WarpsModule(),
+    override fun onLoad() = CommandAPI.onLoad(
+        CommandAPIBukkitConfig(this)
+            .verboseOutput(true)
     )
-
-    private fun integrations(container: DependencyContainer): Array<SpigotIntegration> =
-        container.run {
-            arrayOf(
-                dynmapIntegration,
-                essentialsIntegration,
-                gadgetsMenuIntegration,
-                luckPermsIntegration,
-            )
-        }
-
-    override fun onLoad() {
-        CommandAPI.onLoad(
-            CommandAPIBukkitConfig(this)
-                .verboseOutput(true)
-        )
-    }
 
     override fun onEnable() {
         printLogo()
@@ -66,55 +37,25 @@ class PCBridge : JavaPlugin() {
             spigotConfig = config,
             minecraftDispatcher = minecraftDispatcher
         )
-        container!!.apply {
-            errorReporter.start()
+        containerLifecycle = ContainerLifecycle(container!!)
 
-            runCatching {
-                CommandAPI.onEnable()
-
-                dataSource.connect()
-                permissions.connect()
-                webServer.start()
-
-                modules.forEach { module ->
-                    val container = container!!
-                    val builder = ModuleRegisterDSL(listenerRegistry, container)
-                    module.register(builder::apply)
-                }
-
-                integrations = integrations(this)
-                integrations.forEach { it.onEnable() }
-            }.onFailure {
-                reportError(it, errorReporter)
-                server.pluginManager.disablePlugin(plugin)
-            }
+        runCatching {
+            containerLifecycle?.onEnable()
+        }.onFailure {
+            container?.errorReporter?.report(it)
+            server.pluginManager.disablePlugin(this)
         }
     }
 
     override fun onDisable() {
-        container?.apply {
-            runCatching {
-                integrations.forEach { it.onDisable() }
-                integrations = emptyArray()
-
-                listenerRegistry.unregisterAll()
-                dataSource.disconnect()
-                webServer.stop()
-
-                CommandAPI.onDisable()
-                CommandAPI.getRegisteredCommands().forEach {
-                    CommandAPI.unregister(it.commandName)
-                }
-            }.onFailure {
-                reportError(it, errorReporter)
-            }
+        runCatching {
+            containerLifecycle?.onDisable()
+        }.onFailure {
+            container?.errorReporter?.report(it)
+            server.pluginManager.disablePlugin(this)
         }
+        containerLifecycle = null
         container = null
-    }
-
-    private fun reportError(throwable: Throwable, errorReporter: ErrorReporter) {
-        throwable.printStackTrace()
-        errorReporter.report(throwable)
     }
 
     private fun printLogo() {
@@ -130,5 +71,59 @@ class PCBridge : JavaPlugin() {
         """.trimIndent()
 
         enableMessage.split("\n").forEach(logger::info)
+    }
+}
+
+private class ContainerLifecycle(
+    private val container: DependencyContainer,
+) {
+    private var integrations: List<SpigotIntegration> = emptyList()
+
+    fun onEnable() = container.apply {
+        CommandAPI.onEnable()
+
+        dataSource.connect()
+        permissions.connect()
+        webServer.start()
+
+        listOf(
+            BansModule(),
+            ChatModule(),
+            InvisFramesModule(),
+            JoinMessagesModule(),
+            MutesModule(),
+            nightVisionModule,
+            PluginUtilsModule(),
+            RankSyncModule(),
+            StaffChatModule(),
+            TelemetryModule(),
+            WarningsModule(),
+            WarpsModule(),
+        ).forEach { module ->
+            val builder = ModuleRegisterDSL(listenerRegistry, container)
+            module.register(builder::apply)
+        }
+
+        integrations = listOf(
+            dynmapIntegration,
+            essentialsIntegration,
+            gadgetsMenuIntegration,
+            luckPermsIntegration,
+        )
+        integrations.forEach { it.onEnable() }
+    }
+
+    fun onDisable() = container.apply {
+        integrations.forEach { it.onDisable() }
+        integrations = emptyList()
+
+        listenerRegistry.unregisterAll()
+        dataSource.disconnect()
+        webServer.stop()
+
+        CommandAPI.onDisable()
+        CommandAPI.getRegisteredCommands().forEach {
+            CommandAPI.unregister(it.commandName)
+        }
     }
 }
