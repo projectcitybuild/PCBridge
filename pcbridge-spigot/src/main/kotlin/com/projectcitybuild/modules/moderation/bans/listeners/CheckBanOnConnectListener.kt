@@ -10,7 +10,7 @@ import com.projectcitybuild.repositories.AggregateRepository
 import com.projectcitybuild.support.spigot.eventbroadcast.LocalEventBroadcaster
 import com.projectcitybuild.support.spigot.listeners.SpigotListener
 import com.projectcitybuild.support.textcomponent.add
-import com.projectcitybuild.utilities.helpers.Sanitizer
+import com.projectcitybuild.utils.Sanitizer
 import kotlinx.coroutines.runBlocking
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.chat.TextComponent

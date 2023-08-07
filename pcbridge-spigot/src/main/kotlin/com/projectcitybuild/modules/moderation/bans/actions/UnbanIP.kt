@@ -1,10 +1,10 @@
 package com.projectcitybuild.modules.moderation.bans.actions
 
-import com.projectcitybuild.utilities.helpers.Regex
-import com.projectcitybuild.utilities.helpers.Sanitizer
+import com.projectcitybuild.utils.Sanitizer
 import com.projectcitybuild.pcbridge.core.utils.Failure
 import com.projectcitybuild.pcbridge.core.utils.Result
 import com.projectcitybuild.pcbridge.core.utils.Success
+import com.projectcitybuild.pcbridge.core.utils.helpers.isValidIP
 import com.projectcitybuild.pcbridge.http.services.pcb.IPBanHttpService
 import com.projectcitybuild.repositories.IPBanRepository
 import java.util.UUID
@@ -23,9 +23,7 @@ class UnbanIP(
         unbannerName: String,
     ): Result<Unit, FailureReason> {
         val sanitizedIP = Sanitizer.sanitizedIP(ip)
-
-        val isValidIP = Regex.IP.matcher(sanitizedIP).matches()
-        if (!isValidIP) {
+        if (!isValidIP(sanitizedIP)) {
             return Failure(FailureReason.INVALID_IP)
         }
 

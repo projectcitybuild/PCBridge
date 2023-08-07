@@ -1,4 +1,4 @@
-package com.projectcitybuild.utilities.helpers
+package com.projectcitybuild.utils
 
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
