@@ -1,15 +1,15 @@
-package com.projectcitybuild.libs.errorreporting.adapters
+package com.projectcitybuild.libs.errorreporting.outputs
 
 import com.projectcitybuild.libs.config.Config
 import com.projectcitybuild.libs.config.ConfigKeys
-import com.projectcitybuild.libs.errorreporting.ErrorReporter
+import com.projectcitybuild.libs.errorreporting.ErrorOutput
 import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger
 import io.sentry.Sentry
 
-class SentryErrorReporter(
+class SentryErrorOutput(
     private val config: Config,
     private val logger: PlatformLogger,
-) : ErrorReporter {
+) : ErrorOutput {
 
     override fun start() {
         val isEnabled = config.get(ConfigKeys.errorReportingSentryEnabled)

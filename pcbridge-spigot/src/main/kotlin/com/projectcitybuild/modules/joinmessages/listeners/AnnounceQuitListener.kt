@@ -16,7 +16,7 @@ class AnnounceQuitListener(
     override suspend fun handle(event: PlayerQuitEvent) {
         server.broadcastMessage(
             TextComponent()
-                .add("— ") {
+                .add("- ") {
                     it.color = ChatColor.RED
                     it.isBold = true
                 }

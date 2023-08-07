@@ -1,9 +1,6 @@
 package com.projectcitybuild.modules.warps.commands
 
 import com.projectcitybuild.modules.warps.actions.GetWarpList
-import com.projectcitybuild.support.spigot.commands.InvalidCommandArgumentsException
-import com.projectcitybuild.support.spigot.commands.SpigotCommand
-import com.projectcitybuild.support.spigot.commands.SpigotCommandInput
 import com.projectcitybuild.support.textcomponent.add
 import com.projectcitybuild.support.textcomponent.send
 import net.md_5.bungee.api.ChatColor
@@ -11,28 +8,17 @@ import net.md_5.bungee.api.chat.ClickEvent
 import net.md_5.bungee.api.chat.HoverEvent
 import net.md_5.bungee.api.chat.TextComponent
 import net.md_5.bungee.api.chat.hover.content.Text
+import org.bukkit.entity.Player
+import java.lang.Integer.max
 
-class WarpsCommand(
+class ListWarpsCommand(
     private val getWarpList: GetWarpList,
-) : SpigotCommand {
-
-    override val label = "warps"
-    override val permission = "pcbridge.warp.list"
-    override val usageHelp = "/warps"
-
-    override suspend fun execute(input: SpigotCommandInput) {
-        if (input.args.size > 1) {
-            throw InvalidCommandArgumentsException()
-        }
-        val page = try {
-            input.args.firstOrNull()?.toInt()
-        } catch (e: NumberFormatException) {
-            null
-        } ?: 1
-
-        val warpList = getWarpList.getList(page)
+) {
+    fun execute(commandSender: Player, pageIndex: Int?) {
+        val clampedPageIndex = max(1, pageIndex ?: 1)
+        val warpList = getWarpList.getList(clampedPageIndex)
         if (warpList == null) {
-            input.sender.send().info("No warps available")
+            commandSender.send().info("No warps available")
             return
         }
 
@@ -55,9 +41,9 @@ class WarpsCommand(
 
         if (warpList.totalPages > 1) {
             tc.add("\n---\n")
-                .add("Page $page of ${warpList.totalPages}") { it.color = ChatColor.GRAY }
+                .add("Page $clampedPageIndex of ${warpList.totalPages}") { it.color = ChatColor.GRAY }
         }
 
-        input.sender.spigot().sendMessage(tc)
+        commandSender.spigot().sendMessage(tc)
     }
 }

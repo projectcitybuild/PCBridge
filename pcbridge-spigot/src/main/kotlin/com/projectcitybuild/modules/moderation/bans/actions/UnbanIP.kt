@@ -22,7 +22,7 @@ class UnbanIP(
         unbannerUUID: UUID,
         unbannerName: String,
     ): Result<Unit, FailureReason> {
-        val sanitizedIP = Sanitizer().sanitizedIP(ip)
+        val sanitizedIP = Sanitizer.sanitizedIP(ip)
 
         val isValidIP = Regex.IP.matcher(sanitizedIP).matches()
         if (!isValidIP) {

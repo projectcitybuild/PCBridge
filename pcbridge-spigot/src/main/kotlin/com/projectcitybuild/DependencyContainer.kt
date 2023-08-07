@@ -16,12 +16,15 @@ import com.projectcitybuild.pcbridge.core.modules.datetime.formatter.DateTimeFor
 import com.projectcitybuild.pcbridge.core.modules.datetime.time.LocalizedTime
 import com.projectcitybuild.pcbridge.core.modules.datetime.time.Time
 import com.projectcitybuild.libs.errorreporting.ErrorReporter
-import com.projectcitybuild.libs.errorreporting.adapters.SentryErrorReporter
+import com.projectcitybuild.libs.errorreporting.outputs.PrintStackTraceOutput
+import com.projectcitybuild.libs.errorreporting.outputs.SentryErrorOutput
 import com.projectcitybuild.libs.nameguesser.NameGuesser
 import com.projectcitybuild.libs.permissions.Permissions
 import com.projectcitybuild.libs.permissions.adapters.LuckPermsPermissions
 import com.projectcitybuild.libs.playercache.PlayerConfigCache
 import com.projectcitybuild.libs.storage.adapters.YamlStorage
+import com.projectcitybuild.modules.buildtools.nightvision.NightVisionModule
+import com.projectcitybuild.modules.buildtools.nightvision.commands.NightVisionCommand
 import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger
 import com.projectcitybuild.pcbridge.core.contracts.PlatformScheduler
 import com.projectcitybuild.pcbridge.http.HttpService
@@ -42,7 +45,6 @@ import com.projectcitybuild.repositories.WarpRepository
 import com.projectcitybuild.support.spigot.SpigotLogger
 import com.projectcitybuild.support.spigot.SpigotNamespace
 import com.projectcitybuild.support.spigot.SpigotScheduler
-import com.projectcitybuild.support.spigot.commands.SpigotCommandRegistry
 import com.projectcitybuild.support.spigot.eventbroadcast.LocalEventBroadcaster
 import com.projectcitybuild.support.spigot.eventbroadcast.SpigotLocalEventBroadcaster
 import com.projectcitybuild.support.spigot.listeners.SpigotListenerRegistry
@@ -95,7 +97,12 @@ class DependencyContainer(
         get() = SpigotScheduler(plugin)
 
     val errorReporter: ErrorReporter by lazy {
-        SentryErrorReporter(config, logger)
+        ErrorReporter(
+            outputs = listOf(
+                SentryErrorOutput(config, logger),
+                PrintStackTraceOutput(),
+            )
+        )
     }
 
     val dataSource by lazy {
@@ -117,16 +124,8 @@ class DependencyContainer(
         )
     }
 
-    val commandRegistry by lazy {
-        SpigotCommandRegistry(
-            plugin,
-            logger,
-            errorReporter,
-        )
-    }
-
     val localEventBroadcaster: LocalEventBroadcaster
-        get() = SpigotLocalEventBroadcaster()
+        get() = SpigotLocalEventBroadcaster(scheduler)
 
     val spigotServer: SpigotServer
         get() = SpigotServer(server)
@@ -296,4 +295,13 @@ class DependencyContainer(
             chatGroupFormatter,
         )
     }
+
+    /**
+     * Modules
+     */
+
+    val nightVisionModule
+        get() = NightVisionModule(
+            nightVisionCommandFactory = { NightVisionCommand() },
+        )
 }

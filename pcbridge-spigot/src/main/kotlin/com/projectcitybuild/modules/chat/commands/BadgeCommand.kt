@@ -1,45 +1,28 @@
 package com.projectcitybuild.modules.chat.commands
 
-import com.projectcitybuild.modules.chat.actions.ToggleBadge
-import com.projectcitybuild.support.spigot.commands.InvalidCommandArgumentsException
-import com.projectcitybuild.support.spigot.commands.SpigotCommand
-import com.projectcitybuild.support.spigot.commands.SpigotCommandInput
+import com.projectcitybuild.repositories.PlayerConfigRepository
+import com.projectcitybuild.support.commandapi.ToggleOption
 import com.projectcitybuild.support.textcomponent.send
-import org.bukkit.command.CommandSender
+import org.bukkit.entity.Player
 
 class BadgeCommand(
-    private val toggleBadge: ToggleBadge,
-) : SpigotCommand {
+    private val playerConfigRepository: PlayerConfigRepository,
+) {
+    fun execute(commandSender: Player, desiredState: ToggleOption) {
+        val playerConfig = playerConfigRepository.get(commandSender.uniqueId)!!
 
-    override val label = "badge"
-    override val permission = "pcbridge.chat.badge"
-    override val usageHelp = "/badge <on|off>"
-
-    override suspend fun execute(input: SpigotCommandInput) {
-        if (input.args.size != 1) {
-            throw InvalidCommandArgumentsException()
-        }
-
-        val shouldDisableBadge = when (input.args.first().lowercase()) {
-            "on" -> false
-            "off" -> true
-            else -> throw InvalidCommandArgumentsException()
-        }
-        toggleBadge.execute(
-            willBeDisabled = shouldDisableBadge,
-            playerUUID = input.player.uniqueId,
-        )
-        if (shouldDisableBadge) {
-            input.sender.send().success("Your chat badge has been turned off")
+        val shouldHideBadge = if (desiredState == ToggleOption.UNSPECIFIED) {
+            !playerConfig.isChatBadgeDisabled
         } else {
-            input.sender.send().success("Your chat badge has been turned on")
+            desiredState == ToggleOption.OFF
         }
-    }
+        playerConfig.isChatBadgeDisabled = shouldHideBadge
+        playerConfigRepository.save(playerConfig)
 
-    override fun onTabComplete(sender: CommandSender?, args: List<String>): Iterable<String>? {
-        return when {
-            args.isEmpty() -> listOf("on", "off")
-            else -> null
+        if (shouldHideBadge) {
+            commandSender.send().success("Your chat badge has been turned off")
+        } else {
+            commandSender.send().success("Your chat badge has been turned on")
         }
     }
 }

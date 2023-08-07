@@ -1,16 +1,12 @@
 package com.projectcitybuild.modules.buildtools.nightvision.commands
 
-import com.projectcitybuild.support.spigot.commands.CannotInvokeFromConsoleException
-import com.projectcitybuild.support.spigot.commands.InvalidCommandArgumentsException
-import com.projectcitybuild.support.spigot.commands.SpigotCommandInput
+import com.projectcitybuild.support.commandapi.ToggleOption
 import kotlinx.coroutines.test.runTest
 import org.bukkit.entity.Player
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertDoesNotThrow
-import org.junit.jupiter.api.assertThrows
 import org.mockito.Mockito
 import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
@@ -39,75 +35,21 @@ class NightVisionCommandTest {
     }
 
     @Test
-    fun `throws exception if console uses command`() = runTest {
-        val input = SpigotCommandInput(
-            sender = player,
-            args = emptyList(),
-            isConsole = true,
-        )
-        assertThrows<CannotInvokeFromConsoleException> {
-            NightVisionCommand().execute(input)
-        }
-    }
-
-    @Test
-    fun `throws exception if too many arguments`() = runTest {
-        val input = SpigotCommandInput(
-            sender = player,
-            args = listOf("on", "off"),
-            isConsole = false,
-        )
-        assertThrows<InvalidCommandArgumentsException> {
-            NightVisionCommand().execute(input)
-        }
-    }
-
-    @Test
-    fun `throws exception if invalid toggle option`() = runTest {
-        listOf("bad", "1", "true").forEach { invalidOption ->
-            val input = SpigotCommandInput(
-                sender = player,
-                args = listOf(invalidOption),
-                isConsole = false,
-            )
-            assertThrows<InvalidCommandArgumentsException> {
-                NightVisionCommand().execute(input)
-            }
-        }
-        listOf("on", "ON", "off", "OFF").forEach { validOption ->
-            val input = SpigotCommandInput(
-                sender = player,
-                args = listOf(validOption),
-                isConsole = false,
-            )
-            assertDoesNotThrow {
-                NightVisionCommand().execute(input)
-            }
-        }
-    }
-
-    @Test
     fun `forces on nightvision when specified`() = runTest {
-        val input = SpigotCommandInput(
-            sender = player,
-            args = listOf("on"),
-            isConsole = false,
+        NightVisionCommand().execute(
+            player = player,
+            desiredState = ToggleOption.ON,
         )
-        NightVisionCommand().execute(input)
-
         verify(player).removePotionEffect(PotionEffectType.NIGHT_VISION)
         verify(player).addPotionEffect(potionEffect)
     }
 
     @Test
     fun `forces off nightvision when specified`() = runTest {
-        val input = SpigotCommandInput(
-            sender = player,
-            args = listOf("off"),
-            isConsole = false,
+        NightVisionCommand().execute(
+            player = player,
+            desiredState = ToggleOption.OFF,
         )
-        NightVisionCommand().execute(input)
-
         verify(player).removePotionEffect(PotionEffectType.NIGHT_VISION)
         verify(player, never()).addPotionEffect(potionEffect)
     }
@@ -117,13 +59,10 @@ class NightVisionCommandTest {
         whenever(player.hasPotionEffect(PotionEffectType.NIGHT_VISION))
             .thenReturn(false)
 
-        val input = SpigotCommandInput(
-            sender = player,
-            args = emptyList(),
-            isConsole = false,
+        NightVisionCommand().execute(
+            player = player,
+            desiredState = ToggleOption.UNSPECIFIED,
         )
-        NightVisionCommand().execute(input)
-
         verify(player).removePotionEffect(PotionEffectType.NIGHT_VISION)
         verify(player).addPotionEffect(potionEffect)
     }
@@ -133,13 +72,10 @@ class NightVisionCommandTest {
         whenever(player.hasPotionEffect(PotionEffectType.NIGHT_VISION))
             .thenReturn(true)
 
-        val input = SpigotCommandInput(
-            sender = player,
-            args = emptyList(),
-            isConsole = false,
+        NightVisionCommand().execute(
+            player = player,
+            desiredState = ToggleOption.UNSPECIFIED,
         )
-        NightVisionCommand().execute(input)
-
         verify(player).removePotionEffect(PotionEffectType.NIGHT_VISION)
         verify(player, never()).addPotionEffect(potionEffect)
     }
