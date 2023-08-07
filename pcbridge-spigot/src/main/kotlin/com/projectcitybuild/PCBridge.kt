@@ -41,6 +41,8 @@ class PCBridge : JavaPlugin() {
         )
         containerLifecycle = ContainerLifecycle(container!!)
 
+        container?.errorReporter?.start()
+
         runCatching {
             containerLifecycle?.onEnable()
         }.onFailure {

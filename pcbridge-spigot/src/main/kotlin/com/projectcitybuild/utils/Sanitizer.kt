@@ -1,4 +1,4 @@
-package com.projectcitybuild.utilities.helpers
+package com.projectcitybuild.utils
 
 class Sanitizer private constructor() {
 
@@ -13,12 +13,10 @@ class Sanitizer private constructor() {
          */
         fun sanitizedIP(ip: String): String {
             var sanitized = ip.replace("/", "")
-
             if (sanitized.matches(ipPortPattern)) {
                 val colonIndex = sanitized.indexOf(":")
                 sanitized = sanitized.substring(0 until colonIndex)
             }
-
             return sanitized
         }
     }
