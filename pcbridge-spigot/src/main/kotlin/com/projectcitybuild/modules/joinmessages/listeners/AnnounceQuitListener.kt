@@ -16,7 +16,11 @@ class AnnounceQuitListener(
     override suspend fun handle(event: PlayerQuitEvent) {
         server.broadcastMessage(
             TextComponent()
+<<<<<<< Updated upstream
                 .add("— ") {
+=======
+                .add("- ") {
+>>>>>>> Stashed changes
                     it.color = ChatColor.RED
                     it.isBold = true
                 }

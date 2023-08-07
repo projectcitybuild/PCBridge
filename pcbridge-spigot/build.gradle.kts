@@ -77,7 +77,7 @@ tasks.withType<ShadowJar> {
     archiveVersion.set(project.version.toString())
 
     // Prevent clashes with other Spigot plugins that may be shadowing CommandAPI
-    relocate("dev.jorel.commandapi", "com.projectcitybuild.pcbridge.commandapi")
+    relocate("dev.jorel.commandapi", project.group.toString())
 }
 
 tasks.create("generateVersionResource") {
