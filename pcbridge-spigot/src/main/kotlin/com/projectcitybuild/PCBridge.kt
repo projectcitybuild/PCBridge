@@ -22,10 +22,12 @@ class PCBridge : JavaPlugin() {
     private var container: DependencyContainer? = null
     private var containerLifecycle: ContainerLifecycle? = null
 
-    override fun onLoad() = CommandAPI.onLoad(
-        CommandAPIBukkitConfig(this)
-            .verboseOutput(true)
-    )
+    override fun onLoad() {
+        CommandAPI.onLoad(
+            CommandAPIBukkitConfig(this)
+                .verboseOutput(true)
+        )
+    }
 
     override fun onEnable() {
         printLogo()

@@ -8,11 +8,7 @@ softdepend:
   - GadgetsMenu
   - Essentials
 
-<<<<<<< Updated upstream
-api-version: 1.19.2
-=======
 api-version: 1.16
-<<<<<<< Updated upstream
 
 commands:
   a:
@@ -67,6 +63,3 @@ commands:
   warning:
     description: "Acknowledges a given warning"
     usage: "/warning acknowledge <id>"
-=======
->>>>>>> Stashed changes
->>>>>>> Stashed changes
