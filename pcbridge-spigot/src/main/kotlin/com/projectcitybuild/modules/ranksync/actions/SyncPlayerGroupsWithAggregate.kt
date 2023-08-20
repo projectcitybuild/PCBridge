@@ -1,7 +1,7 @@
 package com.projectcitybuild.modules.ranksync.actions
 
+import com.projectcitybuild.ConfigData
 import com.projectcitybuild.pcbridge.core.modules.config.Config
-import com.projectcitybuild.pcbridge.core.modules.config.ConfigStorageKey
 import com.projectcitybuild.libs.permissions.Permissions
 import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger
 import com.projectcitybuild.pcbridge.http.responses.Aggregate
@@ -9,7 +9,7 @@ import java.util.UUID
 
 class SyncPlayerGroupsWithAggregate(
     private val permissions: Permissions,
-    private val config: Config,
+    private val config: Config<ConfigData>,
     private val logger: PlatformLogger,
 ) {
     fun execute(playerUUID: UUID, aggregate: Aggregate) {
@@ -23,17 +23,16 @@ class SyncPlayerGroupsWithAggregate(
             aggregate.donationPerks.mapNotNull { donorPerk ->
                 val tierName = donorPerk.donationTier.name
 
-                val configNode = ConfigStorageKey<String?>(
-                    path = "donors.tiers.$tierName.permission_group_name",
-                    defaultValue = null
-                )
-                val permissionGroupName = config.get(configNode)
-
-                if (permissionGroupName == null) {
-                    logger.severe("Missing config node for donor tier: $tierName")
-                    return@mapNotNull null
+                val groupNames = config.get().groups.donorTierGroupNames
+                val permissionGroupName = when (tierName) {
+                    "copper" -> groupNames.copper
+                    "iron" -> groupNames.iron
+                    "diamond" -> groupNames.diamond
+                    else -> {
+                        logger.severe("Missing config node for donor tier: $tierName")
+                        return@mapNotNull null
+                    }
                 }
-
                 return@mapNotNull permissionGroupName
             }
         )

@@ -1,7 +1,7 @@
 package com.projectcitybuild.modules.warps.actions
 
+import com.projectcitybuild.ConfigData
 import com.projectcitybuild.pcbridge.core.modules.config.Config
-import com.projectcitybuild.ConfigKeys
 import com.projectcitybuild.repositories.WarpRepository
 import kotlin.math.ceil
 import kotlin.math.max
@@ -9,7 +9,7 @@ import kotlin.math.min
 
 class GetWarpList(
     private val warpRepository: WarpRepository,
-    private val config: Config
+    private val config: Config<ConfigData>
 ) {
     data class WarpList(
         val totalWarps: Int,
@@ -19,7 +19,7 @@ class GetWarpList(
     )
 
     fun getList(page: Int = 1): WarpList? {
-        val warpsPerPage = config.get(ConfigKeys.warpsPerPage)
+        val warpsPerPage = config.get().warps.itemsPerPage
         val availableWarps = warpRepository.names()
         val totalWarpPages = ceil((availableWarps.size.toDouble() / warpsPerPage.toDouble())).toInt()
 

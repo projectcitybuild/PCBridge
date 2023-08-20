@@ -8,12 +8,13 @@ class Config<T>(
 ) {
     private var cache: T? = null
 
-    fun get(): T? {
+    fun get(): T {
+        val cache = cache
         if (cache != null) {
             return cache
         }
         return (jsonStorage.read() ?: default)
-            .also { cache = it }
+            .also { this.cache = it }
     }
 
     fun flush() {

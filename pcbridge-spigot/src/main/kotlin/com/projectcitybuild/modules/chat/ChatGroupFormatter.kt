@@ -1,7 +1,7 @@
 package com.projectcitybuild.modules.chat
 
+import com.projectcitybuild.ConfigData
 import com.projectcitybuild.pcbridge.core.modules.config.Config
-import com.projectcitybuild.ConfigKeys
 import com.projectcitybuild.libs.permissions.Permissions
 import net.md_5.bungee.api.chat.BaseComponent
 import net.md_5.bungee.api.chat.HoverEvent
@@ -11,7 +11,7 @@ import java.util.UUID
 
 class ChatGroupFormatter(
     private val permissions: Permissions,
-    private val config: Config,
+    private val config: Config<ConfigData>,
 ) {
     data class Aggregate(
         val prefix: List<BaseComponent>,
@@ -114,9 +114,9 @@ class ChatGroupFormatter(
     }
 
     private fun buildGroupList() {
-        val trustedGroupPriority = config.get(ConfigKeys.groupsTrustPriority)
-        val builderGroupPriority = config.get(ConfigKeys.groupsBuildPriority)
-        val donorGroupPriority = config.get(ConfigKeys.groupsDonorPriority)
+        val trustedGroupPriority = config.get().groups.displayPriority.trust
+        val builderGroupPriority = config.get().groups.displayPriority.builder
+        val donorGroupPriority = config.get().groups.displayPriority.donor
 
         trustedGroupPriority.withIndex().forEach {
             groupPriorities[it.value.lowercase()] = Pair(GroupType.TRUST, it.index)
