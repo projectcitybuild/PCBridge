@@ -27,6 +27,15 @@ class ConfigKeys {
 
         val integrationDynmapWarpIcon = "integrations.dynmap.warp_icon" defaultsTo "portal"
 
+        val announcementMinInterval = "announcements.min_interval" defaultsTo 30
+        val announcementMessages = "announcements.messages" defaultsTo listOf(
+            "§bJoin the Project City Build Discord server! Type /discord in game!",
+            "§bDonations are the only way to keep PCB running! If you would like to donate to the server, you can do so by typing /donate in game!",
+            "§bVote for us to help keep PCB active! Type /vote in game!",
+            "§bPost screenshots of your builds to the #showcase channel on our Discord to be featured on the PCB Instagram! Type /discord to join!",
+            "§bMake sure to follow the Project City Build Instagram for features of YOUR builds! Type /instagram in game!",
+        )
+
         val groupsBuildPriority = "groups.build_priority" defaultsTo listOf(
             "architect",
             "engineer",
