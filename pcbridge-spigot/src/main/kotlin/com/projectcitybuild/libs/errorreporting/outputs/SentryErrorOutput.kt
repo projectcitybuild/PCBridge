@@ -1,7 +1,7 @@
 package com.projectcitybuild.libs.errorreporting.outputs
 
-import com.projectcitybuild.libs.config.Config
-import com.projectcitybuild.libs.config.ConfigKeys
+import com.projectcitybuild.pcbridge.core.modules.config.Config
+import com.projectcitybuild.ConfigKeys
 import com.projectcitybuild.libs.errorreporting.ErrorOutput
 import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger
 import io.sentry.Sentry

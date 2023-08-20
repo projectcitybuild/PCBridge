@@ -1,7 +1,7 @@
 package com.projectcitybuild.modules.ranksync.actions
 
-import com.projectcitybuild.libs.config.Config
-import com.projectcitybuild.libs.config.ConfigStorageKey
+import com.projectcitybuild.pcbridge.core.modules.config.Config
+import com.projectcitybuild.pcbridge.core.modules.config.ConfigStorageKey
 import com.projectcitybuild.libs.permissions.Permissions
 import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger
 import com.projectcitybuild.pcbridge.http.responses.Aggregate

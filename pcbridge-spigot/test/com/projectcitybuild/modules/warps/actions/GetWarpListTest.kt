@@ -1,8 +1,8 @@
 package com.projectcitybuild.modules.warps.actions
 
-import com.projectcitybuild.libs.config.Config
-import com.projectcitybuild.libs.config.ConfigKeys
-import com.projectcitybuild.libs.config.adapters.MemoryKeyValueStorage
+import com.projectcitybuild.pcbridge.core.modules.config.Config
+import com.projectcitybuild.ConfigKeys
+import com.projectcitybuild.pcbridge.core.modules.config.storage.MemoryConfigStorage
 import com.projectcitybuild.repositories.WarpRepository
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -15,14 +15,14 @@ import org.mockito.kotlin.whenever
 class GetWarpListTest {
 
     private lateinit var useCase: GetWarpList
-    private lateinit var keyValueStorage: MemoryKeyValueStorage
+    private lateinit var keyValueStorage: MemoryConfigStorage
     private lateinit var config: Config
 
     private val warpRepository = mock(WarpRepository::class.java)
 
     @BeforeEach
     fun setUp() {
-        keyValueStorage = MemoryKeyValueStorage()
+        keyValueStorage = MemoryConfigStorage()
         config = Config(keyValueStorage)
         useCase = GetWarpList(
             warpRepository,

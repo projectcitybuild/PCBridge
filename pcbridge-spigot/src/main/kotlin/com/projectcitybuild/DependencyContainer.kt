@@ -7,9 +7,8 @@ import com.projectcitybuild.integrations.dynmap.DynmapMarkerIntegration
 import com.projectcitybuild.integrations.essentials.EssentialsIntegration
 import com.projectcitybuild.integrations.gadgetsmenu.GadgetsMenuIntegration
 import com.projectcitybuild.integrations.luckperms.LuckPermsIntegration
-import com.projectcitybuild.libs.config.Config
-import com.projectcitybuild.libs.config.ConfigKeys
-import com.projectcitybuild.libs.config.adapters.YamlKeyValueStorage
+import com.projectcitybuild.pcbridge.core.modules.config.Config
+import com.projectcitybuild.pcbridge.core.modules.config.storage.YamlConfigStorageAdapter
 import com.projectcitybuild.libs.database.DataSource
 import com.projectcitybuild.pcbridge.core.modules.datetime.formatter.DateTimeFormatter
 import com.projectcitybuild.pcbridge.core.modules.datetime.formatter.DateTimeFormatterImpl
@@ -22,7 +21,7 @@ import com.projectcitybuild.libs.nameguesser.NameGuesser
 import com.projectcitybuild.libs.permissions.Permissions
 import com.projectcitybuild.libs.permissions.adapters.LuckPermsPermissions
 import com.projectcitybuild.libs.playercache.PlayerConfigCache
-import com.projectcitybuild.libs.storage.adapters.YamlStorage
+import com.projectcitybuild.pcbridge.core.storage.adapters.JsonStorage
 import com.projectcitybuild.modules.buildtools.nightvision.NightVisionModule
 import com.projectcitybuild.modules.buildtools.nightvision.commands.NightVisionCommand
 import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger
@@ -67,8 +66,8 @@ class DependencyContainer(
 ) {
     val config: Config by lazy {
         Config(
-            YamlKeyValueStorage(
-                storage = YamlStorage(spigotConfig)
+            YamlConfigStorageAdapter(
+                storage = JsonStorage(spigotConfig)
             )
         )
     }

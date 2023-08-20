@@ -1,8 +1,8 @@
 package com.projectcitybuild.modules.ranksync.actions
 
-import com.projectcitybuild.libs.config.Config
-import com.projectcitybuild.libs.config.ConfigStorageKey
-import com.projectcitybuild.libs.config.adapters.MemoryKeyValueStorage
+import com.projectcitybuild.pcbridge.core.modules.config.Config
+import com.projectcitybuild.pcbridge.core.modules.config.ConfigStorageKey
+import com.projectcitybuild.pcbridge.core.modules.config.storage.MemoryConfigStorage
 import com.projectcitybuild.libs.permissions.Permissions
 import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger
 import com.projectcitybuild.pcbridge.http.responses.Account
@@ -21,12 +21,12 @@ class SyncPlayerGroupsWithAggregateTest {
 
     private lateinit var useCase: SyncPlayerGroupsWithAggregate
     private lateinit var permissions: Permissions
-    private lateinit var keyValueStorage: MemoryKeyValueStorage
+    private lateinit var keyValueStorage: MemoryConfigStorage
 
     @BeforeEach
     fun setUp() {
         permissions = mock(Permissions::class.java)
-        keyValueStorage = MemoryKeyValueStorage()
+        keyValueStorage = MemoryConfigStorage()
 
         useCase = SyncPlayerGroupsWithAggregate(
             permissions = permissions,

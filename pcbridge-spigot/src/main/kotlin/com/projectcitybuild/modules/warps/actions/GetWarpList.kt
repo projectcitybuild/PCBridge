@@ -1,7 +1,7 @@
 package com.projectcitybuild.modules.warps.actions
 
-import com.projectcitybuild.libs.config.Config
-import com.projectcitybuild.libs.config.ConfigKeys
+import com.projectcitybuild.pcbridge.core.modules.config.Config
+import com.projectcitybuild.ConfigKeys
 import com.projectcitybuild.repositories.WarpRepository
 import kotlin.math.ceil
 import kotlin.math.max

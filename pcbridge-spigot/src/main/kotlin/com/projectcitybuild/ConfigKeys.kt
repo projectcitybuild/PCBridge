@@ -1,6 +1,9 @@
-package com.projectcitybuild.libs.config
+package com.projectcitybuild
 
-class ConfigKeys {
+import com.projectcitybuild.pcbridge.core.modules.config.defaultsTo
+
+class ConfigKeys private constructor() {
+
     companion object {
         val apiToken = "api.token" defaultsTo "FILL_THIS_IN"
         val apiBaseURL = "api.base_url" defaultsTo "https://projectcitybuild.com/api/"

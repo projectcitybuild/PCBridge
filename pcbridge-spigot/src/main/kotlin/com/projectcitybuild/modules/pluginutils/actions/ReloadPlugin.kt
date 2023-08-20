@@ -1,7 +1,7 @@
 package com.projectcitybuild.modules.pluginutils.actions
 
 import com.projectcitybuild.modules.chat.ChatGroupFormatter
-import com.projectcitybuild.libs.config.Config
+import com.projectcitybuild.pcbridge.core.modules.config.Config
 import com.projectcitybuild.libs.playercache.PlayerConfigCache
 import com.projectcitybuild.repositories.WarpRepository
 
