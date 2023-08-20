@@ -44,9 +44,9 @@ class InvisFrameCommand(
         })
 
         if (isGlowingFrame) {
-            player.send().info("You received an invisible item frame")
-        } else {
             player.send().info("You received an invisible glowing frame")
+        } else {
+            player.send().info("You received an invisible item frame")
         }
     }
 }
