@@ -1,29 +1,31 @@
 package com.projectcitybuild.modules.warps.actions
 
+import com.projectcitybuild.ConfigData
 import com.projectcitybuild.pcbridge.core.modules.config.Config
-import com.projectcitybuild.ConfigKeys
-import com.projectcitybuild.pcbridge.core.modules.config.storage.MemoryConfigStorage
 import com.projectcitybuild.repositories.WarpRepository
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.mockito.Mock
 import org.mockito.Mockito.mock
+import org.mockito.MockitoAnnotations
 import org.mockito.kotlin.whenever
 
 class GetWarpListTest {
 
+    @Mock
+    private lateinit var config: Config<ConfigData>
+
     private lateinit var useCase: GetWarpList
-    private lateinit var keyValueStorage: MemoryConfigStorage
-    private lateinit var config: Config
 
     private val warpRepository = mock(WarpRepository::class.java)
 
     @BeforeEach
     fun setUp() {
-        keyValueStorage = MemoryConfigStorage()
-        config = Config(keyValueStorage)
+        MockitoAnnotations.openMocks(this)
+
         useCase = GetWarpList(
             warpRepository,
             config,
@@ -34,7 +36,9 @@ class GetWarpListTest {
     fun `should return all warps sorted`() = runTest {
         val warps = listOf("b", "c", "a",)
         whenever(warpRepository.names()).thenReturn(warps)
-        keyValueStorage.set(ConfigKeys.warpsPerPage, warps.size)
+        whenever(config.get()).thenReturn(ConfigData.default.copy(
+            warps = ConfigData.Warps(itemsPerPage = warps.size),
+        ))
 
         val received = useCase.getList(page = 1)
         val expected = listOf("a", "b", "c")
@@ -47,7 +51,9 @@ class GetWarpListTest {
         val warps = MutableList(3) { index -> "warp_$index" }
 
         whenever(warpRepository.names()).thenReturn(warps)
-        keyValueStorage.set(ConfigKeys.warpsPerPage, 3)
+        whenever(config.get()).thenReturn(ConfigData.default.copy(
+            warps = ConfigData.Warps(itemsPerPage = 3),
+        ))
 
         val received = useCase.getList(page = 1)
 
@@ -64,7 +70,9 @@ class GetWarpListTest {
         val warps = MutableList(5) { index -> "warp_$index" }
 
         whenever(warpRepository.names()).thenReturn(warps)
-        keyValueStorage.set(ConfigKeys.warpsPerPage, 2)
+        whenever(config.get()).thenReturn(ConfigData.default.copy(
+            warps = ConfigData.Warps(itemsPerPage = 2),
+        ))
 
         val firstPage = useCase.getList(page = 1)
         assertEquals(listOf("warp_0", "warp_1"), firstPage?.warps)
