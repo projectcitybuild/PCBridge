@@ -33,9 +33,8 @@ jobs:
 
       - name: Upload jar file as artifact
         uses: actions/upload-artifact@v2.2.4
-        working-directory: pcbridge-spigot
         with:
-          path: build/release/pcbridge*.jar
+          path: pcbridge-spigot/build/release/pcbridge*.jar
           if-no-files-found: warn
 
       - name: Create git tag
