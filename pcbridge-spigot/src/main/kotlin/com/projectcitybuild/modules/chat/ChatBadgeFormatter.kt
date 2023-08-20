@@ -1,7 +1,7 @@
 package com.projectcitybuild.modules.chat
 
-import com.projectcitybuild.libs.config.Config
-import com.projectcitybuild.libs.config.ConfigKeys
+import com.projectcitybuild.ConfigData
+import com.projectcitybuild.pcbridge.core.modules.config.Config
 import com.projectcitybuild.repositories.ChatBadgeRepository
 import com.projectcitybuild.repositories.PlayerConfigRepository
 import com.projectcitybuild.support.textcomponent.add
@@ -15,7 +15,7 @@ import java.util.UUID
 class ChatBadgeFormatter(
     private val playerConfigRepository: PlayerConfigRepository,
     private val chatBadgeRepository: ChatBadgeRepository,
-    private val config: Config,
+    private val config: Config<ConfigData>,
 ) {
     fun get(playerUUID: UUID): TextComponent? {
         val playerConfig = playerConfigRepository.get(playerUUID)
@@ -39,7 +39,7 @@ class ChatBadgeFormatter(
 
         val tc = TextComponent()
         TextComponent
-            .fromLegacyText(config.get(ConfigKeys.chatBadgeIcon))
+            .fromLegacyText(config.get().chatBadge.icon)
             .forEach { c ->
                 tc.add(c) {
                     it.hoverEvent = HoverEvent(

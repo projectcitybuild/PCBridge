@@ -1,5 +1,6 @@
 package com.projectcitybuild
 
+import com.google.gson.reflect.TypeToken
 import com.projectcitybuild.modules.chat.ChatBadgeFormatter
 import com.projectcitybuild.modules.chat.ChatGroupFormatter
 import com.projectcitybuild.modules.ranksync.actions.UpdatePlayerGroups
@@ -7,9 +8,7 @@ import com.projectcitybuild.integrations.dynmap.DynmapMarkerIntegration
 import com.projectcitybuild.integrations.essentials.EssentialsIntegration
 import com.projectcitybuild.integrations.gadgetsmenu.GadgetsMenuIntegration
 import com.projectcitybuild.integrations.luckperms.LuckPermsIntegration
-import com.projectcitybuild.libs.config.Config
-import com.projectcitybuild.libs.config.ConfigKeys
-import com.projectcitybuild.libs.config.adapters.YamlKeyValueStorage
+import com.projectcitybuild.pcbridge.core.modules.config.Config
 import com.projectcitybuild.libs.database.DataSource
 import com.projectcitybuild.pcbridge.core.modules.datetime.formatter.DateTimeFormatter
 import com.projectcitybuild.pcbridge.core.modules.datetime.formatter.DateTimeFormatterImpl
@@ -22,7 +21,7 @@ import com.projectcitybuild.libs.nameguesser.NameGuesser
 import com.projectcitybuild.libs.permissions.Permissions
 import com.projectcitybuild.libs.permissions.adapters.LuckPermsPermissions
 import com.projectcitybuild.libs.playercache.PlayerConfigCache
-import com.projectcitybuild.libs.storage.adapters.YamlStorage
+import com.projectcitybuild.pcbridge.core.storage.adapters.JsonStorage
 import com.projectcitybuild.modules.buildtools.nightvision.NightVisionModule
 import com.projectcitybuild.modules.buildtools.nightvision.commands.NightVisionCommand
 import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger
@@ -50,7 +49,6 @@ import com.projectcitybuild.support.spigot.eventbroadcast.SpigotLocalEventBroadc
 import com.projectcitybuild.support.spigot.listeners.SpigotListenerRegistry
 import com.projectcitybuild.support.spigot.SpigotServer
 import org.bukkit.Server
-import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.plugin.java.JavaPlugin
 import java.time.Clock
 import java.time.ZoneId
@@ -61,32 +59,36 @@ import java.util.logging.Logger as JavaLogger
 class DependencyContainer(
     val plugin: JavaPlugin,
     val server: Server,
-    val spigotConfig: FileConfiguration,
     val spigotLogger: JavaLogger,
     val minecraftDispatcher: CoroutineContext,
 ) {
-    val config: Config by lazy {
+    val config: Config<ConfigData> by lazy {
         Config(
-            YamlKeyValueStorage(
-                storage = YamlStorage(spigotConfig)
-            )
+            default = ConfigData.default,
+            jsonStorage = JsonStorage(
+                file = plugin.dataFolder.resolve("config.json"),
+                logger = logger,
+                typeToken = object : TypeToken<ConfigData>(){},
+            ),
         )
     }
 
+    // TODO: inject config instead of the config keys, otherwise flushing the cache
+    // will never do anything
     val dateTimeFormatter: DateTimeFormatter
         get() = DateTimeFormatterImpl(
             locale = Locale.forLanguageTag(
-                config.get(ConfigKeys.timeLocale)
+                config.get().localization.locale,
             ),
             timezone = ZoneId.of(
-                config.get(ConfigKeys.timeTimezone)
+                config.get().localization.timeZone
             ),
         )
 
     val time: Time
         get() = LocalizedTime(
             clock = Clock.system(
-                ZoneId.of(config.get(ConfigKeys.timeTimezone))
+                ZoneId.of(config.get().localization.timeZone),
             ),
         )
 
@@ -108,12 +110,12 @@ class DependencyContainer(
     val dataSource by lazy {
         DataSource(
             logger = logger,
-            hostName = config.get(ConfigKeys.dbHostName),
-            port = config.get(ConfigKeys.dbPort),
-            databaseName = config.get(ConfigKeys.dbName),
-            username = config.get(ConfigKeys.dbUsername),
-            password = config.get(ConfigKeys.dbPassword),
-            shouldRunMigrations = true
+            hostName = config.get().database.hostName,
+            port = config.get().database.port,
+            databaseName = config.get().database.name,
+            username = config.get().database.username,
+            password = config.get().database.password,
+            shouldRunMigrations = true,
         )
     }
 
@@ -154,9 +156,9 @@ class DependencyContainer(
 
     private val httpService by lazy {
         HttpService(
-            authToken = config.get(ConfigKeys.apiToken),
-            baseURL = config.get(ConfigKeys.apiBaseURL),
-            withLogging = config.get(ConfigKeys.apiIsLoggingEnabled),
+            authToken = config.get().api.token,
+            baseURL = config.get().api.baseUrl,
+            withLogging = config.get().api.isLoggingEnabled,
             contextBuilder = { minecraftDispatcher },
         )
     }
@@ -164,8 +166,8 @@ class DependencyContainer(
     val webServer by lazy {
         HttpServer(
             config = HttpServerConfig(
-                authToken = config.get(ConfigKeys.internalWebServerToken),
-                port = config.get(ConfigKeys.internalWebServerPort),
+                authToken = config.get().webServer.token,
+                port = config.get().webServer.port,
             ),
             delegate = WebServerDelegate(
                 scheduler,

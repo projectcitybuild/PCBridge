@@ -36,7 +36,6 @@ class PCBridge : JavaPlugin() {
             plugin = this,
             server = server,
             spigotLogger = logger,
-            spigotConfig = config,
             minecraftDispatcher = minecraftDispatcher
         )
         containerLifecycle = ContainerLifecycle(container!!)

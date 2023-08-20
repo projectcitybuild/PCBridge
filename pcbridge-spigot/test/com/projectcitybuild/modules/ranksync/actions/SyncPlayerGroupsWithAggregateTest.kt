@@ -1,8 +1,7 @@
 package com.projectcitybuild.modules.ranksync.actions
 
-import com.projectcitybuild.libs.config.Config
-import com.projectcitybuild.libs.config.ConfigStorageKey
-import com.projectcitybuild.libs.config.adapters.MemoryKeyValueStorage
+import com.projectcitybuild.ConfigData
+import com.projectcitybuild.pcbridge.core.modules.config.Config
 import com.projectcitybuild.libs.permissions.Permissions
 import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger
 import com.projectcitybuild.pcbridge.http.responses.Account
@@ -13,24 +12,30 @@ import com.projectcitybuild.pcbridge.http.responses.Group
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.mockito.Mock
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.verify
+import org.mockito.MockitoAnnotations
+import org.mockito.kotlin.whenever
 import java.util.UUID
 
 class SyncPlayerGroupsWithAggregateTest {
 
-    private lateinit var useCase: SyncPlayerGroupsWithAggregate
+    @Mock
     private lateinit var permissions: Permissions
-    private lateinit var keyValueStorage: MemoryKeyValueStorage
+
+    @Mock
+    private lateinit var config: Config<ConfigData>
+
+    private lateinit var useCase: SyncPlayerGroupsWithAggregate
 
     @BeforeEach
     fun setUp() {
-        permissions = mock(Permissions::class.java)
-        keyValueStorage = MemoryKeyValueStorage()
+        MockitoAnnotations.openMocks(this)
 
         useCase = SyncPlayerGroupsWithAggregate(
             permissions = permissions,
-            config = Config(keyValueStorage),
+            config = config,
             logger = mock(PlatformLogger::class.java),
         )
     }
@@ -47,10 +52,15 @@ class SyncPlayerGroupsWithAggregateTest {
         val aggregate = Aggregate(account = account, donationPerks = listOf(donorPerk))
         val uuid = UUID.randomUUID()
 
-        keyValueStorage.set(
-            key = ConfigStorageKey(path = "donors.tiers.copper_tier.permission_group_name", defaultValue = "default"),
-            value = "tier1",
-        )
+        whenever(config.get()).thenReturn(ConfigData.default.copy(
+            groups = ConfigData.default.groups.copy(
+                donorTierGroupNames = ConfigData.Groups.DonorTierGroupNames(
+                    copper = "tier1",
+                    iron = "tier2",
+                    diamond = "tier3",
+                ),
+            ),
+        ))
 
         useCase.execute(uuid, aggregate)
 
