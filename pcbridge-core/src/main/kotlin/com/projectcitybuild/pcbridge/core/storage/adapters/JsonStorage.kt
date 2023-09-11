@@ -1,6 +1,7 @@
 package com.projectcitybuild.pcbridge.core.storage.adapters
 
-import com.google.gson.Gson
+import com.google.gson.FieldNamingPolicy
+import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import com.google.gson.stream.JsonReader
 import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger
@@ -14,7 +15,9 @@ class JsonStorage<T>(
     private val logger: PlatformLogger,
     private val typeToken: TypeToken<T>,
 ) {
-    private val gson = Gson()
+    private val gson = GsonBuilder()
+        .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+        .create()
 
     fun read(): T? {
         return try {

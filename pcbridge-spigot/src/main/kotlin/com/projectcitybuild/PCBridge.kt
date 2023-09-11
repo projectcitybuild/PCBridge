@@ -15,6 +15,7 @@ import com.projectcitybuild.modules.telemetry.TelemetryModule
 import com.projectcitybuild.modules.warps.WarpsModule
 import com.projectcitybuild.support.modules.ModuleRegisterDSL
 import dev.jorel.commandapi.CommandAPI
+import dev.jorel.commandapi.CommandAPIBukkit
 import dev.jorel.commandapi.CommandAPIBukkitConfig
 import org.bukkit.plugin.java.JavaPlugin
 
@@ -31,6 +32,13 @@ class PCBridge : JavaPlugin() {
 
     override fun onEnable() {
         printLogo()
+
+        // Since CommandAPIBukkit doesn't support namespaces (yet?), we need to force
+        // unregister Essentials commands that name clash with ours
+        CommandAPIBukkit.unregister("ban", false, true)
+        CommandAPIBukkit.unregister("unban", false, true)
+        CommandAPIBukkit.unregister("mute", false, true)
+        CommandAPIBukkit.unregister("unmute", false, true)
 
         container = DependencyContainer(
             plugin = this,
