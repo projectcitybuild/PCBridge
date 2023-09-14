@@ -26,6 +26,11 @@ class JsonStorageTest {
         private val value: String,
     )
 
+    @Serializable
+    data class StringConfig(
+        private val string: String,
+    )
+
     companion object {
         val testData = TestConfig(
             testString = "string",
@@ -82,5 +87,19 @@ class JsonStorageTest {
         )
         storage.write(testData)
         assertEquals(jsonString, file.readText())
+    }
+
+    @Test
+    fun `can read ASCII characters`() {
+        val file = File.createTempFile("test_config", ".json")
+        file.writeText("{\"string\": \"§6test★\"}")
+
+        val storage = JsonStorage(
+            file = file,
+            logger = logger,
+            typeToken = object : TypeToken<StringConfig>() {}
+        )
+        val expected = StringConfig(string = "§6test★")
+        assertEquals(expected, storage.read())
     }
 }
