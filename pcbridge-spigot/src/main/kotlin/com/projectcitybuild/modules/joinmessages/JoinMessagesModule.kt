@@ -11,10 +11,17 @@ class JoinMessagesModule: PluginModule {
     override fun register(module: ModuleDeclaration) {
         module {
             listener(
-                AnnounceJoinListener(container.server),
+                AnnounceJoinListener(
+                    container.spigotServer,
+                    container.playerJoinTimeCache,
+                ),
             )
             listener(
-                AnnounceQuitListener(container.server),
+                AnnounceQuitListener(
+                    container.spigotServer,
+                    container.playerJoinTimeCache,
+                    container.time,
+                ),
             )
             listener(
                 FirstTimeJoinListener(

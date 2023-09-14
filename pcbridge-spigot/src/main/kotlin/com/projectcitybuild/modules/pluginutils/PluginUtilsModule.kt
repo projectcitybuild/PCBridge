@@ -49,6 +49,7 @@ class PluginUtilsModule: PluginModule {
                 container.localEventBroadcaster,
                 container.playerConfigRepository,
                 container.logger,
+                container.time,
             ),
         )
         listener(
