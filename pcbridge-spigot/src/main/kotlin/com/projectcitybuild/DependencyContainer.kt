@@ -297,13 +297,4 @@ class DependencyContainer(
             chatGroupFormatter,
         )
     }
-
-    /**
-     * Modules
-     */
-
-    val nightVisionModule
-        get() = NightVisionModule(
-            nightVisionCommandFactory = { NightVisionCommand() },
-        )
 }
