@@ -22,11 +22,10 @@ import com.projectcitybuild.libs.permissions.Permissions
 import com.projectcitybuild.libs.permissions.adapters.LuckPermsPermissions
 import com.projectcitybuild.libs.playercache.PlayerConfigCache
 import com.projectcitybuild.pcbridge.core.storage.adapters.JsonStorage
-import com.projectcitybuild.modules.buildtools.nightvision.NightVisionModule
-import com.projectcitybuild.modules.buildtools.nightvision.commands.NightVisionCommand
 import com.projectcitybuild.modules.joinmessages.PlayerJoinTimeCache
 import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger
 import com.projectcitybuild.pcbridge.core.contracts.PlatformScheduler
+import com.projectcitybuild.pcbridge.core.contracts.PlatformTimer
 import com.projectcitybuild.pcbridge.http.HttpService
 import com.projectcitybuild.pcbridge.webserver.HttpServer
 import com.projectcitybuild.pcbridge.webserver.HttpServerConfig
@@ -49,6 +48,7 @@ import com.projectcitybuild.support.spigot.eventbroadcast.LocalEventBroadcaster
 import com.projectcitybuild.support.spigot.eventbroadcast.SpigotLocalEventBroadcaster
 import com.projectcitybuild.support.spigot.listeners.SpigotListenerRegistry
 import com.projectcitybuild.support.spigot.SpigotServer
+import com.projectcitybuild.support.spigot.SpigotTimer
 import org.bukkit.Server
 import org.bukkit.plugin.java.JavaPlugin
 import java.time.Clock
@@ -98,6 +98,10 @@ class DependencyContainer(
 
     val scheduler: PlatformScheduler
         get() = SpigotScheduler(plugin)
+
+    val timer: PlatformTimer by lazy {
+        SpigotTimer(plugin)
+    }
 
     val errorReporter: ErrorReporter by lazy {
         ErrorReporter(
