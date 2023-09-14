@@ -24,6 +24,7 @@ import com.projectcitybuild.libs.playercache.PlayerConfigCache
 import com.projectcitybuild.pcbridge.core.storage.adapters.JsonStorage
 import com.projectcitybuild.modules.buildtools.nightvision.NightVisionModule
 import com.projectcitybuild.modules.buildtools.nightvision.commands.NightVisionCommand
+import com.projectcitybuild.modules.joinmessages.PlayerJoinTimeCache
 import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger
 import com.projectcitybuild.pcbridge.core.contracts.PlatformScheduler
 import com.projectcitybuild.pcbridge.http.HttpService
@@ -183,6 +184,10 @@ class DependencyContainer(
     }
 
     val spigotNamespace get() = SpigotNamespace(plugin)
+
+    val playerJoinTimeCache by lazy {
+        PlayerJoinTimeCache(time)
+    }
 
     /**
      * Repositories
