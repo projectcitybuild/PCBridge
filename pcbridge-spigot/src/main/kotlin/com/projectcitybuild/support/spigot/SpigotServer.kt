@@ -3,6 +3,8 @@ package com.projectcitybuild.support.spigot
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.Server
+import org.bukkit.entity.Player
+import org.bukkit.inventory.Inventory
 import java.util.UUID
 
 class SpigotServer(
@@ -42,5 +44,9 @@ class SpigotServer(
 
     fun broadcastMessage(message: TextComponent) {
         server.broadcastMessage(message.toLegacyText())
+    }
+
+    fun createInventory(owner: Player, size: Int, title: String): Inventory {
+        return server.createInventory(owner, size, title)
     }
 }

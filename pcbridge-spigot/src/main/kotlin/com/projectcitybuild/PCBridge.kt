@@ -2,6 +2,7 @@ package com.projectcitybuild
 
 import com.github.shynixn.mccoroutine.bukkit.minecraftDispatcher
 import com.projectcitybuild.integrations.SpigotIntegration
+import com.projectcitybuild.modules.buildtools.general.GeneralBuildToolsModule
 import com.projectcitybuild.modules.buildtools.invisframes.InvisFramesModule
 import com.projectcitybuild.modules.buildtools.nightvision.NightVisionModule
 import com.projectcitybuild.modules.chat.ChatModule
@@ -101,6 +102,7 @@ private class ContainerLifecycle(
         listOf(
             BansModule(),
             ChatModule(),
+            GeneralBuildToolsModule(),
             InvisFramesModule(),
             JoinMessagesModule(),
             MutesModule(),
