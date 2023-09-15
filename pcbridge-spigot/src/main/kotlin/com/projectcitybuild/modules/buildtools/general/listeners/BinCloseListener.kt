@@ -20,8 +20,6 @@ class BinCloseListener : SpigotListener<InventoryCloseEvent> {
             .filterNotNull()
             .sumOf { it.amount }
 
-        println(event.inventory.contents)
-
         if (disposedCount == 0) return
 
         event.player.spigot().sendMessage(
