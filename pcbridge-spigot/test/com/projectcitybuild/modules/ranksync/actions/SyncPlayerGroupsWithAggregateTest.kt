@@ -48,7 +48,7 @@ class SyncPlayerGroupsWithAggregateTest {
                 Group(minecraftName = "group2"),
             )
         )
-        val donorPerk = DonationPerk(donationTier = DonationTier(name = "copper_tier"))
+        val donorPerk = DonationPerk(donationTier = DonationTier(name = "copper"))
         val aggregate = Aggregate(account = account, donationPerks = listOf(donorPerk))
         val uuid = UUID.randomUUID()
 
