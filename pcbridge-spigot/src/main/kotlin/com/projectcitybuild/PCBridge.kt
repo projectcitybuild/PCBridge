@@ -14,6 +14,7 @@ import com.projectcitybuild.modules.moderation.warnings.WarningsModule
 import com.projectcitybuild.modules.pluginutils.PluginUtilsModule
 import com.projectcitybuild.modules.ranksync.RankSyncModule
 import com.projectcitybuild.modules.telemetry.TelemetryModule
+import com.projectcitybuild.modules.teleport.TeleportModule
 import com.projectcitybuild.modules.warps.WarpsModule
 import com.projectcitybuild.support.modules.ModuleRegisterDSL
 import dev.jorel.commandapi.CommandAPI
@@ -35,12 +36,10 @@ class PCBridge : JavaPlugin() {
     override fun onEnable() {
         printLogo()
 
-        // Since CommandAPIBukkit doesn't support namespaces (yet?), we need to force
+        // Since CommandAPIBukkit doesn't support namespaces (yet?), we need to forcibly
         // unregister Essentials commands that name clash with ours
-        CommandAPIBukkit.unregister("ban", false, true)
-        CommandAPIBukkit.unregister("unban", false, true)
-        CommandAPIBukkit.unregister("mute", false, true)
-        CommandAPIBukkit.unregister("unmute", false, true)
+        listOf("ban", "banip", "unban", "unbanip", "mute", "unmute", "tppos")
+            .forEach { CommandAPIBukkit.unregister(it, false, true) }
 
         container = DependencyContainer(
             plugin = this,
@@ -111,6 +110,7 @@ private class ContainerLifecycle(
             RankSyncModule(),
             StaffChatModule(),
             TelemetryModule(),
+            TeleportModule(),
             WarningsModule(),
             WarpsModule(),
         ).forEach { module ->

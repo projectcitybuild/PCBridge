@@ -14,6 +14,7 @@ class Permissions private constructor() {
         const val COMMAND_MUTES_MUTE = "pcbridge.chat.mute"
         const val COMMAND_MUTES_UNMUTE = "pcbridge.chat.unmute"
         const val COMMAND_STAFF_CHAT = "pcbridge.chat.staff_channel"
+        const val COMMAND_TELEPORT_POSITION = "pcbridge.tp.position"
         const val COMMAND_WARNING_ACKNOWLEDGE = "pcbridge.warning.acknowledge"
         const val COMMAND_RANKSYNC_SYNC = "pcbridge.sync.login"
         const val COMMAND_RANKSYNC_SYNC_OTHER = "pcbridge.sync.other"

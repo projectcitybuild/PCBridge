@@ -1,4 +1,4 @@
-package com.projectcitybuild.libs.nameguesser
+package com.projectcitybuild.utils
 
 class NameGuesser {
 
