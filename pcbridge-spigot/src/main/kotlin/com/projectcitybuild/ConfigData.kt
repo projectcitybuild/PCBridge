@@ -14,6 +14,7 @@ data class ConfigData(
     val integrations: Integrations,
     val announcements: Announcements,
     val groups: Groups,
+    val messages: Messages,
 ) {
     companion object {
         val default = ConfigData(
@@ -89,6 +90,19 @@ data class ConfigData(
                     diamond = "diamond_tier",
                 ),
             ),
+            messages = Messages(
+                join = "§a§l+ §r§f%name% §7joined the server",
+                leave = "§c§l- §r§f%name% §7left the server (online for %time_online%)",
+                firstTimeJoin = "§d✦ Welcome §f%name%§d to the server!",
+                welcome = """
+                    #§3Welcome to §f§lPROJECT §6§lCITY §9§lBUILD
+                    #
+                    #§3Type §c/register §3to become a member.
+                    #§3Type §c/list§6 §3to see who else is online.
+                    #
+                    #§f§lAsk our staff if you have any questions.
+                """.trimMargin("#"),
+            )
         )
     }
 
@@ -171,4 +185,12 @@ data class ConfigData(
             val diamond: String,
         )
     }
+
+    @Serializable
+    data class Messages(
+        val join: String,
+        val leave: String,
+        val firstTimeJoin: String,
+        val welcome: String,
+    )
 }
