@@ -13,24 +13,29 @@ class JoinMessagesModule: PluginModule {
             listener(
                 AnnounceJoinListener(
                     container.spigotServer,
+                    container.config,
                     container.playerJoinTimeCache,
                 ),
             )
             listener(
                 AnnounceQuitListener(
                     container.spigotServer,
+                    container.config,
                     container.playerJoinTimeCache,
                     container.time,
                 ),
             )
             listener(
                 FirstTimeJoinListener(
-                    container.server,
+                    container.spigotServer,
+                    container.config,
                     container.logger,
                 ),
             )
             listener(
-                ServerOverviewJoinListener(container.server),
+                ServerOverviewJoinListener(
+                    container.config,
+                ),
             )
         }
     }

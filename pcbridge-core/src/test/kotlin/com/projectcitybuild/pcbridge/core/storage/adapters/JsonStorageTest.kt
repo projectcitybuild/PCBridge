@@ -41,7 +41,7 @@ class JsonStorageTest {
             testObject = NestedObject(value = "test")
         )
 
-        val jsonString = "{\"testString\":\"string\",\"testInt\":123,\"testFloat\":1.0,\"testBoolean\":true,\"testList\":[\"1\",\"2\",\"3\"],\"testObject\":{\"value\":\"test\"}}"
+        val jsonString = "{\"test_string\":\"string\",\"test_int\":123,\"test_float\":1.0,\"test_boolean\":true,\"test_list\":[\"1\",\"2\",\"3\"],\"test_object\":{\"value\":\"test\"}}"
     }
 
     private lateinit var logger: PlatformLogger

@@ -19,7 +19,6 @@ import org.mockito.kotlin.whenever
 import java.time.LocalDateTime
 
 class CreateWarpTest {
-
     private lateinit var useCase: CreateWarp
 
     private lateinit var warpRepository: WarpRepository

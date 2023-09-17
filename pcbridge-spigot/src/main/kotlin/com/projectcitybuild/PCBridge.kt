@@ -3,6 +3,7 @@ package com.projectcitybuild
 import com.github.shynixn.mccoroutine.bukkit.minecraftDispatcher
 import com.projectcitybuild.integrations.SpigotIntegration
 import com.projectcitybuild.modules.buildtools.general.GeneralBuildToolsModule
+import com.projectcitybuild.modules.announcements.AnnouncementsModule
 import com.projectcitybuild.modules.buildtools.invisframes.InvisFramesModule
 import com.projectcitybuild.modules.buildtools.nightvision.NightVisionModule
 import com.projectcitybuild.modules.chat.ChatModule
@@ -17,6 +18,7 @@ import com.projectcitybuild.modules.telemetry.TelemetryModule
 import com.projectcitybuild.modules.teleport.TeleportModule
 import com.projectcitybuild.modules.warps.WarpsModule
 import com.projectcitybuild.support.modules.ModuleRegisterDSL
+import com.projectcitybuild.support.modules.PluginModule
 import dev.jorel.commandapi.CommandAPI
 import dev.jorel.commandapi.CommandAPIBukkit
 import dev.jorel.commandapi.CommandAPIBukkitConfig
@@ -89,6 +91,7 @@ class PCBridge : JavaPlugin() {
 private class ContainerLifecycle(
     private val container: DependencyContainer,
 ) {
+    private var modules: List<PluginModule> = emptyList()
     private var integrations: List<SpigotIntegration> = emptyList()
 
     fun onEnable() = container.apply {
@@ -98,7 +101,8 @@ private class ContainerLifecycle(
         permissions.connect()
         webServer.start()
 
-        listOf(
+        modules = listOf(
+            AnnouncementsModule(),
             BansModule(),
             ChatModule(),
             GeneralBuildToolsModule(),
@@ -113,7 +117,8 @@ private class ContainerLifecycle(
             TeleportModule(),
             WarningsModule(),
             WarpsModule(),
-        ).forEach { module ->
+        )
+        modules.forEach { module ->
             val builder = ModuleRegisterDSL(listenerRegistry, container)
             module.register(builder::apply)
         }
@@ -130,6 +135,9 @@ private class ContainerLifecycle(
     fun onDisable() = container.apply {
         integrations.forEach { it.onDisable() }
         integrations = emptyList()
+
+        modules.forEach { it.unregister() }
+        modules = emptyList()
 
         listenerRegistry.unregisterAll()
         dataSource.disconnect()
