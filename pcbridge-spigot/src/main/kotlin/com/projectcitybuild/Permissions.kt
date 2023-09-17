@@ -4,6 +4,7 @@ class Permissions private constructor() {
     companion object {
         const val COMMAND_BUILD_NIGHTVISION = "pcbridge.build.nightvision"
         const val COMMAND_BUILD_INVIS_FRAME = "pcbridge.build.invisframe"
+        const val COMMAND_BUILD_BIN = "pcbridge.build.bin"
         const val COMMAND_CHAT_TOGGLE_BADGE = "pcbridge.chat.badge"
         const val COMMAND_BANS_BAN = "pcbridge.ban.ban"
         const val COMMAND_BANS_BAN_IP = "pcbridge.ban.banip"

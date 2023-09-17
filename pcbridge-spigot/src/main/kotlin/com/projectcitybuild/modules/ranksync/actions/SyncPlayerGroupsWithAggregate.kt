@@ -25,9 +25,9 @@ class SyncPlayerGroupsWithAggregate(
 
                 val groupNames = config.get().groups.donorTierGroupNames
                 val permissionGroupName = when (tierName) {
-                    "copper_tier" -> groupNames.copper
-                    "iron_tier" -> groupNames.iron
-                    "diamond_tier" -> groupNames.diamond
+                    "copper" -> groupNames.copper
+                    "iron" -> groupNames.iron
+                    "diamond" -> groupNames.diamond
                     else -> {
                         logger.severe("Missing config node for donor tier: $tierName")
                         return@mapNotNull null
