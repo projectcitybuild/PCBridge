@@ -1,6 +1,6 @@
 package com.projectcitybuild.modules.ranksync.listener
 
-import com.projectcitybuild.events.ConnectionPermittedEvent
+import com.projectcitybuild.entities.events.ConnectionPermittedEvent
 import com.projectcitybuild.modules.ranksync.actions.SyncPlayerGroupsWithAggregate
 import com.projectcitybuild.support.spigot.listeners.SpigotListener
 import org.bukkit.event.EventHandler

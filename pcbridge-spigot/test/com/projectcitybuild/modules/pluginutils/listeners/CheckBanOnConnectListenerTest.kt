@@ -1,6 +1,6 @@
 package com.projectcitybuild.modules.pluginutils.listeners
 
-import com.projectcitybuild.events.ConnectionPermittedEvent
+import com.projectcitybuild.entities.events.ConnectionPermittedEvent
 import com.projectcitybuild.libs.errorreporting.ErrorReporter
 import com.projectcitybuild.modules.moderation.bans.actions.AuthoriseConnection
 import com.projectcitybuild.modules.moderation.bans.listeners.CheckBanOnConnectListener

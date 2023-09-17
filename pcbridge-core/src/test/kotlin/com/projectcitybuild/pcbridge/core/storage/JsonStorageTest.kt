@@ -1,7 +1,8 @@
-package com.projectcitybuild.pcbridge.core.storage.adapters
+package com.projectcitybuild.pcbridge.core.storage
 
 import com.google.gson.reflect.TypeToken
 import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger
+import com.projectcitybuild.pcbridge.core.storage.JsonStorage
 import kotlinx.serialization.Serializable
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach

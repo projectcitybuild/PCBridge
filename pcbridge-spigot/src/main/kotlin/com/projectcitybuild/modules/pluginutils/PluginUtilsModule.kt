@@ -1,6 +1,6 @@
 package com.projectcitybuild.modules.pluginutils
 
-import com.projectcitybuild.Permissions
+import com.projectcitybuild.entities.Permissions
 import com.projectcitybuild.modules.pluginutils.commands.VersionCommand
 import com.projectcitybuild.modules.pluginutils.actions.GetVersion
 import com.projectcitybuild.modules.pluginutils.actions.ReloadPlugin

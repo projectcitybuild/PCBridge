@@ -1,6 +1,6 @@
 package com.projectcitybuild.modules.joinmessages.listeners
 
-import com.projectcitybuild.ConfigData
+import com.projectcitybuild.entities.ConfigData
 import com.projectcitybuild.modules.joinmessages.PlayerJoinTimeCache
 import com.projectcitybuild.pcbridge.core.modules.config.Config
 import com.projectcitybuild.support.spigot.SpigotServer

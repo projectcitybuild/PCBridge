@@ -1,10 +1,15 @@
-package com.projectcitybuild.events
+package com.projectcitybuild.entities.events
 
+import com.projectcitybuild.pcbridge.http.responses.Aggregate
 import com.projectcitybuild.support.spigot.eventbroadcast.BroadcastableEvent
+import org.bukkit.event.Event
 import org.bukkit.event.HandlerList
-import org.bukkit.event.Event as SpigotEvent
+import java.util.UUID
 
-class WarpCreateEvent : SpigotEvent(), BroadcastableEvent {
+class ConnectionPermittedEvent(
+    val aggregate: Aggregate,
+    val playerUUID: UUID,
+) : Event(), BroadcastableEvent {
 
     companion object {
         private val HANDLERS = HandlerList()

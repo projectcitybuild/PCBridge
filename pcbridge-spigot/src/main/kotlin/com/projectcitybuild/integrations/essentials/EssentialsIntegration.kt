@@ -1,7 +1,7 @@
 package com.projectcitybuild.integrations.essentials
 
 import com.earth2me.essentials.Essentials
-import com.projectcitybuild.events.PlayerPreWarpEvent
+import com.projectcitybuild.entities.events.PlayerPreWarpEvent
 import com.projectcitybuild.integrations.SpigotIntegration
 import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger
 import org.bukkit.event.EventHandler

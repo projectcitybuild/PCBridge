@@ -1,6 +1,6 @@
 package com.projectcitybuild.modules.joinmessages.listeners
 
-import com.projectcitybuild.ConfigData
+import com.projectcitybuild.entities.ConfigData
 import com.projectcitybuild.pcbridge.core.modules.config.Config
 import kotlinx.coroutines.test.runTest
 import net.md_5.bungee.api.chat.TextComponent

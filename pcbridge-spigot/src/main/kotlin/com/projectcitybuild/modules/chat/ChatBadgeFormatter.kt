@@ -1,6 +1,6 @@
 package com.projectcitybuild.modules.chat
 
-import com.projectcitybuild.ConfigData
+import com.projectcitybuild.entities.ConfigData
 import com.projectcitybuild.pcbridge.core.modules.config.Config
 import com.projectcitybuild.repositories.ChatBadgeRepository
 import com.projectcitybuild.repositories.PlayerConfigRepository

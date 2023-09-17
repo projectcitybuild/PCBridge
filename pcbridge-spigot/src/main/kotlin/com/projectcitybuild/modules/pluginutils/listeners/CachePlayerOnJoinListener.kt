@@ -1,6 +1,6 @@
 package com.projectcitybuild.modules.pluginutils.listeners
 
-import com.projectcitybuild.events.FirstTimeJoinEvent
+import com.projectcitybuild.entities.events.FirstTimeJoinEvent
 import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger
 import com.projectcitybuild.pcbridge.core.modules.datetime.time.Time
 import com.projectcitybuild.repositories.PlayerConfigRepository

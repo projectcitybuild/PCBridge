@@ -1,13 +1,12 @@
 package com.projectcitybuild.pcbridge.core.modules.config
 
-import com.projectcitybuild.pcbridge.core.storage.adapters.JsonStorage
+import com.projectcitybuild.pcbridge.core.storage.JsonStorage
 import kotlinx.serialization.Serializable
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
-import org.mockito.kotlin.verifyNoMoreInteractions
 import org.mockito.kotlin.whenever
 
 class ConfigTest {

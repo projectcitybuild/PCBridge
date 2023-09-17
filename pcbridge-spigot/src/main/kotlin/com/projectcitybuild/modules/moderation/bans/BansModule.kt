@@ -1,6 +1,6 @@
 package com.projectcitybuild.modules.moderation.bans
 
-import com.projectcitybuild.Permissions
+import com.projectcitybuild.entities.Permissions
 import com.projectcitybuild.modules.moderation.bans.actions.AuthoriseConnection
 import com.projectcitybuild.modules.moderation.bans.actions.BanIP
 import com.projectcitybuild.modules.moderation.bans.actions.BanUUID

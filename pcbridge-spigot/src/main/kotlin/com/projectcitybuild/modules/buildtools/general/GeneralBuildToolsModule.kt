@@ -1,6 +1,6 @@
 package com.projectcitybuild.modules.buildtools.general
 
-import com.projectcitybuild.Permissions
+import com.projectcitybuild.entities.Permissions
 import com.projectcitybuild.modules.buildtools.general.commands.BinCommand
 import com.projectcitybuild.modules.buildtools.general.listeners.BinCloseListener
 import com.projectcitybuild.support.modules.ModuleDeclaration

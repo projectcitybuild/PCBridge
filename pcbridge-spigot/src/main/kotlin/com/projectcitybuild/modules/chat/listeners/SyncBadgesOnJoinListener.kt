@@ -1,6 +1,6 @@
 package com.projectcitybuild.modules.chat.listeners
 
-import com.projectcitybuild.events.ConnectionPermittedEvent
+import com.projectcitybuild.entities.events.ConnectionPermittedEvent
 import com.projectcitybuild.repositories.ChatBadgeRepository
 import com.projectcitybuild.support.spigot.listeners.SpigotListener
 import org.bukkit.event.EventHandler

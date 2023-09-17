@@ -1,7 +1,7 @@
 package com.projectcitybuild.modules.joinmessages.listeners
 
-import com.projectcitybuild.ConfigData
-import com.projectcitybuild.events.FirstTimeJoinEvent
+import com.projectcitybuild.entities.ConfigData
+import com.projectcitybuild.entities.events.FirstTimeJoinEvent
 import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger
 import com.projectcitybuild.pcbridge.core.modules.config.Config
 import com.projectcitybuild.support.spigot.SpigotServer

@@ -1,6 +1,6 @@
 package com.projectcitybuild.modules.warps.actions
 
-import com.projectcitybuild.events.WarpDeleteEvent
+import com.projectcitybuild.entities.events.WarpDeleteEvent
 import com.projectcitybuild.pcbridge.core.utils.Failure
 import com.projectcitybuild.pcbridge.core.utils.Result
 import com.projectcitybuild.pcbridge.core.utils.Success

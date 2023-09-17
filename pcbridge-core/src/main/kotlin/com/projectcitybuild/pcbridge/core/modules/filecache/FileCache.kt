@@ -1,6 +1,6 @@
 package com.projectcitybuild.pcbridge.core.modules.filecache
 
-import com.projectcitybuild.pcbridge.core.storage.adapters.JsonStorage
+import com.projectcitybuild.pcbridge.core.storage.JsonStorage
 
 class FileCache<T>(
     private val jsonStorage: JsonStorage<T>,

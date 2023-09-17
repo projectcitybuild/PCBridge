@@ -1,4 +1,4 @@
-package com.projectcitybuild.events
+package com.projectcitybuild.entities.events
 
 import com.projectcitybuild.support.spigot.eventbroadcast.BroadcastableEvent
 import org.bukkit.entity.Player

@@ -1,4 +1,4 @@
-package com.projectcitybuild.pcbridge.core.storage.adapters
+package com.projectcitybuild.pcbridge.core.storage
 
 import com.google.gson.FieldNamingPolicy
 import com.google.gson.GsonBuilder

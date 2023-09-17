@@ -1,6 +1,6 @@
 package com.projectcitybuild.modules.warps
 
-import com.projectcitybuild.Permissions
+import com.projectcitybuild.entities.Permissions
 import com.projectcitybuild.modules.warps.actions.CreateWarp
 import com.projectcitybuild.modules.warps.actions.DeleteWarp
 import com.projectcitybuild.modules.warps.actions.GetWarpList

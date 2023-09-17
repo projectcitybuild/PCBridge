@@ -1,6 +1,6 @@
 package com.projectcitybuild.modules.pluginutils.actions
 
-import com.projectcitybuild.ConfigData
+import com.projectcitybuild.entities.ConfigData
 import com.projectcitybuild.modules.chat.ChatGroupFormatter
 import com.projectcitybuild.pcbridge.core.modules.config.Config
 import com.projectcitybuild.libs.playercache.PlayerConfigCache
