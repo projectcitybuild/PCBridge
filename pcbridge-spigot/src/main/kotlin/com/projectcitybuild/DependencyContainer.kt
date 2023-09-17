@@ -17,7 +17,7 @@ import com.projectcitybuild.pcbridge.core.modules.datetime.time.Time
 import com.projectcitybuild.libs.errorreporting.ErrorReporter
 import com.projectcitybuild.libs.errorreporting.outputs.PrintStackTraceOutput
 import com.projectcitybuild.libs.errorreporting.outputs.SentryErrorOutput
-import com.projectcitybuild.libs.nameguesser.NameGuesser
+import com.projectcitybuild.utils.NameGuesser
 import com.projectcitybuild.libs.permissions.Permissions
 import com.projectcitybuild.libs.permissions.adapters.LuckPermsPermissions
 import com.projectcitybuild.libs.playercache.PlayerConfigCache

@@ -1,5 +1,6 @@
-package com.projectcitybuild.libs.nameguesser
+package com.projectcitybuild.utils
 
+import com.projectcitybuild.utils.NameGuesser
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
