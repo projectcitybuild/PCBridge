@@ -26,21 +26,11 @@ import com.projectcitybuild.modules.joinmessages.PlayerJoinTimeCache
 import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger
 import com.projectcitybuild.pcbridge.core.contracts.PlatformScheduler
 import com.projectcitybuild.pcbridge.core.contracts.PlatformTimer
+import com.projectcitybuild.pcbridge.core.modules.filecache.FileCache
 import com.projectcitybuild.pcbridge.http.HttpService
 import com.projectcitybuild.pcbridge.webserver.HttpServer
 import com.projectcitybuild.pcbridge.webserver.HttpServerConfig
-import com.projectcitybuild.repositories.AggregateRepository
-import com.projectcitybuild.repositories.ChatBadgeRepository
-import com.projectcitybuild.repositories.CurrencyRepository
-import com.projectcitybuild.repositories.IPBanRepository
-import com.projectcitybuild.repositories.PlayerBanRepository
-import com.projectcitybuild.repositories.PlayerConfigRepository
-import com.projectcitybuild.repositories.PlayerGroupRepository
-import com.projectcitybuild.repositories.PlayerUUIDRepository
-import com.projectcitybuild.repositories.PlayerWarningRepository
-import com.projectcitybuild.repositories.TelemetryRepository
-import com.projectcitybuild.repositories.VerificationURLRepository
-import com.projectcitybuild.repositories.WarpRepository
+import com.projectcitybuild.repositories.*
 import com.projectcitybuild.support.spigot.SpigotLogger
 import com.projectcitybuild.support.spigot.SpigotNamespace
 import com.projectcitybuild.support.spigot.SpigotScheduler
@@ -51,6 +41,7 @@ import com.projectcitybuild.support.spigot.SpigotServer
 import com.projectcitybuild.support.spigot.SpigotTimer
 import org.bukkit.Server
 import org.bukkit.plugin.java.JavaPlugin
+import java.io.File
 import java.time.Clock
 import java.time.ZoneId
 import java.util.Locale
@@ -268,6 +259,19 @@ class DependencyContainer(
     val verificationURLRepository by lazy {
         VerificationURLRepository(
             httpService.verificationURL,
+        )
+    }
+
+    val scheduledAnnouncementsRepository by lazy {
+        ScheduledAnnouncementsRepository(
+            config,
+            FileCache(
+                JsonStorage(
+                    file = plugin.dataFolder.resolve("cache/scheduled_announcements.json"),
+                    logger = logger,
+                    typeToken = object : TypeToken<ScheduledAnnouncements>(){},
+                ),
+            ),
         )
     }
 
