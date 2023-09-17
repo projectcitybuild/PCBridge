@@ -1,6 +1,6 @@
 package com.projectcitybuild.modules.moderation.staffchat.commands
 
-import com.projectcitybuild.Permissions
+import com.projectcitybuild.entities.Permissions
 import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.Server
 import org.bukkit.entity.Player

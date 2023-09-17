@@ -1,6 +1,6 @@
 package com.projectcitybuild.modules.buildtools.nightvision
 
-import com.projectcitybuild.Permissions
+import com.projectcitybuild.entities.Permissions
 import com.projectcitybuild.modules.buildtools.nightvision.commands.NightVisionCommand
 import com.projectcitybuild.support.commandapi.ToggleOption
 import com.projectcitybuild.support.modules.ModuleDeclaration

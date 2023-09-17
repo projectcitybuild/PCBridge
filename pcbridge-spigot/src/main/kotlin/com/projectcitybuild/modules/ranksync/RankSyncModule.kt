@@ -1,6 +1,6 @@
 package com.projectcitybuild.modules.ranksync
 
-import com.projectcitybuild.Permissions
+import com.projectcitybuild.entities.Permissions
 import com.projectcitybuild.modules.ranksync.actions.GenerateAccountVerificationURL
 import com.projectcitybuild.modules.ranksync.actions.SyncPlayerGroupsWithAggregate
 import com.projectcitybuild.modules.ranksync.actions.UpdatePlayerGroups

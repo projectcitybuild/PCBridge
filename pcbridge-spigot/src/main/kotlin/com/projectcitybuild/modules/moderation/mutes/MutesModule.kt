@@ -1,6 +1,6 @@
 package com.projectcitybuild.modules.moderation.mutes
 
-import com.projectcitybuild.Permissions
+import com.projectcitybuild.entities.Permissions
 import com.projectcitybuild.modules.moderation.mutes.commands.MuteCommand
 import com.projectcitybuild.modules.moderation.mutes.commands.UnmuteCommand
 import com.projectcitybuild.modules.moderation.mutes.actions.MutePlayer

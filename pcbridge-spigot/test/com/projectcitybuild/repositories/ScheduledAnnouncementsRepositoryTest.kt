@@ -1,6 +1,6 @@
 package com.projectcitybuild.repositories
 
-import com.projectcitybuild.ConfigData
+import com.projectcitybuild.entities.ConfigData
 import com.projectcitybuild.mock
 import com.projectcitybuild.pcbridge.core.modules.config.Config
 import com.projectcitybuild.pcbridge.core.modules.filecache.FileCache

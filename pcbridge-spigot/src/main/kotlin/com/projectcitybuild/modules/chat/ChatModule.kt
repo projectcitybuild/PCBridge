@@ -1,6 +1,6 @@
 package com.projectcitybuild.modules.chat
 
-import com.projectcitybuild.Permissions
+import com.projectcitybuild.entities.Permissions
 import com.projectcitybuild.modules.chat.commands.BadgeCommand
 import com.projectcitybuild.modules.chat.listeners.AsyncPlayerChatListener
 import com.projectcitybuild.modules.chat.listeners.EmojiChatListener

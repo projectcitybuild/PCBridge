@@ -1,6 +1,6 @@
 package com.projectcitybuild.modules.moderation.warnings
 
-import com.projectcitybuild.Permissions
+import com.projectcitybuild.entities.Permissions
 import com.projectcitybuild.modules.moderation.warnings.actions.AcknowledgeWarning
 import com.projectcitybuild.modules.moderation.warnings.actions.GetUnacknowledgedWarnings
 import com.projectcitybuild.modules.moderation.warnings.commands.WarningAcknowledgeCommand

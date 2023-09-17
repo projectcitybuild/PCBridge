@@ -1,11 +1,10 @@
-package com.projectcitybuild.events
+package com.projectcitybuild.entities.events
 
 import com.projectcitybuild.support.spigot.eventbroadcast.BroadcastableEvent
-import org.bukkit.entity.Player
-import org.bukkit.event.Event
 import org.bukkit.event.HandlerList
+import org.bukkit.event.Event as SpigotEvent
 
-class FirstTimeJoinEvent(val player: Player) : Event(), BroadcastableEvent {
+class WarpDeleteEvent : SpigotEvent(), BroadcastableEvent {
 
     companion object {
         private val HANDLERS = HandlerList()

@@ -1,6 +1,6 @@
 package com.projectcitybuild.modules.buildtools.invisframes
 
-import com.projectcitybuild.Permissions
+import com.projectcitybuild.entities.Permissions
 import com.projectcitybuild.modules.buildtools.invisframes.commands.InvisFrameCommand
 import com.projectcitybuild.modules.buildtools.invisframes.listeners.FramePlaceListener
 import com.projectcitybuild.modules.buildtools.invisframes.listeners.ItemInsertListener

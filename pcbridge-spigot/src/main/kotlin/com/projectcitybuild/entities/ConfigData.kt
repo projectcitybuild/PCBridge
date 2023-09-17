@@ -1,4 +1,4 @@
-package com.projectcitybuild
+package com.projectcitybuild.entities
 
 import kotlinx.serialization.Serializable
 

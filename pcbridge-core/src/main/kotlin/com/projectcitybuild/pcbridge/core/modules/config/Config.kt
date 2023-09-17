@@ -1,6 +1,6 @@
 package com.projectcitybuild.pcbridge.core.modules.config
 
-import com.projectcitybuild.pcbridge.core.storage.adapters.JsonStorage
+import com.projectcitybuild.pcbridge.core.storage.JsonStorage
 
 class Config<T>(
     private val default: T,

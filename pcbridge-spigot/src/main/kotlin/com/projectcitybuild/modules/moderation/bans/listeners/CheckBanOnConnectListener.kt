@@ -1,6 +1,6 @@
 package com.projectcitybuild.modules.moderation.bans.listeners
 
-import com.projectcitybuild.events.ConnectionPermittedEvent
+import com.projectcitybuild.entities.events.ConnectionPermittedEvent
 import com.projectcitybuild.modules.moderation.bans.actions.AuthoriseConnection
 import com.projectcitybuild.pcbridge.core.modules.datetime.formatter.DateTimeFormatter
 import com.projectcitybuild.libs.errorreporting.ErrorReporter
