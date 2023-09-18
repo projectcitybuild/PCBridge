@@ -27,6 +27,7 @@ import com.projectcitybuild.modules.joinmessages.PlayerJoinTimeCache
 import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger
 import com.projectcitybuild.pcbridge.core.contracts.PlatformScheduler
 import com.projectcitybuild.pcbridge.core.contracts.PlatformTimer
+import com.projectcitybuild.pcbridge.core.architecture.events.EventPipeline
 import com.projectcitybuild.pcbridge.core.modules.filecache.FileCache
 import com.projectcitybuild.pcbridge.http.HttpService
 import com.projectcitybuild.pcbridge.webserver.HttpServer
@@ -54,6 +55,10 @@ class DependencyContainer(
     val spigotLogger: JavaLogger,
     val minecraftDispatcher: CoroutineContext,
 ) {
+    val eventPipeline by lazy {
+        EventPipeline()
+    }
+
     val config: Config<ConfigData> by lazy {
         Config(
             default = ConfigData.default,

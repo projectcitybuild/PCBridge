@@ -1,19 +1,15 @@
 package com.projectcitybuild.modules.buildtools.invisframes.listeners
 
 import com.projectcitybuild.support.spigot.SpigotNamespace
-import com.projectcitybuild.support.spigot.listeners.SpigotListener
 import org.bukkit.entity.GlowItemFrame
 import org.bukkit.entity.ItemFrame
-import org.bukkit.event.EventHandler
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.persistence.PersistentDataType
 
 class ItemRemoveListener(
     private val spigotNamespace: SpigotNamespace,
-) : SpigotListener<EntityDamageByEntityEvent> {
-
-    @EventHandler
-    override suspend fun handle(event: EntityDamageByEntityEvent) {
+) {
+    fun handle(event: EntityDamageByEntityEvent) {
         val entity = event.entity
 
         val isItemFrame = entity is ItemFrame

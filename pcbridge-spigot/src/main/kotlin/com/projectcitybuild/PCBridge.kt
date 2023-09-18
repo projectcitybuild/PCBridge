@@ -5,6 +5,10 @@ import com.projectcitybuild.integrations.SpigotIntegration
 import com.projectcitybuild.modules.buildtools.general.GeneralBuildToolsModule
 import com.projectcitybuild.modules.announcements.AnnouncementsModule
 import com.projectcitybuild.modules.buildtools.invisframes.InvisFramesModule
+import com.projectcitybuild.modules.buildtools.invisframes.commands.InvisFrameCommand
+import com.projectcitybuild.modules.buildtools.invisframes.listeners.FramePlaceListener
+import com.projectcitybuild.modules.buildtools.invisframes.listeners.ItemInsertListener
+import com.projectcitybuild.modules.buildtools.invisframes.listeners.ItemRemoveListener
 import com.projectcitybuild.modules.buildtools.nightvision.NightVisionModule
 import com.projectcitybuild.modules.chat.ChatModule
 import com.projectcitybuild.modules.joinmessages.JoinMessagesModule
@@ -16,22 +20,43 @@ import com.projectcitybuild.modules.pluginutils.PluginUtilsModule
 import com.projectcitybuild.modules.ranksync.RankSyncModule
 import com.projectcitybuild.modules.telemetry.TelemetryModule
 import com.projectcitybuild.modules.warps.WarpsModule
+import com.projectcitybuild.pcbridge.core.architecture.features.PluginFeature
+import com.projectcitybuild.pcbridge.core.architecture.monitors.Monitorable
+import com.projectcitybuild.pcbridge.core.architecture.monitors.MonitorableEvent
+import com.projectcitybuild.pcbridge.core.architecture.monitors.NullEvent
+import com.projectcitybuild.pcbridge.core.architecture.monitors.PluginDisableEvent
+import com.projectcitybuild.pcbridge.core.architecture.monitors.PluginEnableEvent
+import com.projectcitybuild.pcbridge.core.architecture.monitors.PluginLoadEvent
+import com.projectcitybuild.pcbridge.core.architecture.monitors.ShutdownEvent
 import com.projectcitybuild.support.modules.ModuleRegisterDSL
 import com.projectcitybuild.support.modules.PluginModule
+import com.projectcitybuild.support.spigot.listeners.SpigotEventHandler
 import dev.jorel.commandapi.CommandAPI
 import dev.jorel.commandapi.CommandAPIBukkit
 import dev.jorel.commandapi.CommandAPIBukkitConfig
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.runBlocking
 import org.bukkit.plugin.java.JavaPlugin
 
-class PCBridge : JavaPlugin() {
+class PCBridge : JavaPlugin(), Monitorable {
     private var container: DependencyContainer? = null
     private var containerLifecycle: ContainerLifecycle? = null
 
+    override val monitorFlow: MutableStateFlow<MonitorableEvent> = MutableStateFlow(NullEvent)
+
     override fun onLoad() {
+        Runtime.getRuntime().addShutdownHook(object : Thread() {
+            override fun run() = runBlocking {
+                emit(ShutdownEvent)
+            }
+        })
+
         CommandAPI.onLoad(
             CommandAPIBukkitConfig(this)
                 .verboseOutput(true)
         )
+
+        emit(PluginLoadEvent)
     }
 
     override fun onEnable() {
@@ -58,6 +83,7 @@ class PCBridge : JavaPlugin() {
 
         runCatching {
             containerLifecycle?.onEnable()
+            emit(PluginEnableEvent)
         }.onFailure {
             container?.errorReporter?.report(it)
             server.pluginManager.disablePlugin(this)
@@ -67,6 +93,7 @@ class PCBridge : JavaPlugin() {
     override fun onDisable() {
         runCatching {
             containerLifecycle?.onDisable()
+            emit(PluginDisableEvent)
         }.onFailure {
             container?.errorReporter?.report(it)
             server.pluginManager.disablePlugin(this)
@@ -104,12 +131,21 @@ private class ContainerLifecycle(
         permissions.connect()
         webServer.start()
 
+        SpigotEventHandler(plugin, eventPipeline, logger).register()
+
         modules = listOf(
             AnnouncementsModule(),
             BansModule(),
             ChatModule(),
             GeneralBuildToolsModule(),
-            InvisFramesModule(),
+            InvisFramesModule(
+                eventPipeline,
+                { minecraftDispatcher },
+                FramePlaceListener(spigotNamespace),
+                ItemInsertListener(spigotNamespace),
+                ItemRemoveListener(spigotNamespace),
+                InvisFrameCommand(spigotNamespace),
+            ),
             JoinMessagesModule(),
             MutesModule(),
             NightVisionModule(),
@@ -123,6 +159,11 @@ private class ContainerLifecycle(
         modules.forEach { module ->
             val builder = ModuleRegisterDSL(listenerRegistry, container)
             module.register(builder::apply)
+
+            // TODO: move registration out of here
+            if (module is PluginFeature) {
+                module.installOn(plugin as Monitorable)
+            }
         }
 
         integrations = listOf(

@@ -52,6 +52,7 @@ dependencies {
     implementation("co.aikar:idb-core:1.0.0-SNAPSHOT")
     implementation("io.sentry:sentry:5.7.4")
     implementation("dev.jorel:commandapi-bukkit-shade:9.1.0")
+    implementation("org.reflections:reflections:0.10.2")
 
     testImplementation("net.md-5:bungeecord-api:1.16-R0.4")
     testImplementation("org.spigotmc:spigot-api:1.20.1-R0.1-SNAPSHOT")
