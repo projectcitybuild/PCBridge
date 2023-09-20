@@ -1,16 +1,16 @@
-package com.projectcitybuild.modules.buildtools.invisframes.listeners
+package com.projectcitybuild.modules.invisframes.listeners
 
 import com.projectcitybuild.support.spigot.SpigotNamespace
 import org.bukkit.entity.GlowItemFrame
 import org.bukkit.entity.ItemFrame
-import org.bukkit.event.player.PlayerInteractEntityEvent
+import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.persistence.PersistentDataType
 
-class ItemInsertListener(
+class ItemRemoveListener(
     private val spigotNamespace: SpigotNamespace,
 ) {
-    fun handle(event: PlayerInteractEntityEvent) {
-        val entity = event.rightClicked
+    fun handle(event: EntityDamageByEntityEvent) {
+        val entity = event.entity
 
         val isItemFrame = entity is ItemFrame
         if (!isItemFrame) return
@@ -23,7 +23,7 @@ class ItemInsertListener(
 
         if (isInvisibleFrame) {
             val itemFrame = entity as ItemFrame
-            itemFrame.isVisible = false
+            itemFrame.isVisible = true
             itemFrame.isGlowing = entity is GlowItemFrame
         }
     }

@@ -4,16 +4,9 @@ import com.github.shynixn.mccoroutine.bukkit.minecraftDispatcher
 import com.projectcitybuild.integrations.SpigotIntegration
 import com.projectcitybuild.modules.buildtools.general.GeneralBuildToolsModule
 import com.projectcitybuild.modules.announcements.AnnouncementsModule
-import com.projectcitybuild.modules.buildtools.invisframes.InvisFramesModule
-import com.projectcitybuild.modules.buildtools.invisframes.commands.InvisFrameCommand
-import com.projectcitybuild.modules.buildtools.invisframes.listeners.FramePlaceListener
-import com.projectcitybuild.modules.buildtools.invisframes.listeners.ItemInsertListener
-import com.projectcitybuild.modules.buildtools.invisframes.listeners.ItemRemoveListener
 import com.projectcitybuild.modules.buildtools.nightvision.NightVisionModule
-import com.projectcitybuild.modules.chat.ChatModule
 import com.projectcitybuild.modules.joinmessages.JoinMessagesModule
 import com.projectcitybuild.modules.moderation.bans.BansModule
-import com.projectcitybuild.modules.moderation.mutes.MutesModule
 import com.projectcitybuild.modules.moderation.staffchat.StaffChatModule
 import com.projectcitybuild.modules.moderation.warnings.WarningsModule
 import com.projectcitybuild.modules.pluginutils.PluginUtilsModule
@@ -50,12 +43,10 @@ class PCBridge : JavaPlugin(), Monitorable {
                 emit(ShutdownEvent)
             }
         })
-
         CommandAPI.onLoad(
             CommandAPIBukkitConfig(this)
                 .verboseOutput(true)
         )
-
         emit(PluginLoadEvent)
     }
 
@@ -123,6 +114,7 @@ private class ContainerLifecycle(
 ) {
     private var modules: List<PluginModule> = emptyList()
     private var integrations: List<SpigotIntegration> = emptyList()
+    private var features: List<PluginFeature> = emptyList()
 
     fun onEnable() = container.apply {
         CommandAPI.onEnable()
@@ -133,21 +125,18 @@ private class ContainerLifecycle(
 
         SpigotEventHandler(plugin, eventPipeline, logger).register()
 
+        features = listOf(
+            chatFeature,
+            invisFrameFeature,
+            mutesFeature,
+        )
+        features.forEach { it.installOn(plugin as Monitorable) }
+
         modules = listOf(
             AnnouncementsModule(),
             BansModule(),
-            ChatModule(),
             GeneralBuildToolsModule(),
-            InvisFramesModule(
-                eventPipeline,
-                { minecraftDispatcher },
-                FramePlaceListener(spigotNamespace),
-                ItemInsertListener(spigotNamespace),
-                ItemRemoveListener(spigotNamespace),
-                InvisFrameCommand(spigotNamespace),
-            ),
             JoinMessagesModule(),
-            MutesModule(),
             NightVisionModule(),
             PluginUtilsModule(),
             RankSyncModule(),
@@ -159,11 +148,6 @@ private class ContainerLifecycle(
         modules.forEach { module ->
             val builder = ModuleRegisterDSL(listenerRegistry, container)
             module.register(builder::apply)
-
-            // TODO: move registration out of here
-            if (module is PluginFeature) {
-                module.installOn(plugin as Monitorable)
-            }
         }
 
         integrations = listOf(

@@ -1,6 +1,6 @@
-package com.projectcitybuild.modules.moderation.mutes.commands
+package com.projectcitybuild.modules.mutes.commands
 
-import com.projectcitybuild.modules.moderation.mutes.actions.MutePlayer
+import com.projectcitybuild.modules.mutes.actions.MutePlayer
 import com.projectcitybuild.support.textcomponent.send
 import org.bukkit.entity.Player
 

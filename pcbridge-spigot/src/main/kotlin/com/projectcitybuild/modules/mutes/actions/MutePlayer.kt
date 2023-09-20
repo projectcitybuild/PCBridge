@@ -1,4 +1,4 @@
-package com.projectcitybuild.modules.moderation.mutes.actions
+package com.projectcitybuild.modules.mutes.actions
 
 import com.projectcitybuild.repositories.PlayerConfigRepository
 import java.util.UUID

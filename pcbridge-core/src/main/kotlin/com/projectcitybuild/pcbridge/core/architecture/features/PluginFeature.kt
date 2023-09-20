@@ -2,6 +2,7 @@ package com.projectcitybuild.pcbridge.core.architecture.features
 
 import com.projectcitybuild.pcbridge.core.architecture.events.EventPipeline
 import com.projectcitybuild.pcbridge.core.architecture.events.EventSink
+import com.projectcitybuild.pcbridge.core.architecture.events.MiddlewareRegistry
 import com.projectcitybuild.pcbridge.core.architecture.monitors.Monitorable
 import com.projectcitybuild.pcbridge.core.architecture.monitors.MonitorableEvent
 import com.projectcitybuild.pcbridge.core.architecture.monitors.NullEvent
@@ -15,6 +16,7 @@ abstract class PluginFeature(
     contextBuilder: () -> CoroutineContext,
 ): Monitorable {
     protected val events = EventSink(eventPipeline, contextBuilder)
+    protected val middleware = MiddlewareRegistry(eventPipeline)
 
     override val monitorFlow: MutableStateFlow<MonitorableEvent> = MutableStateFlow(NullEvent)
 

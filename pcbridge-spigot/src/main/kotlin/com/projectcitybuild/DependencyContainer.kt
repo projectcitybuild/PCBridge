@@ -22,8 +22,20 @@ import com.projectcitybuild.libs.nameguesser.NameGuesser
 import com.projectcitybuild.libs.permissions.Permissions
 import com.projectcitybuild.libs.permissions.adapters.LuckPermsPermissions
 import com.projectcitybuild.libs.playercache.PlayerConfigCache
+import com.projectcitybuild.modules.chat.ChatFeature
+import com.projectcitybuild.modules.chat.listeners.AsyncPlayerChatListener
+import com.projectcitybuild.modules.invisframes.InvisFramesFeature
+import com.projectcitybuild.modules.invisframes.commands.InvisFrameCommand
+import com.projectcitybuild.modules.invisframes.listeners.FramePlaceListener
+import com.projectcitybuild.modules.invisframes.listeners.ItemInsertListener
+import com.projectcitybuild.modules.invisframes.listeners.ItemRemoveListener
 import com.projectcitybuild.pcbridge.core.storage.JsonStorage
 import com.projectcitybuild.modules.joinmessages.PlayerJoinTimeCache
+import com.projectcitybuild.modules.mutes.MutesFeature
+import com.projectcitybuild.modules.mutes.actions.MutePlayer
+import com.projectcitybuild.modules.mutes.commands.MuteCommand
+import com.projectcitybuild.modules.mutes.commands.UnmuteCommand
+import com.projectcitybuild.modules.mutes.middleware.MuteChatMiddleware
 import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger
 import com.projectcitybuild.pcbridge.core.contracts.PlatformScheduler
 import com.projectcitybuild.pcbridge.core.contracts.PlatformTimer
@@ -56,7 +68,7 @@ class DependencyContainer(
     val minecraftDispatcher: CoroutineContext,
 ) {
     val eventPipeline by lazy {
-        EventPipeline()
+        EventPipeline({ minecraftDispatcher })
     }
 
     val config: Config<ConfigData> by lazy {
@@ -313,6 +325,46 @@ class DependencyContainer(
             plugin,
             logger,
             chatGroupFormatter,
+        )
+    }
+
+    /**
+     * Features
+     */
+
+    val chatFeature by lazy {
+        ChatFeature(
+            eventPipeline,
+            { minecraftDispatcher },
+            AsyncPlayerChatListener(
+                server,
+                chatGroupFormatter,
+                chatBadgeFormatter,
+            ),
+        )
+    }
+
+    val invisFrameFeature by lazy {
+        InvisFramesFeature(
+            eventPipeline,
+            { minecraftDispatcher },
+            FramePlaceListener(spigotNamespace),
+            ItemInsertListener(spigotNamespace),
+            ItemRemoveListener(spigotNamespace),
+            InvisFrameCommand(spigotNamespace),
+        )
+    }
+
+    val mutesFeature by lazy {
+        MutesFeature(
+            eventPipeline,
+            { minecraftDispatcher },
+            MuteCommand(MutePlayer(playerConfigRepository)),
+            UnmuteCommand(MutePlayer(playerConfigRepository)),
+            MuteChatMiddleware(
+                { minecraftDispatcher },
+                playerConfigRepository,
+            ),
         )
     }
 }

@@ -10,12 +10,14 @@ class ModuleRegisterDSL(
     private val listenerRegistry: SpigotListenerRegistry,
     val container: DependencyContainer,
 ) {
+    @Deprecated("Register commands manually with CommandAPICommand")
     fun command(label: String, declaration: ModuleCommandBuilder) {
         val command = CommandAPICommand(label)
         declaration(command)
         command.register()
     }
 
+    @Deprecated("Use EventPipeline instead")
     fun <T: Event> listener(listener: SpigotListener<T>) {
         listenerRegistry.register(listener)
     }

@@ -1,14 +1,12 @@
-package com.projectcitybuild.modules.buildtools.invisframes
+package com.projectcitybuild.modules.invisframes
 
 import com.projectcitybuild.entities.Permissions
-import com.projectcitybuild.modules.buildtools.invisframes.commands.InvisFrameCommand
-import com.projectcitybuild.modules.buildtools.invisframes.listeners.FramePlaceListener
-import com.projectcitybuild.modules.buildtools.invisframes.listeners.ItemInsertListener
-import com.projectcitybuild.modules.buildtools.invisframes.listeners.ItemRemoveListener
+import com.projectcitybuild.modules.invisframes.commands.InvisFrameCommand
+import com.projectcitybuild.modules.invisframes.listeners.FramePlaceListener
+import com.projectcitybuild.modules.invisframes.listeners.ItemInsertListener
+import com.projectcitybuild.modules.invisframes.listeners.ItemRemoveListener
 import com.projectcitybuild.pcbridge.core.architecture.events.EventPipeline
 import com.projectcitybuild.pcbridge.core.architecture.features.PluginFeature
-import com.projectcitybuild.support.modules.ModuleDeclaration
-import com.projectcitybuild.support.modules.PluginModule
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.arguments.MultiLiteralArgument
 import dev.jorel.commandapi.executors.PlayerCommandExecutor
@@ -17,17 +15,14 @@ import org.bukkit.event.hanging.HangingPlaceEvent
 import org.bukkit.event.player.PlayerInteractEntityEvent
 import kotlin.coroutines.CoroutineContext
 
-class InvisFramesModule(
+class InvisFramesFeature(
     eventPipeline: EventPipeline,
     contextBuilder: () -> CoroutineContext,
     private val framePlaceListener: FramePlaceListener,
     private val itemInsertListener: ItemInsertListener,
     private val itemRemoveListener: ItemRemoveListener,
     private val invisFrameCommand: InvisFrameCommand,
-): PluginModule, PluginFeature(eventPipeline, contextBuilder) {
-
-    // TODO: remove
-    override fun register(module: ModuleDeclaration) = module {}
+): PluginFeature(eventPipeline, contextBuilder) {
 
     override fun onLoad() {
         events.subscribe(HangingPlaceEvent::class.java) { event ->

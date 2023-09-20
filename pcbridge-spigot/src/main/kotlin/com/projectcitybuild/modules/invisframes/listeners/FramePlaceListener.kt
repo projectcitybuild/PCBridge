@@ -1,4 +1,4 @@
-package com.projectcitybuild.modules.buildtools.invisframes.listeners
+package com.projectcitybuild.modules.invisframes.listeners
 
 import com.projectcitybuild.support.spigot.SpigotNamespace
 import org.bukkit.entity.ItemFrame

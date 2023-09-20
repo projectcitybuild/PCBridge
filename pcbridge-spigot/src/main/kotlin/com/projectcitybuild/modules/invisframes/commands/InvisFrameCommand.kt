@@ -1,4 +1,4 @@
-package com.projectcitybuild.modules.buildtools.invisframes.commands
+package com.projectcitybuild.modules.invisframes.commands
 
 import com.projectcitybuild.support.spigot.SpigotNamespace
 import com.projectcitybuild.support.textcomponent.send
