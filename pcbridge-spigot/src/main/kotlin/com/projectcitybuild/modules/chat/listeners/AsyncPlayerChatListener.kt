@@ -49,10 +49,10 @@ class AsyncPlayerChatListener(
             .add(badges)
             .add(format.prefix)
             .add(format.groups)
-            .add(" ") { it.color = ChatColor.RESET }
+            .add(" ") { it.color = ChatColor.WHITE }
             .add(TextComponent.fromLegacyText(event.player.displayName))
             .add(format.suffix)
-            .add(": ") { it.color = ChatColor.RESET }
+            .add(": ") { it.color = ChatColor.WHITE }
             .add(TextComponent.fromLegacyText(event.message))
 
         server.onlinePlayers.forEach { it.spigot().sendMessage(tc) }
