@@ -24,8 +24,7 @@ class StartAnnouncementTimer(
         timer.scheduleRepeating(
             identifier = timerId,
             delay = 0,
-            repeatingInterval = 5,
-            // repeatingInterval = intervalInMins.toLong(),
+            repeatingInterval = intervalInMins.toLong(),
             unit = TimeUnit.SECONDS,
             work = {
                 val message = repository.getNextAnnouncement()

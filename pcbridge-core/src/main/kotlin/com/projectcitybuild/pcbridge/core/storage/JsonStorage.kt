@@ -34,6 +34,8 @@ class JsonStorage<T>(
 
     fun write(data: T) {
         return try {
+            file.createNewFile();
+
             PrintWriter(file).use { writer ->
                 gson.toJson(data, typeToken.type, writer)
             }
