@@ -50,7 +50,7 @@ class ChatBadgeFormatter(
             }
 
         tc.add(" ") {
-            it.color = ChatColor.RESET
+            it.color = ChatColor.WHITE
         }
         return tc
     }

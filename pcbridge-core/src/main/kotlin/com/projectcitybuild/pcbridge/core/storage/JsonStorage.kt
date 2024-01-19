@@ -20,6 +20,8 @@ class JsonStorage<T>(
 
     fun read(): T? {
         return try {
+            if (!file.exists()) return null
+
             // Normally we'd pass a FileReader+JsonReader to gson to read the file contents,
             // but it's unable to interpret ASCII characters. For some reason, feeding a
             // JSON string to it instead doesn't have the same problem...
@@ -34,6 +36,9 @@ class JsonStorage<T>(
 
     fun write(data: T) {
         return try {
+            file.parentFile.mkdirs()
+            file.createNewFile()
+
             PrintWriter(file).use { writer ->
                 gson.toJson(data, typeToken.type, writer)
             }

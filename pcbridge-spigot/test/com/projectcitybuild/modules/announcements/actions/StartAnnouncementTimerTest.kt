@@ -42,7 +42,7 @@ class StartAnnouncementTimerTest {
         action.start()
 
         argumentCaptor<() -> Unit>().apply {
-            verify(timer).scheduleRepeating(any(), eq(0), eq(5), eq(TimeUnit.SECONDS), capture())
+            verify(timer).scheduleRepeating(any(), eq(0), eq(5), eq(TimeUnit.MINUTES), capture())
             firstValue()
             firstValue()
         }

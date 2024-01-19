@@ -39,8 +39,8 @@ dependencies {
     implementation(project(":pcbridge-http"))
     implementation(project(":pcbridge-web-server"))
 
-    compileOnly("org.spigotmc:spigot-api:1.19.2-R0.1-SNAPSHOT")
-    compileOnly("net.md-5:bungeecord-api:1.16-R0.4")
+    compileOnly("org.spigotmc:spigot-api:1.20.4-R0.1-SNAPSHOT")
+    compileOnly("net.md-5:bungeecord-api:1.20-R0.1")
     compileOnly("net.luckperms:api:5.4")
     compileOnly("net.essentialsx:EssentialsX:2.19.0")
     compileOnly("us.dynmap:dynmap-api:3.3")
@@ -51,7 +51,7 @@ dependencies {
     implementation("com.zaxxer:HikariCP:5.0.1")
     implementation("co.aikar:idb-core:1.0.0-SNAPSHOT")
     implementation("io.sentry:sentry:5.7.4")
-    implementation("dev.jorel:commandapi-bukkit-shade:9.1.0")
+    implementation("dev.jorel:commandapi-bukkit-shade:9.3.0")
 
     testImplementation("net.md-5:bungeecord-api:1.16-R0.4")
     testImplementation("org.spigotmc:spigot-api:1.20.1-R0.1-SNAPSHOT")
