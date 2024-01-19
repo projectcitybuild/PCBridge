@@ -39,8 +39,8 @@ dependencies {
     implementation(project(":pcbridge-http"))
     implementation(project(":pcbridge-web-server"))
 
-    compileOnly("org.spigotmc:spigot-api:1.19.2-R0.1-SNAPSHOT")
-    compileOnly("net.md-5:bungeecord-api:1.16-R0.4")
+    compileOnly("org.spigotmc:spigot-api:1.20.4-R0.1-SNAPSHOT")
+    compileOnly("net.md-5:bungeecord-api:1.20-R0.1")
     compileOnly("net.luckperms:api:5.4")
     compileOnly("net.essentialsx:EssentialsX:2.19.0")
     compileOnly("us.dynmap:dynmap-api:3.3")
