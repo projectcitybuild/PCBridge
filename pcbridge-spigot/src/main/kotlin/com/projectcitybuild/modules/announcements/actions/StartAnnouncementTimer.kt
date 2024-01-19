@@ -25,7 +25,7 @@ class StartAnnouncementTimer(
             identifier = timerId,
             delay = 0,
             repeatingInterval = intervalInMins.toLong(),
-            unit = TimeUnit.SECONDS,
+            unit = TimeUnit.MINUTES,
             work = {
                 val message = repository.getNextAnnouncement()
                 server.broadcastMessage(

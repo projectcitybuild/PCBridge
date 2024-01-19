@@ -40,7 +40,7 @@ class SpigotTimer(
             plugin,
             work,
             unit.toSeconds(delay),
-            unit.toSeconds(repeatingInterval) * 20, // 20 ticks per second
+            unit.toSeconds(repeatingInterval),
         )
         tasks[identifier] = task
 
