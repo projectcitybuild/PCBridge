@@ -1,4 +1,4 @@
-package com.projectcitybuild.modules.buildtools.general.commands
+package com.projectcitybuild.modules.buildtools.bin.commands
 
 import com.projectcitybuild.support.spigot.SpigotServer
 import org.bukkit.entity.Player

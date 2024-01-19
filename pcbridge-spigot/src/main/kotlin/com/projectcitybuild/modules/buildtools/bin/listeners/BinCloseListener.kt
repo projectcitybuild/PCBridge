@@ -1,4 +1,4 @@
-package com.projectcitybuild.modules.buildtools.general.listeners
+package com.projectcitybuild.modules.buildtools.bin.listeners
 
 import com.projectcitybuild.support.spigot.listeners.SpigotListener
 import net.md_5.bungee.api.ChatColor

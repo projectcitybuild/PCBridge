@@ -1,13 +1,13 @@
-package com.projectcitybuild.modules.buildtools.general
+package com.projectcitybuild.modules.buildtools.bin
 
 import com.projectcitybuild.entities.Permissions
-import com.projectcitybuild.modules.buildtools.general.commands.BinCommand
-import com.projectcitybuild.modules.buildtools.general.listeners.BinCloseListener
+import com.projectcitybuild.modules.buildtools.bin.commands.BinCommand
+import com.projectcitybuild.modules.buildtools.bin.listeners.BinCloseListener
 import com.projectcitybuild.support.modules.ModuleDeclaration
 import com.projectcitybuild.support.modules.PluginModule
 import dev.jorel.commandapi.executors.PlayerCommandExecutor
 
-class GeneralBuildToolsModule: PluginModule {
+class BinModule: PluginModule {
 
     override fun register(module: ModuleDeclaration) = module {
         command("bin") {
