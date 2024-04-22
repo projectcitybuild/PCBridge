@@ -1,11 +1,10 @@
 main: com.projectcitybuild.PCBridge
 name: PCBridge
 author: Andy
-version: 5.1.0
+version: 6.0.0
 softdepend:
   - LuckPerms
   - dynmap
-  - GadgetsMenu
   - Essentials
 
 api-version: 1.16

@@ -45,7 +45,6 @@ dependencies {
     compileOnly("net.essentialsx:EssentialsX:2.19.0")
     compileOnly("us.dynmap:dynmap-api:3.3")
     compileOnly("us.dynmap:DynmapCoreAPI:3.3")
-    compileOnly(files("$projectDir/libs/GadgetsMenu.jar"))
     implementation("com.github.shynixn.mccoroutine:mccoroutine-bukkit-api:2.11.0")
     implementation("com.github.shynixn.mccoroutine:mccoroutine-bukkit-core:2.12.1")
     implementation("com.zaxxer:HikariCP:5.0.1")

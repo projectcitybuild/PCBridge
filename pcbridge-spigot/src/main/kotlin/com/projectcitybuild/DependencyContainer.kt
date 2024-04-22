@@ -7,7 +7,6 @@ import com.projectcitybuild.modules.chat.ChatGroupFormatter
 import com.projectcitybuild.modules.ranksync.actions.UpdatePlayerGroups
 import com.projectcitybuild.integrations.dynmap.DynmapMarkerIntegration
 import com.projectcitybuild.integrations.essentials.EssentialsIntegration
-import com.projectcitybuild.integrations.gadgetsmenu.GadgetsMenuIntegration
 import com.projectcitybuild.integrations.luckperms.LuckPermsIntegration
 import com.projectcitybuild.pcbridge.core.modules.config.Config
 import com.projectcitybuild.libs.database.DataSource
@@ -250,12 +249,6 @@ class DependencyContainer(
         )
     }
 
-    private val currencyRepository by lazy {
-        CurrencyRepository(
-            httpService.currency,
-        )
-    }
-
     val verificationURLRepository by lazy {
         VerificationURLRepository(
             httpService.verificationURL,
@@ -292,14 +285,6 @@ class DependencyContainer(
         EssentialsIntegration(
             plugin,
             logger,
-        )
-    }
-
-    val gadgetsMenuIntegration by lazy {
-        GadgetsMenuIntegration(
-            plugin,
-            logger,
-            currencyRepository,
         )
     }
 

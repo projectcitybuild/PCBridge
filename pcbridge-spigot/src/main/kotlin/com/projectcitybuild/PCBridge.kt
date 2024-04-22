@@ -2,7 +2,6 @@ package com.projectcitybuild
 
 import com.github.shynixn.mccoroutine.bukkit.minecraftDispatcher
 import com.projectcitybuild.integrations.SpigotIntegration
-import com.projectcitybuild.modules.buildtools.bin.BinModule
 import com.projectcitybuild.modules.announcements.AnnouncementsModule
 import com.projectcitybuild.modules.buildtools.invisframes.InvisFramesModule
 import com.projectcitybuild.modules.buildtools.nightvision.NightVisionModule
@@ -108,7 +107,6 @@ private class ContainerLifecycle(
             AnnouncementsModule(),
             BansModule(),
             ChatModule(),
-            BinModule(),
             InvisFramesModule(),
             JoinMessagesModule(),
             MutesModule(),
@@ -128,7 +126,6 @@ private class ContainerLifecycle(
         integrations = listOf(
             dynmapIntegration,
             essentialsIntegration,
-            gadgetsMenuIntegration,
             luckPermsIntegration,
         )
         integrations.forEach { it.onEnable() }

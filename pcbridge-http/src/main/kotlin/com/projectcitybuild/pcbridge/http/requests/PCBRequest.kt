@@ -53,20 +53,6 @@ internal interface PCBRequest {
     ): ApiResponse<Array<DonationPerk>>
 
 
-    @GET("v2/minecraft/{uuid}/balance")
-    suspend fun getBalance(
-        @Path(value = "uuid") uuid: String,
-    ): ApiResponse<AccountBalance>
-
-    @POST("v2/minecraft/{uuid}/balance/deduct")
-    @FormUrlEncoded
-    suspend fun deductFromBalance(
-        @Path(value = "uuid") uuid: String,
-        @Field("amount") amount: Int,
-        @Field("reason") reason: String,
-    ): ApiResponse<Unit>
-
-
     @POST("v2/bans/ip/ban")
     @FormUrlEncoded
     suspend fun banIP(
