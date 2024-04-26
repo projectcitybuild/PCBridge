@@ -1,9 +1,11 @@
 package com.projectcitybuild
 
 import com.google.gson.reflect.TypeToken
-import com.projectcitybuild.core.config.PluginConfig
+import com.projectcitybuild.data.PluginConfig
 import com.projectcitybuild.core.database.DatabaseSession
 import com.projectcitybuild.core.database.DatabaseSource
+import com.projectcitybuild.core.errors.SentryReporter
+import com.projectcitybuild.features.warps.commands.WarpsCommand
 import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger
 import com.projectcitybuild.pcbridge.core.modules.config.Config
 import com.projectcitybuild.pcbridge.core.storage.JsonStorage
@@ -13,11 +15,27 @@ import org.koin.core.module.dsl.createdAtStart
 import org.koin.core.module.dsl.onClose
 import org.koin.core.module.dsl.withOptions
 import org.koin.dsl.module
+import org.koin.dsl.onClose
 
 fun pluginModule(_plugin: JavaPlugin) = module {
     single { _plugin }
 
     single<PlatformLogger> { SpigotLogger(get<JavaPlugin>().logger) }
+
+    single {
+        SentryReporter(
+            config = get(),
+            logger = get(),
+        ).apply {
+            val configProvider = get<Config<PluginConfig>>()
+            val config = configProvider.get()
+            if (config.errorReporting.isSentryEnabled) {
+                start()
+            }
+        }
+    } onClose {
+        it?.close()
+    }
 
     single {
         Config(
@@ -28,8 +46,6 @@ fun pluginModule(_plugin: JavaPlugin) = module {
                 typeToken = object : TypeToken<PluginConfig>(){},
             ),
         )
-    } withOptions {
-        createdAtStart()
     }
 
     single {

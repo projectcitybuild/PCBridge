@@ -1,6 +1,6 @@
 package com.projectcitybuild.modules.chat
 
-import com.projectcitybuild.core.config.PluginConfig
+import com.projectcitybuild.data.PluginConfig
 import com.projectcitybuild.pcbridge.core.modules.config.Config
 import com.projectcitybuild.libs.permissions.Permissions
 import net.md_5.bungee.api.chat.BaseComponent

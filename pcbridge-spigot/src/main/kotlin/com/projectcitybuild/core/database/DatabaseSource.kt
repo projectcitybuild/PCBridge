@@ -1,6 +1,6 @@
 package com.projectcitybuild.core.database
 
-import com.projectcitybuild.core.config.PluginConfig
+import com.projectcitybuild.data.PluginConfig
 
 data class DatabaseSource(
     val hostName: String,

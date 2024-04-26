@@ -1,7 +1,7 @@
 // package com.projectcitybuild.deprecated
 //
 // import com.google.gson.reflect.TypeToken
-// import com.projectcitybuild.core.config.PluginConfig
+// import com.projectcitybuild.data.PluginConfig
 // import com.projectcitybuild.modules.chat.ChatBadgeFormatter
 // import com.projectcitybuild.modules.chat.ChatGroupFormatter
 // import com.projectcitybuild.modules.ranksync.actions.UpdatePlayerGroups

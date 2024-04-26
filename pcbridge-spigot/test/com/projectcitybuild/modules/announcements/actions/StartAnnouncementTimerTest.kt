@@ -1,6 +1,6 @@
 package com.projectcitybuild.modules.announcements.actions
 
-import com.projectcitybuild.core.config.PluginConfig
+import com.projectcitybuild.data.PluginConfig
 import com.projectcitybuild.mock
 import com.projectcitybuild.pcbridge.core.contracts.PlatformTimer
 import com.projectcitybuild.pcbridge.core.modules.config.Config

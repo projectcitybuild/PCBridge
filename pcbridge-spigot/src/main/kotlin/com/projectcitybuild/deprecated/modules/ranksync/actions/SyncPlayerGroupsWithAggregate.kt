@@ -1,6 +1,6 @@
 package com.projectcitybuild.modules.ranksync.actions
 
-import com.projectcitybuild.core.config.PluginConfig
+import com.projectcitybuild.data.PluginConfig
 import com.projectcitybuild.pcbridge.core.modules.config.Config
 import com.projectcitybuild.libs.permissions.Permissions
 import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger

@@ -1,4 +1,4 @@
-package com.projectcitybuild
+package com.projectcitybuild.features.warps.commands
 
 import com.github.shynixn.mccoroutine.bukkit.SuspendingCommandExecutor
 import org.bukkit.command.Command

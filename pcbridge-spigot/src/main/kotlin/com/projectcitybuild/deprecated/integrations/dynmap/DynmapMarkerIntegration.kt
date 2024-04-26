@@ -1,6 +1,6 @@
 // package com.projectcitybuild.integrations.dynmap
 //
-// import com.projectcitybuild.core.config.PluginConfig
+// import com.projectcitybuild.data.PluginConfig
 // import com.projectcitybuild.entities.events.WarpCreateEvent
 // import com.projectcitybuild.entities.events.WarpDeleteEvent
 // import com.projectcitybuild.integrations.SpigotIntegration

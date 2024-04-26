@@ -1,6 +1,6 @@
 package com.projectcitybuild.modules.joinmessages.listeners
 
-import com.projectcitybuild.core.config.PluginConfig
+import com.projectcitybuild.data.PluginConfig
 import com.projectcitybuild.entities.events.FirstTimeJoinEvent
 import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger
 import com.projectcitybuild.pcbridge.core.modules.config.Config

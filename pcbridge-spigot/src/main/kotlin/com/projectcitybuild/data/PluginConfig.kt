@@ -1,4 +1,4 @@
-package com.projectcitybuild.core.config
+package com.projectcitybuild.data
 
 import kotlinx.serialization.Serializable
 
