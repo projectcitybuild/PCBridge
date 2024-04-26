@@ -1,6 +1,6 @@
 package com.projectcitybuild.repositories
 
-import com.projectcitybuild.entities.ConfigData
+import com.projectcitybuild.core.config.PluginConfig
 import com.projectcitybuild.mock
 import com.projectcitybuild.pcbridge.core.modules.config.Config
 import com.projectcitybuild.pcbridge.core.modules.filecache.FileCache
@@ -12,13 +12,13 @@ import org.mockito.kotlin.inOrder
 import org.mockito.kotlin.whenever
 
 class ScheduledAnnouncementsRepositoryTest {
-    private lateinit var config: Config<ConfigData>
+    private lateinit var config: Config<PluginConfig>
     private lateinit var fileCache: FileCache<ScheduledAnnouncements>
     private lateinit var repository: ScheduledAnnouncementsRepository
 
     @BeforeEach
     fun setUp() {
-        config = mock<Config<ConfigData>>()
+        config = mock<Config<PluginConfig>>()
         fileCache = mock<FileCache<ScheduledAnnouncements>>()
 
         repository = ScheduledAnnouncementsRepository(
@@ -26,8 +26,9 @@ class ScheduledAnnouncementsRepositoryTest {
             fileCache,
         )
 
-        whenever(config.get()).thenReturn(ConfigData.default.copy(
-            announcements = ConfigData.Announcements(
+        whenever(config.get()).thenReturn(
+            PluginConfig.default.copy(
+            announcements = PluginConfig.Announcements(
                 intervalInMins = 5,
                 messages = listOf(
                     "message1",

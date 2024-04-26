@@ -8,3 +8,7 @@ softdepend:
   - Essentials
 
 api-version: 1.16
+
+commands:
+  warps:
+    permissions: pcbridge.warps

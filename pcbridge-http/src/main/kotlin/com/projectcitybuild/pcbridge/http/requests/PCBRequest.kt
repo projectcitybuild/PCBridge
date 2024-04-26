@@ -1,7 +1,6 @@
 package com.projectcitybuild.pcbridge.http.requests
 
 import com.projectcitybuild.pcbridge.http.responses.Account
-import com.projectcitybuild.pcbridge.http.responses.AccountBalance
 import com.projectcitybuild.pcbridge.http.responses.Aggregate
 import com.projectcitybuild.pcbridge.http.parsing.ApiResponse
 import com.projectcitybuild.pcbridge.http.responses.AuthURL

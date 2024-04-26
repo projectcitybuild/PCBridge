@@ -1,6 +1,6 @@
 package com.projectcitybuild.modules.joinmessages.listeners
 
-import com.projectcitybuild.entities.ConfigData
+import com.projectcitybuild.core.config.PluginConfig
 import com.projectcitybuild.pcbridge.core.modules.config.Config
 import kotlinx.coroutines.test.runTest
 import net.md_5.bungee.api.chat.TextComponent
@@ -15,7 +15,7 @@ import org.mockito.kotlin.whenever
 class ServerOverviewJoinListenerTest {
     private lateinit var player: Player
     private lateinit var spigotPlayer: Player.Spigot
-    private lateinit var config: Config<ConfigData>
+    private lateinit var config: Config<PluginConfig>
 
     @BeforeEach
     fun setUp() {
@@ -29,8 +29,9 @@ class ServerOverviewJoinListenerTest {
     @Test
     fun `sends welcome message set in config`() = runTest {
         val welcomeMessage = "welcome message"
-        whenever(config.get()).thenReturn(ConfigData.default.copy(
-            messages = ConfigData.default.messages.copy(
+        whenever(config.get()).thenReturn(
+            PluginConfig.default.copy(
+            messages = PluginConfig.default.messages.copy(
                 welcome = welcomeMessage,
             ),
         ))

@@ -1,6 +1,6 @@
 package com.projectcitybuild.modules.ranksync.actions
 
-import com.projectcitybuild.entities.ConfigData
+import com.projectcitybuild.core.config.PluginConfig
 import com.projectcitybuild.pcbridge.core.modules.config.Config
 import com.projectcitybuild.libs.permissions.Permissions
 import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger
@@ -25,7 +25,7 @@ class SyncPlayerGroupsWithAggregateTest {
     private lateinit var permissions: Permissions
 
     @Mock
-    private lateinit var config: Config<ConfigData>
+    private lateinit var config: Config<PluginConfig>
 
     private lateinit var useCase: SyncPlayerGroupsWithAggregate
 
@@ -52,9 +52,10 @@ class SyncPlayerGroupsWithAggregateTest {
         val aggregate = Aggregate(account = account, donationPerks = listOf(donorPerk))
         val uuid = UUID.randomUUID()
 
-        whenever(config.get()).thenReturn(ConfigData.default.copy(
-            groups = ConfigData.default.groups.copy(
-                donorTierGroupNames = ConfigData.Groups.DonorTierGroupNames(
+        whenever(config.get()).thenReturn(
+            PluginConfig.default.copy(
+            groups = PluginConfig.default.groups.copy(
+                donorTierGroupNames = PluginConfig.Groups.DonorTierGroupNames(
                     copper = "tier1",
                     iron = "tier2",
                     diamond = "tier3",

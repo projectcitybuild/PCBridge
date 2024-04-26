@@ -1,6 +1,6 @@
 package com.projectcitybuild.modules.joinmessages.listeners
 
-import com.projectcitybuild.entities.ConfigData
+import com.projectcitybuild.core.config.PluginConfig
 import com.projectcitybuild.modules.joinmessages.PlayerJoinTimeCache
 import com.projectcitybuild.pcbridge.core.modules.config.Config
 import com.projectcitybuild.pcbridge.core.modules.datetime.time.Time
@@ -21,7 +21,7 @@ class AnnounceQuitListenerTest {
     private lateinit var player: Player
     private lateinit var server: SpigotServer
     private lateinit var playerJoinTimeCache: PlayerJoinTimeCache
-    private lateinit var config: Config<ConfigData>
+    private lateinit var config: Config<PluginConfig>
     private lateinit var time: Time
 
     @BeforeEach
@@ -43,8 +43,9 @@ class AnnounceQuitListenerTest {
         whenever(player.name).thenReturn("player_name")
         whenever(player.uniqueId).thenReturn(uuid)
         whenever(playerJoinTimeCache.get(uuid)).thenReturn(joinTime)
-        whenever(config.get()).thenReturn(ConfigData.default.copy(
-            messages = ConfigData.default.messages.copy(
+        whenever(config.get()).thenReturn(
+            PluginConfig.default.copy(
+            messages = PluginConfig.default.messages.copy(
                 leave = "%name% left the server (online for %time_online%)",
             ),
         ))
@@ -104,8 +105,9 @@ class AnnounceQuitListenerTest {
             whenever(player.name).thenReturn("player_name")
             whenever(player.uniqueId).thenReturn(uuid)
             whenever(playerJoinTimeCache.get(uuid)).thenReturn(joinTime)
-            whenever(config.get()).thenReturn(ConfigData.default.copy(
-                messages = ConfigData.default.messages.copy(
+            whenever(config.get()).thenReturn(
+                PluginConfig.default.copy(
+                messages = PluginConfig.default.messages.copy(
                     leave = "%name% left the server (online for %time_online%)",
                 ),
             ))

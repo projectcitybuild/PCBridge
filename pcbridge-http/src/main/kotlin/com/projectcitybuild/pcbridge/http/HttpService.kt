@@ -6,7 +6,6 @@ import com.projectcitybuild.pcbridge.http.parsing.ResponseParser
 import com.projectcitybuild.pcbridge.http.services.mojang.PlayerUUIDHttpService
 import com.projectcitybuild.pcbridge.http.services.pcb.AccountLinkHTTPService
 import com.projectcitybuild.pcbridge.http.services.pcb.AggregateHttpService
-import com.projectcitybuild.pcbridge.http.services.pcb.CurrencyHttpService
 import com.projectcitybuild.pcbridge.http.services.pcb.IPBanHttpService
 import com.projectcitybuild.pcbridge.http.services.pcb.PlayerGroupHttpService
 import com.projectcitybuild.pcbridge.http.services.pcb.PlayerWarningHttpService
@@ -58,9 +57,6 @@ class HttpService(
 
     val telemetry
         get() = TelemetryHttpService(pcbClient, responseParser)
-
-    val currency
-        get() = CurrencyHttpService(pcbClient, responseParser)
 
     val verificationURL
         get() = AccountLinkHTTPService(pcbClient, responseParser)

@@ -1,6 +1,6 @@
 package com.projectcitybuild.modules.warps.actions
 
-import com.projectcitybuild.entities.ConfigData
+import com.projectcitybuild.core.config.PluginConfig
 import com.projectcitybuild.pcbridge.core.modules.config.Config
 import com.projectcitybuild.repositories.WarpRepository
 import kotlinx.coroutines.test.runTest
@@ -16,7 +16,7 @@ import org.mockito.kotlin.whenever
 class GetWarpListTest {
 
     @Mock
-    private lateinit var config: Config<ConfigData>
+    private lateinit var config: Config<PluginConfig>
 
     private lateinit var useCase: GetWarpList
 
@@ -36,8 +36,9 @@ class GetWarpListTest {
     fun `should return all warps sorted`() = runTest {
         val warps = listOf("b", "c", "a",)
         whenever(warpRepository.names()).thenReturn(warps)
-        whenever(config.get()).thenReturn(ConfigData.default.copy(
-            warps = ConfigData.Warps(itemsPerPage = warps.size),
+        whenever(config.get()).thenReturn(
+            PluginConfig.default.copy(
+            warps = PluginConfig.Warps(itemsPerPage = warps.size),
         ))
 
         val received = useCase.getList(page = 1)
@@ -51,8 +52,9 @@ class GetWarpListTest {
         val warps = MutableList(3) { index -> "warp_$index" }
 
         whenever(warpRepository.names()).thenReturn(warps)
-        whenever(config.get()).thenReturn(ConfigData.default.copy(
-            warps = ConfigData.Warps(itemsPerPage = 3),
+        whenever(config.get()).thenReturn(
+            PluginConfig.default.copy(
+            warps = PluginConfig.Warps(itemsPerPage = 3),
         ))
 
         val received = useCase.getList(page = 1)
@@ -70,8 +72,9 @@ class GetWarpListTest {
         val warps = MutableList(5) { index -> "warp_$index" }
 
         whenever(warpRepository.names()).thenReturn(warps)
-        whenever(config.get()).thenReturn(ConfigData.default.copy(
-            warps = ConfigData.Warps(itemsPerPage = 2),
+        whenever(config.get()).thenReturn(
+            PluginConfig.default.copy(
+            warps = PluginConfig.Warps(itemsPerPage = 2),
         ))
 
         val firstPage = useCase.getList(page = 1)

@@ -1,6 +1,6 @@
 package com.projectcitybuild.modules.joinmessages.listeners
 
-import com.projectcitybuild.entities.ConfigData
+import com.projectcitybuild.core.config.PluginConfig
 import com.projectcitybuild.entities.events.FirstTimeJoinEvent
 import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger
 import com.projectcitybuild.pcbridge.core.modules.config.Config
@@ -17,7 +17,7 @@ import org.mockito.kotlin.whenever
 class FirstTimeJoinListenerTest {
     private lateinit var player: Player
     private lateinit var server: SpigotServer
-    private lateinit var config: Config<ConfigData>
+    private lateinit var config: Config<PluginConfig>
 
     @BeforeEach
     fun setUp() {
@@ -29,8 +29,9 @@ class FirstTimeJoinListenerTest {
     @Test
     fun `broadcasts first time join message set in config`() = runTest {
         whenever(player.name).thenReturn("player_name")
-        whenever(config.get()).thenReturn(ConfigData.default.copy(
-            messages = ConfigData.default.messages.copy(
+        whenever(config.get()).thenReturn(
+            PluginConfig.default.copy(
+            messages = PluginConfig.default.messages.copy(
                 firstTimeJoin = "Welcome %name% to the server",
             ),
         ))
