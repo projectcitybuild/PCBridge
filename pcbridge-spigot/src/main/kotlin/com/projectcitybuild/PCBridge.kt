@@ -55,6 +55,7 @@ private class Lifecycle: KoinComponent {
 
     fun boot() = trace {
         plugin.apply {
+            // TODO: wrap these later for Sentry reporting
             getCommand("pcbridge")!!.setSuspendingExecutor(get<PCBridgeCommand>())
             getCommand("pcbridge")!!.setSuspendingTabCompleter(get<PCBridgeCommand.TabCompleter>())
 
@@ -63,6 +64,12 @@ private class Lifecycle: KoinComponent {
     }
 
     fun shutdown() = trace {
+        plugin.apply {
+            getCommand("pcbridge")!!.setExecutor(null)
+            getCommand("pcbridge")!!.tabCompleter = null
+
+            getCommand("warps")!!.setExecutor(null)
+        }
         audiences.close()
     }
 

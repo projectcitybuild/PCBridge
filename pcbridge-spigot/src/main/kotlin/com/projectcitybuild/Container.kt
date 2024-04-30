@@ -84,6 +84,7 @@ fun pluginModule(_plugin: JavaPlugin) = module {
         WarpsCommand(
             warpRepository = get(),
             audiences = get(),
+            config = get(),
         )
     }
     factory {
