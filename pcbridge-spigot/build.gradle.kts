@@ -1,15 +1,10 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import java.io.ByteArrayOutputStream
-import java.io.FileOutputStream
-import java.util.Properties
 
 val generatedResourcesDir = "${layout.buildDirectory}/generated-resources"
 
 plugins {
-    id("com.github.johnrengelman.shadow") version "7.0.0"
+    id("com.github.johnrengelman.shadow") version "8.1.1"
 }
-
-apply(plugin = "com.github.johnrengelman.shadow")
 
 repositories {
     mavenCentral()
@@ -56,6 +51,8 @@ dependencies {
     implementation("co.aikar:idb-core:1.0.0-SNAPSHOT")
     implementation("io.sentry:sentry:5.7.4")
     implementation("io.insert-koin:koin-core:3.5.6")
+    implementation("io.github.reactivecircus.cache4k:cache4k:0.13.0")
+    implementation("net.kyori:adventure-platform-bukkit:4.3.2")
 
     // Testing
     // testImplementation("net.md-5:bungeecord-api:1.16-R0.4")

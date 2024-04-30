@@ -2,14 +2,18 @@ package com.projectcitybuild
 
 import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
 import com.github.shynixn.mccoroutine.bukkit.setSuspendingExecutor
+import com.github.shynixn.mccoroutine.bukkit.setSuspendingTabCompleter
 import com.projectcitybuild.core.errors.SentryReporter
+import com.projectcitybuild.features.utilities.commands.PCBridgeCommand
 import com.projectcitybuild.features.warps.commands.WarpsCommand
-import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger
+import net.kyori.adventure.platform.bukkit.BukkitAudiences
 import org.bukkit.plugin.java.JavaPlugin
 import org.koin.core.KoinApplication
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
+import org.koin.core.component.inject
 import org.koin.core.context.GlobalContext.startKoin
+import org.koin.core.context.GlobalContext.stopKoin
 
 class PCBridge : SuspendingJavaPlugin() {
     private var container: KoinApplication? = null
@@ -23,7 +27,9 @@ class PCBridge : SuspendingJavaPlugin() {
         }
         this.container = container
 
-        Lifecycle().boot()
+        Lifecycle().boot().onFailure {
+            server.pluginManager.disablePlugin(this)
+        }
     }
 
     override suspend fun onDisableAsync() {
@@ -31,6 +37,7 @@ class PCBridge : SuspendingJavaPlugin() {
 
         this.container?.close()
         this.container = null
+        stopKoin()
 
         logger.info("Goodbye")
     }
@@ -41,23 +48,28 @@ class PCBridge : SuspendingJavaPlugin() {
 }
 
 private class Lifecycle: KoinComponent {
-    private val sentry: SentryReporter = get()
-    private val logger: PlatformLogger = get()
+    private val audiences: BukkitAudiences = get()
+    private val sentry: SentryReporter by inject()
 
-    fun boot() = sentry.runCatching {
-        get<JavaPlugin>().apply {
+    private val plugin: JavaPlugin by inject()
+
+    fun boot() = trace {
+        plugin.apply {
+            getCommand("pcbridge")!!.setSuspendingExecutor(get<PCBridgeCommand>())
+            getCommand("pcbridge")!!.setSuspendingTabCompleter(get<PCBridgeCommand.TabCompleter>())
+
             getCommand("warps")!!.setSuspendingExecutor(get<WarpsCommand>())
         }
-    }.onFailure {
-        sentry.report(it)
-        logger.severe(it.localizedMessage)
     }
 
-    fun shutdown() = sentry.runCatching {
-        // TODO
-    }.onFailure {
-        sentry.report(it)
-        logger.severe(it.localizedMessage)
+    fun shutdown() = trace {
+        audiences.close()
+    }
+
+    private fun <R> trace(block: () -> R): Result<R> {
+        return runCatching(block).onFailure {
+            sentry.report(it)
+        }
     }
 }
 

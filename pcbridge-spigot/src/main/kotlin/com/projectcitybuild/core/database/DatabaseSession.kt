@@ -34,8 +34,11 @@ class DatabaseSession(
         logger.info("Database connection closed")
     }
 
-    fun database(): HikariPooledDatabase {
-        return database ?: throw Exception("Not connected to a database yet")
+    fun database(): HikariPooledDatabase? {
+        if (database == null) {
+            logger.warning("Tried to access database without an established connection")
+        }
+        return database
     }
 
     private fun hasDatabase(expectedName: String): Boolean {
