@@ -25,9 +25,6 @@ class CommandHelpBuilder {
     }
 
     fun build(hasPermission: (String) -> Boolean): TextComponent {
-        check(commands.isNotEmpty()) {
-            "Cannot build without commands added"
-        }
         return Component.text()
             .appendDivider()
             .also {

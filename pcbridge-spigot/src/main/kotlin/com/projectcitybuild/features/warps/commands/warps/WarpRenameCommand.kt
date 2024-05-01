@@ -1,6 +1,6 @@
 package com.projectcitybuild.features.warps.commands.warps
 
-import com.projectcitybuild.data.repositories.WarpRepository
+import com.projectcitybuild.features.warps.repositories.WarpRepository
 import net.kyori.adventure.platform.bukkit.BukkitAudiences
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
@@ -36,7 +36,7 @@ class WarpRenameArgs {
     )
 
     fun parse(args: List<String>): Args {
-        check(args.size == 2) {
+        check (args.size == 2) {
             "Invalid command arguments"
         }
         return Args(

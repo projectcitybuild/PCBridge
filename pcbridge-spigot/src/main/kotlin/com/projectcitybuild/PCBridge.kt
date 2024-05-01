@@ -13,6 +13,7 @@ import org.koin.core.component.inject
 import org.koin.core.context.GlobalContext.startKoin
 import org.koin.core.context.GlobalContext.stopKoin
 
+@SuppressWarnings("unused")
 class PCBridge : SuspendingJavaPlugin() {
     private var container: KoinApplication? = null
 
@@ -53,11 +54,13 @@ private class Lifecycle: KoinComponent {
     fun boot() = trace {
         commandRegistry.register(
             label = "pcbridge",
+            argsParser = PCBridgeCommand.Args.Parser(),
             handler = get<PCBridgeCommand>(),
             tabCompleter = get<PCBridgeCommand.TabCompleter>(),
         )
         commandRegistry.register(
             label = "warps",
+            argsParser = WarpsCommand.Args.Parser(),
             handler = get<WarpsCommand>(),
         )
     }
@@ -70,6 +73,7 @@ private class Lifecycle: KoinComponent {
     private fun <R> trace(block: () -> R): Result<R> {
         return runCatching(block).onFailure {
             sentry.report(it)
+            throw it
         }
     }
 }

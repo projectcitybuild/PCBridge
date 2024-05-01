@@ -20,12 +20,13 @@ class SpigotCommandRegistry(
 ) {
     private val registered: MutableSet<String> = mutableSetOf()
 
-    fun register(
+    fun <T> register(
         label: String,
-        handler: SuspendingCommandExecutor,
+        argsParser: ArgsParser<T>,
+        handler: SpigotCommand<T>,
         tabCompleter: SuspendingTabCompleter? = null,
     ) {
-        check(!registered.contains(label)) {
+        check (!registered.contains(label)) {
             "$label command already registered"
         }
         val pluginCommand = plugin.getCommand(label)
@@ -40,12 +41,16 @@ class SpigotCommandRegistry(
                 args: Array<out String>
             ): Boolean {
                 runCatching {
-                    handler.onCommand(
-                        sender,
-                        command,
-                        label,
-                        args,
-                    )
+                    val parsedArgs = argsParser.tryParse(args)
+                    if (parsedArgs == null) {
+                        handler.displayUsage(sender, audiences)
+                    } else {
+                        handler.run(
+                            sender,
+                            command,
+                            args = parsedArgs,
+                        )
+                    }
                 }.onFailure {
                     if (it is IllegalStateException) {
                         val message = Component.text("Error: ${it.localizedMessage}")
@@ -53,12 +58,12 @@ class SpigotCommandRegistry(
 
                         audiences.sender(sender).sendMessage(message)
                     } else {
-                        sentry.report(it)
-
                         val message = Component.text("Error: Something went wrong")
                             .color(NamedTextColor.RED)
 
                         audiences.sender(sender).sendMessage(message)
+                        sentry.report(it)
+                        throw it
                     }
                 }
                 return true

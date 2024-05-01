@@ -9,9 +9,6 @@ data class DatabaseSource(
     val username: String,
     val password: String,
 ) {
-    val hostAndPort: String
-        get() = "$hostName:$port"
-
     companion object {
         fun fromConfig(config: PluginConfig) = DatabaseSource(
             hostName = config.database.hostName,

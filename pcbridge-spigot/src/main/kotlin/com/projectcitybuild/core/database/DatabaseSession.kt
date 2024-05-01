@@ -1,28 +1,40 @@
 package com.projectcitybuild.core.database
 
-import co.aikar.idb.DatabaseOptions
-import co.aikar.idb.HikariPooledDatabase
-import co.aikar.idb.PooledDatabaseOptions
 import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger
+import com.zaxxer.hikari.HikariConfig
+import com.zaxxer.hikari.HikariDataSource
+import java.sql.Connection
 
 class DatabaseSession(
     private val logger: PlatformLogger,
 ) {
-    class DatabaseNotFoundException : Exception()
-
-    private var database: HikariPooledDatabase? = null
+    private var database: HikariDataSource? = null
 
     fun connect(source: DatabaseSource) {
-        val options = DatabaseOptions.builder()
-            .mysql(source.username, source.password, source.databaseName, source.hostAndPort)
-            .build()
+        val url = "jdbc:mysql://${source.hostName}:${source.port}/${source.databaseName}"
+        logger.debug("Connecting to $url")
 
-        database = PooledDatabaseOptions.builder()
-            .options(options)
-            .createHikariDatabase()
+        val config = HikariConfig().apply {
+            jdbcUrl = url
+            username = source.username
+            password = source.password
 
-        if (!hasDatabase(source.databaseName)) {
-            throw DatabaseNotFoundException()
+            // See https://github.com/brettwooldridge/HikariCP/wiki/MySQL-Configuration
+            addDataSourceProperty("cachePrepStmts", true)
+            addDataSourceProperty("prepStmtCacheSize", 250)
+            addDataSourceProperty("prepStmtCacheSqlLimit", 2048)
+            addDataSourceProperty("useServerPrepStmts", true)
+            addDataSourceProperty("useLocalSessionState", true)
+            addDataSourceProperty("rewriteBatchedStatements", true)
+            addDataSourceProperty("cacheResultSetMetadata", true)
+            addDataSourceProperty("cacheServerConfiguration", true)
+            addDataSourceProperty("elideSetAutoCommits", true)
+            addDataSourceProperty("maintainTimeStats", false)
+        }
+        database = HikariDataSource(config)
+
+        check (hasDatabase(source.databaseName)) {
+            "Database not found: ${source.databaseName}"
         }
         logger.info("Database connection established")
     }
@@ -34,25 +46,32 @@ class DatabaseSession(
         logger.info("Database connection closed")
     }
 
-    fun database(): HikariPooledDatabase? {
+    fun <T> connect(action: (Connection) -> T): T {
         if (database == null) {
-            logger.warning("Tried to access database without an established connection")
+            logger.warning("Tried to access database before connecting")
         }
-        return database
+        val connection = database?.connection
+        checkNotNull(connection)
+
+        logger.debug("Creating db connection")
+
+        return database!!.connection.use(action)
     }
 
     private fun hasDatabase(expectedName: String): Boolean {
-        var doesExist = false
-        val resultSet = database!!.connection.metaData.catalogs
-        while (resultSet.next()) {
-            val databaseName = resultSet.getString(1)
-            if (databaseName == expectedName) {
-                doesExist = true
-                break
+        var found = false
+
+        connect { connection ->
+            connection.metaData.catalogs.use { resultSet ->
+                while (resultSet.next()) {
+                    val databaseName = resultSet.getString(1)
+                    if (databaseName == expectedName) {
+                        found = true
+                        break
+                    }
+                }
             }
         }
-        resultSet.close()
-
-        return doesExist
+        return found
     }
 }

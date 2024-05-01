@@ -26,7 +26,6 @@ repositories {
     maven { url = uri("https://hub.spigotmc.org/nexus/content/repositories/snapshots/") }
     maven { url = uri("https://oss.sonatype.org/content/repositories/snapshots") }
     maven { url = uri("https://nexus.hc.to/content/repositories/pub_releases") }
-    maven { url = uri("https://repo.aikar.co/content/groups/aikar/") } // idb-core
 }
 
 dependencies {
@@ -48,7 +47,6 @@ dependencies {
     implementation("com.github.shynixn.mccoroutine:mccoroutine-bukkit-api:2.15.0")
     implementation("com.github.shynixn.mccoroutine:mccoroutine-bukkit-core:2.15.0")
     implementation("com.zaxxer:HikariCP:5.0.1")
-    implementation("co.aikar:idb-core:1.0.0-SNAPSHOT")
     implementation("io.sentry:sentry:5.7.4")
     implementation("io.insert-koin:koin-core:3.5.6")
     implementation("io.github.reactivecircus.cache4k:cache4k:0.13.0")
