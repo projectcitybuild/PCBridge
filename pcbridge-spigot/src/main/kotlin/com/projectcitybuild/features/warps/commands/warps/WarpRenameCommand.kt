@@ -34,7 +34,6 @@ class WarpRenameArgs {
         val oldName: String,
         val newName: String,
     )
-
     fun parse(args: List<String>): Args {
         check (args.size == 2) {
             "Invalid command arguments"

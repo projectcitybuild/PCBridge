@@ -21,11 +21,11 @@ class SpigotCommandRegistry(
     private val registered: MutableSet<String> = mutableSetOf()
 
     fun <T> register(
-        label: String,
-        argsParser: ArgsParser<T>,
         handler: SpigotCommand<T>,
+        argsParser: CommandArgsParser<T>,
         tabCompleter: SuspendingTabCompleter? = null,
     ) {
+        val label = handler.label
         check (!registered.contains(label)) {
             "$label command already registered"
         }

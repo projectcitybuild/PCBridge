@@ -4,7 +4,7 @@ import com.projectcitybuild.features.warps.repositories.WarpRepository
 import com.projectcitybuild.entities.Warp
 import com.projectcitybuild.support.messages.CommandHelpBuilder
 import com.projectcitybuild.support.messages.PaginationBuilder
-import com.projectcitybuild.support.spigot.ArgsParser
+import com.projectcitybuild.support.spigot.CommandArgsParser
 import com.projectcitybuild.support.spigot.BadCommandUsageException
 import com.projectcitybuild.support.spigot.SpigotCommand
 import net.kyori.adventure.platform.bukkit.BukkitAudiences
@@ -21,8 +21,9 @@ class WarpListCommand(
     private val audiences: BukkitAudiences,
     private val itemsPerPage: Int,
 ): SpigotCommand<WarpListCommand.Args> {
-    override val usage: CommandHelpBuilder
-        get() = CommandHelpBuilder() // TODO
+    override val label = "list"
+
+    override val usage = CommandHelpBuilder() // TODO
 
     override suspend fun run(sender: CommandSender, command: Command, args: Args) {
         val page = warpRepository.all(
@@ -64,7 +65,7 @@ class WarpListCommand(
     data class Args(
         val page: Int,
     ) {
-        class Parser: ArgsParser<Args> {
+        class Parser: CommandArgsParser<Args> {
             override fun tryParse(args: List<String>): Args {
                 if (args.size > 1) {
                     throw BadCommandUsageException()
@@ -75,7 +76,6 @@ class WarpListCommand(
                 check (page > 0) {
                     "Page must be greater than 0"
                 }
-
                 return Args(page = page)
             }
         }

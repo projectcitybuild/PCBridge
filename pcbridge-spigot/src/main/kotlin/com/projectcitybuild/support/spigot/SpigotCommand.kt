@@ -6,7 +6,7 @@ import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 
 interface SpigotCommand<T> {
-    suspend fun run(sender: CommandSender, command: Command, args: T)
+    val label: String
 
     val usage: CommandHelpBuilder
 
@@ -14,6 +14,8 @@ interface SpigotCommand<T> {
         audiences.sender(sender)
             .sendMessage(usage.build(sender::hasPermission))
     }
+
+    suspend fun run(sender: CommandSender, command: Command, args: T)
 }
 
 /**
@@ -24,7 +26,7 @@ interface SpigotCommand<T> {
  * Throws [BadCommandUsageException] if expected arguments are not present
  * Throws [IllegalStateException] if present arguments are invalid or malformed
  */
-interface ArgsParser<T> {
+interface CommandArgsParser<T> {
     @Throws(IllegalStateException::class, BadCommandUsageException::class)
     fun tryParse(args: List<String>): T?
 

@@ -13,7 +13,7 @@ class CommandHelpBuilder {
         val permission: String,
     )
 
-    fun command(
+    fun subcommand(
         label: String,
         description: String,
         permission: String,

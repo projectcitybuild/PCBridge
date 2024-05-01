@@ -7,8 +7,9 @@ import com.projectcitybuild.features.warps.commands.warps.WarpRenameArgs
 import com.projectcitybuild.features.warps.commands.warps.WarpRenameCommand
 import com.projectcitybuild.pcbridge.core.modules.config.Config
 import com.projectcitybuild.support.messages.CommandHelpBuilder
-import com.projectcitybuild.support.spigot.ArgsParser
+import com.projectcitybuild.support.spigot.CommandArgsParser
 import com.projectcitybuild.support.spigot.SpigotCommand
+import com.projectcitybuild.support.tryValueOf
 import net.kyori.adventure.platform.bukkit.BukkitAudiences
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
@@ -18,22 +19,23 @@ class WarpsCommand(
     private val audiences: BukkitAudiences,
     private val config: Config<PluginConfig>,
 ): SpigotCommand<WarpsCommand.Args> {
-    override val usage: CommandHelpBuilder
-        get() = CommandHelpBuilder()
-            .command(
-                label = "/warps list",
-                description = "shows all available warps",
-                permission = "pcbridge.warp.list"
-            )
-            .command(
-                label = "/warps rename",
-                description = "renames the given warp",
-                permission = "pcbridge.warp.manage"
-            )
+    override val label = "warps"
+
+    override val usage = CommandHelpBuilder()
+        .subcommand(
+            label = "/warps list",
+            description = "shows all available warps",
+            permission = "pcbridge.warp.list"
+        )
+        .subcommand(
+            label = "/warps rename",
+            description = "renames the given warp",
+            permission = "pcbridge.warp.manage"
+        )
 
     override suspend fun run(sender: CommandSender, command: Command, args: Args) {
         when (args.command) {
-            "list" -> WarpListCommand(
+            Args.Command.List -> WarpListCommand(
                 warpRepository = warpRepository,
                 audiences = audiences,
                 itemsPerPage = config.get().warps.itemsPerPage,
@@ -43,7 +45,8 @@ class WarpsCommand(
                 args = WarpListCommand.Args.Parser()
                     .tryParse(args.remainingArgs),
             )
-            "rename" -> WarpRenameCommand(
+
+            Args.Command.Rename -> WarpRenameCommand(
                 argsParser = WarpRenameArgs(),
                 warpRepository = warpRepository,
                 audiences = audiences,
@@ -51,22 +54,28 @@ class WarpsCommand(
                 sender = sender,
                 args = args.remainingArgs,
             )
-            else -> displayUsage(sender, audiences)
         }
         return
     }
 
     data class Args(
-        val command: String,
+        val command: Command,
         val remainingArgs: List<String>,
     ) {
-        class Parser: ArgsParser<Args> {
+        enum class Command {
+            List,
+            Rename,
+        }
+        class Parser: CommandArgsParser<Args> {
             override fun tryParse(args: List<String>): Args? {
                 if (args.isEmpty()) {
                     return null
                 }
+                val command = tryValueOf<Command>(args[0])
+                    ?: return null
+
                 return Args(
-                    command = args[0],
+                    command = command,
                     remainingArgs = args.drop(1),
                 )
             }

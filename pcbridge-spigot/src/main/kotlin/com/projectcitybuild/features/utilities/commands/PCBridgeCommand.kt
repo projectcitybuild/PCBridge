@@ -2,8 +2,9 @@ package com.projectcitybuild.features.utilities.commands
 
 import com.github.shynixn.mccoroutine.bukkit.SuspendingTabCompleter
 import com.projectcitybuild.support.messages.CommandHelpBuilder
-import com.projectcitybuild.support.spigot.ArgsParser
+import com.projectcitybuild.support.spigot.CommandArgsParser
 import com.projectcitybuild.support.spigot.SpigotCommand
+import com.projectcitybuild.support.tryValueOf
 import net.kyori.adventure.platform.bukkit.BukkitAudiences
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextColor
@@ -15,13 +16,13 @@ class PCBridgeCommand(
     private val plugin: JavaPlugin,
     private val audiences: BukkitAudiences,
 ): SpigotCommand<PCBridgeCommand.Args> {
-    override val usage: CommandHelpBuilder
-        get() = CommandHelpBuilder() // TODO
+    override val label = "pcbridge"
+
+    override val usage = CommandHelpBuilder() // TODO
 
     override suspend fun run(sender: CommandSender, command: Command, args: Args) {
         when (args.command) {
-            "reload" -> reload(sender)
-            else -> displayUsage(sender, audiences)
+            Args.Command.Reload -> reload(sender)
         }
     }
 
@@ -38,7 +39,7 @@ class PCBridgeCommand(
     }
 
     class TabCompleter: SuspendingTabCompleter {
-        private val subCommands = listOf(
+        private val subcommands = listOf(
             "reload",
         )
 
@@ -52,7 +53,7 @@ class PCBridgeCommand(
                 return null
             }
             if (args.size == 1) {
-                return subCommands
+                return subcommands
                     .filter { it.startsWith(args[0]) }
                     .toMutableList()
             }
@@ -61,16 +62,22 @@ class PCBridgeCommand(
     }
 
     data class Args(
-        val command: String,
+        val command: Command,
         val remainingArgs: List<String>,
     ) {
-        class Parser: ArgsParser<Args> {
+        enum class Command {
+            Reload,
+        }
+        class Parser: CommandArgsParser<Args> {
             override fun tryParse(args: List<String>): Args? {
                 if (args.isEmpty()) {
                     return null
                 }
+                val command = tryValueOf<Command>(args[0])
+                    ?: return null
+
                 return Args(
-                    command = args[0],
+                    command = command,
                     remainingArgs = args.drop(1),
                 )
             }
