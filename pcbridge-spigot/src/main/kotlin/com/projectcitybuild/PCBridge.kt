@@ -1,13 +1,11 @@
 package com.projectcitybuild
 
 import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
-import com.github.shynixn.mccoroutine.bukkit.setSuspendingExecutor
-import com.github.shynixn.mccoroutine.bukkit.setSuspendingTabCompleter
 import com.projectcitybuild.core.errors.SentryReporter
 import com.projectcitybuild.features.utilities.commands.PCBridgeCommand
 import com.projectcitybuild.features.warps.commands.WarpsCommand
+import com.projectcitybuild.support.spigot.SpigotCommandRegistry
 import net.kyori.adventure.platform.bukkit.BukkitAudiences
-import org.bukkit.plugin.java.JavaPlugin
 import org.koin.core.KoinApplication
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
@@ -50,26 +48,22 @@ class PCBridge : SuspendingJavaPlugin() {
 private class Lifecycle: KoinComponent {
     private val audiences: BukkitAudiences = get()
     private val sentry: SentryReporter by inject()
-
-    private val plugin: JavaPlugin by inject()
+    private val commandRegistry: SpigotCommandRegistry by inject()
 
     fun boot() = trace {
-        plugin.apply {
-            // TODO: wrap these later for Sentry reporting
-            getCommand("pcbridge")!!.setSuspendingExecutor(get<PCBridgeCommand>())
-            getCommand("pcbridge")!!.setSuspendingTabCompleter(get<PCBridgeCommand.TabCompleter>())
-
-            getCommand("warps")!!.setSuspendingExecutor(get<WarpsCommand>())
-        }
+        commandRegistry.register(
+            label = "pcbridge",
+            handler = get<PCBridgeCommand>(),
+            tabCompleter = get<PCBridgeCommand.TabCompleter>(),
+        )
+        commandRegistry.register(
+            label = "warps",
+            handler = get<WarpsCommand>(),
+        )
     }
 
     fun shutdown() = trace {
-        plugin.apply {
-            getCommand("pcbridge")!!.setExecutor(null)
-            getCommand("pcbridge")!!.tabCompleter = null
-
-            getCommand("warps")!!.setExecutor(null)
-        }
+        commandRegistry.unregisterAll()
         audiences.close()
     }
 

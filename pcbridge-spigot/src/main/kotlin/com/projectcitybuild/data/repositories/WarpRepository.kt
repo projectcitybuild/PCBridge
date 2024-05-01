@@ -60,13 +60,22 @@ class WarpRepository(
         oldName: String,
         newName: String,
     ) = withContext(Dispatchers.IO) {
-        val exists = db.database()
+        val oldExists = db.database()
             ?.getResults("SELECT * FROM `warps` WHERE `name`=?", oldName)
             ?.isNotEmpty()
             ?: false
 
-        check(exists) {
+        check(oldExists) {
             "$oldName warp does not exist"
+        }
+
+        val newExists = db.database()
+            ?.getResults("SELECT * FROM `warps` WHERE `name`=?", newName)
+            ?.isNotEmpty()
+            ?: false
+
+        check(!newExists) {
+            "$newName warp already exists"
         }
 
         val success = db.database()

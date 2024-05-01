@@ -12,6 +12,7 @@ import com.projectcitybuild.features.warps.commands.WarpsCommand
 import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger
 import com.projectcitybuild.pcbridge.core.modules.config.Config
 import com.projectcitybuild.pcbridge.core.storage.JsonStorage
+import com.projectcitybuild.support.spigot.SpigotCommandRegistry
 import com.projectcitybuild.support.spigot.SpigotLogger
 import io.github.reactivecircus.cache4k.Cache
 import net.kyori.adventure.platform.bukkit.BukkitAudiences
@@ -69,6 +70,14 @@ fun pluginModule(_plugin: JavaPlugin) = module {
     } withOptions {
         createdAtStart()
         onClose { it?.disconnect() }
+    }
+
+    single {
+        SpigotCommandRegistry(
+            plugin = get(),
+            audiences = get(),
+            sentry = get(),
+        )
     }
 
     single {

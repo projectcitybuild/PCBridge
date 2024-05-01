@@ -36,8 +36,8 @@ class WarpRenameArgs {
     )
 
     fun parse(args: List<String>): Args {
-        check(args.size <= 2) {
-            "Too many arguments given"
+        check(args.size == 2) {
+            "Invalid command arguments"
         }
         return Args(
             oldName = args[0],
