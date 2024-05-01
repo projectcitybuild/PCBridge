@@ -17,9 +17,9 @@ class WarpRepository(
 ) {
     suspend fun all(
         limit: Int,
-        page: Int = 0,
+        page: Int = 1,
     ): Page<Warp> = withContext(Dispatchers.IO) {
-        check(page >= 0) { "Page cannot be negative" }
+        check(page >= 1) { "Page must be greater than 0" }
         // val cached = cache.asMap()
         // if (cached.isNotEmpty()) {
         //     val start = offset * limit
@@ -32,12 +32,12 @@ class WarpRepository(
         //         .slice(start..end)
         // }
 
-        val startIndex = page * limit
+        val startIndex = (page - 1) * limit
 
         val warpCount = db.database()
-            ?.getResults("SELECT COUNT(*) FROM `warps` AS `count`")
+            ?.getResults("SELECT COUNT(*) AS `count` FROM `warps`")
             ?.firstOrNull()
-            ?.get("column")
+            ?.getLong("count")
             ?: 0
 
         val warps = db.database()
@@ -54,6 +54,28 @@ class WarpRepository(
             page = page,
             totalPages = ceil(warpCount.toDouble() / limit.toDouble()).toInt(),
         )
+    }
+
+    suspend fun rename(
+        oldName: String,
+        newName: String,
+    ) = withContext(Dispatchers.IO) {
+        val exists = db.database()
+            ?.getResults("SELECT * FROM `warps` WHERE `name`=?", oldName)
+            ?.isNotEmpty()
+            ?: false
+
+        check(exists) {
+            "$oldName warp does not exist"
+        }
+
+        val success = db.database()
+            ?.executeUpdate("UPDATE `warps` SET `name`=? WHERE `name`= ?", newName, oldName)
+            ?: 0
+
+        check(success == 1) {
+            "Database write operation failed: no affected rows"
+        }
     }
 }
 
