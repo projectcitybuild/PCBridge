@@ -20,7 +20,7 @@ class PCBridgeCommand(
 
     override val usage = CommandHelpBuilder() // TODO
 
-    override suspend fun run(sender: CommandSender, command: Command, args: Args) {
+    override suspend fun run(sender: CommandSender, args: Args) {
         when (args.command) {
             Args.Command.Reload -> reload(sender)
         }

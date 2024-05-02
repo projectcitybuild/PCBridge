@@ -1,7 +1,7 @@
 package com.projectcitybuild.features.warps.commands.warps
 
 import com.projectcitybuild.features.warps.repositories.WarpRepository
-import com.projectcitybuild.entities.Warp
+import com.projectcitybuild.features.warps.Warp
 import com.projectcitybuild.support.messages.CommandHelpBuilder
 import com.projectcitybuild.support.messages.PaginationBuilder
 import com.projectcitybuild.support.spigot.CommandArgsParser
@@ -13,7 +13,6 @@ import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextDecoration
-import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 
 class WarpListCommand(
@@ -25,7 +24,7 @@ class WarpListCommand(
 
     override val usage = CommandHelpBuilder() // TODO
 
-    override suspend fun run(sender: CommandSender, command: Command, args: Args) {
+    override suspend fun run(sender: CommandSender, args: Args) {
         val page = warpRepository.all(
             limit = itemsPerPage,
             page = args.page,

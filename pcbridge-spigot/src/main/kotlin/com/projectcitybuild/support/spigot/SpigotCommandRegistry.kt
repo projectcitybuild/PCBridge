@@ -46,8 +46,7 @@ class SpigotCommandRegistry(
                         handler.displayUsage(sender, audiences)
                     } else {
                         handler.run(
-                            sender,
-                            command,
+                            sender = sender,
                             args = parsedArgs,
                         )
                     }

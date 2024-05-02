@@ -1,7 +1,7 @@
 package com.projectcitybuild.features.warps.repositories
 
 import com.projectcitybuild.entities.SerializableLocation
-import com.projectcitybuild.entities.Warp
+import com.projectcitybuild.features.warps.Warp
 import com.projectcitybuild.core.database.DatabaseSession
 import com.projectcitybuild.core.pagination.Page
 import io.github.reactivecircus.cache4k.Cache
@@ -25,7 +25,8 @@ class WarpRepository(
             connection.prepareStatement("SELECT COUNT(*) AS `count` FROM `warps`")
                 .executeQuery()
                 .firstRow()
-                .getLong("count")
+                ?.getLong("count")
+                ?: 0
         }
         val warps = db.connect { connection ->
             connection.prepareStatement("SELECT * FROM `warps` ORDER BY `name` ASC LIMIT ? OFFSET ?",)
@@ -41,6 +42,18 @@ class WarpRepository(
             page = page,
             totalPages = ceil(warpCount.toDouble() / limit.toDouble()).toInt(),
         )
+    }
+
+    suspend fun get(name: String): Warp? = withContext(Dispatchers.IO) {
+        check (name.isNotEmpty())
+
+        db.connect { connection ->
+            connection.prepareStatement("SELECT * FROM `warps` WHERE `name`=? LIMIT 1")
+                .apply { setString(1, name) }
+                .executeQuery()
+                .firstRow()
+                ?.toWarp()
+        }
     }
 
     suspend fun rename(
@@ -81,9 +94,9 @@ class WarpRepository(
     }
 }
 
-private fun ResultSet.firstRow(): ResultSet {
-    next()
-    return this
+private fun ResultSet.firstRow(): ResultSet? {
+    if (next()) return this
+    return null
 }
 
 private fun <T> ResultSet.mapRows(transform: (ResultSet) -> T): List<T> {

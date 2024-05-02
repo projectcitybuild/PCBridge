@@ -1,7 +1,7 @@
 package com.projectcitybuild.modules.warps.actions
 
 import com.projectcitybuild.entities.SerializableLocation
-import com.projectcitybuild.entities.Warp
+import com.projectcitybuild.features.warps.Warp
 import com.projectcitybuild.pcbridge.core.modules.datetime.time.Time
 import com.projectcitybuild.pcbridge.core.utils.Failure
 import com.projectcitybuild.pcbridge.core.utils.Success

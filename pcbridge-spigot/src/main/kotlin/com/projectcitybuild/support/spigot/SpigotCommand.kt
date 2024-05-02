@@ -2,7 +2,6 @@ package com.projectcitybuild.support.spigot
 
 import com.projectcitybuild.support.messages.CommandHelpBuilder
 import net.kyori.adventure.platform.bukkit.BukkitAudiences
-import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 
 interface SpigotCommand<T> {
@@ -15,7 +14,7 @@ interface SpigotCommand<T> {
             .sendMessage(usage.build(sender::hasPermission))
     }
 
-    suspend fun run(sender: CommandSender, command: Command, args: T)
+    suspend fun run(sender: CommandSender, args: T)
 }
 
 /**

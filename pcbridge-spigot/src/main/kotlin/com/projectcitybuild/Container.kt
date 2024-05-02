@@ -6,7 +6,7 @@ import com.projectcitybuild.core.database.DatabaseSession
 import com.projectcitybuild.core.database.DatabaseSource
 import com.projectcitybuild.core.errors.SentryReporter
 import com.projectcitybuild.features.warps.repositories.WarpRepository
-import com.projectcitybuild.entities.Warp
+import com.projectcitybuild.features.warps.Warp
 import com.projectcitybuild.features.utilities.commands.PCBridgeCommand
 import com.projectcitybuild.features.warps.commands.WarpsCommand
 import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger

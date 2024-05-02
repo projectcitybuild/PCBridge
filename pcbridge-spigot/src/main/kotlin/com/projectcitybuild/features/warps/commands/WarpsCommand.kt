@@ -11,7 +11,6 @@ import com.projectcitybuild.support.spigot.CommandArgsParser
 import com.projectcitybuild.support.spigot.SpigotCommand
 import com.projectcitybuild.support.tryValueOf
 import net.kyori.adventure.platform.bukkit.BukkitAudiences
-import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 
 class WarpsCommand(
@@ -33,7 +32,7 @@ class WarpsCommand(
             permission = "pcbridge.warp.manage"
         )
 
-    override suspend fun run(sender: CommandSender, command: Command, args: Args) {
+    override suspend fun run(sender: CommandSender, args: Args) {
         when (args.command) {
             Args.Command.List -> WarpListCommand(
                 warpRepository = warpRepository,
@@ -41,7 +40,6 @@ class WarpsCommand(
                 itemsPerPage = config.get().warps.itemsPerPage,
             ).run(
                 sender = sender,
-                command = command,
                 args = WarpListCommand.Args.Parser()
                     .tryParse(args.remainingArgs),
             )
@@ -55,7 +53,6 @@ class WarpsCommand(
                 args = args.remainingArgs,
             )
         }
-        return
     }
 
     data class Args(

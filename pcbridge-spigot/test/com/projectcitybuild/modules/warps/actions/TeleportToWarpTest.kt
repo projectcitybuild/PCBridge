@@ -1,6 +1,6 @@
 package com.projectcitybuild.modules.warps.actions
 
-import com.projectcitybuild.entities.Warp
+import com.projectcitybuild.features.warps.Warp
 import com.projectcitybuild.libs.nameguesser.NameGuesser
 import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger
 import com.projectcitybuild.pcbridge.core.utils.Failure

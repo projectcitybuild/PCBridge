@@ -10,7 +10,9 @@ softdepend:
   - Essentials
 
 commands:
+  warp:
+    permissions: pcbridge.warps.teleport
   warps:
-    permissions: pcbridge.warps
+    permissions: pcbridge.warps.list
   pcbridge:
     permissions: pcbridge.utils
