@@ -53,8 +53,6 @@ class DatabaseSession(
         val connection = database?.connection
         checkNotNull(connection)
 
-        logger.debug("Creating db connection")
-
         return database!!.connection.use(action)
     }
 

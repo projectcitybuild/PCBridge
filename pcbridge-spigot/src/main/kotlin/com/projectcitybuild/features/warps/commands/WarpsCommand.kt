@@ -122,7 +122,7 @@ class WarpsCommand(
                 if (args.isEmpty()) {
                     return null
                 }
-                val command = tryValueOf<Command>(args[0])
+                val command = tryValueOf<Command>(args[0].replaceFirstChar { it.uppercase() })
                     ?: return null
 
                 return Args(

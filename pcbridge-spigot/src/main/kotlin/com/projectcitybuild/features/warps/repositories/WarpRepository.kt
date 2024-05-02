@@ -24,9 +24,8 @@ class WarpRepository(
         val startIndex = (page - 1) * limit
         val warpCount = db.connect { connection ->
             connection.prepareStatement("SELECT COUNT(*) AS `count` FROM `warps`")
-                .executeQuery()
-                .firstRow()
-                ?.getLong("count")
+                .use { it.executeQuery() }
+                .use { it.firstRow()?.getLong("count") }
                 ?: 0
         }
         val warps = db.connect { connection ->
@@ -35,8 +34,8 @@ class WarpRepository(
                     setInt(1, limit)
                     setInt(2, startIndex)
                 }
-                .executeQuery()
-                .mapRows { it.toWarp() }
+                .use { it.executeQuery() }
+                .use { it.mapRows { row -> row.toWarp() } }
         }
         return@withContext Page(
             items = warps,
@@ -51,13 +50,12 @@ class WarpRepository(
         db.connect { connection ->
             connection.prepareStatement("SELECT * FROM `warps` WHERE `name`=? LIMIT 1")
                 .apply { setString(1, name) }
-                .executeQuery()
-                .firstRow()
-                ?.toWarp()
+                .use { it.executeQuery() }
+                .use { it.firstRow()?.toWarp() }
         }
     }
 
-    fun create(warp: Warp) {
+    suspend fun create(warp: Warp) = withContext(Dispatchers.IO) {
         val success = db.connect { connection ->
             connection.prepareStatement("INSERT INTO `warps` VALUES (?, ?, ?, ?, ?, ?, ?, ?)")
                 .apply {
@@ -70,7 +68,7 @@ class WarpRepository(
                     setFloat(7, warp.location.yaw)
                     setDate(8, valueOf(warp.createdAt.toLocalDate()))
                 }
-                .executeUpdate() == 1
+                .use { it.executeUpdate() } == 1
         }
         check (success) {
             "Database write operation failed"
@@ -81,8 +79,8 @@ class WarpRepository(
         val exists = db.connect { connection ->
             connection.prepareStatement("SELECT * FROM `warps` WHERE `name`=?")
                 .apply { setString(1, name) }
-                .executeQuery()
-                .isBeforeFirst
+                .use { it.executeQuery() }
+                .use { it.isBeforeFirst }
         }
         check (exists) {
             "$name warp does not exist"
@@ -105,8 +103,8 @@ class WarpRepository(
         val oldExists = db.connect { connection ->
             connection.prepareStatement("SELECT * FROM `warps` WHERE `name`=?")
                 .apply { setString(1, oldName) }
-                .executeQuery()
-                .isBeforeFirst
+                .use { it.executeQuery() }
+                .use { it.isBeforeFirst }
         }
         check (oldExists) {
             "$oldName warp does not exist"
@@ -115,8 +113,8 @@ class WarpRepository(
         val newExists = db.connect { connection ->
             connection.prepareStatement("SELECT * FROM `warps` WHERE `name`=?")
                 .apply { setString(1, newName) }
-                .executeQuery()
-                .isBeforeFirst
+                .use { it.executeQuery() }
+                .use { it.isBeforeFirst }
         }
         check (!newExists) {
             "$newName warp already exists"
@@ -128,7 +126,7 @@ class WarpRepository(
                     setString(1, newName)
                     setString(2, oldName)
                 }
-                .executeUpdate() == 1
+                .use { it.executeUpdate() } == 1
         }
         check (success) {
             "Database write operation failed: no affected rows"
@@ -160,7 +158,7 @@ class WarpRepository(
                     setFloat(6, newLocation.pitch)
                     setString(7, name)
                 }
-                .executeUpdate() == 1
+                .use { it.executeUpdate() } == 1
         }
         check (success) {
             "Database write operation failed: no affected rows"
