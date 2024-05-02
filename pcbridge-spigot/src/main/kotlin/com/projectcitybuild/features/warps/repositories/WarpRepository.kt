@@ -56,6 +56,27 @@ class WarpRepository(
         }
     }
 
+    suspend fun delete(name: String) = withContext(Dispatchers.IO) {
+        val exists = db.connect { connection ->
+            connection.prepareStatement("SELECT * FROM `warps` WHERE `name`=?")
+                .apply { setString(1, name) }
+                .executeQuery()
+                .isBeforeFirst
+        }
+        check (exists) {
+            "$name warp does not exist"
+        }
+
+        val success = db.connect { connection ->
+            connection.prepareStatement("DELETE `warps` WHERE `name`= ?")
+                .apply { setString(1, name) }
+                .executeUpdate() == 1
+        }
+        check (success) {
+            "Database write operation failed: no affected rows"
+        }
+    }
+
     suspend fun rename(
         oldName: String,
         newName: String,

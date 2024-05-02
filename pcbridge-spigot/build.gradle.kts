@@ -51,6 +51,7 @@ dependencies {
     implementation("io.insert-koin:koin-core:3.5.6")
     implementation("io.github.reactivecircus.cache4k:cache4k:0.13.0")
     implementation("net.kyori:adventure-platform-bukkit:4.3.2")
+    implementation("net.kyori:adventure-text-minimessage:4.16.0")
 
     // Testing
     // testImplementation("net.md-5:bungeecord-api:1.16-R0.4")

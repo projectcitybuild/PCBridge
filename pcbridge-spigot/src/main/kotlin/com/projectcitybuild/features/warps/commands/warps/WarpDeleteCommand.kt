@@ -10,39 +10,32 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.command.CommandSender
 
-class WarpRenameCommand(
+class WarpDeleteCommand(
     private val warpRepository: WarpRepository,
     private val audiences: BukkitAudiences,
-): SpigotCommand<WarpRenameCommand.Args> {
-    override val label = "rename"
+): SpigotCommand<WarpDeleteCommand.Args> {
+    override val label = "delete"
 
     override val usage = CommandHelpBuilder() // TODO
 
     override suspend fun run(sender: CommandSender, args: Args) {
-        warpRepository.rename(
-            oldName = args.oldName,
-            newName = args.newName,
-        )
+        warpRepository.delete(name = args.warpName)
 
-        val message = Component.text("${args.oldName} was renamed to ${args.newName}")
+        val message = Component.text("${args.warpName} warp was deleted")
             .color(NamedTextColor.GREEN)
 
         audiences.sender(sender).sendMessage(message)
     }
 
     data class Args(
-        val oldName: String,
-        val newName: String,
+        val warpName: String,
     ) {
         class Parser: CommandArgsParser<Args> {
             override fun tryParse(args: List<String>): Args {
-                if (args.size != 2) {
+                if (args.size != 1) {
                     throw BadCommandUsageException()
                 }
-                return Args(
-                    oldName = args[0],
-                    newName = args[1],
-                )
+                return Args(warpName = args[0])
             }
         }
     }

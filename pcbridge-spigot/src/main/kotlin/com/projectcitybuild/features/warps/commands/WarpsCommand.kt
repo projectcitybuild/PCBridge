@@ -1,9 +1,9 @@
 package com.projectcitybuild.features.warps.commands
 
 import com.projectcitybuild.data.PluginConfig
+import com.projectcitybuild.features.warps.commands.warps.WarpDeleteCommand
 import com.projectcitybuild.features.warps.repositories.WarpRepository
 import com.projectcitybuild.features.warps.commands.warps.WarpListCommand
-import com.projectcitybuild.features.warps.commands.warps.WarpRenameArgs
 import com.projectcitybuild.features.warps.commands.warps.WarpRenameCommand
 import com.projectcitybuild.pcbridge.core.modules.config.Config
 import com.projectcitybuild.support.messages.CommandHelpBuilder
@@ -27,6 +27,11 @@ class WarpsCommand(
             permission = "pcbridge.warp.list"
         )
         .subcommand(
+            label = "/warps delete",
+            description = "deletes the given warp",
+            permission = "pcbridge.warp.manage"
+        )
+        .subcommand(
             label = "/warps rename",
             description = "renames the given warp",
             permission = "pcbridge.warp.manage"
@@ -44,13 +49,22 @@ class WarpsCommand(
                     .tryParse(args.remainingArgs),
             )
 
-            Args.Command.Rename -> WarpRenameCommand(
-                argsParser = WarpRenameArgs(),
+            Args.Command.Delete -> WarpDeleteCommand(
                 warpRepository = warpRepository,
                 audiences = audiences,
-            ).onCommand(
+            ).run(
                 sender = sender,
-                args = args.remainingArgs,
+                args = WarpDeleteCommand.Args.Parser()
+                    .tryParse(args.remainingArgs),
+            )
+
+            Args.Command.Rename -> WarpRenameCommand(
+                warpRepository = warpRepository,
+                audiences = audiences,
+            ).run(
+                sender = sender,
+                args = WarpRenameCommand.Args.Parser()
+                    .tryParse(args.remainingArgs),
             )
         }
     }
@@ -61,6 +75,7 @@ class WarpsCommand(
     ) {
         enum class Command {
             List,
+            Delete,
             Rename,
         }
         class Parser: CommandArgsParser<Args> {
