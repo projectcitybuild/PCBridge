@@ -1,6 +1,6 @@
 package com.projectcitybuild.features.warps
 
-import com.projectcitybuild.entities.SerializableLocation
+import com.projectcitybuild.data.SerializableLocation
 import java.time.LocalDateTime
 
 data class Warp(

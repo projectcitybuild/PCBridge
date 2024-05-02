@@ -1,6 +1,6 @@
 package com.projectcitybuild.features.warps.repositories
 
-import com.projectcitybuild.entities.SerializableLocation
+import com.projectcitybuild.data.SerializableLocation
 import com.projectcitybuild.features.warps.Warp
 import com.projectcitybuild.core.database.DatabaseSession
 import com.projectcitybuild.core.pagination.Page
@@ -106,6 +106,38 @@ class WarpRepository(
                 .apply {
                     setString(1, newName)
                     setString(2, oldName)
+                }
+                .executeUpdate() == 1
+        }
+        check (success) {
+            "Database write operation failed: no affected rows"
+        }
+    }
+
+    suspend fun move(
+        name: String,
+        newLocation: SerializableLocation,
+    ) = withContext(Dispatchers.IO) {
+        val exists = db.connect { connection ->
+            connection.prepareStatement("SELECT * FROM `warps` WHERE `name`=?")
+                .apply { setString(1, name) }
+                .executeQuery()
+                .isBeforeFirst
+        }
+        check (exists) {
+            "$name warp does not exist"
+        }
+
+        val success = db.connect { connection ->
+            connection.prepareStatement("UPDATE `warps` SET `world`=?, `x`=?, `y`=?, `z`=?, `pitch`=?, `yaw`=? WHERE `name`= ?")
+                .apply {
+                    setString(1, newLocation.worldName)
+                    setDouble(2, newLocation.x)
+                    setDouble(3, newLocation.y)
+                    setDouble(4, newLocation.z)
+                    setFloat(5, newLocation.yaw)
+                    setFloat(6, newLocation.pitch)
+                    setString(7, name)
                 }
                 .executeUpdate() == 1
         }

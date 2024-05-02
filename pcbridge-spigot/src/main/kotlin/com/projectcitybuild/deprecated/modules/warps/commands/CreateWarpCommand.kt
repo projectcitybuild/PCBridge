@@ -1,6 +1,6 @@
 // package com.projectcitybuild.modules.warps.commands
 //
-// import com.projectcitybuild.entities.SerializableLocation
+// import com.projectcitybuild.data.SerializableLocation
 // import com.projectcitybuild.modules.warps.actions.CreateWarp
 // import com.projectcitybuild.pcbridge.core.utils.Failure
 // import com.projectcitybuild.pcbridge.core.utils.Success

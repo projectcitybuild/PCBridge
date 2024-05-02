@@ -4,6 +4,7 @@ import com.projectcitybuild.data.PluginConfig
 import com.projectcitybuild.features.warps.commands.warps.WarpDeleteCommand
 import com.projectcitybuild.features.warps.repositories.WarpRepository
 import com.projectcitybuild.features.warps.commands.warps.WarpListCommand
+import com.projectcitybuild.features.warps.commands.warps.WarpMoveCommand
 import com.projectcitybuild.features.warps.commands.warps.WarpRenameCommand
 import com.projectcitybuild.pcbridge.core.modules.config.Config
 import com.projectcitybuild.support.messages.CommandHelpBuilder
@@ -29,6 +30,11 @@ class WarpsCommand(
         .subcommand(
             label = "/warps delete",
             description = "deletes the given warp",
+            permission = "pcbridge.warp.manage"
+        )
+        .subcommand(
+            label = "/warps move",
+            description = "moves an existing warp to your current location",
             permission = "pcbridge.warp.manage"
         )
         .subcommand(
@@ -58,6 +64,15 @@ class WarpsCommand(
                     .tryParse(args.remainingArgs),
             )
 
+            Args.Command.Move -> WarpMoveCommand(
+                warpRepository = warpRepository,
+                audiences = audiences,
+            ).run(
+                sender = sender,
+                args = WarpMoveCommand.Args.Parser()
+                    .tryParse(args.remainingArgs),
+            )
+
             Args.Command.Rename -> WarpRenameCommand(
                 warpRepository = warpRepository,
                 audiences = audiences,
@@ -76,6 +91,7 @@ class WarpsCommand(
         enum class Command {
             List,
             Delete,
+            Move,
             Rename,
         }
         class Parser: CommandArgsParser<Args> {

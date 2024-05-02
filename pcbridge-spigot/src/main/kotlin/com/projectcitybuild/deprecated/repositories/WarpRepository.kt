@@ -1,6 +1,6 @@
 // package com.projectcitybuild.repositories
 //
-// import com.projectcitybuild.entities.SerializableLocation
+// import com.projectcitybuild.data.SerializableLocation
 // import com.projectcitybuild.features.warps.Warp
 // import com.projectcitybuild.core.database.DatabaseSession
 //

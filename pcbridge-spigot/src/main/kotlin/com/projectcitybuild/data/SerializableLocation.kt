@@ -1,4 +1,4 @@
-package com.projectcitybuild.entities
+package com.projectcitybuild.data
 
 import org.bukkit.Location
 
