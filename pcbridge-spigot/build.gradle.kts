@@ -22,10 +22,6 @@ repositories {
         name = "papermc"
         url = uri("https://papermc.io/repo/repository/maven-public/")
     }
-
-    maven { url = uri("https://hub.spigotmc.org/nexus/content/repositories/snapshots/") }
-    maven { url = uri("https://oss.sonatype.org/content/repositories/snapshots") }
-    maven { url = uri("https://nexus.hc.to/content/repositories/pub_releases") }
 }
 
 dependencies {
@@ -33,9 +29,8 @@ dependencies {
     implementation(project(":pcbridge-http"))
     implementation(project(":pcbridge-web-server"))
 
-    // Spigot
-    compileOnly("org.spigotmc:spigot-api:1.20.4-R0.1-SNAPSHOT")
-    compileOnly("net.md-5:bungeecord-api:1.20-R0.1")
+    // Paper
+    compileOnly("io.papermc.paper:paper-api:1.20.2-R0.1-SNAPSHOT")
 
     // Integrations
     // compileOnly("net.luckperms:api:5.4")
@@ -54,8 +49,7 @@ dependencies {
     implementation("net.kyori:adventure-text-minimessage:4.16.0")
 
     // Testing
-    // testImplementation("net.md-5:bungeecord-api:1.16-R0.4")
-    // testImplementation("org.spigotmc:spigot-api:1.20.1-R0.1-SNAPSHOT")
+    // testImplementation("io.papermc.paper:paper-api:1.20.2-R0.1-SNAPSHOT")
 }
 
 sourceSets {
