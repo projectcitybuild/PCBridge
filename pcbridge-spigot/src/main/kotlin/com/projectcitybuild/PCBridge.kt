@@ -3,6 +3,7 @@ package com.projectcitybuild
 import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
 import com.projectcitybuild.core.errors.SentryReporter
 import com.projectcitybuild.features.utilities.commands.PCBridgeCommand
+import com.projectcitybuild.features.warps.commands.WarpCommand
 import com.projectcitybuild.features.warps.commands.WarpsCommand
 import com.projectcitybuild.support.spigot.SpigotCommandRegistry
 import net.kyori.adventure.platform.bukkit.BukkitAudiences
@@ -55,6 +56,10 @@ private class Lifecycle: KoinComponent {
             handler = get<PCBridgeCommand>(),
             argsParser = PCBridgeCommand.Args.Parser(),
             tabCompleter = get<PCBridgeCommand.TabCompleter>(),
+        )
+        commandRegistry.register(
+            handler = get<WarpCommand>(),
+            argsParser = WarpCommand.Args.Parser(),
         )
         commandRegistry.register(
             handler = get<WarpsCommand>(),

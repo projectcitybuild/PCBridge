@@ -7,6 +7,7 @@ import com.projectcitybuild.support.messages.PaginationBuilder
 import com.projectcitybuild.support.spigot.CommandArgsParser
 import com.projectcitybuild.support.spigot.BadCommandUsageException
 import com.projectcitybuild.support.spigot.SpigotCommand
+import com.projectcitybuild.support.spigot.UnauthorizedCommandException
 import net.kyori.adventure.platform.bukkit.BukkitAudiences
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.ClickEvent
@@ -25,6 +26,9 @@ class WarpListCommand(
     override val usage = CommandHelpBuilder() // TODO
 
     override suspend fun run(sender: CommandSender, args: Args) {
+        if (!sender.hasPermission("pcbridge.warp.list")) {
+            throw UnauthorizedCommandException()
+        }
         val page = warpRepository.all(
             limit = itemsPerPage,
             page = args.page,

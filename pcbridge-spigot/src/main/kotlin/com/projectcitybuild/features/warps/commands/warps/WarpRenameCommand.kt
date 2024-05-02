@@ -5,6 +5,7 @@ import com.projectcitybuild.support.messages.CommandHelpBuilder
 import com.projectcitybuild.support.spigot.BadCommandUsageException
 import com.projectcitybuild.support.spigot.CommandArgsParser
 import com.projectcitybuild.support.spigot.SpigotCommand
+import com.projectcitybuild.support.spigot.UnauthorizedCommandException
 import net.kyori.adventure.platform.bukkit.BukkitAudiences
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
@@ -19,15 +20,17 @@ class WarpRenameCommand(
     override val usage = CommandHelpBuilder() // TODO
 
     override suspend fun run(sender: CommandSender, args: Args) {
+        if (!sender.hasPermission("pcbridge.warp.manage")) {
+            throw UnauthorizedCommandException()
+        }
         warpRepository.rename(
             oldName = args.oldName,
             newName = args.newName,
         )
-
-        val message = Component.text("${args.oldName} was renamed to ${args.newName}")
-            .color(NamedTextColor.GREEN)
-
-        audiences.sender(sender).sendMessage(message)
+        audiences.sender(sender).sendMessage(
+            Component.text("${args.oldName} renamed to ${args.newName}")
+                .color(NamedTextColor.GREEN)
+        )
     }
 
     data class Args(

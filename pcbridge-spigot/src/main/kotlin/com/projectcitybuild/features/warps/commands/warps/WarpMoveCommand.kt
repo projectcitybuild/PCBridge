@@ -6,6 +6,7 @@ import com.projectcitybuild.support.messages.CommandHelpBuilder
 import com.projectcitybuild.support.spigot.BadCommandUsageException
 import com.projectcitybuild.support.spigot.CommandArgsParser
 import com.projectcitybuild.support.spigot.SpigotCommand
+import com.projectcitybuild.support.spigot.UnauthorizedCommandException
 import net.kyori.adventure.platform.bukkit.BukkitAudiences
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
@@ -21,6 +22,9 @@ class WarpMoveCommand(
     override val usage = CommandHelpBuilder() // TODO
 
     override suspend fun run(sender: CommandSender, args: Args) {
+        if (!sender.hasPermission("pcbridge.warp.manage")) {
+            throw UnauthorizedCommandException()
+        }
         val player = sender as? Player
         checkNotNull (player) {
             "Only players can use this command"
@@ -29,11 +33,10 @@ class WarpMoveCommand(
             name = args.warpName,
             newLocation = SerializableLocation.fromLocation(player.location),
         )
-
-        val message = Component.text("${args.warpName} warp was moved")
-            .color(NamedTextColor.GREEN)
-
-        audiences.sender(sender).sendMessage(message)
+        audiences.sender(sender).sendMessage(
+            Component.text("${args.warpName} warp moved")
+                .color(NamedTextColor.GREEN)
+        )
     }
 
     data class Args(

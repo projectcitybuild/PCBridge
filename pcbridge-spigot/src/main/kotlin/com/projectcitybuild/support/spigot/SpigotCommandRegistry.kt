@@ -51,18 +51,27 @@ class SpigotCommandRegistry(
                         )
                     }
                 }.onFailure {
-                    if (it is IllegalStateException) {
-                        val message = Component.text("Error: ${it.localizedMessage}")
-                            .color(NamedTextColor.RED)
+                    when (it) {
+                        is IllegalStateException -> {
+                            val message = Component.text("Error: ${it.localizedMessage}")
+                                .color(NamedTextColor.RED)
 
-                        audiences.sender(sender).sendMessage(message)
-                    } else {
-                        val message = Component.text("Error: Something went wrong")
-                            .color(NamedTextColor.RED)
+                            audiences.sender(sender).sendMessage(message)
+                        }
+                        is UnauthorizedCommandException -> {
+                            val message = Component.text("Error: You do not have permission to use this command")
+                                .color(NamedTextColor.RED)
 
-                        audiences.sender(sender).sendMessage(message)
-                        sentry.report(it)
-                        throw it
+                            audiences.sender(sender).sendMessage(message)
+                        }
+                        else -> {
+                            val message = Component.text("Error: Something went wrong")
+                                .color(NamedTextColor.RED)
+
+                            audiences.sender(sender).sendMessage(message)
+                            sentry.report(it)
+                            throw it
+                        }
                     }
                 }
                 return true

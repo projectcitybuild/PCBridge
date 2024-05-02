@@ -1,6 +1,7 @@
 package com.projectcitybuild.features.warps.commands
 
 import com.projectcitybuild.data.PluginConfig
+import com.projectcitybuild.features.warps.commands.warps.WarpCreateCommand
 import com.projectcitybuild.features.warps.commands.warps.WarpDeleteCommand
 import com.projectcitybuild.features.warps.repositories.WarpRepository
 import com.projectcitybuild.features.warps.commands.warps.WarpListCommand
@@ -10,14 +11,17 @@ import com.projectcitybuild.pcbridge.core.modules.config.Config
 import com.projectcitybuild.support.messages.CommandHelpBuilder
 import com.projectcitybuild.support.spigot.CommandArgsParser
 import com.projectcitybuild.support.spigot.SpigotCommand
+import com.projectcitybuild.support.spigot.UnauthorizedCommandException
 import com.projectcitybuild.support.tryValueOf
 import net.kyori.adventure.platform.bukkit.BukkitAudiences
+import org.bukkit.Server
 import org.bukkit.command.CommandSender
 
 class WarpsCommand(
     private val warpRepository: WarpRepository,
     private val audiences: BukkitAudiences,
     private val config: Config<PluginConfig>,
+    private val server: Server,
 ): SpigotCommand<WarpsCommand.Args> {
     override val label = "warps"
 
@@ -26,6 +30,11 @@ class WarpsCommand(
             label = "/warps list",
             description = "shows all available warps",
             permission = "pcbridge.warp.list"
+        )
+        .subcommand(
+            label = "/warps create",
+            description = "creates a warp at the given position (or current position)",
+            permission = "pcbridge.warp.manage"
         )
         .subcommand(
             label = "/warps delete",
@@ -44,6 +53,9 @@ class WarpsCommand(
         )
 
     override suspend fun run(sender: CommandSender, args: Args) {
+        if (!sender.hasPermission("pcbridge.warp.manage") && !sender.hasPermission("pcbridge.warp.list")) {
+            throw UnauthorizedCommandException()
+        }
         when (args.command) {
             Args.Command.List -> WarpListCommand(
                 warpRepository = warpRepository,
@@ -52,6 +64,16 @@ class WarpsCommand(
             ).run(
                 sender = sender,
                 args = WarpListCommand.Args.Parser()
+                    .tryParse(args.remainingArgs),
+            )
+
+            Args.Command.Create -> WarpCreateCommand(
+                warpRepository = warpRepository,
+                audiences = audiences,
+                server = server,
+            ).run(
+                sender = sender,
+                args = WarpCreateCommand.Args.Parser()
                     .tryParse(args.remainingArgs),
             )
 
@@ -90,6 +112,7 @@ class WarpsCommand(
     ) {
         enum class Command {
             List,
+            Create,
             Delete,
             Move,
             Rename,

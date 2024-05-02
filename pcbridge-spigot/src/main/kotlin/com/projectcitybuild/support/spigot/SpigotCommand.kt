@@ -38,3 +38,9 @@ interface CommandArgsParser<T> {
  * Represents that the expected arguments for a command were not present
  */
 class BadCommandUsageException: Exception()
+
+/**
+ * Represents that the player does not have the required permission
+ * to execute a command
+ */
+class UnauthorizedCommandException: Exception()

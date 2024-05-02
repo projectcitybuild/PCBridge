@@ -4,6 +4,7 @@ import com.projectcitybuild.features.warps.repositories.WarpRepository
 import com.projectcitybuild.support.messages.CommandHelpBuilder
 import com.projectcitybuild.support.spigot.CommandArgsParser
 import com.projectcitybuild.support.spigot.SpigotCommand
+import com.projectcitybuild.support.spigot.UnauthorizedCommandException
 import net.kyori.adventure.platform.bukkit.BukkitAudiences
 import org.bukkit.Location
 import org.bukkit.Server
@@ -21,6 +22,9 @@ class WarpCommand(
     override val usage = CommandHelpBuilder() // TODO
 
     override suspend fun run(sender: CommandSender, args: Args) {
+        if (!sender.hasPermission("pcbridge.warp.teleport")) {
+            throw UnauthorizedCommandException()
+        }
         val player = sender as? Player
         checkNotNull (player) {
             "Only players can use this command"

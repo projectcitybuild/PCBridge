@@ -1,12 +1,13 @@
 package com.projectcitybuild.features.warps.repositories
 
-import com.projectcitybuild.data.SerializableLocation
-import com.projectcitybuild.features.warps.Warp
 import com.projectcitybuild.core.database.DatabaseSession
 import com.projectcitybuild.core.pagination.Page
+import com.projectcitybuild.data.SerializableLocation
+import com.projectcitybuild.features.warps.Warp
 import io.github.reactivecircus.cache4k.Cache
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.sql.Date.valueOf
 import java.sql.ResultSet
 import kotlin.math.ceil
 
@@ -29,7 +30,7 @@ class WarpRepository(
                 ?: 0
         }
         val warps = db.connect { connection ->
-            connection.prepareStatement("SELECT * FROM `warps` ORDER BY `name` ASC LIMIT ? OFFSET ?",)
+            connection.prepareStatement("SELECT * FROM `warps` ORDER BY `name` ASC LIMIT ? OFFSET ?")
                 .apply {
                     setInt(1, limit)
                     setInt(2, startIndex)
@@ -53,6 +54,26 @@ class WarpRepository(
                 .executeQuery()
                 .firstRow()
                 ?.toWarp()
+        }
+    }
+
+    fun create(warp: Warp) {
+        val success = db.connect { connection ->
+            connection.prepareStatement("INSERT INTO `warps` VALUES (?, ?, ?, ?, ?, ?, ?, ?)")
+                .apply {
+                    setString(1, warp.name)
+                    setString(2, warp.location.worldName)
+                    setDouble(3, warp.location.x)
+                    setDouble(4, warp.location.y)
+                    setDouble(5, warp.location.z)
+                    setFloat(6, warp.location.pitch)
+                    setFloat(7, warp.location.yaw)
+                    setDate(8, valueOf(warp.createdAt.toLocalDate()))
+                }
+                .executeUpdate() == 1
+        }
+        check (success) {
+            "Database write operation failed"
         }
     }
 

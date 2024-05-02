@@ -8,6 +8,7 @@ import com.projectcitybuild.core.errors.SentryReporter
 import com.projectcitybuild.features.warps.repositories.WarpRepository
 import com.projectcitybuild.features.warps.Warp
 import com.projectcitybuild.features.utilities.commands.PCBridgeCommand
+import com.projectcitybuild.features.warps.commands.WarpCommand
 import com.projectcitybuild.features.warps.commands.WarpsCommand
 import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger
 import com.projectcitybuild.pcbridge.core.modules.config.Config
@@ -90,10 +91,18 @@ fun pluginModule(_plugin: JavaPlugin) = module {
     }
 
     factory {
+        WarpCommand(
+            warpRepository = get(),
+            audiences = get(),
+            server = get<JavaPlugin>().server,
+        )
+    }
+    factory {
         WarpsCommand(
             warpRepository = get(),
             audiences = get(),
             config = get(),
+            server = get<JavaPlugin>().server,
         )
     }
     factory {
