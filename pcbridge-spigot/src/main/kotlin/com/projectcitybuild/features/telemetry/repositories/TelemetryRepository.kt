@@ -1,4 +1,4 @@
-package com.projectcitybuild.repositories
+package com.projectcitybuild.features.telemetry.repositories
 
 import com.projectcitybuild.pcbridge.http.services.pcb.TelemetryHttpService
 import java.util.UUID

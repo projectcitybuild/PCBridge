@@ -16,24 +16,23 @@ class StaffChatCommand(
     override val usage = CommandHelpBuilder() // TODO
 
     override suspend fun run(sender: CommandSender, args: Args) {
+        val message = Component.text()
+            .append(
+                Component.text("(Staff) ${sender.name}")
+                    .color(NamedTextColor.YELLOW)
+            )
+            .append(
+                Component.text(" » ")
+                    .color(NamedTextColor.GRAY)
+            )
+            .append(
+                Component.text(args.message)
+            )
+            .build()
+
         server.onlinePlayers
             .filter { it.hasPermission("pcbridge.chat.staff_channel") }
-            .forEach { player ->
-                player.sendMessage(
-                    Component.text()
-                        .append(
-                            Component.text("(Staff) ${sender.name}")
-                                .color(NamedTextColor.YELLOW)
-                        )
-                        .append(
-                            Component.text(" » ")
-                                .color(NamedTextColor.GRAY)
-                        )
-                        .append(
-                            Component.text(args.message)
-                        )
-                )
-            }
+            .forEach { it.sendMessage(message) }
     }
 
     data class Args(

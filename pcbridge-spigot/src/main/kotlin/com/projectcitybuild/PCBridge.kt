@@ -8,6 +8,7 @@ import com.projectcitybuild.features.joinmessages.listeners.AnnounceQuitListener
 import com.projectcitybuild.features.joinmessages.listeners.FirstTimeJoinListener
 import com.projectcitybuild.features.joinmessages.listeners.ServerOverviewJoinListener
 import com.projectcitybuild.features.staffchat.commands.StaffChatCommand
+import com.projectcitybuild.features.telemetry.listeners.TelemetryPlayerConnectListener
 import com.projectcitybuild.features.utilities.commands.PCBridgeCommand
 import com.projectcitybuild.features.warps.commands.WarpCommand
 import com.projectcitybuild.features.warps.commands.WarpsCommand
@@ -87,6 +88,7 @@ private class Lifecycle: KoinComponent {
             register(get<FirstTimeJoinListener>())
             register(get<ServerOverviewJoinListener>())
             register(get<EmojiChatListener>())
+            register(get<TelemetryPlayerConnectListener>())
         }
 
         get<DynmapIntegration>().onEnable()

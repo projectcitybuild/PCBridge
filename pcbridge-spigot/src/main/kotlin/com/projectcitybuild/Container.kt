@@ -1,5 +1,6 @@
 package com.projectcitybuild
 
+import com.github.shynixn.mccoroutine.bukkit.minecraftDispatcher
 import com.google.gson.reflect.TypeToken
 import com.projectcitybuild.data.PluginConfig
 import com.projectcitybuild.core.database.DatabaseSession
@@ -12,6 +13,8 @@ import com.projectcitybuild.features.joinmessages.listeners.AnnounceQuitListener
 import com.projectcitybuild.features.joinmessages.listeners.FirstTimeJoinListener
 import com.projectcitybuild.features.joinmessages.listeners.ServerOverviewJoinListener
 import com.projectcitybuild.features.staffchat.commands.StaffChatCommand
+import com.projectcitybuild.features.telemetry.listeners.TelemetryPlayerConnectListener
+import com.projectcitybuild.features.telemetry.repositories.TelemetryRepository
 import com.projectcitybuild.features.warps.repositories.WarpRepository
 import com.projectcitybuild.features.warps.Warp
 import com.projectcitybuild.features.utilities.commands.PCBridgeCommand
@@ -24,6 +27,7 @@ import com.projectcitybuild.pcbridge.core.modules.config.Config
 import com.projectcitybuild.pcbridge.core.modules.datetime.time.LocalizedTime
 import com.projectcitybuild.pcbridge.core.modules.datetime.time.Time
 import com.projectcitybuild.pcbridge.core.storage.JsonStorage
+import com.projectcitybuild.pcbridge.http.HttpService
 import com.projectcitybuild.support.spigot.SpigotCommandRegistry
 import com.projectcitybuild.support.spigot.SpigotListenerRegistry
 import com.projectcitybuild.support.spigot.SpigotLogger
@@ -85,6 +89,17 @@ fun pluginModule(_plugin: JavaPlugin) = module {
     } withOptions {
         createdAtStart()
         onClose { it?.disconnect() }
+    }
+
+    single {
+        val config = get<Config<PluginConfig>>().get()
+
+        HttpService(
+            authToken = config.api.token,
+            baseURL = config.api.baseUrl,
+            withLogging = config.api.isLoggingEnabled,
+            contextBuilder = { _plugin.minecraftDispatcher }, // TODO
+        )
     }
 
     factory<Time> {
@@ -209,5 +224,12 @@ fun pluginModule(_plugin: JavaPlugin) = module {
 
     factory {
         EmojiChatListener()
+    }
+
+    factory {
+        val httpService = get<HttpService>().telemetry
+        val repository = TelemetryRepository(httpService)
+
+        TelemetryPlayerConnectListener(repository)
     }
 }
