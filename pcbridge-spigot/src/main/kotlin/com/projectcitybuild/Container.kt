@@ -57,6 +57,10 @@ import kotlin.time.Duration.Companion.minutes
 fun pluginModule(_plugin: JavaPlugin) = module {
     single { _plugin }
 
+    factory {
+        get<JavaPlugin>().server
+    }
+
     single<PlatformLogger> {
         SpigotLogger(get<JavaPlugin>().logger)
     }
@@ -177,23 +181,21 @@ fun pluginModule(_plugin: JavaPlugin) = module {
     factory {
         WarpCommand(
             warpRepository = get(),
-            server = get<JavaPlugin>().server,
+            server = get(),
         )
     }
 
     factory {
         WarpsCommand(
             warpRepository = get(),
-            audiences = get(),
             config = get(),
-            server = get<JavaPlugin>().server,
+            server = get(),
         )
     }
 
     factory {
         PCBridgeCommand(
             plugin = get(),
-            audiences = get(),
         )
     }
 
@@ -203,7 +205,7 @@ fun pluginModule(_plugin: JavaPlugin) = module {
 
     factory {
         StaffChatCommand(
-            server = get<JavaPlugin>().server,
+            server = get(),
         )
     }
 
@@ -227,7 +229,7 @@ fun pluginModule(_plugin: JavaPlugin) = module {
         FirstTimeJoinListener(
             config = get(),
             logger = get(),
-            server = get<JavaPlugin>().server,
+            server = get(),
         )
     }
 
@@ -250,14 +252,14 @@ fun pluginModule(_plugin: JavaPlugin) = module {
 
     factory {
         MuteCommand(
-            server = get<JavaPlugin>().server,
+            server = get(),
             mutedPlayers = get(named("mute_cache"))
         )
     }
 
     factory {
         UnmuteCommand(
-            server = get<JavaPlugin>().server,
+            server = get(),
             mutedPlayers = get(named("mute_cache"))
         )
     }

@@ -7,7 +7,6 @@ import com.projectcitybuild.support.spigot.BadCommandUsageException
 import com.projectcitybuild.support.spigot.CommandArgsParser
 import com.projectcitybuild.support.spigot.SpigotCommand
 import com.projectcitybuild.support.spigot.UnauthorizedCommandException
-import net.kyori.adventure.platform.bukkit.BukkitAudiences
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.command.CommandSender
@@ -15,7 +14,6 @@ import org.bukkit.entity.Player
 
 class WarpMoveCommand(
     private val warpRepository: WarpRepository,
-    private val audiences: BukkitAudiences,
 ): SpigotCommand<WarpMoveCommand.Args> {
     override val label = "move"
 
@@ -33,7 +31,7 @@ class WarpMoveCommand(
             name = args.warpName,
             newLocation = SerializableLocation.fromLocation(player.location),
         )
-        audiences.sender(sender).sendMessage(
+        sender.sendMessage(
             Component.text("${args.warpName} warp moved")
                 .color(NamedTextColor.GREEN)
         )

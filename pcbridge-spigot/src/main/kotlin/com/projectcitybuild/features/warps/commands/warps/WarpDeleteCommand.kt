@@ -7,7 +7,6 @@ import com.projectcitybuild.support.spigot.BadCommandUsageException
 import com.projectcitybuild.support.spigot.CommandArgsParser
 import com.projectcitybuild.support.spigot.SpigotCommand
 import com.projectcitybuild.support.spigot.UnauthorizedCommandException
-import net.kyori.adventure.platform.bukkit.BukkitAudiences
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.Server
@@ -15,7 +14,6 @@ import org.bukkit.command.CommandSender
 
 class WarpDeleteCommand(
     private val warpRepository: WarpRepository,
-    private val audiences: BukkitAudiences,
     private val server: Server,
 ): SpigotCommand<WarpDeleteCommand.Args> {
     override val label = "delete"
@@ -30,7 +28,7 @@ class WarpDeleteCommand(
 
         server.pluginManager.callEvent(WarpDeleteEvent())
 
-        audiences.sender(sender).sendMessage(
+        sender.sendMessage(
             Component.text("${args.warpName} warp deleted")
                 .color(NamedTextColor.GREEN)
         )

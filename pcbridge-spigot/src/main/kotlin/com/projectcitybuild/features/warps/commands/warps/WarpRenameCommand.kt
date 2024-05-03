@@ -6,14 +6,12 @@ import com.projectcitybuild.support.spigot.BadCommandUsageException
 import com.projectcitybuild.support.spigot.CommandArgsParser
 import com.projectcitybuild.support.spigot.SpigotCommand
 import com.projectcitybuild.support.spigot.UnauthorizedCommandException
-import net.kyori.adventure.platform.bukkit.BukkitAudiences
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.command.CommandSender
 
 class WarpRenameCommand(
     private val warpRepository: WarpRepository,
-    private val audiences: BukkitAudiences,
 ): SpigotCommand<WarpRenameCommand.Args> {
     override val label = "rename"
 
@@ -27,7 +25,7 @@ class WarpRenameCommand(
             oldName = args.oldName,
             newName = args.newName,
         )
-        audiences.sender(sender).sendMessage(
+        sender.sendMessage(
             Component.text("${args.oldName} renamed to ${args.newName}")
                 .color(NamedTextColor.GREEN)
         )

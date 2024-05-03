@@ -15,7 +15,6 @@ import org.bukkit.plugin.java.JavaPlugin
 
 class PCBridgeCommand(
     private val plugin: JavaPlugin,
-    private val audiences: BukkitAudiences,
 ): SpigotCommand<PCBridgeCommand.Args> {
     override val label = "pcbridge"
 
@@ -36,7 +35,7 @@ class PCBridgeCommand(
             .color(TextColor.color(0x75e900))
             .build()
 
-        audiences.sender(sender).sendMessage(message)
+        sender.sendMessage(message)
     }
 
     class TabCompleter: SuspendingTabCompleter {

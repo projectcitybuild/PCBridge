@@ -19,7 +19,6 @@ import java.time.LocalDateTime
 
 class WarpCreateCommand(
     private val warpRepository: WarpRepository,
-    private val audiences: BukkitAudiences,
     private val server: Server,
 ): SpigotCommand<WarpCreateCommand.Args> {
     override val label = "create"
@@ -61,7 +60,7 @@ class WarpCreateCommand(
 
         server.pluginManager.callEvent(WarpCreateEvent())
 
-        audiences.sender(sender).sendMessage(
+        sender.sendMessage(
             Component.text("${args.warpName} warp created")
                 .color(NamedTextColor.GREEN)
         )

@@ -8,7 +8,6 @@ import com.projectcitybuild.support.spigot.CommandArgsParser
 import com.projectcitybuild.support.spigot.BadCommandUsageException
 import com.projectcitybuild.support.spigot.SpigotCommand
 import com.projectcitybuild.support.spigot.UnauthorizedCommandException
-import net.kyori.adventure.platform.bukkit.BukkitAudiences
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.event.HoverEvent
@@ -18,7 +17,6 @@ import org.bukkit.command.CommandSender
 
 class WarpListCommand(
     private val warpRepository: WarpRepository,
-    private val audiences: BukkitAudiences,
     private val itemsPerPage: Int,
 ): SpigotCommand<WarpListCommand.Args> {
     override val label = "list"
@@ -34,7 +32,7 @@ class WarpListCommand(
             page = args.page,
         )
         if (page.items.isEmpty()) {
-            audiences.sender(sender).sendMessage(
+            sender.sendMessage(
                 Component.text("No warps available")
                     .color(NamedTextColor.GRAY)
             )
@@ -62,7 +60,7 @@ class WarpListCommand(
             }
             .build(page)
 
-        audiences.sender(sender).sendMessage(message)
+        sender.sendMessage(message)
     }
 
     data class Args(

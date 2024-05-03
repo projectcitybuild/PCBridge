@@ -20,7 +20,6 @@ import org.bukkit.command.CommandSender
 
 class WarpsCommand(
     private val warpRepository: WarpRepository,
-    private val audiences: BukkitAudiences,
     private val config: Config<PluginConfig>,
     private val server: Server,
 ): SpigotCommand<WarpsCommand.Args> {
@@ -60,7 +59,6 @@ class WarpsCommand(
         when (args.command) {
             Args.Command.List -> WarpListCommand(
                 warpRepository = warpRepository,
-                audiences = audiences,
                 itemsPerPage = config.get().warps.itemsPerPage,
             ).run(
                 sender = sender,
@@ -70,7 +68,6 @@ class WarpsCommand(
 
             Args.Command.Create -> WarpCreateCommand(
                 warpRepository = warpRepository,
-                audiences = audiences,
                 server = server,
             ).run(
                 sender = sender,
@@ -80,7 +77,6 @@ class WarpsCommand(
 
             Args.Command.Delete -> WarpDeleteCommand(
                 warpRepository = warpRepository,
-                audiences = audiences,
                 server = server,
             ).run(
                 sender = sender,
@@ -90,7 +86,6 @@ class WarpsCommand(
 
             Args.Command.Move -> WarpMoveCommand(
                 warpRepository = warpRepository,
-                audiences = audiences,
             ).run(
                 sender = sender,
                 args = WarpMoveCommand.Args.Parser()
@@ -99,7 +94,6 @@ class WarpsCommand(
 
             Args.Command.Rename -> WarpRenameCommand(
                 warpRepository = warpRepository,
-                audiences = audiences,
             ).run(
                 sender = sender,
                 args = WarpRenameCommand.Args.Parser()
