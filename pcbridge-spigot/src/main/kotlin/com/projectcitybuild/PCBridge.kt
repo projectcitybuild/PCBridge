@@ -147,13 +147,13 @@ private class Lifecycle: KoinComponent {
             register(get<CheckBanOnConnectListener>())
         }
 
-        get<DynmapIntegration>().onEnable()
-        get<EssentialsIntegration>().onEnable()
+        get<DynmapIntegration>().enable()
+        get<EssentialsIntegration>().enable()
     }
 
     suspend fun shutdown() = trace {
-        get<DynmapIntegration>().onDisable()
-        get<EssentialsIntegration>().onDisable()
+        get<DynmapIntegration>().disable()
+        get<EssentialsIntegration>().disable()
 
         listenerRegistry.unregisterAll()
         commandRegistry.unregisterAll()

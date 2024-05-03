@@ -11,6 +11,7 @@ import com.projectcitybuild.pcbridge.core.modules.config.Config
 import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
+import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
 import org.dynmap.DynmapAPI
 
@@ -18,32 +19,28 @@ class DynmapIntegration(
     private val plugin: JavaPlugin,
     private val warpRepository: WarpRepository,
     private val config: Config<PluginConfig>,
-    private val sentry: SentryReporter,
     private val logger: PlatformLogger,
-) : Listener, SpigotIntegration {
-
+    sentry: SentryReporter,
+) : Listener, SpigotIntegration(
+    pluginName = "dynmap",
+    pluginManager = plugin.server.pluginManager,
+    logger = logger,
+    sentry = sentry,
+) {
     class DynmapMarkerIconNotFoundException : Exception()
 
     private var dynmap: DynmapAPI? = null
 
-    override suspend fun onEnable() = runCatching {
-        val anyPlugin = plugin.server.pluginManager.getPlugin("dynmap")
-        if (anyPlugin == null) {
-            logger.warning("Cannot find dynmap plugin. Disabling marker integration")
-            return
+    override suspend fun onEnable(loadedPlugin: Plugin) {
+        check (loadedPlugin is DynmapAPI) {
+            "Found dynmap plugin but cannot cast to DynmapAPI class"
         }
-        check (anyPlugin is DynmapAPI) {
-            logger.severe("Found dynmap plugin but cannot access dynmap-api")
-            "Cannot cast dynmap plugin to DynmapAPI"
-        }
-        dynmap = anyPlugin
+        dynmap = loadedPlugin
         plugin.server.pluginManager.registerSuspendingEvents(this, plugin)
         logger.info("Dynmap integration enabled")
+
         updateWarpMarkers()
-    }.onFailure {
-        logger.severe("Failed to enable Dynmap integration: ${it.localizedMessage}")
-        sentry.report(it)
-    }.let {}
+    }
 
     override suspend fun onDisable() {
         if (dynmap != null) {
