@@ -1,17 +1,16 @@
 package com.projectcitybuild.support.spigot
 
 import com.projectcitybuild.support.messages.CommandHelpBuilder
-import net.kyori.adventure.platform.bukkit.BukkitAudiences
 import org.bukkit.command.CommandSender
 
 interface SpigotCommand<T> {
     val label: String
-
     val usage: CommandHelpBuilder
 
-    fun displayUsage(sender: CommandSender, audiences: BukkitAudiences) {
-        audiences.sender(sender)
-            .sendMessage(usage.build(sender::hasPermission))
+    fun displayUsage(sender: CommandSender) {
+        sender.sendMessage(
+            usage.build(sender::hasPermission),
+        )
     }
 
     suspend fun run(sender: CommandSender, args: T)

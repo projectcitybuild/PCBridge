@@ -15,7 +15,6 @@ import java.lang.IllegalStateException
 
 class SpigotCommandRegistry(
     private val plugin: JavaPlugin,
-    private val audiences: BukkitAudiences,
     private val sentry: SentryReporter,
 ) {
     private val registered: MutableSet<String> = mutableSetOf()
@@ -41,34 +40,32 @@ class SpigotCommandRegistry(
                 args: Array<out String>
             ): Boolean {
                 runCatching {
-                    val parsedArgs = argsParser.parse(args)
-                    if (parsedArgs == null) {
-                        handler.displayUsage(sender, audiences)
-                    } else {
-                        handler.run(
-                            sender = sender,
-                            args = parsedArgs,
-                        )
-                    }
+                    handler.run(
+                        sender = sender,
+                        args = argsParser.parse(args),
+                    )
                 }.onFailure {
                     when (it) {
                         is IllegalStateException -> {
-                            val message = Component.text("Error: ${it.localizedMessage}")
-                                .color(NamedTextColor.RED)
-
-                            audiences.sender(sender).sendMessage(message)
+                            sender.sendMessage(
+                                Component.text("Error: ${it.localizedMessage}")
+                                    .color(NamedTextColor.RED)
+                            )
+                        }
+                        is BadCommandUsageException -> {
+                            handler.displayUsage(sender)
                         }
                         is UnauthorizedCommandException -> {
-                            val message = Component.text("Error: You do not have permission to use this command")
-                                .color(NamedTextColor.RED)
-
-                            audiences.sender(sender).sendMessage(message)
+                            sender.sendMessage(
+                                Component.text("Error: You do not have permission to use this command")
+                                    .color(NamedTextColor.RED)
+                            )
                         }
                         else -> {
-                            val message = Component.text("Error: Something went wrong")
-                                .color(NamedTextColor.RED)
-
-                            audiences.sender(sender).sendMessage(message)
+                            sender.sendMessage(
+                                Component.text("Error: Something went wrong")
+                                    .color(NamedTextColor.RED)
+                            )
                             sentry.report(it)
                             throw it
                         }

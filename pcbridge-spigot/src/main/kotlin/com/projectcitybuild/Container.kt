@@ -8,6 +8,10 @@ import com.projectcitybuild.core.database.DatabaseSource
 import com.projectcitybuild.core.errors.SentryReporter
 import com.projectcitybuild.core.state.Store
 import com.projectcitybuild.features.chat.listeners.EmojiChatListener
+import com.projectcitybuild.features.invisframes.commands.InvisFrameCommand
+import com.projectcitybuild.features.invisframes.listeners.FrameItemInsertListener
+import com.projectcitybuild.features.invisframes.listeners.FrameItemRemoveListener
+import com.projectcitybuild.features.invisframes.listeners.FramePlaceListener
 import com.projectcitybuild.features.joinmessages.listeners.AnnounceJoinListener
 import com.projectcitybuild.features.joinmessages.listeners.AnnounceQuitListener
 import com.projectcitybuild.features.joinmessages.listeners.FirstTimeJoinListener
@@ -35,6 +39,7 @@ import com.projectcitybuild.pcbridge.http.HttpService
 import com.projectcitybuild.support.spigot.SpigotCommandRegistry
 import com.projectcitybuild.support.spigot.SpigotListenerRegistry
 import com.projectcitybuild.support.spigot.SpigotLogger
+import com.projectcitybuild.support.spigot.SpigotNamespace
 import io.github.reactivecircus.cache4k.Cache
 import net.kyori.adventure.platform.bukkit.BukkitAudiences
 import org.bukkit.plugin.java.JavaPlugin
@@ -118,6 +123,12 @@ fun pluginModule(_plugin: JavaPlugin) = module {
     }
 
     single {
+        SpigotNamespace(
+            plugin = get(),
+        )
+    }
+
+    single {
         Store(
             logger = get(),
         )
@@ -126,7 +137,6 @@ fun pluginModule(_plugin: JavaPlugin) = module {
     single {
         SpigotCommandRegistry(
             plugin = get(),
-            audiences = get(),
             sentry = get(),
         )
     }
@@ -167,7 +177,6 @@ fun pluginModule(_plugin: JavaPlugin) = module {
     factory {
         WarpCommand(
             warpRepository = get(),
-            audiences = get(),
             server = get<JavaPlugin>().server,
         )
     }
@@ -267,4 +276,28 @@ fun pluginModule(_plugin: JavaPlugin) = module {
     }
 
     factory { NightVisionCommand() }
+
+    factory {
+        InvisFrameCommand(
+            spigotNamespace = get(),
+        )
+    }
+
+    factory {
+        FramePlaceListener(
+            spigotNamespace = get(),
+        )
+    }
+
+    factory {
+        FrameItemInsertListener(
+            spigotNamespace = get(),
+        )
+    }
+
+    factory {
+        FrameItemRemoveListener(
+            spigotNamespace = get(),
+        )
+    }
 }

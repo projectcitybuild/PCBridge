@@ -17,6 +17,8 @@ commands:
     permission: pcbridge.chat.mute
   pcbridge:
     permission: pcbridge.utils
+  invisframe:
+    permission: pcbridge.build.invisframe
   nv:
     permission: pcbridge.build.nightvision
   unmute:

@@ -3,6 +3,10 @@ package com.projectcitybuild
 import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
 import com.projectcitybuild.core.errors.SentryReporter
 import com.projectcitybuild.features.chat.listeners.EmojiChatListener
+import com.projectcitybuild.features.invisframes.commands.InvisFrameCommand
+import com.projectcitybuild.features.invisframes.listeners.FrameItemInsertListener
+import com.projectcitybuild.features.invisframes.listeners.FrameItemRemoveListener
+import com.projectcitybuild.features.invisframes.listeners.FramePlaceListener
 import com.projectcitybuild.features.joinmessages.listeners.AnnounceJoinListener
 import com.projectcitybuild.features.joinmessages.listeners.AnnounceQuitListener
 import com.projectcitybuild.features.joinmessages.listeners.FirstTimeJoinListener
@@ -97,6 +101,10 @@ private class Lifecycle: KoinComponent {
                 handler = get<NightVisionCommand>(),
                 argsParser = NightVisionCommand.Args.Parser(),
             )
+            register(
+                handler = get<InvisFrameCommand>(),
+                argsParser = InvisFrameCommand.Args.Parser(),
+            )
         }
         listenerRegistry.apply {
             register(get<AnnounceJoinListener>())
@@ -106,6 +114,9 @@ private class Lifecycle: KoinComponent {
             register(get<EmojiChatListener>())
             register(get<TelemetryPlayerConnectListener>())
             register(get<MuteChatListener>())
+            register(get<FramePlaceListener>())
+            register(get<FrameItemInsertListener>())
+            register(get<FrameItemRemoveListener>())
         }
 
         get<DynmapIntegration>().onEnable()

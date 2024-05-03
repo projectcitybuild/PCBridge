@@ -8,6 +8,9 @@ import com.projectcitybuild.support.spigot.CommandArgsParser
 import com.projectcitybuild.support.spigot.SpigotCommand
 import com.projectcitybuild.support.spigot.UnauthorizedCommandException
 import net.kyori.adventure.platform.bukkit.BukkitAudiences
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.NamedTextColor
+import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.Location
 import org.bukkit.Server
 import org.bukkit.command.CommandSender
@@ -16,7 +19,6 @@ import org.bukkit.event.player.PlayerTeleportEvent
 
 class WarpCommand(
     private val warpRepository: WarpRepository,
-    private val audiences: BukkitAudiences,
     private val server: Server,
 ): SpigotCommand<WarpCommand.Args> {
     override val label = "warp"
@@ -53,6 +55,11 @@ class WarpCommand(
         player.teleport(
             location,
             PlayerTeleportEvent.TeleportCause.COMMAND,
+        )
+        sender.sendMessage(
+            Component.text("Warped to ${warp.name}")
+                .color(NamedTextColor.GRAY)
+                .decorate(TextDecoration.ITALIC)
         )
     }
 
