@@ -11,6 +11,7 @@ import com.projectcitybuild.features.joinmessages.listeners.AnnounceJoinListener
 import com.projectcitybuild.features.joinmessages.listeners.AnnounceQuitListener
 import com.projectcitybuild.features.joinmessages.listeners.FirstTimeJoinListener
 import com.projectcitybuild.features.joinmessages.listeners.ServerOverviewJoinListener
+import com.projectcitybuild.features.staffchat.commands.StaffChatCommand
 import com.projectcitybuild.features.warps.repositories.WarpRepository
 import com.projectcitybuild.features.warps.Warp
 import com.projectcitybuild.features.utilities.commands.PCBridgeCommand
@@ -168,6 +169,12 @@ fun pluginModule(_plugin: JavaPlugin) = module {
 
     factory {
         PCBridgeCommand.TabCompleter()
+    }
+
+    factory {
+        StaffChatCommand(
+            server = get<JavaPlugin>().server,
+        )
     }
 
     factory {

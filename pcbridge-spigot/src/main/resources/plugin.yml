@@ -11,9 +11,11 @@ softdepend:
   - Essentials
 
 commands:
+  a:
+    permission: pcbridge.chat.staff_channel
   warp:
-    permissions: pcbridge.warps.teleport
+    permission: pcbridge.warps.teleport
   warps:
-    permissions: pcbridge.warps.list
+    permission: pcbridge.warps.list
   pcbridge:
-    permissions: pcbridge.utils
+    permission: pcbridge.utils

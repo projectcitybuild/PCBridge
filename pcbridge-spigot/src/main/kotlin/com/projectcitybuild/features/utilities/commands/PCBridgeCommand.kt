@@ -2,6 +2,7 @@ package com.projectcitybuild.features.utilities.commands
 
 import com.github.shynixn.mccoroutine.bukkit.SuspendingTabCompleter
 import com.projectcitybuild.support.messages.CommandHelpBuilder
+import com.projectcitybuild.support.spigot.BadCommandUsageException
 import com.projectcitybuild.support.spigot.CommandArgsParser
 import com.projectcitybuild.support.spigot.SpigotCommand
 import com.projectcitybuild.support.tryValueOf
@@ -69,12 +70,12 @@ class PCBridgeCommand(
             Reload,
         }
         class Parser: CommandArgsParser<Args> {
-            override fun tryParse(args: List<String>): Args? {
+            override fun tryParse(args: List<String>): Args {
                 if (args.isEmpty()) {
-                    return null
+                    throw BadCommandUsageException()
                 }
                 val command = tryValueOf<Command>(args[0].replaceFirstChar { it.uppercase() })
-                    ?: return null
+                    ?: throw BadCommandUsageException()
 
                 return Args(
                     command = command,
