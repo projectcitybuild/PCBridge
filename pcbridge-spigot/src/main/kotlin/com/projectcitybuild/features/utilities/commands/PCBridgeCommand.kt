@@ -70,7 +70,7 @@ class PCBridgeCommand(
             Reload,
         }
         class Parser: CommandArgsParser<Args> {
-            override fun tryParse(args: List<String>): Args {
+            override fun parse(args: List<String>): Args {
                 if (args.isEmpty()) {
                     throw BadCommandUsageException()
                 }

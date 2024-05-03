@@ -7,6 +7,9 @@ import com.projectcitybuild.features.joinmessages.listeners.AnnounceJoinListener
 import com.projectcitybuild.features.joinmessages.listeners.AnnounceQuitListener
 import com.projectcitybuild.features.joinmessages.listeners.FirstTimeJoinListener
 import com.projectcitybuild.features.joinmessages.listeners.ServerOverviewJoinListener
+import com.projectcitybuild.features.mute.commands.MuteCommand
+import com.projectcitybuild.features.mute.commands.UnmuteCommand
+import com.projectcitybuild.features.mute.listeners.MuteChatListener
 import com.projectcitybuild.features.staffchat.commands.StaffChatCommand
 import com.projectcitybuild.features.telemetry.listeners.TelemetryPlayerConnectListener
 import com.projectcitybuild.features.utilities.commands.PCBridgeCommand
@@ -81,6 +84,14 @@ private class Lifecycle: KoinComponent {
                 handler = get<StaffChatCommand>(),
                 argsParser = StaffChatCommand.Args.Parser(),
             )
+            register(
+                handler = get<MuteCommand>(),
+                argsParser = MuteCommand.Args.Parser(),
+            )
+            register(
+                handler = get<UnmuteCommand>(),
+                argsParser = UnmuteCommand.Args.Parser(),
+            )
         }
         listenerRegistry.apply {
             register(get<AnnounceJoinListener>())
@@ -89,6 +100,7 @@ private class Lifecycle: KoinComponent {
             register(get<ServerOverviewJoinListener>())
             register(get<EmojiChatListener>())
             register(get<TelemetryPlayerConnectListener>())
+            register(get<MuteChatListener>())
         }
 
         get<DynmapIntegration>().onEnable()

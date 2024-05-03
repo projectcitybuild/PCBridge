@@ -13,9 +13,13 @@ softdepend:
 commands:
   a:
     permission: pcbridge.chat.staff_channel
+  mute:
+    permission: pcbridge.chat.mute
+  pcbridge:
+    permission: pcbridge.utils
+  unmute:
+    permission: pcbridge.chat.mute
   warp:
     permission: pcbridge.warps.teleport
   warps:
     permission: pcbridge.warps.list
-  pcbridge:
-    permission: pcbridge.utils

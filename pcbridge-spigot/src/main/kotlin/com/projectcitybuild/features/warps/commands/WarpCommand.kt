@@ -3,6 +3,7 @@ package com.projectcitybuild.features.warps.commands
 import com.projectcitybuild.features.warps.events.PlayerPreWarpEvent
 import com.projectcitybuild.features.warps.repositories.WarpRepository
 import com.projectcitybuild.support.messages.CommandHelpBuilder
+import com.projectcitybuild.support.spigot.BadCommandUsageException
 import com.projectcitybuild.support.spigot.CommandArgsParser
 import com.projectcitybuild.support.spigot.SpigotCommand
 import com.projectcitybuild.support.spigot.UnauthorizedCommandException
@@ -59,9 +60,9 @@ class WarpCommand(
         val warpName: String,
     ) {
         class Parser: CommandArgsParser<Args> {
-            override fun tryParse(args: List<String>): Args? {
+            override fun parse(args: List<String>): Args {
                 if (args.isEmpty()) {
-                    return null
+                    throw BadCommandUsageException()
                 }
                 return Args(warpName = args[0])
             }

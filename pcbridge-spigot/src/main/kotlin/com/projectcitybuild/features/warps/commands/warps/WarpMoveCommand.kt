@@ -43,7 +43,7 @@ class WarpMoveCommand(
         val warpName: String,
     ) {
         class Parser: CommandArgsParser<Args> {
-            override fun tryParse(args: List<String>): Args {
+            override fun parse(args: List<String>): Args {
                 if (args.size != 1) {
                     throw BadCommandUsageException()
                 }

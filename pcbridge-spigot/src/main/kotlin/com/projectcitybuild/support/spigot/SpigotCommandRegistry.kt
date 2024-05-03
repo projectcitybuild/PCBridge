@@ -41,7 +41,7 @@ class SpigotCommandRegistry(
                 args: Array<out String>
             ): Boolean {
                 runCatching {
-                    val parsedArgs = argsParser.tryParse(args)
+                    val parsedArgs = argsParser.parse(args)
                     if (parsedArgs == null) {
                         handler.displayUsage(sender, audiences)
                     } else {

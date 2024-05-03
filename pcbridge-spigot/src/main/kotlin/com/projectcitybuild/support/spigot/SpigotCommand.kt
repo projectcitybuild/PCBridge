@@ -27,11 +27,11 @@ interface SpigotCommand<T> {
  */
 interface CommandArgsParser<T> {
     @Throws(IllegalStateException::class, BadCommandUsageException::class)
-    fun tryParse(args: List<String>): T?
+    fun parse(args: List<String>): T
 
     @Throws(IllegalStateException::class, BadCommandUsageException::class)
-    fun tryParse(args: Array<out String>): T?
-        = tryParse(args.toList())
+    fun parse(args: Array<out String>): T
+        = parse(args.toList())
 }
 
 /**

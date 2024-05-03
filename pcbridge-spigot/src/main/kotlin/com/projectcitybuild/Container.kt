@@ -12,6 +12,9 @@ import com.projectcitybuild.features.joinmessages.listeners.AnnounceJoinListener
 import com.projectcitybuild.features.joinmessages.listeners.AnnounceQuitListener
 import com.projectcitybuild.features.joinmessages.listeners.FirstTimeJoinListener
 import com.projectcitybuild.features.joinmessages.listeners.ServerOverviewJoinListener
+import com.projectcitybuild.features.mute.commands.MuteCommand
+import com.projectcitybuild.features.mute.commands.UnmuteCommand
+import com.projectcitybuild.features.mute.listeners.MuteChatListener
 import com.projectcitybuild.features.staffchat.commands.StaffChatCommand
 import com.projectcitybuild.features.telemetry.listeners.TelemetryPlayerConnectListener
 import com.projectcitybuild.features.telemetry.repositories.TelemetryRepository
@@ -37,10 +40,12 @@ import org.bukkit.plugin.java.JavaPlugin
 import org.koin.core.module.dsl.createdAtStart
 import org.koin.core.module.dsl.onClose
 import org.koin.core.module.dsl.withOptions
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import org.koin.dsl.onClose
 import java.time.Clock
 import java.time.ZoneId
+import java.util.UUID
 import kotlin.time.Duration.Companion.minutes
 
 fun pluginModule(_plugin: JavaPlugin) = module {
@@ -224,6 +229,33 @@ fun pluginModule(_plugin: JavaPlugin) = module {
 
     factory {
         EmojiChatListener()
+    }
+
+    single(named("mute_cache")) {
+        // We use a regular cache instead of the server state here
+        // so that mutes persist even if the player leaves, but
+        // invalidates if the plugin is reloaded/shutdown
+        Cache.Builder<UUID, Unit>().build()
+    }
+
+    factory {
+        MuteCommand(
+            server = get<JavaPlugin>().server,
+            mutedPlayers = get(named("mute_cache"))
+        )
+    }
+
+    factory {
+        UnmuteCommand(
+            server = get<JavaPlugin>().server,
+            mutedPlayers = get(named("mute_cache"))
+        )
+    }
+
+    factory {
+        MuteChatListener(
+            mutedPlayers = get(named("mute_cache"))
+        )
     }
 
     factory {

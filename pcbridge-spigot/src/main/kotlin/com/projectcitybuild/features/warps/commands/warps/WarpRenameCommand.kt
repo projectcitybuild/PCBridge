@@ -38,7 +38,7 @@ class WarpRenameCommand(
         val newName: String,
     ) {
         class Parser: CommandArgsParser<Args> {
-            override fun tryParse(args: List<String>): Args {
+            override fun parse(args: List<String>): Args {
                 if (args.size != 2) {
                     throw BadCommandUsageException()
                 }

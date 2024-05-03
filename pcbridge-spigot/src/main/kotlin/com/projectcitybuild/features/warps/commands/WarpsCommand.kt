@@ -9,6 +9,7 @@ import com.projectcitybuild.features.warps.commands.warps.WarpMoveCommand
 import com.projectcitybuild.features.warps.commands.warps.WarpRenameCommand
 import com.projectcitybuild.pcbridge.core.modules.config.Config
 import com.projectcitybuild.support.messages.CommandHelpBuilder
+import com.projectcitybuild.support.spigot.BadCommandUsageException
 import com.projectcitybuild.support.spigot.CommandArgsParser
 import com.projectcitybuild.support.spigot.SpigotCommand
 import com.projectcitybuild.support.spigot.UnauthorizedCommandException
@@ -64,7 +65,7 @@ class WarpsCommand(
             ).run(
                 sender = sender,
                 args = WarpListCommand.Args.Parser()
-                    .tryParse(args.remainingArgs),
+                    .parse(args.remainingArgs),
             )
 
             Args.Command.Create -> WarpCreateCommand(
@@ -74,7 +75,7 @@ class WarpsCommand(
             ).run(
                 sender = sender,
                 args = WarpCreateCommand.Args.Parser()
-                    .tryParse(args.remainingArgs),
+                    .parse(args.remainingArgs),
             )
 
             Args.Command.Delete -> WarpDeleteCommand(
@@ -84,7 +85,7 @@ class WarpsCommand(
             ).run(
                 sender = sender,
                 args = WarpDeleteCommand.Args.Parser()
-                    .tryParse(args.remainingArgs),
+                    .parse(args.remainingArgs),
             )
 
             Args.Command.Move -> WarpMoveCommand(
@@ -93,7 +94,7 @@ class WarpsCommand(
             ).run(
                 sender = sender,
                 args = WarpMoveCommand.Args.Parser()
-                    .tryParse(args.remainingArgs),
+                    .parse(args.remainingArgs),
             )
 
             Args.Command.Rename -> WarpRenameCommand(
@@ -102,7 +103,7 @@ class WarpsCommand(
             ).run(
                 sender = sender,
                 args = WarpRenameCommand.Args.Parser()
-                    .tryParse(args.remainingArgs),
+                    .parse(args.remainingArgs),
             )
         }
     }
@@ -119,12 +120,12 @@ class WarpsCommand(
             Rename,
         }
         class Parser: CommandArgsParser<Args> {
-            override fun tryParse(args: List<String>): Args? {
+            override fun parse(args: List<String>): Args {
                 if (args.isEmpty()) {
-                    return null
+                    throw BadCommandUsageException()
                 }
                 val command = tryValueOf<Command>(args[0].replaceFirstChar { it.uppercase() })
-                    ?: return null
+                    ?: throw BadCommandUsageException()
 
                 return Args(
                     command = command,

@@ -1,6 +1,7 @@
 package com.projectcitybuild.features.staffchat.commands
 
 import com.projectcitybuild.support.messages.CommandHelpBuilder
+import com.projectcitybuild.support.spigot.BadCommandUsageException
 import com.projectcitybuild.support.spigot.CommandArgsParser
 import com.projectcitybuild.support.spigot.SpigotCommand
 import net.kyori.adventure.text.Component
@@ -39,9 +40,9 @@ class StaffChatCommand(
         val message: String,
     ) {
         class Parser: CommandArgsParser<Args> {
-            override fun tryParse(args: List<String>): Args? {
+            override fun parse(args: List<String>): Args {
                 if (args.isEmpty()) {
-                    return null
+                    throw BadCommandUsageException()
                 }
                 return Args(message = args.joinToString(separator = " "))
             }
