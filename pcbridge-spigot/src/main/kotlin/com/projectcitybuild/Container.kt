@@ -5,6 +5,12 @@ import com.projectcitybuild.data.PluginConfig
 import com.projectcitybuild.core.database.DatabaseSession
 import com.projectcitybuild.core.database.DatabaseSource
 import com.projectcitybuild.core.errors.SentryReporter
+import com.projectcitybuild.core.state.Store
+import com.projectcitybuild.features.chat.listeners.EmojiChatListener
+import com.projectcitybuild.features.joinmessages.listeners.AnnounceJoinListener
+import com.projectcitybuild.features.joinmessages.listeners.AnnounceQuitListener
+import com.projectcitybuild.features.joinmessages.listeners.FirstTimeJoinListener
+import com.projectcitybuild.features.joinmessages.listeners.ServerOverviewJoinListener
 import com.projectcitybuild.features.warps.repositories.WarpRepository
 import com.projectcitybuild.features.warps.Warp
 import com.projectcitybuild.features.utilities.commands.PCBridgeCommand
@@ -14,8 +20,11 @@ import com.projectcitybuild.integrations.DynmapIntegration
 import com.projectcitybuild.integrations.EssentialsIntegration
 import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger
 import com.projectcitybuild.pcbridge.core.modules.config.Config
+import com.projectcitybuild.pcbridge.core.modules.datetime.time.LocalizedTime
+import com.projectcitybuild.pcbridge.core.modules.datetime.time.Time
 import com.projectcitybuild.pcbridge.core.storage.JsonStorage
 import com.projectcitybuild.support.spigot.SpigotCommandRegistry
+import com.projectcitybuild.support.spigot.SpigotListenerRegistry
 import com.projectcitybuild.support.spigot.SpigotLogger
 import io.github.reactivecircus.cache4k.Cache
 import net.kyori.adventure.platform.bukkit.BukkitAudiences
@@ -25,6 +34,8 @@ import org.koin.core.module.dsl.onClose
 import org.koin.core.module.dsl.withOptions
 import org.koin.dsl.module
 import org.koin.dsl.onClose
+import java.time.Clock
+import java.time.ZoneId
 import kotlin.time.Duration.Companion.minutes
 
 fun pluginModule(_plugin: JavaPlugin) = module {
@@ -75,11 +86,32 @@ fun pluginModule(_plugin: JavaPlugin) = module {
         onClose { it?.disconnect() }
     }
 
+    factory<Time> {
+        val config = get<Config<PluginConfig>>().get()
+        val zoneId = ZoneId.of(config.localization.timeZone)
+
+        LocalizedTime(
+            clock = Clock.system(zoneId)
+        )
+    }
+
+    single {
+        Store(
+            logger = get(),
+        )
+    }
+
     single {
         SpigotCommandRegistry(
             plugin = get(),
             audiences = get(),
             sentry = get(),
+        )
+    }
+
+    single {
+        SpigotListenerRegistry(
+            plugin = get(),
         )
     }
 
@@ -136,5 +168,39 @@ fun pluginModule(_plugin: JavaPlugin) = module {
 
     factory {
         PCBridgeCommand.TabCompleter()
+    }
+
+    factory {
+        AnnounceJoinListener(
+            config = get(),
+            store = get(),
+            time = get(),
+        )
+    }
+
+    factory {
+        AnnounceQuitListener(
+            config = get(),
+            store = get(),
+            time = get(),
+        )
+    }
+
+    factory {
+        FirstTimeJoinListener(
+            config = get(),
+            logger = get(),
+            server = get<JavaPlugin>().server,
+        )
+    }
+
+    factory {
+        ServerOverviewJoinListener(
+            config = get(),
+        )
+    }
+
+    factory {
+        EmojiChatListener()
     }
 }
