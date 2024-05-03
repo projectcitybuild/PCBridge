@@ -1,11 +1,12 @@
-package com.projectcitybuild.entities.events
+package com.projectcitybuild.features.warps.events
 
-import com.projectcitybuild.support.spigot.eventbroadcast.BroadcastableEvent
 import org.bukkit.event.HandlerList
 import org.bukkit.event.Event as SpigotEvent
 
-class WarpCreateEvent : SpigotEvent(), BroadcastableEvent {
-
+class WarpCreateEvent : SpigotEvent() {
+    override fun getHandlers(): HandlerList {
+        return HANDLERS
+    }
     companion object {
         private val HANDLERS = HandlerList()
 
@@ -13,9 +14,5 @@ class WarpCreateEvent : SpigotEvent(), BroadcastableEvent {
         fun getHandlerList(): HandlerList {
             return HANDLERS
         }
-    }
-
-    override fun getHandlers(): HandlerList {
-        return HANDLERS
     }
 }

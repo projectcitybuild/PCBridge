@@ -2,6 +2,7 @@ package com.projectcitybuild.features.warps.commands.warps
 
 import com.projectcitybuild.data.SerializableLocation
 import com.projectcitybuild.features.warps.Warp
+import com.projectcitybuild.features.warps.events.WarpCreateEvent
 import com.projectcitybuild.features.warps.repositories.WarpRepository
 import com.projectcitybuild.support.messages.CommandHelpBuilder
 import com.projectcitybuild.support.spigot.BadCommandUsageException
@@ -57,6 +58,8 @@ class WarpCreateCommand(
             createdAt = LocalDateTime.now(), // TODO
         )
         warpRepository.create(warp)
+
+        server.pluginManager.callEvent(WarpCreateEvent())
 
         audiences.sender(sender).sendMessage(
             Component.text("${args.warpName} warp created")

@@ -10,6 +10,8 @@ import com.projectcitybuild.features.warps.Warp
 import com.projectcitybuild.features.utilities.commands.PCBridgeCommand
 import com.projectcitybuild.features.warps.commands.WarpCommand
 import com.projectcitybuild.features.warps.commands.WarpsCommand
+import com.projectcitybuild.integrations.DynmapIntegration
+import com.projectcitybuild.integrations.EssentialsIntegration
 import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger
 import com.projectcitybuild.pcbridge.core.modules.config.Config
 import com.projectcitybuild.pcbridge.core.storage.JsonStorage
@@ -90,6 +92,24 @@ fun pluginModule(_plugin: JavaPlugin) = module {
         )
     }
 
+    single {
+        DynmapIntegration(
+            plugin = get(),
+            config = get(),
+            logger = get(),
+            sentry = get(),
+            warpRepository = get(),
+        )
+    }
+
+    single {
+        EssentialsIntegration(
+            plugin = get(),
+            logger = get(),
+            sentry = get(),
+        )
+    }
+
     factory {
         WarpCommand(
             warpRepository = get(),
@@ -97,6 +117,7 @@ fun pluginModule(_plugin: JavaPlugin) = module {
             server = get<JavaPlugin>().server,
         )
     }
+
     factory {
         WarpsCommand(
             warpRepository = get(),
@@ -105,12 +126,14 @@ fun pluginModule(_plugin: JavaPlugin) = module {
             server = get<JavaPlugin>().server,
         )
     }
+
     factory {
         PCBridgeCommand(
             plugin = get(),
             audiences = get(),
         )
     }
+
     factory {
         PCBridgeCommand.TabCompleter()
     }

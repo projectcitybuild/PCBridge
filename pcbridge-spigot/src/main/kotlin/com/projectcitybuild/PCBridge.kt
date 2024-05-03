@@ -5,8 +5,11 @@ import com.projectcitybuild.core.errors.SentryReporter
 import com.projectcitybuild.features.utilities.commands.PCBridgeCommand
 import com.projectcitybuild.features.warps.commands.WarpCommand
 import com.projectcitybuild.features.warps.commands.WarpsCommand
+import com.projectcitybuild.integrations.DynmapIntegration
+import com.projectcitybuild.integrations.EssentialsIntegration
 import com.projectcitybuild.support.spigot.SpigotCommandRegistry
 import net.kyori.adventure.platform.bukkit.BukkitAudiences
+import org.bukkit.event.HandlerList
 import org.koin.core.KoinApplication
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
@@ -51,7 +54,7 @@ private class Lifecycle: KoinComponent {
     private val sentry: SentryReporter by inject()
     private val commandRegistry: SpigotCommandRegistry by inject()
 
-    fun boot() = trace {
+    suspend fun boot() = trace {
         commandRegistry.register(
             handler = get<PCBridgeCommand>(),
             argsParser = PCBridgeCommand.Args.Parser(),
@@ -65,15 +68,24 @@ private class Lifecycle: KoinComponent {
             handler = get<WarpsCommand>(),
             argsParser = WarpsCommand.Args.Parser(),
         )
+
+        get<DynmapIntegration>().onEnable()
+        get<EssentialsIntegration>().onEnable()
     }
 
-    fun shutdown() = trace {
+    suspend fun shutdown() = trace {
+        get<DynmapIntegration>().onDisable()
+        get<EssentialsIntegration>().onDisable()
+
+        // Unregister all event listeners
+        HandlerList.unregisterAll()
+
         commandRegistry.unregisterAll()
         audiences.close()
     }
 
-    private fun <R> trace(block: () -> R): Result<R> {
-        return runCatching(block).onFailure {
+    private suspend fun <R> trace(block: suspend () -> R): Result<R> {
+        return runCatching { block() }.onFailure {
             sentry.report(it)
             throw it
         }

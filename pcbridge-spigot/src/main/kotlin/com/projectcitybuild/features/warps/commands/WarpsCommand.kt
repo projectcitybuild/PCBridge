@@ -80,6 +80,7 @@ class WarpsCommand(
             Args.Command.Delete -> WarpDeleteCommand(
                 warpRepository = warpRepository,
                 audiences = audiences,
+                server = server,
             ).run(
                 sender = sender,
                 args = WarpDeleteCommand.Args.Parser()

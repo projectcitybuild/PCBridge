@@ -1,5 +1,6 @@
 package com.projectcitybuild.features.warps.commands
 
+import com.projectcitybuild.features.warps.events.PlayerPreWarpEvent
 import com.projectcitybuild.features.warps.repositories.WarpRepository
 import com.projectcitybuild.support.messages.CommandHelpBuilder
 import com.projectcitybuild.support.spigot.CommandArgsParser
@@ -44,6 +45,9 @@ class WarpCommand(
             warp.location.z,
             warp.location.yaw,
             warp.location.pitch,
+        )
+        server.pluginManager.callEvent(
+            PlayerPreWarpEvent(player),
         )
         player.teleport(
             location,
