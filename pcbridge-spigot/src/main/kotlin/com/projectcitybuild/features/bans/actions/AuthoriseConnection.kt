@@ -1,4 +1,4 @@
-package com.projectcitybuild.modules.moderation.bans.actions
+package com.projectcitybuild.features.bans.actions
 
 import com.projectcitybuild.pcbridge.http.responses.Aggregate
 import com.projectcitybuild.pcbridge.http.responses.IPBan

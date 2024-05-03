@@ -1,10 +1,10 @@
-package com.projectcitybuild.modules.moderation.bans.actions
+package com.projectcitybuild.features.bans.actions
 
 import com.projectcitybuild.pcbridge.core.modules.datetime.formatter.DateTimeFormatter
 import com.projectcitybuild.pcbridge.core.utils.Failure
 import com.projectcitybuild.pcbridge.core.utils.Result
 import com.projectcitybuild.pcbridge.core.utils.Success
-import com.projectcitybuild.repositories.PlayerBanRepository
+import com.projectcitybuild.features.bans.repositories.PlayerBanRepository
 import com.projectcitybuild.repositories.PlayerUUIDRepository
 
 class CheckUUIDBan(

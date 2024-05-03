@@ -1,17 +1,17 @@
-package com.projectcitybuild.modules.moderation.bans.actions
+package com.projectcitybuild.features.bans.actions
 
 import com.projectcitybuild.pcbridge.core.utils.Failure
 import com.projectcitybuild.pcbridge.core.utils.Result
 import com.projectcitybuild.pcbridge.core.utils.Success
 import com.projectcitybuild.pcbridge.http.services.pcb.UUIDBanHttpService
-import com.projectcitybuild.repositories.PlayerBanRepository
+import com.projectcitybuild.features.bans.repositories.PlayerBanRepository
 import com.projectcitybuild.repositories.PlayerUUIDRepository
 import com.projectcitybuild.support.spigot.SpigotServer
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.chat.TextComponent
 import java.util.UUID
 
-class BanUUID(
+class TempBanUUID(
     private val playerBanRepository: PlayerBanRepository,
     private val playerUUIDRepository: PlayerUUIDRepository,
     private val server: SpigotServer,
@@ -25,7 +25,8 @@ class BanUUID(
         targetPlayerName: String,
         bannerUUID: UUID?,
         bannerName: String,
-        reason: String?
+        reason: String?,
+        expiryDate: Long,
     ): Result<Unit, FailureReason> {
         try {
             val targetPlayerUUID = playerUUIDRepository.get(targetPlayerName)
@@ -36,7 +37,8 @@ class BanUUID(
                 targetPlayerName = targetPlayerName,
                 bannerPlayerUUID = bannerUUID,
                 bannerPlayerName = bannerName,
-                reason = reason
+                reason = reason,
+                expiryDate = expiryDate,
             )
 
             server.kickByUUID(
@@ -45,8 +47,9 @@ class BanUUID(
                 context = SpigotServer.KickContext.FATAL,
             )
 
+            // TODO: move this to command
             server.broadcastMessage(
-                TextComponent("$targetPlayerName has been banned by $bannerName: ${reason ?: "No reason given"}").apply {
+                TextComponent("$targetPlayerName has been temporarily banned by $bannerName: ${reason ?: "No reason given"}").apply {
                     color = ChatColor.GRAY
                     isItalic = true
                 }

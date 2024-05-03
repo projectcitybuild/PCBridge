@@ -2,7 +2,7 @@ package com.projectcitybuild.modules.moderation.bans.actions
 
 import com.projectcitybuild.pcbridge.core.utils.Failure
 import com.projectcitybuild.pcbridge.http.services.pcb.UUIDBanHttpService
-import com.projectcitybuild.repositories.PlayerBanRepository
+import com.projectcitybuild.features.bans.repositories.PlayerBanRepository
 import com.projectcitybuild.repositories.PlayerUUIDRepository
 import kotlinx.coroutines.test.runTest
 import org.bukkit.Server

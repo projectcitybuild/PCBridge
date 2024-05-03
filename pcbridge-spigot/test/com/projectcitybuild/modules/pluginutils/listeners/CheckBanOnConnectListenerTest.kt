@@ -1,6 +1,6 @@
 package com.projectcitybuild.modules.pluginutils.listeners
 
-import com.projectcitybuild.entities.events.ConnectionPermittedEvent
+import com.projectcitybuild.features.bans.events.ConnectionPermittedEvent
 import com.projectcitybuild.libs.errorreporting.ErrorReporter
 import com.projectcitybuild.modules.moderation.bans.actions.AuthoriseConnection
 import com.projectcitybuild.modules.moderation.bans.listeners.CheckBanOnConnectListener
@@ -9,7 +9,7 @@ import com.projectcitybuild.pcbridge.core.modules.datetime.formatter.DateTimeFor
 import com.projectcitybuild.pcbridge.http.responses.Aggregate
 import com.projectcitybuild.pcbridge.http.responses.IPBan
 import com.projectcitybuild.pcbridge.http.responses.PlayerBan
-import com.projectcitybuild.repositories.AggregateRepository
+import com.projectcitybuild.features.bans.repositories.AggregateRepository
 import com.projectcitybuild.support.spigot.eventbroadcast.LocalEventBroadcaster
 import kotlinx.coroutines.test.runTest
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent

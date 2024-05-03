@@ -1,6 +1,6 @@
 package com.projectcitybuild.modules.chat.listeners
 
-import com.projectcitybuild.entities.events.ConnectionPermittedEvent
+import com.projectcitybuild.features.bans.events.ConnectionPermittedEvent
 import com.projectcitybuild.pcbridge.http.responses.Aggregate
 import com.projectcitybuild.pcbridge.http.responses.Badge
 import com.projectcitybuild.repositories.ChatBadgeRepository

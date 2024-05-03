@@ -1,12 +1,12 @@
-package com.projectcitybuild.modules.moderation.bans.actions
+package com.projectcitybuild.features.bans.actions
 
+import com.projectcitybuild.features.bans.repositories.IPBanRepository
 import com.projectcitybuild.utils.Sanitizer
 import com.projectcitybuild.pcbridge.core.utils.Failure
 import com.projectcitybuild.pcbridge.core.utils.Result
 import com.projectcitybuild.pcbridge.core.utils.Success
 import com.projectcitybuild.pcbridge.core.utils.helpers.isValidIP
 import com.projectcitybuild.pcbridge.http.services.pcb.IPBanHttpService
-import com.projectcitybuild.repositories.IPBanRepository
 import java.util.UUID
 
 class UnbanIP(
@@ -19,7 +19,7 @@ class UnbanIP(
 
     suspend fun execute(
         ip: String,
-        unbannerUUID: UUID,
+        unbannerUUID: UUID?,
         unbannerName: String,
     ): Result<Unit, FailureReason> {
         val sanitizedIP = Sanitizer.sanitizedIP(ip)

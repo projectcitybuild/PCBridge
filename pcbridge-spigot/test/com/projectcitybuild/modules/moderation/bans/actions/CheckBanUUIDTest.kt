@@ -4,7 +4,7 @@ import com.projectcitybuild.pcbridge.core.modules.datetime.formatter.DateTimeFor
 import com.projectcitybuild.pcbridge.core.utils.Failure
 import com.projectcitybuild.pcbridge.core.utils.Success
 import com.projectcitybuild.pcbridge.http.responses.PlayerBan
-import com.projectcitybuild.repositories.PlayerBanRepository
+import com.projectcitybuild.features.bans.repositories.PlayerBanRepository
 import com.projectcitybuild.repositories.PlayerUUIDRepository
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -12,8 +12,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.mock
 import org.mockito.kotlin.whenever
-import java.time.ZoneId
-import java.util.Locale
 import java.util.UUID
 
 class CheckBanUUIDTest {

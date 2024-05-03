@@ -1,4 +1,4 @@
-package com.projectcitybuild.repositories
+package com.projectcitybuild.features.bans.repositories
 
 import com.projectcitybuild.pcbridge.http.responses.Aggregate
 import com.projectcitybuild.pcbridge.http.services.pcb.AggregateHttpService

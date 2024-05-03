@@ -13,6 +13,12 @@ softdepend:
 commands:
   a:
     permission: pcbridge.chat.staff_channel
+  ban:
+    permission: pcbridge.ban.ban
+  banip:
+    permission: pcbridge.ban.banip
+  checkban:
+    permission: pcbridge.ban.check
   mute:
     permission: pcbridge.chat.mute
   pcbridge:
@@ -21,6 +27,10 @@ commands:
     permission: pcbridge.build.invisframe
   nv:
     permission: pcbridge.build.nightvision
+  unban:
+    permission: pcbridge.ban.ban
+  unbanip:
+    permission: pcbridge.ban.banip
   unmute:
     permission: pcbridge.chat.mute
   warp:

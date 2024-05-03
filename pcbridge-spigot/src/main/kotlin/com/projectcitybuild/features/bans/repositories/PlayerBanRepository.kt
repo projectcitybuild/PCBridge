@@ -1,4 +1,4 @@
-package com.projectcitybuild.repositories
+package com.projectcitybuild.features.bans.repositories
 
 import com.projectcitybuild.pcbridge.http.responses.PlayerBan
 import com.projectcitybuild.pcbridge.http.services.pcb.UUIDBanHttpService

@@ -1,15 +1,11 @@
-package com.projectcitybuild.entities.events
+package com.projectcitybuild.features.joinmessages.events
 
-import com.projectcitybuild.pcbridge.http.responses.Aggregate
 import com.projectcitybuild.support.spigot.eventbroadcast.BroadcastableEvent
+import org.bukkit.entity.Player
 import org.bukkit.event.Event
 import org.bukkit.event.HandlerList
-import java.util.UUID
 
-class ConnectionPermittedEvent(
-    val aggregate: Aggregate,
-    val playerUUID: UUID,
-) : Event(), BroadcastableEvent {
+class FirstTimeJoinEvent(val player: Player) : Event(), BroadcastableEvent {
 
     companion object {
         private val HANDLERS = HandlerList()

@@ -7,8 +7,8 @@ import java.util.UUID
 /**
  * Represents in-memory, global state for the plugin.
  *
- * This state is persisted to storage on plugin shutdown, and
- * rehydrated upon boot.
+ * This state is persisted to storage on plugin shutdown,
+ * and restored upon boot.
  */
 @Serializable
 data class ServerState(

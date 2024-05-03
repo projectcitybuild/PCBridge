@@ -23,7 +23,7 @@ class IPBanHttpService(
     @Throws(IPAlreadyBannedException::class)
     suspend fun ban(
         ip: String,
-        bannerUUID: UUID,
+        bannerUUID: UUID?,
         bannerName: String,
         reason: String,
     ) {
@@ -47,7 +47,7 @@ class IPBanHttpService(
     @Throws(IPNotBannedException::class)
     suspend fun unban(
         ip: String,
-        unbannerUUID: UUID,
+        unbannerUUID: UUID?,
         unbannerName: String,
     ) {
         try {

@@ -2,6 +2,12 @@ package com.projectcitybuild
 
 import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
 import com.projectcitybuild.core.errors.SentryReporter
+import com.projectcitybuild.features.bans.commands.BanCommand
+import com.projectcitybuild.features.bans.commands.BanIPCommand
+import com.projectcitybuild.features.bans.commands.CheckBanCommand
+import com.projectcitybuild.features.bans.commands.UnbanCommand
+import com.projectcitybuild.features.bans.commands.UnbanIPCommand
+import com.projectcitybuild.features.bans.listeners.CheckBanOnConnectListener
 import com.projectcitybuild.features.chat.listeners.EmojiChatListener
 import com.projectcitybuild.features.invisframes.commands.InvisFrameCommand
 import com.projectcitybuild.features.invisframes.listeners.FrameItemInsertListener
@@ -32,6 +38,7 @@ import org.koin.core.component.inject
 import org.koin.core.context.GlobalContext.startKoin
 import org.koin.core.context.GlobalContext.stopKoin
 
+@SuppressWarnings("unused")
 class PCBridge : SuspendingJavaPlugin() {
     private var container: KoinApplication? = null
 
@@ -105,6 +112,26 @@ private class Lifecycle: KoinComponent {
                 handler = get<InvisFrameCommand>(),
                 argsParser = InvisFrameCommand.Args.Parser(),
             )
+            register(
+                handler = get<BanCommand>(),
+                argsParser = BanCommand.Args.Parser(),
+            )
+            register(
+                handler = get<BanIPCommand>(),
+                argsParser = BanIPCommand.Args.Parser(),
+            )
+            register(
+                handler = get<CheckBanCommand>(),
+                argsParser = CheckBanCommand.Args.Parser(),
+            )
+            register(
+                handler = get<UnbanCommand>(),
+                argsParser = UnbanCommand.Args.Parser(),
+            )
+            register(
+                handler = get<UnbanIPCommand>(),
+                argsParser = UnbanIPCommand.Args.Parser(),
+            )
         }
         listenerRegistry.apply {
             register(get<AnnounceJoinListener>())
@@ -117,6 +144,7 @@ private class Lifecycle: KoinComponent {
             register(get<FramePlaceListener>())
             register(get<FrameItemInsertListener>())
             register(get<FrameItemRemoveListener>())
+            register(get<CheckBanOnConnectListener>())
         }
 
         get<DynmapIntegration>().onEnable()

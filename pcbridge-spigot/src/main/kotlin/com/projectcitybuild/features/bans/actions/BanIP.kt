@@ -1,12 +1,12 @@
-package com.projectcitybuild.modules.moderation.bans.actions
+package com.projectcitybuild.features.bans.actions
 
+import com.projectcitybuild.features.bans.repositories.IPBanRepository
 import com.projectcitybuild.utils.Sanitizer
 import com.projectcitybuild.pcbridge.core.utils.Failure
 import com.projectcitybuild.pcbridge.core.utils.Result
 import com.projectcitybuild.pcbridge.core.utils.Success
 import com.projectcitybuild.pcbridge.core.utils.helpers.isValidIP
 import com.projectcitybuild.pcbridge.http.services.pcb.IPBanHttpService
-import com.projectcitybuild.repositories.IPBanRepository
 import com.projectcitybuild.support.spigot.SpigotServer
 import java.util.UUID
 
@@ -21,7 +21,7 @@ class BanIP(
 
     suspend fun execute(
         ip: String,
-        bannerUUID: UUID,
+        bannerUUID: UUID?,
         bannerName: String,
         reason: String,
     ): Result<Unit, FailureReason> {
@@ -29,7 +29,6 @@ class BanIP(
         if (!isValidIP(sanitizedIP)) {
             return Failure(FailureReason.INVALID_IP)
         }
-
         try {
             ipBanRepository.ban(
                 ip = sanitizedIP,

@@ -1,4 +1,4 @@
-package com.projectcitybuild.repositories
+package com.projectcitybuild.features.bans.repositories
 
 import com.projectcitybuild.pcbridge.http.responses.IPBan
 import com.projectcitybuild.pcbridge.http.services.pcb.IPBanHttpService
@@ -14,7 +14,7 @@ class IPBanRepository(
     @Throws(IPBanHttpService.IPAlreadyBannedException::class)
     suspend fun ban(
         ip: String,
-        bannerUUID: UUID,
+        bannerUUID: UUID?,
         bannerName: String,
         reason: String,
     ) {
@@ -29,7 +29,7 @@ class IPBanRepository(
     @Throws(IPBanHttpService.IPNotBannedException::class)
     suspend fun unban(
         ip: String,
-        unbannerUUID: UUID,
+        unbannerUUID: UUID?,
         unbannerName: String,
     ) {
         ipBanHttpService.unban(
