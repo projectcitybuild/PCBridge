@@ -15,6 +15,7 @@ import com.projectcitybuild.features.joinmessages.listeners.ServerOverviewJoinLi
 import com.projectcitybuild.features.mute.commands.MuteCommand
 import com.projectcitybuild.features.mute.commands.UnmuteCommand
 import com.projectcitybuild.features.mute.listeners.MuteChatListener
+import com.projectcitybuild.features.nightvision.commands.NightVisionCommand
 import com.projectcitybuild.features.staffchat.commands.StaffChatCommand
 import com.projectcitybuild.features.telemetry.listeners.TelemetryPlayerConnectListener
 import com.projectcitybuild.features.telemetry.repositories.TelemetryRepository
@@ -264,4 +265,6 @@ fun pluginModule(_plugin: JavaPlugin) = module {
 
         TelemetryPlayerConnectListener(repository)
     }
+
+    factory { NightVisionCommand() }
 }
