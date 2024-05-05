@@ -1,14 +1,14 @@
-package com.projectcitybuild.modules.ranksync.actions
+package com.projectcitybuild.features.sync.actions
 
+import com.projectcitybuild.features.sync.repositories.SyncRepository
 import com.projectcitybuild.pcbridge.core.utils.Failure
 import com.projectcitybuild.pcbridge.core.utils.Result
 import com.projectcitybuild.pcbridge.core.utils.Success
 import com.projectcitybuild.pcbridge.http.services.pcb.AccountLinkHTTPService
-import com.projectcitybuild.repositories.VerificationURLRepository
 import java.util.UUID
 
 class GenerateAccountVerificationURL(
-    private val verificationURLRepository: VerificationURLRepository
+    private val syncRepository: SyncRepository,
 ) {
     data class VerificationURL(val urlString: String)
 
@@ -19,7 +19,7 @@ class GenerateAccountVerificationURL(
 
     suspend fun generate(playerUUID: UUID): Result<VerificationURL, FailureReason> {
         return try {
-            val url = verificationURLRepository.generateVerificationURL(playerUUID)
+            val url = syncRepository.generateVerificationURL(playerUUID)
 
             return if (url.isNullOrEmpty()) {
                 Failure(FailureReason.EMPTY_RESPONSE)

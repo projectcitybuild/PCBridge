@@ -5,10 +5,11 @@ import io.papermc.paper.event.player.AsyncChatEvent
 import net.kyori.adventure.text.Component
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
+import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 
 class EmojiChatListener: Listener, ChatRenderer.ViewerUnaware {
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOW)
     fun onChat(event: AsyncChatEvent) {
         event.renderer(
             ChatRenderer.viewerUnaware(this),

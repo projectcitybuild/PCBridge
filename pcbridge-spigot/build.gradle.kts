@@ -33,7 +33,7 @@ dependencies {
     compileOnly("io.papermc.paper:paper-api:1.20.2-R0.1-SNAPSHOT")
 
     // Integrations
-    // compileOnly("net.luckperms:api:5.4")
+    compileOnly("net.luckperms:api:5.4")
     compileOnly("net.essentialsx:EssentialsX:2.20.1")
     compileOnly("us.dynmap:dynmap-api:3.3")
     compileOnly("us.dynmap:DynmapCoreAPI:3.3")

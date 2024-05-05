@@ -5,10 +5,10 @@ import com.projectcitybuild.pcbridge.http.services.pcb.IPBanHttpService
 import java.util.UUID
 
 class IPBanRepository(
-    private val ipBanHttpService: IPBanHttpService
+    private val httpService: IPBanHttpService
 ) {
     suspend fun get(ip: String): IPBan? {
-        return ipBanHttpService.get(ip)
+        return httpService.get(ip)
     }
 
     @Throws(IPBanHttpService.IPAlreadyBannedException::class)
@@ -18,7 +18,7 @@ class IPBanRepository(
         bannerName: String,
         reason: String,
     ) {
-        ipBanHttpService.ban(
+        httpService.ban(
             ip = ip,
             bannerUUID = bannerUUID,
             bannerName = bannerName,
@@ -32,7 +32,7 @@ class IPBanRepository(
         unbannerUUID: UUID?,
         unbannerName: String,
     ) {
-        ipBanHttpService.unban(
+        httpService.unban(
             ip = ip,
             unbannerUUID = unbannerUUID,
             unbannerName = unbannerName,

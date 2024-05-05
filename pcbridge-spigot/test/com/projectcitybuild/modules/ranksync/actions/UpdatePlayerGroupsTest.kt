@@ -4,7 +4,7 @@ import com.projectcitybuild.libs.permissions.Permissions
 import com.projectcitybuild.pcbridge.core.utils.Failure
 import com.projectcitybuild.pcbridge.core.utils.Success
 import com.projectcitybuild.pcbridge.http.services.pcb.PlayerGroupHttpService
-import com.projectcitybuild.repositories.PlayerGroupRepository
+import com.projectcitybuild.features.sync.repositories.SyncRepository
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
@@ -21,16 +21,16 @@ class UpdatePlayerGroupsTest {
     private lateinit var useCase: UpdatePlayerGroups
 
     private lateinit var permissions: Permissions
-    private lateinit var playerGroupRepository: PlayerGroupRepository
+    private lateinit var syncRepository: SyncRepository
 
     @BeforeEach
     fun setUp() {
         permissions = mock(Permissions::class.java)
-        playerGroupRepository = mock(PlayerGroupRepository::class.java)
+        syncRepository = mock(SyncRepository::class.java)
 
         useCase = UpdatePlayerGroups(
             permissions,
-            playerGroupRepository,
+            syncRepository,
         )
     }
 
@@ -38,10 +38,10 @@ class UpdatePlayerGroupsTest {
     fun `should assign player to groups and donor tiers`() = runTest {
         val playerUUID = UUID.randomUUID()
 
-        whenever(playerGroupRepository.getGroups(any())).thenReturn(
+        whenever(syncRepository.getGroups(any())).thenReturn(
             listOf("group1", "group2")
         )
-        whenever(playerGroupRepository.getDonorTiers(any())).thenReturn(
+        whenever(syncRepository.getDonorTiers(any())).thenReturn(
             listOf("donor_tier1")
         )
 
@@ -55,10 +55,10 @@ class UpdatePlayerGroupsTest {
     fun `should return failure if account not linked`() = runTest {
         val playerUUID = UUID.randomUUID()
 
-        whenever(playerGroupRepository.getGroups(any())).thenThrow(
+        whenever(syncRepository.getGroups(any())).thenThrow(
             PlayerGroupHttpService.NoLinkedAccountException::class.java
         )
-        whenever(playerGroupRepository.getDonorTiers(any())).thenReturn(emptyList())
+        whenever(syncRepository.getDonorTiers(any())).thenReturn(emptyList())
 
         val result = useCase.execute(playerUUID)
 

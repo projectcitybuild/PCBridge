@@ -1,7 +1,7 @@
 package com.projectcitybuild.features.bans.actions
 
 import com.projectcitybuild.features.bans.repositories.IPBanRepository
-import com.projectcitybuild.utils.Sanitizer
+import com.projectcitybuild.features.bans.Sanitizer
 import com.projectcitybuild.pcbridge.core.utils.Failure
 import com.projectcitybuild.pcbridge.core.utils.Result
 import com.projectcitybuild.pcbridge.core.utils.Success

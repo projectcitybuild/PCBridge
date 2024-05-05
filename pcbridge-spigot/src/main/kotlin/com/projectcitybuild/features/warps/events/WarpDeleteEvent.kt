@@ -11,8 +11,6 @@ class WarpDeleteEvent : SpigotEvent() {
         private val HANDLERS = HandlerList()
 
         @JvmStatic
-        fun getHandlerList(): HandlerList {
-            return HANDLERS
-        }
+        fun getHandlerList() = HANDLERS
     }
 }

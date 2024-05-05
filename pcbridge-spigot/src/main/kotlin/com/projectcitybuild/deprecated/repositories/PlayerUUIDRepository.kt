@@ -8,7 +8,7 @@ import java.util.UUID
 
 open class PlayerUUIDRepository(
     private val server: Server,
-    private val playerUUIDHttpService: PlayerUUIDHttpService,
+    private val httpService: PlayerUUIDHttpService,
 ) {
     // TODO: cache with expiry time
     private val mojangPlayerCache = HashMap<String, MojangPlayer>()
@@ -29,7 +29,7 @@ open class PlayerUUIDRepository(
             return cacheHit
         }
         return try {
-            playerUUIDHttpService.get(playerName)
+            httpService.get(playerName)
         } catch (e: PlayerUUIDHttpService.PlayerNotFoundException) {
             null
         }

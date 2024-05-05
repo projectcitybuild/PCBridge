@@ -1,6 +1,6 @@
 // package com.projectcitybuild.integrations.luckperms
 //
-// import com.projectcitybuild.modules.chat.ChatGroupFormatter
+// import com.projectcitybuild.features.chat.ChatGroupFormatter
 // import com.projectcitybuild.support.spigot.SpigotIntegration
 // import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger
 // import net.luckperms.api.LuckPerms

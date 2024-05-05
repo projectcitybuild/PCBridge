@@ -11,13 +11,11 @@ import com.projectcitybuild.pcbridge.http.services.pcb.PlayerGroupHttpService
 import com.projectcitybuild.pcbridge.http.services.pcb.PlayerWarningHttpService
 import com.projectcitybuild.pcbridge.http.services.pcb.TelemetryHttpService
 import com.projectcitybuild.pcbridge.http.services.pcb.UUIDBanHttpService
-import kotlin.coroutines.CoroutineContext
 
 class HttpService(
     private val authToken: String,
     private val baseURL: String,
     private val withLogging: Boolean,
-    private val contextBuilder: () -> CoroutineContext,
 ) {
     private val pcbClient by lazy {
         PCBClientFactory(
@@ -33,9 +31,8 @@ class HttpService(
         ).build()
     }
 
-    private val responseParser: ResponseParser by lazy {
-        ResponseParser(contextBuilder)
-    }
+    private val responseParser: ResponseParser
+        get() = ResponseParser()
 
     val playerUuid
         get() = PlayerUUIDHttpService(mojangClient, responseParser)

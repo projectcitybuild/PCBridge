@@ -1,14 +1,18 @@
 package com.projectcitybuild.features.bans.listeners
 
 import com.projectcitybuild.core.errors.SentryReporter
+import com.projectcitybuild.core.state.PlayerState
+import com.projectcitybuild.core.state.Store
 import com.projectcitybuild.features.bans.actions.AuthoriseConnection
 import com.projectcitybuild.features.bans.events.ConnectionPermittedEvent
 import com.projectcitybuild.pcbridge.core.modules.datetime.formatter.DateTimeFormatter
 import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger
 import com.projectcitybuild.pcbridge.http.responses.Aggregate
 import com.projectcitybuild.features.bans.repositories.AggregateRepository
-import com.projectcitybuild.utils.Sanitizer
+import com.projectcitybuild.features.bans.Sanitizer
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.Server
@@ -17,14 +21,17 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent
 import java.time.format.FormatStyle
+import kotlin.coroutines.CoroutineContext
 
-class CheckBanOnConnectListener(
+class AuthorizeConnectionListener(
     private val aggregateRepository: AggregateRepository,
     private val authoriseConnection: AuthoriseConnection,
     private val logger: PlatformLogger,
     private val dateTimeFormatter: DateTimeFormatter,
     private val sentry: SentryReporter,
     private val server: Server,
+    private val minecraftDispatcher: () -> CoroutineContext,
+    private val store: Store,
 ) : Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     suspend fun handle(event: AsyncPlayerPreLoginEvent) {
@@ -54,14 +61,20 @@ class CheckBanOnConnectListener(
                     )
                     return@runBlocking
                 }
-
-                server.pluginManager.callEvent(
-                    ConnectionPermittedEvent(
-                        aggregate = aggregate,
-                        playerUUID = event.uniqueId,
+                store.mutate { state ->
+                    state.copy(
+                        players = state.players
+                            .apply { put(event.uniqueId, PlayerState.empty()) },
                     )
-                )
-
+                }
+                withContext(minecraftDispatcher()) {
+                    server.pluginManager.callEvent(
+                        ConnectionPermittedEvent(
+                            aggregate = aggregate,
+                            playerUUID = event.uniqueId,
+                        )
+                    )
+                }
             }.onFailure {
                 logger.severe(it.localizedMessage)
                 sentry.report(it)

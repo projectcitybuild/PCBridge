@@ -9,17 +9,14 @@ class ConnectionPermittedEvent(
     val aggregate: Aggregate,
     val playerUUID: UUID,
 ) : Event() {
+    override fun getHandlers(): HandlerList {
+        return HANDLERS
+    }
 
     companion object {
         private val HANDLERS = HandlerList()
 
         @JvmStatic
-        fun getHandlerList(): HandlerList {
-            return HANDLERS
-        }
-    }
-
-    override fun getHandlers(): HandlerList {
-        return HANDLERS
+        fun getHandlerList() = HANDLERS
     }
 }

@@ -1,5 +1,6 @@
 package com.projectcitybuild.utils
 
+import com.projectcitybuild.features.bans.Sanitizer
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 

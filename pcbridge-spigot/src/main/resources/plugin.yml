@@ -27,6 +27,10 @@ commands:
     permission: pcbridge.build.invisframe
   nv:
     permission: pcbridge.build.nightvision
+  sync:
+    permission: pcbridge.sync.login
+  syncother:
+    permission: pcbridge.sync.other
   unban:
     permission: pcbridge.ban.ban
   unbanip:

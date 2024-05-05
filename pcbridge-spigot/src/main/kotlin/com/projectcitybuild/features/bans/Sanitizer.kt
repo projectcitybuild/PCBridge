@@ -1,7 +1,6 @@
-package com.projectcitybuild.utils
+package com.projectcitybuild.features.bans
 
 class Sanitizer private constructor() {
-
     companion object {
         private val ipPortPattern = Regex("^.*:[0-9]+$")
 

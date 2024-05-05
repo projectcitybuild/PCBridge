@@ -7,8 +7,10 @@ import com.projectcitybuild.features.bans.commands.BanIPCommand
 import com.projectcitybuild.features.bans.commands.CheckBanCommand
 import com.projectcitybuild.features.bans.commands.UnbanCommand
 import com.projectcitybuild.features.bans.commands.UnbanIPCommand
-import com.projectcitybuild.features.bans.listeners.CheckBanOnConnectListener
+import com.projectcitybuild.features.bans.listeners.AuthorizeConnectionListener
 import com.projectcitybuild.features.chat.listeners.EmojiChatListener
+import com.projectcitybuild.features.chat.listeners.FormatNameChatListener
+import com.projectcitybuild.features.chat.listeners.SyncBadgesOnJoinListener
 import com.projectcitybuild.features.invisframes.commands.InvisFrameCommand
 import com.projectcitybuild.features.invisframes.listeners.FrameItemInsertListener
 import com.projectcitybuild.features.invisframes.listeners.FrameItemRemoveListener
@@ -22,6 +24,9 @@ import com.projectcitybuild.features.mute.commands.UnmuteCommand
 import com.projectcitybuild.features.mute.listeners.MuteChatListener
 import com.projectcitybuild.features.nightvision.commands.NightVisionCommand
 import com.projectcitybuild.features.staffchat.commands.StaffChatCommand
+import com.projectcitybuild.features.sync.commands.SyncCommand
+import com.projectcitybuild.features.sync.commands.SyncOtherCommand
+import com.projectcitybuild.features.sync.listener.SyncRankOnJoinListener
 import com.projectcitybuild.features.telemetry.listeners.TelemetryPlayerConnectListener
 import com.projectcitybuild.features.utilities.commands.PCBridgeCommand
 import com.projectcitybuild.features.warps.commands.WarpCommand
@@ -132,20 +137,31 @@ private class Lifecycle: KoinComponent {
                 handler = get<UnbanIPCommand>(),
                 argsParser = UnbanIPCommand.Args.Parser(),
             )
+            register(
+                handler = get<SyncCommand>(),
+                argsParser = SyncCommand.Args.Parser(),
+            )
+            register(
+                handler = get<SyncOtherCommand>(),
+                argsParser = SyncOtherCommand.Args.Parser(),
+            )
         }
-        listenerRegistry.apply {
-            register(get<AnnounceJoinListener>())
-            register(get<AnnounceQuitListener>())
-            register(get<FirstTimeJoinListener>())
-            register(get<ServerOverviewJoinListener>())
-            register(get<EmojiChatListener>())
-            register(get<TelemetryPlayerConnectListener>())
-            register(get<MuteChatListener>())
-            register(get<FramePlaceListener>())
-            register(get<FrameItemInsertListener>())
-            register(get<FrameItemRemoveListener>())
-            register(get<CheckBanOnConnectListener>())
-        }
+        listenerRegistry.register(
+            get<AnnounceJoinListener>(),
+            get<AnnounceQuitListener>(),
+            get<FirstTimeJoinListener>(),
+            get<ServerOverviewJoinListener>(),
+            get<EmojiChatListener>(),
+            get<TelemetryPlayerConnectListener>(),
+            get<MuteChatListener>(),
+            get<FramePlaceListener>(),
+            get<FrameItemInsertListener>(),
+            get<FrameItemRemoveListener>(),
+            get<AuthorizeConnectionListener>(),
+            get<SyncRankOnJoinListener>(),
+            get<SyncBadgesOnJoinListener>(),
+            get<FormatNameChatListener>(),
+        )
 
         get<DynmapIntegration>().enable()
         get<EssentialsIntegration>().enable()

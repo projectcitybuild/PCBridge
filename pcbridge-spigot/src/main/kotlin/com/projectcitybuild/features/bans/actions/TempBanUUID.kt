@@ -49,7 +49,7 @@ class TempBanUUID(
 
             // TODO: move this to command
             server.broadcastMessage(
-                TextComponent("$targetPlayerName has been temporarily banned by $bannerName: ${reason ?: "No reason given"}").apply {
+                TextComponent("$targetPlayerName has been temporarily banned").apply {
                     color = ChatColor.GRAY
                     isItalic = true
                 }

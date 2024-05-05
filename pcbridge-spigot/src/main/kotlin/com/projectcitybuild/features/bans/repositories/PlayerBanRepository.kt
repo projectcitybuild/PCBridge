@@ -5,10 +5,10 @@ import com.projectcitybuild.pcbridge.http.services.pcb.UUIDBanHttpService
 import java.util.UUID
 
 class PlayerBanRepository(
-    private val uuidBanHttpService: UUIDBanHttpService,
+    private val httpService: UUIDBanHttpService,
 ) {
     suspend fun get(targetPlayerUUID: UUID): PlayerBan? {
-        return uuidBanHttpService.get(targetPlayerUUID)
+        return httpService.get(targetPlayerUUID)
     }
 
     @Throws(UUIDBanHttpService.UUIDAlreadyBannedException::class)
@@ -20,7 +20,7 @@ class PlayerBanRepository(
         reason: String?,
         expiryDate: Long? = null,
     ) {
-        uuidBanHttpService.ban(
+        httpService.ban(
             targetPlayerUUID = targetPlayerUUID,
             targetPlayerName = targetPlayerName,
             bannerPlayerUUID = bannerPlayerUUID,
@@ -35,7 +35,7 @@ class PlayerBanRepository(
         targetPlayerUUID: UUID,
         unbannerUUID: UUID?,
     ) {
-        uuidBanHttpService.unban(
+        httpService.unban(
             targetPlayerUUID = targetPlayerUUID,
             unbannerUUID = unbannerUUID,
         )

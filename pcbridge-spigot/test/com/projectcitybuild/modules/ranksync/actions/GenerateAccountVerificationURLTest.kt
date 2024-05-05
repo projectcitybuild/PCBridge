@@ -3,7 +3,7 @@ package com.projectcitybuild.modules.ranksync.actions
 import com.projectcitybuild.pcbridge.core.utils.Failure
 import com.projectcitybuild.pcbridge.core.utils.Success
 import com.projectcitybuild.pcbridge.http.services.pcb.AccountLinkHTTPService
-import com.projectcitybuild.repositories.VerificationURLRepository
+import com.projectcitybuild.features.sync.repositories.VerificationURLRepository
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach

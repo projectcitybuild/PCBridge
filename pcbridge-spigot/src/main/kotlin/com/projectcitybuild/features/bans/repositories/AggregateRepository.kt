@@ -6,11 +6,11 @@ import java.util.UUID
 import kotlin.jvm.Throws
 
 class AggregateRepository(
-    private val aggregateHttpService: AggregateHttpService,
+    private val httpService: AggregateHttpService,
 ) {
     @Throws(Exception::class)
     suspend fun get(playerUUID: UUID, ip: String): Aggregate? {
-        return aggregateHttpService.get(
+        return httpService.get(
             playerUUID = playerUUID,
             ip = ip,
         )

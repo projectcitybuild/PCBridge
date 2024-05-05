@@ -21,10 +21,11 @@ class AnnounceJoinListener(
     @EventHandler(priority = EventPriority.NORMAL)
     suspend fun onPlayerJoin(event: PlayerJoinEvent) {
         store.mutate { state ->
-            val players = state.players
-            players[event.player.uniqueId] = PlayerState(
-                connectedAt = time.now(),
-            )
+            val players = state.players.also {
+                it[event.player.uniqueId] = it
+                    .getOrDefault(event.player.uniqueId, defaultValue = PlayerState.empty())
+                    .copy(connectedAt = time.now())
+            }
             state.copy(
                 players = players
             )

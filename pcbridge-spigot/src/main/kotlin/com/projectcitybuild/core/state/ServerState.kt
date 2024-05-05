@@ -1,5 +1,6 @@
 package com.projectcitybuild.core.state
 
+import com.projectcitybuild.pcbridge.http.responses.Badge
 import kotlinx.serialization.Serializable
 import java.time.LocalDateTime
 import java.util.UUID
@@ -17,5 +18,13 @@ data class ServerState(
 
 @Serializable
 data class PlayerState(
-    val connectedAt: LocalDateTime,
-)
+    val connectedAt: LocalDateTime?,
+    val badges: List<Badge>,
+) {
+    companion object {
+        fun empty() = PlayerState(
+            connectedAt = null,
+            badges = emptyList(),
+        )
+    }
+}

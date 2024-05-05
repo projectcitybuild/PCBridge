@@ -1,13 +1,16 @@
-package com.projectcitybuild.repositories
+package com.projectcitybuild.features.sync.repositories
 
 import com.projectcitybuild.data.PluginConfig
 import com.projectcitybuild.pcbridge.core.modules.config.Config
 import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger
+import com.projectcitybuild.pcbridge.http.responses.DonationPerk
+import com.projectcitybuild.pcbridge.http.services.pcb.AccountLinkHTTPService
 import com.projectcitybuild.pcbridge.http.services.pcb.PlayerGroupHttpService
 import java.util.UUID
 
-class PlayerGroupRepository(
+class SyncRepository(
     private val playerGroupHttpService: PlayerGroupHttpService,
+    private val accountLinkHttpService: AccountLinkHTTPService,
     private val config: Config<PluginConfig>,
     private val logger: PlatformLogger,
 ) {
@@ -18,9 +21,11 @@ class PlayerGroupRepository(
     }
 
     @Throws(PlayerGroupHttpService.NoLinkedAccountException::class)
-    suspend fun getDonorTiers(playerUUID: UUID): List<String> {
-        val perks = playerGroupHttpService.getDonorPerks(playerUUID)
+    suspend fun getDonorPerks(playerUUID: UUID): List<DonationPerk> {
+        return playerGroupHttpService.getDonorPerks(playerUUID)
+    }
 
+    fun getDonorTiers(perks: List<DonationPerk>): List<String> {
         return perks.mapNotNull { donorPerk ->
             val tierName = donorPerk.donationTier.name
 
@@ -35,5 +40,10 @@ class PlayerGroupRepository(
                 }
             }
         }
+    }
+
+    @Throws(AccountLinkHTTPService.AlreadyLinkedException::class)
+    suspend fun generateVerificationURL(playerUUID: UUID): String? {
+        return accountLinkHttpService.generateVerificationURL(playerUUID)
     }
 }

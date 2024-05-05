@@ -4,7 +4,6 @@ import com.projectcitybuild.support.messages.CommandHelpBuilder
 import com.projectcitybuild.support.spigot.BadCommandUsageException
 import com.projectcitybuild.support.spigot.CommandArgsParser
 import com.projectcitybuild.support.spigot.SpigotCommand
-import com.projectcitybuild.support.textcomponent.send
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextDecoration
@@ -19,8 +18,7 @@ class NightVisionCommand: SpigotCommand<NightVisionCommand.Args> {
     override val usage = CommandHelpBuilder()
 
     override suspend fun run(sender: CommandSender, args: Args) {
-        val player = sender as? Player
-        checkNotNull (player) {
+        check (sender is Player) {
             "Only players can use this command"
         }
         val duration = Integer.MAX_VALUE
@@ -29,22 +27,22 @@ class NightVisionCommand: SpigotCommand<NightVisionCommand.Args> {
         val potionEffect = PotionEffect(potionEffectType, duration, amplifier)
 
         val toggleOn = if (args.desiredState == null) {
-            !player.hasPotionEffect(potionEffectType)
+            !sender.hasPotionEffect(potionEffectType)
         } else {
             args.desiredState == true
         }
 
-        player.removePotionEffect(potionEffectType)
+        sender.removePotionEffect(potionEffectType)
 
         if (toggleOn) {
-            player.addPotionEffect(potionEffect)
-            player.sendMessage(
+            sender.addPotionEffect(potionEffect)
+            sender.sendMessage(
                 Component.text("NightVision toggled on. Type /nv to turn it off")
                     .color(NamedTextColor.GRAY)
                     .decorate(TextDecoration.ITALIC)
             )
         } else {
-            player.sendMessage(
+            sender.sendMessage(
                 Component.text("NightVision toggled off")
                     .color(NamedTextColor.GRAY)
                     .decorate(TextDecoration.ITALIC)

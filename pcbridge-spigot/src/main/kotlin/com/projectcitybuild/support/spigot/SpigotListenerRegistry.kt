@@ -12,6 +12,10 @@ class SpigotListenerRegistry(
         plugin.server.pluginManager.registerSuspendingEvents(listener, plugin)
     }
 
+    fun register(vararg listeners: Listener) {
+        listeners.forEach(::register)
+    }
+
     fun unregisterAll() {
         HandlerList.unregisterAll(plugin)
     }
