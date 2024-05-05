@@ -37,7 +37,7 @@ class SyncOtherCommand(
             }
             is Success -> {
                 sender.sendMessage(
-                    Component.text("$targetPlayer has been synchronized")
+                    Component.text("${targetPlayer.name} has been synchronized")
                         .color(NamedTextColor.GRAY)
                         .decorate(TextDecoration.ITALIC)
                 )

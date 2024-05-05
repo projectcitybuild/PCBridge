@@ -16,18 +16,14 @@ class ChatBadgeFormatter(
             return null
         }
 
-        val formattedBadge = Component.text()
-            .append(
-                Component.text("Badges")
-                    .color(NamedTextColor.YELLOW),
-            )
-            .appendNewline()
-            .append(
-                Component.text("---")
-                    .color(NamedTextColor.GRAY),
-            )
-            .appendNewline()
-
+        val formattedBadge = Component.text().append(
+            Component.text("Badges")
+                .color(NamedTextColor.YELLOW)
+                .appendNewline(),
+            Component.text("---")
+                .color(NamedTextColor.GRAY)
+                .appendNewline(),
+        )
         badges.withIndex().forEach { (index, badge) ->
             formattedBadge.append(
                 Component.text(badge.unicodeIcon),

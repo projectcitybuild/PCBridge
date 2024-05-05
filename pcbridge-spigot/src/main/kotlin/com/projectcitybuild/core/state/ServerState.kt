@@ -13,8 +13,26 @@ import java.util.UUID
  */
 @Serializable
 data class ServerState(
-    val players: MutableMap<UUID, PlayerState>
-)
+    /**
+     * Individual state for each online player
+     */
+    val players: MutableMap<UUID, PlayerState>,
+
+    /**
+     * Index of the last announcement broadcast to players on the server.
+     *
+     * This is used to enumerate over the announcement list, and remember
+     * which one was last broadcast when reloading
+     */
+    val lastBroadcastIndex: Int,
+) {
+    companion object {
+        fun default() = ServerState(
+            players = mutableMapOf(),
+            lastBroadcastIndex = -1,
+        )
+    }
+}
 
 @Serializable
 data class PlayerState(

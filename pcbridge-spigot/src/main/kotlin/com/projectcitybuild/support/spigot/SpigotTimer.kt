@@ -2,12 +2,13 @@ package com.projectcitybuild.support.spigot
 
 import com.projectcitybuild.pcbridge.core.contracts.PlatformTimer
 import com.projectcitybuild.pcbridge.core.utils.Cancellable
-import org.bukkit.plugin.Plugin
+import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.scheduler.BukkitTask
 import java.util.concurrent.TimeUnit
 
+// TODO: replace these with coroutines + delay later
 class SpigotTimer(
-    private val plugin: Plugin,
+    private val plugin: JavaPlugin,
 ) : PlatformTimer {
     private val tasks: HashMap<String, BukkitTask> = hashMapOf()
 

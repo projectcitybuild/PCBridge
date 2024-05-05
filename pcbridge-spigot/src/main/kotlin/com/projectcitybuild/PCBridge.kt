@@ -2,6 +2,7 @@ package com.projectcitybuild
 
 import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
 import com.projectcitybuild.core.errors.SentryReporter
+import com.projectcitybuild.features.announcements.listeners.AnnouncementEnableListener
 import com.projectcitybuild.features.bans.commands.BanCommand
 import com.projectcitybuild.features.bans.commands.BanIPCommand
 import com.projectcitybuild.features.bans.commands.CheckBanCommand
@@ -36,6 +37,7 @@ import com.projectcitybuild.integrations.EssentialsIntegration
 import com.projectcitybuild.integrations.LuckPermsIntegration
 import com.projectcitybuild.support.spigot.SpigotCommandRegistry
 import com.projectcitybuild.support.spigot.SpigotListenerRegistry
+import com.projectcitybuild.support.spigot.SpigotTimer
 import net.kyori.adventure.platform.bukkit.BukkitAudiences
 import org.koin.core.KoinApplication
 import org.koin.core.component.KoinComponent
@@ -162,6 +164,7 @@ private class Lifecycle: KoinComponent {
             get<SyncRankOnJoinListener>(),
             get<SyncBadgesOnJoinListener>(),
             get<FormatNameChatListener>(),
+            get<AnnouncementEnableListener>(),
         )
 
         get<DynmapIntegration>().enable()
@@ -170,6 +173,8 @@ private class Lifecycle: KoinComponent {
     }
 
     suspend fun shutdown() = trace {
+        get<SpigotTimer>().cancelAll()
+
         get<DynmapIntegration>().disable()
         get<EssentialsIntegration>().disable()
         get<LuckPermsIntegration>().disable()

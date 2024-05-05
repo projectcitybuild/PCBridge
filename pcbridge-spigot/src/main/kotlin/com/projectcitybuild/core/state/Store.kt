@@ -16,6 +16,7 @@ class Store(
 
     private var _state = ServerState(
         players = mutableMapOf(),
+        lastBroadcastIndex = 0,
     )
 
     suspend fun mutate(mutation: (ServerState) -> ServerState) = withContext(Dispatchers.Default) {

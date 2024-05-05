@@ -27,7 +27,6 @@ repositories {
 dependencies {
     implementation(project(":pcbridge-core"))
     implementation(project(":pcbridge-http"))
-    implementation(project(":pcbridge-web-server"))
 
     // Paper
     compileOnly("io.papermc.paper:paper-api:1.20.2-R0.1-SNAPSHOT")

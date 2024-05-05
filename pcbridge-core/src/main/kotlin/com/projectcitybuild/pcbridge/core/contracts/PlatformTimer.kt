@@ -4,7 +4,6 @@ import com.projectcitybuild.pcbridge.core.utils.Cancellable
 import java.util.concurrent.TimeUnit
 
 interface PlatformTimer {
-
     fun scheduleOnce(
         identifier: String,
         delay: Long,

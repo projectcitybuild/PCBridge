@@ -9,6 +9,8 @@ import com.projectcitybuild.core.errors.SentryReporter
 import com.projectcitybuild.core.permissions.Permissions
 import com.projectcitybuild.core.permissions.adapters.LuckPermsPermissions
 import com.projectcitybuild.core.state.Store
+import com.projectcitybuild.features.announcements.listeners.AnnouncementEnableListener
+import com.projectcitybuild.features.announcements.repositories.ScheduledAnnouncementsRepository
 import com.projectcitybuild.features.bans.actions.AuthoriseConnection
 import com.projectcitybuild.features.bans.actions.BanIP
 import com.projectcitybuild.features.bans.actions.BanUUID
@@ -62,6 +64,7 @@ import com.projectcitybuild.integrations.DynmapIntegration
 import com.projectcitybuild.integrations.EssentialsIntegration
 import com.projectcitybuild.integrations.LuckPermsIntegration
 import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger
+import com.projectcitybuild.pcbridge.core.contracts.PlatformTimer
 import com.projectcitybuild.pcbridge.core.modules.config.Config
 import com.projectcitybuild.pcbridge.core.modules.datetime.formatter.DateTimeFormatter
 import com.projectcitybuild.pcbridge.core.modules.datetime.formatter.DateTimeFormatterImpl
@@ -74,6 +77,7 @@ import com.projectcitybuild.support.spigot.SpigotCommandRegistry
 import com.projectcitybuild.support.spigot.SpigotListenerRegistry
 import com.projectcitybuild.support.spigot.SpigotLogger
 import com.projectcitybuild.support.spigot.SpigotNamespace
+import com.projectcitybuild.support.spigot.SpigotTimer
 import io.github.reactivecircus.cache4k.Cache
 import net.kyori.adventure.platform.bukkit.BukkitAudiences
 import net.kyori.adventure.text.Component
@@ -98,6 +102,7 @@ fun pluginModule(_plugin: JavaPlugin) = module {
     integrations()
 
     // Features
+    announcements()
     bans()
     chat()
     joinMessages()
@@ -148,6 +153,12 @@ private fun Module.spigot(plugin: JavaPlugin) {
     single<Permissions> {
         LuckPermsPermissions(
             logger = get(),
+        )
+    }
+
+    factory<PlatformTimer> {
+        SpigotTimer(
+            plugin = get(),
         )
     }
 }
@@ -253,6 +264,26 @@ private fun Module.integrations() {
     single {
         LuckPermsIntegration(
             logger = get(),
+        )
+    }
+}
+
+private fun Module.announcements() {
+    single {
+        ScheduledAnnouncementsRepository(
+            config = get(),
+            store = get(),
+        )
+    }
+
+    factory {
+        AnnouncementEnableListener(
+            scheduledAnnouncementsRepository = get(),
+            config = get(),
+            timer = get(),
+            server = get(),
+            logger = get(),
+            plugin = get(),
         )
     }
 }
