@@ -3,6 +3,8 @@ package com.projectcitybuild.pcbridge.http.services.pcb
 import com.projectcitybuild.pcbridge.http.parsing.ResponseParser
 import com.projectcitybuild.pcbridge.http.pcb
 import com.projectcitybuild.pcbridge.http.responses.PlayerBan
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import retrofit2.Retrofit
 import java.util.UUID
 
@@ -13,7 +15,7 @@ class UUIDBanHttpService(
     class UUIDAlreadyBannedException : Exception()
     class UUIDNotBannedException : Exception()
 
-    suspend fun get(targetPlayerUUID: UUID): PlayerBan? {
+    suspend fun get(targetPlayerUUID: UUID): PlayerBan? = withContext(Dispatchers.IO) {
         val response = responseParser.parse {
             retrofit.pcb().getUuidBanStatus(
                 playerId = targetPlayerUUID.toString(),
@@ -21,9 +23,9 @@ class UUIDBanHttpService(
         }
         val ban = response.data
         if (ban?.unbannedAt != null) {
-            return null
+            null
         }
-        return ban
+        ban
     }
 
     @Throws(UUIDAlreadyBannedException::class)
@@ -34,7 +36,7 @@ class UUIDBanHttpService(
         bannerPlayerName: String,
         reason: String?,
         expiryDate: Long? = null,
-    ) {
+    ) = withContext(Dispatchers.IO) {
         try {
             responseParser.parse {
                 retrofit.pcb().banUUID(
@@ -58,7 +60,7 @@ class UUIDBanHttpService(
     suspend fun unban(
         targetPlayerUUID: UUID,
         unbannerUUID: UUID?,
-    ) {
+    ) = withContext(Dispatchers.IO) {
         try {
             responseParser.parse {
                 retrofit.pcb().unbanUUID(

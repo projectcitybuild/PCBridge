@@ -4,6 +4,8 @@ import com.projectcitybuild.pcbridge.http.parsing.ResponseParser
 import com.projectcitybuild.pcbridge.http.pcb
 import com.projectcitybuild.pcbridge.http.responses.DonationPerk
 import com.projectcitybuild.pcbridge.http.responses.Group
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import retrofit2.Retrofit
 import java.util.UUID
 
@@ -14,7 +16,7 @@ class PlayerGroupHttpService(
     class NoLinkedAccountException : Exception()
 
     @Throws(NoLinkedAccountException::class)
-    suspend fun getGroups(playerUUID: UUID): List<Group> {
+    suspend fun getGroups(playerUUID: UUID): List<Group> = withContext(Dispatchers.IO) {
         val response = try {
             responseParser.parse {
                 retrofit.pcb().getUserGroups(
@@ -27,12 +29,11 @@ class PlayerGroupHttpService(
             }
             throw e
         }
-
-        return response.data?.groups ?: listOf()
+        response.data?.groups ?: listOf()
     }
 
     @Throws(NoLinkedAccountException::class)
-    suspend fun getDonorPerks(playerUUID: UUID): List<DonationPerk> {
+    suspend fun getDonorPerks(playerUUID: UUID): List<DonationPerk> = withContext(Dispatchers.IO) {
         val response = try {
             responseParser.parse {
                 retrofit.pcb().getDonationTier(
@@ -45,6 +46,6 @@ class PlayerGroupHttpService(
             }
             throw e
         }
-        return response.data?.toList() ?: listOf()
+        response.data?.toList() ?: listOf()
     }
 }

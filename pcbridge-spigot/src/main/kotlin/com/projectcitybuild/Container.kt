@@ -6,6 +6,8 @@ import com.projectcitybuild.data.PluginConfig
 import com.projectcitybuild.core.database.DatabaseSession
 import com.projectcitybuild.core.database.DatabaseSource
 import com.projectcitybuild.core.errors.SentryReporter
+import com.projectcitybuild.core.permissions.Permissions
+import com.projectcitybuild.core.permissions.adapters.LuckPermsPermissions
 import com.projectcitybuild.core.state.Store
 import com.projectcitybuild.features.bans.actions.AuthoriseConnection
 import com.projectcitybuild.features.bans.actions.BanIP
@@ -58,8 +60,7 @@ import com.projectcitybuild.features.warps.commands.WarpCommand
 import com.projectcitybuild.features.warps.commands.WarpsCommand
 import com.projectcitybuild.integrations.DynmapIntegration
 import com.projectcitybuild.integrations.EssentialsIntegration
-import com.projectcitybuild.libs.permissions.Permissions
-import com.projectcitybuild.libs.permissions.adapters.LuckPermsPermissions
+import com.projectcitybuild.integrations.LuckPermsIntegration
 import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger
 import com.projectcitybuild.pcbridge.core.modules.config.Config
 import com.projectcitybuild.pcbridge.core.modules.datetime.formatter.DateTimeFormatter
@@ -246,6 +247,12 @@ private fun Module.integrations() {
             plugin = get(),
             logger = get(),
             sentry = get(),
+        )
+    }
+
+    single {
+        LuckPermsIntegration(
+            logger = get(),
         )
     }
 }

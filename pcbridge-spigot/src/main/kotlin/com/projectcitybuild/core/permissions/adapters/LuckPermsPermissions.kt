@@ -1,6 +1,6 @@
-package com.projectcitybuild.libs.permissions.adapters
+package com.projectcitybuild.core.permissions.adapters
 
-import com.projectcitybuild.libs.permissions.Permissions
+import com.projectcitybuild.core.permissions.Permissions
 import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger
 import net.luckperms.api.LuckPerms
 import net.luckperms.api.LuckPermsProvider
@@ -13,16 +13,10 @@ import java.util.stream.Collectors
 class LuckPermsPermissions(
     private val logger: PlatformLogger,
 ) : Permissions {
-
     class PermissionUserNotFoundException() : Exception()
 
-    private lateinit var luckPerms: LuckPerms
-
-    override fun connect() {
-        luckPerms = LuckPermsProvider.get()
-
-        logger.info("Connected to LuckPerms")
-    }
+    private val luckPerms: LuckPerms
+        get() = LuckPermsProvider.get()
 
     private fun getUser(playerUUID: UUID): User {
         val user = luckPerms.userManager.getUser(playerUUID)

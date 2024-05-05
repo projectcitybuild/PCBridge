@@ -1,10 +1,8 @@
-package com.projectcitybuild.libs.permissions
+package com.projectcitybuild.core.permissions
 
 import java.util.UUID
 
 interface Permissions {
-    fun connect()
-
     fun setUserGroups(playerUUID: UUID, groupNames: List<String>)
 
     fun getUserGroups(playerUUID: UUID): Set<String>

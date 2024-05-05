@@ -3,6 +3,7 @@ package com.projectcitybuild.features.chat
 import com.projectcitybuild.features.chat.repositories.ChatBadgeRepository
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.HoverEvent
+import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.minimessage.MiniMessage
 import java.util.UUID
 
@@ -14,24 +15,32 @@ class ChatBadgeFormatter(
         if (badges.isEmpty()) {
             return null
         }
-        val formattedBadges = badges.withIndex().map { (index, badge) ->
-            Component.text()
-                .append(
-                    Component.text(badge.unicodeIcon),
-                    Component.space(),
-                    Component.text(badge.displayName),
-                )
-                .also {
-                    if (index < badges.size - 1) {
-                        it.appendNewline()
-                    }
-                }
-        }
-        return MiniMessage.miniMessage().deserialize(chatBadgeRepository.getIcon())
-            .hoverEvent(
-                HoverEvent.showText(
-                    Component.text(formattedBadges.joinToString(separator = ""))
-                )
+
+        val formattedBadge = Component.text()
+            .append(
+                Component.text("Badges")
+                    .color(NamedTextColor.YELLOW),
             )
+            .appendNewline()
+            .append(
+                Component.text("---")
+                    .color(NamedTextColor.GRAY),
+            )
+            .appendNewline()
+
+        badges.withIndex().forEach { (index, badge) ->
+            formattedBadge.append(
+                Component.text(badge.unicodeIcon),
+                Component.space(),
+                Component.text(badge.displayName),
+            ).also {
+                if (index < badges.size - 1) {
+                    it.appendNewline()
+                }
+            }
+        }
+        return MiniMessage.miniMessage()
+            .deserialize(chatBadgeRepository.getIcon())
+            .hoverEvent(HoverEvent.showText(formattedBadge))
     }
 }

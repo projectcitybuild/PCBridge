@@ -1,6 +1,6 @@
 package com.projectcitybuild.features.sync.actions
 
-import com.projectcitybuild.libs.permissions.Permissions
+import com.projectcitybuild.core.permissions.Permissions
 import com.projectcitybuild.pcbridge.core.utils.Failure
 import com.projectcitybuild.pcbridge.core.utils.Result
 import com.projectcitybuild.pcbridge.core.utils.Success

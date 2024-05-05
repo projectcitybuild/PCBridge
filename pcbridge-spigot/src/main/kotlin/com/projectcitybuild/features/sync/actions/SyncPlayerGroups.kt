@@ -1,7 +1,7 @@
 package com.projectcitybuild.features.sync.actions
 
+import com.projectcitybuild.core.permissions.Permissions
 import com.projectcitybuild.features.sync.repositories.SyncRepository
-import com.projectcitybuild.libs.permissions.Permissions
 import com.projectcitybuild.pcbridge.http.responses.DonationPerk
 import com.projectcitybuild.pcbridge.http.responses.Group
 import java.util.UUID

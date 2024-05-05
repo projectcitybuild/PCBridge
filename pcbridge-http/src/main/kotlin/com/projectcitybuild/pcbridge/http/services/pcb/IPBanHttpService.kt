@@ -3,6 +3,8 @@ package com.projectcitybuild.pcbridge.http.services.pcb
 import com.projectcitybuild.pcbridge.http.parsing.ResponseParser
 import com.projectcitybuild.pcbridge.http.pcb
 import com.projectcitybuild.pcbridge.http.responses.IPBan
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import retrofit2.Retrofit
 import java.util.UUID
 
@@ -26,7 +28,7 @@ class IPBanHttpService(
         bannerUUID: UUID?,
         bannerName: String,
         reason: String,
-    ) {
+    ) = withContext(Dispatchers.IO) {
         try {
             responseParser.parse {
                 retrofit.pcb().banIP(
@@ -49,7 +51,7 @@ class IPBanHttpService(
         ip: String,
         unbannerUUID: UUID?,
         unbannerName: String,
-    ) {
+    ) = withContext(Dispatchers.IO) {
         try {
             responseParser.parse {
                 retrofit.pcb().unbanIP(

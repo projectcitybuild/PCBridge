@@ -33,6 +33,7 @@ import com.projectcitybuild.features.warps.commands.WarpCommand
 import com.projectcitybuild.features.warps.commands.WarpsCommand
 import com.projectcitybuild.integrations.DynmapIntegration
 import com.projectcitybuild.integrations.EssentialsIntegration
+import com.projectcitybuild.integrations.LuckPermsIntegration
 import com.projectcitybuild.support.spigot.SpigotCommandRegistry
 import com.projectcitybuild.support.spigot.SpigotListenerRegistry
 import net.kyori.adventure.platform.bukkit.BukkitAudiences
@@ -165,11 +166,13 @@ private class Lifecycle: KoinComponent {
 
         get<DynmapIntegration>().enable()
         get<EssentialsIntegration>().enable()
+        get<LuckPermsIntegration>().enable()
     }
 
     suspend fun shutdown() = trace {
         get<DynmapIntegration>().disable()
         get<EssentialsIntegration>().disable()
+        get<LuckPermsIntegration>().disable()
 
         listenerRegistry.unregisterAll()
         commandRegistry.unregisterAll()

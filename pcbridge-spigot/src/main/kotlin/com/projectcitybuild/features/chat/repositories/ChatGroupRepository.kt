@@ -1,8 +1,8 @@
 package com.projectcitybuild.features.chat.repositories
 
+import com.projectcitybuild.core.permissions.Permissions
 import com.projectcitybuild.data.PluginConfig
 import com.projectcitybuild.features.chat.ChatGroupType
-import com.projectcitybuild.libs.permissions.Permissions
 import com.projectcitybuild.pcbridge.core.modules.config.Config
 import java.util.UUID
 
