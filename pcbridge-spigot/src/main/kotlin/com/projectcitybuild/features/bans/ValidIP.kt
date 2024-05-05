@@ -1,4 +1,4 @@
-package com.projectcitybuild.pcbridge.core.utils.helpers
+package com.projectcitybuild.features.bans
 
 import java.util.regex.Pattern
 

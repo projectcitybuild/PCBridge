@@ -3,7 +3,7 @@ package com.projectcitybuild.modules.moderation.bans.actions
 import com.projectcitybuild.pcbridge.core.utils.Failure
 import com.projectcitybuild.pcbridge.http.services.pcb.UUIDBanHttpService
 import com.projectcitybuild.features.bans.repositories.PlayerBanRepository
-import com.projectcitybuild.repositories.PlayerUUIDRepository
+import com.projectcitybuild.features.bans.repositories.PlayerUUIDRepository
 import com.projectcitybuild.support.spigot.SpigotServer
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals

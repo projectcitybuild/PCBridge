@@ -5,7 +5,7 @@ import com.projectcitybuild.pcbridge.core.utils.Result
 import com.projectcitybuild.pcbridge.core.utils.Success
 import com.projectcitybuild.pcbridge.http.services.pcb.UUIDBanHttpService
 import com.projectcitybuild.features.bans.repositories.PlayerBanRepository
-import com.projectcitybuild.repositories.PlayerUUIDRepository
+import com.projectcitybuild.features.bans.repositories.PlayerUUIDRepository
 import net.kyori.adventure.text.Component
 import org.bukkit.Server
 import org.bukkit.event.player.PlayerKickEvent

@@ -5,7 +5,7 @@
 // import com.projectcitybuild.pcbridge.core.utils.Success
 // import com.projectcitybuild.pcbridge.http.services.pcb.UUIDBanHttpService
 // import com.projectcitybuild.features.bans.repositories.PlayerBanRepository
-// import com.projectcitybuild.repositories.PlayerUUIDRepository
+// import com.projectcitybuild.features.bans.repositories.PlayerUUIDRepository
 // import com.projectcitybuild.support.spigot.SpigotServer
 // import net.md_5.bungee.api.ChatColor
 // import net.md_5.bungee.api.chat.TextComponent

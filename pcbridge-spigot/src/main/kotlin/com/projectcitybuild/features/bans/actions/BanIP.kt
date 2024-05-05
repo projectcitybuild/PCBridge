@@ -2,10 +2,10 @@ package com.projectcitybuild.features.bans.actions
 
 import com.projectcitybuild.features.bans.repositories.IPBanRepository
 import com.projectcitybuild.features.bans.Sanitizer
+import com.projectcitybuild.features.bans.isValidIP
 import com.projectcitybuild.pcbridge.core.utils.Failure
 import com.projectcitybuild.pcbridge.core.utils.Result
 import com.projectcitybuild.pcbridge.core.utils.Success
-import com.projectcitybuild.pcbridge.core.utils.helpers.isValidIP
 import com.projectcitybuild.pcbridge.http.services.pcb.IPBanHttpService
 import net.kyori.adventure.text.Component
 import org.bukkit.Server

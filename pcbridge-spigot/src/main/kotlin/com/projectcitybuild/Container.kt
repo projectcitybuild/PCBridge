@@ -72,7 +72,7 @@ import com.projectcitybuild.pcbridge.core.modules.datetime.time.LocalizedTime
 import com.projectcitybuild.pcbridge.core.modules.datetime.time.Time
 import com.projectcitybuild.pcbridge.core.storage.JsonStorage
 import com.projectcitybuild.pcbridge.http.HttpService
-import com.projectcitybuild.repositories.PlayerUUIDRepository
+import com.projectcitybuild.features.bans.repositories.PlayerUUIDRepository
 import com.projectcitybuild.support.spigot.SpigotCommandRegistry
 import com.projectcitybuild.support.spigot.SpigotListenerRegistry
 import com.projectcitybuild.support.spigot.SpigotLogger

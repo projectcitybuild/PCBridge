@@ -5,7 +5,7 @@ import com.projectcitybuild.pcbridge.core.utils.Failure
 import com.projectcitybuild.pcbridge.core.utils.Result
 import com.projectcitybuild.pcbridge.core.utils.Success
 import com.projectcitybuild.features.bans.repositories.PlayerBanRepository
-import com.projectcitybuild.repositories.PlayerUUIDRepository
+import com.projectcitybuild.features.bans.repositories.PlayerUUIDRepository
 
 class CheckUUIDBan(
     private val playerBanRepository: PlayerBanRepository,

@@ -74,6 +74,8 @@ class AuthorizeConnectionListener(
                             playerUUID = event.uniqueId,
                         )
                     )
+
+                    // TODO: emit FirstTimeJoinEvent if necessary
                 }
             }.onFailure {
                 logger.severe(it.localizedMessage)
