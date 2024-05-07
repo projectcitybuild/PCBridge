@@ -30,6 +30,8 @@ import com.projectcitybuild.features.sync.commands.SyncOtherCommand
 import com.projectcitybuild.features.sync.listener.SyncRankOnJoinListener
 import com.projectcitybuild.features.telemetry.listeners.TelemetryPlayerConnectListener
 import com.projectcitybuild.features.utilities.commands.PCBridgeCommand
+import com.projectcitybuild.features.warnings.commands.WarningAcknowledgeCommand
+import com.projectcitybuild.features.warnings.listeners.NotifyWarningsOnJoinListener
 import com.projectcitybuild.features.warps.commands.WarpCommand
 import com.projectcitybuild.features.warps.commands.WarpsCommand
 import com.projectcitybuild.integrations.DynmapIntegration
@@ -148,6 +150,10 @@ private class Lifecycle: KoinComponent {
                 handler = get<SyncOtherCommand>(),
                 argsParser = SyncOtherCommand.Args.Parser(),
             )
+            register(
+                handler = get<WarningAcknowledgeCommand>(),
+                argsParser = WarningAcknowledgeCommand.Args.Parser(),
+            )
         }
         listenerRegistry.register(
             get<AnnounceJoinListener>(),
@@ -165,6 +171,7 @@ private class Lifecycle: KoinComponent {
             get<SyncBadgesOnJoinListener>(),
             get<FormatNameChatListener>(),
             get<AnnouncementEnableListener>(),
+            get<NotifyWarningsOnJoinListener>(),
         )
 
         get<DynmapIntegration>().enable()

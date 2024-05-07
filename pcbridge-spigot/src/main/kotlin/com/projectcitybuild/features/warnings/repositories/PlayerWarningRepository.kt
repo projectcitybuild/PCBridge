@@ -1,4 +1,4 @@
-package com.projectcitybuild.repositories
+package com.projectcitybuild.features.warnings.repositories
 
 import com.projectcitybuild.pcbridge.http.responses.PlayerWarning
 import com.projectcitybuild.pcbridge.http.services.pcb.PlayerWarningHttpService
@@ -11,22 +11,6 @@ class PlayerWarningRepository(
         return playerWarningHttpService.get(
             playerUUID = playerUUID,
             playerName = playerName,
-        )
-    }
-
-    suspend fun create(
-        warnedPlayerUUID: UUID,
-        warnedPlayerName: String,
-        warnerPlayerUUID: UUID,
-        warnerPlayerName: String,
-        reason: String,
-    ): PlayerWarning? {
-        return playerWarningHttpService.create(
-            warnedPlayerUUID = warnedPlayerUUID,
-            warnedPlayerName = warnedPlayerName,
-            warnerPlayerUUID = warnerPlayerUUID,
-            warnerPlayerName = warnerPlayerName,
-            reason = reason,
         )
     }
 

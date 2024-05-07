@@ -1,11 +1,11 @@
-package com.projectcitybuild.modules.moderation.warnings.actions
+package com.projectcitybuild.features.warnings.actions
 
 import com.projectcitybuild.pcbridge.core.modules.datetime.formatter.DateTimeFormatter
-import com.projectcitybuild.repositories.PlayerWarningRepository
+import com.projectcitybuild.features.warnings.repositories.PlayerWarningRepository
 import java.util.UUID
 
 class GetUnacknowledgedWarnings(
-    private val playerWarningRepository: PlayerWarningRepository,
+    private val warningRepository: PlayerWarningRepository,
     private val dateTimeFormatter: DateTimeFormatter,
 ) {
     data class FormattedWarning(
@@ -19,7 +19,7 @@ class GetUnacknowledgedWarnings(
         playerUUID: UUID,
         playerName: String
     ): List<FormattedWarning> {
-        return playerWarningRepository
+        return warningRepository
             .get(playerUUID, playerName)
             .filter { !it.isAcknowledged }
             .map {

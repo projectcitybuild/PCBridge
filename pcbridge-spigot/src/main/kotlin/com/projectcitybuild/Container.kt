@@ -73,6 +73,10 @@ import com.projectcitybuild.pcbridge.core.modules.datetime.time.Time
 import com.projectcitybuild.pcbridge.core.storage.JsonStorage
 import com.projectcitybuild.pcbridge.http.HttpService
 import com.projectcitybuild.features.bans.repositories.PlayerUUIDRepository
+import com.projectcitybuild.features.warnings.actions.GetUnacknowledgedWarnings
+import com.projectcitybuild.features.warnings.commands.WarningAcknowledgeCommand
+import com.projectcitybuild.features.warnings.listeners.NotifyWarningsOnJoinListener
+import com.projectcitybuild.features.warnings.repositories.PlayerWarningRepository
 import com.projectcitybuild.support.spigot.SpigotCommandRegistry
 import com.projectcitybuild.support.spigot.SpigotListenerRegistry
 import com.projectcitybuild.support.spigot.SpigotLogger
@@ -114,6 +118,7 @@ fun pluginModule(_plugin: JavaPlugin) = module {
     telemetry()
     utilities()
     warps()
+    warnings()
 }
 
 private fun Module.spigot(plugin: JavaPlugin) {
@@ -633,5 +638,28 @@ private fun Module.utilities() {
 
     factory {
         PCBridgeCommand.TabCompleter()
+    }
+}
+
+private fun Module.warnings() {
+    factory {
+        PlayerWarningRepository(
+            playerWarningHttpService = get<HttpService>().playerWarning,
+        )
+    }
+
+    factory {
+        WarningAcknowledgeCommand(
+            warningRepository = get(),
+        )
+    }
+
+    factory {
+        NotifyWarningsOnJoinListener(
+            getUnacknowledgedWarnings = GetUnacknowledgedWarnings(
+                dateTimeFormatter = get(),
+                warningRepository = get(),
+            )
+        )
     }
 }
