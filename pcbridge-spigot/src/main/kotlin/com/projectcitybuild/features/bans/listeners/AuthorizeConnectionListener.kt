@@ -10,7 +10,6 @@ import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger
 import com.projectcitybuild.pcbridge.http.responses.Aggregate
 import com.projectcitybuild.features.bans.repositories.AggregateRepository
 import com.projectcitybuild.features.bans.Sanitizer
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import net.kyori.adventure.text.Component
@@ -67,6 +66,7 @@ class AuthorizeConnectionListener(
                             .apply { put(event.uniqueId, PlayerState.empty()) },
                     )
                 }
+
                 withContext(minecraftDispatcher()) {
                     server.pluginManager.callEvent(
                         ConnectionPermittedEvent(
@@ -74,8 +74,6 @@ class AuthorizeConnectionListener(
                             playerUUID = event.uniqueId,
                         )
                     )
-
-                    // TODO: emit FirstTimeJoinEvent if necessary
                 }
             }.onFailure {
                 logger.severe(it.localizedMessage)

@@ -5,7 +5,6 @@ import com.github.shynixn.mccoroutine.bukkit.SuspendingTabCompleter
 import com.github.shynixn.mccoroutine.bukkit.setSuspendingExecutor
 import com.github.shynixn.mccoroutine.bukkit.setSuspendingTabCompleter
 import com.projectcitybuild.core.errors.SentryReporter
-import net.kyori.adventure.platform.bukkit.BukkitAudiences
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.command.Command

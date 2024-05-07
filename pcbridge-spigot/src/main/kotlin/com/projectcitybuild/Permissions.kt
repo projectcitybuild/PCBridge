@@ -1,4 +1,4 @@
-package com.projectcitybuild.entities
+package com.projectcitybuild
 
 class Permissions private constructor() {
     companion object {

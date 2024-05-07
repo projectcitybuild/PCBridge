@@ -2,7 +2,7 @@ package com.projectcitybuild.features.announcements.listeners
 
 import com.projectcitybuild.data.PluginConfig
 import com.projectcitybuild.features.announcements.actions.StartAnnouncementTimer
-import com.projectcitybuild.features.announcements.repositories.ScheduledAnnouncementsRepository
+import com.projectcitybuild.features.announcements.repositories.AnnouncementRepository
 import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger
 import com.projectcitybuild.pcbridge.core.contracts.PlatformTimer
 import com.projectcitybuild.pcbridge.core.modules.config.Config
@@ -15,7 +15,7 @@ import org.bukkit.event.server.PluginEnableEvent
 import org.bukkit.plugin.java.JavaPlugin
 
 class AnnouncementEnableListener(
-    private val scheduledAnnouncementsRepository: ScheduledAnnouncementsRepository,
+    private val announcementRepository: AnnouncementRepository,
     private val config: Config<PluginConfig>,
     private val timer: PlatformTimer,
     private val server: Server,
@@ -31,7 +31,7 @@ class AnnouncementEnableListener(
             return
         }
         action = StartAnnouncementTimer(
-            scheduledAnnouncementsRepository,
+            announcementRepository,
             config,
             timer,
             server,

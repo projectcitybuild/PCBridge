@@ -1,7 +1,7 @@
 package com.projectcitybuild.features.announcements.actions
 
 import com.projectcitybuild.data.PluginConfig
-import com.projectcitybuild.features.announcements.repositories.ScheduledAnnouncementsRepository
+import com.projectcitybuild.features.announcements.repositories.AnnouncementRepository
 import com.projectcitybuild.pcbridge.core.contracts.PlatformTimer
 import com.projectcitybuild.pcbridge.core.modules.config.Config
 import kotlinx.coroutines.runBlocking
@@ -10,7 +10,7 @@ import org.bukkit.Server
 import java.util.concurrent.TimeUnit
 
 class StartAnnouncementTimer(
-    private val repository: ScheduledAnnouncementsRepository,
+    private val repository: AnnouncementRepository,
     private val config: Config<PluginConfig>,
     private val timer: PlatformTimer,
     private val server: Server,

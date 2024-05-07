@@ -10,7 +10,7 @@ import com.projectcitybuild.core.permissions.Permissions
 import com.projectcitybuild.core.permissions.adapters.LuckPermsPermissions
 import com.projectcitybuild.core.state.Store
 import com.projectcitybuild.features.announcements.listeners.AnnouncementEnableListener
-import com.projectcitybuild.features.announcements.repositories.ScheduledAnnouncementsRepository
+import com.projectcitybuild.features.announcements.repositories.AnnouncementRepository
 import com.projectcitybuild.features.bans.actions.AuthoriseConnection
 import com.projectcitybuild.features.bans.actions.BanIP
 import com.projectcitybuild.features.bans.actions.BanUUID
@@ -275,7 +275,7 @@ private fun Module.integrations() {
 
 private fun Module.announcements() {
     single {
-        ScheduledAnnouncementsRepository(
+        AnnouncementRepository(
             config = get(),
             store = get(),
         )
@@ -283,7 +283,7 @@ private fun Module.announcements() {
 
     factory {
         AnnouncementEnableListener(
-            scheduledAnnouncementsRepository = get(),
+            announcementRepository = get(),
             config = get(),
             timer = get(),
             server = get(),

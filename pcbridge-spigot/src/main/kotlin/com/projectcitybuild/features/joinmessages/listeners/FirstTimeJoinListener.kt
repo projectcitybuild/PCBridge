@@ -1,9 +1,10 @@
 package com.projectcitybuild.features.joinmessages.listeners
 
 import com.projectcitybuild.data.PluginConfig
-import com.projectcitybuild.features.joinmessages.events.FirstTimeJoinEvent
+import com.projectcitybuild.features.joinmessages.repositories.PlayerConfigRepository
 import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger
 import com.projectcitybuild.pcbridge.core.modules.config.Config
+import com.projectcitybuild.pcbridge.core.modules.datetime.time.Time
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.MiniMessage
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
@@ -11,14 +12,26 @@ import org.bukkit.Server
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
+import org.bukkit.event.player.PlayerJoinEvent
 
 class FirstTimeJoinListener(
     private val server: Server,
-    private val config: Config<PluginConfig>,
     private val logger: PlatformLogger,
+    private val playerConfigRepository: PlayerConfigRepository,
+    private val config: Config<PluginConfig>,
+    private val time: Time,
 ) : Listener {
     @EventHandler(priority = EventPriority.MONITOR)
-    fun onFirstTimeJoin(event: FirstTimeJoinEvent) {
+    suspend fun onPlayerJoin(event: PlayerJoinEvent) {
+        val playerConfig = playerConfigRepository.get(event.player.uniqueId)
+        if (playerConfig != null) {
+            return
+        }
+        playerConfigRepository.add(
+            uuid = event.player.uniqueId,
+            firstSeen = time.now(),
+        )
+
         logger.debug("Sending first-time welcome message for ${event.player.name}")
 
         val message = MiniMessage.miniMessage().deserialize(

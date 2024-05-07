@@ -41,3 +41,5 @@ commands:
     permission: pcbridge.warps.teleport
   warps:
     permission: pcbridge.warps.list
+  warning:
+    permission: pcbridge.warning.acknowledge

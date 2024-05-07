@@ -1,7 +1,7 @@
 package com.projectcitybuild.modules.chat.commands
 
-import com.projectcitybuild.entities.PlayerConfig
-import com.projectcitybuild.repositories.PlayerConfigRepository
+import com.projectcitybuild.features.joinmessages.PlayerConfig
+import com.projectcitybuild.features.joinmessages.repositories.PlayerConfigRepository
 import com.projectcitybuild.support.commandapi.ToggleOption
 import org.bukkit.entity.Player
 import org.junit.jupiter.api.Assertions.assertEquals

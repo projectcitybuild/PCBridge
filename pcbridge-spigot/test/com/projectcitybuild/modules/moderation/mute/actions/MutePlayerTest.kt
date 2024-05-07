@@ -1,8 +1,8 @@
 package com.projectcitybuild.modules.moderation.mute.actions
 
-import com.projectcitybuild.entities.PlayerConfig
+import com.projectcitybuild.features.joinmessages.PlayerConfig
 import com.projectcitybuild.modules.moderation.mutes.actions.MutePlayer
-import com.projectcitybuild.repositories.PlayerConfigRepository
+import com.projectcitybuild.features.joinmessages.repositories.PlayerConfigRepository
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
