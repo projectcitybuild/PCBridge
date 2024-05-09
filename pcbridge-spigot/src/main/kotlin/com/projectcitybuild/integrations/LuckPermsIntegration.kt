@@ -1,8 +1,7 @@
 package com.projectcitybuild.integrations
 
+import com.projectcitybuild.core.logger.logger
 import com.projectcitybuild.features.chat.ChatGroupFormatter
-import com.projectcitybuild.support.PlatformLogger
-import com.projectcitybuild.support.spigot.SpigotIntegration
 import net.luckperms.api.LuckPerms
 import net.luckperms.api.LuckPermsProvider
 import net.luckperms.api.event.EventSubscription
@@ -13,7 +12,6 @@ import org.bukkit.plugin.Plugin
 
 class LuckPermsIntegration(
     // private val plugin: Plugin,
-    private val logger: PlatformLogger,
     // private val chatGroupFormatter: ChatGroupFormatter,
 ) : Listener {
     private var luckPerms: LuckPerms? = null
@@ -23,10 +21,10 @@ class LuckPermsIntegration(
         try {
             luckPerms = LuckPermsProvider.get()
         } catch (e: Exception) {
-            logger.severe("Failed to hook into LuckPerms plugin")
+            logger.error { "Failed to hook into LuckPerms plugin" }
             return
         }
-        logger.info("LuckPerms integration enabled")
+        logger.info { "LuckPerms integration enabled" }
 
         // listenForCacheInvalidation()
     }

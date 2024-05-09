@@ -1,17 +1,16 @@
 package com.projectcitybuild.features.sync.repositories
 
 import com.projectcitybuild.core.config.Config
+import com.projectcitybuild.core.logger.logger
 import com.projectcitybuild.pcbridge.http.responses.DonationPerk
 import com.projectcitybuild.pcbridge.http.services.pcb.AccountLinkHTTPService
 import com.projectcitybuild.pcbridge.http.services.pcb.PlayerGroupHttpService
-import com.projectcitybuild.support.PlatformLogger
 import java.util.UUID
 
 class SyncRepository(
     private val playerGroupHttpService: PlayerGroupHttpService,
     private val accountLinkHttpService: AccountLinkHTTPService,
     private val config: Config,
-    private val logger: PlatformLogger,
 ) {
     @Throws(PlayerGroupHttpService.NoLinkedAccountException::class)
     suspend fun getGroups(playerUUID: UUID): List<String> {
@@ -34,7 +33,7 @@ class SyncRepository(
                 "iron" -> groupNames.iron
                 "diamond" -> groupNames.diamond
                 else -> {
-                    logger.severe("Missing config node for donor tier: $tierName")
+                    logger.error { "Missing config node for donor tier: $tierName" }
                     null
                 }
             }

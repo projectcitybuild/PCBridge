@@ -1,12 +1,11 @@
 package com.projectcitybuild.core.errors
 
 import com.projectcitybuild.core.config.Config
-import com.projectcitybuild.support.PlatformLogger
+import com.projectcitybuild.core.logger.logger
 import io.sentry.Sentry
 
 class SentryReporter(
     private val config: Config,
-    private val logger: PlatformLogger,
 ) {
     private var started = false
 
@@ -15,13 +14,13 @@ class SentryReporter(
             options.dsn = config.load().errorReporting.sentryDsn
         }
         started = true
-        logger.info("Sentry error reporting enabled")
+        logger.info { "Sentry error reporting enabled" }
     }
 
     fun close() {
         if (started) {
             Sentry.close()
-            logger.info("Sentry error reporting disabled")
+            logger.info { "Sentry error reporting disabled" }
         }
     }
 
@@ -29,5 +28,12 @@ class SentryReporter(
         if (started) {
             Sentry.captureException(throwable)
         }
+    }
+}
+
+suspend fun <R> SentryReporter.trace(block: suspend () -> R): Result<R> {
+    return runCatching { block() }.onFailure {
+        report(it)
+        throw it
     }
 }

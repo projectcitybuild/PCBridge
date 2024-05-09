@@ -1,4 +1,4 @@
-package com.projectcitybuild.utils
+package com.projectcitybuild.utils.extensions
 
 import java.util.regex.Pattern
 

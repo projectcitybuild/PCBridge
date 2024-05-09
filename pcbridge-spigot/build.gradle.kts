@@ -48,6 +48,7 @@ dependencies {
     implementation("net.kyori:adventure-text-minimessage:4.16.0")
     compileOnly("org.spongepowered:configurate-gson:4.0.0")
     implementation("org.spongepowered:configurate-extra-kotlin:4.1.2")
+    implementation("io.github.oshai:kotlin-logging-jvm:5.1.0")
 
     // Testing
     // testImplementation("io.papermc.paper:paper-api:1.20.2-R0.1-SNAPSHOT")

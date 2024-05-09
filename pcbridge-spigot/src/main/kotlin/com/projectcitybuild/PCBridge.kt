@@ -2,6 +2,7 @@ package com.projectcitybuild
 
 import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
 import com.projectcitybuild.core.errors.SentryReporter
+import com.projectcitybuild.core.errors.trace
 import com.projectcitybuild.features.announcements.listeners.AnnouncementEnableListener
 import com.projectcitybuild.features.bans.commands.BanCommand
 import com.projectcitybuild.features.bans.commands.BanIPCommand
@@ -87,7 +88,7 @@ private class Lifecycle: KoinComponent {
     private val commandRegistry: SpigotCommandRegistry by inject()
     private val listenerRegistry: SpigotListenerRegistry by inject()
 
-    suspend fun boot() = trace {
+    suspend fun boot() = sentry.trace {
         commandRegistry.apply {
             register(
                 handler = get<PCBridgeCommand>(),
@@ -179,7 +180,7 @@ private class Lifecycle: KoinComponent {
         get<LuckPermsIntegration>().enable()
     }
 
-    suspend fun shutdown() = trace {
+    suspend fun shutdown() = sentry.trace {
         get<SpigotTimer>().cancelAll()
 
         get<DynmapIntegration>().disable()
@@ -189,13 +190,6 @@ private class Lifecycle: KoinComponent {
         listenerRegistry.unregisterAll()
         commandRegistry.unregisterAll()
         audiences.close()
-    }
-
-    private suspend fun <R> trace(block: suspend () -> R): Result<R> {
-        return runCatching { block() }.onFailure {
-            sentry.report(it)
-            throw it
-        }
     }
 }
 

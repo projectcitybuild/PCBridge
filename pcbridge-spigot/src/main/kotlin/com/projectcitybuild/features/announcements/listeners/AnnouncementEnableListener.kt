@@ -1,9 +1,9 @@
 package com.projectcitybuild.features.announcements.listeners
 
 import com.projectcitybuild.core.config.Config
+import com.projectcitybuild.core.logger.logger
 import com.projectcitybuild.features.announcements.actions.StartAnnouncementTimer
 import com.projectcitybuild.features.announcements.repositories.AnnouncementRepository
-import com.projectcitybuild.support.PlatformLogger
 import com.projectcitybuild.support.spigot.SpigotTimer
 import org.bukkit.Server
 import org.bukkit.event.EventHandler
@@ -18,7 +18,6 @@ class AnnouncementEnableListener(
     private val config: Config,
     private val timer: SpigotTimer,
     private val server: Server,
-    private val logger: PlatformLogger,
     private val plugin: JavaPlugin,
 ): Listener {
     private var action: StartAnnouncementTimer? = null
@@ -37,7 +36,7 @@ class AnnouncementEnableListener(
         )
         action?.start()
 
-        logger.debug("Announcement timer started")
+        logger.debug { "Announcement timer started" }
     }
 
     @EventHandler
@@ -49,6 +48,6 @@ class AnnouncementEnableListener(
         action?.stop()
         action = null
 
-        logger.debug("Announcement timer stopped")
+        logger.debug { "Announcement timer stopped" }
     }
 }

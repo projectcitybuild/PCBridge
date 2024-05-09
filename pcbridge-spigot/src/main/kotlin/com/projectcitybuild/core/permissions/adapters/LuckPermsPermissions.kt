@@ -1,7 +1,7 @@
 package com.projectcitybuild.core.permissions.adapters
 
+import com.projectcitybuild.core.logger.logger
 import com.projectcitybuild.core.permissions.Permissions
-import com.projectcitybuild.support.PlatformLogger
 import net.luckperms.api.LuckPerms
 import net.luckperms.api.LuckPermsProvider
 import net.luckperms.api.model.user.User
@@ -10,9 +10,7 @@ import net.luckperms.api.node.types.InheritanceNode
 import java.util.UUID
 import java.util.stream.Collectors
 
-class LuckPermsPermissions(
-    private val logger: PlatformLogger,
-) : Permissions {
+class LuckPermsPermissions: Permissions {
     class PermissionUserNotFoundException() : Exception()
 
     private val luckPerms: LuckPerms
@@ -21,7 +19,7 @@ class LuckPermsPermissions(
     private fun getUser(playerUUID: UUID): User {
         val user = luckPerms.userManager.getUser(playerUUID)
         if (user == null) {
-            logger.severe("Could not load user ($playerUUID) from permissions manager")
+            logger.error { "Could not load user ($playerUUID) from permissions manager" }
             throw PermissionUserNotFoundException()
         }
         return user
@@ -41,8 +39,7 @@ class LuckPermsPermissions(
         groupNames.forEach { groupName ->
             val groupNode = InheritanceNode.builder(groupName).build()
             user.data().add(groupNode)
-
-            logger.verbose("Assigning to $groupName group")
+            logger.debug { "Assigning to $groupName group" }
         }
 
         luckPerms.userManager.saveUser(user)

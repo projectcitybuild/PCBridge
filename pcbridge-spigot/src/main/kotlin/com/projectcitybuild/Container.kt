@@ -71,10 +71,8 @@ import com.projectcitybuild.features.warnings.actions.GetUnacknowledgedWarnings
 import com.projectcitybuild.features.warnings.commands.WarningAcknowledgeCommand
 import com.projectcitybuild.features.warnings.listeners.NotifyWarningsOnJoinListener
 import com.projectcitybuild.features.warnings.repositories.PlayerWarningRepository
-import com.projectcitybuild.support.PlatformLogger
 import com.projectcitybuild.support.spigot.SpigotCommandRegistry
 import com.projectcitybuild.support.spigot.SpigotListenerRegistry
-import com.projectcitybuild.support.spigot.SpigotLogger
 import com.projectcitybuild.support.spigot.SpigotNamespace
 import com.projectcitybuild.support.spigot.SpigotTimer
 import io.github.reactivecircus.cache4k.Cache
@@ -123,10 +121,6 @@ private fun Module.spigot(plugin: JavaPlugin) {
         get<JavaPlugin>().server
     }
 
-    single<PlatformLogger> {
-        SpigotLogger(get<JavaPlugin>().logger)
-    }
-
     single {
         BukkitAudiences.create(get<JavaPlugin>())
     }
@@ -151,9 +145,7 @@ private fun Module.spigot(plugin: JavaPlugin) {
     }
 
     single<Permissions> {
-        LuckPermsPermissions(
-            logger = get(),
-        )
+        LuckPermsPermissions()
     }
 
     factory {
@@ -174,7 +166,7 @@ private fun Module.core() {
     }
 
     single {
-        DatabaseSession(logger = get()).apply {
+        DatabaseSession().apply {
             val configProvider = get<Config>()
             val config = configProvider.load()
             connect(DatabaseSource.fromConfig(config))
@@ -187,7 +179,6 @@ private fun Module.core() {
     single {
         SentryReporter(
             config = get(),
-            logger = get(),
         ).apply {
             val configProvider = get<Config>()
             val config = configProvider.load()
@@ -221,11 +212,7 @@ private fun Module.core() {
         )
     }
 
-    single {
-        Store(
-            logger = get(),
-        )
-    }
+    single { Store() }
 }
 
 private fun Module.http() {
@@ -245,7 +232,6 @@ private fun Module.integrations() {
         DynmapIntegration(
             plugin = get(),
             config = get(),
-            logger = get(),
             sentry = get(),
             warpRepository = get(),
         )
@@ -254,15 +240,12 @@ private fun Module.integrations() {
     single {
         EssentialsIntegration(
             plugin = get(),
-            logger = get(),
             sentry = get(),
         )
     }
 
     single {
-        LuckPermsIntegration(
-            logger = get(),
-        )
+        LuckPermsIntegration()
     }
 }
 
@@ -280,7 +263,6 @@ private fun Module.announcements() {
             config = get(),
             timer = get(),
             server = get(),
-            logger = get(),
             plugin = get(),
         )
     }
@@ -332,7 +314,6 @@ private fun Module.joinMessages() {
     factory {
         FirstTimeJoinListener(
             config = get(),
-            logger = get(),
             server = get(),
             playerConfigRepository = get(),
             time = get(),
@@ -425,7 +406,6 @@ private fun Module.bans() {
             aggregateRepository = get(),
             authoriseConnection = AuthoriseConnection(),
             dateTimeFormatter = get(),
-            logger = get(),
             sentry = get(),
             server = get(),
             minecraftDispatcher = { get<JavaPlugin>().minecraftDispatcher },
@@ -578,7 +558,6 @@ private fun Module.sync() {
             playerGroupHttpService = get<HttpService>().playerGroup,
             accountLinkHttpService = get<HttpService>().verificationURL,
             config = get(),
-            logger = get(),
         )
     }
 

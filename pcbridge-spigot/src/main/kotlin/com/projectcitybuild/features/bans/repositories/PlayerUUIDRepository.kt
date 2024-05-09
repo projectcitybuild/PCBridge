@@ -2,7 +2,7 @@ package com.projectcitybuild.features.bans.repositories
 
 import com.projectcitybuild.pcbridge.http.responses.MojangPlayer
 import com.projectcitybuild.pcbridge.http.services.mojang.PlayerUUIDHttpService
-import com.projectcitybuild.utils.toDashFormattedUUID
+import com.projectcitybuild.utils.extensions.toDashFormattedUUID
 import org.bukkit.Server
 import java.util.UUID
 

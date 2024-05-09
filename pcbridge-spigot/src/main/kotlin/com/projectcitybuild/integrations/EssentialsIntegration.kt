@@ -3,8 +3,8 @@ package com.projectcitybuild.integrations
 import com.earth2me.essentials.Essentials
 import com.github.shynixn.mccoroutine.bukkit.registerSuspendingEvents
 import com.projectcitybuild.core.errors.SentryReporter
+import com.projectcitybuild.core.logger.logger
 import com.projectcitybuild.features.warps.events.PlayerPreWarpEvent
-import com.projectcitybuild.support.PlatformLogger
 import com.projectcitybuild.support.spigot.SpigotIntegration
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -13,12 +13,10 @@ import org.bukkit.plugin.java.JavaPlugin
 
 class EssentialsIntegration(
     private val plugin: JavaPlugin,
-    private val sentry: SentryReporter,
-    private val logger: PlatformLogger,
+    sentry: SentryReporter,
 ) : Listener, SpigotIntegration(
     pluginName = "Essentials",
     pluginManager = plugin.server.pluginManager,
-    logger = logger,
     sentry = sentry,
 ) {
     private var essentials: Essentials? = null
@@ -29,7 +27,7 @@ class EssentialsIntegration(
         }
         essentials = loadedPlugin
         plugin.server.pluginManager.registerSuspendingEvents(this, plugin)
-        logger.info("Essentials integration enabled")
+        logger.info { "Essentials integration enabled" }
     }
 
     override suspend fun onDisable() {
@@ -46,13 +44,13 @@ class EssentialsIntegration(
     @EventHandler
     fun onPlayerPreWarp(event: PlayerPreWarpEvent) = runCatching {
         if (essentials == null) {
-            logger.warning("Essentials integration disabled but it's still listening to events")
+            logger.warn { "Essentials integration disabled but it's still listening to events" }
             return@runCatching
         }
         essentials!!
             .getUser(event.player)
             .setLastLocation()
 
-        logger.verbose("Registered last location for ${event.player.name} with Essentials")
+        logger.debug { "Registered last location for ${event.player.name} with Essentials" }
     }
 }

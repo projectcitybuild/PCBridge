@@ -3,7 +3,7 @@ package com.projectcitybuild.features.joinmessages.listeners
 import com.projectcitybuild.core.config.Config
 import com.projectcitybuild.features.joinmessages.repositories.PlayerConfigRepository
 import com.projectcitybuild.core.datetime.time.Time
-import com.projectcitybuild.support.PlatformLogger
+import com.projectcitybuild.core.logger.logger
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.MiniMessage
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
@@ -15,7 +15,6 @@ import org.bukkit.event.player.PlayerJoinEvent
 
 class FirstTimeJoinListener(
     private val server: Server,
-    private val logger: PlatformLogger,
     private val playerConfigRepository: PlayerConfigRepository,
     private val config: Config,
     private val time: Time,
@@ -31,7 +30,7 @@ class FirstTimeJoinListener(
             firstSeen = time.now(),
         )
 
-        logger.debug("Sending first-time welcome message for ${event.player.name}")
+        logger.debug { "Sending first-time welcome message for ${event.player.name}" }
 
         val message = MiniMessage.miniMessage().deserialize(
             config.load().messages.firstTimeJoin,

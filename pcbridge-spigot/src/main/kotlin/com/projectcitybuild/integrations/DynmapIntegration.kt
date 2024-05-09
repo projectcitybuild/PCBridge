@@ -3,11 +3,11 @@ package com.projectcitybuild.integrations
 import com.github.shynixn.mccoroutine.bukkit.registerSuspendingEvents
 import com.projectcitybuild.core.config.Config
 import com.projectcitybuild.core.errors.SentryReporter
+import com.projectcitybuild.core.logger.logger
 import com.projectcitybuild.features.warps.events.WarpCreateEvent
 import com.projectcitybuild.features.warps.events.WarpDeleteEvent
 import com.projectcitybuild.features.warps.repositories.WarpRepository
 import com.projectcitybuild.support.spigot.SpigotIntegration
-import com.projectcitybuild.support.PlatformLogger
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.plugin.Plugin
@@ -18,12 +18,10 @@ class DynmapIntegration(
     private val plugin: JavaPlugin,
     private val warpRepository: WarpRepository,
     private val config: Config,
-    private val logger: PlatformLogger,
     sentry: SentryReporter,
 ) : Listener, SpigotIntegration(
     pluginName = "dynmap",
     pluginManager = plugin.server.pluginManager,
-    logger = logger,
     sentry = sentry,
 ) {
     class DynmapMarkerIconNotFoundException : Exception()
@@ -36,7 +34,7 @@ class DynmapIntegration(
         }
         dynmap = loadedPlugin
         plugin.server.pluginManager.registerSuspendingEvents(this, plugin)
-        logger.info("Dynmap integration enabled")
+        logger.info { "Dynmap integration enabled" }
 
         updateWarpMarkers()
     }
@@ -61,11 +59,11 @@ class DynmapIntegration(
     private suspend fun updateWarpMarkers() {
         val dynmap = dynmap
         if (dynmap == null) {
-            logger.warning("Dynmap integration disabled but attempted to draw warp markers")
+            logger.warn { "Dynmap integration disabled but attempted to draw warp markers" }
             return
         }
 
-        logger.verbose("Redrawing warp markers...")
+        logger.debug { "Redrawing warp markers..." }
 
         val markerAPI = dynmap.markerAPI
 

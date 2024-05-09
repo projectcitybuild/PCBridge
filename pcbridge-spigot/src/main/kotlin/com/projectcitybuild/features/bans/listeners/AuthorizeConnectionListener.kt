@@ -6,10 +6,10 @@ import com.projectcitybuild.core.state.Store
 import com.projectcitybuild.features.bans.actions.AuthoriseConnection
 import com.projectcitybuild.features.bans.events.ConnectionPermittedEvent
 import com.projectcitybuild.core.datetime.formatter.DateTimeFormatter
+import com.projectcitybuild.core.logger.logger
 import com.projectcitybuild.pcbridge.http.responses.Aggregate
 import com.projectcitybuild.features.bans.repositories.AggregateRepository
 import com.projectcitybuild.features.bans.Sanitizer
-import com.projectcitybuild.support.PlatformLogger
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import net.kyori.adventure.text.Component
@@ -25,7 +25,6 @@ import kotlin.coroutines.CoroutineContext
 class AuthorizeConnectionListener(
     private val aggregateRepository: AggregateRepository,
     private val authoriseConnection: AuthoriseConnection,
-    private val logger: PlatformLogger,
     private val dateTimeFormatter: DateTimeFormatter,
     private val sentry: SentryReporter,
     private val server: Server,
@@ -76,7 +75,7 @@ class AuthorizeConnectionListener(
                     )
                 }
             }.onFailure {
-                logger.severe(it.localizedMessage)
+                logger.error { it.localizedMessage }
                 sentry.report(it)
 
                 // If something goes wrong, better not to let players in

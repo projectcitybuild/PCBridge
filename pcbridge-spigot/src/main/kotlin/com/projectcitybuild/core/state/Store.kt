@@ -1,6 +1,6 @@
 package com.projectcitybuild.core.state
 
-import com.projectcitybuild.support.PlatformLogger
+import com.projectcitybuild.core.logger.logger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -8,9 +8,7 @@ import kotlinx.coroutines.withContext
 
 private val mutex = Mutex()
 
-class Store(
-    private val logger: PlatformLogger,
-) {
+class Store {
     val state: ServerState
         get() = _state
 
@@ -20,11 +18,11 @@ class Store(
     )
 
     suspend fun mutate(mutation: (ServerState) -> ServerState) = withContext(Dispatchers.Default) {
-        logger.debug("[previous state]\n$state")
+        logger.debug { "[previous state]\n$state" }
 
         mutex.withLock {
             _state = mutation(_state)
-            logger.debug("[new state]\n$state")
+            logger.debug { "[new state]\n$state" }
         }
     }
 
