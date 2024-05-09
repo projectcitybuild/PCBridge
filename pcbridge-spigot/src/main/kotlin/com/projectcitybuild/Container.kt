@@ -62,18 +62,16 @@ import com.projectcitybuild.features.warps.commands.WarpsCommand
 import com.projectcitybuild.integrations.DynmapIntegration
 import com.projectcitybuild.integrations.EssentialsIntegration
 import com.projectcitybuild.integrations.LuckPermsIntegration
-import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger
-import com.projectcitybuild.pcbridge.core.contracts.PlatformTimer
-import com.projectcitybuild.pcbridge.core.modules.datetime.formatter.DateTimeFormatter
-import com.projectcitybuild.pcbridge.core.modules.datetime.formatter.DateTimeFormatterImpl
-import com.projectcitybuild.pcbridge.core.modules.datetime.time.LocalizedTime
-import com.projectcitybuild.pcbridge.core.modules.datetime.time.Time
+import com.projectcitybuild.core.datetime.formatter.DateTimeFormatter
+import com.projectcitybuild.core.datetime.time.LocalizedTime
+import com.projectcitybuild.core.datetime.time.Time
 import com.projectcitybuild.pcbridge.http.HttpService
 import com.projectcitybuild.features.bans.repositories.PlayerUUIDRepository
 import com.projectcitybuild.features.warnings.actions.GetUnacknowledgedWarnings
 import com.projectcitybuild.features.warnings.commands.WarningAcknowledgeCommand
 import com.projectcitybuild.features.warnings.listeners.NotifyWarningsOnJoinListener
 import com.projectcitybuild.features.warnings.repositories.PlayerWarningRepository
+import com.projectcitybuild.support.PlatformLogger
 import com.projectcitybuild.support.spigot.SpigotCommandRegistry
 import com.projectcitybuild.support.spigot.SpigotListenerRegistry
 import com.projectcitybuild.support.spigot.SpigotLogger
@@ -158,7 +156,7 @@ private fun Module.spigot(plugin: JavaPlugin) {
         )
     }
 
-    factory<PlatformTimer> {
+    factory {
         SpigotTimer(
             plugin = get(),
         )
@@ -210,10 +208,10 @@ private fun Module.core() {
         )
     }
 
-    factory<DateTimeFormatter> {
+    factory {
         val config = get<Config>().load()
 
-        DateTimeFormatterImpl(
+        DateTimeFormatter(
             locale = Locale.forLanguageTag(
                 config.localization.locale,
             ),

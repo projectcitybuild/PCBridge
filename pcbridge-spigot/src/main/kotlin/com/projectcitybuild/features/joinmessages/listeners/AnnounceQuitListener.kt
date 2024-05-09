@@ -2,7 +2,7 @@ package com.projectcitybuild.features.joinmessages.listeners
 
 import com.projectcitybuild.core.config.Config
 import com.projectcitybuild.core.state.Store
-import com.projectcitybuild.pcbridge.core.modules.datetime.time.Time
+import com.projectcitybuild.core.datetime.time.Time
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.MiniMessage
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder

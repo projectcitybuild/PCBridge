@@ -4,8 +4,8 @@ import com.earth2me.essentials.Essentials
 import com.github.shynixn.mccoroutine.bukkit.registerSuspendingEvents
 import com.projectcitybuild.core.errors.SentryReporter
 import com.projectcitybuild.features.warps.events.PlayerPreWarpEvent
+import com.projectcitybuild.support.PlatformLogger
 import com.projectcitybuild.support.spigot.SpigotIntegration
-import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.plugin.Plugin

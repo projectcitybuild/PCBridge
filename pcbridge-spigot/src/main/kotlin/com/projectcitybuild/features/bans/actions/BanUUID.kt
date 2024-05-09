@@ -1,8 +1,8 @@
 package com.projectcitybuild.features.bans.actions
 
-import com.projectcitybuild.pcbridge.core.utils.Failure
-import com.projectcitybuild.pcbridge.core.utils.Result
-import com.projectcitybuild.pcbridge.core.utils.Success
+import com.projectcitybuild.utils.Failure
+import com.projectcitybuild.utils.Result
+import com.projectcitybuild.utils.Success
 import com.projectcitybuild.pcbridge.http.services.pcb.UUIDBanHttpService
 import com.projectcitybuild.features.bans.repositories.PlayerBanRepository
 import com.projectcitybuild.features.bans.repositories.PlayerUUIDRepository

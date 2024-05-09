@@ -1,7 +1,6 @@
 package com.projectcitybuild.support.spigot
 
-import com.projectcitybuild.pcbridge.core.contracts.PlatformTimer
-import com.projectcitybuild.pcbridge.core.utils.Cancellable
+import com.projectcitybuild.utils.Cancellable
 import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.scheduler.BukkitTask
 import java.util.concurrent.TimeUnit
@@ -9,10 +8,10 @@ import java.util.concurrent.TimeUnit
 // TODO: replace these with coroutines + delay later
 class SpigotTimer(
     private val plugin: JavaPlugin,
-) : PlatformTimer {
+) {
     private val tasks: HashMap<String, BukkitTask> = hashMapOf()
 
-    override fun scheduleOnce(
+    fun scheduleOnce(
         identifier: String,
         delay: Long,
         unit: TimeUnit,
@@ -30,7 +29,7 @@ class SpigotTimer(
         }
     }
 
-    override fun scheduleRepeating(
+    fun scheduleRepeating(
         identifier: String,
         delay: Long,
         repeatingInterval: Long,
@@ -50,7 +49,7 @@ class SpigotTimer(
         }
     }
 
-    override fun cancel(identifier: String) {
+    fun cancel(identifier: String) {
         val task = tasks[identifier]
         if (task != null) {
             task.cancel()
@@ -58,7 +57,7 @@ class SpigotTimer(
         }
     }
 
-    override fun cancelAll() {
+    fun cancelAll() {
         plugin.server.scheduler.cancelTasks(plugin)
     }
 }

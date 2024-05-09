@@ -1,9 +1,9 @@
 package com.projectcitybuild.features.sync.actions
 
 import com.projectcitybuild.core.permissions.Permissions
-import com.projectcitybuild.pcbridge.core.utils.Failure
-import com.projectcitybuild.pcbridge.core.utils.Result
-import com.projectcitybuild.pcbridge.core.utils.Success
+import com.projectcitybuild.utils.Failure
+import com.projectcitybuild.utils.Result
+import com.projectcitybuild.utils.Success
 import com.projectcitybuild.pcbridge.http.services.pcb.PlayerGroupHttpService
 import com.projectcitybuild.features.sync.repositories.SyncRepository
 import java.util.UUID

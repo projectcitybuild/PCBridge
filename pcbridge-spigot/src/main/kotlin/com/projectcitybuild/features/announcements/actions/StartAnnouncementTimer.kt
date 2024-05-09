@@ -2,7 +2,7 @@ package com.projectcitybuild.features.announcements.actions
 
 import com.projectcitybuild.core.config.Config
 import com.projectcitybuild.features.announcements.repositories.AnnouncementRepository
-import com.projectcitybuild.pcbridge.core.contracts.PlatformTimer
+import com.projectcitybuild.support.spigot.SpigotTimer
 import kotlinx.coroutines.runBlocking
 import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.Server
@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit
 class StartAnnouncementTimer(
     private val repository: AnnouncementRepository,
     private val config: Config,
-    private val timer: PlatformTimer,
+    private val timer: SpigotTimer,
     private val server: Server,
 ) {
     private val timerId = "scheduled_announcements"

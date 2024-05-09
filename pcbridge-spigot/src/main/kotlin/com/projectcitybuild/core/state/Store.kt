@@ -1,6 +1,6 @@
 package com.projectcitybuild.core.state
 
-import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger
+import com.projectcitybuild.support.PlatformLogger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock

@@ -1,6 +1,6 @@
 package com.projectcitybuild.core.database
 
-import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger
+import com.projectcitybuild.support.PlatformLogger
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import java.sql.Connection

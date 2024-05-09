@@ -25,7 +25,6 @@ repositories {
 }
 
 dependencies {
-    implementation(project(":pcbridge-core"))
     implementation(project(":pcbridge-http"))
 
     // Paper

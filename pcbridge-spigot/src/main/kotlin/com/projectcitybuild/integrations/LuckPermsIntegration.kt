@@ -1,8 +1,8 @@
 package com.projectcitybuild.integrations
 
 import com.projectcitybuild.features.chat.ChatGroupFormatter
+import com.projectcitybuild.support.PlatformLogger
 import com.projectcitybuild.support.spigot.SpigotIntegration
-import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger
 import net.luckperms.api.LuckPerms
 import net.luckperms.api.LuckPermsProvider
 import net.luckperms.api.event.EventSubscription

@@ -7,7 +7,7 @@ import com.projectcitybuild.features.warps.events.WarpCreateEvent
 import com.projectcitybuild.features.warps.events.WarpDeleteEvent
 import com.projectcitybuild.features.warps.repositories.WarpRepository
 import com.projectcitybuild.support.spigot.SpigotIntegration
-import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger
+import com.projectcitybuild.support.PlatformLogger
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.plugin.Plugin

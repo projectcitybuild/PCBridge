@@ -1,8 +1,8 @@
 package com.projectcitybuild.features.sync.commands
 
 import com.projectcitybuild.features.sync.actions.UpdatePlayerGroups
-import com.projectcitybuild.pcbridge.core.utils.Failure
-import com.projectcitybuild.pcbridge.core.utils.Success
+import com.projectcitybuild.utils.Failure
+import com.projectcitybuild.utils.Success
 import com.projectcitybuild.support.messages.CommandHelpBuilder
 import com.projectcitybuild.support.spigot.BadCommandUsageException
 import com.projectcitybuild.support.spigot.CommandArgsParser

@@ -1,10 +1,10 @@
 package com.projectcitybuild.features.sync.repositories
 
 import com.projectcitybuild.core.config.Config
-import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger
 import com.projectcitybuild.pcbridge.http.responses.DonationPerk
 import com.projectcitybuild.pcbridge.http.services.pcb.AccountLinkHTTPService
 import com.projectcitybuild.pcbridge.http.services.pcb.PlayerGroupHttpService
+import com.projectcitybuild.support.PlatformLogger
 import java.util.UUID
 
 class SyncRepository(

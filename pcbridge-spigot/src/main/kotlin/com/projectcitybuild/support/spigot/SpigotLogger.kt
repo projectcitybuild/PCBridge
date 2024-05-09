@@ -1,6 +1,6 @@
 package com.projectcitybuild.support.spigot
 
-import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger
+import com.projectcitybuild.support.PlatformLogger
 import java.util.logging.Logger
 
 class SpigotLogger(
