@@ -1,14 +1,13 @@
 package com.projectcitybuild.features.chat.repositories
 
+import com.projectcitybuild.core.config.Config
 import com.projectcitybuild.core.permissions.Permissions
-import com.projectcitybuild.data.PluginConfig
 import com.projectcitybuild.features.chat.ChatGroupType
-import com.projectcitybuild.pcbridge.core.modules.config.Config
 import java.util.UUID
 
 class ChatGroupRepository(
     private val permissions: Permissions,
-    private val config: Config<PluginConfig>,
+    private val config: Config,
 ) {
     fun getGroupNamesForPlayer(playerUUID: UUID): Set<String> {
         return permissions.getUserGroups(playerUUID)
@@ -38,9 +37,9 @@ class ChatGroupRepository(
 
     fun getDisplayPriority(groupType: ChatGroupType): List<String> {
         return when (groupType) {
-            ChatGroupType.TRUST -> config.get().groups.displayPriority.trust
-            ChatGroupType.BUILD -> config.get().groups.displayPriority.builder
-            ChatGroupType.DONOR -> config.get().groups.displayPriority.donor
+            ChatGroupType.TRUST -> config.load().groups.displayPriority.trust
+            ChatGroupType.BUILD -> config.load().groups.displayPriority.builder
+            ChatGroupType.DONOR -> config.load().groups.displayPriority.donor
         }
     }
 }

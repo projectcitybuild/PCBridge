@@ -1,9 +1,8 @@
 package com.projectcitybuild.features.announcements.actions
 
-import com.projectcitybuild.data.PluginConfig
+import com.projectcitybuild.core.config.Config
 import com.projectcitybuild.features.announcements.repositories.AnnouncementRepository
 import com.projectcitybuild.pcbridge.core.contracts.PlatformTimer
-import com.projectcitybuild.pcbridge.core.modules.config.Config
 import kotlinx.coroutines.runBlocking
 import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.Server
@@ -11,14 +10,14 @@ import java.util.concurrent.TimeUnit
 
 class StartAnnouncementTimer(
     private val repository: AnnouncementRepository,
-    private val config: Config<PluginConfig>,
+    private val config: Config,
     private val timer: PlatformTimer,
     private val server: Server,
 ) {
     private val timerId = "scheduled_announcements"
 
     suspend fun start() {
-        val config = config.get()
+        val config = config.load()
         val intervalInMins = config.announcements.intervalInMins
 
         timer.cancel(timerId)

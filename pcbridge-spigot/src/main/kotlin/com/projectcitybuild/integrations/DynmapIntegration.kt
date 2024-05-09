@@ -1,13 +1,12 @@
 package com.projectcitybuild.integrations
 
 import com.github.shynixn.mccoroutine.bukkit.registerSuspendingEvents
+import com.projectcitybuild.core.config.Config
 import com.projectcitybuild.core.errors.SentryReporter
-import com.projectcitybuild.data.PluginConfig
 import com.projectcitybuild.features.warps.events.WarpCreateEvent
 import com.projectcitybuild.features.warps.events.WarpDeleteEvent
 import com.projectcitybuild.features.warps.repositories.WarpRepository
 import com.projectcitybuild.support.spigot.SpigotIntegration
-import com.projectcitybuild.pcbridge.core.modules.config.Config
 import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -18,7 +17,7 @@ import org.dynmap.DynmapAPI
 class DynmapIntegration(
     private val plugin: JavaPlugin,
     private val warpRepository: WarpRepository,
-    private val config: Config<PluginConfig>,
+    private val config: Config,
     private val logger: PlatformLogger,
     sentry: SentryReporter,
 ) : Listener, SpigotIntegration(
@@ -84,7 +83,7 @@ class DynmapIntegration(
             markers.forEach { it.deleteMarker() }
         }
 
-        val iconName = config.get().integrations.dynmap.warpIconName
+        val iconName = config.load().integrations.dynmap.warpIconName
         val icon = markerAPI.getMarkerIcon(iconName)
             ?: throw DynmapMarkerIconNotFoundException()
 

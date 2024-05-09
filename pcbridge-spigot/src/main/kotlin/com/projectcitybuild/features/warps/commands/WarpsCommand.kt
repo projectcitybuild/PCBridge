@@ -1,26 +1,24 @@
 package com.projectcitybuild.features.warps.commands
 
-import com.projectcitybuild.data.PluginConfig
+import com.projectcitybuild.core.config.Config
 import com.projectcitybuild.features.warps.commands.warps.WarpCreateCommand
 import com.projectcitybuild.features.warps.commands.warps.WarpDeleteCommand
 import com.projectcitybuild.features.warps.repositories.WarpRepository
 import com.projectcitybuild.features.warps.commands.warps.WarpListCommand
 import com.projectcitybuild.features.warps.commands.warps.WarpMoveCommand
 import com.projectcitybuild.features.warps.commands.warps.WarpRenameCommand
-import com.projectcitybuild.pcbridge.core.modules.config.Config
 import com.projectcitybuild.support.messages.CommandHelpBuilder
 import com.projectcitybuild.support.spigot.BadCommandUsageException
 import com.projectcitybuild.support.spigot.CommandArgsParser
 import com.projectcitybuild.support.spigot.SpigotCommand
 import com.projectcitybuild.support.spigot.UnauthorizedCommandException
 import com.projectcitybuild.support.tryValueOf
-import net.kyori.adventure.platform.bukkit.BukkitAudiences
 import org.bukkit.Server
 import org.bukkit.command.CommandSender
 
 class WarpsCommand(
     private val warpRepository: WarpRepository,
-    private val config: Config<PluginConfig>,
+    private val config: Config,
     private val server: Server,
 ): SpigotCommand<WarpsCommand.Args> {
     override val label = "warps"
@@ -59,7 +57,7 @@ class WarpsCommand(
         when (args.command) {
             Args.Command.List -> WarpListCommand(
                 warpRepository = warpRepository,
-                itemsPerPage = config.get().warps.itemsPerPage,
+                itemsPerPage = config.load().warps.itemsPerPage,
             ).run(
                 sender = sender,
                 args = WarpListCommand.Args.Parser()

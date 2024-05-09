@@ -1,8 +1,7 @@
 package com.projectcitybuild
 
 import com.github.shynixn.mccoroutine.bukkit.minecraftDispatcher
-import com.google.gson.reflect.TypeToken
-import com.projectcitybuild.data.PluginConfig
+import com.projectcitybuild.core.config.Config
 import com.projectcitybuild.core.database.DatabaseSession
 import com.projectcitybuild.core.database.DatabaseSource
 import com.projectcitybuild.core.errors.SentryReporter
@@ -65,12 +64,10 @@ import com.projectcitybuild.integrations.EssentialsIntegration
 import com.projectcitybuild.integrations.LuckPermsIntegration
 import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger
 import com.projectcitybuild.pcbridge.core.contracts.PlatformTimer
-import com.projectcitybuild.pcbridge.core.modules.config.Config
 import com.projectcitybuild.pcbridge.core.modules.datetime.formatter.DateTimeFormatter
 import com.projectcitybuild.pcbridge.core.modules.datetime.formatter.DateTimeFormatterImpl
 import com.projectcitybuild.pcbridge.core.modules.datetime.time.LocalizedTime
 import com.projectcitybuild.pcbridge.core.modules.datetime.time.Time
-import com.projectcitybuild.pcbridge.core.storage.JsonStorage
 import com.projectcitybuild.pcbridge.http.HttpService
 import com.projectcitybuild.features.bans.repositories.PlayerUUIDRepository
 import com.projectcitybuild.features.warnings.actions.GetUnacknowledgedWarnings
@@ -171,19 +168,17 @@ private fun Module.spigot(plugin: JavaPlugin) {
 private fun Module.core() {
     single {
         Config(
-            default = PluginConfig.default,
-            jsonStorage = JsonStorage(
-                file = get<JavaPlugin>().dataFolder.resolve("config.json"),
-                logger = get(),
-                typeToken = object : TypeToken<PluginConfig>(){},
-            ),
+            path = get<JavaPlugin>()
+                .dataFolder
+                .resolve("config.json")
+                .toPath(),
         )
     }
 
     single {
         DatabaseSession(logger = get()).apply {
-            val configProvider = get<Config<PluginConfig>>()
-            val config = configProvider.get()
+            val configProvider = get<Config>()
+            val config = configProvider.load()
             connect(DatabaseSource.fromConfig(config))
         }
     } withOptions {
@@ -196,8 +191,8 @@ private fun Module.core() {
             config = get(),
             logger = get(),
         ).apply {
-            val configProvider = get<Config<PluginConfig>>()
-            val config = configProvider.get()
+            val configProvider = get<Config>()
+            val config = configProvider.load()
             if (config.errorReporting.isSentryEnabled) {
                 start()
             }
@@ -207,7 +202,7 @@ private fun Module.core() {
     }
 
     factory<Time> {
-        val config = get<Config<PluginConfig>>().get()
+        val config = get<Config>().load()
         val zoneId = ZoneId.of(config.localization.timeZone)
 
         LocalizedTime(
@@ -216,7 +211,7 @@ private fun Module.core() {
     }
 
     factory<DateTimeFormatter> {
-        val config = get<Config<PluginConfig>>().get()
+        val config = get<Config>().load()
 
         DateTimeFormatterImpl(
             locale = Locale.forLanguageTag(
@@ -237,7 +232,7 @@ private fun Module.core() {
 
 private fun Module.http() {
     single {
-        val config = get<Config<PluginConfig>>().get()
+        val config = get<Config>().load()
 
         HttpService(
             authToken = config.api.token,
@@ -341,6 +336,8 @@ private fun Module.joinMessages() {
             config = get(),
             logger = get(),
             server = get(),
+            playerConfigRepository = get(),
+            time = get(),
         )
     }
 

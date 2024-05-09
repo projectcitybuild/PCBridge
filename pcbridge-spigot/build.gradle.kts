@@ -38,6 +38,7 @@ dependencies {
     compileOnly("us.dynmap:DynmapCoreAPI:3.3")
 
     // Libraries
+    implementation(kotlin("reflect"))
     implementation("com.github.shynixn.mccoroutine:mccoroutine-bukkit-api:2.15.0")
     implementation("com.github.shynixn.mccoroutine:mccoroutine-bukkit-core:2.15.0")
     implementation("com.zaxxer:HikariCP:5.0.1")
@@ -46,6 +47,8 @@ dependencies {
     implementation("io.github.reactivecircus.cache4k:cache4k:0.13.0")
     implementation("net.kyori:adventure-platform-bukkit:4.3.2")
     implementation("net.kyori:adventure-text-minimessage:4.16.0")
+    compileOnly("org.spongepowered:configurate-gson:4.0.0")
+    implementation("org.spongepowered:configurate-extra-kotlin:4.1.2")
 
     // Testing
     // testImplementation("io.papermc.paper:paper-api:1.20.2-R0.1-SNAPSHOT")

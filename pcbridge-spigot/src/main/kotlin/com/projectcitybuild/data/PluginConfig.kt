@@ -1,8 +1,8 @@
 package com.projectcitybuild.data
 
-import kotlinx.serialization.Serializable
+import org.spongepowered.configurate.objectmapping.ConfigSerializable
 
-@Serializable
+@ConfigSerializable
 data class PluginConfig(
     val api: Api,
     val database: Database,
@@ -106,14 +106,14 @@ data class PluginConfig(
         )
     }
 
-    @Serializable
+    @ConfigSerializable
     data class Api(
         val token: String,
         val baseUrl: String,
         val isLoggingEnabled: Boolean
     )
 
-    @Serializable
+    @ConfigSerializable
     data class Database(
         val hostName: String,
         val port: Int,
@@ -122,63 +122,63 @@ data class PluginConfig(
         val password: String,
     )
 
-    @Serializable
+    @ConfigSerializable
     data class WebServer(
         val token: String,
         val port: Int,
     )
 
-    @Serializable
+    @ConfigSerializable
     data class ErrorReporting(
         val isSentryEnabled: Boolean,
         val sentryDsn: String,
     )
 
-    @Serializable
+    @ConfigSerializable
     data class Localization(
         val timeZone: String,
         val locale: String,
     )
 
-    @Serializable
+    @ConfigSerializable
     data class ChatBadge(
         val icon: String,
     )
 
-    @Serializable
+    @ConfigSerializable
     data class Warps(
         val itemsPerPage: Int,
     )
 
-    @Serializable
+    @ConfigSerializable
     data class Integrations(
         val dynmap: Dynmap,
     ) {
-        @Serializable
+        @ConfigSerializable
         data class Dynmap(
             val warpIconName: String,
         )
     }
 
-    @Serializable
+    @ConfigSerializable
     data class Announcements(
         val intervalInMins: Int,
         val messages: List<String>,
     )
 
-    @Serializable
+    @ConfigSerializable
     data class Groups(
         val displayPriority: DisplayPriority,
         val donorTierGroupNames: DonorTierGroupNames,
     ) {
-        @Serializable
+        @ConfigSerializable
         data class DisplayPriority(
             val builder: List<String>,
             val trust: List<String>,
             val donor: List<String>,
         )
 
-        @Serializable
+        @ConfigSerializable
         data class DonorTierGroupNames(
             val copper: String,
             val iron: String,
@@ -186,7 +186,7 @@ data class PluginConfig(
         )
     }
 
-    @Serializable
+    @ConfigSerializable
     data class Messages(
         val join: String,
         val leave: String,

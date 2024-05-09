@@ -1,8 +1,7 @@
 package com.projectcitybuild.features.joinmessages.listeners
 
+import com.projectcitybuild.core.config.Config
 import com.projectcitybuild.core.state.Store
-import com.projectcitybuild.data.PluginConfig
-import com.projectcitybuild.pcbridge.core.modules.config.Config
 import com.projectcitybuild.pcbridge.core.modules.datetime.time.Time
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.MiniMessage
@@ -15,7 +14,7 @@ import java.time.Duration
 import java.time.LocalDateTime
 
 class AnnounceQuitListener(
-    private val config: Config<PluginConfig>,
+    private val config: Config,
     private val store: Store,
     private val time: Time,
 ): Listener {
@@ -34,7 +33,7 @@ class AnnounceQuitListener(
 
         event.quitMessage(
             MiniMessage.miniMessage().deserialize(
-                config.get().messages.leave,
+                config.load().messages.leave,
                 Placeholder.component("name", Component.text(event.player.name)),
                 Placeholder.component("time_online", Component.text(timeOnline)),
             )

@@ -1,11 +1,10 @@
 package com.projectcitybuild.features.announcements.listeners
 
-import com.projectcitybuild.data.PluginConfig
+import com.projectcitybuild.core.config.Config
 import com.projectcitybuild.features.announcements.actions.StartAnnouncementTimer
 import com.projectcitybuild.features.announcements.repositories.AnnouncementRepository
 import com.projectcitybuild.pcbridge.core.contracts.PlatformLogger
 import com.projectcitybuild.pcbridge.core.contracts.PlatformTimer
-import com.projectcitybuild.pcbridge.core.modules.config.Config
 import org.bukkit.Server
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
@@ -16,7 +15,7 @@ import org.bukkit.plugin.java.JavaPlugin
 
 class AnnouncementEnableListener(
     private val announcementRepository: AnnouncementRepository,
-    private val config: Config<PluginConfig>,
+    private val config: Config,
     private val timer: PlatformTimer,
     private val server: Server,
     private val logger: PlatformLogger,
