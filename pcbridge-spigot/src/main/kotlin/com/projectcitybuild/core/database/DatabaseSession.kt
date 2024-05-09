@@ -1,6 +1,6 @@
 package com.projectcitybuild.core.database
 
-import com.projectcitybuild.core.logger.logger
+import com.projectcitybuild.core.logger.log
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import java.sql.Connection
@@ -10,7 +10,7 @@ class DatabaseSession {
 
     fun connect(source: DatabaseSource) {
         val url = "jdbc:mysql://${source.hostName}:${source.port}/${source.databaseName}"
-        logger.debug {"Connecting to $url" }
+        log.debug {"Connecting to $url" }
 
         val config = HikariConfig().apply {
             jdbcUrl = url
@@ -34,19 +34,19 @@ class DatabaseSession {
         check (hasDatabase(source.databaseName)) {
             "Database not found: ${source.databaseName}"
         }
-        logger.info { "Database connection established" }
+        log.info { "Database connection established" }
     }
 
     fun disconnect() {
         database?.close()
         database = null
 
-        logger.info { "Database connection closed" }
+        log.info { "Database connection closed" }
     }
 
     fun <T> connect(action: (Connection) -> T): T {
         if (database == null) {
-            logger.warn { "Tried to access database before connecting" }
+            log.warn { "Tried to access database before connecting" }
         }
         val connection = database?.connection
         checkNotNull(connection)

@@ -1,4 +1,4 @@
-package com.projectcitybuild.core.datetime.formatter
+package com.projectcitybuild.core.datetime
 
 import org.jetbrains.annotations.TestOnly
 import java.time.Instant

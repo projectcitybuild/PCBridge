@@ -1,7 +1,7 @@
 package com.projectcitybuild.support.spigot
 
 import com.projectcitybuild.core.errors.SentryReporter
-import com.projectcitybuild.core.logger.logger
+import com.projectcitybuild.core.logger.log
 import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.PluginManager
 
@@ -16,12 +16,12 @@ abstract class SpigotIntegration(
     suspend fun enable() = runCatching {
         val integratedPlugin = pluginManager.getPlugin(pluginName)
         if (integratedPlugin == null) {
-            logger.warn { "Cannot find dynmap plugin. Disabling marker integration" }
+            log.warn { "Cannot find dynmap plugin. Disabling marker integration" }
             return@runCatching
         }
         onEnable(integratedPlugin)
     }.onFailure {
-        logger.error { "Failed to enable Dynmap integration: ${it.localizedMessage}" }
+        log.error { "Failed to enable Dynmap integration: ${it.localizedMessage}" }
         sentry.report(it)
     }
 

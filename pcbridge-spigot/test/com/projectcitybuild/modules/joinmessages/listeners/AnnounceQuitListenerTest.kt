@@ -3,7 +3,7 @@ package com.projectcitybuild.modules.joinmessages.listeners
 import com.projectcitybuild.data.PluginConfig
 import com.projectcitybuild.modules.joinmessages.PlayerJoinTimeCache
 import com.projectcitybuild.pcbridge.core.modules.config.Config
-import com.projectcitybuild.core.datetime.time.Time
+import com.projectcitybuild.core.datetime.Time
 import com.projectcitybuild.support.spigot.SpigotServer
 import kotlinx.coroutines.test.runTest
 import net.md_5.bungee.api.chat.TextComponent

@@ -1,6 +1,6 @@
 package com.projectcitybuild.support.messages
 
-import com.projectcitybuild.core.pagination.Page
+import com.projectcitybuild.data.Page
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextComponent
 import net.kyori.adventure.text.format.NamedTextColor

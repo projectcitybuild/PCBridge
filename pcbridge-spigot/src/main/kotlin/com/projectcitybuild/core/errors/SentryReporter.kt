@@ -1,7 +1,7 @@
 package com.projectcitybuild.core.errors
 
 import com.projectcitybuild.core.config.Config
-import com.projectcitybuild.core.logger.logger
+import com.projectcitybuild.core.logger.log
 import io.sentry.Sentry
 
 class SentryReporter(
@@ -14,13 +14,13 @@ class SentryReporter(
             options.dsn = config.load().errorReporting.sentryDsn
         }
         started = true
-        logger.info { "Sentry error reporting enabled" }
+        log.info { "Sentry error reporting enabled" }
     }
 
     fun close() {
         if (started) {
             Sentry.close()
-            logger.info { "Sentry error reporting disabled" }
+            log.info { "Sentry error reporting disabled" }
         }
     }
 

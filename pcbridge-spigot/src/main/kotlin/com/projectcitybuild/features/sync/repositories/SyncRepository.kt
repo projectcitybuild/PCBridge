@@ -1,7 +1,7 @@
 package com.projectcitybuild.features.sync.repositories
 
 import com.projectcitybuild.core.config.Config
-import com.projectcitybuild.core.logger.logger
+import com.projectcitybuild.core.logger.log
 import com.projectcitybuild.pcbridge.http.responses.DonationPerk
 import com.projectcitybuild.pcbridge.http.services.pcb.AccountLinkHTTPService
 import com.projectcitybuild.pcbridge.http.services.pcb.PlayerGroupHttpService
@@ -33,7 +33,7 @@ class SyncRepository(
                 "iron" -> groupNames.iron
                 "diamond" -> groupNames.diamond
                 else -> {
-                    logger.error { "Missing config node for donor tier: $tierName" }
+                    log.error { "Missing config node for donor tier: $tierName" }
                     null
                 }
             }

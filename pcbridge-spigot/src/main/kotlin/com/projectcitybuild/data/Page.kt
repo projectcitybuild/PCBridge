@@ -1,4 +1,4 @@
-package com.projectcitybuild.core.pagination
+package com.projectcitybuild.data
 
 data class Page<T>(
     val items: List<T>,

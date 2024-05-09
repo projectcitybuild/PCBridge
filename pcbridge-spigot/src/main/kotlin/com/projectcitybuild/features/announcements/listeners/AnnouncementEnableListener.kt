@@ -1,7 +1,7 @@
 package com.projectcitybuild.features.announcements.listeners
 
 import com.projectcitybuild.core.config.Config
-import com.projectcitybuild.core.logger.logger
+import com.projectcitybuild.core.logger.log
 import com.projectcitybuild.features.announcements.actions.StartAnnouncementTimer
 import com.projectcitybuild.features.announcements.repositories.AnnouncementRepository
 import com.projectcitybuild.support.spigot.SpigotTimer
@@ -36,7 +36,7 @@ class AnnouncementEnableListener(
         )
         action?.start()
 
-        logger.debug { "Announcement timer started" }
+        log.debug { "Announcement timer started" }
     }
 
     @EventHandler
@@ -48,6 +48,6 @@ class AnnouncementEnableListener(
         action?.stop()
         action = null
 
-        logger.debug { "Announcement timer stopped" }
+        log.debug { "Announcement timer stopped" }
     }
 }

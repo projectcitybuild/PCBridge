@@ -3,7 +3,7 @@ package com.projectcitybuild.integrations
 import com.github.shynixn.mccoroutine.bukkit.registerSuspendingEvents
 import com.projectcitybuild.core.config.Config
 import com.projectcitybuild.core.errors.SentryReporter
-import com.projectcitybuild.core.logger.logger
+import com.projectcitybuild.core.logger.log
 import com.projectcitybuild.features.warps.events.WarpCreateEvent
 import com.projectcitybuild.features.warps.events.WarpDeleteEvent
 import com.projectcitybuild.features.warps.repositories.WarpRepository
@@ -34,7 +34,7 @@ class DynmapIntegration(
         }
         dynmap = loadedPlugin
         plugin.server.pluginManager.registerSuspendingEvents(this, plugin)
-        logger.info { "Dynmap integration enabled" }
+        log.info { "Dynmap integration enabled" }
 
         updateWarpMarkers()
     }
@@ -59,11 +59,11 @@ class DynmapIntegration(
     private suspend fun updateWarpMarkers() {
         val dynmap = dynmap
         if (dynmap == null) {
-            logger.warn { "Dynmap integration disabled but attempted to draw warp markers" }
+            log.warn { "Dynmap integration disabled but attempted to draw warp markers" }
             return
         }
 
-        logger.debug { "Redrawing warp markers..." }
+        log.debug { "Redrawing warp markers..." }
 
         val markerAPI = dynmap.markerAPI
 

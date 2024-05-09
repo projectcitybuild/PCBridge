@@ -49,7 +49,6 @@ import org.koin.core.component.inject
 import org.koin.core.context.GlobalContext.startKoin
 import org.koin.core.context.GlobalContext.stopKoin
 
-@SuppressWarnings("unused")
 class PCBridge : SuspendingJavaPlugin() {
     private var container: KoinApplication? = null
 

@@ -5,8 +5,8 @@ import com.projectcitybuild.core.state.PlayerState
 import com.projectcitybuild.core.state.Store
 import com.projectcitybuild.features.bans.actions.AuthoriseConnection
 import com.projectcitybuild.features.bans.events.ConnectionPermittedEvent
-import com.projectcitybuild.core.datetime.formatter.DateTimeFormatter
-import com.projectcitybuild.core.logger.logger
+import com.projectcitybuild.core.datetime.DateTimeFormatter
+import com.projectcitybuild.core.logger.log
 import com.projectcitybuild.pcbridge.http.responses.Aggregate
 import com.projectcitybuild.features.bans.repositories.AggregateRepository
 import com.projectcitybuild.features.bans.Sanitizer
@@ -75,7 +75,7 @@ class AuthorizeConnectionListener(
                     )
                 }
             }.onFailure {
-                logger.error { it.localizedMessage }
+                log.error { it.localizedMessage }
                 sentry.report(it)
 
                 // If something goes wrong, better not to let players in

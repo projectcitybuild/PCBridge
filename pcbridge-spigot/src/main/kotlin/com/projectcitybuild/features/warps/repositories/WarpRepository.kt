@@ -1,7 +1,7 @@
 package com.projectcitybuild.features.warps.repositories
 
 import com.projectcitybuild.core.database.DatabaseSession
-import com.projectcitybuild.core.pagination.Page
+import com.projectcitybuild.data.Page
 import com.projectcitybuild.data.SerializableLocation
 import com.projectcitybuild.features.warps.Warp
 import io.github.reactivecircus.cache4k.Cache

@@ -62,9 +62,8 @@ import com.projectcitybuild.features.warps.commands.WarpsCommand
 import com.projectcitybuild.integrations.DynmapIntegration
 import com.projectcitybuild.integrations.EssentialsIntegration
 import com.projectcitybuild.integrations.LuckPermsIntegration
-import com.projectcitybuild.core.datetime.formatter.DateTimeFormatter
-import com.projectcitybuild.core.datetime.time.LocalizedTime
-import com.projectcitybuild.core.datetime.time.Time
+import com.projectcitybuild.core.datetime.DateTimeFormatter
+import com.projectcitybuild.core.datetime.LocalizedTime
 import com.projectcitybuild.pcbridge.http.HttpService
 import com.projectcitybuild.features.bans.repositories.PlayerUUIDRepository
 import com.projectcitybuild.features.warnings.actions.GetUnacknowledgedWarnings
@@ -190,7 +189,7 @@ private fun Module.core() {
         it?.close()
     }
 
-    factory<Time> {
+    factory {
         val config = get<Config>().load()
         val zoneId = ZoneId.of(config.localization.timeZone)
 
