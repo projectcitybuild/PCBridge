@@ -17,7 +17,7 @@ class StartAnnouncementTimer(
     private val timerId = "scheduled_announcements"
 
     suspend fun start() {
-        val config = config.load()
+        val config = config.get()
         val intervalInMins = config.announcements.intervalInMins
 
         timer.cancel(timerId)

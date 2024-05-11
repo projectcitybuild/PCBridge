@@ -46,8 +46,6 @@ dependencies {
     implementation("io.github.reactivecircus.cache4k:cache4k:0.13.0")
     implementation("net.kyori:adventure-platform-bukkit:4.3.2")
     implementation("net.kyori:adventure-text-minimessage:4.16.0")
-    compileOnly("org.spongepowered:configurate-gson:4.0.0")
-    implementation("org.spongepowered:configurate-extra-kotlin:4.1.2")
     implementation("io.github.oshai:kotlin-logging-jvm:5.1.0")
 
     // Testing

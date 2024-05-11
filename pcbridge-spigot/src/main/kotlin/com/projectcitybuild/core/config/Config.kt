@@ -1,35 +1,24 @@
 package com.projectcitybuild.core.config
 
 import com.projectcitybuild.data.PluginConfig
-import org.spongepowered.configurate.gson.GsonConfigurationLoader
-import org.spongepowered.configurate.kotlin.extensions.get
-import org.spongepowered.configurate.kotlin.objectMapperFactory
-import java.nio.file.Path
+import com.projectcitybuild.data.default
 
 class Config(
-    path: Path,
+    private val jsonStorage: JsonStorage<PluginConfig>,
 ) {
-    private var cached: PluginConfig? = null
+    private var cache: PluginConfig? = null
 
-    private val loader = GsonConfigurationLoader.builder()
-        .path(path)
-        .defaultOptions { options ->
-            options.serializers { builder ->
-                builder.registerAnnotatedObjects(objectMapperFactory())
-            }
+    fun get(): PluginConfig {
+        val cache = cache
+        if (cache != null) {
+            return cache
         }
-        .build()
+        return (jsonStorage.read() ?: PluginConfig.default())
+            .also { this.cache = it }
+    }
 
-    fun load(): PluginConfig {
-        if (cached != null) {
-            cached
-        }
-        val node = loader.load()
-        val config: PluginConfig? = node.get()
-        checkNotNull(config) {
-            "Config failed to load or file not found"
-        }
-        cached = config
-        return config
+    fun flush() {
+        cache = null
+        get()
     }
 }

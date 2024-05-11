@@ -12,7 +12,7 @@ class ServerOverviewJoinListener(
 ) : Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     fun onPlayerJoin(event: PlayerJoinEvent) {
-        val message = config.load().messages.welcome
+        val message = config.get().messages.welcome
 
         event.player.sendMessage(
             MiniMessage.miniMessage().deserialize(message),

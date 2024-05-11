@@ -57,7 +57,7 @@ class WarpsCommand(
         when (args.command) {
             Args.Command.List -> WarpListCommand(
                 warpRepository = warpRepository,
-                itemsPerPage = config.load().warps.itemsPerPage,
+                itemsPerPage = config.get().warps.itemsPerPage,
             ).run(
                 sender = sender,
                 args = WarpListCommand.Args.Parser()

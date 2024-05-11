@@ -1,8 +1,8 @@
 package com.projectcitybuild.data
 
-import org.spongepowered.configurate.objectmapping.ConfigSerializable
+import kotlinx.serialization.Serializable
 
-@ConfigSerializable
+@Serializable
 data class PluginConfig(
     val api: Api,
     val database: Database,
@@ -16,104 +16,14 @@ data class PluginConfig(
     val groups: Groups,
     val messages: Messages,
 ) {
-    companion object {
-        val default = PluginConfig(
-            api = Api(
-                token = "FILL_THIS_IN",
-                baseUrl = "https://projectcitybuild.com/api/",
-                isLoggingEnabled = false,
-            ),
-            database = Database(
-                hostName = "127.0.0.1",
-                port = 3306,
-                name = "pcbridge",
-                username = "FILL_THIS_IN",
-                password = "FILL_THIS_IN",
-            ),
-            webServer = WebServer(
-                token = "FILL_THIS_IN",
-                port = 8080,
-            ),
-            errorReporting = ErrorReporting(
-                isSentryEnabled = false,
-                sentryDsn = "https://<key>@sentry.io/<project>",
-            ),
-            localization = Localization(
-                timeZone = "UTC",
-                locale = "en-us",
-            ),
-            chatBadge = ChatBadge(
-                icon = "§6★"
-            ),
-            warps = Warps(
-                itemsPerPage = 15,
-            ),
-            integrations = Integrations(
-                dynmap = Integrations.Dynmap(
-                    warpIconName = "portal",
-                )
-            ),
-            announcements = Announcements(
-                intervalInMins = 30,
-                messages = listOf(
-                    "§bJoin the Project City Build Discord server! Type /discord in game!",
-                    "§bDonations are the only way to keep PCB running! If you would like to donate to the server, you can do so by typing /donate in game!",
-                    "§bVote for us to help keep PCB active! Type /vote in game!",
-                    "§bPost screenshots of your builds to the #showcase channel on our Discord to be featured on the PCB Instagram! Type /discord to join!",
-                    "§bMake sure to follow the Project City Build Instagram for features of YOUR builds! Type /instagram in game!",
-                ),
-            ),
-            groups = Groups(
-                displayPriority = Groups.DisplayPriority(
-                    builder = listOf(
-                        "architect",
-                        "engineer",
-                        "planner",
-                        "builder",
-                        "intern",
-                    ),
-                    trust = listOf(
-                        "developer",
-                        "moderator",
-                        "trusted+",
-                        "trusted",
-                        "member",
-                    ),
-                    donor = listOf(
-                        "donator",
-                        "legacy-donator",
-                    ),
-                ),
-                donorTierGroupNames = Groups.DonorTierGroupNames(
-                    copper = "copper_tier",
-                    iron = "iron_tier",
-                    diamond = "diamond_tier",
-                ),
-            ),
-            messages = Messages(
-                join = "§a§l+ §r§f%name% §7joined the server",
-                leave = "§c§l- §r§f%name% §7left the server (online for %time_online%)",
-                firstTimeJoin = "§d✦ Welcome §f%name%§d to the server!",
-                welcome = """
-                    #§3Welcome to §f§lPROJECT §6§lCITY §9§lBUILD
-                    #
-                    #§3Type §c/register §3to become a member.
-                    #§3Type §c/list§6 §3to see who else is online.
-                    #
-                    #§f§lAsk our staff if you have any questions.
-                """.trimMargin("#"),
-            )
-        )
-    }
-
-    @ConfigSerializable
+    @Serializable
     data class Api(
         val token: String,
         val baseUrl: String,
         val isLoggingEnabled: Boolean
     )
 
-    @ConfigSerializable
+    @Serializable
     data class Database(
         val hostName: String,
         val port: Int,
@@ -122,63 +32,63 @@ data class PluginConfig(
         val password: String,
     )
 
-    @ConfigSerializable
+    @Serializable
     data class WebServer(
         val token: String,
         val port: Int,
     )
 
-    @ConfigSerializable
+    @Serializable
     data class ErrorReporting(
         val isSentryEnabled: Boolean,
         val sentryDsn: String,
     )
 
-    @ConfigSerializable
+    @Serializable
     data class Localization(
         val timeZone: String,
         val locale: String,
     )
 
-    @ConfigSerializable
+    @Serializable
     data class ChatBadge(
         val icon: String,
     )
 
-    @ConfigSerializable
+    @Serializable
     data class Warps(
         val itemsPerPage: Int,
     )
 
-    @ConfigSerializable
+    @Serializable
     data class Integrations(
         val dynmap: Dynmap,
     ) {
-        @ConfigSerializable
+        @Serializable
         data class Dynmap(
             val warpIconName: String,
         )
     }
 
-    @ConfigSerializable
+    @Serializable
     data class Announcements(
         val intervalInMins: Int,
         val messages: List<String>,
     )
 
-    @ConfigSerializable
+    @Serializable
     data class Groups(
         val displayPriority: DisplayPriority,
         val donorTierGroupNames: DonorTierGroupNames,
     ) {
-        @ConfigSerializable
+        @Serializable
         data class DisplayPriority(
             val builder: List<String>,
             val trust: List<String>,
             val donor: List<String>,
         )
 
-        @ConfigSerializable
+        @Serializable
         data class DonorTierGroupNames(
             val copper: String,
             val iron: String,
@@ -186,11 +96,94 @@ data class PluginConfig(
         )
     }
 
-    @ConfigSerializable
+    @Serializable
     data class Messages(
         val join: String,
         val leave: String,
         val firstTimeJoin: String,
         val welcome: String,
     )
+
+    companion object
 }
+
+fun PluginConfig.Companion.default() = PluginConfig(
+    api = PluginConfig.Api(
+        token = "FILL_THIS_IN",
+        baseUrl = "https://projectcitybuild.com/api/",
+        isLoggingEnabled = false,
+    ),
+    database = PluginConfig.Database(
+        hostName = "127.0.0.1",
+        port = 3306,
+        name = "pcbridge",
+        username = "FILL_THIS_IN",
+        password = "FILL_THIS_IN",
+    ),
+    webServer = PluginConfig.WebServer(
+        token = "FILL_THIS_IN",
+        port = 8080,
+    ),
+    errorReporting = PluginConfig.ErrorReporting(
+        isSentryEnabled = false,
+        sentryDsn = "https://<key>@sentry.io/<project>",
+    ),
+    localization = PluginConfig.Localization(
+        timeZone = "UTC",
+        locale = "en-us",
+    ),
+    chatBadge = PluginConfig.ChatBadge(
+        icon = "<color:yellow>★</color>"
+    ),
+    warps = PluginConfig.Warps(
+        itemsPerPage = 15,
+    ),
+    integrations = PluginConfig.Integrations(
+        dynmap = PluginConfig.Integrations.Dynmap(
+            warpIconName = "portal",
+        )
+    ),
+    announcements = PluginConfig.Announcements(
+        intervalInMins = 30,
+        messages = listOf(
+            "<color:aqua>Join the Project City Build Discord server! Type /discord in game!</color>",
+            "<color:aqua>Donations are the only way to keep PCB running! If you would like to donate to the server, you can do so by typing /donate in game!</color>",
+            "<color:aqua>Vote for us to help keep PCB active! Type /vote in game!</color>",
+            "<color:aqua>Post screenshots of your builds to the #showcase channel on our Discord to be featured on the PCB Instagram! Type /discord to join!</color>",
+            "<color:aqua>Make sure to follow the Project City Build Instagram for features of YOUR builds! Type /instagram in game!</color>"
+        ),
+    ),
+    groups = PluginConfig.Groups(
+        displayPriority = PluginConfig.Groups.DisplayPriority(
+            builder = listOf(
+                "architect",
+                "engineer",
+                "planner",
+                "builder",
+                "intern",
+            ),
+            trust = listOf(
+                "developer",
+                "moderator",
+                "trusted+",
+                "trusted",
+                "member",
+            ),
+            donor = listOf(
+                "donator",
+                "legacy-donator",
+            ),
+        ),
+        donorTierGroupNames = PluginConfig.Groups.DonorTierGroupNames(
+            copper = "copper_tier",
+            iron = "iron_tier",
+            diamond = "diamond_tier",
+        ),
+    ),
+    messages = PluginConfig.Messages(
+        join = "<color:green><b>+</b></color> %name% <color:gray>joined the server</color>",
+        leave = "<color:red><b>-</b></color> %name% <color:gray>left the server (online for %time_online%)</color>",
+        firstTimeJoin =  "<color:AA00AA><b>✦ Welcome §f%name%§d to the server!</b></color>",
+        welcome = "<b>Welcome to PCB!</b>",
+    )
+)

@@ -3,6 +3,7 @@ package com.projectcitybuild
 import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
 import com.projectcitybuild.core.errors.SentryReporter
 import com.projectcitybuild.core.errors.trace
+import com.projectcitybuild.core.logger.log
 import com.projectcitybuild.features.announcements.listeners.AnnouncementEnableListener
 import com.projectcitybuild.features.bans.commands.BanCommand
 import com.projectcitybuild.features.bans.commands.BanIPCommand

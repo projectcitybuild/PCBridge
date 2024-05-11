@@ -33,7 +33,7 @@ class AnnounceQuitListener(
 
         event.quitMessage(
             MiniMessage.miniMessage().deserialize(
-                config.load().messages.leave,
+                config.get().messages.leave,
                 Placeholder.component("name", Component.text(event.player.name)),
                 Placeholder.component("time_online", Component.text(timeOnline)),
             )

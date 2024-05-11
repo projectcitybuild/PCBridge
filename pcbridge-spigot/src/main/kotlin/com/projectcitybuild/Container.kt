@@ -1,7 +1,9 @@
 package com.projectcitybuild
 
 import com.github.shynixn.mccoroutine.bukkit.minecraftDispatcher
+import com.google.gson.reflect.TypeToken
 import com.projectcitybuild.core.config.Config
+import com.projectcitybuild.core.config.JsonStorage
 import com.projectcitybuild.core.database.DatabaseSession
 import com.projectcitybuild.core.database.DatabaseSource
 import com.projectcitybuild.core.errors.SentryReporter
@@ -64,6 +66,7 @@ import com.projectcitybuild.integrations.EssentialsIntegration
 import com.projectcitybuild.integrations.LuckPermsIntegration
 import com.projectcitybuild.core.datetime.DateTimeFormatter
 import com.projectcitybuild.core.datetime.LocalizedTime
+import com.projectcitybuild.data.PluginConfig
 import com.projectcitybuild.pcbridge.http.HttpService
 import com.projectcitybuild.features.bans.repositories.PlayerUUIDRepository
 import com.projectcitybuild.features.warnings.actions.GetUnacknowledgedWarnings
@@ -157,17 +160,19 @@ private fun Module.spigot(plugin: JavaPlugin) {
 private fun Module.core() {
     single {
         Config(
-            path = get<JavaPlugin>()
-                .dataFolder
-                .resolve("config.json")
-                .toPath(),
+            jsonStorage = JsonStorage(
+                file = get<JavaPlugin>()
+                    .dataFolder
+                    .resolve("config.json"),
+                typeToken = object : TypeToken<PluginConfig>(){},
+            )
         )
     }
 
     single {
         DatabaseSession().apply {
             val configProvider = get<Config>()
-            val config = configProvider.load()
+            val config = configProvider.get()
             connect(DatabaseSource.fromConfig(config))
         }
     } withOptions {
@@ -180,7 +185,7 @@ private fun Module.core() {
             config = get(),
         ).apply {
             val configProvider = get<Config>()
-            val config = configProvider.load()
+            val config = configProvider.get()
             if (config.errorReporting.isSentryEnabled) {
                 start()
             }
@@ -190,7 +195,7 @@ private fun Module.core() {
     }
 
     factory {
-        val config = get<Config>().load()
+        val config = get<Config>().get()
         val zoneId = ZoneId.of(config.localization.timeZone)
 
         LocalizedTime(
@@ -199,7 +204,7 @@ private fun Module.core() {
     }
 
     factory {
-        val config = get<Config>().load()
+        val config = get<Config>().get()
 
         DateTimeFormatter(
             locale = Locale.forLanguageTag(
@@ -216,7 +221,7 @@ private fun Module.core() {
 
 private fun Module.http() {
     single {
-        val config = get<Config>().load()
+        val config = get<Config>().get()
 
         HttpService(
             authToken = config.api.token,

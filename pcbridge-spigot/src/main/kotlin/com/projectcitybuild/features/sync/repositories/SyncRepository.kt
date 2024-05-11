@@ -27,7 +27,7 @@ class SyncRepository(
         return perks.mapNotNull { donorPerk ->
             val tierName = donorPerk.donationTier.name
 
-            val groupNames = config.load().groups.donorTierGroupNames
+            val groupNames = config.get().groups.donorTierGroupNames
             when (tierName) {
                 "copper" -> groupNames.copper
                 "iron" -> groupNames.iron

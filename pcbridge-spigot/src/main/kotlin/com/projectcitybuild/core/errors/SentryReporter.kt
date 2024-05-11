@@ -11,7 +11,7 @@ class SentryReporter(
 
     fun start() {
         Sentry.init { options ->
-            options.dsn = config.load().errorReporting.sentryDsn
+            options.dsn = config.get().errorReporting.sentryDsn
         }
         started = true
         log.info { "Sentry error reporting enabled" }

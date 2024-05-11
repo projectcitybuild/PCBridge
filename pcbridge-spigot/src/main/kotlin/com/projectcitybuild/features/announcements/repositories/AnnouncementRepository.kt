@@ -10,7 +10,7 @@ class AnnouncementRepository(
     private val store: Store,
 ) {
     suspend fun getNextAnnouncement(): String = withContext(Dispatchers.IO) {
-        val announcements = config.load().announcements.messages
+        val announcements = config.get().announcements.messages
         val lastBroadcastIndex = store.state.lastBroadcastIndex
         val nextIndex = (lastBroadcastIndex + 1) % announcements.size
         store.mutate { state ->

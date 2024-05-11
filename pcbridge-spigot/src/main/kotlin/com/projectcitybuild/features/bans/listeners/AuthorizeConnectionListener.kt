@@ -75,7 +75,7 @@ class AuthorizeConnectionListener(
                     )
                 }
             }.onFailure {
-                log.error { it.localizedMessage }
+                log.error(it) { "An error occurred while authorizing a connection" }
                 sentry.report(it)
 
                 // If something goes wrong, better not to let players in

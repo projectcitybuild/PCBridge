@@ -10,7 +10,7 @@ class ChatBadgeRepository(
     private val store: Store,
 ) {
     fun getIcon(): String {
-        return config.load().chatBadge.icon
+        return config.get().chatBadge.icon
     }
 
     fun getBadgesForPlayer(playerUuid: UUID): List<Badge> {

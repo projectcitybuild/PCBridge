@@ -32,7 +32,7 @@ class AnnounceJoinListener(
 
         event.joinMessage(
             MiniMessage.miniMessage().deserialize(
-                config.load().messages.join,
+                config.get().messages.join,
                 Placeholder.component("name", Component.text(event.player.name)),
             )
         )

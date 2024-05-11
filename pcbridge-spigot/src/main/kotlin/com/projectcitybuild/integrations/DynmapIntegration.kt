@@ -81,7 +81,7 @@ class DynmapIntegration(
             markers.forEach { it.deleteMarker() }
         }
 
-        val iconName = config.load().integrations.dynmap.warpIconName
+        val iconName = config.get().integrations.dynmap.warpIconName
         val icon = markerAPI.getMarkerIcon(iconName)
             ?: throw DynmapMarkerIconNotFoundException()
 

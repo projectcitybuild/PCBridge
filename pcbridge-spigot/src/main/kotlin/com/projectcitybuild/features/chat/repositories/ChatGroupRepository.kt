@@ -37,9 +37,9 @@ class ChatGroupRepository(
 
     fun getDisplayPriority(groupType: ChatGroupType): List<String> {
         return when (groupType) {
-            ChatGroupType.TRUST -> config.load().groups.displayPriority.trust
-            ChatGroupType.BUILD -> config.load().groups.displayPriority.builder
-            ChatGroupType.DONOR -> config.load().groups.displayPriority.donor
+            ChatGroupType.TRUST -> config.get().groups.displayPriority.trust
+            ChatGroupType.BUILD -> config.get().groups.displayPriority.builder
+            ChatGroupType.DONOR -> config.get().groups.displayPriority.donor
         }
     }
 }

@@ -33,7 +33,7 @@ class FirstTimeJoinListener(
         log.debug { "Sending first-time welcome message for ${event.player.name}" }
 
         val message = MiniMessage.miniMessage().deserialize(
-            config.load().messages.firstTimeJoin,
+            config.get().messages.firstTimeJoin,
             Placeholder.component("name", Component.text(event.player.name)),
         )
         server.onlinePlayers
