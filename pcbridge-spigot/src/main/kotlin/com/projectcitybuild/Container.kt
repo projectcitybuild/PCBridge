@@ -69,6 +69,7 @@ import com.projectcitybuild.core.datetime.LocalizedTime
 import com.projectcitybuild.data.PluginConfig
 import com.projectcitybuild.pcbridge.http.HttpService
 import com.projectcitybuild.features.bans.repositories.PlayerUUIDRepository
+import com.projectcitybuild.features.joinmessages.repositories.PlayerConfigRepository
 import com.projectcitybuild.features.warnings.actions.GetUnacknowledgedWarnings
 import com.projectcitybuild.features.warnings.commands.WarningAcknowledgeCommand
 import com.projectcitybuild.features.warnings.listeners.NotifyWarningsOnJoinListener
@@ -299,6 +300,12 @@ private fun Module.warps() {
 }
 
 private fun Module.joinMessages() {
+    factory {
+        PlayerConfigRepository(
+            dataSource = get(),
+        )
+    }
+
     factory {
         AnnounceJoinListener(
             config = get(),
