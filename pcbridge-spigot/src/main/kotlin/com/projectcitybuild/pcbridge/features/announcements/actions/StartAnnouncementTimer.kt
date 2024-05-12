@@ -23,7 +23,8 @@ class StartAnnouncementTimer(
         timer.cancel(timerId)
         timer.scheduleRepeating(
             identifier = timerId,
-            delay = intervalInMins.toLong(), // No point doing an announcement just as the server starts
+            // No point doing an announcement just as the server starts
+            delay = intervalInMins.toLong(),
             repeatingInterval = intervalInMins.toLong(),
             unit = TimeUnit.MINUTES,
             work = {

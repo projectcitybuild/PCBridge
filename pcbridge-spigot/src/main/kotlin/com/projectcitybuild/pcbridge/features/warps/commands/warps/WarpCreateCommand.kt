@@ -1,5 +1,6 @@
 package com.projectcitybuild.pcbridge.features.warps.commands.warps
 
+import com.projectcitybuild.pcbridge.core.datetime.LocalizedTime
 import com.projectcitybuild.pcbridge.data.SerializableLocation
 import com.projectcitybuild.pcbridge.features.warps.Warp
 import com.projectcitybuild.pcbridge.features.warps.events.WarpCreateEvent
@@ -14,11 +15,11 @@ import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.Server
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
-import java.time.LocalDateTime
 
 class WarpCreateCommand(
     private val warpRepository: WarpRepository,
     private val server: Server,
+    private val time: LocalizedTime,
 ) : SpigotCommand<WarpCreateCommand.Args> {
     override val label = "create"
 
@@ -59,7 +60,7 @@ class WarpCreateCommand(
             Warp(
                 name = args.warpName,
                 location = location,
-                createdAt = LocalDateTime.now(), // TODO
+                createdAt = time.now(),
             )
         warpRepository.create(warp)
 

@@ -69,9 +69,12 @@ class DynmapIntegration(
             markerAPI.getMarkerSet(MARKER_SET_NAME)
                 ?: markerAPI.createMarkerSet(
                     MARKER_SET_NAME,
-                    "Warps", // Name that shows up in the dynmap web interface
-                    null, // TODO: what is this?
-                    false, // TODO: what is this?
+                    // Name that shows up in the dynmap web interface
+                    "Warps",
+                    // TODO: what is this?
+                    null,
+                    // TODO: what is this?
+                    false,
                 )
         warpMarkerSet.apply {
             layerPriority = 1
@@ -94,7 +97,8 @@ class DynmapIntegration(
                 warp.location.y,
                 warp.location.z,
                 icon,
-                false, // TODO: what is this?
+                // TODO: what is this?
+                false,
             )
         }
     }

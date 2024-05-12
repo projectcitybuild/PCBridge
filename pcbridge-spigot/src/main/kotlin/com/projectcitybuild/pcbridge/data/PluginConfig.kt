@@ -1,3 +1,5 @@
+@file:Suppress("ktlint:standard:max-line-length")
+
 package com.projectcitybuild.pcbridge.data
 
 import kotlinx.serialization.Serializable

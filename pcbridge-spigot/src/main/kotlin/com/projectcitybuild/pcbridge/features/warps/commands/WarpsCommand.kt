@@ -1,6 +1,7 @@
 package com.projectcitybuild.pcbridge.features.warps.commands
 
 import com.projectcitybuild.pcbridge.core.config.Config
+import com.projectcitybuild.pcbridge.core.datetime.LocalizedTime
 import com.projectcitybuild.pcbridge.features.warps.commands.warps.WarpCreateCommand
 import com.projectcitybuild.pcbridge.features.warps.commands.warps.WarpDeleteCommand
 import com.projectcitybuild.pcbridge.features.warps.commands.warps.WarpListCommand
@@ -20,6 +21,7 @@ class WarpsCommand(
     private val warpRepository: WarpRepository,
     private val config: Config,
     private val server: Server,
+    private val time: LocalizedTime,
 ) : SpigotCommand<WarpsCommand.Args> {
     override val label = "warps"
 
@@ -74,6 +76,7 @@ class WarpsCommand(
                 WarpCreateCommand(
                     warpRepository = warpRepository,
                     server = server,
+                    time = time,
                 ).run(
                     sender = sender,
                     args =

@@ -301,6 +301,7 @@ private fun Module.warps() {
             warpRepository = get(),
             config = get(),
             server = get(),
+            time = get(),
         )
     }
 }

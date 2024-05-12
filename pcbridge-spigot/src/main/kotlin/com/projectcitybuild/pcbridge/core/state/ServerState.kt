@@ -40,7 +40,6 @@ data class ServerState(
 data class PlayerState(
     @Serializable(with = LocalDateTimeSerializer::class)
     val connectedAt: LocalDateTime?,
-
     val badges: List<Badge>,
 ) {
     companion object {
