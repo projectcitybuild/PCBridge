@@ -1,5 +1,6 @@
 package com.projectcitybuild.pcbridge.features.staffchat.commands
 
+import com.projectcitybuild.pcbridge.Permissions
 import com.projectcitybuild.pcbridge.support.messages.CommandHelpBuilder
 import com.projectcitybuild.pcbridge.support.spigot.BadCommandUsageException
 import com.projectcitybuild.pcbridge.support.spigot.CommandArgsParser
@@ -32,7 +33,7 @@ class StaffChatCommand(
             .build()
 
         server.onlinePlayers
-            .filter { it.hasPermission("pcbridge.chat.staff_channel") }
+            .filter { it.hasPermission(Permissions.COMMAND_STAFF_CHAT) }
             .forEach { it.sendMessage(message) }
     }
 

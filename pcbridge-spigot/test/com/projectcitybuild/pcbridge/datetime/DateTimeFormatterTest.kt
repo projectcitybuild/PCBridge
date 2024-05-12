@@ -1,5 +1,6 @@
 package com.projectcitybuild.pcbridge.datetime
 
+import com.projectcitybuild.pcbridge.core.datetime.DateTimeFormatter
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import java.time.ZoneId
@@ -10,7 +11,7 @@ class DateTimeFormatterTest {
 
     @Test
     fun `convert formats timestamp with correct locale and timezone`() {
-        val formatter = DateTimeFormatterImpl(
+        val formatter = DateTimeFormatter(
             Locale.forLanguageTag("en-us"),
             ZoneId.of("UTC"),
         )

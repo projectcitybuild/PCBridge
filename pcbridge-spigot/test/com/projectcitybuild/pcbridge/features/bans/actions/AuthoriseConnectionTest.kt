@@ -1,6 +1,5 @@
 package com.projectcitybuild.pcbridge.features.bans.actions
 
-import com.projectcitybuild.pcbridge.features.bans.actions.AuthoriseConnection
 import com.projectcitybuild.pcbridge.http.responses.Aggregate
 import com.projectcitybuild.pcbridge.http.responses.IPBan
 import com.projectcitybuild.pcbridge.http.responses.PlayerBan
@@ -12,7 +11,6 @@ import java.time.LocalDate
 import java.time.ZoneId
 
 class AuthoriseConnectionTest {
-
     private lateinit var useCase: AuthoriseConnection
 
     @BeforeEach

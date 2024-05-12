@@ -27,16 +27,17 @@ subprojects {
     apply(plugin = "org.jetbrains.kotlin.jvm")
 
     dependencies {
+        // Kotlin
         implementation(kotlin("stdlib-jdk8"))
-
         implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
         implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
 
+        // Tests
         testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.0")
-        // testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
-        // testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.2")
-        // testImplementation("org.mockito.kotlin:mockito-kotlin:5.0.0")
-        // testImplementation("org.mockito:mockito-inline:4.2.0")
+        testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
+        testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.2")
+        testImplementation("org.mockito.kotlin:mockito-kotlin:5.0.0")
+        testImplementation("org.mockito:mockito-inline:4.2.0")
     }
 
     sourceSets {

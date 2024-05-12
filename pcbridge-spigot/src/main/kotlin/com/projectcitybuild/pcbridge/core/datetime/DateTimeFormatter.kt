@@ -24,13 +24,4 @@ class DateTimeFormatter(
 
         return dateTime.format(formatter)
     }
-
-    // TODO: move this
-    companion object {
-        @TestOnly
-        fun mock() = DateTimeFormatter(
-            Locale.forLanguageTag("en-us"),
-            ZoneId.of("UTC"),
-        )
-    }
 }

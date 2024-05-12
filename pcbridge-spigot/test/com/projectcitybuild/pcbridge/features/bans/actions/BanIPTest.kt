@@ -1,33 +1,34 @@
 package com.projectcitybuild.pcbridge.features.bans.actions
 
-import com.projectcitybuild.pcbridge.core.utils.Failure
-import com.projectcitybuild.pcbridge.core.utils.Success
-import com.projectcitybuild.pcbridge.features.bans.actions.BanIP
+import com.projectcitybuild.pcbridge.features.bans.repositories.IPBanRepository
 import com.projectcitybuild.pcbridge.http.services.pcb.IPBanHttpService
-import com.projectcitybuild.repositories.IPBanRepository
-import com.projectcitybuild.support.spigot.SpigotServer
+import com.projectcitybuild.pcbridge.utils.Failure
+import com.projectcitybuild.pcbridge.utils.Success
 import kotlinx.coroutines.test.runTest
+import org.bukkit.Server
+import org.bukkit.entity.Player
+import org.bukkit.event.player.PlayerKickEvent
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.mockito.ArgumentMatchers.anyString
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.verify
 import org.mockito.kotlin.any
 import org.mockito.kotlin.eq
+import org.mockito.kotlin.verifyNoInteractions
 import org.mockito.kotlin.whenever
+import java.net.InetSocketAddress
 import java.util.UUID
 
 class BanIPTest {
-
     private lateinit var useCase: BanIP
     private lateinit var ipBanRepository: IPBanRepository
-    private lateinit var server: SpigotServer
+    private lateinit var server: Server
 
     @BeforeEach
     fun setUp() {
         ipBanRepository = mock(IPBanRepository::class.java)
-        server = mock(SpigotServer::class.java)
+        server = mock(Server::class.java)
 
         useCase = BanIP(
             ipBanRepository,
@@ -94,20 +95,30 @@ class BanIPTest {
 
     @Test
     fun `should kick player if online`() = runTest {
-        val ip = "127.0.0.1"
+        val otherPlayer = mockPlayer(ip = "127.0.0.2")
+        val targetPlayer = mockPlayer(ip = "127.0.0.1")
+        whenever(server.onlinePlayers).thenReturn(
+            listOf(targetPlayer, otherPlayer),
+        )
 
-        val result = useCase.execute(
-            ip = ip,
+        useCase.execute(
+            ip = "127.0.0.1",
             bannerUUID = UUID.randomUUID(),
             bannerName = "name",
             reason = "reason",
         )
 
-        verify(server).kickByIP(
-            eq(ip),
-            anyString(),
-            eq(SpigotServer.KickContext.FATAL),
-        )
-        assertEquals(Success(Unit), result)
+        verify(targetPlayer).kick(any(), eq(PlayerKickEvent.Cause.BANNED))
+        verifyNoInteractions(otherPlayer)
     }
+}
+
+private fun mockPlayer(ip: String): Player {
+    val address = mock(InetSocketAddress::class.java)
+    val player = mock(Player::class.java)
+
+    whenever(address.toString()).thenReturn(ip)
+    whenever(player.address).thenReturn(address)
+
+    return player
 }

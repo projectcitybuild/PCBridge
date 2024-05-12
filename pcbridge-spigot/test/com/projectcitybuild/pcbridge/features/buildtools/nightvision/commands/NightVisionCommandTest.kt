@@ -1,6 +1,6 @@
 package com.projectcitybuild.pcbridge.features.buildtools.nightvision.commands
 
-import com.projectcitybuild.support.commandapi.ToggleOption
+import com.projectcitybuild.pcbridge.features.nightvision.commands.NightVisionCommand
 import kotlinx.coroutines.test.runTest
 import org.bukkit.entity.Player
 import org.bukkit.potion.PotionEffect
@@ -36,9 +36,11 @@ class NightVisionCommandTest {
 
     @Test
     fun `forces on nightvision when specified`() = runTest {
-        NightVisionCommand().execute(
-            player = player,
-            desiredState = ToggleOption.ON,
+        NightVisionCommand().run(
+            sender = player,
+            args = NightVisionCommand.Args(
+                desiredState = true,
+            ),
         )
         verify(player).removePotionEffect(PotionEffectType.NIGHT_VISION)
         verify(player).addPotionEffect(potionEffect)
@@ -46,9 +48,11 @@ class NightVisionCommandTest {
 
     @Test
     fun `forces off nightvision when specified`() = runTest {
-        NightVisionCommand().execute(
-            player = player,
-            desiredState = ToggleOption.OFF,
+        NightVisionCommand().run(
+            sender = player,
+            args = NightVisionCommand.Args(
+                desiredState = false,
+            ),
         )
         verify(player).removePotionEffect(PotionEffectType.NIGHT_VISION)
         verify(player, never()).addPotionEffect(potionEffect)
@@ -59,9 +63,11 @@ class NightVisionCommandTest {
         whenever(player.hasPotionEffect(PotionEffectType.NIGHT_VISION))
             .thenReturn(false)
 
-        NightVisionCommand().execute(
-            player = player,
-            desiredState = ToggleOption.UNSPECIFIED,
+        NightVisionCommand().run(
+            sender = player,
+            args = NightVisionCommand.Args(
+                desiredState = null,
+            ),
         )
         verify(player).removePotionEffect(PotionEffectType.NIGHT_VISION)
         verify(player).addPotionEffect(potionEffect)
@@ -72,9 +78,11 @@ class NightVisionCommandTest {
         whenever(player.hasPotionEffect(PotionEffectType.NIGHT_VISION))
             .thenReturn(true)
 
-        NightVisionCommand().execute(
-            player = player,
-            desiredState = ToggleOption.UNSPECIFIED,
+        NightVisionCommand().run(
+            sender = player,
+            args = NightVisionCommand.Args(
+                desiredState = null,
+            ),
         )
         verify(player).removePotionEffect(PotionEffectType.NIGHT_VISION)
         verify(player, never()).addPotionEffect(potionEffect)

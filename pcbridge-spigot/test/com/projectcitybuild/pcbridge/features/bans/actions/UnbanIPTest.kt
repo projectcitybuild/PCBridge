@@ -1,10 +1,9 @@
 package com.projectcitybuild.pcbridge.features.bans.actions
 
-import com.projectcitybuild.pcbridge.core.utils.Failure
-import com.projectcitybuild.pcbridge.core.utils.Success
-import com.projectcitybuild.pcbridge.features.bans.actions.UnbanIP
+import com.projectcitybuild.pcbridge.features.bans.repositories.IPBanRepository
 import com.projectcitybuild.pcbridge.http.services.pcb.IPBanHttpService
-import com.projectcitybuild.repositories.IPBanRepository
+import com.projectcitybuild.pcbridge.utils.Failure
+import com.projectcitybuild.pcbridge.utils.Success
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
@@ -17,7 +16,6 @@ import org.mockito.kotlin.whenever
 import java.util.UUID
 
 class UnbanIPTest {
-
     private lateinit var useCase: UnbanIP
     private lateinit var ipBanRepository: IPBanRepository
 

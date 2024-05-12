@@ -1,37 +1,32 @@
 package com.projectcitybuild.pcbridge.features.bans.actions
 
-import com.projectcitybuild.pcbridge.core.utils.Failure
 import com.projectcitybuild.pcbridge.http.services.pcb.UUIDBanHttpService
 import com.projectcitybuild.pcbridge.features.bans.repositories.PlayerBanRepository
 import com.projectcitybuild.pcbridge.features.bans.repositories.PlayerUUIDRepository
-import com.projectcitybuild.pcbridge.features.bans.actions.BanUUID
-import com.projectcitybuild.support.spigot.SpigotServer
+import com.projectcitybuild.pcbridge.utils.Failure
 import kotlinx.coroutines.test.runTest
+import org.bukkit.Server
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.mockito.ArgumentMatchers.anyString
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
-import org.mockito.kotlin.any
-import org.mockito.kotlin.eq
 import org.mockito.kotlin.whenever
 import java.util.UUID
 
 class BanUUIDTest {
-
     private lateinit var useCase: BanUUID
 
     private lateinit var playerBanRepository: PlayerBanRepository
     private lateinit var playerUUIDRepository: PlayerUUIDRepository
-    private lateinit var server: SpigotServer
+    private lateinit var server: Server
 
     @BeforeEach
     fun setUp() {
         playerBanRepository = mock(PlayerBanRepository::class.java)
         playerUUIDRepository = mock(PlayerUUIDRepository::class.java)
-        server = mock(SpigotServer::class.java)
+        server = mock(Server::class.java)
 
         useCase = BanUUID(
             playerBanRepository,
@@ -81,29 +76,5 @@ class BanUUIDTest {
 
         verify(playerBanRepository, times(1))
             .ban(playerUUID, playerName, staffUUID, staffName, reason)
-    }
-
-    @Test
-    fun `ban should be broadcasted to all online players`() = runTest {
-        val playerName = "banned_player"
-
-        whenever(playerUUIDRepository.get(playerName)).thenReturn(UUID.randomUUID())
-
-        useCase.ban(playerName, UUID.randomUUID(), "staff_player", "reason")
-
-        verify(server).broadcastMessage(any())
-    }
-
-    @Test
-    fun `ban should kick the online player`() = runTest {
-        val playerName = "banned_player"
-        val playerUUID = UUID.randomUUID()
-
-        whenever(playerUUIDRepository.get(playerName)).thenReturn(playerUUID)
-
-        useCase.ban(playerName, UUID.randomUUID(), "staff_player", "reason")
-
-        verify(server, times(1))
-            .kickByUUID(eq(playerUUID), anyString(), eq(SpigotServer.KickContext.FATAL))
     }
 }

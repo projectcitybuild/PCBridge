@@ -1,36 +1,42 @@
 package com.projectcitybuild.pcbridge.features.bans.actions
 
-import com.projectcitybuild.pcbridge.core.modules.datetime.formatter.DateTimeFormatterImpl
-import com.projectcitybuild.pcbridge.core.utils.Failure
-import com.projectcitybuild.pcbridge.core.utils.Success
+import com.projectcitybuild.pcbridge.core.datetime.DateTimeFormatter
 import com.projectcitybuild.pcbridge.http.responses.PlayerBan
 import com.projectcitybuild.pcbridge.features.bans.repositories.PlayerBanRepository
 import com.projectcitybuild.pcbridge.features.bans.repositories.PlayerUUIDRepository
-import com.projectcitybuild.pcbridge.features.bans.actions.CheckUUIDBan
+import com.projectcitybuild.pcbridge.utils.Failure
+import com.projectcitybuild.pcbridge.utils.Success
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.mock
 import org.mockito.kotlin.whenever
+import java.time.ZoneId
+import java.util.Locale
 import java.util.UUID
 
 class CheckBanUUIDTest {
-
     private lateinit var useCase: CheckUUIDBan
 
     private lateinit var playerBanRepository: PlayerBanRepository
     private lateinit var playerUUIDRepository: PlayerUUIDRepository
+    private lateinit var dateTimeFormatter: DateTimeFormatter
 
     @BeforeEach
     fun setUp() {
         playerBanRepository = mock(PlayerBanRepository::class.java)
         playerUUIDRepository = mock(PlayerUUIDRepository::class.java)
 
+        dateTimeFormatter = DateTimeFormatter(
+            Locale.forLanguageTag("en-us"),
+            ZoneId.of("UTC"),
+        )
+
         useCase = CheckUUIDBan(
             playerBanRepository,
             playerUUIDRepository,
-            DateTimeFormatterImpl.mock(),
+            dateTimeFormatter,
         )
     }
 
