@@ -8,7 +8,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 internal class PCBClientFactory(
     private val authToken: String,
     private val baseUrl: String,
-    private val withLogging: Boolean
+    private val withLogging: Boolean,
 ) {
     fun build(): Retrofit {
         val authenticatedClient = makeAuthenticatedClient()
@@ -20,15 +20,16 @@ internal class PCBClientFactory(
     }
 
     private fun makeAuthenticatedClient(): OkHttpClient {
-        var clientFactory = OkHttpClient().newBuilder()
-            .addInterceptor { chain ->
-                // Add access token as header to each API request
-                val request = chain.request()
-                val requestBuilder = request.newBuilder().header("Authorization", "Bearer $authToken")
-                val nextRequest = requestBuilder.build()
+        var clientFactory =
+            OkHttpClient().newBuilder()
+                .addInterceptor { chain ->
+                    // Add access token as header to each API request
+                    val request = chain.request()
+                    val requestBuilder = request.newBuilder().header("Authorization", "Bearer $authToken")
+                    val nextRequest = requestBuilder.build()
 
-                chain.proceed(nextRequest)
-            }
+                    chain.proceed(nextRequest)
+                }
 
         if (withLogging) {
             val loggingInterceptor = HttpLoggingInterceptor()

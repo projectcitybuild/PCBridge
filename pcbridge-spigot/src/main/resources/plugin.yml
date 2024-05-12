@@ -1,11 +1,45 @@
-main: com.projectcitybuild.PCBridge
 name: PCBridge
+main: com.projectcitybuild.pcbridge.Plugin
+website: https://github.com/projectcitybuild/PCBridge
 author: Andy
-version: 5.1.0
+version: 6.0.0
+api-version: 1.20
+
 softdepend:
   - LuckPerms
   - dynmap
-  - GadgetsMenu
   - Essentials
 
-api-version: 1.16
+commands:
+  a:
+    permission: pcbridge.chat.staff_channel
+  ban:
+    permission: pcbridge.ban.ban
+  banip:
+    permission: pcbridge.ban.banip
+  checkban:
+    permission: pcbridge.ban.check
+  mute:
+    permission: pcbridge.chat.mute
+  pcbridge:
+    permission: pcbridge.utils
+  invisframe:
+    permission: pcbridge.build.invisframe
+  nv:
+    permission: pcbridge.build.nightvision
+  sync:
+    permission: pcbridge.sync.login
+  syncother:
+    permission: pcbridge.sync.other
+  unban:
+    permission: pcbridge.ban.ban
+  unbanip:
+    permission: pcbridge.ban.banip
+  unmute:
+    permission: pcbridge.chat.mute
+  warp:
+    permission: pcbridge.warps.teleport
+  warps:
+    permission: pcbridge.warps.list
+  warning:
+    permission: pcbridge.warning.acknowledge

@@ -1,9 +1,8 @@
 package com.projectcitybuild.pcbridge.http.requests
 
-import com.projectcitybuild.pcbridge.http.responses.Account
-import com.projectcitybuild.pcbridge.http.responses.AccountBalance
-import com.projectcitybuild.pcbridge.http.responses.Aggregate
 import com.projectcitybuild.pcbridge.http.parsing.ApiResponse
+import com.projectcitybuild.pcbridge.http.responses.Account
+import com.projectcitybuild.pcbridge.http.responses.Aggregate
 import com.projectcitybuild.pcbridge.http.responses.AuthURL
 import com.projectcitybuild.pcbridge.http.responses.DonationPerk
 import com.projectcitybuild.pcbridge.http.responses.IPBan
@@ -24,7 +23,7 @@ internal interface PCBRequest {
     @POST("auth/minecraft")
     @FormUrlEncoded
     suspend fun getVerificationUrl(
-        @Field("minecraft_uuid") uuid: String
+        @Field("minecraft_uuid") uuid: String,
     ): ApiResponse<AuthURL>
 
     /**
@@ -32,7 +31,7 @@ internal interface PCBRequest {
      */
     @GET("auth/minecraft/{uuid}")
     suspend fun getUserGroups(
-        @Path(value = "uuid") uuid: String
+        @Path(value = "uuid") uuid: String,
     ): ApiResponse<Account>
 
     /**
@@ -46,26 +45,10 @@ internal interface PCBRequest {
         @Query("ip") ip: String,
     ): ApiResponse<Aggregate>
 
-
     @GET("v2/minecraft/{uuid}/donation-tiers")
     suspend fun getDonationTier(
-        @Path(value = "uuid") uuid: String
+        @Path(value = "uuid") uuid: String,
     ): ApiResponse<Array<DonationPerk>>
-
-
-    @GET("v2/minecraft/{uuid}/balance")
-    suspend fun getBalance(
-        @Path(value = "uuid") uuid: String,
-    ): ApiResponse<AccountBalance>
-
-    @POST("v2/minecraft/{uuid}/balance/deduct")
-    @FormUrlEncoded
-    suspend fun deductFromBalance(
-        @Path(value = "uuid") uuid: String,
-        @Field("amount") amount: Int,
-        @Field("reason") reason: String,
-    ): ApiResponse<Unit>
-
 
     @POST("v2/bans/ip/ban")
     @FormUrlEncoded
@@ -92,7 +75,6 @@ internal interface PCBRequest {
         @Field("ip_address") ip: String,
     ): ApiResponse<IPBan>
 
-
     @POST("v2/bans/player/ban")
     @FormUrlEncoded
     suspend fun banUUID(
@@ -106,28 +88,27 @@ internal interface PCBRequest {
         @Field("expires_at") expiresAt: Long?,
     ): ApiResponse<PlayerBan>
 
-
     @POST("v2/bans/player/unban")
     @FormUrlEncoded
     suspend fun unbanUUID(
         @Field("banned_player_id") bannedPlayerId: String,
         @Field("banned_player_type") bannedPlayerType: String = "minecraft_uuid",
         @Field("unbanner_player_id") unbannerPlayerId: String?,
-        @Field("unbanner_player_type") unbannerPlayerType: String = "minecraft_uuid"
+        @Field("unbanner_player_type") unbannerPlayerType: String = "minecraft_uuid",
     ): ApiResponse<PlayerBan>
 
     @POST("v2/bans/player/status")
     @FormUrlEncoded
     suspend fun getUuidBanStatus(
         @Field("player_id") playerId: String,
-        @Field("player_type") playerType: String = "minecraft_uuid"
+        @Field("player_type") playerType: String = "minecraft_uuid",
     ): ApiResponse<PlayerBan>
 
     @POST("v2/bans/player/all")
     @FormUrlEncoded
     suspend fun getUUIDBans(
         @Field("player_id") playerId: String,
-        @Field("player_id_type") playerType: String = "minecraft_uuid"
+        @Field("player_id_type") playerType: String = "minecraft_uuid",
     ): ApiResponse<List<PlayerBan>>
 
     @POST("v2/bans/player/ban")
@@ -139,7 +120,6 @@ internal interface PCBRequest {
         @Field("banner_player_alias") bannerPlayerAlias: String,
         @Field("reason") reason: String? = null,
     ): ApiResponse<PlayerBan>
-
 
     @GET("v2/warnings")
     suspend fun getWarnings(
@@ -166,7 +146,6 @@ internal interface PCBRequest {
     suspend fun acknowledgeWarning(
         @Field("warning_id") warningId: Int,
     ): ApiResponse<PlayerWarning>
-
 
     @POST("v2/minecraft/telemetry/seen")
     @FormUrlEncoded

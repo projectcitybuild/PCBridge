@@ -6,10 +6,9 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 internal interface MojangRequest {
-
     @GET("users/profiles/minecraft/{username}")
     suspend fun getMojangPlayer(
         @Path("username") playerName: String,
-        @Query("at") timestamp: Long? = null
+        @Query("at") timestamp: Long? = null,
     ): MojangPlayer?
 }

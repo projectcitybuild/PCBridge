@@ -1,8 +1,0 @@
-{
-  "error": {
-    "id": "player_already_banned",
-    "title": "UserAlreadyBannedException",
-    "detail": "Player is already banned",
-    "status": 400
-  }
-}

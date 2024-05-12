@@ -4,7 +4,10 @@ import com.google.gson.annotations.SerializedName
 import java.util.UUID
 
 data class Account(
-    @SerializedName("account_id") val id: String = UUID.randomUUID().toString(),
-    @SerializedName("username") val username: String = "username",
-    @SerializedName("groups") val groups: List<Group> = listOf(),
+    @SerializedName("account_id")
+    val id: String = UUID.randomUUID().toString(),
+    @SerializedName("username")
+    val username: String = "username",
+    @SerializedName("groups")
+    val groups: List<Group> = listOf(),
 )
