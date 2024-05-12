@@ -11,7 +11,10 @@ class TelemetryHttpService(
     private val retrofit: Retrofit,
     private val responseParser: ResponseParser,
 ) {
-    suspend fun playerSeen(playerUUID: UUID, playerName: String) = withContext(Dispatchers.IO) {
+    suspend fun playerSeen(
+        playerUUID: UUID,
+        playerName: String,
+    ) = withContext(Dispatchers.IO) {
         responseParser.parse {
             retrofit.pcb().telemetrySeen(
                 playerUUID = playerUUID.toString(),

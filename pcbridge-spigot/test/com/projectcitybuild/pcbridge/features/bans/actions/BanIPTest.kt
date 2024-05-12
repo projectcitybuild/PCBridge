@@ -77,12 +77,10 @@ class BanIPTest {
     @Test
     fun `should ban valid IP`() =
         runTest {
-            val ips =
-                arrayOf(
-                    "127.0.0.1",
-                    "/127.0.0.1:1234", // This should get sanitized
-                )
-            ips.forEach { ip ->
+            arrayOf(
+                "127.0.0.1",
+                "/127.0.0.1:1234",
+            ).forEach { ip ->
                 val uuid = UUID.randomUUID()
                 val result =
                     useCase.execute(

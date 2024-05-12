@@ -14,16 +14,18 @@ class PlayerWarningHttpService(
 ) {
     suspend fun get(
         playerUUID: UUID,
-        playerName: String
-    ): List<PlayerWarning> = withContext(Dispatchers.IO) {
-        val response = responseParser.parse {
-            retrofit.pcb().getWarnings(
-                playerId = playerUUID.toString(),
-                playerAlias = playerName,
-            )
+        playerName: String,
+    ): List<PlayerWarning> =
+        withContext(Dispatchers.IO) {
+            val response =
+                responseParser.parse {
+                    retrofit.pcb().getWarnings(
+                        playerId = playerUUID.toString(),
+                        playerAlias = playerName,
+                    )
+                }
+            response.data ?: listOf()
         }
-        response.data ?: listOf()
-    }
 
     suspend fun create(
         warnedPlayerUUID: UUID,
@@ -31,25 +33,29 @@ class PlayerWarningHttpService(
         warnerPlayerUUID: UUID,
         warnerPlayerName: String,
         reason: String,
-    ): PlayerWarning? = withContext(Dispatchers.IO) {
-        val response = responseParser.parse {
-            retrofit.pcb().createWarning(
-                warnedPlayerId = warnedPlayerUUID.toString(),
-                warnedPlayerAlias = warnedPlayerName,
-                warnerPlayerId = warnerPlayerUUID.toString(),
-                warnerPlayerAlias = warnerPlayerName,
-                reason = reason,
-            )
+    ): PlayerWarning? =
+        withContext(Dispatchers.IO) {
+            val response =
+                responseParser.parse {
+                    retrofit.pcb().createWarning(
+                        warnedPlayerId = warnedPlayerUUID.toString(),
+                        warnedPlayerAlias = warnedPlayerName,
+                        warnerPlayerId = warnerPlayerUUID.toString(),
+                        warnerPlayerAlias = warnerPlayerName,
+                        reason = reason,
+                    )
+                }
+            response.data
         }
-        response.data
-    }
 
-    suspend fun acknowledge(warningId: Int): PlayerWarning? = withContext(Dispatchers.IO) {
-        val response = responseParser.parse {
-            retrofit.pcb().acknowledgeWarning(
-                warningId = warningId,
-            )
+    suspend fun acknowledge(warningId: Int): PlayerWarning? =
+        withContext(Dispatchers.IO) {
+            val response =
+                responseParser.parse {
+                    retrofit.pcb().acknowledgeWarning(
+                        warningId = warningId,
+                    )
+                }
+            response.data
         }
-        response.data
-    }
 }

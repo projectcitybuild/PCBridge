@@ -71,9 +71,11 @@ tasks.withType<ShadowJar> {
     //
     // For faster testing with a Minecraft server, since we can output directly
     // to the "plugins" folder
-    destinationDirectory.set(File(
-        env.fetchOrNull("BUILD_OUTPUT_DIR") ?: "build/release"
-    ))
+    destinationDirectory.set(
+        File(
+            env.fetchOrNull("BUILD_OUTPUT_DIR") ?: "build/release",
+        ),
+    )
     archiveVersion.set(project.version.toString())
     this.dependsOn
 }

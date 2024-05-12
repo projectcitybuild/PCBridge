@@ -13,12 +13,14 @@ class IPBanHttpService(
     private val responseParser: ResponseParser,
 ) {
     class IPAlreadyBannedException : Exception()
+
     class IPNotBannedException : Exception()
 
     suspend fun get(ip: String): IPBan? {
-        val response = responseParser.parse {
-            retrofit.pcb().getIPStatus(ip = ip)
-        }
+        val response =
+            responseParser.parse {
+                retrofit.pcb().getIPStatus(ip = ip)
+            }
         return response.data
     }
 

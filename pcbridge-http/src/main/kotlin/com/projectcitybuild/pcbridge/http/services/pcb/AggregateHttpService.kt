@@ -12,13 +12,18 @@ class AggregateHttpService(
     private val retrofit: Retrofit,
     private val responseParser: ResponseParser,
 ) {
-    suspend fun get(playerUUID: UUID, ip: String): Aggregate? = withContext(Dispatchers.IO) {
-        val response = responseParser.parse {
-            retrofit.pcb().getAggregate(
-                uuid = playerUUID.toString(),
-                ip = ip,
-            )
+    suspend fun get(
+        playerUUID: UUID,
+        ip: String,
+    ): Aggregate? =
+        withContext(Dispatchers.IO) {
+            val response =
+                responseParser.parse {
+                    retrofit.pcb().getAggregate(
+                        uuid = playerUUID.toString(),
+                        ip = ip,
+                    )
+                }
+            response.data
         }
-        response.data
-    }
 }

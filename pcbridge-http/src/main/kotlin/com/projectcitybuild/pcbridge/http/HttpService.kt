@@ -21,7 +21,7 @@ class HttpService(
         PCBClientFactory(
             authToken = authToken,
             baseUrl = baseURL,
-            withLogging = withLogging
+            withLogging = withLogging,
         ).build()
     }
 

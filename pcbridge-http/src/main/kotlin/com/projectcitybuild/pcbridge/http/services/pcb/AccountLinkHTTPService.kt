@@ -12,26 +12,28 @@ class AccountLinkHTTPService(
     private val retrofit: Retrofit,
     private val responseParser: ResponseParser,
 ) {
-    class AlreadyLinkedException: Exception()
+    class AlreadyLinkedException : Exception()
 
     @Throws(AlreadyLinkedException::class)
-    suspend fun generateVerificationURL(playerUUID: UUID): String? = withContext(Dispatchers.IO) {
-        try {
-            val response = responseParser.parse {
-                retrofit.pcb().getVerificationUrl(uuid = playerUUID.toString())
-            }
-            val data = response.data
+    suspend fun generateVerificationURL(playerUUID: UUID): String? =
+        withContext(Dispatchers.IO) {
+            try {
+                val response =
+                    responseParser.parse {
+                        retrofit.pcb().getVerificationUrl(uuid = playerUUID.toString())
+                    }
+                val data = response.data
 
-            if (data == null || data.url.isEmpty()) {
-                null
-            } else {
-                data.url
+                if (data == null || data.url.isEmpty()) {
+                    null
+                } else {
+                    data.url
+                }
+            } catch (e: ResponseParser.HTTPError) {
+                if (e.errorBody?.id == "already_authenticated") {
+                    throw AlreadyLinkedException()
+                }
+                throw e
             }
-        } catch (e: ResponseParser.HTTPError) {
-            if (e.errorBody?.id == "already_authenticated") {
-                throw AlreadyLinkedException()
-            }
-            throw e
         }
-    }
 }

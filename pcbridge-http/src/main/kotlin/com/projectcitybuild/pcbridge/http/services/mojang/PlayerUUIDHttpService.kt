@@ -13,14 +13,18 @@ class PlayerUUIDHttpService(
 ) {
     class PlayerNotFoundException : Exception()
 
-    suspend fun get(playerName: String, at: Long? = null): MojangPlayer? = withContext(Dispatchers.IO) {
-        responseParser.parse {
-            try {
-                retrofit.mojang().getMojangPlayer(playerName)
-            } catch (e: KotlinNullPointerException) {
-                // Hacky workaround to catch 204 HTTP errors (username not found)
-                throw PlayerNotFoundException()
+    suspend fun get(
+        playerName: String,
+        at: Long? = null,
+    ): MojangPlayer? =
+        withContext(Dispatchers.IO) {
+            responseParser.parse {
+                try {
+                    retrofit.mojang().getMojangPlayer(playerName)
+                } catch (e: KotlinNullPointerException) {
+                    // Hacky workaround to catch 204 HTTP errors (username not found)
+                    throw PlayerNotFoundException()
+                }
             }
         }
-    }
 }

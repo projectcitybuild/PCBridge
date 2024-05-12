@@ -13,20 +13,23 @@ class UUIDBanHttpService(
     private val responseParser: ResponseParser,
 ) {
     class UUIDAlreadyBannedException : Exception()
+
     class UUIDNotBannedException : Exception()
 
-    suspend fun get(targetPlayerUUID: UUID): PlayerBan? = withContext(Dispatchers.IO) {
-        val response = responseParser.parse {
-            retrofit.pcb().getUuidBanStatus(
-                playerId = targetPlayerUUID.toString(),
-            )
+    suspend fun get(targetPlayerUUID: UUID): PlayerBan? =
+        withContext(Dispatchers.IO) {
+            val response =
+                responseParser.parse {
+                    retrofit.pcb().getUuidBanStatus(
+                        playerId = targetPlayerUUID.toString(),
+                    )
+                }
+            val ban = response.data
+            if (ban?.unbannedAt != null) {
+                null
+            }
+            ban
         }
-        val ban = response.data
-        if (ban?.unbannedAt != null) {
-            null
-        }
-        ban
-    }
 
     @Throws(UUIDAlreadyBannedException::class)
     suspend fun ban(

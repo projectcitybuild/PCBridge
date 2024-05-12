@@ -1,6 +1,7 @@
 package com.projectcitybuild.pcbridge.core.state
 
 import com.projectcitybuild.pcbridge.http.responses.Badge
+import com.projectcitybuild.pcbridge.support.serializable.UUIDSerializer
 import kotlinx.serialization.Serializable
 import java.time.LocalDateTime
 import java.util.UUID
@@ -16,6 +17,7 @@ data class ServerState(
     /**
      * Individual state for each online player
      */
+    @Serializable(with = UUIDSerializer::class)
     val players: MutableMap<UUID, PlayerState>,
     /**
      * Index of the last announcement broadcast to players on the server.

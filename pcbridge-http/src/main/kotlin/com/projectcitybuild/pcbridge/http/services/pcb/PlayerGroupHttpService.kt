@@ -16,36 +16,40 @@ class PlayerGroupHttpService(
     class NoLinkedAccountException : Exception()
 
     @Throws(NoLinkedAccountException::class)
-    suspend fun getGroups(playerUUID: UUID): List<Group> = withContext(Dispatchers.IO) {
-        val response = try {
-            responseParser.parse {
-                retrofit.pcb().getUserGroups(
-                    uuid = playerUUID.toString(),
-                )
-            }
-        } catch (e: ResponseParser.HTTPError) {
-            if (e.errorBody?.id == "account_not_linked") {
-                throw NoLinkedAccountException()
-            }
-            throw e
+    suspend fun getGroups(playerUUID: UUID): List<Group> =
+        withContext(Dispatchers.IO) {
+            val response =
+                try {
+                    responseParser.parse {
+                        retrofit.pcb().getUserGroups(
+                            uuid = playerUUID.toString(),
+                        )
+                    }
+                } catch (e: ResponseParser.HTTPError) {
+                    if (e.errorBody?.id == "account_not_linked") {
+                        throw NoLinkedAccountException()
+                    }
+                    throw e
+                }
+            response.data?.groups ?: listOf()
         }
-        response.data?.groups ?: listOf()
-    }
 
     @Throws(NoLinkedAccountException::class)
-    suspend fun getDonorPerks(playerUUID: UUID): List<DonationPerk> = withContext(Dispatchers.IO) {
-        val response = try {
-            responseParser.parse {
-                retrofit.pcb().getDonationTier(
-                    uuid = playerUUID.toString(),
-                )
-            }
-        } catch (e: ResponseParser.HTTPError) {
-            if (e.errorBody?.id == "account_not_linked") {
-                throw NoLinkedAccountException()
-            }
-            throw e
+    suspend fun getDonorPerks(playerUUID: UUID): List<DonationPerk> =
+        withContext(Dispatchers.IO) {
+            val response =
+                try {
+                    responseParser.parse {
+                        retrofit.pcb().getDonationTier(
+                            uuid = playerUUID.toString(),
+                        )
+                    }
+                } catch (e: ResponseParser.HTTPError) {
+                    if (e.errorBody?.id == "account_not_linked") {
+                        throw NoLinkedAccountException()
+                    }
+                    throw e
+                }
+            response.data?.toList() ?: listOf()
         }
-        response.data?.toList() ?: listOf()
-    }
 }
