@@ -1,5 +1,5 @@
 name: PCBridge
-main: com.projectcitybuild.PCBridge
+main: com.projectcitybuild.pcbridge.Plugin
 website: https://github.com/projectcitybuild/PCBridge
 author: Andy
 version: 6.0.0
