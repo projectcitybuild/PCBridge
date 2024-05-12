@@ -1,8 +1,8 @@
 package com.projectcitybuild.pcbridge.features.bans.actions
 
-import com.projectcitybuild.pcbridge.http.services.pcb.UUIDBanHttpService
 import com.projectcitybuild.pcbridge.features.bans.repositories.PlayerBanRepository
 import com.projectcitybuild.pcbridge.features.bans.repositories.PlayerUUIDRepository
+import com.projectcitybuild.pcbridge.http.services.pcb.UUIDBanHttpService
 import com.projectcitybuild.pcbridge.utils.Failure
 import kotlinx.coroutines.test.runTest
 import org.bukkit.Server
@@ -28,53 +28,57 @@ class BanUUIDTest {
         playerUUIDRepository = mock(PlayerUUIDRepository::class.java)
         server = mock(Server::class.java)
 
-        useCase = BanUUID(
-            playerBanRepository,
-            playerUUIDRepository,
-            server,
-        )
+        useCase =
+            BanUUID(
+                playerBanRepository,
+                playerUUIDRepository,
+                server,
+            )
     }
 
     @Test
-    fun `ban should fail when player doesn't exist`() = runTest {
-        val playerName = "banned_player"
+    fun `ban should fail when player doesn't exist`() =
+        runTest {
+            val playerName = "banned_player"
 
-        whenever(playerUUIDRepository.get(playerName)).thenReturn(null)
+            whenever(playerUUIDRepository.get(playerName)).thenReturn(null)
 
-        val result = useCase.ban(playerName, null, "staff_player", null)
+            val result = useCase.ban(playerName, null, "staff_player", null)
 
-        assertEquals(result, Failure(BanUUID.FailureReason.PlayerDoesNotExist))
-    }
-
-    @Test
-    fun `ban should fail when player is already banned`() = runTest {
-        val playerName = "banned_player"
-        val playerUUID = UUID.randomUUID()
-        val staffName = "staff_player"
-        val staffUUID = UUID.randomUUID()
-
-        whenever(playerUUIDRepository.get(playerName)).thenReturn(playerUUID)
-        whenever(playerBanRepository.ban(playerUUID, playerName, staffUUID, staffName, null))
-            .thenThrow(UUIDBanHttpService.UUIDAlreadyBannedException())
-
-        val result = useCase.ban(playerName, staffUUID, staffName, null)
-
-        assertEquals(result, Failure(BanUUID.FailureReason.PlayerAlreadyBanned))
-    }
+            assertEquals(result, Failure(BanUUID.FailureReason.PlayerDoesNotExist))
+        }
 
     @Test
-    fun `ban should pass input to ban repository`() = runTest {
-        val playerName = "banned_player"
-        val playerUUID = UUID.randomUUID()
-        val staffUUID = UUID.randomUUID()
-        val staffName = "staff_player"
-        val reason = "reason"
+    fun `ban should fail when player is already banned`() =
+        runTest {
+            val playerName = "banned_player"
+            val playerUUID = UUID.randomUUID()
+            val staffName = "staff_player"
+            val staffUUID = UUID.randomUUID()
 
-        whenever(playerUUIDRepository.get(playerName)).thenReturn(playerUUID)
+            whenever(playerUUIDRepository.get(playerName)).thenReturn(playerUUID)
+            whenever(playerBanRepository.ban(playerUUID, playerName, staffUUID, staffName, null))
+                .thenThrow(UUIDBanHttpService.UUIDAlreadyBannedException())
 
-        useCase.ban(playerName, staffUUID, "staff_player", reason)
+            val result = useCase.ban(playerName, staffUUID, staffName, null)
 
-        verify(playerBanRepository, times(1))
-            .ban(playerUUID, playerName, staffUUID, staffName, reason)
-    }
+            assertEquals(result, Failure(BanUUID.FailureReason.PlayerAlreadyBanned))
+        }
+
+    @Test
+    fun `ban should pass input to ban repository`() =
+        runTest {
+            val playerName = "banned_player"
+            val playerUUID = UUID.randomUUID()
+            val staffUUID = UUID.randomUUID()
+            val staffName = "staff_player"
+            val reason = "reason"
+
+            whenever(playerUUIDRepository.get(playerName)).thenReturn(playerUUID)
+
+            useCase.ban(playerName, staffUUID, "staff_player", reason)
+
+            verify(playerBanRepository, times(1))
+                .ban(playerUUID, playerName, staffUUID, staffName, reason)
+        }
 }

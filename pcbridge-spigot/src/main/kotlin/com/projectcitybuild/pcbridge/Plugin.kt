@@ -56,9 +56,10 @@ class Plugin : SuspendingJavaPlugin() {
         printLogo()
 
         val module = pluginModule(this)
-        val container = startKoin {
-            modules(module)
-        }
+        val container =
+            startKoin {
+                modules(module)
+            }
         this.container = container
 
         Lifecycle().boot().onFailure {
@@ -76,129 +77,133 @@ class Plugin : SuspendingJavaPlugin() {
         logger.info("Goodbye")
     }
 
-    private fun printLogo() = logo
-        .split("\n")
-        .forEach(logger::info)
+    private fun printLogo() =
+        logo
+            .split("\n")
+            .forEach(logger::info)
 }
 
-private class Lifecycle: KoinComponent {
+private class Lifecycle : KoinComponent {
     private val audiences: BukkitAudiences = get()
     private val sentry: SentryReporter by inject()
     private val commandRegistry: SpigotCommandRegistry by inject()
     private val listenerRegistry: SpigotListenerRegistry by inject()
 
-    suspend fun boot() = sentry.trace {
-        commandRegistry.apply {
-            register(
-                handler = get<PCBridgeCommand>(),
-                argsParser = PCBridgeCommand.Args.Parser(),
-                tabCompleter = get<PCBridgeCommand.TabCompleter>(),
+    suspend fun boot() =
+        sentry.trace {
+            commandRegistry.apply {
+                register(
+                    handler = get<PCBridgeCommand>(),
+                    argsParser = PCBridgeCommand.Args.Parser(),
+                    tabCompleter = get<PCBridgeCommand.TabCompleter>(),
+                )
+                register(
+                    handler = get<WarpCommand>(),
+                    argsParser = WarpCommand.Args.Parser(),
+                )
+                register(
+                    handler = get<WarpsCommand>(),
+                    argsParser = WarpsCommand.Args.Parser(),
+                )
+                register(
+                    handler = get<StaffChatCommand>(),
+                    argsParser = StaffChatCommand.Args.Parser(),
+                )
+                register(
+                    handler = get<MuteCommand>(),
+                    argsParser = MuteCommand.Args.Parser(),
+                )
+                register(
+                    handler = get<UnmuteCommand>(),
+                    argsParser = UnmuteCommand.Args.Parser(),
+                )
+                register(
+                    handler = get<NightVisionCommand>(),
+                    argsParser = NightVisionCommand.Args.Parser(),
+                )
+                register(
+                    handler = get<InvisFrameCommand>(),
+                    argsParser = InvisFrameCommand.Args.Parser(),
+                )
+                register(
+                    handler = get<BanCommand>(),
+                    argsParser = BanCommand.Args.Parser(),
+                )
+                register(
+                    handler = get<BanIPCommand>(),
+                    argsParser = BanIPCommand.Args.Parser(),
+                )
+                register(
+                    handler = get<CheckBanCommand>(),
+                    argsParser = CheckBanCommand.Args.Parser(),
+                )
+                register(
+                    handler = get<UnbanCommand>(),
+                    argsParser = UnbanCommand.Args.Parser(),
+                )
+                register(
+                    handler = get<UnbanIPCommand>(),
+                    argsParser = UnbanIPCommand.Args.Parser(),
+                )
+                register(
+                    handler = get<SyncCommand>(),
+                    argsParser = SyncCommand.Args.Parser(),
+                )
+                register(
+                    handler = get<SyncOtherCommand>(),
+                    argsParser = SyncOtherCommand.Args.Parser(),
+                )
+                register(
+                    handler = get<WarningAcknowledgeCommand>(),
+                    argsParser = WarningAcknowledgeCommand.Args.Parser(),
+                )
+            }
+            listenerRegistry.register(
+                get<AnnounceJoinListener>(),
+                get<AnnounceQuitListener>(),
+                get<FirstTimeJoinListener>(),
+                get<ServerOverviewJoinListener>(),
+                get<EmojiChatListener>(),
+                get<TelemetryPlayerConnectListener>(),
+                get<MuteChatListener>(),
+                get<FramePlaceListener>(),
+                get<FrameItemInsertListener>(),
+                get<FrameItemRemoveListener>(),
+                get<AuthorizeConnectionListener>(),
+                get<SyncRankOnJoinListener>(),
+                get<SyncBadgesOnJoinListener>(),
+                get<FormatNameChatListener>(),
+                get<AnnouncementEnableListener>(),
+                get<NotifyWarningsOnJoinListener>(),
             )
-            register(
-                handler = get<WarpCommand>(),
-                argsParser = WarpCommand.Args.Parser(),
-            )
-            register(
-                handler = get<WarpsCommand>(),
-                argsParser = WarpsCommand.Args.Parser(),
-            )
-            register(
-                handler = get<StaffChatCommand>(),
-                argsParser = StaffChatCommand.Args.Parser(),
-            )
-            register(
-                handler = get<MuteCommand>(),
-                argsParser = MuteCommand.Args.Parser(),
-            )
-            register(
-                handler = get<UnmuteCommand>(),
-                argsParser = UnmuteCommand.Args.Parser(),
-            )
-            register(
-                handler = get<NightVisionCommand>(),
-                argsParser = NightVisionCommand.Args.Parser(),
-            )
-            register(
-                handler = get<InvisFrameCommand>(),
-                argsParser = InvisFrameCommand.Args.Parser(),
-            )
-            register(
-                handler = get<BanCommand>(),
-                argsParser = BanCommand.Args.Parser(),
-            )
-            register(
-                handler = get<BanIPCommand>(),
-                argsParser = BanIPCommand.Args.Parser(),
-            )
-            register(
-                handler = get<CheckBanCommand>(),
-                argsParser = CheckBanCommand.Args.Parser(),
-            )
-            register(
-                handler = get<UnbanCommand>(),
-                argsParser = UnbanCommand.Args.Parser(),
-            )
-            register(
-                handler = get<UnbanIPCommand>(),
-                argsParser = UnbanIPCommand.Args.Parser(),
-            )
-            register(
-                handler = get<SyncCommand>(),
-                argsParser = SyncCommand.Args.Parser(),
-            )
-            register(
-                handler = get<SyncOtherCommand>(),
-                argsParser = SyncOtherCommand.Args.Parser(),
-            )
-            register(
-                handler = get<WarningAcknowledgeCommand>(),
-                argsParser = WarningAcknowledgeCommand.Args.Parser(),
-            )
+
+            get<DynmapIntegration>().enable()
+            get<EssentialsIntegration>().enable()
+            get<LuckPermsIntegration>().enable()
         }
-        listenerRegistry.register(
-            get<AnnounceJoinListener>(),
-            get<AnnounceQuitListener>(),
-            get<FirstTimeJoinListener>(),
-            get<ServerOverviewJoinListener>(),
-            get<EmojiChatListener>(),
-            get<TelemetryPlayerConnectListener>(),
-            get<MuteChatListener>(),
-            get<FramePlaceListener>(),
-            get<FrameItemInsertListener>(),
-            get<FrameItemRemoveListener>(),
-            get<AuthorizeConnectionListener>(),
-            get<SyncRankOnJoinListener>(),
-            get<SyncBadgesOnJoinListener>(),
-            get<FormatNameChatListener>(),
-            get<AnnouncementEnableListener>(),
-            get<NotifyWarningsOnJoinListener>(),
-        )
 
-        get<DynmapIntegration>().enable()
-        get<EssentialsIntegration>().enable()
-        get<LuckPermsIntegration>().enable()
-    }
+    suspend fun shutdown() =
+        sentry.trace {
+            get<SpigotTimer>().cancelAll()
 
-    suspend fun shutdown() = sentry.trace {
-        get<SpigotTimer>().cancelAll()
+            get<DynmapIntegration>().disable()
+            get<EssentialsIntegration>().disable()
+            get<LuckPermsIntegration>().disable()
 
-        get<DynmapIntegration>().disable()
-        get<EssentialsIntegration>().disable()
-        get<LuckPermsIntegration>().disable()
-
-        listenerRegistry.unregisterAll()
-        commandRegistry.unregisterAll()
-        audiences.close()
-    }
+            listenerRegistry.unregisterAll()
+            commandRegistry.unregisterAll()
+            audiences.close()
+        }
 }
 
-private val logo = """
-        
-        ██████╗  ██████╗██████╗ ██████╗ ██╗██████╗  ██████╗ ███████╗
-        ██╔══██╗██╔════╝██╔══██╗██╔══██╗██║██╔══██╗██╔════╝ ██╔════╝
-        ██████╔╝██║     ██████╔╝██████╔╝██║██║  ██║██║  ███╗█████╗  
-        ██╔═══╝ ██║     ██╔══██╗██╔══██╗██║██║  ██║██║   ██║██╔══╝  
-        ██║     ╚██████╗██████╔╝██║  ██║██║██████╔╝╚██████╔╝███████╗
-        ╚═╝      ╚═════╝╚═════╝ ╚═╝  ╚═╝╚═╝╚═════╝  ╚═════╝ ╚══════╝
-        
+private val logo =
+    """
+    
+    ██████╗  ██████╗██████╗ ██████╗ ██╗██████╗  ██████╗ ███████╗
+    ██╔══██╗██╔════╝██╔══██╗██╔══██╗██║██╔══██╗██╔════╝ ██╔════╝
+    ██████╔╝██║     ██████╔╝██████╔╝██║██║  ██║██║  ███╗█████╗  
+    ██╔═══╝ ██║     ██╔══██╗██╔══██╗██║██║  ██║██║   ██║██╔══╝  
+    ██║     ╚██████╗██████╔╝██║  ██║██║██████╔╝╚██████╔╝███████╗
+    ╚═╝      ╚═════╝╚═════╝ ╚═╝  ╚═╝╚═╝╚═════╝  ╚═════╝ ╚══════╝
+    
     """.trimIndent()

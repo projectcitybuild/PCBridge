@@ -11,14 +11,14 @@ import java.util.UUID
 
 class MuteChatListener(
     private val mutedPlayers: Cache<UUID, Unit>,
-): Listener {
+) : Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     fun onChat(event: AsyncChatEvent) {
         if (mutedPlayers.get(event.player.uniqueId) != null) {
             event.isCancelled = true
             event.player.sendMessage(
                 Component.text("You cannot talk while muted")
-                    .color(NamedTextColor.RED)
+                    .color(NamedTextColor.RED),
             )
         }
     }

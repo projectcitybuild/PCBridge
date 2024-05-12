@@ -10,28 +10,29 @@ class DatabaseSession {
 
     fun connect(source: DatabaseSource) {
         val url = "jdbc:mysql://${source.hostName}:${source.port}/${source.databaseName}"
-        log.debug {"Connecting to $url" }
+        log.debug { "Connecting to $url" }
 
-        val config = HikariConfig().apply {
-            jdbcUrl = url
-            username = source.username
-            password = source.password
+        val config =
+            HikariConfig().apply {
+                jdbcUrl = url
+                username = source.username
+                password = source.password
 
-            // See https://github.com/brettwooldridge/HikariCP/wiki/MySQL-Configuration
-            addDataSourceProperty("cachePrepStmts", true)
-            addDataSourceProperty("prepStmtCacheSize", 250)
-            addDataSourceProperty("prepStmtCacheSqlLimit", 2048)
-            addDataSourceProperty("useServerPrepStmts", true)
-            addDataSourceProperty("useLocalSessionState", true)
-            addDataSourceProperty("rewriteBatchedStatements", true)
-            addDataSourceProperty("cacheResultSetMetadata", true)
-            addDataSourceProperty("cacheServerConfiguration", true)
-            addDataSourceProperty("elideSetAutoCommits", true)
-            addDataSourceProperty("maintainTimeStats", false)
-        }
+                // See https://github.com/brettwooldridge/HikariCP/wiki/MySQL-Configuration
+                addDataSourceProperty("cachePrepStmts", true)
+                addDataSourceProperty("prepStmtCacheSize", 250)
+                addDataSourceProperty("prepStmtCacheSqlLimit", 2048)
+                addDataSourceProperty("useServerPrepStmts", true)
+                addDataSourceProperty("useLocalSessionState", true)
+                addDataSourceProperty("rewriteBatchedStatements", true)
+                addDataSourceProperty("cacheResultSetMetadata", true)
+                addDataSourceProperty("cacheServerConfiguration", true)
+                addDataSourceProperty("elideSetAutoCommits", true)
+                addDataSourceProperty("maintainTimeStats", false)
+            }
         database = HikariDataSource(config)
 
-        check (hasDatabase(source.databaseName)) {
+        check(hasDatabase(source.databaseName)) {
             "Database not found: ${source.databaseName}"
         }
         log.info { "Database connection established" }

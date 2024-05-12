@@ -18,19 +18,20 @@ class PaginationBuilder<T> {
     fun build(page: Page<T>): TextComponent {
         checkNotNull(transformer)
 
-        val message = Component.text()
-            .append(
-                Component.text("---")
-                    .color(NamedTextColor.LIGHT_PURPLE)
-            )
-            .append(
-                Component.text("Page ${page.page} of ${page.totalPages}")
-            )
-            .append(
-                Component.text("---")
-                    .color(NamedTextColor.LIGHT_PURPLE)
-            )
-            .appendNewline()
+        val message =
+            Component.text()
+                .append(
+                    Component.text("---")
+                        .color(NamedTextColor.LIGHT_PURPLE),
+                )
+                .append(
+                    Component.text("Page ${page.page} of ${page.totalPages}"),
+                )
+                .append(
+                    Component.text("---")
+                        .color(NamedTextColor.LIGHT_PURPLE),
+                )
+                .appendNewline()
 
         for (entry in page.items.withIndex()) {
             val component = transformer!!(entry)

@@ -9,12 +9,15 @@ import org.bukkit.command.CommandSender
 
 class WarningAcknowledgeCommand(
     private val warningRepository: PlayerWarningRepository,
-): SpigotCommand<WarningAcknowledgeCommand.Args> {
+) : SpigotCommand<WarningAcknowledgeCommand.Args> {
     override val label = "warning"
 
     override val usage = CommandHelpBuilder()
 
-    override suspend fun run(sender: CommandSender, args: Args) {
+    override suspend fun run(
+        sender: CommandSender,
+        args: Args,
+    ) {
         warningRepository.acknowledge(args.id)
         sender.sendMessage("Warning acknowledged and hidden")
     }
@@ -22,7 +25,7 @@ class WarningAcknowledgeCommand(
     data class Args(
         val id: Int,
     ) {
-        class Parser: CommandArgsParser<Args> {
+        class Parser : CommandArgsParser<Args> {
             override fun parse(args: List<String>): Args {
                 if (args.isEmpty()) {
                     throw BadCommandUsageException()

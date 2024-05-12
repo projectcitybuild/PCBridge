@@ -18,11 +18,12 @@ class FrameItemInsertListener(
         val isItemFrame = entity is ItemFrame
         if (!isItemFrame) return
 
-        val invisibleValue = entity.persistentDataContainer.getOrDefault(
-            spigotNamespace.invisibleKey,
-            PersistentDataType.BYTE,
-            0,
-        )
+        val invisibleValue =
+            entity.persistentDataContainer.getOrDefault(
+                spigotNamespace.invisibleKey,
+                PersistentDataType.BYTE,
+                0,
+            )
         val isInvisibleFrame = invisibleValue == 1.toByte()
         if (isInvisibleFrame) {
             val itemFrame = entity as ItemFrame

@@ -8,16 +8,16 @@ import java.time.LocalDate
 import java.time.ZoneOffset
 
 class LocalizedTimeTest {
-
     @Test
     fun `returns current time based on given clock`() {
         val zoneId = ZoneOffset.UTC
         val fixedDate = LocalDate.of(2023, 7, 15).atStartOfDay().atZone(zoneId)
 
-        val clock = Clock.fixed(
-            fixedDate.toInstant(),
-            zoneId,
-        )
+        val clock =
+            Clock.fixed(
+                fixedDate.toInstant(),
+                zoneId,
+            )
         val result = LocalizedTime(clock).now()
 
         assertEquals(fixedDate.toLocalDateTime(), result)

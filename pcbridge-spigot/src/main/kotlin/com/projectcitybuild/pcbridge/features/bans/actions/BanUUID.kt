@@ -1,11 +1,11 @@
 package com.projectcitybuild.pcbridge.features.bans.actions
 
+import com.projectcitybuild.pcbridge.features.bans.repositories.PlayerBanRepository
+import com.projectcitybuild.pcbridge.features.bans.repositories.PlayerUUIDRepository
+import com.projectcitybuild.pcbridge.http.services.pcb.UUIDBanHttpService
 import com.projectcitybuild.pcbridge.utils.Failure
 import com.projectcitybuild.pcbridge.utils.Result
 import com.projectcitybuild.pcbridge.utils.Success
-import com.projectcitybuild.pcbridge.http.services.pcb.UUIDBanHttpService
-import com.projectcitybuild.pcbridge.features.bans.repositories.PlayerBanRepository
-import com.projectcitybuild.pcbridge.features.bans.repositories.PlayerUUIDRepository
 import net.kyori.adventure.text.Component
 import org.bukkit.Server
 import org.bukkit.event.player.PlayerKickEvent
@@ -25,18 +25,19 @@ class BanUUID(
         targetPlayerName: String,
         bannerUUID: UUID?,
         bannerName: String,
-        reason: String?
+        reason: String?,
     ): Result<Unit, FailureReason> {
         try {
-            val targetPlayerUUID = playerUUIDRepository.get(targetPlayerName)
-                ?: return Failure(FailureReason.PlayerDoesNotExist)
+            val targetPlayerUUID =
+                playerUUIDRepository.get(targetPlayerName)
+                    ?: return Failure(FailureReason.PlayerDoesNotExist)
 
             playerBanRepository.ban(
                 targetPlayerUUID = targetPlayerUUID,
                 targetPlayerName = targetPlayerName,
                 bannerPlayerUUID = bannerUUID,
                 bannerPlayerName = bannerName,
-                reason = reason
+                reason = reason,
             )
 
             server.getPlayer(targetPlayerUUID)?.kick(

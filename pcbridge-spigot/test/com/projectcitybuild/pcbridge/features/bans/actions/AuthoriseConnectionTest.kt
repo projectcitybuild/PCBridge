@@ -19,69 +19,81 @@ class AuthoriseConnectionTest {
     }
 
     @Test
-    fun `should deny if player is banned`() = runTest {
-        val ban = PlayerBan()
-        val result = useCase.execute(
-            Aggregate(playerBan = ban)
-        )
-        assertEquals(
-            AuthoriseConnection.ConnectResult.Denied(
-                AuthoriseConnection.Ban.UUID(ban)
-            ),
-            result,
-        )
-    }
+    fun `should deny if player is banned`() =
+        runTest {
+            val ban = PlayerBan()
+            val result =
+                useCase.execute(
+                    Aggregate(playerBan = ban),
+                )
+            assertEquals(
+                AuthoriseConnection.ConnectResult.Denied(
+                    AuthoriseConnection.Ban.UUID(ban),
+                ),
+                result,
+            )
+        }
 
     @Test
-    fun `should not deny if player ban is inactive`() = runTest {
-        val ban = PlayerBan(
-            unbannedAt = LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toEpochSecond()
-        )
-        val result = useCase.execute(
-            Aggregate(playerBan = ban)
-        )
-        assertEquals(
-            AuthoriseConnection.ConnectResult.Allowed,
-            result,
-        )
-    }
+    fun `should not deny if player ban is inactive`() =
+        runTest {
+            val ban =
+                PlayerBan(
+                    unbannedAt = LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toEpochSecond(),
+                )
+            val result =
+                useCase.execute(
+                    Aggregate(playerBan = ban),
+                )
+            assertEquals(
+                AuthoriseConnection.ConnectResult.Allowed,
+                result,
+            )
+        }
 
     @Test
-    fun `should deny if IP is banned`() = runTest {
-        val ban = IPBan()
-        val result = useCase.execute(
-            Aggregate(ipBan = ban)
-        )
-        assertEquals(
-            AuthoriseConnection.ConnectResult.Denied(
-                AuthoriseConnection.Ban.IP(ban)
-            ),
-            result,
-        )
-    }
+    fun `should deny if IP is banned`() =
+        runTest {
+            val ban = IPBan()
+            val result =
+                useCase.execute(
+                    Aggregate(ipBan = ban),
+                )
+            assertEquals(
+                AuthoriseConnection.ConnectResult.Denied(
+                    AuthoriseConnection.Ban.IP(ban),
+                ),
+                result,
+            )
+        }
 
     @Test
-    fun `should not deny if IP ban is inactive`() = runTest {
-        val ban = IPBan(
-            unbannedAt = LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toEpochSecond()
-        )
-        val result = useCase.execute(
-            Aggregate(ipBan = ban)
-        )
-        assertEquals(
-            AuthoriseConnection.ConnectResult.Allowed,
-            result,
-        )
-    }
+    fun `should not deny if IP ban is inactive`() =
+        runTest {
+            val ban =
+                IPBan(
+                    unbannedAt = LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toEpochSecond(),
+                )
+            val result =
+                useCase.execute(
+                    Aggregate(ipBan = ban),
+                )
+            assertEquals(
+                AuthoriseConnection.ConnectResult.Allowed,
+                result,
+            )
+        }
 
     @Test
-    fun `should allow if not banned`() = runTest {
-        val result = useCase.execute(
-            Aggregate(playerBan = null, ipBan = null)
-        )
-        assertEquals(
-            AuthoriseConnection.ConnectResult.Allowed,
-            result,
-        )
-    }
+    fun `should allow if not banned`() =
+        runTest {
+            val result =
+                useCase.execute(
+                    Aggregate(playerBan = null, ipBan = null),
+                )
+            assertEquals(
+                AuthoriseConnection.ConnectResult.Allowed,
+                result,
+            )
+        }
 }

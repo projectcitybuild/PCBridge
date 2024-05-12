@@ -5,7 +5,7 @@ import com.projectcitybuild.pcbridge.http.services.pcb.IPBanHttpService
 import java.util.UUID
 
 class IPBanRepository(
-    private val httpService: IPBanHttpService
+    private val httpService: IPBanHttpService,
 ) {
     suspend fun get(ip: String): IPBan? {
         return httpService.get(ip)
@@ -22,7 +22,7 @@ class IPBanRepository(
             ip = ip,
             bannerUUID = bannerUUID,
             bannerName = bannerName,
-            reason = reason
+            reason = reason,
         )
     }
 

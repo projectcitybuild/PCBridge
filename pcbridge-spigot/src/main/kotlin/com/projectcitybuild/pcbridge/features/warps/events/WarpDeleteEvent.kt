@@ -7,6 +7,7 @@ class WarpDeleteEvent : SpigotEvent() {
     override fun getHandlers(): HandlerList {
         return HANDLERS
     }
+
     companion object {
         private val HANDLERS = HandlerList()
 

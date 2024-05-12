@@ -7,16 +7,18 @@ import org.bukkit.event.Listener
 
 class SyncBadgesOnJoinListener(
     private val store: Store,
-): Listener {
+) : Listener {
     @EventHandler
     suspend fun onConnectionPermitted(event: ConnectionPermittedEvent) {
         store.mutate { state ->
-            val player = state.players[event.playerUUID]!!.copy(
-                badges = event.aggregate.badges,
-            )
-            val players = state.players.apply {
-                put(event.playerUUID, player)
-            }
+            val player =
+                state.players[event.playerUUID]!!.copy(
+                    badges = event.aggregate.badges,
+                )
+            val players =
+                state.players.apply {
+                    put(event.playerUUID, player)
+                }
             state.copy(players = players)
         }
     }

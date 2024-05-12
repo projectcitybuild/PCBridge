@@ -17,7 +17,7 @@ class AnnounceQuitListener(
     private val config: Config,
     private val store: Store,
     private val time: LocalizedTime,
-): Listener {
+) : Listener {
     @EventHandler(priority = EventPriority.NORMAL)
     suspend fun onPlayerQuit(event: PlayerQuitEvent) {
         val playerState = store.state.players[event.player.uniqueId]
@@ -36,7 +36,7 @@ class AnnounceQuitListener(
                 config.get().messages.leave,
                 Placeholder.component("name", Component.text(event.player.name)),
                 Placeholder.component("time_online", Component.text(timeOnline)),
-            )
+            ),
         )
     }
 
@@ -50,7 +50,7 @@ class AnnounceQuitListener(
 
         return if (secsOnline < 60) {
             "$secsOnline sec" + if (secsOnline > 1) "s" else ""
-        } else if(minsOnline < 60) {
+        } else if (minsOnline < 60) {
             "$minsOnline min" + if (minsOnline > 1) "s" else ""
         } else {
             "$hoursOnline hour" + if (hoursOnline > 1) "s" else ""

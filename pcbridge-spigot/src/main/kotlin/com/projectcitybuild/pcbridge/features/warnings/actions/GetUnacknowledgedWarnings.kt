@@ -17,7 +17,7 @@ class GetUnacknowledgedWarnings(
 
     suspend fun execute(
         playerUUID: UUID,
-        playerName: String
+        playerName: String,
     ): List<FormattedWarning> {
         return warningRepository
             .get(playerUUID, playerName)
@@ -27,9 +27,10 @@ class GetUnacknowledgedWarnings(
                     id = it.id,
                     reason = it.reason,
                     isAcknowledged = it.isAcknowledged,
-                    createdAt = it.createdAt.let { createdAt ->
-                        dateTimeFormatter.convert(createdAt)
-                    },
+                    createdAt =
+                        it.createdAt.let { createdAt ->
+                            dateTimeFormatter.convert(createdAt)
+                        },
                 )
             }
     }

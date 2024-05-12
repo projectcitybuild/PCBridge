@@ -10,7 +10,7 @@ import net.luckperms.api.node.types.InheritanceNode
 import java.util.UUID
 import java.util.stream.Collectors
 
-class LuckPermsPermissions: Permissions {
+class LuckPermsPermissions : Permissions {
     class PermissionUserNotFoundException() : Exception()
 
     private val luckPerms: LuckPerms
@@ -25,7 +25,10 @@ class LuckPermsPermissions: Permissions {
         return user
     }
 
-    override fun setUserGroups(playerUUID: UUID, groupNames: List<String>) {
+    override fun setUserGroups(
+        playerUUID: UUID,
+        groupNames: List<String>,
+    ) {
         val user = getUser(playerUUID)
 
         user.nodes.stream()
@@ -78,9 +81,13 @@ class LuckPermsPermissions: Permissions {
             .joinToString(separator = "")
     }
 
-    override fun getGroupMetaData(groupName: String, key: String): String? {
-        val group = luckPerms.groupManager.getGroup(groupName)
-            ?: return null
+    override fun getGroupMetaData(
+        groupName: String,
+        key: String,
+    ): String? {
+        val group =
+            luckPerms.groupManager.getGroup(groupName)
+                ?: return null
 
         return group.cachedData.metaData.getMetaValue(key)
     }

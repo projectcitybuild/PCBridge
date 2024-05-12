@@ -19,7 +19,7 @@ class AnnouncementEnableListener(
     private val timer: SpigotTimer,
     private val server: Server,
     private val plugin: JavaPlugin,
-): Listener {
+) : Listener {
     private var action: StartAnnouncementTimer? = null
 
     @EventHandler(priority = EventPriority.MONITOR)
@@ -28,12 +28,13 @@ class AnnouncementEnableListener(
             // PluginEnableEvent is emitted for every plugin, not just ours
             return
         }
-        action = StartAnnouncementTimer(
-            announcementRepository,
-            config,
-            timer,
-            server,
-        )
+        action =
+            StartAnnouncementTimer(
+                announcementRepository,
+                config,
+                timer,
+                server,
+            )
         action?.start()
 
         log.debug { "Announcement timer started" }

@@ -18,7 +18,7 @@ data class SerializableLocation(
                 y = location.y,
                 z = location.z,
                 pitch = location.pitch,
-                yaw = location.yaw
+                yaw = location.yaw,
             )
         }
     }

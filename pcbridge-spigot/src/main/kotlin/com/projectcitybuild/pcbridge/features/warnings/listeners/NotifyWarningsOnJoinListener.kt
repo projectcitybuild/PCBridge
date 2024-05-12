@@ -15,23 +15,25 @@ class NotifyWarningsOnJoinListener(
     @EventHandler
     suspend fun onPlayerJoin(event: PlayerJoinEvent) {
         val player = event.player
-        val warnings = getUnacknowledgedWarnings.execute(
-            playerUUID = player.uniqueId,
-            playerName = player.name,
-        )
+        val warnings =
+            getUnacknowledgedWarnings.execute(
+                playerUUID = player.uniqueId,
+                playerName = player.name,
+            )
         if (warnings.isEmpty()) {
             return
         }
 
-        val message = Component.text()
-            .append(
-                Component.text("You have ").color(NamedTextColor.RED),
-                Component.text(warnings.size).decorate(TextDecoration.BOLD),
-                Component.text(" unacknowledged warnings").color(NamedTextColor.RED),
-                Component.newline(),
-                Component.text("---").color(NamedTextColor.GRAY),
-                Component.newline(),
-            )
+        val message =
+            Component.text()
+                .append(
+                    Component.text("You have ").color(NamedTextColor.RED),
+                    Component.text(warnings.size).decorate(TextDecoration.BOLD),
+                    Component.text(" unacknowledged warnings").color(NamedTextColor.RED),
+                    Component.newline(),
+                    Component.text("---").color(NamedTextColor.GRAY),
+                    Component.newline(),
+                )
 
         warnings.forEach { warning ->
             message.append(

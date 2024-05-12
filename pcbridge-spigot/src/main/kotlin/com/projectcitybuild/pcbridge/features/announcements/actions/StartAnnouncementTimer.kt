@@ -29,9 +29,9 @@ class StartAnnouncementTimer(
             work = {
                 val message = runBlocking { repository.getNextAnnouncement() }
                 server.broadcast(
-                    MiniMessage.miniMessage().deserialize(message)
+                    MiniMessage.miniMessage().deserialize(message),
                 )
-            }
+            },
         )
     }
 

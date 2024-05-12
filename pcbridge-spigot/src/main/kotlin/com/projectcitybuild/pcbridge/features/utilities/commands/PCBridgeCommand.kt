@@ -14,12 +14,15 @@ import org.bukkit.plugin.java.JavaPlugin
 
 class PCBridgeCommand(
     private val plugin: JavaPlugin,
-): SpigotCommand<PCBridgeCommand.Args> {
+) : SpigotCommand<PCBridgeCommand.Args> {
     override val label = "pcbridge"
 
     override val usage = CommandHelpBuilder() // TODO
 
-    override suspend fun run(sender: CommandSender, args: Args) {
+    override suspend fun run(
+        sender: CommandSender,
+        args: Args,
+    ) {
         when (args.command) {
             Args.Command.Reload -> reload(sender)
         }
@@ -29,24 +32,26 @@ class PCBridgeCommand(
         plugin.onDisable()
         plugin.onEnable()
 
-        val message = Component.text()
-            .content("Reload complete")
-            .color(TextColor.color(0x75e900))
-            .build()
+        val message =
+            Component.text()
+                .content("Reload complete")
+                .color(TextColor.color(0x75e900))
+                .build()
 
         sender.sendMessage(message)
     }
 
-    class TabCompleter: SuspendingTabCompleter {
-        private val subcommands = listOf(
-            "reload",
-        )
+    class TabCompleter : SuspendingTabCompleter {
+        private val subcommands =
+            listOf(
+                "reload",
+            )
 
         override suspend fun onTabComplete(
             sender: CommandSender,
             command: Command,
             alias: String,
-            args: Array<out String>
+            args: Array<out String>,
         ): List<String>? {
             if (args.isEmpty()) {
                 return null
@@ -67,13 +72,15 @@ class PCBridgeCommand(
         enum class Command {
             Reload,
         }
-        class Parser: CommandArgsParser<Args> {
+
+        class Parser : CommandArgsParser<Args> {
             override fun parse(args: List<String>): Args {
                 if (args.isEmpty()) {
                     throw BadCommandUsageException()
                 }
-                val command = tryValueOf<Command>(args[0].replaceFirstChar { it.uppercase() })
-                    ?: throw BadCommandUsageException()
+                val command =
+                    tryValueOf<Command>(args[0].replaceFirstChar { it.uppercase() })
+                        ?: throw BadCommandUsageException()
 
                 return Args(
                     command = command,

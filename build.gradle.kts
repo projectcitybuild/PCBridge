@@ -9,10 +9,8 @@ version = sharedVersion
 plugins {
     kotlin("jvm") version "1.9.22"
 
+    id("org.jlleitschuh.gradle.ktlint") version "12.1.1"
     id("org.jetbrains.kotlin.plugin.serialization") version "1.6.10"
-    // id("org.jetbrains.kotlin.kapt") version "1.6.10"
-    // id("org.jlleitschuh.gradle.ktlint") version "10.2.1"
-    // id("org.jlleitschuh.gradle.ktlint-idea") version "10.2.1"
     id("co.uzzu.dotenv.gradle") version "4.0.0"
 }
 
@@ -25,6 +23,8 @@ subprojects {
     version = sharedVersion
 
     apply(plugin = "org.jetbrains.kotlin.jvm")
+    apply(plugin = "org.jlleitschuh.gradle.ktlint")
+    apply(plugin = "org.jetbrains.kotlin.plugin.serialization")
 
     dependencies {
         // Kotlin

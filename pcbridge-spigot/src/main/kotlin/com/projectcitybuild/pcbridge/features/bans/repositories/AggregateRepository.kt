@@ -9,7 +9,10 @@ class AggregateRepository(
     private val httpService: AggregateHttpService,
 ) {
     @Throws(Exception::class)
-    suspend fun get(playerUUID: UUID, ip: String): Aggregate? {
+    suspend fun get(
+        playerUUID: UUID,
+        ip: String,
+    ): Aggregate? {
         return httpService.get(
             playerUUID = playerUUID,
             ip = ip,

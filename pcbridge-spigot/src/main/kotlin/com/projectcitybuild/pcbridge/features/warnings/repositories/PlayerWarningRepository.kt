@@ -7,7 +7,10 @@ import java.util.UUID
 class PlayerWarningRepository(
     private val playerWarningHttpService: PlayerWarningHttpService,
 ) {
-    suspend fun get(playerUUID: UUID, playerName: String): List<PlayerWarning> {
+    suspend fun get(
+        playerUUID: UUID,
+        playerName: String,
+    ): List<PlayerWarning> {
         return playerWarningHttpService.get(
             playerUUID = playerUUID,
             playerName = playerName,

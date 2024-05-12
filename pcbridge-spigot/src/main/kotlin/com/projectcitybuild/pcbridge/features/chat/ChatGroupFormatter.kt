@@ -30,19 +30,23 @@ class ChatGroupFormatter(
 
         for (groupName in groupNames) {
             val lowercaseGroupName = groupName.lowercase()
-            val (groupType, priorityIndex) = groupPriorities[lowercaseGroupName]
-                ?: continue
+            val (groupType, priorityIndex) =
+                groupPriorities[lowercaseGroupName]
+                    ?: continue
 
             when (groupType) {
-                ChatGroupType.TRUST -> if (highestTrust == null || priorityIndex < highestTrust.first) {
-                    highestTrust = Pair(priorityIndex, groupName)
-                }
-                ChatGroupType.BUILD -> if (highestBuild == null || priorityIndex < highestBuild.first) {
-                    highestBuild = Pair(priorityIndex, groupName)
-                }
-                ChatGroupType.DONOR -> if (highestDonor == null || priorityIndex < highestDonor.first) {
-                    highestDonor = Pair(priorityIndex, groupName)
-                }
+                ChatGroupType.TRUST ->
+                    if (highestTrust == null || priorityIndex < highestTrust.first) {
+                        highestTrust = Pair(priorityIndex, groupName)
+                    }
+                ChatGroupType.BUILD ->
+                    if (highestBuild == null || priorityIndex < highestBuild.first) {
+                        highestBuild = Pair(priorityIndex, groupName)
+                    }
+                ChatGroupType.DONOR ->
+                    if (highestDonor == null || priorityIndex < highestDonor.first) {
+                        highestDonor = Pair(priorityIndex, groupName)
+                    }
             }
         }
 
@@ -59,12 +63,14 @@ class ChatGroupFormatter(
         }
 
         return Aggregate(
-            prefix = MiniMessage.miniMessage().deserialize(
-                chatGroupRepository.getPrefixForPlayer(playerUUID),
-            ),
-            suffix = MiniMessage.miniMessage().deserialize(
-                chatGroupRepository.getSuffixForPlayer(playerUUID),
-            ),
+            prefix =
+                MiniMessage.miniMessage().deserialize(
+                    chatGroupRepository.getPrefixForPlayer(playerUUID),
+                ),
+            suffix =
+                MiniMessage.miniMessage().deserialize(
+                    chatGroupRepository.getSuffixForPlayer(playerUUID),
+                ),
             groups = groupComponent.build(),
         )
     }
@@ -79,7 +85,7 @@ class ChatGroupFormatter(
             .also {
                 if (!hoverName.isNullOrEmpty()) {
                     it.hoverEvent(
-                        HoverEvent.showText(Component.text(hoverName))
+                        HoverEvent.showText(Component.text(hoverName)),
                     )
                 }
             }

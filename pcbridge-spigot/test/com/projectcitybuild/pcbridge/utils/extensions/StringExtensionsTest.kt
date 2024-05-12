@@ -1,6 +1,5 @@
 package com.projectcitybuild.pcbridge.utils.extensions
 
-import com.projectcitybuild.pcbridge.utils.extensions.toDashFormattedUUID
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 

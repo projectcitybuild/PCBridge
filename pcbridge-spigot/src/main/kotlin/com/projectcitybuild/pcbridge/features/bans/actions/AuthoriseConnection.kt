@@ -7,11 +7,13 @@ import com.projectcitybuild.pcbridge.http.responses.PlayerBan
 class AuthoriseConnection {
     sealed class ConnectResult {
         object Allowed : ConnectResult()
+
         data class Denied(val ban: Ban) : ConnectResult()
     }
 
     sealed class Ban {
         data class UUID(val value: PlayerBan) : Ban()
+
         data class IP(val value: IPBan) : Ban()
     }
 

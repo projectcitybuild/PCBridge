@@ -15,17 +15,20 @@ import java.util.UUID
 class UnmuteCommand(
     private val server: Server,
     private val mutedPlayers: Cache<UUID, Unit>,
-): SpigotCommand<UnmuteCommand.Args> {
+) : SpigotCommand<UnmuteCommand.Args> {
     override val label = "unmute"
 
     override val usage = CommandHelpBuilder() // TODO
 
-    override suspend fun run(sender: CommandSender, args: Args) {
+    override suspend fun run(
+        sender: CommandSender,
+        args: Args,
+    ) {
         val player = server.getPlayer(args.playerName)
-        checkNotNull (player) {
+        checkNotNull(player) {
             "Player ${args.playerName} not found"
         }
-        check (mutedPlayers.get(player.uniqueId) != null) {
+        check(mutedPlayers.get(player.uniqueId) != null) {
             "Player ${args.playerName} is not currently muted"
         }
         mutedPlayers.invalidate(player.uniqueId)
@@ -33,20 +36,20 @@ class UnmuteCommand(
         sender.sendMessage(
             Component.text("Player ${args.playerName} has been unmuted")
                 .color(NamedTextColor.GRAY)
-                .decorate(TextDecoration.ITALIC)
+                .decorate(TextDecoration.ITALIC),
         )
 
         player.sendMessage(
             Component.text("You have been unmuted")
                 .color(NamedTextColor.LIGHT_PURPLE)
-                .decorate(TextDecoration.ITALIC)
+                .decorate(TextDecoration.ITALIC),
         )
     }
 
     data class Args(
         val playerName: String,
     ) {
-        class Parser: CommandArgsParser<Args> {
+        class Parser : CommandArgsParser<Args> {
             override fun parse(args: List<String>): Args {
                 if (args.isEmpty()) {
                     throw BadCommandUsageException()

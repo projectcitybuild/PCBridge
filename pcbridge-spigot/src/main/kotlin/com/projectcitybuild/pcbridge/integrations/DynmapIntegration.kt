@@ -20,16 +20,16 @@ class DynmapIntegration(
     private val config: Config,
     sentry: SentryReporter,
 ) : Listener, SpigotIntegration(
-    pluginName = "dynmap",
-    pluginManager = plugin.server.pluginManager,
-    sentry = sentry,
-) {
+        pluginName = "dynmap",
+        pluginManager = plugin.server.pluginManager,
+        sentry = sentry,
+    ) {
     class DynmapMarkerIconNotFoundException : Exception()
 
     private var dynmap: DynmapAPI? = null
 
     override suspend fun onEnable(loadedPlugin: Plugin) {
-        check (loadedPlugin is DynmapAPI) {
+        check(loadedPlugin is DynmapAPI) {
             "Found dynmap plugin but cannot cast to DynmapAPI class"
         }
         dynmap = loadedPlugin
@@ -49,12 +49,10 @@ class DynmapIntegration(
     }
 
     @EventHandler
-    suspend fun onWarpCreate(event: WarpCreateEvent)
-        = updateWarpMarkers()
+    suspend fun onWarpCreate(event: WarpCreateEvent) = updateWarpMarkers()
 
     @EventHandler
-    suspend fun onWarpDelete(event: WarpDeleteEvent)
-        = updateWarpMarkers()
+    suspend fun onWarpDelete(event: WarpDeleteEvent) = updateWarpMarkers()
 
     private suspend fun updateWarpMarkers() {
         val dynmap = dynmap
@@ -67,13 +65,14 @@ class DynmapIntegration(
 
         val markerAPI = dynmap.markerAPI
 
-        val warpMarkerSet = markerAPI.getMarkerSet(MARKER_SET_NAME)
-            ?: markerAPI.createMarkerSet(
-                MARKER_SET_NAME,
-                "Warps", // Name that shows up in the dynmap web interface
-                null, // TODO: what is this?
-                false, // TODO: what is this?
-            )
+        val warpMarkerSet =
+            markerAPI.getMarkerSet(MARKER_SET_NAME)
+                ?: markerAPI.createMarkerSet(
+                    MARKER_SET_NAME,
+                    "Warps", // Name that shows up in the dynmap web interface
+                    null, // TODO: what is this?
+                    false, // TODO: what is this?
+                )
         warpMarkerSet.apply {
             layerPriority = 1
             hideByDefault = false
@@ -82,8 +81,9 @@ class DynmapIntegration(
         }
 
         val iconName = config.get().integrations.dynmap.warpIconName
-        val icon = markerAPI.getMarkerIcon(iconName)
-            ?: throw DynmapMarkerIconNotFoundException()
+        val icon =
+            markerAPI.getMarkerIcon(iconName)
+                ?: throw DynmapMarkerIconNotFoundException()
 
         warpRepository.all(limit = 0).items.forEach { warp ->
             warpMarkerSet.createMarker(

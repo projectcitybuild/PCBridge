@@ -15,11 +15,12 @@ class FramePlaceListener(
         val isItemFrame = event.entity is ItemFrame
         if (!isItemFrame) return
 
-        val invisibleValue = event.itemStack?.itemMeta?.persistentDataContainer?.getOrDefault(
-            spigotNamespace.invisibleKey,
-            PersistentDataType.BYTE,
-            0,
-        ) ?: 0.toByte()
+        val invisibleValue =
+            event.itemStack?.itemMeta?.persistentDataContainer?.getOrDefault(
+                spigotNamespace.invisibleKey,
+                PersistentDataType.BYTE,
+                0,
+            ) ?: 0.toByte()
 
         val isInvisibleFrame = invisibleValue == 1.toByte()
         if (isInvisibleFrame) {

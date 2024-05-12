@@ -11,19 +11,21 @@ abstract class SpigotIntegration(
     private val sentry: SentryReporter,
 ) {
     protected abstract suspend fun onEnable(loadedPlugin: Plugin)
+
     protected abstract suspend fun onDisable()
 
-    suspend fun enable() = runCatching {
-        val integratedPlugin = pluginManager.getPlugin(pluginName)
-        if (integratedPlugin == null) {
-            log.warn { "Cannot find dynmap plugin. Disabling marker integration" }
-            return@runCatching
+    suspend fun enable() =
+        runCatching {
+            val integratedPlugin = pluginManager.getPlugin(pluginName)
+            if (integratedPlugin == null) {
+                log.warn { "Cannot find dynmap plugin. Disabling marker integration" }
+                return@runCatching
+            }
+            onEnable(integratedPlugin)
+        }.onFailure {
+            log.error { "Failed to enable Dynmap integration: ${it.localizedMessage}" }
+            sentry.report(it)
         }
-        onEnable(integratedPlugin)
-    }.onFailure {
-        log.error { "Failed to enable Dynmap integration: ${it.localizedMessage}" }
-        sentry.report(it)
-    }
 
     suspend fun disable() = onDisable()
 }

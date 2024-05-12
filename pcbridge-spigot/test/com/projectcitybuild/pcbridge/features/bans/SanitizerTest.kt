@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 class SanitizerTest {
-
     @Test
     fun `sanitize ip should strip slashes and ports`() {
         arrayOf(

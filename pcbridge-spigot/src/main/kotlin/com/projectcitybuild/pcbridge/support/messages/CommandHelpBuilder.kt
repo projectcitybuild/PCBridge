@@ -19,7 +19,7 @@ class CommandHelpBuilder {
         permission: String,
     ): CommandHelpBuilder {
         commands.add(
-            CommandHelp(label, description, permission)
+            CommandHelp(label, description, permission),
         )
         return this
     }
@@ -43,11 +43,11 @@ private fun CommandHelpBuilder.CommandHelp.asComponent(): TextComponent {
     return Component.text()
         .append(
             Component.text(label)
-                .color(NamedTextColor.AQUA)
+                .color(NamedTextColor.AQUA),
         )
         .append(
             Component.text(" - $description")
-                .color(NamedTextColor.LIGHT_PURPLE)
+                .color(NamedTextColor.LIGHT_PURPLE),
         )
         .appendNewline()
         .build()

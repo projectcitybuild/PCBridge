@@ -17,11 +17,12 @@ class SpigotTimer(
         unit: TimeUnit,
         work: () -> Unit,
     ): Cancellable {
-        val task = plugin.server.scheduler.runTaskLater(
-            plugin,
-            work,
-            unit.toSeconds(delay),
-        )
+        val task =
+            plugin.server.scheduler.runTaskLater(
+                plugin,
+                work,
+                unit.toSeconds(delay),
+            )
         tasks[identifier] = task
 
         return Cancellable {
@@ -36,12 +37,13 @@ class SpigotTimer(
         unit: TimeUnit,
         work: () -> Unit,
     ): Cancellable {
-        val task = plugin.server.scheduler.runTaskTimer(
-            plugin,
-            work,
-            unit.toSeconds(delay),
-            unit.toSeconds(repeatingInterval) * 20, // Expects to be given in ticks (20 ticks per second)
-        )
+        val task =
+            plugin.server.scheduler.runTaskTimer(
+                plugin,
+                work,
+                unit.toSeconds(delay),
+                unit.toSeconds(repeatingInterval) * 20, // Expects to be given in ticks (20 ticks per second)
+            )
         tasks[identifier] = task
 
         return Cancellable {

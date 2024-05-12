@@ -20,7 +20,7 @@ data class PluginConfig(
     data class Api(
         val token: String,
         val baseUrl: String,
-        val isLoggingEnabled: Boolean
+        val isLoggingEnabled: Boolean,
     )
 
     @Serializable
@@ -107,83 +107,102 @@ data class PluginConfig(
     companion object
 }
 
-fun PluginConfig.Companion.default() = PluginConfig(
-    api = PluginConfig.Api(
-        token = "FILL_THIS_IN",
-        baseUrl = "https://projectcitybuild.com/api/",
-        isLoggingEnabled = false,
-    ),
-    database = PluginConfig.Database(
-        hostName = "127.0.0.1",
-        port = 3306,
-        name = "pcbridge",
-        username = "FILL_THIS_IN",
-        password = "FILL_THIS_IN",
-    ),
-    webServer = PluginConfig.WebServer(
-        token = "FILL_THIS_IN",
-        port = 8080,
-    ),
-    errorReporting = PluginConfig.ErrorReporting(
-        isSentryEnabled = false,
-        sentryDsn = "https://<key>@sentry.io/<project>",
-    ),
-    localization = PluginConfig.Localization(
-        timeZone = "UTC",
-        locale = "en-us",
-    ),
-    chatBadge = PluginConfig.ChatBadge(
-        icon = "<color:yellow>★</color>"
-    ),
-    warps = PluginConfig.Warps(
-        itemsPerPage = 15,
-    ),
-    integrations = PluginConfig.Integrations(
-        dynmap = PluginConfig.Integrations.Dynmap(
-            warpIconName = "portal",
-        )
-    ),
-    announcements = PluginConfig.Announcements(
-        intervalInMins = 30,
-        messages = listOf(
-            "<color:aqua>Join the Project City Build Discord server! Type /discord in game!</color>",
-            "<color:aqua>Donations are the only way to keep PCB running! If you would like to donate to the server, you can do so by typing /donate in game!</color>",
-            "<color:aqua>Vote for us to help keep PCB active! Type /vote in game!</color>",
-            "<color:aqua>Post screenshots of your builds to the #showcase channel on our Discord to be featured on the PCB Instagram! Type /discord to join!</color>",
-            "<color:aqua>Make sure to follow the Project City Build Instagram for features of YOUR builds! Type /instagram in game!</color>"
-        ),
-    ),
-    groups = PluginConfig.Groups(
-        displayPriority = PluginConfig.Groups.DisplayPriority(
-            builder = listOf(
-                "architect",
-                "engineer",
-                "planner",
-                "builder",
-                "intern",
+fun PluginConfig.Companion.default() =
+    PluginConfig(
+        api =
+            PluginConfig.Api(
+                token = "FILL_THIS_IN",
+                baseUrl = "https://projectcitybuild.com/api/",
+                isLoggingEnabled = false,
             ),
-            trust = listOf(
-                "developer",
-                "moderator",
-                "trusted+",
-                "trusted",
-                "member",
+        database =
+            PluginConfig.Database(
+                hostName = "127.0.0.1",
+                port = 3306,
+                name = "pcbridge",
+                username = "FILL_THIS_IN",
+                password = "FILL_THIS_IN",
             ),
-            donor = listOf(
-                "donator",
-                "legacy-donator",
+        webServer =
+            PluginConfig.WebServer(
+                token = "FILL_THIS_IN",
+                port = 8080,
             ),
-        ),
-        donorTierGroupNames = PluginConfig.Groups.DonorTierGroupNames(
-            copper = "copper_tier",
-            iron = "iron_tier",
-            diamond = "diamond_tier",
-        ),
-    ),
-    messages = PluginConfig.Messages(
-        join = "<color:green><b>+</b></color> %name% <color:gray>joined the server</color>",
-        leave = "<color:red><b>-</b></color> %name% <color:gray>left the server (online for %time_online%)</color>",
-        firstTimeJoin =  "<color:AA00AA><b>✦ Welcome §f%name%§d to the server!</b></color>",
-        welcome = "<b>Welcome to PCB!</b>",
+        errorReporting =
+            PluginConfig.ErrorReporting(
+                isSentryEnabled = false,
+                sentryDsn = "https://<key>@sentry.io/<project>",
+            ),
+        localization =
+            PluginConfig.Localization(
+                timeZone = "UTC",
+                locale = "en-us",
+            ),
+        chatBadge =
+            PluginConfig.ChatBadge(
+                icon = "<color:yellow>★</color>",
+            ),
+        warps =
+            PluginConfig.Warps(
+                itemsPerPage = 15,
+            ),
+        integrations =
+            PluginConfig.Integrations(
+                dynmap =
+                    PluginConfig.Integrations.Dynmap(
+                        warpIconName = "portal",
+                    ),
+            ),
+        announcements =
+            PluginConfig.Announcements(
+                intervalInMins = 30,
+                messages =
+                    listOf(
+                        "<color:aqua>Join the Project City Build Discord server! Type /discord in game!</color>",
+                        "<color:aqua>Donations are the only way to keep PCB running! If you would like to donate to the server, you can do so by typing /donate in game!</color>",
+                        "<color:aqua>Vote for us to help keep PCB active! Type /vote in game!</color>",
+                        "<color:aqua>Post screenshots of your builds to the #showcase channel on our Discord to be featured on the PCB Instagram! Type /discord to join!</color>",
+                        "<color:aqua>Make sure to follow the Project City Build Instagram for features of YOUR builds! Type /instagram in game!</color>",
+                    ),
+            ),
+        groups =
+            PluginConfig.Groups(
+                displayPriority =
+                    PluginConfig.Groups.DisplayPriority(
+                        builder =
+                            listOf(
+                                "architect",
+                                "engineer",
+                                "planner",
+                                "builder",
+                                "intern",
+                            ),
+                        trust =
+                            listOf(
+                                "developer",
+                                "moderator",
+                                "trusted+",
+                                "trusted",
+                                "member",
+                            ),
+                        donor =
+                            listOf(
+                                "donator",
+                                "legacy-donator",
+                            ),
+                    ),
+                donorTierGroupNames =
+                    PluginConfig.Groups.DonorTierGroupNames(
+                        copper = "copper_tier",
+                        iron = "iron_tier",
+                        diamond = "diamond_tier",
+                    ),
+            ),
+        messages =
+            PluginConfig.Messages(
+                join = "<color:green><b>+</b></color> %name% <color:gray>joined the server</color>",
+                leave = "<color:red><b>-</b></color> %name% <color:gray>left the server (online for %time_online%)</color>",
+                firstTimeJoin = "<color:AA00AA><b>✦ Welcome §f%name%§d to the server!</b></color>",
+                welcome = "<b>Welcome to PCB!</b>",
+            ),
     )
-)

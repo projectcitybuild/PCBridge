@@ -12,10 +12,11 @@ class JsonStorage<T>(
     private val file: File,
     private val typeToken: TypeToken<T>,
 ) {
-    private val gson = GsonBuilder()
-        .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-        .disableHtmlEscaping()
-        .create()
+    private val gson =
+        GsonBuilder()
+            .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+            .disableHtmlEscaping()
+            .create()
 
     fun read(): T? {
         return try {

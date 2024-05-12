@@ -15,17 +15,20 @@ import java.util.UUID
 class MuteCommand(
     private val server: Server,
     private val mutedPlayers: Cache<UUID, Unit>,
-): SpigotCommand<MuteCommand.Args> {
+) : SpigotCommand<MuteCommand.Args> {
     override val label = "mute"
 
     override val usage = CommandHelpBuilder() // TODO
 
-    override suspend fun run(sender: CommandSender, args: Args) {
+    override suspend fun run(
+        sender: CommandSender,
+        args: Args,
+    ) {
         val player = server.getPlayer(args.playerName)
-        checkNotNull (player) {
+        checkNotNull(player) {
             "Player ${args.playerName} not found"
         }
-        check (mutedPlayers.get(player.uniqueId) == null) {
+        check(mutedPlayers.get(player.uniqueId) == null) {
             "Player ${args.playerName} is already muted"
         }
         mutedPlayers.put(player.uniqueId, Unit)
@@ -33,20 +36,20 @@ class MuteCommand(
         sender.sendMessage(
             Component.text("Player ${args.playerName} has been muted")
                 .color(NamedTextColor.GRAY)
-                .decorate(TextDecoration.ITALIC)
+                .decorate(TextDecoration.ITALIC),
         )
 
         player.sendMessage(
             Component.text("You have been muted")
                 .color(NamedTextColor.RED)
-                .decorate(TextDecoration.ITALIC)
+                .decorate(TextDecoration.ITALIC),
         )
     }
 
     data class Args(
         val playerName: String,
     ) {
-        class Parser: CommandArgsParser<Args> {
+        class Parser : CommandArgsParser<Args> {
             override fun parse(args: List<String>): Args {
                 if (args.isEmpty()) {
                     throw BadCommandUsageException()

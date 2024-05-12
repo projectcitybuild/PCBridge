@@ -14,7 +14,7 @@ class ValidIPTest {
             "255.255.255.255",
         ).forEach { string ->
             assertTrue(
-                isValidIP(string)
+                isValidIP(string),
             )
         }
     }
@@ -31,7 +31,7 @@ class ValidIPTest {
             "a.b.c.d",
         ).forEach { string ->
             assertFalse(
-                isValidIP(string)
+                isValidIP(string),
             )
         }
     }

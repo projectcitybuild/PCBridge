@@ -1,6 +1,5 @@
 package com.projectcitybuild.pcbridge.core.datetime
 
-import org.jetbrains.annotations.TestOnly
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.FormatStyle
@@ -15,9 +14,10 @@ class DateTimeFormatter(
         timestampInSeconds: Long,
         formatStyle: FormatStyle = FormatStyle.MEDIUM,
     ): String {
-        val formatter = java.time.format.DateTimeFormatter
-            .ofLocalizedDateTime(formatStyle)
-            .withLocale(locale)
+        val formatter =
+            java.time.format.DateTimeFormatter
+                .ofLocalizedDateTime(formatStyle)
+                .withLocale(locale)
 
         val secondsSince1970 = TimeUnit.SECONDS.toSeconds(timestampInSeconds)
         val dateTime = Instant.ofEpochSecond(secondsSince1970).atZone(timezone)

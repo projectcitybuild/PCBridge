@@ -24,55 +24,57 @@ class SpigotCommandRegistry(
         tabCompleter: SuspendingTabCompleter? = null,
     ) {
         val label = handler.label
-        check (!registered.contains(label)) {
+        check(!registered.contains(label)) {
             "$label command already registered"
         }
         val pluginCommand = plugin.getCommand(label)
         checkNotNull(pluginCommand) {
             "$label command is not found. Did you forget to add it to plugin.yml?"
         }
-        pluginCommand.setSuspendingExecutor(object : SuspendingCommandExecutor {
-            override suspend fun onCommand(
-                sender: CommandSender,
-                command: Command,
-                label: String,
-                args: Array<out String>
-            ): Boolean {
-                runCatching {
-                    handler.run(
-                        sender = sender,
-                        args = argsParser.parse(args),
-                    )
-                }.onFailure {
-                    when (it) {
-                        is IllegalStateException -> {
-                            sender.sendMessage(
-                                Component.text("Error: ${it.localizedMessage}")
-                                    .color(NamedTextColor.RED)
-                            )
-                        }
-                        is BadCommandUsageException -> {
-                            handler.displayUsage(sender)
-                        }
-                        is UnauthorizedCommandException -> {
-                            sender.sendMessage(
-                                Component.text("Error: You do not have permission to use this command")
-                                    .color(NamedTextColor.RED)
-                            )
-                        }
-                        else -> {
-                            sender.sendMessage(
-                                Component.text("Error: Something went wrong")
-                                    .color(NamedTextColor.RED)
-                            )
-                            sentry.report(it)
-                            throw it
+        pluginCommand.setSuspendingExecutor(
+            object : SuspendingCommandExecutor {
+                override suspend fun onCommand(
+                    sender: CommandSender,
+                    command: Command,
+                    label: String,
+                    args: Array<out String>,
+                ): Boolean {
+                    runCatching {
+                        handler.run(
+                            sender = sender,
+                            args = argsParser.parse(args),
+                        )
+                    }.onFailure {
+                        when (it) {
+                            is IllegalStateException -> {
+                                sender.sendMessage(
+                                    Component.text("Error: ${it.localizedMessage}")
+                                        .color(NamedTextColor.RED),
+                                )
+                            }
+                            is BadCommandUsageException -> {
+                                handler.displayUsage(sender)
+                            }
+                            is UnauthorizedCommandException -> {
+                                sender.sendMessage(
+                                    Component.text("Error: You do not have permission to use this command")
+                                        .color(NamedTextColor.RED),
+                                )
+                            }
+                            else -> {
+                                sender.sendMessage(
+                                    Component.text("Error: Something went wrong")
+                                        .color(NamedTextColor.RED),
+                                )
+                                sentry.report(it)
+                                throw it
+                            }
                         }
                     }
+                    return true
                 }
-                return true
-            }
-        })
+            },
+        )
         registered.add(label)
 
         if (tabCompleter != null) {

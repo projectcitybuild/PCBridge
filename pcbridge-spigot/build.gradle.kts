@@ -1,7 +1,5 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
-val generatedResourcesDir = "${layout.buildDirectory}/generated-resources"
-
 plugins {
     id("com.github.johnrengelman.shadow") version "8.1.1"
 }
@@ -57,7 +55,7 @@ sourceSets {
         kotlin {
             // TODO: is this still needed?
             // Bundle generated resources with the output jar
-            output.dir(generatedResourcesDir)
+            output.dir("${layout.buildDirectory}/generated-resources")
         }
     }
 }
@@ -69,6 +67,10 @@ tasks {
 }
 
 tasks.withType<ShadowJar> {
+    // Outputs the JAR to a location specified in the .env file if present.
+    //
+    // For faster testing with a Minecraft server, since we can output directly
+    // to the "plugins" folder
     destinationDirectory.set(File(
         env.fetchOrNull("BUILD_OUTPUT_DIR") ?: "build/release"
     ))

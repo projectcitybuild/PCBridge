@@ -11,12 +11,10 @@ class TelemetryPlayerConnectListener(
     private val telemetryRepository: TelemetryRepository,
 ) : Listener {
     @EventHandler
-    suspend fun onPlayerJoin(event: PlayerJoinEvent)
-        = seen(event.player)
+    suspend fun onPlayerJoin(event: PlayerJoinEvent) = seen(event.player)
 
     @EventHandler
-    suspend fun onPlayerQuit(event: PlayerQuitEvent)
-        = seen(event.player)
+    suspend fun onPlayerQuit(event: PlayerQuitEvent) = seen(event.player)
 
     private suspend fun seen(player: Player) {
         telemetryRepository.playerSeen(

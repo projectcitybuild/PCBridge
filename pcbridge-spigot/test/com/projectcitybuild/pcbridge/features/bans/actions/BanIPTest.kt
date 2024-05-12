@@ -30,87 +30,96 @@ class BanIPTest {
         ipBanRepository = mock(IPBanRepository::class.java)
         server = mock(Server::class.java)
 
-        useCase = BanIP(
-            ipBanRepository,
-            server,
-        )
+        useCase =
+            BanIP(
+                ipBanRepository,
+                server,
+            )
     }
 
     @Test
-    fun `should fail if IP is already banned`() = runTest {
-        val ip = "127.0.0.1"
+    fun `should fail if IP is already banned`() =
+        runTest {
+            val ip = "127.0.0.1"
 
-        whenever(ipBanRepository.ban(eq(ip), any(), any(), any()))
-            .thenThrow(IPBanHttpService.IPAlreadyBannedException::class.java)
+            whenever(ipBanRepository.ban(eq(ip), any(), any(), any()))
+                .thenThrow(IPBanHttpService.IPAlreadyBannedException::class.java)
 
-        val result = useCase.execute(
-            ip = ip,
-            bannerUUID = UUID.randomUUID(),
-            bannerName = "name",
-            reason = "reason",
-        )
+            val result =
+                useCase.execute(
+                    ip = ip,
+                    bannerUUID = UUID.randomUUID(),
+                    bannerName = "name",
+                    reason = "reason",
+                )
 
-        assertEquals(Failure(BanIP.FailureReason.IP_ALREADY_BANNED), result)
-    }
+            assertEquals(Failure(BanIP.FailureReason.IP_ALREADY_BANNED), result)
+        }
 
     @Test
-    fun `should fail if IP is invalid`() = runTest {
-        arrayOf(
-            "text",
-            "1234",
-        ).forEach { invalidIP ->
-            val result = useCase.execute(
-                ip = invalidIP,
+    fun `should fail if IP is invalid`() =
+        runTest {
+            arrayOf(
+                "text",
+                "1234",
+            ).forEach { invalidIP ->
+                val result =
+                    useCase.execute(
+                        ip = invalidIP,
+                        bannerUUID = UUID.randomUUID(),
+                        bannerName = "name",
+                        reason = "reason",
+                    )
+                assertEquals(Failure(BanIP.FailureReason.INVALID_IP), result)
+            }
+        }
+
+    @Test
+    fun `should ban valid IP`() =
+        runTest {
+            val ips =
+                arrayOf(
+                    "127.0.0.1",
+                    "/127.0.0.1:1234", // This should get sanitized
+                )
+            ips.forEach { ip ->
+                val uuid = UUID.randomUUID()
+                val result =
+                    useCase.execute(
+                        ip = ip,
+                        bannerUUID = uuid,
+                        bannerName = "name",
+                        reason = "reason",
+                    )
+                verify(ipBanRepository).ban(
+                    ip = "127.0.0.1",
+                    bannerUUID = uuid,
+                    bannerName = "name",
+                    reason = "reason",
+                )
+                assertEquals(Success(Unit), result)
+            }
+        }
+
+    @Test
+    fun `should kick player if online`() =
+        runTest {
+            val otherPlayer = mockPlayer(ip = "127.0.0.2")
+            val targetPlayer = mockPlayer(ip = "127.0.0.1")
+            whenever(server.onlinePlayers).thenReturn(
+                listOf(targetPlayer, otherPlayer),
+            )
+
+            useCase.execute(
+                ip = "127.0.0.1",
                 bannerUUID = UUID.randomUUID(),
                 bannerName = "name",
                 reason = "reason",
             )
-            assertEquals(Failure(BanIP.FailureReason.INVALID_IP), result)
+
+            verify(targetPlayer).kick(any(), eq(PlayerKickEvent.Cause.BANNED))
+            verifyNoInteractions(otherPlayer)
         }
-    }
-
-    @Test
-    fun `should ban valid IP`() = runTest {
-        val ips = arrayOf(
-            "127.0.0.1",
-            "/127.0.0.1:1234", // This should get sanitized
-        )
-        ips.forEach { ip ->
-            val uuid = UUID.randomUUID()
-            val result = useCase.execute(
-                ip = ip,
-                bannerUUID = uuid,
-                bannerName = "name",
-                reason = "reason",
-            )
-            verify(ipBanRepository).ban(
-                ip = "127.0.0.1",
-                bannerUUID = uuid,
-                bannerName = "name",
-                reason = "reason",
-            )
-            assertEquals(Success(Unit), result)
-        }
-    }
-
-    @Test
-    fun `should kick player if online`() = runTest {
-        val otherPlayer = mockPlayer(ip = "127.0.0.2")
-        val targetPlayer = mockPlayer(ip = "127.0.0.1")
-        whenever(server.onlinePlayers).thenReturn(
-            listOf(targetPlayer, otherPlayer),
-        )
-
-        useCase.execute(
-            ip = "127.0.0.1",
-            bannerUUID = UUID.randomUUID(),
-            bannerName = "name",
-            reason = "reason",
-        )
-
-        verify(targetPlayer).kick(any(), eq(PlayerKickEvent.Cause.BANNED))
-        verifyNoInteractions(otherPlayer)
-    }
 }
 
 private fun mockPlayer(ip: String): Player {

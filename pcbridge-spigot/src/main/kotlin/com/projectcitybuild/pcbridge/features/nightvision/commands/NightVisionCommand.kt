@@ -12,13 +12,16 @@ import org.bukkit.entity.Player
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 
-class NightVisionCommand: SpigotCommand<NightVisionCommand.Args> {
+class NightVisionCommand : SpigotCommand<NightVisionCommand.Args> {
     override val label = "nv"
 
     override val usage = CommandHelpBuilder()
 
-    override suspend fun run(sender: CommandSender, args: Args) {
-        check (sender is Player) {
+    override suspend fun run(
+        sender: CommandSender,
+        args: Args,
+    ) {
+        check(sender is Player) {
             "Only players can use this command"
         }
         val duration = Integer.MAX_VALUE
@@ -26,11 +29,12 @@ class NightVisionCommand: SpigotCommand<NightVisionCommand.Args> {
         val potionEffectType = PotionEffectType.NIGHT_VISION
         val potionEffect = PotionEffect(potionEffectType, duration, amplifier)
 
-        val toggleOn = if (args.desiredState == null) {
-            !sender.hasPotionEffect(potionEffectType)
-        } else {
-            args.desiredState == true
-        }
+        val toggleOn =
+            if (args.desiredState == null) {
+                !sender.hasPotionEffect(potionEffectType)
+            } else {
+                args.desiredState == true
+            }
 
         sender.removePotionEffect(potionEffectType)
 
@@ -39,13 +43,13 @@ class NightVisionCommand: SpigotCommand<NightVisionCommand.Args> {
             sender.sendMessage(
                 Component.text("NightVision toggled on. Type /nv to turn it off")
                     .color(NamedTextColor.GRAY)
-                    .decorate(TextDecoration.ITALIC)
+                    .decorate(TextDecoration.ITALIC),
             )
         } else {
             sender.sendMessage(
                 Component.text("NightVision toggled off")
                     .color(NamedTextColor.GRAY)
-                    .decorate(TextDecoration.ITALIC)
+                    .decorate(TextDecoration.ITALIC),
             )
         }
     }
@@ -53,7 +57,7 @@ class NightVisionCommand: SpigotCommand<NightVisionCommand.Args> {
     data class Args(
         val desiredState: Boolean? = null,
     ) {
-        class Parser: CommandArgsParser<Args> {
+        class Parser : CommandArgsParser<Args> {
             override fun parse(args: List<String>): Args {
                 if (args.isEmpty()) {
                     return Args()

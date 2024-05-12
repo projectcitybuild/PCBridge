@@ -17,7 +17,6 @@ data class ServerState(
      * Individual state for each online player
      */
     val players: MutableMap<UUID, PlayerState>,
-
     /**
      * Index of the last announcement broadcast to players on the server.
      *
@@ -27,10 +26,11 @@ data class ServerState(
     val lastBroadcastIndex: Int,
 ) {
     companion object {
-        fun default() = ServerState(
-            players = mutableMapOf(),
-            lastBroadcastIndex = -1,
-        )
+        fun default() =
+            ServerState(
+                players = mutableMapOf(),
+                lastBroadcastIndex = -1,
+            )
     }
 }
 
@@ -40,9 +40,10 @@ data class PlayerState(
     val badges: List<Badge>,
 ) {
     companion object {
-        fun empty() = PlayerState(
-            connectedAt = null,
-            badges = emptyList(),
-        )
+        fun empty() =
+            PlayerState(
+                connectedAt = null,
+                badges = emptyList(),
+            )
     }
 }

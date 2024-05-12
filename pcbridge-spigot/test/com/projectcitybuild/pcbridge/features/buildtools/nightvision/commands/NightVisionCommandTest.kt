@@ -35,56 +35,64 @@ class NightVisionCommandTest {
     }
 
     @Test
-    fun `forces on nightvision when specified`() = runTest {
-        NightVisionCommand().run(
-            sender = player,
-            args = NightVisionCommand.Args(
-                desiredState = true,
-            ),
-        )
-        verify(player).removePotionEffect(PotionEffectType.NIGHT_VISION)
-        verify(player).addPotionEffect(potionEffect)
-    }
+    fun `forces on nightvision when specified`() =
+        runTest {
+            NightVisionCommand().run(
+                sender = player,
+                args =
+                    NightVisionCommand.Args(
+                        desiredState = true,
+                    ),
+            )
+            verify(player).removePotionEffect(PotionEffectType.NIGHT_VISION)
+            verify(player).addPotionEffect(potionEffect)
+        }
 
     @Test
-    fun `forces off nightvision when specified`() = runTest {
-        NightVisionCommand().run(
-            sender = player,
-            args = NightVisionCommand.Args(
-                desiredState = false,
-            ),
-        )
-        verify(player).removePotionEffect(PotionEffectType.NIGHT_VISION)
-        verify(player, never()).addPotionEffect(potionEffect)
-    }
+    fun `forces off nightvision when specified`() =
+        runTest {
+            NightVisionCommand().run(
+                sender = player,
+                args =
+                    NightVisionCommand.Args(
+                        desiredState = false,
+                    ),
+            )
+            verify(player).removePotionEffect(PotionEffectType.NIGHT_VISION)
+            verify(player, never()).addPotionEffect(potionEffect)
+        }
 
     @Test
-    fun `toggles on nightvision if no effect`() = runTest {
-        whenever(player.hasPotionEffect(PotionEffectType.NIGHT_VISION))
-            .thenReturn(false)
+    fun `toggles on nightvision if no effect`() =
+        runTest {
+            whenever(player.hasPotionEffect(PotionEffectType.NIGHT_VISION))
+                .thenReturn(false)
 
-        NightVisionCommand().run(
-            sender = player,
-            args = NightVisionCommand.Args(
-                desiredState = null,
-            ),
-        )
-        verify(player).removePotionEffect(PotionEffectType.NIGHT_VISION)
-        verify(player).addPotionEffect(potionEffect)
-    }
+            NightVisionCommand().run(
+                sender = player,
+                args =
+                    NightVisionCommand.Args(
+                        desiredState = null,
+                    ),
+            )
+            verify(player).removePotionEffect(PotionEffectType.NIGHT_VISION)
+            verify(player).addPotionEffect(potionEffect)
+        }
 
     @Test
-    fun `toggles off nightvision if already has effect`() = runTest {
-        whenever(player.hasPotionEffect(PotionEffectType.NIGHT_VISION))
-            .thenReturn(true)
+    fun `toggles off nightvision if already has effect`() =
+        runTest {
+            whenever(player.hasPotionEffect(PotionEffectType.NIGHT_VISION))
+                .thenReturn(true)
 
-        NightVisionCommand().run(
-            sender = player,
-            args = NightVisionCommand.Args(
-                desiredState = null,
-            ),
-        )
-        verify(player).removePotionEffect(PotionEffectType.NIGHT_VISION)
-        verify(player, never()).addPotionEffect(potionEffect)
-    }
+            NightVisionCommand().run(
+                sender = player,
+                args =
+                    NightVisionCommand.Args(
+                        desiredState = null,
+                    ),
+            )
+            verify(player).removePotionEffect(PotionEffectType.NIGHT_VISION)
+            verify(player, never()).addPotionEffect(potionEffect)
+        }
 }

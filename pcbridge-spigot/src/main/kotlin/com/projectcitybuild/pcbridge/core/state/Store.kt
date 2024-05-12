@@ -12,22 +12,23 @@ class Store {
     val state: ServerState
         get() = _state
 
-    private var _state = ServerState(
-        players = mutableMapOf(),
-        lastBroadcastIndex = 0,
-    )
+    private var _state =
+        ServerState(
+            players = mutableMapOf(),
+            lastBroadcastIndex = 0,
+        )
 
-    suspend fun mutate(mutation: (ServerState) -> ServerState) = withContext(Dispatchers.Default) {
-        log.debug { "[previous state]\n$state" }
+    suspend fun mutate(mutation: (ServerState) -> ServerState) =
+        withContext(Dispatchers.Default) {
+            log.debug { "[previous state]\n$state" }
 
-        mutex.withLock {
-            _state = mutation(_state)
-            log.debug { "[new state]\n$state" }
+            mutex.withLock {
+                _state = mutation(_state)
+                log.debug { "[new state]\n$state" }
+            }
         }
-    }
 
     fun persist() {
-
     }
 
     fun rehydrate() {

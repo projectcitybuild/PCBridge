@@ -30,25 +30,28 @@ class FormatNameChatListener(
         source: Player,
         sourceDisplayName: Component,
         message: Component,
-    ): Component = runBlocking {
-        val uuid = source.uniqueId
-        val badge = badgeCache.get(uuid) {
-            chatBadgeFormatter.get(uuid) ?: Component.empty()
+    ): Component =
+        runBlocking {
+            val uuid = source.uniqueId
+            val badge =
+                badgeCache.get(uuid) {
+                    chatBadgeFormatter.get(uuid) ?: Component.empty()
+                }
+            val groups =
+                groupCache.get(uuid) {
+                    chatGroupFormatter.format(uuid)
+                }
+            Component.text()
+                .append(
+                    badge,
+                    groups.prefix,
+                    groups.groups,
+                    Component.space(),
+                    sourceDisplayName,
+                    groups.suffix,
+                    Component.text(": "),
+                    message,
+                )
+                .build()
         }
-        val groups = groupCache.get(uuid) {
-            chatGroupFormatter.format(uuid)
-        }
-        Component.text()
-            .append(
-                badge,
-                groups.prefix,
-                groups.groups,
-                Component.space(),
-                sourceDisplayName,
-                groups.suffix,
-                Component.text(": "),
-                message,
-            )
-            .build()
-    }
 }

@@ -2,8 +2,8 @@ package com.projectcitybuild.pcbridge.features.joinmessages.listeners
 
 import com.projectcitybuild.pcbridge.core.config.Config
 import com.projectcitybuild.pcbridge.core.datetime.LocalizedTime
-import com.projectcitybuild.pcbridge.features.joinmessages.repositories.PlayerConfigRepository
 import com.projectcitybuild.pcbridge.core.logger.log
+import com.projectcitybuild.pcbridge.features.joinmessages.repositories.PlayerConfigRepository
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.MiniMessage
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
@@ -32,12 +32,13 @@ class FirstTimeJoinListener(
 
         log.debug { "Sending first-time welcome message for ${event.player.name}" }
 
-        val message = MiniMessage.miniMessage().deserialize(
-            config.get().messages.firstTimeJoin,
-            Placeholder.component("name", Component.text(event.player.name)),
-        )
+        val message =
+            MiniMessage.miniMessage().deserialize(
+                config.get().messages.firstTimeJoin,
+                Placeholder.component("name", Component.text(event.player.name)),
+            )
         server.onlinePlayers
             .filter { it.uniqueId != event.player.uniqueId }
-            .forEach {it.sendMessage(message) }
+            .forEach { it.sendMessage(message) }
     }
 }

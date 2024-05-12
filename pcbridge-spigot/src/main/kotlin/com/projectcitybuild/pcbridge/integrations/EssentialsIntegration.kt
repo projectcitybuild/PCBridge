@@ -15,14 +15,14 @@ class EssentialsIntegration(
     private val plugin: JavaPlugin,
     sentry: SentryReporter,
 ) : Listener, SpigotIntegration(
-    pluginName = "Essentials",
-    pluginManager = plugin.server.pluginManager,
-    sentry = sentry,
-) {
+        pluginName = "Essentials",
+        pluginManager = plugin.server.pluginManager,
+        sentry = sentry,
+    ) {
     private var essentials: Essentials? = null
 
     override suspend fun onEnable(loadedPlugin: Plugin) {
-        check (loadedPlugin is Essentials) {
+        check(loadedPlugin is Essentials) {
             "Found Essentials plugin but cannot cast to Essentials class"
         }
         essentials = loadedPlugin
@@ -42,15 +42,16 @@ class EssentialsIntegration(
      * in Essentials
      */
     @EventHandler
-    fun onPlayerPreWarp(event: PlayerPreWarpEvent) = runCatching {
-        if (essentials == null) {
-            log.warn { "Essentials integration disabled but it's still listening to events" }
-            return@runCatching
-        }
-        essentials!!
-            .getUser(event.player)
-            .setLastLocation()
+    fun onPlayerPreWarp(event: PlayerPreWarpEvent) =
+        runCatching {
+            if (essentials == null) {
+                log.warn { "Essentials integration disabled but it's still listening to events" }
+                return@runCatching
+            }
+            essentials!!
+                .getUser(event.player)
+                .setLastLocation()
 
-        log.debug { "Registered last location for ${event.player.name} with Essentials" }
-    }
+            log.debug { "Registered last location for ${event.player.name} with Essentials" }
+        }
 }

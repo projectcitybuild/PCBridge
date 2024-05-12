@@ -10,12 +10,13 @@ data class DatabaseSource(
     val password: String,
 ) {
     companion object {
-        fun fromConfig(config: PluginConfig) = DatabaseSource(
-            hostName = config.database.hostName,
-            port = config.database.port,
-            databaseName = config.database.name,
-            username = config.database.username,
-            password = config.database.password,
-        )
+        fun fromConfig(config: PluginConfig) =
+            DatabaseSource(
+                hostName = config.database.hostName,
+                port = config.database.port,
+                databaseName = config.database.name,
+                username = config.database.username,
+                password = config.database.password,
+            )
     }
 }

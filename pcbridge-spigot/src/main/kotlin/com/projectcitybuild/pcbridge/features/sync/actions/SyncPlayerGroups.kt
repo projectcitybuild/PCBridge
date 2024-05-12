@@ -17,7 +17,7 @@ class SyncPlayerGroups(
     ) {
         val groupSet = mutableSetOf<String>()
         groupSet.addAll(
-            groups.mapNotNull { it.minecraftName }
+            groups.mapNotNull { it.minecraftName },
         )
         groupSet.addAll(
             syncRepository.getDonorTiers(donationPerks),

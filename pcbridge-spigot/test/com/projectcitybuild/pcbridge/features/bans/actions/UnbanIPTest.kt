@@ -26,54 +26,61 @@ class UnbanIPTest {
     }
 
     @Test
-    fun `should fail if IP is not banned`() = runTest {
-        val ip = "127.0.0.1"
+    fun `should fail if IP is not banned`() =
+        runTest {
+            val ip = "127.0.0.1"
 
-        whenever(ipBanRepository.unban(eq(ip), any(), any()))
-            .thenThrow(IPBanHttpService.IPNotBannedException::class.java)
+            whenever(ipBanRepository.unban(eq(ip), any(), any()))
+                .thenThrow(IPBanHttpService.IPNotBannedException::class.java)
 
-        val result = useCase.execute(
-            ip = ip,
-            unbannerUUID = UUID.randomUUID(),
-            unbannerName = "name",
-        )
-        assertEquals(Failure(UnbanIP.FailureReason.IP_NOT_BANNED), result)
-    }
+            val result =
+                useCase.execute(
+                    ip = ip,
+                    unbannerUUID = UUID.randomUUID(),
+                    unbannerName = "name",
+                )
+            assertEquals(Failure(UnbanIP.FailureReason.IP_NOT_BANNED), result)
+        }
 
     @Test
-    fun `should fail if IP is invalid`() = runTest {
-        arrayOf(
-            "text",
-            "1234",
-        ).forEach { invalidIP ->
-            val result = useCase.execute(
-                ip = invalidIP,
-                unbannerUUID = UUID.randomUUID(),
-                unbannerName = "name",
-            )
-            assertEquals(Failure(UnbanIP.FailureReason.INVALID_IP), result)
+    fun `should fail if IP is invalid`() =
+        runTest {
+            arrayOf(
+                "text",
+                "1234",
+            ).forEach { invalidIP ->
+                val result =
+                    useCase.execute(
+                        ip = invalidIP,
+                        unbannerUUID = UUID.randomUUID(),
+                        unbannerName = "name",
+                    )
+                assertEquals(Failure(UnbanIP.FailureReason.INVALID_IP), result)
+            }
         }
-    }
 
     @Test
-    fun `should unban valid IP`() = runTest {
-        val uuid = UUID.randomUUID()
-        val ips = arrayOf(
-            "127.0.0.1",
-            "/127.0.0.1:1234", // This should get sanitized
-        )
-        ips.forEach { ip ->
-            val result = useCase.execute(
-                ip = ip,
-                unbannerUUID = uuid,
-                unbannerName = "name",
-            )
-            verify(ipBanRepository).unban(
-                ip = "127.0.0.1",
-                unbannerUUID = uuid,
-                unbannerName = "name",
-            )
-            assertEquals(Success(Unit), result)
+    fun `should unban valid IP`() =
+        runTest {
+            val uuid = UUID.randomUUID()
+            val ips =
+                arrayOf(
+                    "127.0.0.1",
+                    "/127.0.0.1:1234", // This should get sanitized
+                )
+            ips.forEach { ip ->
+                val result =
+                    useCase.execute(
+                        ip = ip,
+                        unbannerUUID = uuid,
+                        unbannerName = "name",
+                    )
+                verify(ipBanRepository).unban(
+                    ip = "127.0.0.1",
+                    unbannerUUID = uuid,
+                    unbannerName = "name",
+                )
+                assertEquals(Success(Unit), result)
+            }
         }
-    }
 }

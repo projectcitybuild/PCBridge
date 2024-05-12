@@ -12,12 +12,15 @@ import org.bukkit.command.CommandSender
 
 class WarpRenameCommand(
     private val warpRepository: WarpRepository,
-): SpigotCommand<WarpRenameCommand.Args> {
+) : SpigotCommand<WarpRenameCommand.Args> {
     override val label = "rename"
 
     override val usage = CommandHelpBuilder() // TODO
 
-    override suspend fun run(sender: CommandSender, args: Args) {
+    override suspend fun run(
+        sender: CommandSender,
+        args: Args,
+    ) {
         if (!sender.hasPermission("pcbridge.warp.manage")) {
             throw UnauthorizedCommandException()
         }
@@ -27,7 +30,7 @@ class WarpRenameCommand(
         )
         sender.sendMessage(
             Component.text("${args.oldName} renamed to ${args.newName}")
-                .color(NamedTextColor.GREEN)
+                .color(NamedTextColor.GREEN),
         )
     }
 
@@ -35,7 +38,7 @@ class WarpRenameCommand(
         val oldName: String,
         val newName: String,
     ) {
-        class Parser: CommandArgsParser<Args> {
+        class Parser : CommandArgsParser<Args> {
             override fun parse(args: List<String>): Args {
                 if (args.size != 2) {
                     throw BadCommandUsageException()

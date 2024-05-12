@@ -1,10 +1,10 @@
 package com.projectcitybuild.pcbridge.features.sync.actions
 
 import com.projectcitybuild.pcbridge.features.sync.repositories.SyncRepository
+import com.projectcitybuild.pcbridge.http.services.pcb.AccountLinkHTTPService
 import com.projectcitybuild.pcbridge.utils.Failure
 import com.projectcitybuild.pcbridge.utils.Result
 import com.projectcitybuild.pcbridge.utils.Success
-import com.projectcitybuild.pcbridge.http.services.pcb.AccountLinkHTTPService
 import java.util.UUID
 
 class GenerateAccountVerificationURL(

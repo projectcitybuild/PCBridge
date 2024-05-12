@@ -1,11 +1,11 @@
 package com.projectcitybuild.pcbridge.features.bans.actions
 
+import com.projectcitybuild.pcbridge.features.bans.repositories.PlayerBanRepository
+import com.projectcitybuild.pcbridge.features.bans.repositories.PlayerUUIDRepository
+import com.projectcitybuild.pcbridge.http.services.pcb.UUIDBanHttpService
 import com.projectcitybuild.pcbridge.utils.Failure
 import com.projectcitybuild.pcbridge.utils.Result
 import com.projectcitybuild.pcbridge.utils.Success
-import com.projectcitybuild.pcbridge.http.services.pcb.UUIDBanHttpService
-import com.projectcitybuild.pcbridge.features.bans.repositories.PlayerBanRepository
-import com.projectcitybuild.pcbridge.features.bans.repositories.PlayerUUIDRepository
 import java.util.UUID
 
 class UnbanUUID(
@@ -22,8 +22,9 @@ class UnbanUUID(
         unbannerUUID: UUID?,
     ): Result<Unit, FailureReason> {
         try {
-            val targetPlayerUUID = playerUUIDRepository.get(targetPlayerName)
-                ?: return Failure(FailureReason.PlayerDoesNotExist)
+            val targetPlayerUUID =
+                playerUUIDRepository.get(targetPlayerName)
+                    ?: return Failure(FailureReason.PlayerDoesNotExist)
 
             playerBanRepository.unban(
                 targetPlayerUUID = targetPlayerUUID,

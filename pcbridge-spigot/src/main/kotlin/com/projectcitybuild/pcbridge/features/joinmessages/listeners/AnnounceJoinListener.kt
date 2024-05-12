@@ -16,17 +16,19 @@ class AnnounceJoinListener(
     private val config: Config,
     private val store: Store,
     private val time: LocalizedTime,
-): Listener {
+) : Listener {
     @EventHandler(priority = EventPriority.NORMAL)
     suspend fun onPlayerJoin(event: PlayerJoinEvent) {
         store.mutate { state ->
-            val players = state.players.also {
-                it[event.player.uniqueId] = it
-                    .getOrDefault(event.player.uniqueId, defaultValue = PlayerState.empty())
-                    .copy(connectedAt = time.now())
-            }
+            val players =
+                state.players.also {
+                    it[event.player.uniqueId] =
+                        it
+                            .getOrDefault(event.player.uniqueId, defaultValue = PlayerState.empty())
+                            .copy(connectedAt = time.now())
+                }
             state.copy(
-                players = players
+                players = players,
             )
         }
 
@@ -34,7 +36,7 @@ class AnnounceJoinListener(
             MiniMessage.miniMessage().deserialize(
                 config.get().messages.join,
                 Placeholder.component("name", Component.text(event.player.name)),
-            )
+            ),
         )
     }
 }

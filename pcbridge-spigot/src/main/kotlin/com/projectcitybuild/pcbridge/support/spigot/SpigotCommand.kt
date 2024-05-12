@@ -13,7 +13,10 @@ interface SpigotCommand<T> {
         )
     }
 
-    suspend fun run(sender: CommandSender, args: T)
+    suspend fun run(
+        sender: CommandSender,
+        args: T,
+    )
 }
 
 /**
@@ -29,17 +32,16 @@ interface CommandArgsParser<T> {
     fun parse(args: List<String>): T
 
     @Throws(IllegalStateException::class, BadCommandUsageException::class)
-    fun parse(args: Array<out String>): T
-        = parse(args.toList())
+    fun parse(args: Array<out String>): T = parse(args.toList())
 }
 
 /**
  * Represents that the expected arguments for a command were not present
  */
-class BadCommandUsageException: Exception()
+class BadCommandUsageException : Exception()
 
 /**
  * Represents that the player does not have the required permission
  * to execute a command
  */
-class UnauthorizedCommandException: Exception()
+class UnauthorizedCommandException : Exception()

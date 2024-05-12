@@ -12,25 +12,29 @@ import org.bukkit.command.CommandSender
 
 class StaffChatCommand(
     private val server: Server,
-): SpigotCommand<StaffChatCommand.Args> {
+) : SpigotCommand<StaffChatCommand.Args> {
     override val label = "a"
 
     override val usage = CommandHelpBuilder() // TODO
 
-    override suspend fun run(sender: CommandSender, args: Args) {
-        val message = Component.text()
-            .append(
-                Component.text("(Staff) ${sender.name}")
-                    .color(NamedTextColor.YELLOW)
-            )
-            .append(
-                Component.text(" » ")
-                    .color(NamedTextColor.GRAY)
-            )
-            .append(
-                Component.text(args.message)
-            )
-            .build()
+    override suspend fun run(
+        sender: CommandSender,
+        args: Args,
+    ) {
+        val message =
+            Component.text()
+                .append(
+                    Component.text("(Staff) ${sender.name}")
+                        .color(NamedTextColor.YELLOW),
+                )
+                .append(
+                    Component.text(" » ")
+                        .color(NamedTextColor.GRAY),
+                )
+                .append(
+                    Component.text(args.message),
+                )
+                .build()
 
         server.onlinePlayers
             .filter { it.hasPermission(Permissions.COMMAND_STAFF_CHAT) }
@@ -40,7 +44,7 @@ class StaffChatCommand(
     data class Args(
         val message: String,
     ) {
-        class Parser: CommandArgsParser<Args> {
+        class Parser : CommandArgsParser<Args> {
             override fun parse(args: List<String>): Args {
                 if (args.isEmpty()) {
                     throw BadCommandUsageException()

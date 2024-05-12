@@ -8,7 +8,7 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 
-class EmojiChatListener: Listener, ChatRenderer.ViewerUnaware {
+class EmojiChatListener : Listener, ChatRenderer.ViewerUnaware {
     @EventHandler(priority = EventPriority.LOW)
     fun onChat(event: AsyncChatEvent) {
         event.renderer(
@@ -30,15 +30,17 @@ class EmojiChatListener: Listener, ChatRenderer.ViewerUnaware {
     }
 
     private companion object {
-        val emojis: Map<String, String> = mapOf(
-            Pair(":skull:", "☠"),
-            Pair(":heart:", "❤"),
-            Pair(":fire:", "\uD83D\uDD25"),
-            Pair(":tm:", "™"),
-        )
+        val emojis: Map<String, String> =
+            mapOf(
+                Pair(":skull:", "☠"),
+                Pair(":heart:", "❤"),
+                Pair(":fire:", "\uD83D\uDD25"),
+                Pair(":tm:", "™"),
+            )
 
-        val pattern = emojis.keys
-            .joinToString(separator = "|")
-            .let { pattern -> "(?i)($pattern)" }  // Add case-insensitivity
+        val pattern =
+            emojis.keys
+                .joinToString(separator = "|")
+                .let { pattern -> "(?i)($pattern)" } // Add case-insensitivity
     }
 }
