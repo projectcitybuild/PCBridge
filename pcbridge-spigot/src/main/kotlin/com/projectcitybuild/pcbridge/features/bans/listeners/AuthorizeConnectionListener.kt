@@ -3,13 +3,10 @@ package com.projectcitybuild.pcbridge.features.bans.listeners
 import com.projectcitybuild.pcbridge.core.datetime.DateTimeFormatter
 import com.projectcitybuild.pcbridge.core.errors.SentryReporter
 import com.projectcitybuild.pcbridge.core.logger.log
-import com.projectcitybuild.pcbridge.core.state.PlayerState
-import com.projectcitybuild.pcbridge.core.state.Store
-import com.projectcitybuild.pcbridge.features.bans.Sanitizer
-import com.projectcitybuild.pcbridge.features.bans.actions.AuthoriseConnection
+import com.projectcitybuild.pcbridge.features.bans.actions.AuthorizeConnection
 import com.projectcitybuild.pcbridge.features.bans.events.ConnectionPermittedEvent
-import com.projectcitybuild.pcbridge.features.bans.repositories.AggregateRepository
-import com.projectcitybuild.pcbridge.http.responses.Aggregate
+import com.projectcitybuild.pcbridge.features.bans.repositories.PlayerRepository
+import com.projectcitybuild.pcbridge.http.responses.PlayerData
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import net.kyori.adventure.text.Component
@@ -23,13 +20,12 @@ import java.time.format.FormatStyle
 import kotlin.coroutines.CoroutineContext
 
 class AuthorizeConnectionListener(
-    private val aggregateRepository: AggregateRepository,
-    private val authoriseConnection: AuthoriseConnection,
+    private val playerRepository: PlayerRepository,
+    private val authorizeConnection: AuthorizeConnection,
     private val dateTimeFormatter: DateTimeFormatter,
     private val sentry: SentryReporter,
     private val server: Server,
     private val minecraftDispatcher: () -> CoroutineContext,
-    private val store: Store,
 ) : Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     suspend fun handle(event: AsyncPlayerPreLoginEvent) {
@@ -46,35 +42,27 @@ class AuthorizeConnectionListener(
          */
         runBlocking {
             runCatching {
-                val aggregate =
-                    aggregateRepository.get(
+                val playerData =
+                    playerRepository.get(
                         playerUUID = event.uniqueId,
-                        ip = Sanitizer.sanitizedIP(event.address.toString()),
-                    ) ?: Aggregate()
+                        ip = event.address,
+                    ) ?: PlayerData()
 
-                val result = authoriseConnection.execute(aggregate)
-                if (result is AuthoriseConnection.ConnectResult.Denied) {
-                    event.disallow(
+                when (val result = authorizeConnection.execute(playerData)) {
+                    is AuthorizeConnection.ConnectResult.Denied -> event.disallow(
                         AsyncPlayerPreLoginEvent.Result.KICK_BANNED,
                         result.ban.toMessage(dateTimeFormatter),
                     )
-                    return@runBlocking
-                }
-                store.mutate { state ->
-                    state.copy(
-                        players =
-                            state.players
-                                .apply { put(event.uniqueId, PlayerState.empty()) },
-                    )
-                }
-
-                withContext(minecraftDispatcher()) {
-                    server.pluginManager.callEvent(
-                        ConnectionPermittedEvent(
-                            aggregate = aggregate,
-                            playerUUID = event.uniqueId,
-                        ),
-                    )
+                    is AuthorizeConnection.ConnectResult.Allowed -> {
+                        withContext(minecraftDispatcher()) {
+                            server.pluginManager.callEvent(
+                                ConnectionPermittedEvent(
+                                    playerData = playerData,
+                                    playerUUID = event.uniqueId,
+                                ),
+                            )
+                        }
+                    }
                 }
             }.onFailure {
                 log.error(it) { "An error occurred while authorizing a connection" }
@@ -90,9 +78,9 @@ class AuthorizeConnectionListener(
     }
 }
 
-private fun AuthoriseConnection.Ban.toMessage(dateTimeFormatter: DateTimeFormatter): Component {
+private fun AuthorizeConnection.Ban.toMessage(dateTimeFormatter: DateTimeFormatter): Component {
     return when (this) {
-        is AuthoriseConnection.Ban.UUID ->
+        is AuthorizeConnection.Ban.UUID ->
             MiniMessage.miniMessage().deserialize(
                 """
                 <color:red><b>You are currently banned.</b></color>
@@ -104,7 +92,7 @@ private fun AuthoriseConnection.Ban.toMessage(dateTimeFormatter: DateTimeFormatt
                 """.trimIndent(),
             )
 
-        is AuthoriseConnection.Ban.IP ->
+        is AuthorizeConnection.Ban.IP ->
             MiniMessage.miniMessage().deserialize(
                 """
                 <color:red><b>You are currently IP banned.</b></color>

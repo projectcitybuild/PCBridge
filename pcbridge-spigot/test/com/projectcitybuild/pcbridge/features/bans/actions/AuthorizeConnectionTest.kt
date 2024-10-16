@@ -1,6 +1,6 @@
 package com.projectcitybuild.pcbridge.features.bans.actions
 
-import com.projectcitybuild.pcbridge.http.responses.Aggregate
+import com.projectcitybuild.pcbridge.http.responses.PlayerData
 import com.projectcitybuild.pcbridge.http.responses.IPBan
 import com.projectcitybuild.pcbridge.http.responses.PlayerBan
 import kotlinx.coroutines.test.runTest
@@ -10,12 +10,12 @@ import org.junit.jupiter.api.Test
 import java.time.LocalDate
 import java.time.ZoneId
 
-class AuthoriseConnectionTest {
-    private lateinit var useCase: AuthoriseConnection
+class AuthorizeConnectionTest {
+    private lateinit var useCase: AuthorizeConnection
 
     @BeforeEach
     fun setUp() {
-        useCase = AuthoriseConnection()
+        useCase = AuthorizeConnection()
     }
 
     @Test
@@ -24,11 +24,11 @@ class AuthoriseConnectionTest {
             val ban = PlayerBan()
             val result =
                 useCase.execute(
-                    Aggregate(playerBan = ban),
+                    PlayerData(playerBan = ban),
                 )
             assertEquals(
-                AuthoriseConnection.ConnectResult.Denied(
-                    AuthoriseConnection.Ban.UUID(ban),
+                AuthorizeConnection.ConnectResult.Denied(
+                    AuthorizeConnection.Ban.UUID(ban),
                 ),
                 result,
             )
@@ -43,10 +43,10 @@ class AuthoriseConnectionTest {
                 )
             val result =
                 useCase.execute(
-                    Aggregate(playerBan = ban),
+                    PlayerData(playerBan = ban),
                 )
             assertEquals(
-                AuthoriseConnection.ConnectResult.Allowed,
+                AuthorizeConnection.ConnectResult.Allowed,
                 result,
             )
         }
@@ -57,11 +57,11 @@ class AuthoriseConnectionTest {
             val ban = IPBan()
             val result =
                 useCase.execute(
-                    Aggregate(ipBan = ban),
+                    PlayerData(ipBan = ban),
                 )
             assertEquals(
-                AuthoriseConnection.ConnectResult.Denied(
-                    AuthoriseConnection.Ban.IP(ban),
+                AuthorizeConnection.ConnectResult.Denied(
+                    AuthorizeConnection.Ban.IP(ban),
                 ),
                 result,
             )
@@ -76,10 +76,10 @@ class AuthoriseConnectionTest {
                 )
             val result =
                 useCase.execute(
-                    Aggregate(ipBan = ban),
+                    PlayerData(ipBan = ban),
                 )
             assertEquals(
-                AuthoriseConnection.ConnectResult.Allowed,
+                AuthorizeConnection.ConnectResult.Allowed,
                 result,
             )
         }
@@ -89,10 +89,10 @@ class AuthoriseConnectionTest {
         runTest {
             val result =
                 useCase.execute(
-                    Aggregate(playerBan = null, ipBan = null),
+                    PlayerData(playerBan = null, ipBan = null),
                 )
             assertEquals(
-                AuthoriseConnection.ConnectResult.Allowed,
+                AuthorizeConnection.ConnectResult.Allowed,
                 result,
             )
         }

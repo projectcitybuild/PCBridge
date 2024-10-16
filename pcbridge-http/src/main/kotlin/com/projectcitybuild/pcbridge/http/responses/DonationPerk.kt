@@ -1,9 +1,11 @@
 package com.projectcitybuild.pcbridge.http.responses
 
 import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.Serializable
 import java.time.LocalDate
 import java.time.ZoneId
 
+@Serializable
 data class DonationPerk(
     @SerializedName("donation_perks_id")
     val id: Int = Math.random().toInt(),

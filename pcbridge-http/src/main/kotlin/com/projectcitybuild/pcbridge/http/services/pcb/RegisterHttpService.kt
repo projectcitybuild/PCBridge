@@ -8,26 +8,22 @@ import retrofit2.Retrofit
 import java.util.UUID
 import kotlin.jvm.Throws
 
-class AccountLinkHTTPService(
+class RegisterHttpService(
     private val retrofit: Retrofit,
     private val responseParser: ResponseParser,
 ) {
     class AlreadyLinkedException : Exception()
 
     @Throws(AlreadyLinkedException::class)
-    suspend fun generateVerificationURL(playerUUID: UUID): String? =
+    suspend fun sendCode(playerUUID: UUID, playerAlias: String, email: String) =
         withContext(Dispatchers.IO) {
             try {
-                val response =
-                    responseParser.parse {
-                        retrofit.pcb().getVerificationUrl(uuid = playerUUID.toString())
-                    }
-                val data = response.data
-
-                if (data == null || data.url.isEmpty()) {
-                    null
-                } else {
-                    data.url
+                responseParser.parse {
+                    retrofit.pcb().sendRegisterCode(
+                        uuid = playerUUID.toString(),
+                        playerName = playerAlias,
+                        email = email,
+                    )
                 }
             } catch (e: ResponseParser.HTTPError) {
                 if (e.errorBody?.id == "already_authenticated") {

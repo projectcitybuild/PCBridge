@@ -10,25 +10,22 @@ internal class PCBClientFactory(
     private val baseUrl: String,
     private val withLogging: Boolean,
 ) {
-    fun build(): Retrofit {
-        val authenticatedClient = makeAuthenticatedClient()
-        return Retrofit.Builder()
-            .baseUrl(baseUrl)
-            .client(authenticatedClient)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-    }
+    fun build(): Retrofit = Retrofit.Builder()
+        .baseUrl(baseUrl)
+        .client(makeAuthenticatedClient())
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
 
     private fun makeAuthenticatedClient(): OkHttpClient {
         var clientFactory =
             OkHttpClient().newBuilder()
                 .addInterceptor { chain ->
-                    // Add access token as header to each API request
                     val request = chain.request()
-                    val requestBuilder = request.newBuilder().header("Authorization", "Bearer $authToken")
-                    val nextRequest = requestBuilder.build()
+                        .newBuilder()
+                        .header("Authorization", "Bearer $authToken")
+                        .build()
 
-                    chain.proceed(nextRequest)
+                    chain.proceed(request)
                 }
 
         if (withLogging) {

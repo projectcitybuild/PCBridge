@@ -4,15 +4,9 @@ import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
 import com.projectcitybuild.pcbridge.core.errors.SentryReporter
 import com.projectcitybuild.pcbridge.core.errors.trace
 import com.projectcitybuild.pcbridge.features.announcements.listeners.AnnouncementEnableListener
-import com.projectcitybuild.pcbridge.features.bans.commands.BanCommand
-import com.projectcitybuild.pcbridge.features.bans.commands.BanIPCommand
-import com.projectcitybuild.pcbridge.features.bans.commands.CheckBanCommand
-import com.projectcitybuild.pcbridge.features.bans.commands.UnbanCommand
-import com.projectcitybuild.pcbridge.features.bans.commands.UnbanIPCommand
 import com.projectcitybuild.pcbridge.features.bans.listeners.AuthorizeConnectionListener
 import com.projectcitybuild.pcbridge.features.chat.listeners.EmojiChatListener
 import com.projectcitybuild.pcbridge.features.chat.listeners.FormatNameChatListener
-import com.projectcitybuild.pcbridge.features.chat.listeners.SyncBadgesOnJoinListener
 import com.projectcitybuild.pcbridge.features.invisframes.commands.InvisFrameCommand
 import com.projectcitybuild.pcbridge.features.invisframes.listeners.FrameItemInsertListener
 import com.projectcitybuild.pcbridge.features.invisframes.listeners.FrameItemRemoveListener
@@ -21,18 +15,13 @@ import com.projectcitybuild.pcbridge.features.joinmessages.listeners.AnnounceJoi
 import com.projectcitybuild.pcbridge.features.joinmessages.listeners.AnnounceQuitListener
 import com.projectcitybuild.pcbridge.features.joinmessages.listeners.FirstTimeJoinListener
 import com.projectcitybuild.pcbridge.features.joinmessages.listeners.ServerOverviewJoinListener
-import com.projectcitybuild.pcbridge.features.mute.commands.MuteCommand
-import com.projectcitybuild.pcbridge.features.mute.commands.UnmuteCommand
-import com.projectcitybuild.pcbridge.features.mute.listeners.MuteChatListener
 import com.projectcitybuild.pcbridge.features.nightvision.commands.NightVisionCommand
+import com.projectcitybuild.pcbridge.features.playerstate.listeners.PlayerStateListener
 import com.projectcitybuild.pcbridge.features.staffchat.commands.StaffChatCommand
 import com.projectcitybuild.pcbridge.features.sync.commands.SyncCommand
-import com.projectcitybuild.pcbridge.features.sync.commands.SyncOtherCommand
 import com.projectcitybuild.pcbridge.features.sync.listener.SyncRankOnJoinListener
 import com.projectcitybuild.pcbridge.features.telemetry.listeners.TelemetryPlayerConnectListener
 import com.projectcitybuild.pcbridge.features.utilities.commands.PCBridgeCommand
-import com.projectcitybuild.pcbridge.features.warnings.commands.WarningAcknowledgeCommand
-import com.projectcitybuild.pcbridge.features.warnings.listeners.NotifyWarningsOnJoinListener
 import com.projectcitybuild.pcbridge.features.warps.commands.WarpCommand
 import com.projectcitybuild.pcbridge.features.warps.commands.WarpsCommand
 import com.projectcitybuild.pcbridge.integrations.DynmapIntegration
@@ -110,14 +99,6 @@ private class Lifecycle : KoinComponent {
                     argsParser = StaffChatCommand.Args.Parser(),
                 )
                 register(
-                    handler = get<MuteCommand>(),
-                    argsParser = MuteCommand.Args.Parser(),
-                )
-                register(
-                    handler = get<UnmuteCommand>(),
-                    argsParser = UnmuteCommand.Args.Parser(),
-                )
-                register(
                     handler = get<NightVisionCommand>(),
                     argsParser = NightVisionCommand.Args.Parser(),
                 )
@@ -126,55 +107,25 @@ private class Lifecycle : KoinComponent {
                     argsParser = InvisFrameCommand.Args.Parser(),
                 )
                 register(
-                    handler = get<BanCommand>(),
-                    argsParser = BanCommand.Args.Parser(),
-                )
-                register(
-                    handler = get<BanIPCommand>(),
-                    argsParser = BanIPCommand.Args.Parser(),
-                )
-                register(
-                    handler = get<CheckBanCommand>(),
-                    argsParser = CheckBanCommand.Args.Parser(),
-                )
-                register(
-                    handler = get<UnbanCommand>(),
-                    argsParser = UnbanCommand.Args.Parser(),
-                )
-                register(
-                    handler = get<UnbanIPCommand>(),
-                    argsParser = UnbanIPCommand.Args.Parser(),
-                )
-                register(
                     handler = get<SyncCommand>(),
                     argsParser = SyncCommand.Args.Parser(),
-                )
-                register(
-                    handler = get<SyncOtherCommand>(),
-                    argsParser = SyncOtherCommand.Args.Parser(),
-                )
-                register(
-                    handler = get<WarningAcknowledgeCommand>(),
-                    argsParser = WarningAcknowledgeCommand.Args.Parser(),
                 )
             }
             listenerRegistry.register(
                 get<AnnounceJoinListener>(),
                 get<AnnounceQuitListener>(),
-                get<FirstTimeJoinListener>(),
-                get<ServerOverviewJoinListener>(),
+                get<AnnouncementEnableListener>(),
+                get<AuthorizeConnectionListener>(),
                 get<EmojiChatListener>(),
-                get<TelemetryPlayerConnectListener>(),
-                get<MuteChatListener>(),
+                get<FirstTimeJoinListener>(),
+                get<FormatNameChatListener>(),
                 get<FramePlaceListener>(),
                 get<FrameItemInsertListener>(),
                 get<FrameItemRemoveListener>(),
-                get<AuthorizeConnectionListener>(),
+                get<PlayerStateListener>(),
+                get<ServerOverviewJoinListener>(),
                 get<SyncRankOnJoinListener>(),
-                get<SyncBadgesOnJoinListener>(),
-                get<FormatNameChatListener>(),
-                get<AnnouncementEnableListener>(),
-                get<NotifyWarningsOnJoinListener>(),
+                get<TelemetryPlayerConnectListener>(),
             )
 
             get<DynmapIntegration>().enable()

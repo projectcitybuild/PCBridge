@@ -18,8 +18,7 @@ class PlayerConfigRepository(
                 connection.prepareStatement("SELECT * FROM players WHERE `uuid`=(?) LIMIT 1")
                     .apply { setString(1, uuid.toString()) }
                     .use { it.executeQuery() }
-                    .use { it.firstRow() }
-                    ?.toPlayerConfig()
+                    .use { it.firstRow()?.toPlayerConfig() }
             }
         }
 

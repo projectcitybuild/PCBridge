@@ -19,21 +19,16 @@ class AnnounceQuitListener(
     private val time: LocalizedTime,
 ) : Listener {
     @EventHandler(priority = EventPriority.NORMAL)
-    suspend fun onPlayerQuit(event: PlayerQuitEvent) {
+    fun onPlayerQuit(event: PlayerQuitEvent) {
         val playerState = store.state.players[event.player.uniqueId]
         val joinTime = playerState?.connectedAt ?: time.now()
-
-        store.mutate { state ->
-            state.copy(
-                players = state.players.apply { remove(event.player.uniqueId) },
-            )
-        }
-
         val timeOnline = sessionTime(start = joinTime)
+
+        val leaveMessage = config.get().messages.leave
 
         event.quitMessage(
             MiniMessage.miniMessage().deserialize(
-                config.get().messages.leave,
+                leaveMessage,
                 Placeholder.component("name", Component.text(event.player.name)),
                 Placeholder.component("time_online", Component.text(timeOnline)),
             ),

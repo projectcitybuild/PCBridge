@@ -1,11 +1,11 @@
-package com.projectcitybuild.pcbridge.features.bans.events
+package com.projectcitybuild.pcbridge.features.playerstate.events
 
 import com.projectcitybuild.pcbridge.http.responses.PlayerData
 import org.bukkit.event.Event
 import org.bukkit.event.HandlerList
 import java.util.UUID
 
-class ConnectionPermittedEvent(
+class PlayerStateCreatedEvent(
     val playerData: PlayerData,
     val playerUUID: UUID,
 ) : Event() {

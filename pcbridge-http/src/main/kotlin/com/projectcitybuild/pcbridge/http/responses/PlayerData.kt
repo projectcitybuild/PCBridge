@@ -2,7 +2,7 @@ package com.projectcitybuild.pcbridge.http.responses
 
 import com.google.gson.annotations.SerializedName
 
-data class Aggregate(
+data class PlayerData(
     @SerializedName("account")
     val account: Account? = null,
     @SerializedName("ban")

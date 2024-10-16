@@ -1,6 +1,8 @@
 package com.projectcitybuild.pcbridge.core.state
 
+import com.projectcitybuild.pcbridge.http.responses.Account
 import com.projectcitybuild.pcbridge.http.responses.Badge
+import com.projectcitybuild.pcbridge.http.responses.DonationPerk
 import com.projectcitybuild.pcbridge.support.serializable.LocalDateTimeSerializer
 import com.projectcitybuild.pcbridge.support.serializable.UUIDSerializer
 import kotlinx.serialization.Serializable
@@ -26,27 +28,13 @@ data class ServerState(
      * which one was last broadcast when reloading
      */
     val lastBroadcastIndex: Int,
-) {
-    companion object {
-        fun default() =
-            ServerState(
-                players = mutableMapOf(),
-                lastBroadcastIndex = -1,
-            )
-    }
-}
+)
 
 @Serializable
 data class PlayerState(
     @Serializable(with = LocalDateTimeSerializer::class)
     val connectedAt: LocalDateTime?,
-    val badges: List<Badge>,
-) {
-    companion object {
-        fun empty() =
-            PlayerState(
-                connectedAt = null,
-                badges = emptyList(),
-            )
-    }
-}
+    val account: Account? = null,
+    val badges: List<Badge> = emptyList(),
+    val donationPerks: List<DonationPerk> = emptyList(),
+)
