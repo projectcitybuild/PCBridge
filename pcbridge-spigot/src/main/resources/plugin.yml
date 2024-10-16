@@ -23,6 +23,8 @@ commands:
     permission: pcbridge.build.invisframe
   nv:
     permission: pcbridge.build.nightvision
+  register:
+    permission: pcbridge.register
   sync:
     permission: pcbridge.sync.login
   warp:

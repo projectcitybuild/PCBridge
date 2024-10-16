@@ -23,6 +23,7 @@ internal class PCBClientFactory(
                     val request = chain.request()
                         .newBuilder()
                         .header("Authorization", "Bearer $authToken")
+                        .header("Accept", "application/json")
                         .build()
 
                     chain.proceed(request)

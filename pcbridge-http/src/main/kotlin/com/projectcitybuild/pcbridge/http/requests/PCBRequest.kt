@@ -29,7 +29,7 @@ internal interface PCBRequest {
     @FormUrlEncoded
     suspend fun sendRegisterCode(
         @Path(value = "uuid") uuid: String,
-        @Field(value = "alias") playerName: String,
+        @Field(value = "minecraft_alias") playerAlias: String,
         @Field(value = "email") email: String,
     ): ApiResponse<Unit>
 

@@ -17,16 +17,12 @@ class ResponseParser {
         },
     )
 
-    class NetworkError : Exception(
-        "Failed to contact PCB auth server",
-    )
-
     suspend fun <T> parse(apiCall: suspend () -> T): T =
         withContext(Dispatchers.IO) {
             try {
                 apiCall.invoke()
-            } catch (_: IOException) {
-                throw NetworkError()
+            } catch (e: IOException) {
+                throw e
             } catch (e: HttpException) {
                 val code = e.code()
                 throw HTTPError(errorBody = convertErrorBody(e, code))

@@ -35,9 +35,10 @@ import com.projectcitybuild.pcbridge.features.joinmessages.listeners.ServerOverv
 import com.projectcitybuild.pcbridge.features.joinmessages.repositories.PlayerConfigRepository
 import com.projectcitybuild.pcbridge.features.nightvision.commands.NightVisionCommand
 import com.projectcitybuild.pcbridge.features.playerstate.listeners.PlayerStateListener
+import com.projectcitybuild.pcbridge.features.register.commands.RegisterCommand
+import com.projectcitybuild.pcbridge.features.register.repositories.RegisterRepository
 import com.projectcitybuild.pcbridge.features.staffchat.commands.StaffChatCommand
 import com.projectcitybuild.pcbridge.features.sync.actions.SyncPlayerGroups
-import com.projectcitybuild.pcbridge.features.sync.commands.SyncCommand
 import com.projectcitybuild.pcbridge.features.sync.listener.SyncRankOnJoinListener
 import com.projectcitybuild.pcbridge.features.sync.repositories.SyncRepository
 import com.projectcitybuild.pcbridge.features.telemetry.listeners.TelemetryPlayerConnectListener
@@ -87,6 +88,7 @@ fun pluginModule(_plugin: JavaPlugin) =
         invisFrames()
         nightVision()
         playerState()
+        register()
         staffChat()
         sync()
         telemetry()
@@ -459,6 +461,19 @@ private fun Module.chat() {
     }
 }
 
+private fun Module.register() {
+    factory {
+        RegisterCommand(
+            registerRepository = get(),
+        )
+    }
+    factory {
+        RegisterRepository(
+            registerHttpService = get<HttpService>().register,
+        )
+    }
+}
+
 private fun Module.telemetry() {
     factory {
         TelemetryRepository(
@@ -493,10 +508,6 @@ private fun Module.sync() {
         SyncRepository(
             config = get(),
         )
-    }
-
-    factory {
-        SyncCommand()
     }
 
     factory {

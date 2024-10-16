@@ -17,8 +17,8 @@ import com.projectcitybuild.pcbridge.features.joinmessages.listeners.FirstTimeJo
 import com.projectcitybuild.pcbridge.features.joinmessages.listeners.ServerOverviewJoinListener
 import com.projectcitybuild.pcbridge.features.nightvision.commands.NightVisionCommand
 import com.projectcitybuild.pcbridge.features.playerstate.listeners.PlayerStateListener
+import com.projectcitybuild.pcbridge.features.register.commands.RegisterCommand
 import com.projectcitybuild.pcbridge.features.staffchat.commands.StaffChatCommand
-import com.projectcitybuild.pcbridge.features.sync.commands.SyncCommand
 import com.projectcitybuild.pcbridge.features.sync.listener.SyncRankOnJoinListener
 import com.projectcitybuild.pcbridge.features.telemetry.listeners.TelemetryPlayerConnectListener
 import com.projectcitybuild.pcbridge.features.utilities.commands.PCBridgeCommand
@@ -107,8 +107,8 @@ private class Lifecycle : KoinComponent {
                     argsParser = InvisFrameCommand.Args.Parser(),
                 )
                 register(
-                    handler = get<SyncCommand>(),
-                    argsParser = SyncCommand.Args.Parser(),
+                    handler = get<RegisterCommand>(),
+                    argsParser = RegisterCommand.Args.Parser(),
                 )
             }
             listenerRegistry.register(
