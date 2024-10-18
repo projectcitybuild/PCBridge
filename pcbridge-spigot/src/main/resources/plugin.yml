@@ -17,14 +17,14 @@ commands:
     permission: pcbridge.ban.ban
   banip:
     permission: pcbridge.ban.banip
-  pcbridge:
-    permission: pcbridge.utils
+  code:
+    permission: pcbridge.register.code
   invisframe:
     permission: pcbridge.build.invisframe
   nv:
     permission: pcbridge.build.nightvision
   register:
-    permission: pcbridge.register
+    permission: pcbridge.register.email
   sync:
     permission: pcbridge.sync.login
   warp:

@@ -9,6 +9,13 @@ import java.io.IOException
 class ResponseParser {
     data class ErrorBody(val error: ApiError)
 
+    data class ValidationErrorBody(
+        val message: String?,
+        val errors: Map<String, List<String>>?
+    )
+
+    class NotFoundError : Exception()
+
     class HTTPError(val errorBody: ApiError?) : Exception(
         if (errorBody != null) {
             "Bad response received from the server: ${errorBody.detail}"
@@ -17,6 +24,8 @@ class ResponseParser {
         },
     )
 
+    class ValidationError(message: String?) : Exception(message)
+
     suspend fun <T> parse(apiCall: suspend () -> T): T =
         withContext(Dispatchers.IO) {
             try {
@@ -24,21 +33,26 @@ class ResponseParser {
             } catch (e: IOException) {
                 throw e
             } catch (e: HttpException) {
-                val code = e.code()
-                throw HTTPError(errorBody = convertErrorBody(e, code))
+                when (val code = e.code()) {
+                    404 -> throw NotFoundError()
+                    422 -> {
+                        val body = e.response()?.errorBody()?.string().let {
+                            val errorBody = Gson().fromJson(it, ValidationErrorBody::class.java)
+                            errorBody
+                        }
+                        throw ValidationError(body.message)
+                    }
+                    else -> {
+                        val body = e.response()?.errorBody()?.string().let {
+                            val errorBody = Gson().fromJson(it, ErrorBody::class.java).error
+                            errorBody.status = code
+                            errorBody
+                        }
+                        throw HTTPError(errorBody = body)
+                    }
+                }
             } catch (e: Exception) {
                 throw e
             }
         }
-
-    private fun convertErrorBody(
-        e: HttpException,
-        code: Int,
-    ): ApiError? {
-        e.response()?.errorBody()?.string().let {
-            val errorBody = Gson().fromJson(it, ErrorBody::class.java).error
-            errorBody.status = code
-            return errorBody
-        }
-    }
 }

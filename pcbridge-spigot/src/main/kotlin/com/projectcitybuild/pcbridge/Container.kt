@@ -35,15 +35,14 @@ import com.projectcitybuild.pcbridge.features.joinmessages.listeners.ServerOverv
 import com.projectcitybuild.pcbridge.features.joinmessages.repositories.PlayerConfigRepository
 import com.projectcitybuild.pcbridge.features.nightvision.commands.NightVisionCommand
 import com.projectcitybuild.pcbridge.features.playerstate.listeners.PlayerStateListener
+import com.projectcitybuild.pcbridge.features.register.commands.CodeCommand
 import com.projectcitybuild.pcbridge.features.register.commands.RegisterCommand
-import com.projectcitybuild.pcbridge.features.register.repositories.RegisterRepository
 import com.projectcitybuild.pcbridge.features.staffchat.commands.StaffChatCommand
 import com.projectcitybuild.pcbridge.features.sync.actions.SyncPlayerGroups
 import com.projectcitybuild.pcbridge.features.sync.listener.SyncRankOnJoinListener
 import com.projectcitybuild.pcbridge.features.sync.repositories.SyncRepository
 import com.projectcitybuild.pcbridge.features.telemetry.listeners.TelemetryPlayerConnectListener
 import com.projectcitybuild.pcbridge.features.telemetry.repositories.TelemetryRepository
-import com.projectcitybuild.pcbridge.features.utilities.commands.PCBridgeCommand
 import com.projectcitybuild.pcbridge.features.warps.Warp
 import com.projectcitybuild.pcbridge.features.warps.commands.WarpCommand
 import com.projectcitybuild.pcbridge.features.warps.commands.WarpsCommand
@@ -92,7 +91,6 @@ fun pluginModule(_plugin: JavaPlugin) =
         staffChat()
         sync()
         telemetry()
-        utilities()
         warps()
     }
 
@@ -463,12 +461,15 @@ private fun Module.chat() {
 
 private fun Module.register() {
     factory {
+
+    }
+    factory {
         RegisterCommand(
-            registerRepository = get(),
+            registerHttpService = get<HttpService>().register,
         )
     }
     factory {
-        RegisterRepository(
+        CodeCommand(
             registerHttpService = get<HttpService>().register,
         )
     }
@@ -514,17 +515,5 @@ private fun Module.sync() {
         SyncRankOnJoinListener(
             syncPlayerGroups = get(),
         )
-    }
-}
-
-private fun Module.utilities() {
-    factory {
-        PCBridgeCommand(
-            plugin = get(),
-        )
-    }
-
-    factory {
-        PCBridgeCommand.TabCompleter()
     }
 }

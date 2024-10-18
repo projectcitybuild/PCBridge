@@ -17,11 +17,11 @@ import com.projectcitybuild.pcbridge.features.joinmessages.listeners.FirstTimeJo
 import com.projectcitybuild.pcbridge.features.joinmessages.listeners.ServerOverviewJoinListener
 import com.projectcitybuild.pcbridge.features.nightvision.commands.NightVisionCommand
 import com.projectcitybuild.pcbridge.features.playerstate.listeners.PlayerStateListener
+import com.projectcitybuild.pcbridge.features.register.commands.CodeCommand
 import com.projectcitybuild.pcbridge.features.register.commands.RegisterCommand
 import com.projectcitybuild.pcbridge.features.staffchat.commands.StaffChatCommand
 import com.projectcitybuild.pcbridge.features.sync.listener.SyncRankOnJoinListener
 import com.projectcitybuild.pcbridge.features.telemetry.listeners.TelemetryPlayerConnectListener
-import com.projectcitybuild.pcbridge.features.utilities.commands.PCBridgeCommand
 import com.projectcitybuild.pcbridge.features.warps.commands.WarpCommand
 import com.projectcitybuild.pcbridge.features.warps.commands.WarpsCommand
 import com.projectcitybuild.pcbridge.integrations.DynmapIntegration
@@ -82,11 +82,6 @@ private class Lifecycle : KoinComponent {
         sentry.trace {
             commandRegistry.apply {
                 register(
-                    handler = get<PCBridgeCommand>(),
-                    argsParser = PCBridgeCommand.Args.Parser(),
-                    tabCompleter = get<PCBridgeCommand.TabCompleter>(),
-                )
-                register(
                     handler = get<WarpCommand>(),
                     argsParser = WarpCommand.Args.Parser(),
                 )
@@ -109,6 +104,10 @@ private class Lifecycle : KoinComponent {
                 register(
                     handler = get<RegisterCommand>(),
                     argsParser = RegisterCommand.Args.Parser(),
+                )
+                register(
+                    handler = get<CodeCommand>(),
+                    argsParser = CodeCommand.Args.Parser(),
                 )
             }
             listenerRegistry.register(

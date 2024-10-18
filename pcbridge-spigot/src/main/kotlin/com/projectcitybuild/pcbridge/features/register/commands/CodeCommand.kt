@@ -12,10 +12,10 @@ import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
-class RegisterCommand(
+class CodeCommand(
     private val registerHttpService: RegisterHttpService,
-) : SpigotCommand<RegisterCommand.Args> {
-    override val label = "register"
+) : SpigotCommand<CodeCommand.Args> {
+    override val label = "code"
 
     override val usage = CommandHelpBuilder()
 
@@ -27,16 +27,14 @@ class RegisterCommand(
             "Only players can use this command"
         }
         try {
-            registerHttpService.sendCode(
-                email = args.email,
-                playerAlias = sender.name,
+            registerHttpService.verifyCode(
+                code = args.code,
                 playerUUID = sender.uniqueId,
             )
+        } catch (e: ResponseParser.NotFoundError) {
             sender.sendMessage(
-                MiniMessage.miniMessage().deserialize(
-                    "<color:gray>A code has been emailed to ${args.email}.<newline>" +
-                        "Please type it in with </color><color:aqua><bold><click:suggest_command:/code>/code [code]</click></bold></color>"
-                )
+                Component.text("Error: Code is invalid or expired")
+                    .color(NamedTextColor.RED),
             )
         } catch (e: ResponseParser.ValidationError) {
             sender.sendMessage(
@@ -47,7 +45,7 @@ class RegisterCommand(
     }
 
     data class Args(
-        val email: String,
+        val code: String,
     ) {
         class Parser : CommandArgsParser<Args> {
             override fun parse(args: List<String>): Args {
@@ -57,7 +55,7 @@ class RegisterCommand(
                 if (args.size > 1) {
                     throw BadCommandUsageException()
                 }
-                return Args(email = args[0])
+                return Args(code = args[0])
             }
         }
     }

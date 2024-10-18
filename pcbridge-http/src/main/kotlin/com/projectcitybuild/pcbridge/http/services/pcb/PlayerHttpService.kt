@@ -17,13 +17,11 @@ class PlayerHttpService(
         ip: String,
     ): PlayerData? =
         withContext(Dispatchers.IO) {
-            val response =
-                responseParser.parse {
-                    retrofit.pcb().getPlayer(
-                        uuid = playerUUID.toString(),
-                        ip = ip,
-                    )
-                }
-            response.data
+            responseParser.parse {
+                retrofit.pcb().getPlayer(
+                    uuid = playerUUID.toString(),
+                    ip = ip,
+                )
+            }
         }
 }

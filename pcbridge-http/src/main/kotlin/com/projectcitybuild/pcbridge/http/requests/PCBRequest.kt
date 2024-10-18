@@ -19,7 +19,7 @@ internal interface PCBRequest {
     suspend fun getPlayer(
         @Path(value = "uuid") uuid: String,
         @Query("ip") ip: String,
-    ): ApiResponse<PlayerData>
+    ): PlayerData
 
     /**
      * Begins registration of a PCB account linked to the current
@@ -31,7 +31,7 @@ internal interface PCBRequest {
         @Path(value = "uuid") uuid: String,
         @Field(value = "minecraft_alias") playerAlias: String,
         @Field(value = "email") email: String,
-    ): ApiResponse<Unit>
+    )
 
     /**
      * Finishes registration by verifying the code sent to them
@@ -42,7 +42,7 @@ internal interface PCBRequest {
     suspend fun verifyRegisterCode(
         @Path(value = "uuid") uuid: String,
         @Field(value = "code") code: String,
-    ): ApiResponse<Unit>
+    )
 
     /**
      * Updates the last seen date of the player

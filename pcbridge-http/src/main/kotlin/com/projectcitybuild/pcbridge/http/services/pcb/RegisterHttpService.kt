@@ -21,4 +21,14 @@ class RegisterHttpService(
                 )
             }
         }
+
+    suspend fun verifyCode(playerUUID: UUID, code: String) =
+        withContext(Dispatchers.IO) {
+            responseParser.parse {
+                retrofit.pcb().verifyRegisterCode(
+                    uuid = playerUUID.toString(),
+                    code = code,
+                )
+            }
+        }
 }
