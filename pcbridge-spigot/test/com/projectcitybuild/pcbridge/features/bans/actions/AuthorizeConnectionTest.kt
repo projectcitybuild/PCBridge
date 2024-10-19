@@ -8,10 +8,28 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.ZoneId
+import kotlin.random.Random
 
 class AuthorizeConnectionTest {
     private lateinit var useCase: AuthorizeConnection
+
+    private fun playerBan() = PlayerBan(
+        id = Random.nextInt(),
+        bannerPlayerId = Random.nextInt(),
+        bannedPlayerId = Random.nextInt(),
+        bannedPlayerAlias = "alias",
+        createdAt = LocalDateTime.now(),
+        updatedAt = LocalDateTime.now(),
+    )
+
+    private fun ipBan() = IPBan(
+        id = Random.nextInt(),
+        bannerPlayerId = Random.nextInt(),
+        createdAt = LocalDateTime.now(),
+        updatedAt = LocalDateTime.now(),
+    )
 
     @BeforeEach
     fun setUp() {
@@ -21,7 +39,7 @@ class AuthorizeConnectionTest {
     @Test
     fun `should deny if player is banned`() =
         runTest {
-            val ban = PlayerBan()
+            val ban = playerBan()
             val result =
                 useCase.authorize(
                     PlayerData(playerBan = ban),
@@ -38,8 +56,11 @@ class AuthorizeConnectionTest {
     fun `should not deny if player ban is inactive`() =
         runTest {
             val ban =
-                PlayerBan(
-                    unbannedAt = LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toEpochSecond(),
+                playerBan().copy(
+                    unbannedAt = LocalDate
+                        .now()
+                        .atStartOfDay(ZoneId.systemDefault())
+                        .toLocalDateTime(),
                 )
             val result =
                 useCase.authorize(
@@ -54,7 +75,7 @@ class AuthorizeConnectionTest {
     @Test
     fun `should deny if IP is banned`() =
         runTest {
-            val ban = IPBan()
+            val ban = ipBan()
             val result =
                 useCase.authorize(
                     PlayerData(ipBan = ban),
@@ -71,8 +92,8 @@ class AuthorizeConnectionTest {
     fun `should not deny if IP ban is inactive`() =
         runTest {
             val ban =
-                IPBan(
-                    unbannedAt = LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toEpochSecond(),
+                ipBan().copy(
+                    unbannedAt = LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toLocalDateTime(),
                 )
             val result =
                 useCase.authorize(

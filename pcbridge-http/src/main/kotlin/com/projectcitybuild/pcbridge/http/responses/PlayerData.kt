@@ -6,13 +6,13 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class PlayerData(
     @SerializedName("account")
-    val account: Account?,
+    val account: Account? = null,
 
     @SerializedName("ban")
-    val playerBan: PlayerBan?,
+    val playerBan: PlayerBan? = null,
 
     @SerializedName("ip_ban")
-    val ipBan: IPBan?,
+    val ipBan: IPBan? = null,
 
     @SerializedName("badges")
     val badges: List<Badge> = emptyList(),

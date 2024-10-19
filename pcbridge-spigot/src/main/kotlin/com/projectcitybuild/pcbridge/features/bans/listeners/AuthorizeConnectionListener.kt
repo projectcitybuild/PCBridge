@@ -90,7 +90,7 @@ private fun AuthorizeConnection.Ban.toMessage(): Component {
                 """
                 <color:red><b>You are currently IP banned.</b></color>
                 
-                <color:gray>Reason:</color> ${value.reason.ifEmpty { "No reason provided" }}
+                <color:gray>Reason:</color> ${value.reason ?: "No reason provided" }
                 
                 <color:aqua>Appeal @ https://projectcitybuild.com</color>
                 """.trimIndent(),

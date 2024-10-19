@@ -10,20 +10,17 @@ data class PlayerBan(
     @SerializedName("id")
     val id: Int,
 
-    @SerializedName("server_id")
-    val serverId: Int,
-
     @SerializedName("banned_player_id")
-    val bannedPlayerId: String,
+    val bannedPlayerId: Int,
 
     @SerializedName("banned_player_alias")
     val bannedPlayerAlias: String,
 
     @SerializedName("banner_player_id")
-    val bannerPlayerId: String?,
+    val bannerPlayerId: Int? = null,
 
     @SerializedName("reason")
-    val reason: String?,
+    val reason: String? = null,
 
     @SerializedName("created_at")
     @Serializable(with = LocalDateTimeSerializer::class)
@@ -35,17 +32,17 @@ data class PlayerBan(
 
     @SerializedName("expires_at")
     @Serializable(with = LocalDateTimeSerializer::class)
-    val expiresAt: LocalDateTime?,
+    val expiresAt: LocalDateTime? = null,
 
     @SerializedName("unbanned_at")
     @Serializable(with = LocalDateTimeSerializer::class)
-    var unbannedAt: LocalDateTime?,
+    var unbannedAt: LocalDateTime? = null,
 
     @SerializedName("unbanner_player_id")
-    var unbannerPlayerId: String?,
+    var unbannerPlayerId: String? = null,
 
     @SerializedName("unban_type")
-    var unbanType: String?,
+    var unbanType: String? = null,
 ) {
     val isActive: Boolean
         get() = unbannedAt == null

@@ -11,10 +11,10 @@ data class IPBan(
     val id: Int,
 
     @SerializedName("banner_player_id")
-    val bannerPlayerId: String,
+    val bannerPlayerId: Int,
 
     @SerializedName("reason")
-    val reason: String,
+    val reason: String? = null,
 
     @SerializedName("created_at")
     @Serializable(with = LocalDateTimeSerializer::class)
@@ -26,13 +26,13 @@ data class IPBan(
 
     @SerializedName("unbanned_at")
     @Serializable(with = LocalDateTimeSerializer::class)
-    val unbannedAt: LocalDateTime?,
+    val unbannedAt: LocalDateTime? = null,
 
     @SerializedName("unbanner_player_id")
-    val unbannerPlayerId: String?,
+    val unbannerPlayerId: String? = null,
 
     @SerializedName("unban_type")
-    val unbanType: String?,
+    val unbanType: String? = null,
 ) {
     val isActive: Boolean
         get() = unbannedAt == null
