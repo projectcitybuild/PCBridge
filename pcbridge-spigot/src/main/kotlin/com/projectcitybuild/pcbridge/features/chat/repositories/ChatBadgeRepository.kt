@@ -2,19 +2,29 @@ package com.projectcitybuild.pcbridge.features.chat.repositories
 
 import com.projectcitybuild.pcbridge.core.config.Config
 import com.projectcitybuild.pcbridge.core.state.Store
-import com.projectcitybuild.pcbridge.http.responses.Badge
+import com.projectcitybuild.pcbridge.features.chat.ChatBadgeFormatter
+import io.github.reactivecircus.cache4k.Cache
+import net.kyori.adventure.text.Component
 import java.util.UUID
 
 class ChatBadgeRepository(
     private val config: Config,
     private val store: Store,
+    private val badgeCache: Cache<UUID, Component>,
+    private val badgeFormatter: ChatBadgeFormatter,
 ) {
-    fun getIcon(): String {
-        return config.get().chatBadge.icon
+    suspend fun getComponent(playerUUID: UUID): Component {
+        return badgeCache.get(playerUUID) {
+            val badges = store.state.players[playerUUID]?.badges
+                ?: emptyList()
+
+            val icon = config.get().chatBadge.icon
+
+            badgeFormatter.format(badges, icon)
+        }
     }
 
-    fun getBadgesForPlayer(playerUuid: UUID): List<Badge> {
-        return store.state.players[playerUuid]?.badges
-            ?: emptyList()
+    fun invalidate(playerUUID: UUID) {
+        badgeCache.invalidate(playerUUID)
     }
 }

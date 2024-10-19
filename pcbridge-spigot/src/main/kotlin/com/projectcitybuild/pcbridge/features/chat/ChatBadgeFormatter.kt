@@ -1,19 +1,15 @@
 package com.projectcitybuild.pcbridge.features.chat
 
-import com.projectcitybuild.pcbridge.features.chat.repositories.ChatBadgeRepository
+import com.projectcitybuild.pcbridge.http.responses.Badge
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.minimessage.MiniMessage
-import java.util.UUID
 
-class ChatBadgeFormatter(
-    private val chatBadgeRepository: ChatBadgeRepository,
-) {
-    fun get(playerUUID: UUID): Component? {
-        val badges = chatBadgeRepository.getBadgesForPlayer(playerUUID)
+class ChatBadgeFormatter() {
+    fun format(badges: List<Badge>, icon: String): Component {
         if (badges.isEmpty()) {
-            return null
+            return Component.empty()
         }
 
         val formattedBadge =
@@ -37,7 +33,7 @@ class ChatBadgeFormatter(
             }
         }
         return MiniMessage.miniMessage()
-            .deserialize(chatBadgeRepository.getIcon())
+            .deserialize(icon)
             .hoverEvent(HoverEvent.showText(formattedBadge))
     }
 }

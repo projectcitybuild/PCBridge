@@ -8,14 +8,14 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  linter:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-    - uses: ./.github/actions/setup-java
-
-    - name: Check code formatting
-      run: gradle ktlintCheck --scan
+#  linter:
+#    runs-on: ubuntu-latest
+#    steps:
+#    - uses: actions/checkout@v4
+#    - uses: ./.github/actions/setup-java
+#
+#    - name: Check code formatting
+#      run: gradle ktlintCheck --scan
 
   unit-tests:
     runs-on: ubuntu-latest

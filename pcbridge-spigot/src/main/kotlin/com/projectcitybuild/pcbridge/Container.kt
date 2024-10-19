@@ -15,27 +15,14 @@ import com.projectcitybuild.pcbridge.core.state.Store
 import com.projectcitybuild.pcbridge.data.PluginConfig
 import com.projectcitybuild.pcbridge.features.announcements.listeners.AnnouncementEnableListener
 import com.projectcitybuild.pcbridge.features.announcements.repositories.AnnouncementRepository
-import com.projectcitybuild.pcbridge.features.bans.actions.AuthoriseConnection
-import com.projectcitybuild.pcbridge.features.bans.actions.BanIP
-import com.projectcitybuild.pcbridge.features.bans.actions.BanUUID
-import com.projectcitybuild.pcbridge.features.bans.actions.CheckUUIDBan
-import com.projectcitybuild.pcbridge.features.bans.actions.UnbanIP
-import com.projectcitybuild.pcbridge.features.bans.actions.UnbanUUID
-import com.projectcitybuild.pcbridge.features.bans.commands.BanCommand
-import com.projectcitybuild.pcbridge.features.bans.commands.BanIPCommand
-import com.projectcitybuild.pcbridge.features.bans.commands.CheckBanCommand
-import com.projectcitybuild.pcbridge.features.bans.commands.UnbanCommand
-import com.projectcitybuild.pcbridge.features.bans.commands.UnbanIPCommand
+import com.projectcitybuild.pcbridge.features.bans.actions.AuthorizeConnection
 import com.projectcitybuild.pcbridge.features.bans.listeners.AuthorizeConnectionListener
-import com.projectcitybuild.pcbridge.features.bans.repositories.AggregateRepository
-import com.projectcitybuild.pcbridge.features.bans.repositories.IPBanRepository
-import com.projectcitybuild.pcbridge.features.bans.repositories.PlayerBanRepository
-import com.projectcitybuild.pcbridge.features.bans.repositories.PlayerUUIDRepository
+import com.projectcitybuild.pcbridge.features.bans.repositories.PlayerRepository
 import com.projectcitybuild.pcbridge.features.chat.ChatBadgeFormatter
 import com.projectcitybuild.pcbridge.features.chat.ChatGroupFormatter
 import com.projectcitybuild.pcbridge.features.chat.listeners.EmojiChatListener
 import com.projectcitybuild.pcbridge.features.chat.listeners.FormatNameChatListener
-import com.projectcitybuild.pcbridge.features.chat.listeners.SyncBadgesOnJoinListener
+import com.projectcitybuild.pcbridge.features.chat.listeners.SyncPlayerChatListener
 import com.projectcitybuild.pcbridge.features.chat.repositories.ChatBadgeRepository
 import com.projectcitybuild.pcbridge.features.chat.repositories.ChatGroupRepository
 import com.projectcitybuild.pcbridge.features.invisframes.commands.InvisFrameCommand
@@ -47,25 +34,18 @@ import com.projectcitybuild.pcbridge.features.joinmessages.listeners.AnnounceQui
 import com.projectcitybuild.pcbridge.features.joinmessages.listeners.FirstTimeJoinListener
 import com.projectcitybuild.pcbridge.features.joinmessages.listeners.ServerOverviewJoinListener
 import com.projectcitybuild.pcbridge.features.joinmessages.repositories.PlayerConfigRepository
-import com.projectcitybuild.pcbridge.features.mute.commands.MuteCommand
-import com.projectcitybuild.pcbridge.features.mute.commands.UnmuteCommand
-import com.projectcitybuild.pcbridge.features.mute.listeners.MuteChatListener
 import com.projectcitybuild.pcbridge.features.nightvision.commands.NightVisionCommand
+import com.projectcitybuild.pcbridge.features.playerstate.listeners.PlayerStateListener
+import com.projectcitybuild.pcbridge.features.register.commands.CodeCommand
+import com.projectcitybuild.pcbridge.features.register.commands.RegisterCommand
 import com.projectcitybuild.pcbridge.features.staffchat.commands.StaffChatCommand
-import com.projectcitybuild.pcbridge.features.sync.actions.GenerateAccountVerificationURL
-import com.projectcitybuild.pcbridge.features.sync.actions.SyncPlayerGroups
-import com.projectcitybuild.pcbridge.features.sync.actions.UpdatePlayerGroups
-import com.projectcitybuild.pcbridge.features.sync.commands.SyncCommand
-import com.projectcitybuild.pcbridge.features.sync.commands.SyncOtherCommand
-import com.projectcitybuild.pcbridge.features.sync.listener.SyncRankOnJoinListener
-import com.projectcitybuild.pcbridge.features.sync.repositories.SyncRepository
+import com.projectcitybuild.pcbridge.features.groups.actions.SyncPlayerGroups
+import com.projectcitybuild.pcbridge.features.groups.commands.SyncCommand
+import com.projectcitybuild.pcbridge.features.groups.listener.SyncRankListener
+import com.projectcitybuild.pcbridge.features.groups.repositories.SyncRepository
+import com.projectcitybuild.pcbridge.features.playerstate.listeners.PlayerSyncRequestListener
 import com.projectcitybuild.pcbridge.features.telemetry.listeners.TelemetryPlayerConnectListener
 import com.projectcitybuild.pcbridge.features.telemetry.repositories.TelemetryRepository
-import com.projectcitybuild.pcbridge.features.utilities.commands.PCBridgeCommand
-import com.projectcitybuild.pcbridge.features.warnings.actions.GetUnacknowledgedWarnings
-import com.projectcitybuild.pcbridge.features.warnings.commands.WarningAcknowledgeCommand
-import com.projectcitybuild.pcbridge.features.warnings.listeners.NotifyWarningsOnJoinListener
-import com.projectcitybuild.pcbridge.features.warnings.repositories.PlayerWarningRepository
 import com.projectcitybuild.pcbridge.features.warps.Warp
 import com.projectcitybuild.pcbridge.features.warps.commands.WarpCommand
 import com.projectcitybuild.pcbridge.features.warps.commands.WarpsCommand
@@ -75,9 +55,12 @@ import com.projectcitybuild.pcbridge.integrations.DynmapIntegration
 import com.projectcitybuild.pcbridge.integrations.EssentialsIntegration
 import com.projectcitybuild.pcbridge.integrations.LuckPermsIntegration
 import com.projectcitybuild.pcbridge.support.spigot.SpigotCommandRegistry
+import com.projectcitybuild.pcbridge.support.spigot.SpigotEventBroadcaster
 import com.projectcitybuild.pcbridge.support.spigot.SpigotListenerRegistry
 import com.projectcitybuild.pcbridge.support.spigot.SpigotNamespace
 import com.projectcitybuild.pcbridge.support.spigot.SpigotTimer
+import com.projectcitybuild.pcbridge.webserver.HttpServer
+import com.projectcitybuild.pcbridge.webserver.HttpServerConfig
 import io.github.reactivecircus.cache4k.Cache
 import net.kyori.adventure.platform.bukkit.BukkitAudiences
 import net.kyori.adventure.text.Component
@@ -100,22 +83,22 @@ fun pluginModule(_plugin: JavaPlugin) =
         spigot(_plugin)
         core()
         http()
+        webServer()
         integrations()
 
         // Features
         announcements()
         bans()
         chat()
+        groups()
         joinMessages()
         invisFrames()
-        mute()
         nightVision()
+        playerState()
+        register()
         staffChat()
-        sync()
         telemetry()
-        utilities()
         warps()
-        warnings()
     }
 
 private fun Module.spigot(plugin: JavaPlugin) {
@@ -155,6 +138,13 @@ private fun Module.spigot(plugin: JavaPlugin) {
     factory {
         SpigotTimer(
             plugin = get(),
+        )
+    }
+
+    factory {
+        SpigotEventBroadcaster(
+            server = get(),
+            minecraftDispatcher =  { get<JavaPlugin>().minecraftDispatcher },
         )
     }
 }
@@ -223,6 +213,22 @@ private fun Module.core() {
     }
 
     single { Store() }
+}
+
+private fun Module.webServer() {
+    single {
+        val config = get<Config>().get()
+
+        HttpServer(
+            config = HttpServerConfig(
+                authToken = config.webServer.token,
+                port = config.webServer.port,
+            ),
+            delegate = WebServerDelegate(
+                eventBroadcaster = get(),
+            ),
+        )
+    }
 }
 
 private fun Module.http() {
@@ -316,8 +322,6 @@ private fun Module.joinMessages() {
     factory {
         AnnounceJoinListener(
             config = get(),
-            store = get(),
-            time = get(),
         )
     }
 
@@ -345,123 +349,38 @@ private fun Module.joinMessages() {
     }
 }
 
+private fun Module.playerState() {
+    factory {
+        PlayerStateListener(
+            store = get(),
+            time = get(),
+            eventBroadcaster = get(),
+        )
+    }
+    factory {
+        PlayerSyncRequestListener(
+            store = get(),
+            time = get(),
+            server = get(),
+            eventBroadcaster = get(),
+            playerRepository = get(),
+        )
+    }
+}
+
 private fun Module.bans() {
     factory {
-        AggregateRepository(
-            httpService = get<HttpService>().aggregate,
-        )
-    }
-
-    factory {
-        PlayerBanRepository(
-            httpService = get<HttpService>().uuidBan,
-        )
-    }
-
-    factory {
-        PlayerUUIDRepository(
-            server = get(),
-            httpService = get<HttpService>().playerUuid,
-        )
-    }
-
-    factory {
-        IPBanRepository(
-            httpService = get<HttpService>().ipBan,
-        )
-    }
-
-    factory {
-        BanCommand(
-            banUUID =
-                BanUUID(
-                    playerBanRepository = get(),
-                    playerUUIDRepository = get(),
-                    server = get(),
-                ),
-            server = get(),
-        )
-    }
-
-    factory {
-        BanIPCommand(
-            banIP =
-                BanIP(
-                    ipBanRepository = get(),
-                    server = get(),
-                ),
-            server = get(),
-        )
-    }
-
-    factory {
-        UnbanCommand(
-            unbanUUID =
-                UnbanUUID(
-                    playerBanRepository = get(),
-                    playerUUIDRepository = get(),
-                ),
-        )
-    }
-
-    factory {
-        UnbanIPCommand(
-            unbanIP =
-                UnbanIP(
-                    ipBanRepository = get(),
-                ),
-        )
-    }
-
-    factory {
-        CheckBanCommand(
-            checkUUIDBan =
-                CheckUUIDBan(
-                    dateTimeFormatter = get(),
-                    playerUUIDRepository = get(),
-                    playerBanRepository = get(),
-                ),
+        PlayerRepository(
+            httpService = get<HttpService>().player,
         )
     }
 
     factory {
         AuthorizeConnectionListener(
-            aggregateRepository = get(),
-            authoriseConnection = AuthoriseConnection(),
-            dateTimeFormatter = get(),
+            playerRepository = get(),
+            authorizeConnection = AuthorizeConnection(),
             sentry = get(),
-            server = get(),
-            minecraftDispatcher = { get<JavaPlugin>().minecraftDispatcher },
-            store = get(),
-        )
-    }
-}
-
-private fun Module.mute() {
-    single(named("mute_cache")) {
-        // We use a regular cache instead of the server state here
-        // so that mutes persist even if the player leaves, but
-        // invalidates if the plugin is reloaded/shutdown
-        Cache.Builder<UUID, Unit>().build()
-    }
-
-    factory {
-        MuteCommand(
-            server = get(),
-            mutedPlayers = get(named("mute_cache")),
-        )
-    }
-
-    factory {
-        UnmuteCommand(
-            server = get(),
-            mutedPlayers = get(named("mute_cache")),
-        )
-    }
-
-    factory {
-        MuteChatListener(
-            mutedPlayers = get(named("mute_cache")),
+            eventBroadcaster = get(),
         )
     }
 }
@@ -503,6 +422,8 @@ private fun Module.chat() {
         ChatBadgeRepository(
             store = get(),
             config = get(),
+            badgeFormatter = get(),
+            badgeCache = get(named("badge_cache")),
         )
     }
 
@@ -510,6 +431,8 @@ private fun Module.chat() {
         ChatGroupRepository(
             permissions = get(),
             config = get(),
+            chatGroupFormatter = get(),
+            groupCache = get(named("group_cache")),
         )
     }
 
@@ -522,15 +445,11 @@ private fun Module.chat() {
     }
 
     factory {
-        ChatBadgeFormatter(
-            chatBadgeRepository = get(),
-        )
+        ChatBadgeFormatter()
     }
 
-    factory {
-        ChatGroupFormatter(
-            chatGroupRepository = get(),
-        )
+    single {
+        ChatGroupFormatter()
     }
 
     factory {
@@ -539,16 +458,31 @@ private fun Module.chat() {
 
     factory {
         FormatNameChatListener(
-            chatGroupFormatter = get(),
-            chatBadgeFormatter = get(),
-            badgeCache = get(named("badge_cache")),
-            groupCache = get(named("group_cache")),
+            chatBadgeRepository = get(),
+            chatGroupRepository = get(),
         )
     }
 
     factory {
-        SyncBadgesOnJoinListener(
-            store = get(),
+        SyncPlayerChatListener(
+            chatGroupRepository = get(),
+            chatBadgeRepository = get(),
+        )
+    }
+}
+
+private fun Module.register() {
+    factory {
+
+    }
+    factory {
+        RegisterCommand(
+            registerHttpService = get<HttpService>().register,
+        )
+    }
+    factory {
+        CodeCommand(
+            registerHttpService = get<HttpService>().register,
         )
     }
 }
@@ -575,28 +509,7 @@ private fun Module.staffChat() {
     }
 }
 
-private fun Module.sync() {
-    factory {
-        SyncRepository(
-            playerGroupHttpService = get<HttpService>().playerGroup,
-            accountLinkHttpService = get<HttpService>().verificationURL,
-            config = get(),
-        )
-    }
-
-    factory {
-        UpdatePlayerGroups(
-            permissions = get(),
-            syncRepository = get(),
-        )
-    }
-
-    factory {
-        GenerateAccountVerificationURL(
-            syncRepository = get(),
-        )
-    }
-
+private fun Module.groups() {
     factory {
         SyncPlayerGroups(
             permissions = get(),
@@ -605,58 +518,21 @@ private fun Module.sync() {
     }
 
     factory {
-        SyncCommand(
-            generateAccountVerificationURL = get(),
-            updatePlayerGroups = get(),
+        SyncRepository(
+            config = get(),
         )
     }
 
     factory {
-        SyncOtherCommand(
-            server = get(),
-            updatePlayerGroups = get(),
-        )
-    }
-
-    factory {
-        SyncRankOnJoinListener(
+        SyncRankListener(
             syncPlayerGroups = get(),
         )
     }
-}
-
-private fun Module.utilities() {
-    factory {
-        PCBridgeCommand(
-            plugin = get(),
-        )
-    }
 
     factory {
-        PCBridgeCommand.TabCompleter()
-    }
-}
-
-private fun Module.warnings() {
-    factory {
-        PlayerWarningRepository(
-            playerWarningHttpService = get<HttpService>().playerWarning,
-        )
-    }
-
-    factory {
-        WarningAcknowledgeCommand(
-            warningRepository = get(),
-        )
-    }
-
-    factory {
-        NotifyWarningsOnJoinListener(
-            getUnacknowledgedWarnings =
-                GetUnacknowledgedWarnings(
-                    dateTimeFormatter = get(),
-                    warningRepository = get(),
-                ),
+        SyncCommand(
+            server = get(),
+            eventBroadcaster = get(),
         )
     }
 }

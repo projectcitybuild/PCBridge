@@ -8,6 +8,7 @@ import kotlinx.coroutines.withContext
 
 private val mutex = Mutex()
 
+// TODO: splice the store so that each feature can maintain its own state slice
 class Store {
     val state: ServerState
         get() = _state
@@ -27,11 +28,4 @@ class Store {
                 log.debug { "[new state]\n$state" }
             }
         }
-
-    fun persist() {
-    }
-
-    fun rehydrate() {
-        // TODO: check whether players in the state are still online
-    }
 }

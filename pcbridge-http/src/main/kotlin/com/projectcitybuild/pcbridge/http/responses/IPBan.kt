@@ -1,31 +1,36 @@
 package com.projectcitybuild.pcbridge.http.responses
 
 import com.google.gson.annotations.SerializedName
-import java.time.LocalDate
-import java.time.ZoneId
-import java.util.UUID
+import com.projectcitybuild.pcbridge.http.serializable.LocalDateTimeSerializer
+import kotlinx.serialization.Serializable
+import java.time.LocalDateTime
 
+@Serializable
 data class IPBan(
     @SerializedName("id")
-    val id: Int = Math.random().toInt(),
+    val id: Int,
+
     @SerializedName("banner_player_id")
-    val bannerPlayerId: String = UUID.randomUUID().toString(),
+    val bannerPlayerId: Int,
+
     @SerializedName("reason")
-    val reason: String = "reason",
+    val reason: String? = null,
+
     @SerializedName("created_at")
-    val createdAt: Long =
-        LocalDate.now()
-            .atStartOfDay(ZoneId.systemDefault())
-            .toEpochSecond(),
+    @Serializable(with = LocalDateTimeSerializer::class)
+    val createdAt: LocalDateTime,
+
     @SerializedName("updated_at")
-    val updatedAt: Long =
-        LocalDate.now()
-            .atStartOfDay(ZoneId.systemDefault())
-            .toEpochSecond(),
+    @Serializable(with = LocalDateTimeSerializer::class)
+    val updatedAt: LocalDateTime,
+
     @SerializedName("unbanned_at")
-    val unbannedAt: Long? = null,
+    @Serializable(with = LocalDateTimeSerializer::class)
+    val unbannedAt: LocalDateTime? = null,
+
     @SerializedName("unbanner_player_id")
     val unbannerPlayerId: String? = null,
+
     @SerializedName("unban_type")
     val unbanType: String? = null,
 ) {

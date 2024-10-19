@@ -1,12 +1,12 @@
 package com.projectcitybuild.pcbridge.features.bans.events
 
-import com.projectcitybuild.pcbridge.http.responses.Aggregate
+import com.projectcitybuild.pcbridge.http.responses.PlayerData
 import org.bukkit.event.Event
 import org.bukkit.event.HandlerList
 import java.util.UUID
 
 class ConnectionPermittedEvent(
-    val aggregate: Aggregate,
+    val playerData: PlayerData?,
     val playerUUID: UUID,
 ) : Event() {
     override fun getHandlers(): HandlerList {

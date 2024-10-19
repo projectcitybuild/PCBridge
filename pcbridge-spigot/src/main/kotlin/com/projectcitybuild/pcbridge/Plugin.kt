@@ -4,15 +4,11 @@ import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
 import com.projectcitybuild.pcbridge.core.errors.SentryReporter
 import com.projectcitybuild.pcbridge.core.errors.trace
 import com.projectcitybuild.pcbridge.features.announcements.listeners.AnnouncementEnableListener
-import com.projectcitybuild.pcbridge.features.bans.commands.BanCommand
-import com.projectcitybuild.pcbridge.features.bans.commands.BanIPCommand
-import com.projectcitybuild.pcbridge.features.bans.commands.CheckBanCommand
-import com.projectcitybuild.pcbridge.features.bans.commands.UnbanCommand
-import com.projectcitybuild.pcbridge.features.bans.commands.UnbanIPCommand
 import com.projectcitybuild.pcbridge.features.bans.listeners.AuthorizeConnectionListener
 import com.projectcitybuild.pcbridge.features.chat.listeners.EmojiChatListener
 import com.projectcitybuild.pcbridge.features.chat.listeners.FormatNameChatListener
-import com.projectcitybuild.pcbridge.features.chat.listeners.SyncBadgesOnJoinListener
+import com.projectcitybuild.pcbridge.features.chat.listeners.SyncPlayerChatListener
+import com.projectcitybuild.pcbridge.features.groups.commands.SyncCommand
 import com.projectcitybuild.pcbridge.features.invisframes.commands.InvisFrameCommand
 import com.projectcitybuild.pcbridge.features.invisframes.listeners.FrameItemInsertListener
 import com.projectcitybuild.pcbridge.features.invisframes.listeners.FrameItemRemoveListener
@@ -21,18 +17,14 @@ import com.projectcitybuild.pcbridge.features.joinmessages.listeners.AnnounceJoi
 import com.projectcitybuild.pcbridge.features.joinmessages.listeners.AnnounceQuitListener
 import com.projectcitybuild.pcbridge.features.joinmessages.listeners.FirstTimeJoinListener
 import com.projectcitybuild.pcbridge.features.joinmessages.listeners.ServerOverviewJoinListener
-import com.projectcitybuild.pcbridge.features.mute.commands.MuteCommand
-import com.projectcitybuild.pcbridge.features.mute.commands.UnmuteCommand
-import com.projectcitybuild.pcbridge.features.mute.listeners.MuteChatListener
 import com.projectcitybuild.pcbridge.features.nightvision.commands.NightVisionCommand
+import com.projectcitybuild.pcbridge.features.playerstate.listeners.PlayerStateListener
+import com.projectcitybuild.pcbridge.features.register.commands.CodeCommand
+import com.projectcitybuild.pcbridge.features.register.commands.RegisterCommand
 import com.projectcitybuild.pcbridge.features.staffchat.commands.StaffChatCommand
-import com.projectcitybuild.pcbridge.features.sync.commands.SyncCommand
-import com.projectcitybuild.pcbridge.features.sync.commands.SyncOtherCommand
-import com.projectcitybuild.pcbridge.features.sync.listener.SyncRankOnJoinListener
+import com.projectcitybuild.pcbridge.features.groups.listener.SyncRankListener
+import com.projectcitybuild.pcbridge.features.playerstate.listeners.PlayerSyncRequestListener
 import com.projectcitybuild.pcbridge.features.telemetry.listeners.TelemetryPlayerConnectListener
-import com.projectcitybuild.pcbridge.features.utilities.commands.PCBridgeCommand
-import com.projectcitybuild.pcbridge.features.warnings.commands.WarningAcknowledgeCommand
-import com.projectcitybuild.pcbridge.features.warnings.listeners.NotifyWarningsOnJoinListener
 import com.projectcitybuild.pcbridge.features.warps.commands.WarpCommand
 import com.projectcitybuild.pcbridge.features.warps.commands.WarpsCommand
 import com.projectcitybuild.pcbridge.integrations.DynmapIntegration
@@ -41,6 +33,7 @@ import com.projectcitybuild.pcbridge.integrations.LuckPermsIntegration
 import com.projectcitybuild.pcbridge.support.spigot.SpigotCommandRegistry
 import com.projectcitybuild.pcbridge.support.spigot.SpigotListenerRegistry
 import com.projectcitybuild.pcbridge.support.spigot.SpigotTimer
+import com.projectcitybuild.pcbridge.webserver.HttpServer
 import net.kyori.adventure.platform.bukkit.BukkitAudiences
 import org.koin.core.KoinApplication
 import org.koin.core.component.KoinComponent
@@ -88,15 +81,13 @@ private class Lifecycle : KoinComponent {
     private val sentry: SentryReporter by inject()
     private val commandRegistry: SpigotCommandRegistry by inject()
     private val listenerRegistry: SpigotListenerRegistry by inject()
+    private val httpServer: HttpServer by inject()
 
     suspend fun boot() =
         sentry.trace {
+            httpServer.start()
+
             commandRegistry.apply {
-                register(
-                    handler = get<PCBridgeCommand>(),
-                    argsParser = PCBridgeCommand.Args.Parser(),
-                    tabCompleter = get<PCBridgeCommand.TabCompleter>(),
-                )
                 register(
                     handler = get<WarpCommand>(),
                     argsParser = WarpCommand.Args.Parser(),
@@ -110,14 +101,6 @@ private class Lifecycle : KoinComponent {
                     argsParser = StaffChatCommand.Args.Parser(),
                 )
                 register(
-                    handler = get<MuteCommand>(),
-                    argsParser = MuteCommand.Args.Parser(),
-                )
-                register(
-                    handler = get<UnmuteCommand>(),
-                    argsParser = UnmuteCommand.Args.Parser(),
-                )
-                register(
                     handler = get<NightVisionCommand>(),
                     argsParser = NightVisionCommand.Args.Parser(),
                 )
@@ -126,55 +109,35 @@ private class Lifecycle : KoinComponent {
                     argsParser = InvisFrameCommand.Args.Parser(),
                 )
                 register(
-                    handler = get<BanCommand>(),
-                    argsParser = BanCommand.Args.Parser(),
+                    handler = get<RegisterCommand>(),
+                    argsParser = RegisterCommand.Args.Parser(),
                 )
                 register(
-                    handler = get<BanIPCommand>(),
-                    argsParser = BanIPCommand.Args.Parser(),
-                )
-                register(
-                    handler = get<CheckBanCommand>(),
-                    argsParser = CheckBanCommand.Args.Parser(),
-                )
-                register(
-                    handler = get<UnbanCommand>(),
-                    argsParser = UnbanCommand.Args.Parser(),
-                )
-                register(
-                    handler = get<UnbanIPCommand>(),
-                    argsParser = UnbanIPCommand.Args.Parser(),
+                    handler = get<CodeCommand>(),
+                    argsParser = CodeCommand.Args.Parser(),
                 )
                 register(
                     handler = get<SyncCommand>(),
                     argsParser = SyncCommand.Args.Parser(),
                 )
-                register(
-                    handler = get<SyncOtherCommand>(),
-                    argsParser = SyncOtherCommand.Args.Parser(),
-                )
-                register(
-                    handler = get<WarningAcknowledgeCommand>(),
-                    argsParser = WarningAcknowledgeCommand.Args.Parser(),
-                )
             }
             listenerRegistry.register(
                 get<AnnounceJoinListener>(),
                 get<AnnounceQuitListener>(),
-                get<FirstTimeJoinListener>(),
-                get<ServerOverviewJoinListener>(),
+                get<AnnouncementEnableListener>(),
+                get<AuthorizeConnectionListener>(),
                 get<EmojiChatListener>(),
-                get<TelemetryPlayerConnectListener>(),
-                get<MuteChatListener>(),
+                get<FirstTimeJoinListener>(),
+                get<FormatNameChatListener>(),
                 get<FramePlaceListener>(),
                 get<FrameItemInsertListener>(),
                 get<FrameItemRemoveListener>(),
-                get<AuthorizeConnectionListener>(),
-                get<SyncRankOnJoinListener>(),
-                get<SyncBadgesOnJoinListener>(),
-                get<FormatNameChatListener>(),
-                get<AnnouncementEnableListener>(),
-                get<NotifyWarningsOnJoinListener>(),
+                get<PlayerStateListener>(),
+                get<PlayerSyncRequestListener>(),
+                get<ServerOverviewJoinListener>(),
+                get<SyncPlayerChatListener>(),
+                get<SyncRankListener>(),
+                get<TelemetryPlayerConnectListener>(),
             )
 
             get<DynmapIntegration>().enable()
@@ -184,6 +147,8 @@ private class Lifecycle : KoinComponent {
 
     suspend fun shutdown() =
         sentry.trace {
+            httpServer.stop()
+
             get<SpigotTimer>().cancelAll()
 
             get<DynmapIntegration>().disable()
