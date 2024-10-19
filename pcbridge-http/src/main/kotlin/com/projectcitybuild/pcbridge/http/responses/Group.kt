@@ -6,11 +6,11 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Group(
     @SerializedName("group_id")
-    val id: Int = Math.random().toInt(),
+    val id: Int,
+
     @SerializedName("name")
-    val name: String = "name",
-    @SerializedName("alias")
-    val alias: String? = null,
+    val name: String,
+
     @SerializedName("minecraft_name")
     val minecraftName: String?,
 )

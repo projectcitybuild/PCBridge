@@ -1,4 +1,4 @@
-package com.projectcitybuild.pcbridge.support.serializable
+package com.projectcitybuild.pcbridge.http.serializable
 
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.PrimitiveKind

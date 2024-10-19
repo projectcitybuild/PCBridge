@@ -7,22 +7,12 @@ import retrofit2.HttpException
 import java.io.IOException
 
 class ResponseParser {
-    data class ErrorBody(val error: ApiError)
-
     data class ValidationErrorBody(
         val message: String?,
         val errors: Map<String, List<String>>?
     )
 
     class NotFoundError : Exception()
-
-    class HTTPError(val errorBody: ApiError?) : Exception(
-        if (errorBody != null) {
-            "Bad response received from the server: ${errorBody.detail}"
-        } else {
-            "Bad response received from the server (no error given)"
-        },
-    )
 
     class ValidationError(message: String?) : Exception(message)
 
@@ -33,7 +23,7 @@ class ResponseParser {
             } catch (e: IOException) {
                 throw e
             } catch (e: HttpException) {
-                when (val code = e.code()) {
+                when (e.code()) {
                     404 -> throw NotFoundError()
                     422 -> {
                         val body = e.response()?.errorBody()?.string().let {
@@ -42,14 +32,7 @@ class ResponseParser {
                         }
                         throw ValidationError(body.message)
                     }
-                    else -> {
-                        val body = e.response()?.errorBody()?.string().let {
-                            val errorBody = Gson().fromJson(it, ErrorBody::class.java).error
-                            errorBody.status = code
-                            errorBody
-                        }
-                        throw HTTPError(errorBody = body)
-                    }
+                    else -> throw e
                 }
             } catch (e: Exception) {
                 throw e

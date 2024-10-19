@@ -1,6 +1,5 @@
 package com.projectcitybuild.pcbridge.http.requests
 
-import com.projectcitybuild.pcbridge.http.parsing.ApiResponse
 import com.projectcitybuild.pcbridge.http.responses.PlayerData
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
@@ -52,5 +51,5 @@ internal interface PCBRequest {
     suspend fun telemetrySeen(
         @Field(value = "uuid") playerUUID: String,
         @Field(value = "alias") playerName: String,
-    ): ApiResponse<Unit>
+    )
 }

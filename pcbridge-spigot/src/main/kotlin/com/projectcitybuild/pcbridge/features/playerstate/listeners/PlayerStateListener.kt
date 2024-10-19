@@ -25,10 +25,10 @@ class PlayerStateListener(
     suspend fun onConnectionPermitted(event: ConnectionPermittedEvent) {
         log.info { "Creating player state for ${event.playerUUID}" }
 
-        val playerState = PlayerState.fromPlayerData(
-            event.playerData,
-            connectedAt = time.now(),
-        )
+        val playerState = event.playerData?.let {
+            PlayerState.fromPlayerData(it, connectedAt = time.now())
+        } ?: PlayerState(connectedAt = time.now())
+
         store.mutate { state ->
             state.copy(players = state.players.apply { put(event.playerUUID, playerState) })
         }
@@ -38,6 +38,8 @@ class PlayerStateListener(
                 playerUUID = event.playerUUID,
             ),
         )
+
+        // TODO: warn the user if their data was unable to be fetched
     }
 
     /**

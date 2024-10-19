@@ -6,7 +6,7 @@ import org.bukkit.event.HandlerList
 import java.util.UUID
 
 class ConnectionPermittedEvent(
-    val playerData: PlayerData,
+    val playerData: PlayerData?,
     val playerUUID: UUID,
 ) : Event() {
     override fun getHandlers(): HandlerList {

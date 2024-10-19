@@ -379,7 +379,6 @@ private fun Module.bans() {
         AuthorizeConnectionListener(
             playerRepository = get(),
             authorizeConnection = AuthorizeConnection(),
-            dateTimeFormatter = get(),
             sentry = get(),
             eventBroadcaster = get(),
         )
