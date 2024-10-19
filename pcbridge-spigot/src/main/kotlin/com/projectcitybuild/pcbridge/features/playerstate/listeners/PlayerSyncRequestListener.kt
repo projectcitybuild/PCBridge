@@ -4,29 +4,38 @@ import com.projectcitybuild.pcbridge.core.datetime.LocalizedTime
 import com.projectcitybuild.pcbridge.core.logger.log
 import com.projectcitybuild.pcbridge.core.state.PlayerState
 import com.projectcitybuild.pcbridge.core.state.Store
-import com.projectcitybuild.pcbridge.features.bans.events.ConnectionPermittedEvent
+import com.projectcitybuild.pcbridge.features.bans.repositories.PlayerRepository
 import com.projectcitybuild.pcbridge.features.playerstate.events.PlayerStateUpdatedEvent
-import com.projectcitybuild.pcbridge.features.playerstate.events.PlayerStateDestroyedEvent
+import com.projectcitybuild.pcbridge.features.groups.events.PlayerSyncRequestedEvent
 import com.projectcitybuild.pcbridge.support.spigot.SpigotEventBroadcaster
+import net.kyori.adventure.text.minimessage.MiniMessage
+import org.bukkit.Server
 import org.bukkit.event.EventHandler
-import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
-import org.bukkit.event.player.PlayerQuitEvent
 
-class PlayerStateListener(
+class PlayerSyncRequestListener(
     private val store: Store,
     private val time: LocalizedTime,
+    private val playerRepository: PlayerRepository,
+    private val server: Server,
     private val eventBroadcaster: SpigotEventBroadcaster,
 ) : Listener {
-    /**
-     * Creates a PlayerState for the connecting user
-     */
     @EventHandler
-    suspend fun onConnectionPermitted(event: ConnectionPermittedEvent) {
+    suspend fun onSyncRequested(event: PlayerSyncRequestedEvent) {
+        val matchingPlayer = server.onlinePlayers.firstOrNull { it.uniqueId == event.playerUUID }
+        if (matchingPlayer == null) {
+            log.info { "Skipping sync, player (${event.playerUUID}) not found" }
+            return
+        }
+
         log.info { "Creating player state for ${event.playerUUID}" }
 
+        val playerData = playerRepository.get(
+            playerUUID = matchingPlayer.uniqueId,
+            ip = matchingPlayer.address.address,
+        )
         val playerState = PlayerState.fromPlayerData(
-            event.playerData,
+            playerData,
             connectedAt = time.now(),
         )
         store.mutate { state ->
@@ -38,27 +47,8 @@ class PlayerStateListener(
                 playerUUID = event.playerUUID,
             ),
         )
-    }
-
-    /**
-     * Destroys PlayerState for the disconnecting user.
-     *
-     * Note: Runs at highest priority so that it's invoked last
-     */
-    @EventHandler(priority = EventPriority.HIGHEST)
-    suspend fun onPlayerQuit(event: PlayerQuitEvent) {
-        val uuid = event.player.uniqueId
-        log.info { "Destroying player state for $uuid" }
-        val prevState = store.state.players[uuid]
-
-        store.mutate { state ->
-            state.copy(players = state.players.apply { remove(uuid) })
-        }
-        eventBroadcaster.broadcast(
-            PlayerStateDestroyedEvent(
-                playerData = prevState,
-                playerUUID = uuid,
-            ),
+        matchingPlayer.sendMessage(
+            MiniMessage.miniMessage().deserialize("<color:green>Your account has been synced</color>")
         )
     }
 }

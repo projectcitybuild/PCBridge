@@ -15,7 +15,7 @@ class PlayerHttpService(
     suspend fun get(
         playerUUID: UUID,
         ip: String,
-    ): PlayerData? =
+    ): PlayerData =
         withContext(Dispatchers.IO) {
             responseParser.parse {
                 retrofit.pcb().getPlayer(

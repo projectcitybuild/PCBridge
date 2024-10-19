@@ -28,11 +28,4 @@ class Store {
                 log.debug { "[new state]\n$state" }
             }
         }
-
-    fun persist() {
-    }
-
-    fun rehydrate() {
-        // TODO: check whether players in the state are still online
-    }
 }

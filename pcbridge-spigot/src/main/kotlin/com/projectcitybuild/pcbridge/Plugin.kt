@@ -20,7 +20,8 @@ import com.projectcitybuild.pcbridge.features.playerstate.listeners.PlayerStateL
 import com.projectcitybuild.pcbridge.features.register.commands.CodeCommand
 import com.projectcitybuild.pcbridge.features.register.commands.RegisterCommand
 import com.projectcitybuild.pcbridge.features.staffchat.commands.StaffChatCommand
-import com.projectcitybuild.pcbridge.features.sync.listener.SyncRankOnJoinListener
+import com.projectcitybuild.pcbridge.features.groups.listener.SyncRankListener
+import com.projectcitybuild.pcbridge.features.playerstate.listeners.PlayerSyncRequestListener
 import com.projectcitybuild.pcbridge.features.telemetry.listeners.TelemetryPlayerConnectListener
 import com.projectcitybuild.pcbridge.features.warps.commands.WarpCommand
 import com.projectcitybuild.pcbridge.features.warps.commands.WarpsCommand
@@ -126,8 +127,9 @@ private class Lifecycle : KoinComponent {
                 get<FrameItemInsertListener>(),
                 get<FrameItemRemoveListener>(),
                 get<PlayerStateListener>(),
+                get<PlayerSyncRequestListener>(),
                 get<ServerOverviewJoinListener>(),
-                get<SyncRankOnJoinListener>(),
+                get<SyncRankListener>(),
                 get<TelemetryPlayerConnectListener>(),
             )
 

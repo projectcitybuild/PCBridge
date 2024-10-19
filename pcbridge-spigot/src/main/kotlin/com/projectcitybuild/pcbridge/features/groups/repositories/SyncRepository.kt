@@ -1,4 +1,4 @@
-package com.projectcitybuild.pcbridge.features.sync.repositories
+package com.projectcitybuild.pcbridge.features.groups.repositories
 
 import com.projectcitybuild.pcbridge.core.config.Config
 import com.projectcitybuild.pcbridge.core.logger.log

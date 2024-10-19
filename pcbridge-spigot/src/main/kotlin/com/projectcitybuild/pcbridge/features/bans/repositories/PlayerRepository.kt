@@ -14,7 +14,7 @@ class PlayerRepository(
     suspend fun get(
         playerUUID: UUID,
         ip: InetAddress,
-    ): PlayerData? {
+    ): PlayerData {
         return httpService.get(
             playerUUID = playerUUID,
             ip = Sanitizer.sanitizedIP(ip.toString()),

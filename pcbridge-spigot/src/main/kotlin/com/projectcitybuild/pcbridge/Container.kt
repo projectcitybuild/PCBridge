@@ -38,9 +38,10 @@ import com.projectcitybuild.pcbridge.features.playerstate.listeners.PlayerStateL
 import com.projectcitybuild.pcbridge.features.register.commands.CodeCommand
 import com.projectcitybuild.pcbridge.features.register.commands.RegisterCommand
 import com.projectcitybuild.pcbridge.features.staffchat.commands.StaffChatCommand
-import com.projectcitybuild.pcbridge.features.sync.actions.SyncPlayerGroups
-import com.projectcitybuild.pcbridge.features.sync.listener.SyncRankOnJoinListener
-import com.projectcitybuild.pcbridge.features.sync.repositories.SyncRepository
+import com.projectcitybuild.pcbridge.features.groups.actions.SyncPlayerGroups
+import com.projectcitybuild.pcbridge.features.groups.listener.SyncRankListener
+import com.projectcitybuild.pcbridge.features.groups.repositories.SyncRepository
+import com.projectcitybuild.pcbridge.features.playerstate.listeners.PlayerSyncRequestListener
 import com.projectcitybuild.pcbridge.features.telemetry.listeners.TelemetryPlayerConnectListener
 import com.projectcitybuild.pcbridge.features.telemetry.repositories.TelemetryRepository
 import com.projectcitybuild.pcbridge.features.warps.Warp
@@ -52,6 +53,7 @@ import com.projectcitybuild.pcbridge.integrations.DynmapIntegration
 import com.projectcitybuild.pcbridge.integrations.EssentialsIntegration
 import com.projectcitybuild.pcbridge.integrations.LuckPermsIntegration
 import com.projectcitybuild.pcbridge.support.spigot.SpigotCommandRegistry
+import com.projectcitybuild.pcbridge.support.spigot.SpigotEventBroadcaster
 import com.projectcitybuild.pcbridge.support.spigot.SpigotListenerRegistry
 import com.projectcitybuild.pcbridge.support.spigot.SpigotNamespace
 import com.projectcitybuild.pcbridge.support.spigot.SpigotTimer
@@ -86,13 +88,13 @@ fun pluginModule(_plugin: JavaPlugin) =
         announcements()
         bans()
         chat()
+        groups()
         joinMessages()
         invisFrames()
         nightVision()
         playerState()
         register()
         staffChat()
-        sync()
         telemetry()
         warps()
     }
@@ -134,6 +136,13 @@ private fun Module.spigot(plugin: JavaPlugin) {
     factory {
         SpigotTimer(
             plugin = get(),
+        )
+    }
+
+    factory {
+        SpigotEventBroadcaster(
+            server = get(),
+            minecraftDispatcher =  { get<JavaPlugin>().minecraftDispatcher },
         )
     }
 }
@@ -213,7 +222,9 @@ private fun Module.webServer() {
                 authToken = config.webServer.token,
                 port = config.webServer.port,
             ),
-            delegate = WebServerDelegate(),
+            delegate = WebServerDelegate(
+                eventBroadcaster = get(),
+            ),
         )
     }
 }
@@ -340,38 +351,17 @@ private fun Module.playerState() {
     factory {
         PlayerStateListener(
             store = get(),
-            server = get(),
             time = get(),
-            minecraftDispatcher = { get<JavaPlugin>().minecraftDispatcher },
+            eventBroadcaster = get(),
         )
     }
-
     factory {
-        AnnounceJoinListener(
-            config = get(),
-        )
-    }
-
-    factory {
-        AnnounceQuitListener(
-            config = get(),
+        PlayerSyncRequestListener(
             store = get(),
             time = get(),
-        )
-    }
-
-    factory {
-        FirstTimeJoinListener(
-            config = get(),
             server = get(),
-            playerConfigRepository = get(),
-            time = get(),
-        )
-    }
-
-    factory {
-        ServerOverviewJoinListener(
-            config = get(),
+            eventBroadcaster = get(),
+            playerRepository = get(),
         )
     }
 }
@@ -389,8 +379,7 @@ private fun Module.bans() {
             authorizeConnection = AuthorizeConnection(),
             dateTimeFormatter = get(),
             sentry = get(),
-            server = get(),
-            minecraftDispatcher = { get<JavaPlugin>().minecraftDispatcher },
+            eventBroadcaster = get(),
         )
     }
 }
@@ -514,7 +503,7 @@ private fun Module.staffChat() {
     }
 }
 
-private fun Module.sync() {
+private fun Module.groups() {
     factory {
         SyncPlayerGroups(
             permissions = get(),
@@ -529,7 +518,7 @@ private fun Module.sync() {
     }
 
     factory {
-        SyncRankOnJoinListener(
+        SyncRankListener(
             syncPlayerGroups = get(),
         )
     }

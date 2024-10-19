@@ -21,7 +21,7 @@ import java.math.BigInteger
 import java.util.UUID
 
 interface HttpServerDelegate {
-    fun syncPlayer(uuid: UUID)
+    suspend fun syncPlayer(uuid: UUID)
 }
 
 class HttpServer(

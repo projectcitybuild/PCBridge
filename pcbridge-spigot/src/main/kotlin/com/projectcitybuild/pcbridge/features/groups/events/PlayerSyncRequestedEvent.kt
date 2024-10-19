@@ -1,12 +1,10 @@
-package com.projectcitybuild.pcbridge.features.playerstate.events
+package com.projectcitybuild.pcbridge.features.groups.events
 
-import com.projectcitybuild.pcbridge.http.responses.PlayerData
 import org.bukkit.event.Event
 import org.bukkit.event.HandlerList
 import java.util.UUID
 
-class PlayerStateCreatedEvent(
-    val playerData: PlayerData,
+class PlayerSyncRequestedEvent(
     val playerUUID: UUID,
 ) : Event() {
     override fun getHandlers(): HandlerList {

@@ -23,7 +23,7 @@ class AuthorizeConnectionTest {
         runTest {
             val ban = PlayerBan()
             val result =
-                useCase.execute(
+                useCase.authorize(
                     PlayerData(playerBan = ban),
                 )
             assertEquals(
@@ -42,7 +42,7 @@ class AuthorizeConnectionTest {
                     unbannedAt = LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toEpochSecond(),
                 )
             val result =
-                useCase.execute(
+                useCase.authorize(
                     PlayerData(playerBan = ban),
                 )
             assertEquals(
@@ -56,7 +56,7 @@ class AuthorizeConnectionTest {
         runTest {
             val ban = IPBan()
             val result =
-                useCase.execute(
+                useCase.authorize(
                     PlayerData(ipBan = ban),
                 )
             assertEquals(
@@ -75,7 +75,7 @@ class AuthorizeConnectionTest {
                     unbannedAt = LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toEpochSecond(),
                 )
             val result =
-                useCase.execute(
+                useCase.authorize(
                     PlayerData(ipBan = ban),
                 )
             assertEquals(
@@ -88,7 +88,7 @@ class AuthorizeConnectionTest {
     fun `should allow if not banned`() =
         runTest {
             val result =
-                useCase.execute(
+                useCase.authorize(
                     PlayerData(playerBan = null, ipBan = null),
                 )
             assertEquals(

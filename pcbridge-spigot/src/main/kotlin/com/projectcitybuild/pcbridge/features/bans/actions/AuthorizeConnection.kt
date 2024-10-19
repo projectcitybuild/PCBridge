@@ -17,7 +17,7 @@ class AuthorizeConnection {
         data class IP(val value: IPBan) : Ban()
     }
 
-    fun execute(playerData: PlayerData): ConnectResult {
+    fun authorize(playerData: PlayerData): ConnectResult {
         val ban = getBan(playerData)
         if (ban != null) {
             return ConnectResult.Denied(ban = ban)

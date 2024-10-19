@@ -1,4 +1,4 @@
-package com.projectcitybuild.pcbridge.features.sync.commands
+package com.projectcitybuild.pcbridge.features.groups.commands
 
 import com.projectcitybuild.pcbridge.support.messages.CommandHelpBuilder
 import com.projectcitybuild.pcbridge.support.spigot.BadCommandUsageException

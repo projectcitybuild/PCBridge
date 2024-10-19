@@ -3,6 +3,7 @@ package com.projectcitybuild.pcbridge.core.state
 import com.projectcitybuild.pcbridge.http.responses.Account
 import com.projectcitybuild.pcbridge.http.responses.Badge
 import com.projectcitybuild.pcbridge.http.responses.DonationPerk
+import com.projectcitybuild.pcbridge.http.responses.PlayerData
 import com.projectcitybuild.pcbridge.support.serializable.LocalDateTimeSerializer
 import com.projectcitybuild.pcbridge.support.serializable.UUIDSerializer
 import kotlinx.serialization.Serializable
@@ -37,4 +38,13 @@ data class PlayerState(
     val account: Account? = null,
     val badges: List<Badge> = emptyList(),
     val donationPerks: List<DonationPerk> = emptyList(),
-)
+) {
+    companion object {
+        fun fromPlayerData(data: PlayerData, connectedAt: LocalDateTime) = PlayerState(
+            connectedAt = connectedAt,
+            account = data.account,
+            badges = data.badges,
+            donationPerks = data.donationPerks,
+        )
+    }
+}
