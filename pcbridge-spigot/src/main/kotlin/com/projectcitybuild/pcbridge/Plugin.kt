@@ -7,6 +7,7 @@ import com.projectcitybuild.pcbridge.features.announcements.listeners.Announceme
 import com.projectcitybuild.pcbridge.features.bans.listeners.AuthorizeConnectionListener
 import com.projectcitybuild.pcbridge.features.chat.listeners.EmojiChatListener
 import com.projectcitybuild.pcbridge.features.chat.listeners.FormatNameChatListener
+import com.projectcitybuild.pcbridge.features.groups.commands.SyncCommand
 import com.projectcitybuild.pcbridge.features.invisframes.commands.InvisFrameCommand
 import com.projectcitybuild.pcbridge.features.invisframes.listeners.FrameItemInsertListener
 import com.projectcitybuild.pcbridge.features.invisframes.listeners.FrameItemRemoveListener
@@ -113,6 +114,10 @@ private class Lifecycle : KoinComponent {
                 register(
                     handler = get<CodeCommand>(),
                     argsParser = CodeCommand.Args.Parser(),
+                )
+                register(
+                    handler = get<SyncCommand>(),
+                    argsParser = SyncCommand.Args.Parser(),
                 )
             }
             listenerRegistry.register(

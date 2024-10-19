@@ -39,6 +39,7 @@ import com.projectcitybuild.pcbridge.features.register.commands.CodeCommand
 import com.projectcitybuild.pcbridge.features.register.commands.RegisterCommand
 import com.projectcitybuild.pcbridge.features.staffchat.commands.StaffChatCommand
 import com.projectcitybuild.pcbridge.features.groups.actions.SyncPlayerGroups
+import com.projectcitybuild.pcbridge.features.groups.commands.SyncCommand
 import com.projectcitybuild.pcbridge.features.groups.listener.SyncRankListener
 import com.projectcitybuild.pcbridge.features.groups.repositories.SyncRepository
 import com.projectcitybuild.pcbridge.features.playerstate.listeners.PlayerSyncRequestListener
@@ -520,6 +521,13 @@ private fun Module.groups() {
     factory {
         SyncRankListener(
             syncPlayerGroups = get(),
+        )
+    }
+
+    factory {
+        SyncCommand(
+            server = get(),
+            eventBroadcaster = get(),
         )
     }
 }
