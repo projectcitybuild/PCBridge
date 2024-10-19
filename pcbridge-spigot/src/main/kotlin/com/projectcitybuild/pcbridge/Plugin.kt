@@ -7,6 +7,7 @@ import com.projectcitybuild.pcbridge.features.announcements.listeners.Announceme
 import com.projectcitybuild.pcbridge.features.bans.listeners.AuthorizeConnectionListener
 import com.projectcitybuild.pcbridge.features.chat.listeners.EmojiChatListener
 import com.projectcitybuild.pcbridge.features.chat.listeners.FormatNameChatListener
+import com.projectcitybuild.pcbridge.features.chat.listeners.SyncPlayerChatListener
 import com.projectcitybuild.pcbridge.features.groups.commands.SyncCommand
 import com.projectcitybuild.pcbridge.features.invisframes.commands.InvisFrameCommand
 import com.projectcitybuild.pcbridge.features.invisframes.listeners.FrameItemInsertListener
@@ -134,6 +135,7 @@ private class Lifecycle : KoinComponent {
                 get<PlayerStateListener>(),
                 get<PlayerSyncRequestListener>(),
                 get<ServerOverviewJoinListener>(),
+                get<SyncPlayerChatListener>(),
                 get<SyncRankListener>(),
                 get<TelemetryPlayerConnectListener>(),
             )

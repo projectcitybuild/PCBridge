@@ -1,14 +1,10 @@
 package com.projectcitybuild.pcbridge.features.chat
 
-import com.projectcitybuild.pcbridge.features.chat.repositories.ChatGroupRepository
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.minimessage.MiniMessage
-import java.util.UUID
 
-class ChatGroupFormatter(
-    private val chatGroupRepository: ChatGroupRepository,
-) {
+class ChatGroupFormatter {
     data class Aggregate(
         val prefix: Component,
         val suffix: Component,
@@ -17,12 +13,17 @@ class ChatGroupFormatter(
 
     private val groupPriorities: MutableMap<String, Pair<ChatGroupType, Int>> = mutableMapOf()
 
-    fun format(playerUUID: UUID): Aggregate {
+    fun format(
+        groupNames: Set<String>,
+        groupDisplayNames: Map<String, String?>,
+        groupHoverNames: Map<String, String?>,
+        groupDisplayPriorities: Map<ChatGroupType, List<String>>,
+        prefix: String,
+        suffix: String,
+    ): Aggregate {
         if (groupPriorities.isEmpty()) {
-            buildGroupList()
+            buildGroupList(groupDisplayPriorities)
         }
-
-        val groupNames = chatGroupRepository.getGroupNamesForPlayer(playerUUID)
 
         var highestTrust: Pair<Int, String>? = null
         var highestBuild: Pair<Int, String>? = null
@@ -53,35 +54,51 @@ class ChatGroupFormatter(
         val groupComponent = Component.text()
 
         if (highestDonor != null) {
-            groupComponent.append(groupTextComponent(highestDonor))
+            groupComponent.append(
+                groupTextComponent(
+                    highestDonor,
+                    hoverName = groupHoverNames[highestDonor.second],
+                    displayName = groupDisplayNames[highestDonor.second],
+                )
+            )
         }
         if (highestTrust != null) {
-            groupComponent.append(groupTextComponent(highestTrust))
+            groupComponent.append(
+                groupTextComponent(
+                    highestTrust,
+                    hoverName = groupHoverNames[highestTrust.second],
+                    displayName = groupDisplayNames[highestTrust.second],
+                )
+            )
         }
         if (highestBuild != null) {
-            groupComponent.append(groupTextComponent(highestBuild))
+            groupComponent.append(
+                groupTextComponent(
+                    highestBuild,
+                    hoverName = groupHoverNames[highestBuild.second],
+                    displayName = groupDisplayNames[highestBuild.second],
+                )
+            )
         }
 
         return Aggregate(
             prefix =
-                MiniMessage.miniMessage().deserialize(
-                    chatGroupRepository.getPrefixForPlayer(playerUUID),
-                ),
+                MiniMessage.miniMessage().deserialize(prefix),
             suffix =
-                MiniMessage.miniMessage().deserialize(
-                    chatGroupRepository.getSuffixForPlayer(playerUUID),
-                ),
+                MiniMessage.miniMessage().deserialize(suffix),
             groups = groupComponent.build(),
         )
     }
 
-    private fun groupTextComponent(group: Pair<Int, String>): Component {
+    private fun groupTextComponent(
+        group: Pair<Int, String>,
+        hoverName: String?,
+        displayName: String?,
+    ): Component {
         val groupName = group.second
-        val hoverName = chatGroupRepository.getGroupHoverName(groupName)
-        val displayName = chatGroupRepository.getGroupDisplayName(groupName) ?: groupName
 
         return MiniMessage.miniMessage()
-            .deserialize(displayName)
+            .deserialize(displayName ?: groupName)
             .also {
                 if (!hoverName.isNullOrEmpty()) {
                     it.hoverEvent(
@@ -91,18 +108,18 @@ class ChatGroupFormatter(
             }
     }
 
-    private fun buildGroupList() {
-        val trustedGroupPriority = chatGroupRepository.getDisplayPriority(ChatGroupType.TRUST)
-        val builderGroupPriority = chatGroupRepository.getDisplayPriority(ChatGroupType.BUILD)
-        val donorGroupPriority = chatGroupRepository.getDisplayPriority(ChatGroupType.DONOR)
+    private fun buildGroupList(groupDisplayPriorities: Map<ChatGroupType, List<String>>) {
+        val trustedGroupPriority = groupDisplayPriorities[ChatGroupType.TRUST]
+        val builderGroupPriority = groupDisplayPriorities[ChatGroupType.BUILD]
+        val donorGroupPriority = groupDisplayPriorities[ChatGroupType.DONOR]
 
-        trustedGroupPriority.withIndex().forEach {
+        trustedGroupPriority?.withIndex()?.forEach {
             groupPriorities[it.value.lowercase()] = Pair(ChatGroupType.TRUST, it.index)
         }
-        builderGroupPriority.withIndex().forEach {
+        builderGroupPriority?.withIndex()?.forEach {
             groupPriorities[it.value.lowercase()] = Pair(ChatGroupType.BUILD, it.index)
         }
-        donorGroupPriority.withIndex().forEach {
+        donorGroupPriority?.withIndex()?.forEach {
             groupPriorities[it.value.lowercase()] = Pair(ChatGroupType.DONOR, it.index)
         }
     }

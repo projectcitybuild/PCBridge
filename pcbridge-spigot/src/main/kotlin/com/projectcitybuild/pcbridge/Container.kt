@@ -22,6 +22,7 @@ import com.projectcitybuild.pcbridge.features.chat.ChatBadgeFormatter
 import com.projectcitybuild.pcbridge.features.chat.ChatGroupFormatter
 import com.projectcitybuild.pcbridge.features.chat.listeners.EmojiChatListener
 import com.projectcitybuild.pcbridge.features.chat.listeners.FormatNameChatListener
+import com.projectcitybuild.pcbridge.features.chat.listeners.SyncPlayerChatListener
 import com.projectcitybuild.pcbridge.features.chat.repositories.ChatBadgeRepository
 import com.projectcitybuild.pcbridge.features.chat.repositories.ChatGroupRepository
 import com.projectcitybuild.pcbridge.features.invisframes.commands.InvisFrameCommand
@@ -422,6 +423,8 @@ private fun Module.chat() {
         ChatBadgeRepository(
             store = get(),
             config = get(),
+            badgeFormatter = get(),
+            badgeCache = get(named("badge_cache")),
         )
     }
 
@@ -429,6 +432,8 @@ private fun Module.chat() {
         ChatGroupRepository(
             permissions = get(),
             config = get(),
+            chatGroupFormatter = get(),
+            groupCache = get(named("group_cache")),
         )
     }
 
@@ -441,15 +446,11 @@ private fun Module.chat() {
     }
 
     factory {
-        ChatBadgeFormatter(
-            chatBadgeRepository = get(),
-        )
+        ChatBadgeFormatter()
     }
 
-    factory {
-        ChatGroupFormatter(
-            chatGroupRepository = get(),
-        )
+    single {
+        ChatGroupFormatter()
     }
 
     factory {
@@ -458,10 +459,15 @@ private fun Module.chat() {
 
     factory {
         FormatNameChatListener(
-            chatGroupFormatter = get(),
-            chatBadgeFormatter = get(),
-            badgeCache = get(named("badge_cache")),
-            groupCache = get(named("group_cache")),
+            chatBadgeRepository = get(),
+            chatGroupRepository = get(),
+        )
+    }
+
+    factory {
+        SyncPlayerChatListener(
+            chatGroupRepository = get(),
+            chatBadgeRepository = get(),
         )
     }
 }
