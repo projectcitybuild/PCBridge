@@ -31,6 +31,10 @@ class CodeCommand(
                 code = args.code,
                 playerUUID = sender.uniqueId,
             )
+            sender.sendMessage(
+                Component.text("Registration complete! Your account will be synced momentarily...")
+                    .color(NamedTextColor.GREEN),
+            )
         } catch (e: ResponseParser.NotFoundError) {
             sender.sendMessage(
                 Component.text("Error: Code is invalid or expired")

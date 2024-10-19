@@ -55,6 +55,8 @@ import com.projectcitybuild.pcbridge.support.spigot.SpigotCommandRegistry
 import com.projectcitybuild.pcbridge.support.spigot.SpigotListenerRegistry
 import com.projectcitybuild.pcbridge.support.spigot.SpigotNamespace
 import com.projectcitybuild.pcbridge.support.spigot.SpigotTimer
+import com.projectcitybuild.pcbridge.webserver.HttpServer
+import com.projectcitybuild.pcbridge.webserver.HttpServerConfig
 import io.github.reactivecircus.cache4k.Cache
 import net.kyori.adventure.platform.bukkit.BukkitAudiences
 import net.kyori.adventure.text.Component
@@ -77,6 +79,7 @@ fun pluginModule(_plugin: JavaPlugin) =
         spigot(_plugin)
         core()
         http()
+        webServer()
         integrations()
 
         // Features
@@ -199,6 +202,20 @@ private fun Module.core() {
     }
 
     single { Store() }
+}
+
+private fun Module.webServer() {
+    single {
+        val config = get<Config>().get()
+
+        HttpServer(
+            config = HttpServerConfig(
+                authToken = config.webServer.token,
+                port = config.webServer.port,
+            ),
+            delegate = WebServerDelegate(),
+        )
+    }
 }
 
 private fun Module.http() {

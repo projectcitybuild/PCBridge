@@ -35,7 +35,7 @@ class RegisterCommand(
             sender.sendMessage(
                 MiniMessage.miniMessage().deserialize(
                     "<color:gray>A code has been emailed to ${args.email}.<newline>" +
-                        "Please type it in with </color><color:aqua><bold><click:suggest_command:/code>/code [code]</click></bold></color>"
+                        "Please type it in with </color><color:aqua><bold><hover:show_text:'/code'><click:suggest_command:/code >/code [code]</click></hover></bold></color>"
                 )
             )
         } catch (e: ResponseParser.ValidationError) {

@@ -30,6 +30,7 @@ import com.projectcitybuild.pcbridge.integrations.LuckPermsIntegration
 import com.projectcitybuild.pcbridge.support.spigot.SpigotCommandRegistry
 import com.projectcitybuild.pcbridge.support.spigot.SpigotListenerRegistry
 import com.projectcitybuild.pcbridge.support.spigot.SpigotTimer
+import com.projectcitybuild.pcbridge.webserver.HttpServer
 import net.kyori.adventure.platform.bukkit.BukkitAudiences
 import org.koin.core.KoinApplication
 import org.koin.core.component.KoinComponent
@@ -77,9 +78,12 @@ private class Lifecycle : KoinComponent {
     private val sentry: SentryReporter by inject()
     private val commandRegistry: SpigotCommandRegistry by inject()
     private val listenerRegistry: SpigotListenerRegistry by inject()
+    private val httpServer: HttpServer by inject()
 
     suspend fun boot() =
         sentry.trace {
+            httpServer.start()
+
             commandRegistry.apply {
                 register(
                     handler = get<WarpCommand>(),
@@ -134,6 +138,8 @@ private class Lifecycle : KoinComponent {
 
     suspend fun shutdown() =
         sentry.trace {
+            httpServer.stop()
+
             get<SpigotTimer>().cancelAll()
 
             get<DynmapIntegration>().disable()
