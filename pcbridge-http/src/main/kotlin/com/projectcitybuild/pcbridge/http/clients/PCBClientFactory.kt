@@ -2,7 +2,7 @@ package com.projectcitybuild.pcbridge.http.clients
 
 
 import com.google.gson.GsonBuilder
-import com.projectcitybuild.pcbridge.http.deserializers.LocalDateTimeTypeAdapter
+import com.projectcitybuild.pcbridge.http.serialization.gson.LocalDateTimeTypeAdapter
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit

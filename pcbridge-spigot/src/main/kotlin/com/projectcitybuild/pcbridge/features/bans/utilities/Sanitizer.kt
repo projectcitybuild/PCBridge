@@ -1,4 +1,4 @@
-package com.projectcitybuild.pcbridge.features.bans
+package com.projectcitybuild.pcbridge.features.bans.utilities
 
 class Sanitizer private constructor() {
     companion object {

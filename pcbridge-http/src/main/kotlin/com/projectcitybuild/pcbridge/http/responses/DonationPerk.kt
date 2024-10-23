@@ -1,7 +1,7 @@
 package com.projectcitybuild.pcbridge.http.responses
 
 import com.google.gson.annotations.SerializedName
-import com.projectcitybuild.pcbridge.http.serializable.LocalDateTimeSerializer
+import com.projectcitybuild.pcbridge.http.serialization.serializable.LocalDateTimeSerializer
 import kotlinx.serialization.Serializable
 import java.time.LocalDateTime
 

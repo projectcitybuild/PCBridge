@@ -1,4 +1,4 @@
-package com.projectcitybuild.pcbridge.http.deserializers
+package com.projectcitybuild.pcbridge.http.serialization.gson
 
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer

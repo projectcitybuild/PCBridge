@@ -1,7 +1,7 @@
 package com.projectcitybuild.pcbridge.http.responses
 
 import com.google.gson.annotations.SerializedName
-import com.projectcitybuild.pcbridge.http.serializable.LocalDateTimeSerializer
+import com.projectcitybuild.pcbridge.http.serialization.serializable.LocalDateTimeSerializer
 import kotlinx.serialization.Serializable
 import java.time.LocalDateTime
 
@@ -16,8 +16,14 @@ data class PlayerBan(
     @SerializedName("banned_player_alias")
     val bannedPlayerAlias: String,
 
+    @SerializedName("banned_player")
+    val bannedPlayer: Player?,
+
     @SerializedName("banner_player_id")
     val bannerPlayerId: Int? = null,
+
+    @SerializedName("banner_player")
+    val bannerPlayer: Player? = null,
 
     @SerializedName("reason")
     val reason: String? = null,

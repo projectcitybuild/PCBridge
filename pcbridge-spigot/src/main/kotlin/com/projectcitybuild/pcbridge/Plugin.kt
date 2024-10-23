@@ -5,6 +5,8 @@ import com.projectcitybuild.pcbridge.core.errors.SentryReporter
 import com.projectcitybuild.pcbridge.core.errors.trace
 import com.projectcitybuild.pcbridge.features.announcements.listeners.AnnouncementEnableListener
 import com.projectcitybuild.pcbridge.features.bans.listeners.AuthorizeConnectionListener
+import com.projectcitybuild.pcbridge.features.bans.listeners.IPBanRequestListener
+import com.projectcitybuild.pcbridge.features.bans.listeners.UUIDBanRequestListener
 import com.projectcitybuild.pcbridge.features.chat.listeners.EmojiChatListener
 import com.projectcitybuild.pcbridge.features.chat.listeners.FormatNameChatListener
 import com.projectcitybuild.pcbridge.features.chat.listeners.SyncPlayerChatListener
@@ -132,12 +134,14 @@ private class Lifecycle : KoinComponent {
                 get<FramePlaceListener>(),
                 get<FrameItemInsertListener>(),
                 get<FrameItemRemoveListener>(),
+                get<IPBanRequestListener>(),
                 get<PlayerStateListener>(),
                 get<PlayerSyncRequestListener>(),
                 get<ServerOverviewJoinListener>(),
                 get<SyncPlayerChatListener>(),
                 get<SyncRankListener>(),
                 get<TelemetryPlayerConnectListener>(),
+                get<UUIDBanRequestListener>(),
             )
 
             get<DynmapIntegration>().enable()

@@ -1,5 +1,7 @@
 package com.projectcitybuild.pcbridge.webserver
 
+import com.projectcitybuild.pcbridge.http.responses.IPBan
+import com.projectcitybuild.pcbridge.http.responses.PlayerBan
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.call
 import io.ktor.server.application.install
@@ -11,6 +13,7 @@ import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.server.netty.NettyApplicationEngine
 import io.ktor.server.plugins.callloging.CallLogging
+import io.ktor.server.request.receive
 import io.ktor.server.request.receiveParameters
 import io.ktor.server.response.respond
 import io.ktor.server.routing.post
@@ -22,6 +25,8 @@ import java.util.UUID
 
 interface HttpServerDelegate {
     suspend fun syncPlayer(uuid: UUID)
+    suspend fun banPlayer(ban: PlayerBan)
+    suspend fun banIP(ban: IPBan)
 }
 
 class HttpServer(
@@ -79,6 +84,20 @@ class HttpServer(
 
                         call.application.environment.log.info("Syncing player: $uuid")
                         delegate.syncPlayer(uuid)
+                        call.respond(HttpStatusCode.OK)
+                    }
+                    post("events/ban/uuid") {
+                        val ban = call.receive<PlayerBan>()
+
+                        call.application.environment.log.info("Banning player: ${ban.bannedPlayerId}")
+                        delegate.banPlayer(ban)
+                        call.respond(HttpStatusCode.OK)
+                    }
+                    post("events/ban/ip") {
+                        val ban = call.receive<IPBan>()
+
+                        call.application.environment.log.info("Banning ip: ${ban.ipAddress}")
+                        delegate.banIP(ban)
                         call.respond(HttpStatusCode.OK)
                     }
                 }

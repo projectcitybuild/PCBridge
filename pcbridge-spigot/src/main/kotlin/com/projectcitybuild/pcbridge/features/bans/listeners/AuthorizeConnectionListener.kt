@@ -5,10 +5,9 @@ import com.projectcitybuild.pcbridge.core.logger.log
 import com.projectcitybuild.pcbridge.features.bans.actions.AuthorizeConnection
 import com.projectcitybuild.pcbridge.features.bans.events.ConnectionPermittedEvent
 import com.projectcitybuild.pcbridge.features.bans.repositories.PlayerRepository
+import com.projectcitybuild.pcbridge.features.bans.utilities.toMiniMessage
 import com.projectcitybuild.pcbridge.support.spigot.SpigotEventBroadcaster
 import kotlinx.coroutines.runBlocking
-import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
@@ -71,29 +70,7 @@ class AuthorizeConnectionListener(
     }
 }
 
-private fun AuthorizeConnection.Ban.toMessage(): Component {
-    return when (this) {
-        is AuthorizeConnection.Ban.UUID ->
-            MiniMessage.miniMessage().deserialize(
-                """
-                <color:red><b>You are currently banned.</b></color>
-                
-                <color:gray>Reason:</color> ${value.reason ?: "No reason provided"}
-                <color:gray>Expires:</color> ${value.expiresAt ?: "Never"}
-                
-                <color:aqua>Appeal @ https://projectcitybuild.com"</color>
-                """.trimIndent(),
-            )
-
-        is AuthorizeConnection.Ban.IP ->
-            MiniMessage.miniMessage().deserialize(
-                """
-                <color:red><b>You are currently IP banned.</b></color>
-                
-                <color:gray>Reason:</color> ${value.reason ?: "No reason provided" }
-                
-                <color:aqua>Appeal @ https://projectcitybuild.com</color>
-                """.trimIndent(),
-            )
-    }
+private fun AuthorizeConnection.Ban.toMessage() = when (this) {
+    is AuthorizeConnection.Ban.UUID -> value.toMiniMessage()
+    is AuthorizeConnection.Ban.IP -> value.toMiniMessage()
 }

@@ -1,5 +1,6 @@
 package com.projectcitybuild.pcbridge.features.bans
 
+import com.projectcitybuild.pcbridge.features.bans.utilities.isValidIP
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test

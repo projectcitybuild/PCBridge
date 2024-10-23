@@ -8,7 +8,6 @@ import com.projectcitybuild.pcbridge.support.spigot.CommandArgsParser
 import com.projectcitybuild.pcbridge.support.spigot.SpigotCommand
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
-import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 

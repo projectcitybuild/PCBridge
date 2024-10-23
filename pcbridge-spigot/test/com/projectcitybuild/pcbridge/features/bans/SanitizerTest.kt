@@ -1,5 +1,6 @@
 package com.projectcitybuild.pcbridge.features.bans
 
+import com.projectcitybuild.pcbridge.features.bans.utilities.Sanitizer
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 

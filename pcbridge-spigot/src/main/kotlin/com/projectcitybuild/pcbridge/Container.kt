@@ -17,6 +17,8 @@ import com.projectcitybuild.pcbridge.features.announcements.listeners.Announceme
 import com.projectcitybuild.pcbridge.features.announcements.repositories.AnnouncementRepository
 import com.projectcitybuild.pcbridge.features.bans.actions.AuthorizeConnection
 import com.projectcitybuild.pcbridge.features.bans.listeners.AuthorizeConnectionListener
+import com.projectcitybuild.pcbridge.features.bans.listeners.IPBanRequestListener
+import com.projectcitybuild.pcbridge.features.bans.listeners.UUIDBanRequestListener
 import com.projectcitybuild.pcbridge.features.bans.repositories.PlayerRepository
 import com.projectcitybuild.pcbridge.features.chat.ChatBadgeFormatter
 import com.projectcitybuild.pcbridge.features.chat.ChatGroupFormatter
@@ -381,6 +383,18 @@ private fun Module.bans() {
             authorizeConnection = AuthorizeConnection(),
             sentry = get(),
             eventBroadcaster = get(),
+        )
+    }
+
+    factory {
+        UUIDBanRequestListener(
+            server = get(),
+        )
+    }
+
+    factory {
+        IPBanRequestListener(
+            server = get(),
         )
     }
 }
