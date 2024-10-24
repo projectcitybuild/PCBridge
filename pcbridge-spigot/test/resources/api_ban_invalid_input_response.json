@@ -1,8 +1,0 @@
-{
-    "error": {
-        "id": "bad_input",
-        "title": "BadRequestException",
-        "detail": "The player alias field is required.",
-        "status": 400
-    }
-}

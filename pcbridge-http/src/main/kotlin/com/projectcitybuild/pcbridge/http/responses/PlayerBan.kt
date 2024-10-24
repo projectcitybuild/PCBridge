@@ -1,23 +1,48 @@
 package com.projectcitybuild.pcbridge.http.responses
 
 import com.google.gson.annotations.SerializedName
-import java.time.LocalDate
-import java.time.ZoneId
-import java.util.UUID
+import com.projectcitybuild.pcbridge.http.serialization.serializable.LocalDateTimeSerializer
+import kotlinx.serialization.Serializable
+import java.time.LocalDateTime
 
+@Serializable
 data class PlayerBan(
-    @SerializedName("id") val id: Int = Math.random().toInt(),
-    @SerializedName("server_id") val serverId: Int = Math.random().toInt(),
-    @SerializedName("banned_player_id") val bannedPlayerId: String = UUID.randomUUID().toString(),
-    @SerializedName("banned_player_alias") val bannedPlayerAlias: String = "name",
-    @SerializedName("banner_player_id") val bannerPlayerId: String? = UUID.randomUUID().toString(),
-    @SerializedName("reason") val reason: String? = "reason",
-    @SerializedName("created_at") val createdAt: Long = LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toEpochSecond(),
-    @SerializedName("updated_at") val updatedAt: Long = LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toEpochSecond(),
-    @SerializedName("expires_at") val expiresAt: Long? = null,
-    @SerializedName("unbanned_at") var unbannedAt: Long? = null,
-    @SerializedName("unbanner_player_id") var unbannerPlayerId: String? = null,
-    @SerializedName("unban_type") var unbanType: String? = null,
+    @SerializedName("id")
+    val id: Int,
+
+    @SerializedName("banned_alias_at_time")
+    val bannedPlayerAlias: String? = null,
+
+    @SerializedName("banned_player")
+    val bannedPlayer: Player? = null,
+
+    @SerializedName("banner_player")
+    val bannerPlayer: Player? = null,
+
+    @SerializedName("reason")
+    val reason: String? = null,
+
+    @SerializedName("created_at")
+    @Serializable(with = LocalDateTimeSerializer::class)
+    val createdAt: LocalDateTime,
+
+    @SerializedName("updated_at")
+    @Serializable(with = LocalDateTimeSerializer::class)
+    val updatedAt: LocalDateTime,
+
+    @SerializedName("expires_at")
+    @Serializable(with = LocalDateTimeSerializer::class)
+    val expiresAt: LocalDateTime? = null,
+
+    @SerializedName("unbanned_at")
+    @Serializable(with = LocalDateTimeSerializer::class)
+    var unbannedAt: LocalDateTime? = null,
+
+    @SerializedName("unbanner_player_id")
+    var unbannerPlayerId: String? = null,
+
+    @SerializedName("unban_type")
+    var unbanType: String? = null,
 ) {
     val isActive: Boolean
         get() = unbannedAt == null
