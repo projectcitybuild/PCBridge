@@ -5,7 +5,6 @@ import com.projectcitybuild.pcbridge.http.responses.PlayerBan
 import com.projectcitybuild.pcbridge.http.serialization.gson.LocalDateTimeTypeAdapter
 import io.ktor.http.HttpStatusCode
 import io.ktor.serialization.gson.gson
-import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.call
 import io.ktor.server.application.install
 import io.ktor.server.auth.Authentication
@@ -21,7 +20,6 @@ import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.post
 import io.ktor.server.routing.routing
-import kotlinx.serialization.json.Json
 import org.slf4j.LoggerFactory
 import org.slf4j.event.Level
 import java.math.BigInteger
@@ -68,11 +66,6 @@ class HttpServer(
                 }
             }
             install(ContentNegotiation) {
-                // json(Json {
-                //     prettyPrint = true
-                //     isLenient = true
-                //     ignoreUnknownKeys = true
-                // })
                 gson {
                     registerTypeAdapter(LocalDateTime::class.java, LocalDateTimeTypeAdapter())
                 }
