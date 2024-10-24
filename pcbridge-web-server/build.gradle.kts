@@ -17,4 +17,6 @@ dependencies {
     implementation("io.ktor:ktor-server-netty:2.2.4")
     implementation("io.ktor:ktor-server-call-logging:2.2.4")
     implementation("io.ktor:ktor-server-auth:2.2.4")
+    implementation("io.ktor:ktor-server-content-negotiation:2.2.4")
+    implementation("io.ktor:ktor-serialization-gson:2.2.4")
 }

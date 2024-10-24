@@ -17,8 +17,6 @@ class AuthorizeConnectionTest {
 
     private fun playerBan() = PlayerBan(
         id = Random.nextInt(),
-        bannerPlayerId = Random.nextInt(),
-        bannedPlayerId = Random.nextInt(),
         bannedPlayerAlias = "alias",
         createdAt = LocalDateTime.now(),
         updatedAt = LocalDateTime.now(),
@@ -26,6 +24,7 @@ class AuthorizeConnectionTest {
 
     private fun ipBan() = IPBan(
         id = Random.nextInt(),
+        ipAddress = "192.168.0.1",
         bannerPlayerId = Random.nextInt(),
         createdAt = LocalDateTime.now(),
         updatedAt = LocalDateTime.now(),

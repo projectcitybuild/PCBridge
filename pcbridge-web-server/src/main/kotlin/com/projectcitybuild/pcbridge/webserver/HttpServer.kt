@@ -2,7 +2,9 @@ package com.projectcitybuild.pcbridge.webserver
 
 import com.projectcitybuild.pcbridge.http.responses.IPBan
 import com.projectcitybuild.pcbridge.http.responses.PlayerBan
+import com.projectcitybuild.pcbridge.http.serialization.gson.LocalDateTimeTypeAdapter
 import io.ktor.http.HttpStatusCode
+import io.ktor.serialization.gson.gson
 import io.ktor.server.application.call
 import io.ktor.server.application.install
 import io.ktor.server.auth.Authentication
@@ -13,14 +15,15 @@ import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.server.netty.NettyApplicationEngine
 import io.ktor.server.plugins.callloging.CallLogging
+import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.request.receive
-import io.ktor.server.request.receiveParameters
 import io.ktor.server.response.respond
 import io.ktor.server.routing.post
 import io.ktor.server.routing.routing
 import org.slf4j.LoggerFactory
 import org.slf4j.event.Level
 import java.math.BigInteger
+import java.time.LocalDateTime
 import java.util.UUID
 
 interface HttpServerDelegate {
@@ -62,20 +65,19 @@ class HttpServer(
                     }
                 }
             }
+            install(ContentNegotiation) {
+                gson {
+                    registerTypeAdapter(LocalDateTime::class.java, LocalDateTimeTypeAdapter())
+                }
+            }
+
             routing {
                 authenticate("token") {
                     post("events/player/sync") {
-                        val body = call.receiveParameters()
-
-                        val rawUUID = body["uuid"]
-                        if (rawUUID.isNullOrEmpty()) {
-                            call.application.environment.log.info("Bad Request: No UUID provided")
-                            call.respond(HttpStatusCode.BadRequest, "UUID cannot be empty")
-                            return@post
-                        }
+                        val body = call.receive<PlayerSyncRequest>()
 
                         val uuid = try {
-                            uuidFromAnyString(rawUUID)
+                            uuidFromAnyString(body.uuid)
                         } catch (e: Exception) {
                             call.application.environment.log.info("Bad Request: Invalid UUID")
                             call.respond(HttpStatusCode.BadRequest, "Invalid UUID")
@@ -87,9 +89,15 @@ class HttpServer(
                         call.respond(HttpStatusCode.OK)
                     }
                     post("events/ban/uuid") {
-                        val ban = call.receive<PlayerBan>()
+                        val ban = try {
+                            call.receive<PlayerBan>()
+                        } catch (e: Exception) {
+                            log.error(e.message)
+                            e.printStackTrace()
+                            throw e
+                        }
 
-                        call.application.environment.log.info("Banning player: ${ban.bannedPlayerId}")
+                        call.application.environment.log.info("Banning player: ${ban.bannedPlayer?.uuid}")
                         delegate.banPlayer(ban)
                         call.respond(HttpStatusCode.OK)
                     }

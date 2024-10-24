@@ -8,19 +8,19 @@ import java.time.LocalDateTime
 @Serializable
 data class Player(
     @SerializedName("player_minecraft_id")
-    val id: String,
+    val id: Int,
 
     @SerializedName("uuid")
     val uuid: String,
 
     @SerializedName("alias")
-    val alias: String,
+    val alias: String? = null,
 
     @SerializedName("last_seen_at")
     @Serializable(with = LocalDateTimeSerializer::class)
-    val lastSeenAt: LocalDateTime?,
+    val lastSeenAt: LocalDateTime? = null,
 
     @SerializedName("last_synced_at")
     @Serializable(with = LocalDateTimeSerializer::class)
-    val lastSyncedAt: LocalDateTime?,
+    val lastSyncedAt: LocalDateTime? = null,
 )
