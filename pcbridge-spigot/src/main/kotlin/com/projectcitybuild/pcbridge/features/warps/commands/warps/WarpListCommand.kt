@@ -21,7 +21,7 @@ class WarpListCommand(
 ) : SpigotCommand<WarpListCommand.Args> {
     override val label = "list"
 
-    override val usage = CommandHelpBuilder() // TODO
+    override val usage = CommandHelpBuilder(usage = "/warps list")
 
     override suspend fun run(
         sender: CommandSender,

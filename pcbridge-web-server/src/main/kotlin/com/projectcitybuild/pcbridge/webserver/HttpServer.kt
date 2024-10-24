@@ -74,7 +74,12 @@ class HttpServer(
             routing {
                 authenticate("token") {
                     post("events/player/sync") {
-                        val body = call.receive<PlayerSyncRequest>()
+                        val body = try {
+                            call.receive<PlayerSyncRequest>()
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                            throw e
+                        }
 
                         val uuid = try {
                             uuidFromAnyString(body.uuid)
@@ -92,7 +97,6 @@ class HttpServer(
                         val ban = try {
                             call.receive<PlayerBan>()
                         } catch (e: Exception) {
-                            log.error(e.message)
                             e.printStackTrace()
                             throw e
                         }
@@ -102,7 +106,12 @@ class HttpServer(
                         call.respond(HttpStatusCode.OK)
                     }
                     post("events/ban/ip") {
-                        val ban = call.receive<IPBan>()
+                        val ban = try {
+                            call.receive<IPBan>()
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                            throw e
+                        }
 
                         call.application.environment.log.info("Banning ip: ${ban.ipAddress}")
                         delegate.banIP(ban)

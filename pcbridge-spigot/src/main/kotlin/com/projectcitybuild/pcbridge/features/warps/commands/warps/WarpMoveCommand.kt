@@ -17,7 +17,7 @@ class WarpMoveCommand(
 ) : SpigotCommand<WarpMoveCommand.Args> {
     override val label = "move"
 
-    override val usage = CommandHelpBuilder() // TODO
+    override val usage = CommandHelpBuilder(usage = "/warps move <name>")
 
     override suspend fun run(
         sender: CommandSender,

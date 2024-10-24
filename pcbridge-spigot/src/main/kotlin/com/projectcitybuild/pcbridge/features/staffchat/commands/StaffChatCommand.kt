@@ -15,7 +15,7 @@ class StaffChatCommand(
 ) : SpigotCommand<StaffChatCommand.Args> {
     override val label = "a"
 
-    override val usage = CommandHelpBuilder() // TODO
+    override val usage = CommandHelpBuilder(usage = "/a <message>")
 
     override suspend fun run(
         sender: CommandSender,

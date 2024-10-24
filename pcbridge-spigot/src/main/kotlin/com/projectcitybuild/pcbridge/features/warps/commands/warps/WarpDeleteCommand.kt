@@ -18,7 +18,7 @@ class WarpDeleteCommand(
 ) : SpigotCommand<WarpDeleteCommand.Args> {
     override val label = "delete"
 
-    override val usage = CommandHelpBuilder() // TODO
+    override val usage = CommandHelpBuilder(usage = "/warps delete <name>")
 
     override suspend fun run(
         sender: CommandSender,

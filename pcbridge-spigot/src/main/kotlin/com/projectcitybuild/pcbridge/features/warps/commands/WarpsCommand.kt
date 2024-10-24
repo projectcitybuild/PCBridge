@@ -26,7 +26,7 @@ class WarpsCommand(
     override val label = "warps"
 
     override val usage =
-        CommandHelpBuilder()
+        CommandHelpBuilder(usage = "/warps")
             .subcommand(
                 label = "/warps list",
                 description = "shows all available warps",

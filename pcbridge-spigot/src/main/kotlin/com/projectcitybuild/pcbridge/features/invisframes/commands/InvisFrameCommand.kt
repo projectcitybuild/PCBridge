@@ -19,7 +19,7 @@ class InvisFrameCommand(
 ) : SpigotCommand<InvisFrameCommand.Args> {
     override val label = "invisframe"
 
-    override val usage = CommandHelpBuilder()
+    override val usage = CommandHelpBuilder(usage = "/invisframe [glowing]")
 
     override suspend fun run(
         sender: CommandSender,
