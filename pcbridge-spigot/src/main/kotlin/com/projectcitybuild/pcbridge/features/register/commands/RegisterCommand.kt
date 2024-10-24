@@ -17,7 +17,7 @@ class RegisterCommand(
 ) : SpigotCommand<RegisterCommand.Args> {
     override val label = "register"
 
-    override val usage = CommandHelpBuilder()
+    override val usage = CommandHelpBuilder(usage = "/register <email>")
 
     override suspend fun run(
         sender: CommandSender,

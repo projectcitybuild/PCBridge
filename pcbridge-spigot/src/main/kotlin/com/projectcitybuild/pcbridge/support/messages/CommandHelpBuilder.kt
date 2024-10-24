@@ -3,8 +3,11 @@ package com.projectcitybuild.pcbridge.support.messages
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextComponent
 import net.kyori.adventure.text.format.NamedTextColor
+import net.kyori.adventure.text.format.TextDecoration
 
-class CommandHelpBuilder {
+class CommandHelpBuilder(
+    private val usage: String?,
+) {
     private val commands: MutableList<CommandHelp> = mutableListOf()
 
     data class CommandHelp(
@@ -26,15 +29,27 @@ class CommandHelpBuilder {
 
     fun build(hasPermission: (String) -> Boolean): TextComponent {
         return Component.text()
-            .appendDivider()
             .also {
+                if (!usage.isNullOrEmpty()) {
+                    it.append(
+                        Component.text(usage)
+                            .color(NamedTextColor.GRAY)
+                            .decorate(TextDecoration.ITALIC)
+                    )
+                    it.appendNewline()
+                }
+                if (commands.isNotEmpty()) {
+                    it.appendDivider()
+                }
                 commands.forEach { command ->
                     if (hasPermission(command.permission)) {
                         it.append(command.asComponent())
                     }
                 }
+                if (commands.isNotEmpty()) {
+                    it.appendDivider()
+                }
             }
-            .appendDivider()
             .build()
     }
 }

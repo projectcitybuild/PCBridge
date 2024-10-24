@@ -15,7 +15,7 @@ class WarpRenameCommand(
 ) : SpigotCommand<WarpRenameCommand.Args> {
     override val label = "rename"
 
-    override val usage = CommandHelpBuilder() // TODO
+    override val usage = CommandHelpBuilder(usage = "/warps rename <name> <new name>")
 
     override suspend fun run(
         sender: CommandSender,

@@ -15,7 +15,7 @@ import org.bukkit.potion.PotionEffectType
 class NightVisionCommand : SpigotCommand<NightVisionCommand.Args> {
     override val label = "nv"
 
-    override val usage = CommandHelpBuilder()
+    override val usage = CommandHelpBuilder(usage = "/nv [on|off]")
 
     override suspend fun run(
         sender: CommandSender,

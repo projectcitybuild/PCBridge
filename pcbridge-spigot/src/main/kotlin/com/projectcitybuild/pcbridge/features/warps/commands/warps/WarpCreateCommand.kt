@@ -23,7 +23,7 @@ class WarpCreateCommand(
 ) : SpigotCommand<WarpCreateCommand.Args> {
     override val label = "create"
 
-    override val usage = CommandHelpBuilder() // TODO
+    override val usage = CommandHelpBuilder(usage = "/warps create <name> [x:] [y:] [z:] [pitch:] [yaw:] [world:]")
 
     override suspend fun run(
         sender: CommandSender,

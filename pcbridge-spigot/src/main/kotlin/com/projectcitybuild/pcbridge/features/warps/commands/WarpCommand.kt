@@ -22,7 +22,7 @@ class WarpCommand(
 ) : SpigotCommand<WarpCommand.Args> {
     override val label = "warp"
 
-    override val usage = CommandHelpBuilder() // TODO
+    override val usage = CommandHelpBuilder(usage = "/warp <name>") // TODO
 
     override suspend fun run(
         sender: CommandSender,

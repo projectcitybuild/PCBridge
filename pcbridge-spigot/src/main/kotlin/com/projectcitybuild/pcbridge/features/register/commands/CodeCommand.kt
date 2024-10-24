@@ -16,7 +16,7 @@ class CodeCommand(
 ) : SpigotCommand<CodeCommand.Args> {
     override val label = "code"
 
-    override val usage = CommandHelpBuilder()
+    override val usage = CommandHelpBuilder(usage = "/code <code>")
 
     override suspend fun run(
         sender: CommandSender,

@@ -17,7 +17,7 @@ class SyncCommand(
 ) : SpigotCommand<SyncCommand.Args> {
     override val label = "sync"
 
-    override val usage = CommandHelpBuilder()
+    override val usage = CommandHelpBuilder(usage = "/sync [player name]")
 
     override suspend fun run(
         sender: CommandSender,
