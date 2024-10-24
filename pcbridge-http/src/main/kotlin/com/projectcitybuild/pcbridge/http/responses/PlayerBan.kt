@@ -10,17 +10,11 @@ data class PlayerBan(
     @SerializedName("id")
     val id: Int,
 
-    @SerializedName("banned_player_id")
-    val bannedPlayerId: Int,
-
-    @SerializedName("banned_player_alias")
-    val bannedPlayerAlias: String,
+    @SerializedName("banned_alias_at_time")
+    val bannedPlayerAlias: String? = null,
 
     @SerializedName("banned_player")
-    val bannedPlayer: Player?,
-
-    @SerializedName("banner_player_id")
-    val bannerPlayerId: Int? = null,
+    val bannedPlayer: Player? = null,
 
     @SerializedName("banner_player")
     val bannerPlayer: Player? = null,
