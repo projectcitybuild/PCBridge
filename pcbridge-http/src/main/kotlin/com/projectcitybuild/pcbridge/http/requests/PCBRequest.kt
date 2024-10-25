@@ -57,7 +57,6 @@ internal interface PCBRequest {
     /**
      * Fetches the latest Minecraft config
      */
-    @POST("v2/minecraft/config")
-    @FormUrlEncoded
+    @GET("v2/minecraft/config")
     suspend fun getConfig(): RemoteConfigVersion
 }

@@ -13,10 +13,10 @@ repositories {
 dependencies {
     implementation(project(":pcbridge-http"))
 
-    implementation("io.ktor:ktor-server-core:2.2.4")
-    implementation("io.ktor:ktor-server-netty:2.2.4")
-    implementation("io.ktor:ktor-server-call-logging:2.2.4")
-    implementation("io.ktor:ktor-server-auth:2.2.4")
-    implementation("io.ktor:ktor-server-content-negotiation:2.2.4")
-    implementation("io.ktor:ktor-serialization-gson:2.2.4")
+    implementation("io.ktor:ktor-server-core:3.0.0")
+    implementation("io.ktor:ktor-server-netty:3.0.0")
+    implementation("io.ktor:ktor-server-call-logging:3.0.0")
+    implementation("io.ktor:ktor-server-auth:3.0.0")
+    implementation("io.ktor:ktor-server-content-negotiation:3.0.0")
+    implementation("io.ktor:ktor-serialization-gson:3.0.0")
 }
