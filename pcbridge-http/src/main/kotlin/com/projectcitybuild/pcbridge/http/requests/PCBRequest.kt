@@ -18,7 +18,7 @@ internal interface PCBRequest {
     @GET("v2/minecraft/player/{uuid}")
     suspend fun getPlayer(
         @Path(value = "uuid") uuid: String,
-        @Query("ip") ip: String,
+        @Query("ip") ip: String?,
     ): PlayerData
 
     /**

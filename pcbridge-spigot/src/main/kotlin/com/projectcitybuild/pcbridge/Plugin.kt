@@ -54,11 +54,7 @@ class Plugin : SuspendingJavaPlugin() {
         printLogo()
 
         val module = pluginModule(this)
-        val container =
-            startKoin {
-                modules(module)
-            }
-        this.container = container
+        this.container = startKoin { modules(module) }
 
         Lifecycle().boot().onFailure {
             server.pluginManager.disablePlugin(this)

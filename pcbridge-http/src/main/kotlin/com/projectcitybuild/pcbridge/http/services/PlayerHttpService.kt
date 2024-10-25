@@ -14,7 +14,7 @@ class PlayerHttpService(
 ) {
     suspend fun get(
         playerUUID: UUID,
-        ip: String,
+        ip: String?,
     ): PlayerData =
         withContext(Dispatchers.IO) {
             responseParser.parse {

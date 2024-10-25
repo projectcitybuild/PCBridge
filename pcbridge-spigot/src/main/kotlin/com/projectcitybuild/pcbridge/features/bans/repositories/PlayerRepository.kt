@@ -13,11 +13,11 @@ class PlayerRepository(
     @Throws(Exception::class)
     suspend fun get(
         playerUUID: UUID,
-        ip: InetAddress,
+        ip: InetAddress?,
     ): PlayerData {
         return httpService.get(
             playerUUID = playerUUID,
-            ip = Sanitizer.sanitizedIP(ip.toString()),
+            ip = ip?.let { Sanitizer.sanitizedIP(it.toString()) },
         )
     }
 }

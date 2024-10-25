@@ -48,7 +48,7 @@ dependencies {
     implementation("io.github.oshai:kotlin-logging-jvm:5.1.0")
 
     // Testing
-    testImplementation("io.papermc.paper:paper-api:1.21.1")
+    testImplementation("io.papermc.paper:paper-api:1.20.2-R0.1-SNAPSHOT")
 }
 
 sourceSets {

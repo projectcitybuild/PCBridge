@@ -32,7 +32,7 @@ class PlayerSyncRequestListener(
 
         val playerData = playerRepository.get(
             playerUUID = matchingPlayer.uniqueId,
-            ip = matchingPlayer.address.address,
+            ip = matchingPlayer.address?.address,
         )
         val playerState = PlayerState.fromPlayerData(
             playerData,
