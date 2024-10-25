@@ -14,6 +14,8 @@ import com.projectcitybuild.pcbridge.core.permissions.adapters.LuckPermsPermissi
 import com.projectcitybuild.pcbridge.core.remoteconfig.services.RemoteConfig
 import com.projectcitybuild.pcbridge.core.store.Store
 import com.projectcitybuild.pcbridge.data.LocalConfigKeyValues
+import com.projectcitybuild.pcbridge.features.announcements.actions.StartAnnouncementTimer
+import com.projectcitybuild.pcbridge.features.announcements.listeners.AnnouncementConfigListener
 import com.projectcitybuild.pcbridge.features.announcements.listeners.AnnouncementEnableListener
 import com.projectcitybuild.pcbridge.features.announcements.repositories.AnnouncementRepository
 import com.projectcitybuild.pcbridge.features.bans.actions.AuthorizeConnection
@@ -23,6 +25,7 @@ import com.projectcitybuild.pcbridge.features.bans.listeners.UUIDBanRequestListe
 import com.projectcitybuild.pcbridge.features.bans.repositories.PlayerRepository
 import com.projectcitybuild.pcbridge.features.chat.ChatBadgeFormatter
 import com.projectcitybuild.pcbridge.features.chat.ChatGroupFormatter
+import com.projectcitybuild.pcbridge.features.chat.listeners.ChatConfigListener
 import com.projectcitybuild.pcbridge.features.chat.listeners.EmojiChatListener
 import com.projectcitybuild.pcbridge.features.chat.listeners.FormatNameChatListener
 import com.projectcitybuild.pcbridge.features.chat.listeners.SyncPlayerChatListener
@@ -236,6 +239,7 @@ private fun Module.webServer() {
             ),
             delegate = WebServerDelegate(
                 eventBroadcaster = get(),
+                remoteConfig = get(),
             ),
         )
     }
@@ -283,13 +287,25 @@ private fun Module.announcements() {
         )
     }
 
-    factory {
-        AnnouncementEnableListener(
-            announcementRepository = get(),
+    single {
+        StartAnnouncementTimer(
+            repository = get(),
             remoteConfig = get(),
             timer = get(),
             server = get(),
+        )
+    }
+
+    factory {
+        AnnouncementEnableListener(
+            announcementTimer = get(),
             plugin = get(),
+        )
+    }
+
+    factory {
+        AnnouncementConfigListener(
+            announcementTimer = get(),
         )
     }
 }
@@ -487,6 +503,13 @@ private fun Module.chat() {
 
     factory {
         SyncPlayerChatListener(
+            chatGroupRepository = get(),
+            chatBadgeRepository = get(),
+        )
+    }
+
+    factory {
+        ChatConfigListener(
             chatGroupRepository = get(),
             chatBadgeRepository = get(),
         )

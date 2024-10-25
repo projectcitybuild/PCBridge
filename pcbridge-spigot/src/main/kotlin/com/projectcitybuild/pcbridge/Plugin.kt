@@ -4,10 +4,12 @@ import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
 import com.projectcitybuild.pcbridge.core.errors.SentryReporter
 import com.projectcitybuild.pcbridge.core.errors.trace
 import com.projectcitybuild.pcbridge.core.remoteconfig.services.RemoteConfig
+import com.projectcitybuild.pcbridge.features.announcements.listeners.AnnouncementConfigListener
 import com.projectcitybuild.pcbridge.features.announcements.listeners.AnnouncementEnableListener
 import com.projectcitybuild.pcbridge.features.bans.listeners.AuthorizeConnectionListener
 import com.projectcitybuild.pcbridge.features.bans.listeners.IPBanRequestListener
 import com.projectcitybuild.pcbridge.features.bans.listeners.UUIDBanRequestListener
+import com.projectcitybuild.pcbridge.features.chat.listeners.ChatConfigListener
 import com.projectcitybuild.pcbridge.features.chat.listeners.EmojiChatListener
 import com.projectcitybuild.pcbridge.features.chat.listeners.FormatNameChatListener
 import com.projectcitybuild.pcbridge.features.chat.listeners.SyncPlayerChatListener
@@ -130,8 +132,10 @@ private class Lifecycle : KoinComponent {
             listenerRegistry.register(
                 get<AnnounceJoinListener>(),
                 get<AnnounceQuitListener>(),
+                get<AnnouncementConfigListener>(),
                 get<AnnouncementEnableListener>(),
                 get<AuthorizeConnectionListener>(),
+                get<ChatConfigListener>(),
                 get<EmojiChatListener>(),
                 get<FirstTimeJoinListener>(),
                 get<FormatNameChatListener>(),

@@ -28,4 +28,6 @@ class ChatBadgeRepository(
     fun invalidate(playerUUID: UUID) {
         badgeCache.invalidate(playerUUID)
     }
+
+    fun invalidateAll() = badgeCache.invalidateAll()
 }

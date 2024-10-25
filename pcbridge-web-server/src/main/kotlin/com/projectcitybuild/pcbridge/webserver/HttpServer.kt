@@ -2,6 +2,7 @@ package com.projectcitybuild.pcbridge.webserver
 
 import com.projectcitybuild.pcbridge.http.models.IPBan
 import com.projectcitybuild.pcbridge.http.models.PlayerBan
+import com.projectcitybuild.pcbridge.http.models.RemoteConfigVersion
 import com.projectcitybuild.pcbridge.http.serialization.gson.LocalDateTimeTypeAdapter
 import io.ktor.http.HttpStatusCode
 import io.ktor.serialization.gson.gson
@@ -30,6 +31,7 @@ interface HttpServerDelegate {
     suspend fun syncPlayer(uuid: UUID)
     suspend fun banPlayer(ban: PlayerBan)
     suspend fun banIP(ban: IPBan)
+    suspend fun updateConfig(config: RemoteConfigVersion)
 }
 
 class HttpServer(
@@ -52,7 +54,7 @@ class HttpServer(
         server?.stop(gracePeriodMillis = 0, timeoutMillis = 0)
         server = embeddedServer(Netty, port = config.port) {
             install(CallLogging) {
-                level = Level.INFO
+                level = Level.INFO // Logs calls as info level
             }
             install(Authentication) {
                 bearer("token") {
@@ -115,6 +117,18 @@ class HttpServer(
 
                         call.application.environment.log.info("Banning ip: ${ban.ipAddress}")
                         delegate.banIP(ban)
+                        call.respond(HttpStatusCode.OK)
+                    }
+                    post("events/config") {
+                        val config = try {
+                            call.receive<RemoteConfigVersion>()
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                            throw e
+                        }
+
+                        call.application.environment.log.info("Received config version ${config.version}")
+                        delegate.updateConfig(config)
                         call.respond(HttpStatusCode.OK)
                     }
                 }
