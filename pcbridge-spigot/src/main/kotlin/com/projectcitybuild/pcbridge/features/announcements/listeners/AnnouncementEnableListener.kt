@@ -1,7 +1,7 @@
 package com.projectcitybuild.pcbridge.features.announcements.listeners
 
-import com.projectcitybuild.pcbridge.core.config.Config
 import com.projectcitybuild.pcbridge.core.logger.log
+import com.projectcitybuild.pcbridge.core.remoteconfig.services.RemoteConfig
 import com.projectcitybuild.pcbridge.features.announcements.actions.StartAnnouncementTimer
 import com.projectcitybuild.pcbridge.features.announcements.repositories.AnnouncementRepository
 import com.projectcitybuild.pcbridge.support.spigot.SpigotTimer
@@ -15,7 +15,7 @@ import org.bukkit.plugin.java.JavaPlugin
 
 class AnnouncementEnableListener(
     private val announcementRepository: AnnouncementRepository,
-    private val config: Config,
+    private val remoteConfig: RemoteConfig,
     private val timer: SpigotTimer,
     private val server: Server,
     private val plugin: JavaPlugin,
@@ -31,7 +31,7 @@ class AnnouncementEnableListener(
         action =
             StartAnnouncementTimer(
                 announcementRepository,
-                config,
+                remoteConfig,
                 timer,
                 server,
             )

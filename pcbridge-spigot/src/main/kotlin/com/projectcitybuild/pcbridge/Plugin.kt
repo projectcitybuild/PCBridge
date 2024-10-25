@@ -3,6 +3,7 @@ package com.projectcitybuild.pcbridge
 import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
 import com.projectcitybuild.pcbridge.core.errors.SentryReporter
 import com.projectcitybuild.pcbridge.core.errors.trace
+import com.projectcitybuild.pcbridge.core.remoteconfig.services.RemoteConfig
 import com.projectcitybuild.pcbridge.features.announcements.listeners.AnnouncementEnableListener
 import com.projectcitybuild.pcbridge.features.bans.listeners.AuthorizeConnectionListener
 import com.projectcitybuild.pcbridge.features.bans.listeners.IPBanRequestListener
@@ -84,10 +85,13 @@ private class Lifecycle : KoinComponent {
     private val commandRegistry: SpigotCommandRegistry by inject()
     private val listenerRegistry: SpigotListenerRegistry by inject()
     private val httpServer: HttpServer by inject()
+    private val remoteConfig: RemoteConfig by inject()
 
     suspend fun boot() =
         sentry.trace {
             httpServer.start()
+
+            remoteConfig.fetch()
 
             commandRegistry.apply {
                 register(

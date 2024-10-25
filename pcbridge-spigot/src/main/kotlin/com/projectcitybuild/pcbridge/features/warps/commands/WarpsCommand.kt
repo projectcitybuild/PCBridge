@@ -1,7 +1,7 @@
 package com.projectcitybuild.pcbridge.features.warps.commands
 
-import com.projectcitybuild.pcbridge.core.config.Config
 import com.projectcitybuild.pcbridge.core.datetime.LocalizedTime
+import com.projectcitybuild.pcbridge.core.remoteconfig.services.RemoteConfig
 import com.projectcitybuild.pcbridge.features.warps.commands.warps.WarpCreateCommand
 import com.projectcitybuild.pcbridge.features.warps.commands.warps.WarpDeleteCommand
 import com.projectcitybuild.pcbridge.features.warps.commands.warps.WarpListCommand
@@ -19,7 +19,7 @@ import org.bukkit.command.CommandSender
 
 class WarpsCommand(
     private val warpRepository: WarpRepository,
-    private val config: Config,
+    private val remoteConfig: RemoteConfig,
     private val server: Server,
     private val time: LocalizedTime,
 ) : SpigotCommand<WarpsCommand.Args> {
@@ -64,7 +64,7 @@ class WarpsCommand(
             Args.Command.List ->
                 WarpListCommand(
                     warpRepository = warpRepository,
-                    itemsPerPage = config.get().warps.itemsPerPage,
+                    itemsPerPage = remoteConfig.latest.config.warps.itemsPerPage,
                 ).run(
                     sender = sender,
                     args =

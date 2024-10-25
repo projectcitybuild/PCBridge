@@ -1,11 +1,12 @@
-package com.projectcitybuild.pcbridge.features.bans.events
+package com.projectcitybuild.pcbridge.core.remoteconfig.events
 
-import com.projectcitybuild.pcbridge.http.models.IPBan
+import com.projectcitybuild.pcbridge.http.models.RemoteConfigVersion
 import org.bukkit.event.Event
 import org.bukkit.event.HandlerList
 
-class IPBanRequestedEvent(
-    val ban: IPBan,
+class RemoteConfigUpdatedEvent(
+    val prev: RemoteConfigVersion?,
+    val next: RemoteConfigVersion,
 ) : Event() {
     override fun getHandlers(): HandlerList {
         return HANDLERS

@@ -2,8 +2,8 @@ package com.projectcitybuild.pcbridge
 
 import com.github.shynixn.mccoroutine.bukkit.minecraftDispatcher
 import com.google.gson.reflect.TypeToken
-import com.projectcitybuild.pcbridge.core.config.Config
-import com.projectcitybuild.pcbridge.core.config.JsonStorage
+import com.projectcitybuild.pcbridge.core.localconfig.LocalConfig
+import com.projectcitybuild.pcbridge.core.localconfig.JsonStorage
 import com.projectcitybuild.pcbridge.core.database.DatabaseSession
 import com.projectcitybuild.pcbridge.core.database.DatabaseSource
 import com.projectcitybuild.pcbridge.core.datetime.DateTimeFormatter
@@ -11,8 +11,9 @@ import com.projectcitybuild.pcbridge.core.datetime.LocalizedTime
 import com.projectcitybuild.pcbridge.core.errors.SentryReporter
 import com.projectcitybuild.pcbridge.core.permissions.Permissions
 import com.projectcitybuild.pcbridge.core.permissions.adapters.LuckPermsPermissions
-import com.projectcitybuild.pcbridge.core.state.Store
-import com.projectcitybuild.pcbridge.data.PluginConfig
+import com.projectcitybuild.pcbridge.core.remoteconfig.services.RemoteConfig
+import com.projectcitybuild.pcbridge.core.store.Store
+import com.projectcitybuild.pcbridge.data.LocalConfigKeyValues
 import com.projectcitybuild.pcbridge.features.announcements.listeners.AnnouncementEnableListener
 import com.projectcitybuild.pcbridge.features.announcements.repositories.AnnouncementRepository
 import com.projectcitybuild.pcbridge.features.bans.actions.AuthorizeConnection
@@ -153,22 +154,22 @@ private fun Module.spigot(plugin: JavaPlugin) {
 
 private fun Module.core() {
     single {
-        Config(
+        LocalConfig(
             jsonStorage =
-                JsonStorage(
-                    file =
-                        get<JavaPlugin>()
-                            .dataFolder
-                            .resolve("config.json"),
-                    typeToken = object : TypeToken<PluginConfig>() {},
-                ),
+            JsonStorage(
+                file =
+                get<JavaPlugin>()
+                    .dataFolder
+                    .resolve("config.json"),
+                typeToken = object : TypeToken<LocalConfigKeyValues>() {},
+            ),
         )
     }
 
     single {
         DatabaseSession().apply {
-            val configProvider = get<Config>()
-            val config = configProvider.get()
+            val localConfigProvider = get<LocalConfig>()
+            val config = localConfigProvider.get()
             connect(DatabaseSource.fromConfig(config))
         }
     } withOptions {
@@ -178,10 +179,10 @@ private fun Module.core() {
 
     single {
         SentryReporter(
-            config = get(),
+            localConfig = get(),
         ).apply {
-            val configProvider = get<Config>()
-            val config = configProvider.get()
+            val localConfigProvider = get<LocalConfig>()
+            val config = localConfigProvider.get()
             if (config.errorReporting.isSentryEnabled) {
                 start()
             }
@@ -191,7 +192,7 @@ private fun Module.core() {
     }
 
     factory {
-        val config = get<Config>().get()
+        val config = get<RemoteConfig>().latest.config
         val zoneId = ZoneId.of(config.localization.timeZone)
 
         LocalizedTime(
@@ -200,7 +201,7 @@ private fun Module.core() {
     }
 
     factory {
-        val config = get<Config>().get()
+        val config = get<RemoteConfig>().latest.config
 
         DateTimeFormatter(
             locale =
@@ -215,16 +216,23 @@ private fun Module.core() {
     }
 
     single { Store() }
+
+    single {
+        RemoteConfig(
+            configHttpService = get<HttpService>().config,
+            eventBroadcaster = get(),
+        )
+    }
 }
 
 private fun Module.webServer() {
     single {
-        val config = get<Config>().get()
+        val localConfig = get<LocalConfig>().get()
 
         HttpServer(
             config = HttpServerConfig(
-                authToken = config.webServer.token,
-                port = config.webServer.port,
+                authToken = localConfig.webServer.token,
+                port = localConfig.webServer.port,
             ),
             delegate = WebServerDelegate(
                 eventBroadcaster = get(),
@@ -235,12 +243,12 @@ private fun Module.webServer() {
 
 private fun Module.http() {
     single {
-        val config = get<Config>().get()
+        val localConfig = get<LocalConfig>().get()
 
         HttpService(
-            authToken = config.api.token,
-            baseURL = config.api.baseUrl,
-            withLogging = config.api.isLoggingEnabled,
+            authToken = localConfig.api.token,
+            baseURL = localConfig.api.baseUrl,
+            withLogging = localConfig.api.isLoggingEnabled,
         )
     }
 }
@@ -249,7 +257,7 @@ private fun Module.integrations() {
     single {
         DynmapIntegration(
             plugin = get(),
-            config = get(),
+            remoteConfig = get(),
             sentry = get(),
             warpRepository = get(),
         )
@@ -270,7 +278,7 @@ private fun Module.integrations() {
 private fun Module.announcements() {
     single {
         AnnouncementRepository(
-            config = get(),
+            remoteConfig = get(),
             store = get(),
         )
     }
@@ -278,7 +286,7 @@ private fun Module.announcements() {
     factory {
         AnnouncementEnableListener(
             announcementRepository = get(),
-            config = get(),
+            remoteConfig = get(),
             timer = get(),
             server = get(),
             plugin = get(),
@@ -307,7 +315,7 @@ private fun Module.warps() {
     factory {
         WarpsCommand(
             warpRepository = get(),
-            config = get(),
+            remoteConfig = get(),
             server = get(),
             time = get(),
         )
@@ -323,13 +331,13 @@ private fun Module.joinMessages() {
 
     factory {
         AnnounceJoinListener(
-            config = get(),
+            remoteConfig = get(),
         )
     }
 
     factory {
         AnnounceQuitListener(
-            config = get(),
+            remoteConfig = get(),
             store = get(),
             time = get(),
         )
@@ -337,7 +345,7 @@ private fun Module.joinMessages() {
 
     factory {
         FirstTimeJoinListener(
-            config = get(),
+            remoteConfig = get(),
             server = get(),
             playerConfigRepository = get(),
             time = get(),
@@ -346,7 +354,7 @@ private fun Module.joinMessages() {
 
     factory {
         ServerOverviewJoinListener(
-            config = get(),
+            remoteConfig = get(),
         )
     }
 }
@@ -435,7 +443,7 @@ private fun Module.chat() {
     factory {
         ChatBadgeRepository(
             store = get(),
-            config = get(),
+            remoteConfig = get(),
             badgeFormatter = get(),
             badgeCache = get(named("badge_cache")),
         )
@@ -444,7 +452,7 @@ private fun Module.chat() {
     factory {
         ChatGroupRepository(
             permissions = get(),
-            config = get(),
+            localConfig = get(),
             chatGroupFormatter = get(),
             groupCache = get(named("group_cache")),
         )
@@ -533,7 +541,7 @@ private fun Module.groups() {
 
     factory {
         SyncRepository(
-            config = get(),
+            localConfig = get(),
         )
     }
 

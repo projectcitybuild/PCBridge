@@ -1,8 +1,8 @@
 package com.projectcitybuild.pcbridge.features.joinmessages.listeners
 
-import com.projectcitybuild.pcbridge.core.config.Config
 import com.projectcitybuild.pcbridge.core.datetime.LocalizedTime
 import com.projectcitybuild.pcbridge.core.logger.log
+import com.projectcitybuild.pcbridge.core.remoteconfig.services.RemoteConfig
 import com.projectcitybuild.pcbridge.features.joinmessages.repositories.PlayerConfigRepository
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.MiniMessage
@@ -16,7 +16,7 @@ import org.bukkit.event.player.PlayerJoinEvent
 class FirstTimeJoinListener(
     private val server: Server,
     private val playerConfigRepository: PlayerConfigRepository,
-    private val config: Config,
+    private val remoteConfig: RemoteConfig,
     private val time: LocalizedTime,
 ) : Listener {
     @EventHandler(priority = EventPriority.MONITOR)
@@ -32,9 +32,10 @@ class FirstTimeJoinListener(
 
         log.debug { "Sending first-time welcome message for ${event.player.name}" }
 
+        val config = remoteConfig.latest.config
         val message =
             MiniMessage.miniMessage().deserialize(
-                config.get().messages.firstTimeJoin,
+                config.messages.firstTimeJoin,
                 Placeholder.component("name", Component.text(event.player.name)),
             )
         server.onlinePlayers

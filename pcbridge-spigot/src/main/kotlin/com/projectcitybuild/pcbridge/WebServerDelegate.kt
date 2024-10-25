@@ -3,8 +3,8 @@ package com.projectcitybuild.pcbridge
 import com.projectcitybuild.pcbridge.features.bans.events.IPBanRequestedEvent
 import com.projectcitybuild.pcbridge.features.bans.events.UUIDBanRequestedEvent
 import com.projectcitybuild.pcbridge.features.groups.events.PlayerSyncRequestedEvent
-import com.projectcitybuild.pcbridge.http.responses.IPBan
-import com.projectcitybuild.pcbridge.http.responses.PlayerBan
+import com.projectcitybuild.pcbridge.http.models.IPBan
+import com.projectcitybuild.pcbridge.http.models.PlayerBan
 import com.projectcitybuild.pcbridge.support.spigot.SpigotEventBroadcaster
 import com.projectcitybuild.pcbridge.webserver.HttpServerDelegate
 import java.util.UUID

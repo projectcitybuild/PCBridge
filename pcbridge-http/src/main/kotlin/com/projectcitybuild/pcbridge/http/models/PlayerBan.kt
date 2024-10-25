@@ -1,4 +1,4 @@
-package com.projectcitybuild.pcbridge.http.responses
+package com.projectcitybuild.pcbridge.http.models
 
 import com.google.gson.annotations.SerializedName
 import com.projectcitybuild.pcbridge.http.serialization.serializable.LocalDateTimeSerializer

@@ -2,8 +2,8 @@ package com.projectcitybuild.pcbridge.features.groups.actions
 
 import com.projectcitybuild.pcbridge.core.permissions.Permissions
 import com.projectcitybuild.pcbridge.features.groups.repositories.SyncRepository
-import com.projectcitybuild.pcbridge.http.responses.DonationPerk
-import com.projectcitybuild.pcbridge.http.responses.Group
+import com.projectcitybuild.pcbridge.http.models.DonationPerk
+import com.projectcitybuild.pcbridge.http.models.Group
 import java.util.UUID
 
 class SyncPlayerGroups(

@@ -1,7 +1,7 @@
 package com.projectcitybuild.pcbridge.webserver
 
-import com.projectcitybuild.pcbridge.http.responses.IPBan
-import com.projectcitybuild.pcbridge.http.responses.PlayerBan
+import com.projectcitybuild.pcbridge.http.models.IPBan
+import com.projectcitybuild.pcbridge.http.models.PlayerBan
 import com.projectcitybuild.pcbridge.http.serialization.gson.LocalDateTimeTypeAdapter
 import io.ktor.http.HttpStatusCode
 import io.ktor.serialization.gson.gson

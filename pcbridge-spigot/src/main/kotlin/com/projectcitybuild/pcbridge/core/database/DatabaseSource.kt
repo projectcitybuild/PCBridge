@@ -1,6 +1,6 @@
 package com.projectcitybuild.pcbridge.core.database
 
-import com.projectcitybuild.pcbridge.data.PluginConfig
+import com.projectcitybuild.pcbridge.data.LocalConfigKeyValues
 
 data class DatabaseSource(
     val hostName: String,
@@ -10,7 +10,7 @@ data class DatabaseSource(
     val password: String,
 ) {
     companion object {
-        fun fromConfig(config: PluginConfig) =
+        fun fromConfig(config: LocalConfigKeyValues) =
             DatabaseSource(
                 hostName = config.database.hostName,
                 port = config.database.port,

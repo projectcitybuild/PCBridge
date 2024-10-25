@@ -1,9 +1,9 @@
-package com.projectcitybuild.pcbridge.core.state
+package com.projectcitybuild.pcbridge.core.store
 
-import com.projectcitybuild.pcbridge.http.responses.Account
-import com.projectcitybuild.pcbridge.http.responses.Badge
-import com.projectcitybuild.pcbridge.http.responses.DonationPerk
-import com.projectcitybuild.pcbridge.http.responses.PlayerData
+import com.projectcitybuild.pcbridge.http.models.Account
+import com.projectcitybuild.pcbridge.http.models.Badge
+import com.projectcitybuild.pcbridge.http.models.DonationPerk
+import com.projectcitybuild.pcbridge.http.models.PlayerData
 import com.projectcitybuild.pcbridge.http.serialization.serializable.LocalDateTimeSerializer
 import com.projectcitybuild.pcbridge.http.serialization.serializable.UUIDSerializer
 import kotlinx.serialization.Serializable

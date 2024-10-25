@@ -1,6 +1,6 @@
 package com.projectcitybuild.pcbridge.features.chat.repositories
 
-import com.projectcitybuild.pcbridge.core.config.Config
+import com.projectcitybuild.pcbridge.core.localconfig.LocalConfig
 import com.projectcitybuild.pcbridge.core.permissions.Permissions
 import com.projectcitybuild.pcbridge.features.chat.ChatGroupFormatter
 import com.projectcitybuild.pcbridge.features.chat.ChatGroupType
@@ -9,7 +9,7 @@ import java.util.UUID
 
 class ChatGroupRepository(
     private val permissions: Permissions,
-    private val config: Config,
+    private val localConfig: LocalConfig,
     private val chatGroupFormatter: ChatGroupFormatter,
     private val groupCache: Cache<UUID, ChatGroupFormatter.Aggregate>,
 ) {
@@ -34,9 +34,9 @@ class ChatGroupRepository(
                     map
                 },
                 groupDisplayPriorities = mapOf(
-                    Pair(ChatGroupType.TRUST, config.get().groups.displayPriority.trust),
-                    Pair(ChatGroupType.BUILD, config.get().groups.displayPriority.builder),
-                    Pair(ChatGroupType.DONOR, config.get().groups.displayPriority.donor),
+                    Pair(ChatGroupType.TRUST, localConfig.get().groups.displayPriority.trust),
+                    Pair(ChatGroupType.BUILD, localConfig.get().groups.displayPriority.builder),
+                    Pair(ChatGroupType.DONOR, localConfig.get().groups.displayPriority.donor),
                 ),
                 suffix = permissions.getUserSuffix(playerUUID),
                 prefix = permissions.getUserPrefix(playerUUID),

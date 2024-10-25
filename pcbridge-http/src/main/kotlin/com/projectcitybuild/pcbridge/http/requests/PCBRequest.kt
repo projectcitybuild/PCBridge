@@ -1,6 +1,7 @@
 package com.projectcitybuild.pcbridge.http.requests
 
-import com.projectcitybuild.pcbridge.http.responses.PlayerData
+import com.projectcitybuild.pcbridge.http.models.PlayerData
+import com.projectcitybuild.pcbridge.http.models.RemoteConfigVersion
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
@@ -52,4 +53,11 @@ internal interface PCBRequest {
         @Field(value = "uuid") playerUUID: String,
         @Field(value = "alias") playerName: String,
     )
+
+    /**
+     * Fetches the latest Minecraft config
+     */
+    @POST("v2/minecraft/config")
+    @FormUrlEncoded
+    suspend fun getConfig(): RemoteConfigVersion
 }
