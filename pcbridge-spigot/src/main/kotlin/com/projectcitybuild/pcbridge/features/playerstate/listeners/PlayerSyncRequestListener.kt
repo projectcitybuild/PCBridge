@@ -2,8 +2,8 @@ package com.projectcitybuild.pcbridge.features.playerstate.listeners
 
 import com.projectcitybuild.pcbridge.core.datetime.LocalizedTime
 import com.projectcitybuild.pcbridge.core.logger.log
-import com.projectcitybuild.pcbridge.core.state.PlayerState
-import com.projectcitybuild.pcbridge.core.state.Store
+import com.projectcitybuild.pcbridge.core.store.PlayerState
+import com.projectcitybuild.pcbridge.core.store.Store
 import com.projectcitybuild.pcbridge.features.bans.repositories.PlayerRepository
 import com.projectcitybuild.pcbridge.features.playerstate.events.PlayerStateUpdatedEvent
 import com.projectcitybuild.pcbridge.features.groups.events.PlayerSyncRequestedEvent
@@ -32,7 +32,7 @@ class PlayerSyncRequestListener(
 
         val playerData = playerRepository.get(
             playerUUID = matchingPlayer.uniqueId,
-            ip = matchingPlayer.address.address,
+            ip = matchingPlayer.address?.address,
         )
         val playerState = PlayerState.fromPlayerData(
             playerData,

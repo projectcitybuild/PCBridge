@@ -1,6 +1,6 @@
 package com.projectcitybuild.pcbridge.features.bans.events
 
-import com.projectcitybuild.pcbridge.http.responses.PlayerData
+import com.projectcitybuild.pcbridge.http.models.PlayerData
 import org.bukkit.event.Event
 import org.bukkit.event.HandlerList
 import java.util.UUID

@@ -1,4 +1,4 @@
-package com.projectcitybuild.pcbridge.core.config
+package com.projectcitybuild.pcbridge.core.localconfig
 
 import com.google.gson.FieldNamingPolicy
 import com.google.gson.GsonBuilder

@@ -1,6 +1,6 @@
 package com.projectcitybuild.pcbridge.features.chat
 
-import com.projectcitybuild.pcbridge.http.responses.Badge
+import com.projectcitybuild.pcbridge.http.models.Badge
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.format.NamedTextColor

@@ -1,17 +1,17 @@
 package com.projectcitybuild.pcbridge.features.groups.repositories
 
-import com.projectcitybuild.pcbridge.core.config.Config
+import com.projectcitybuild.pcbridge.core.localconfig.LocalConfig
 import com.projectcitybuild.pcbridge.core.logger.log
-import com.projectcitybuild.pcbridge.http.responses.DonationPerk
+import com.projectcitybuild.pcbridge.http.models.DonationPerk
 
 class SyncRepository(
-    private val config: Config,
+    private val localConfig: LocalConfig,
 ) {
     fun getDonorTiers(perks: List<DonationPerk>): List<String> {
         return perks.mapNotNull { donorPerk ->
             val tierName = donorPerk.donationTier.name
 
-            val groupNames = config.get().groups.donorTierGroupNames
+            val groupNames = localConfig.get().groups.donorTierGroupNames
             when (tierName) {
                 "copper" -> groupNames.copper
                 "iron" -> groupNames.iron

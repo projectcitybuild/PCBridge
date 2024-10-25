@@ -1,4 +1,4 @@
-package com.projectcitybuild.pcbridge.http.services.pcb
+package com.projectcitybuild.pcbridge.http.services
 
 import com.projectcitybuild.pcbridge.http.parsing.ResponseParser
 import com.projectcitybuild.pcbridge.http.pcb

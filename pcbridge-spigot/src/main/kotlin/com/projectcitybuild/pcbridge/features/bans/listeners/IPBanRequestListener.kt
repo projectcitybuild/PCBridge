@@ -19,7 +19,7 @@ class IPBanRequestListener(
     @EventHandler
     fun onBanRequested(event: IPBanRequestedEvent) {
         val matchingPlayer = server.onlinePlayers.firstOrNull {
-            Sanitizer.sanitizedIP(it.address.address.toString()) == Sanitizer.sanitizedIP(event.ban.ipAddress)
+            Sanitizer.sanitizedIP(it.address?.address.toString()) == Sanitizer.sanitizedIP(event.ban.ipAddress)
         }
         if (matchingPlayer == null) {
             log.info { "Skipping ban fulfillment, ip address (${event.ban.ipAddress}) not found" }

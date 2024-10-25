@@ -1,20 +1,21 @@
 package com.projectcitybuild.pcbridge.webserver
 
-import com.projectcitybuild.pcbridge.http.responses.IPBan
-import com.projectcitybuild.pcbridge.http.responses.PlayerBan
+import com.projectcitybuild.pcbridge.http.models.IPBan
+import com.projectcitybuild.pcbridge.http.models.PlayerBan
+import com.projectcitybuild.pcbridge.http.models.RemoteConfigVersion
 import com.projectcitybuild.pcbridge.http.serialization.gson.LocalDateTimeTypeAdapter
 import io.ktor.http.HttpStatusCode
 import io.ktor.serialization.gson.gson
-import io.ktor.server.application.call
 import io.ktor.server.application.install
 import io.ktor.server.auth.Authentication
 import io.ktor.server.auth.UserIdPrincipal
 import io.ktor.server.auth.authenticate
 import io.ktor.server.auth.bearer
+import io.ktor.server.engine.EmbeddedServer
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.server.netty.NettyApplicationEngine
-import io.ktor.server.plugins.callloging.CallLogging
+import io.ktor.server.plugins.calllogging.CallLogging
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
@@ -30,13 +31,14 @@ interface HttpServerDelegate {
     suspend fun syncPlayer(uuid: UUID)
     suspend fun banPlayer(ban: PlayerBan)
     suspend fun banIP(ban: IPBan)
+    suspend fun updateConfig(config: RemoteConfigVersion)
 }
 
 class HttpServer(
     private val config: HttpServerConfig,
     private val delegate: HttpServerDelegate,
 ) {
-    private var server: NettyApplicationEngine? = null
+    private var server: EmbeddedServer<NettyApplicationEngine, NettyApplicationEngine.Configuration>? = null
 
     private val log
         get() = LoggerFactory.getLogger("PCBridge.WebServer")
@@ -52,7 +54,7 @@ class HttpServer(
         server?.stop(gracePeriodMillis = 0, timeoutMillis = 0)
         server = embeddedServer(Netty, port = config.port) {
             install(CallLogging) {
-                level = Level.INFO
+                level = Level.INFO // Logs calls as info level
             }
             install(Authentication) {
                 bearer("token") {
@@ -115,6 +117,18 @@ class HttpServer(
 
                         call.application.environment.log.info("Banning ip: ${ban.ipAddress}")
                         delegate.banIP(ban)
+                        call.respond(HttpStatusCode.OK)
+                    }
+                    post("events/config") {
+                        val config = try {
+                            call.receive<RemoteConfigVersion>()
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                            throw e
+                        }
+
+                        call.application.environment.log.info("Received config version ${config.version}")
+                        delegate.updateConfig(config)
                         call.respond(HttpStatusCode.OK)
                     }
                 }

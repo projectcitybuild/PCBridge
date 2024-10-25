@@ -1,17 +1,17 @@
 package com.projectcitybuild.pcbridge.core.errors
 
-import com.projectcitybuild.pcbridge.core.config.Config
+import com.projectcitybuild.pcbridge.core.localconfig.LocalConfig
 import com.projectcitybuild.pcbridge.core.logger.log
 import io.sentry.Sentry
 
 class SentryReporter(
-    private val config: Config,
+    private val localConfig: LocalConfig,
 ) {
     private var started = false
 
     fun start() {
         Sentry.init { options ->
-            options.dsn = config.get().errorReporting.sentryDsn
+            options.dsn = localConfig.get().errorReporting.sentryDsn
         }
         started = true
         log.info { "Sentry error reporting enabled" }
