@@ -89,7 +89,7 @@ class DynmapIntegration(
             markerAPI.getMarkerIcon(iconName)
                 ?: throw DynmapMarkerIconNotFoundException()
 
-        warpRepository.all(limit = 0).items.forEach { warp ->
+        warpRepository.all().forEach { warp ->
             warpMarkerSet.createMarker(
                 "warp.${warp.name}",
                 warp.name,

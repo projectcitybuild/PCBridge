@@ -4,7 +4,7 @@ import com.projectcitybuild.pcbridge.core.localconfig.LocalConfig
 import com.projectcitybuild.pcbridge.core.logger.log
 import com.projectcitybuild.pcbridge.http.models.DonationPerk
 
-class SyncRepository(
+class GroupRepository(
     private val localConfig: LocalConfig,
 ) {
     fun getDonorTiers(perks: List<DonationPerk>): List<String> {

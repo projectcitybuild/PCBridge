@@ -48,7 +48,7 @@ import com.projectcitybuild.pcbridge.features.staffchat.commands.StaffChatComman
 import com.projectcitybuild.pcbridge.features.groups.actions.SyncPlayerGroups
 import com.projectcitybuild.pcbridge.features.groups.commands.SyncCommand
 import com.projectcitybuild.pcbridge.features.groups.listener.SyncRankListener
-import com.projectcitybuild.pcbridge.features.groups.repositories.SyncRepository
+import com.projectcitybuild.pcbridge.features.groups.repositories.GroupRepository
 import com.projectcitybuild.pcbridge.features.playerstate.listeners.PlayerSyncRequestListener
 import com.projectcitybuild.pcbridge.features.telemetry.listeners.TelemetryPlayerConnectListener
 import com.projectcitybuild.pcbridge.features.telemetry.repositories.TelemetryRepository
@@ -158,10 +158,8 @@ private fun Module.spigot(plugin: JavaPlugin) {
 private fun Module.core() {
     single {
         LocalConfig(
-            jsonStorage =
-            JsonStorage(
-                file =
-                get<JavaPlugin>()
+            jsonStorage = JsonStorage(
+                file = get<JavaPlugin>()
                     .dataFolder
                     .resolve("config.json"),
                 typeToken = object : TypeToken<LocalConfigKeyValues>() {},
@@ -314,10 +312,6 @@ private fun Module.warps() {
     single {
         WarpRepository(
             db = get(),
-            cache =
-                Cache.Builder<String, Warp>()
-                    .expireAfterWrite(30.minutes)
-                    .build(),
         )
     }
 
@@ -518,9 +512,6 @@ private fun Module.chat() {
 
 private fun Module.register() {
     factory {
-
-    }
-    factory {
         RegisterCommand(
             registerHttpService = get<HttpService>().register,
         )
@@ -558,12 +549,12 @@ private fun Module.groups() {
     factory {
         SyncPlayerGroups(
             permissions = get(),
-            syncRepository = get(),
+            groupRepository = get(),
         )
     }
 
     factory {
-        SyncRepository(
+        GroupRepository(
             localConfig = get(),
         )
     }
