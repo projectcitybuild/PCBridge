@@ -23,7 +23,7 @@ interface SpigotCommand<T> {
         sender: CommandSender,
         command: Command,
         alias: String,
-        args: T,
+        args: Array<out String>,
     ): List<String>? = emptyList()
 }
 

@@ -81,12 +81,12 @@ class SpigotCommandRegistry(
                     sender: CommandSender,
                     command: Command,
                     alias: String,
-                    args: Array<out String>
+                    args: Array<out String>,
                 ): List<String>? = handler.tabComplete(
                     sender,
                     command,
                     alias,
-                    argsParser.parse(args),
+                    args,
                 )
             }
         )

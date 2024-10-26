@@ -23,7 +23,7 @@ class WarpCommand(
 ) : SpigotCommand<WarpCommand.Args> {
     override val label = "warp"
 
-    override val usage = CommandHelpBuilder(usage = "/warp <name>") // TODO
+    override val usage = CommandHelpBuilder(usage = "/warp <name>")
 
     override suspend fun run(
         sender: CommandSender,
@@ -71,12 +71,15 @@ class WarpCommand(
         sender: CommandSender,
         command: Command,
         alias: String,
-        args: Args
+        args: Array<out String>,
     ): List<String>? {
-        if (args.warpName.isEmpty()) return null
+        val warps = warpRepository.all()
 
-        return warpRepository.all()
-            .filter { it.name.lowercase().startsWith(args.warpName.lowercase()) }
+        if (args.isEmpty()) {
+            return warps.map { it.name }
+        }
+        return warps
+            .filter { it.name.lowercase().startsWith(args.first().lowercase()) }
             .map { it.name }
     }
 

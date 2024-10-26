@@ -122,39 +122,48 @@ class WarpsCommand(
         sender: CommandSender,
         command: Command,
         alias: String,
-        args: Args,
+        args: Array<out String>,
     ): List<String>? {
-        when (args.command) {
-            Args.Command.List -> return null
-
-            Args.Command.Create -> return null
-
-            Args.Command.Delete -> {
-                if (args.remainingArgs.isEmpty() || args.remainingArgs.size > 1) return null
-                val name = args.remainingArgs.first()
-
+        if (args.isEmpty() || args.first().isEmpty()) {
+            return if (sender.hasPermission("pcbridge.warp.manage")) {
+                listOf("create", "delete", "list", "move", "rename")
+            } else {
+                listOf("list")
+            }
+        }
+        when (args.first()) {
+            "delete" -> {
+                if (args.size != 2) return null
+                val name = args[1]
+                if (name.isEmpty()) {
+                    return warpRepository.all().map { it.name }
+                }
+                return warpRepository.all()
+                    .filter { it.name.lowercase().startsWith(name.lowercase()) }
+                    .map { it.name }
+            }
+            "move" -> {
+                if (args.size != 2) return null
+                val name = args[1]
+                if (name.isEmpty()) {
+                    return warpRepository.all().map { it.name }
+                }
+                return warpRepository.all()
+                    .filter { it.name.lowercase().startsWith(name.lowercase()) }
+                    .map { it.name }
+            }
+            "rename" -> {
+                if (args.size != 2) return null
+                val name = args[1]
+                if (name.isEmpty()) {
+                    return warpRepository.all().map { it.name }
+                }
                 return warpRepository.all()
                     .filter { it.name.lowercase().startsWith(name.lowercase()) }
                     .map { it.name }
             }
 
-            Args.Command.Move -> {
-                if (args.remainingArgs.isEmpty() || args.remainingArgs.size > 1) return null
-                val name = args.remainingArgs.first()
-
-                return warpRepository.all()
-                    .filter { it.name.lowercase().startsWith(name.lowercase()) }
-                    .map { it.name }
-            }
-
-            Args.Command.Rename -> {
-                if (args.remainingArgs.isEmpty() || args.remainingArgs.size > 1) return null
-                val name = args.remainingArgs.first()
-
-                return warpRepository.all()
-                    .filter { it.name.lowercase().startsWith(name.lowercase()) }
-                    .map { it.name }
-            }
+            else -> return null
         }
     }
 
