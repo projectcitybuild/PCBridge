@@ -11,6 +11,7 @@ import com.projectcitybuild.pcbridge.core.datetime.LocalizedTime
 import com.projectcitybuild.pcbridge.core.errors.SentryReporter
 import com.projectcitybuild.pcbridge.core.permissions.Permissions
 import com.projectcitybuild.pcbridge.core.permissions.adapters.LuckPermsPermissions
+import com.projectcitybuild.pcbridge.core.remoteconfig.commands.ConfigCommand
 import com.projectcitybuild.pcbridge.core.remoteconfig.services.RemoteConfig
 import com.projectcitybuild.pcbridge.core.store.Store
 import com.projectcitybuild.pcbridge.data.LocalConfigKeyValues
@@ -222,6 +223,12 @@ private fun Module.core() {
         RemoteConfig(
             configHttpService = get<HttpService>().config,
             eventBroadcaster = get(),
+        )
+    }
+
+    factory {
+        ConfigCommand(
+            remoteConfig = get(),
         )
     }
 }

@@ -3,6 +3,7 @@ package com.projectcitybuild.pcbridge
 import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
 import com.projectcitybuild.pcbridge.core.errors.SentryReporter
 import com.projectcitybuild.pcbridge.core.errors.trace
+import com.projectcitybuild.pcbridge.core.remoteconfig.commands.ConfigCommand
 import com.projectcitybuild.pcbridge.core.remoteconfig.services.RemoteConfig
 import com.projectcitybuild.pcbridge.features.announcements.listeners.AnnouncementConfigListener
 import com.projectcitybuild.pcbridge.features.announcements.listeners.AnnouncementEnableListener
@@ -123,6 +124,10 @@ private class Lifecycle : KoinComponent {
                 register(
                     handler = get<SyncCommand>(),
                     argsParser = SyncCommand.Args.Parser(),
+                )
+                register(
+                    handler = get<ConfigCommand>(),
+                    argsParser = ConfigCommand.Args.Parser(),
                 )
             }
             listenerRegistry.register(

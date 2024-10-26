@@ -19,6 +19,8 @@ commands:
     permission: pcbridge.ban.banip
   code:
     permission: pcbridge.register.code
+  config:
+    permission: pcbridge.config.reload
   invisframe:
     permission: pcbridge.build.invisframe
   nv:
