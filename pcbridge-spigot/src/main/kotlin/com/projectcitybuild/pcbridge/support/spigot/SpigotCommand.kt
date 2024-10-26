@@ -1,6 +1,7 @@
 package com.projectcitybuild.pcbridge.support.spigot
 
 import com.projectcitybuild.pcbridge.support.messages.CommandHelpBuilder
+import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 
 interface SpigotCommand<T> {
@@ -17,6 +18,13 @@ interface SpigotCommand<T> {
         sender: CommandSender,
         args: T,
     )
+
+    suspend fun tabComplete(
+        sender: CommandSender,
+        command: Command,
+        alias: String,
+        args: T,
+    ): List<String>? = emptyList()
 }
 
 /**

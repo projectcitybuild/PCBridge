@@ -15,6 +15,7 @@ import com.projectcitybuild.pcbridge.support.spigot.SpigotCommand
 import com.projectcitybuild.pcbridge.support.spigot.UnauthorizedCommandException
 import com.projectcitybuild.pcbridge.support.tryValueOf
 import org.bukkit.Server
+import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 
 class WarpsCommand(
@@ -117,6 +118,46 @@ class WarpsCommand(
         }
     }
 
+    override suspend fun tabComplete(
+        sender: CommandSender,
+        command: Command,
+        alias: String,
+        args: Args,
+    ): List<String>? {
+        when (args.command) {
+            Args.Command.List -> return null
+
+            Args.Command.Create -> return null
+
+            Args.Command.Delete -> {
+                if (args.remainingArgs.isEmpty() || args.remainingArgs.size > 1) return null
+                val name = args.remainingArgs.first()
+
+                return warpRepository.all()
+                    .filter { it.name.lowercase().startsWith(name.lowercase()) }
+                    .map { it.name }
+            }
+
+            Args.Command.Move -> {
+                if (args.remainingArgs.isEmpty() || args.remainingArgs.size > 1) return null
+                val name = args.remainingArgs.first()
+
+                return warpRepository.all()
+                    .filter { it.name.lowercase().startsWith(name.lowercase()) }
+                    .map { it.name }
+            }
+
+            Args.Command.Rename -> {
+                if (args.remainingArgs.isEmpty() || args.remainingArgs.size > 1) return null
+                val name = args.remainingArgs.first()
+
+                return warpRepository.all()
+                    .filter { it.name.lowercase().startsWith(name.lowercase()) }
+                    .map { it.name }
+            }
+        }
+    }
+
     data class Args(
         val command: Command,
         val remainingArgs: List<String>,
@@ -131,10 +172,9 @@ class WarpsCommand(
 
         class Parser : CommandArgsParser<Args> {
             override fun parse(args: List<String>): Args {
-                if (args.isEmpty()) {
-                    throw BadCommandUsageException()
-                }
-                val command =
+                val command = if (args.isEmpty())
+                    Command.List
+                else
                     tryValueOf<Command>(args[0].replaceFirstChar { it.uppercase() })
                         ?: throw BadCommandUsageException()
 

@@ -12,6 +12,7 @@ import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.Location
 import org.bukkit.Server
+import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerTeleportEvent
@@ -64,6 +65,19 @@ class WarpCommand(
                 .color(NamedTextColor.GRAY)
                 .decorate(TextDecoration.ITALIC),
         )
+    }
+
+    override suspend fun tabComplete(
+        sender: CommandSender,
+        command: Command,
+        alias: String,
+        args: Args
+    ): List<String>? {
+        if (args.warpName.isEmpty()) return null
+
+        return warpRepository.all()
+            .filter { it.name.lowercase().startsWith(args.warpName.lowercase()) }
+            .map { it.name }
     }
 
     data class Args(

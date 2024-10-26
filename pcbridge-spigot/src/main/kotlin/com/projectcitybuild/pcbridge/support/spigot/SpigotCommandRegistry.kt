@@ -75,6 +75,21 @@ class SpigotCommandRegistry(
                 }
             },
         )
+        pluginCommand.setSuspendingTabCompleter(
+            object : SuspendingTabCompleter {
+                override suspend fun onTabComplete(
+                    sender: CommandSender,
+                    command: Command,
+                    alias: String,
+                    args: Array<out String>
+                ): List<String>? = handler.tabComplete(
+                    sender,
+                    command,
+                    alias,
+                    argsParser.parse(args),
+                )
+            }
+        )
         registered.add(label)
 
         if (tabCompleter != null) {
