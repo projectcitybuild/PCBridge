@@ -4,60 +4,56 @@ import com.projectcitybuild.pcbridge.core.database.DatabaseSession
 import com.projectcitybuild.pcbridge.data.Page
 import com.projectcitybuild.pcbridge.data.SerializableLocation
 import com.projectcitybuild.pcbridge.features.warps.Warp
-import io.github.reactivecircus.cache4k.Cache
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.sql.Date.valueOf
 import java.sql.ResultSet
 import kotlin.math.ceil
+import kotlin.math.min
 
 class WarpRepository(
     private val db: DatabaseSession,
-    private val cache: Cache<String, Warp>,
 ) {
-    suspend fun all(
-        limit: Int,
-        page: Int = 1,
-    ): Page<Warp> =
-        withContext(Dispatchers.IO) {
-            check(page >= 1) { "Page must be greater than 0" }
+    private var cache: List<Warp>? = null
 
-            val startIndex = (page - 1) * limit
-            val warpCount =
+    private suspend fun cachedOrFetchAll(): List<Warp> {
+        return cache
+            ?: withContext(Dispatchers.IO) {
                 db.connect { connection ->
-                    connection.prepareStatement("SELECT COUNT(*) AS `count` FROM `warps`")
-                        .use { it.executeQuery() }
-                        .use { it.firstRow()?.getLong("count") }
-                        ?: 0
-                }
-            val warps =
-                db.connect { connection ->
-                    connection.prepareStatement("SELECT * FROM `warps` ORDER BY `name` ASC LIMIT ? OFFSET ?")
-                        .apply {
-                            setInt(1, limit)
-                            setInt(2, startIndex)
-                        }
+                    connection.prepareStatement("SELECT * FROM `warps` ORDER BY `name` ASC")
                         .use { it.executeQuery() }
                         .use { it.mapRows { row -> row.toWarp() } }
                 }
-            return@withContext Page(
-                items = warps,
-                page = page,
-                totalPages = ceil(warpCount.toDouble() / limit.toDouble()).toInt(),
-            )
-        }
-
-    suspend fun get(name: String): Warp? =
-        withContext(Dispatchers.IO) {
-            check(name.isNotEmpty())
-
-            db.connect { connection ->
-                connection.prepareStatement("SELECT * FROM `warps` WHERE `name`=? LIMIT 1")
-                    .apply { setString(1, name) }
-                    .use { it.executeQuery() }
-                    .use { it.firstRow()?.toWarp() }
             }
-        }
+            .also { cache = it }
+    }
+
+    suspend fun all(
+        limit: Int,
+        page: Int = 1,
+    ): Page<Warp> {
+        check(page >= 1) { "Page must be greater than 0" }
+
+        val warps = cachedOrFetchAll()
+
+        val startIndex = (page - 1) * limit
+        val lower = min(warps.size, startIndex) // inclusive
+        val upper = min(warps.size, startIndex + limit) // exclusive
+        val totalPages = ceil(warps.size.toDouble() / limit.toDouble()).toInt()
+
+        return Page(
+            items = if (lower < upper) warps.subList(lower, upper) else emptyList(),
+            page = page,
+            totalPages = totalPages,
+        )
+    }
+
+    suspend fun get(name: String): Warp? {
+        check(name.isNotEmpty())
+
+        return cachedOrFetchAll()
+            .firstOrNull { it.name.lowercase() == name.lowercase() }
+    }
 
     suspend fun create(warp: Warp) =
         withContext(Dispatchers.IO) {
@@ -79,6 +75,7 @@ class WarpRepository(
             check(success) {
                 "Database write operation failed"
             }
+            cache = null
         }
 
     suspend fun delete(name: String) =
@@ -103,6 +100,7 @@ class WarpRepository(
             check(success) {
                 "Database write operation failed: no affected rows"
             }
+            cache = null
         }
 
     suspend fun rename(
@@ -143,6 +141,7 @@ class WarpRepository(
         check(success) {
             "Database write operation failed: no affected rows"
         }
+        cache = null
     }
 
     suspend fun move(
@@ -177,12 +176,8 @@ class WarpRepository(
         check(success) {
             "Database write operation failed: no affected rows"
         }
+        cache = null
     }
-}
-
-private fun ResultSet.firstRow(): ResultSet? {
-    if (next()) return this
-    return null
 }
 
 private fun <T> ResultSet.mapRows(transform: (ResultSet) -> T): List<T> {

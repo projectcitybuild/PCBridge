@@ -1,14 +1,14 @@
 package com.projectcitybuild.pcbridge.features.groups.actions
 
 import com.projectcitybuild.pcbridge.core.permissions.Permissions
-import com.projectcitybuild.pcbridge.features.groups.repositories.SyncRepository
+import com.projectcitybuild.pcbridge.features.groups.repositories.GroupRepository
 import com.projectcitybuild.pcbridge.http.models.DonationPerk
 import com.projectcitybuild.pcbridge.http.models.Group
 import java.util.UUID
 
 class SyncPlayerGroups(
     private val permissions: Permissions,
-    private val syncRepository: SyncRepository,
+    private val groupRepository: GroupRepository,
 ) {
     fun execute(
         playerUUID: UUID,
@@ -20,7 +20,7 @@ class SyncPlayerGroups(
             groups.mapNotNull { it.minecraftName },
         )
         groupSet.addAll(
-            syncRepository.getDonorTiers(donationPerks),
+            groupRepository.getDonorTiers(donationPerks),
         )
         permissions.setUserGroups(playerUUID, groupSet.toList())
     }
