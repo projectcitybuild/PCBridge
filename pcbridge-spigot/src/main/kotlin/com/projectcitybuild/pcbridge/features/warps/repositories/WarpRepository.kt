@@ -1,22 +1,19 @@
 package com.projectcitybuild.pcbridge.features.warps.repositories
 
 import com.projectcitybuild.pcbridge.core.database.DatabaseSession
-import com.projectcitybuild.pcbridge.data.Page
 import com.projectcitybuild.pcbridge.data.SerializableLocation
 import com.projectcitybuild.pcbridge.features.warps.Warp
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.sql.Date.valueOf
 import java.sql.ResultSet
-import kotlin.math.ceil
-import kotlin.math.min
 
 class WarpRepository(
     private val db: DatabaseSession,
 ) {
     private var cache: List<Warp>? = null
 
-    private suspend fun cachedOrFetchAll(): List<Warp> {
+    suspend fun all(): List<Warp> {
         return cache
             ?: withContext(Dispatchers.IO) {
                 db.connect { connection ->
@@ -25,33 +22,13 @@ class WarpRepository(
                         .use { it.mapRows { row -> row.toWarp() } }
                 }
             }
-            .also { cache = it }
-    }
-
-    suspend fun all(
-        limit: Int,
-        page: Int = 1,
-    ): Page<Warp> {
-        check(page >= 1) { "Page must be greater than 0" }
-
-        val warps = cachedOrFetchAll()
-
-        val startIndex = (page - 1) * limit
-        val lower = min(warps.size, startIndex) // inclusive
-        val upper = min(warps.size, startIndex + limit) // exclusive
-        val totalPages = ceil(warps.size.toDouble() / limit.toDouble()).toInt()
-
-        return Page(
-            items = if (lower < upper) warps.subList(lower, upper) else emptyList(),
-            page = page,
-            totalPages = totalPages,
-        )
+                .also { cache = it }
     }
 
     suspend fun get(name: String): Warp? {
         check(name.isNotEmpty())
 
-        return cachedOrFetchAll()
+        return all()
             .firstOrNull { it.name.lowercase() == name.lowercase() }
     }
 
