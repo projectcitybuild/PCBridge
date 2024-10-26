@@ -15,6 +15,7 @@ import com.projectcitybuild.pcbridge.support.spigot.SpigotCommand
 import com.projectcitybuild.pcbridge.support.spigot.UnauthorizedCommandException
 import com.projectcitybuild.pcbridge.support.tryValueOf
 import org.bukkit.Server
+import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 
 class WarpsCommand(
@@ -117,6 +118,55 @@ class WarpsCommand(
         }
     }
 
+    override suspend fun tabComplete(
+        sender: CommandSender,
+        command: Command,
+        alias: String,
+        args: Array<out String>,
+    ): List<String>? {
+        if (args.isEmpty() || args.first().isEmpty()) {
+            return if (sender.hasPermission("pcbridge.warp.manage")) {
+                listOf("create", "delete", "list", "move", "rename")
+            } else {
+                listOf("list")
+            }
+        }
+        when (args.first()) {
+            "delete" -> {
+                if (args.size != 2) return null
+                val name = args[1]
+                if (name.isEmpty()) {
+                    return warpRepository.all().map { it.name }
+                }
+                return warpRepository.all()
+                    .filter { it.name.lowercase().startsWith(name.lowercase()) }
+                    .map { it.name }
+            }
+            "move" -> {
+                if (args.size != 2) return null
+                val name = args[1]
+                if (name.isEmpty()) {
+                    return warpRepository.all().map { it.name }
+                }
+                return warpRepository.all()
+                    .filter { it.name.lowercase().startsWith(name.lowercase()) }
+                    .map { it.name }
+            }
+            "rename" -> {
+                if (args.size != 2) return null
+                val name = args[1]
+                if (name.isEmpty()) {
+                    return warpRepository.all().map { it.name }
+                }
+                return warpRepository.all()
+                    .filter { it.name.lowercase().startsWith(name.lowercase()) }
+                    .map { it.name }
+            }
+
+            else -> return null
+        }
+    }
+
     data class Args(
         val command: Command,
         val remainingArgs: List<String>,
@@ -131,10 +181,9 @@ class WarpsCommand(
 
         class Parser : CommandArgsParser<Args> {
             override fun parse(args: List<String>): Args {
-                if (args.isEmpty()) {
-                    throw BadCommandUsageException()
-                }
-                val command =
+                val command = if (args.isEmpty())
+                    Command.List
+                else
                     tryValueOf<Command>(args[0].replaceFirstChar { it.uppercase() })
                         ?: throw BadCommandUsageException()
 

@@ -12,6 +12,7 @@ import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.Location
 import org.bukkit.Server
+import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerTeleportEvent
@@ -22,7 +23,7 @@ class WarpCommand(
 ) : SpigotCommand<WarpCommand.Args> {
     override val label = "warp"
 
-    override val usage = CommandHelpBuilder(usage = "/warp <name>") // TODO
+    override val usage = CommandHelpBuilder(usage = "/warp <name>")
 
     override suspend fun run(
         sender: CommandSender,
@@ -64,6 +65,22 @@ class WarpCommand(
                 .color(NamedTextColor.GRAY)
                 .decorate(TextDecoration.ITALIC),
         )
+    }
+
+    override suspend fun tabComplete(
+        sender: CommandSender,
+        command: Command,
+        alias: String,
+        args: Array<out String>,
+    ): List<String>? {
+        val warps = warpRepository.all()
+
+        if (args.isEmpty()) {
+            return warps.map { it.name }
+        }
+        return warps
+            .filter { it.name.lowercase().startsWith(args.first().lowercase()) }
+            .map { it.name }
     }
 
     data class Args(
