@@ -93,10 +93,10 @@ class DynmapIntegration(
             warpMarkerSet.createMarker(
                 "warp.${warp.name}",
                 warp.name,
-                warp.location.worldName,
-                warp.location.x,
-                warp.location.y,
-                warp.location.z,
+                warp.name,
+                warp.x,
+                warp.y,
+                warp.z,
                 icon,
                 // TODO: what is this?
                 false,

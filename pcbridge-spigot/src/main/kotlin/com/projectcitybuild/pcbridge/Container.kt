@@ -4,8 +4,6 @@ import com.github.shynixn.mccoroutine.bukkit.minecraftDispatcher
 import com.google.gson.reflect.TypeToken
 import com.projectcitybuild.pcbridge.core.localconfig.LocalConfig
 import com.projectcitybuild.pcbridge.core.localconfig.JsonStorage
-import com.projectcitybuild.pcbridge.core.database.DatabaseSession
-import com.projectcitybuild.pcbridge.core.database.DatabaseSource
 import com.projectcitybuild.pcbridge.core.datetime.DateTimeFormatter
 import com.projectcitybuild.pcbridge.core.datetime.LocalizedTime
 import com.projectcitybuild.pcbridge.core.errors.SentryReporter
@@ -52,7 +50,6 @@ import com.projectcitybuild.pcbridge.features.groups.repositories.GroupRepositor
 import com.projectcitybuild.pcbridge.features.playerstate.listeners.PlayerSyncRequestListener
 import com.projectcitybuild.pcbridge.features.telemetry.listeners.TelemetryPlayerConnectListener
 import com.projectcitybuild.pcbridge.features.telemetry.repositories.TelemetryRepository
-import com.projectcitybuild.pcbridge.features.warps.Warp
 import com.projectcitybuild.pcbridge.features.warps.commands.WarpCommand
 import com.projectcitybuild.pcbridge.features.warps.commands.WarpsCommand
 import com.projectcitybuild.pcbridge.features.warps.repositories.WarpRepository
@@ -165,17 +162,6 @@ private fun Module.core() {
                 typeToken = object : TypeToken<LocalConfigKeyValues>() {},
             ),
         )
-    }
-
-    single {
-        DatabaseSession().apply {
-            val localConfigProvider = get<LocalConfig>()
-            val config = localConfigProvider.get()
-            connect(DatabaseSource.fromConfig(config))
-        }
-    } withOptions {
-        createdAtStart()
-        onClose { it?.disconnect() }
     }
 
     single {
@@ -317,7 +303,7 @@ private fun Module.announcements() {
 private fun Module.warps() {
     single {
         WarpRepository(
-            db = get(),
+            warpHttpService = get<HttpService>().warps
         )
     }
 

@@ -39,7 +39,6 @@ dependencies {
     implementation(kotlin("reflect"))
     implementation("com.github.shynixn.mccoroutine:mccoroutine-bukkit-api:2.15.0")
     implementation("com.github.shynixn.mccoroutine:mccoroutine-bukkit-core:2.15.0")
-    implementation("com.zaxxer:HikariCP:5.0.1")
     implementation("io.sentry:sentry:5.7.4")
     implementation("io.insert-koin:koin-core:3.5.6")
     implementation("io.github.reactivecircus.cache4k:cache4k:0.13.0")

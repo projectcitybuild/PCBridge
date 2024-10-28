@@ -1,8 +1,8 @@
 package com.projectcitybuild.pcbridge.features.warps.commands.warps
 
 import com.projectcitybuild.pcbridge.core.pagination.Paginator
-import com.projectcitybuild.pcbridge.features.warps.Warp
 import com.projectcitybuild.pcbridge.features.warps.repositories.WarpRepository
+import com.projectcitybuild.pcbridge.http.models.Warp
 import com.projectcitybuild.pcbridge.support.messages.CommandHelpBuilder
 import com.projectcitybuild.pcbridge.support.messages.PaginationBuilder
 import com.projectcitybuild.pcbridge.support.spigot.BadCommandUsageException
