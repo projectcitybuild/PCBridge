@@ -6,6 +6,7 @@ import com.projectcitybuild.pcbridge.http.services.ConfigHttpService
 import com.projectcitybuild.pcbridge.http.services.RegisterHttpService
 import com.projectcitybuild.pcbridge.http.services.PlayerHttpService
 import com.projectcitybuild.pcbridge.http.services.TelemetryHttpService
+import com.projectcitybuild.pcbridge.http.services.WarpHttpService
 
 class HttpService(
     private val authToken: String,
@@ -34,4 +35,7 @@ class HttpService(
 
     val telemetry
         get() = TelemetryHttpService(pcbClient, responseParser)
+
+    val warps
+        get() = WarpHttpService(pcbClient, responseParser)
 }

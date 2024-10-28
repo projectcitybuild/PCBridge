@@ -1,6 +1,5 @@
 package com.projectcitybuild.pcbridge.features.warps.commands.warps
 
-import com.projectcitybuild.pcbridge.data.SerializableLocation
 import com.projectcitybuild.pcbridge.features.warps.repositories.WarpRepository
 import com.projectcitybuild.pcbridge.support.messages.CommandHelpBuilder
 import com.projectcitybuild.pcbridge.support.spigot.BadCommandUsageException
@@ -32,7 +31,12 @@ class WarpMoveCommand(
         }
         warpRepository.move(
             name = args.warpName,
-            newLocation = SerializableLocation.fromLocation(player.location),
+            world = player.location.world.name,
+            x = player.location.x,
+            y = player.location.y,
+            z = player.location.z,
+            pitch = player.location.pitch,
+            yaw = player.location.yaw,
         )
         sender.sendMessage(
             Component.text("${args.warpName} warp moved")

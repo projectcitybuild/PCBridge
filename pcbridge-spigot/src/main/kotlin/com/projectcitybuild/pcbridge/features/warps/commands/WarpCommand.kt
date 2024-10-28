@@ -40,18 +40,18 @@ class WarpCommand(
         checkNotNull(warp) {
             "Warp ${args.warpName} not found"
         }
-        val world = server.getWorld(warp.location.worldName)
+        val world = server.getWorld(warp.world)
         checkNotNull(world) {
-            "World $world does not exist"
+            "World ${warp.world} does not exist"
         }
         val location =
             Location(
                 world,
-                warp.location.x,
-                warp.location.y,
-                warp.location.z,
-                warp.location.yaw,
-                warp.location.pitch,
+                warp.x,
+                warp.y,
+                warp.z,
+                warp.yaw,
+                warp.pitch,
             )
         server.pluginManager.callEvent(
             PlayerPreWarpEvent(player),

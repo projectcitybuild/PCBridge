@@ -1,10 +1,9 @@
 package com.projectcitybuild.pcbridge.features.warps.commands.warps
 
 import com.projectcitybuild.pcbridge.core.datetime.LocalizedTime
-import com.projectcitybuild.pcbridge.data.SerializableLocation
-import com.projectcitybuild.pcbridge.features.warps.Warp
 import com.projectcitybuild.pcbridge.features.warps.events.WarpCreateEvent
 import com.projectcitybuild.pcbridge.features.warps.repositories.WarpRepository
+import com.projectcitybuild.pcbridge.http.models.Warp
 import com.projectcitybuild.pcbridge.support.messages.CommandHelpBuilder
 import com.projectcitybuild.pcbridge.support.spigot.BadCommandUsageException
 import com.projectcitybuild.pcbridge.support.spigot.CommandArgsParser
@@ -47,20 +46,16 @@ class WarpCreateCommand(
             "World ${args.worldName} not found"
         }
 
-        val location =
-            SerializableLocation(
-                worldName = world.name,
+        val warp =
+            Warp(
+                id = -1,
+                name = args.warpName,
+                world = world.name,
                 x = args.x ?: player.location.x,
                 y = args.y ?: player.location.y,
                 z = args.z ?: player.location.z,
                 yaw = args.yaw ?: player.location.yaw,
                 pitch = args.pitch ?: player.location.pitch,
-            )
-        val warp =
-            Warp(
-                name = args.warpName,
-                location = location,
-                createdAt = time.now(),
             )
         warpRepository.create(warp)
 
@@ -91,45 +86,29 @@ class WarpCreateCommand(
 
                 return Args(
                     warpName = warpName,
-                    worldName =
-                        remainingArgs
-                            .find { it.startsWith("world:") }
-                            ?.removePrefix("world:"),
-                    x =
-                        "x:".let { prefix ->
-                            remainingArgs
-                                .find { it.startsWith(prefix) }
-                                ?.removePrefix(prefix)
-                                ?.toDoubleOrNull()
-                        },
-                    y =
-                        "y:".let { prefix ->
-                            remainingArgs
-                                .find { it.startsWith(prefix) }
-                                ?.removePrefix(prefix)
-                                ?.toDoubleOrNull()
-                        },
-                    z =
-                        "z:".let { prefix ->
-                            remainingArgs
-                                .find { it.startsWith(prefix) }
-                                ?.removePrefix(prefix)
-                                ?.toDoubleOrNull()
-                        },
-                    yaw =
-                        "yaw:".let { prefix ->
-                            remainingArgs
-                                .find { it.startsWith(prefix) }
-                                ?.removePrefix(prefix)
-                                ?.toFloatOrNull()
-                        },
-                    pitch =
-                        "pitch:".let { prefix ->
-                            remainingArgs
-                                .find { it.startsWith(prefix) }
-                                ?.removePrefix(prefix)
-                                ?.toFloatOrNull()
-                        },
+                    worldName = remainingArgs
+                        .find { it.startsWith("world:") }
+                        ?.removePrefix("world:"),
+                    x = remainingArgs
+                        .find { it.startsWith("x:") }
+                        ?.removePrefix("x:")
+                        ?.toDoubleOrNull(),
+                    y = remainingArgs
+                        .find { it.startsWith("y:") }
+                        ?.removePrefix("y:")
+                        ?.toDoubleOrNull(),
+                    z = remainingArgs
+                        .find { it.startsWith("z:") }
+                        ?.removePrefix("z:")
+                        ?.toDoubleOrNull(),
+                    yaw = remainingArgs
+                        .find { it.startsWith("yaw:") }
+                        ?.removePrefix("yaw:")
+                        ?.toFloatOrNull(),
+                    pitch = remainingArgs
+                        .find { it.startsWith("pitch:") }
+                        ?.removePrefix("pitch:")
+                        ?.toFloatOrNull(),
                 )
             }
         }
