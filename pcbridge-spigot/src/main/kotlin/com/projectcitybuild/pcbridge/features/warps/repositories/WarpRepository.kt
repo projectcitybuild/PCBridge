@@ -82,4 +82,8 @@ class WarpRepository(
         )
         cache = null
     }
+
+    fun invalidate() {
+        cache = null
+    }
 }

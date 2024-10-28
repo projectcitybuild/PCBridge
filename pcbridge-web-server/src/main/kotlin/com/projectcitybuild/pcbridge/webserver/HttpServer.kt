@@ -3,6 +3,7 @@ package com.projectcitybuild.pcbridge.webserver
 import com.projectcitybuild.pcbridge.http.models.IPBan
 import com.projectcitybuild.pcbridge.http.models.PlayerBan
 import com.projectcitybuild.pcbridge.http.models.RemoteConfigVersion
+import com.projectcitybuild.pcbridge.http.models.Warp
 import com.projectcitybuild.pcbridge.http.serialization.gson.LocalDateTimeTypeAdapter
 import io.ktor.http.HttpStatusCode
 import io.ktor.serialization.gson.gson
@@ -32,6 +33,7 @@ interface HttpServerDelegate {
     suspend fun banPlayer(ban: PlayerBan)
     suspend fun banIP(ban: IPBan)
     suspend fun updateConfig(config: RemoteConfigVersion)
+    suspend fun syncWarps(warps: List<Warp>)
 }
 
 class HttpServer(
@@ -82,7 +84,6 @@ class HttpServer(
                             e.printStackTrace()
                             throw e
                         }
-
                         val uuid = try {
                             uuidFromAnyString(body.uuid)
                         } catch (e: Exception) {
@@ -90,7 +91,6 @@ class HttpServer(
                             call.respond(HttpStatusCode.BadRequest, "Invalid UUID")
                             return@post
                         }
-
                         call.application.environment.log.info("Syncing player: $uuid")
                         delegate.syncPlayer(uuid)
                         call.respond(HttpStatusCode.OK)
@@ -102,7 +102,6 @@ class HttpServer(
                             e.printStackTrace()
                             throw e
                         }
-
                         call.application.environment.log.info("Banning player: ${ban.bannedPlayer?.uuid}")
                         delegate.banPlayer(ban)
                         call.respond(HttpStatusCode.OK)
@@ -114,7 +113,6 @@ class HttpServer(
                             e.printStackTrace()
                             throw e
                         }
-
                         call.application.environment.log.info("Banning ip: ${ban.ipAddress}")
                         delegate.banIP(ban)
                         call.respond(HttpStatusCode.OK)
@@ -126,9 +124,19 @@ class HttpServer(
                             e.printStackTrace()
                             throw e
                         }
-
                         call.application.environment.log.info("Received config version ${config.version}")
                         delegate.updateConfig(config)
+                        call.respond(HttpStatusCode.OK)
+                    }
+                    post("events/warps/sync") {
+                        val warps = try {
+                            call.receive<List<Warp>>()
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                            throw e
+                        }
+                        call.application.environment.log.info("Received warps (count: ${warps.size})")
+                        delegate.syncWarps(warps)
                         call.respond(HttpStatusCode.OK)
                     }
                 }

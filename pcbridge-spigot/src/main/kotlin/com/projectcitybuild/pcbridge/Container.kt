@@ -230,6 +230,7 @@ private fun Module.webServer() {
             delegate = WebServerDelegate(
                 eventBroadcaster = get(),
                 remoteConfig = get(),
+                warpRepository = get(),
             ),
         )
     }
