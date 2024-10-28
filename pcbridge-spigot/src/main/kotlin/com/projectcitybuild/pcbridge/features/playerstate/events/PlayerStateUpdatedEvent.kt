@@ -6,6 +6,7 @@ import org.bukkit.event.HandlerList
 import java.util.UUID
 
 class PlayerStateUpdatedEvent(
+    val prevState: PlayerState?,
     val state: PlayerState,
     val playerUUID: UUID,
 ) : Event() {

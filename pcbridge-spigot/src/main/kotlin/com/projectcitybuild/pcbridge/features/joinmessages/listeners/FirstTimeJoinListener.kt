@@ -1,9 +1,8 @@
 package com.projectcitybuild.pcbridge.features.joinmessages.listeners
 
-import com.projectcitybuild.pcbridge.core.datetime.LocalizedTime
 import com.projectcitybuild.pcbridge.core.logger.log
 import com.projectcitybuild.pcbridge.core.remoteconfig.services.RemoteConfig
-import com.projectcitybuild.pcbridge.features.joinmessages.repositories.PlayerConfigRepository
+import com.projectcitybuild.pcbridge.core.store.Store
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.MiniMessage
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
@@ -15,22 +14,33 @@ import org.bukkit.event.player.PlayerJoinEvent
 
 class FirstTimeJoinListener(
     private val server: Server,
-    private val playerConfigRepository: PlayerConfigRepository,
+    private val store: Store,
     private val remoteConfig: RemoteConfig,
-    private val time: LocalizedTime,
 ) : Listener {
     @EventHandler(priority = EventPriority.MONITOR)
-    suspend fun onPlayerJoin(event: PlayerJoinEvent) {
-        val playerConfig = playerConfigRepository.get(event.player.uniqueId)
-        if (playerConfig != null) {
+    fun onPlayerStateUpdated(event: PlayerJoinEvent) {
+        log.debug { "checking if first time join" }
+
+        val playerState = store.state.players[event.player.uniqueId]
+        if (playerState == null) {
+            log.warn { "Failed to find state for player: ${event.player.uniqueId}" }
             return
         }
-        playerConfigRepository.add(
-            uuid = event.player.uniqueId,
-            firstSeen = time.now(),
-        )
+        if (playerState.player == null) {
+            log.warn { "No player data found for ${event.player.uniqueId}" }
+            return
+        }
+        if (playerState.player.lastSeenAt != null) {
+            log.debug { "Player last seen ${playerState.player.lastSeenAt}. Not sending first-time join message" }
+            return
+        }
 
-        log.debug { "Sending first-time welcome message for ${event.player.name}" }
+        log.info { "Sending first-time welcome message for ${event.player.name}" }
+
+        if (server.onlinePlayers.isEmpty()) {
+            log.debug { "Skipping. No players online..." }
+            return
+        }
 
         val config = remoteConfig.latest.config
         val message =

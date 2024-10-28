@@ -34,6 +34,7 @@ class PlayerStateListener(
         }
         eventBroadcaster.broadcast(
             PlayerStateUpdatedEvent(
+                prevState = null,
                 state = playerState,
                 playerUUID = event.playerUUID,
             ),

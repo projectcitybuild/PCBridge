@@ -8,6 +8,9 @@ data class PlayerData(
     @SerializedName("account")
     val account: Account? = null,
 
+    @SerializedName("player")
+    val player: Player? = null,
+
     @SerializedName("ban")
     val playerBan: PlayerBan? = null,
 

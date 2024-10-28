@@ -3,6 +3,7 @@ package com.projectcitybuild.pcbridge.core.store
 import com.projectcitybuild.pcbridge.http.models.Account
 import com.projectcitybuild.pcbridge.http.models.Badge
 import com.projectcitybuild.pcbridge.http.models.DonationPerk
+import com.projectcitybuild.pcbridge.http.models.Player
 import com.projectcitybuild.pcbridge.http.models.PlayerData
 import com.projectcitybuild.pcbridge.http.serialization.serializable.LocalDateTimeSerializer
 import com.projectcitybuild.pcbridge.http.serialization.serializable.UUIDSerializer
@@ -36,6 +37,7 @@ data class PlayerState(
     @Serializable(with = LocalDateTimeSerializer::class)
     val connectedAt: LocalDateTime?,
     val account: Account? = null,
+    val player: Player? = null,
     val badges: List<Badge> = emptyList(),
     val donationPerks: List<DonationPerk> = emptyList(),
 ) {
@@ -43,6 +45,7 @@ data class PlayerState(
         fun fromPlayerData(data: PlayerData, connectedAt: LocalDateTime) = PlayerState(
             connectedAt = connectedAt,
             account = data.account,
+            player = data.player,
             badges = data.badges,
             donationPerks = data.donationPerks,
         )
