@@ -39,7 +39,6 @@ import com.projectcitybuild.pcbridge.features.joinmessages.listeners.AnnounceJoi
 import com.projectcitybuild.pcbridge.features.joinmessages.listeners.AnnounceQuitListener
 import com.projectcitybuild.pcbridge.features.joinmessages.listeners.FirstTimeJoinListener
 import com.projectcitybuild.pcbridge.features.joinmessages.listeners.ServerOverviewJoinListener
-import com.projectcitybuild.pcbridge.features.joinmessages.repositories.PlayerConfigRepository
 import com.projectcitybuild.pcbridge.features.nightvision.commands.NightVisionCommand
 import com.projectcitybuild.pcbridge.features.playerstate.listeners.PlayerStateListener
 import com.projectcitybuild.pcbridge.features.register.commands.CodeCommand
@@ -334,12 +333,6 @@ private fun Module.warps() {
 
 private fun Module.joinMessages() {
     factory {
-        PlayerConfigRepository(
-            dataSource = get(),
-        )
-    }
-
-    factory {
         AnnounceJoinListener(
             remoteConfig = get(),
         )
@@ -357,8 +350,7 @@ private fun Module.joinMessages() {
         FirstTimeJoinListener(
             remoteConfig = get(),
             server = get(),
-            playerConfigRepository = get(),
-            time = get(),
+            store = get(),
         )
     }
 

@@ -38,11 +38,13 @@ class PlayerSyncRequestListener(
             playerData,
             connectedAt = time.now(),
         )
+        val prevState = store.state.players[event.playerUUID]
         store.mutate { state ->
             state.copy(players = state.players.apply { put(event.playerUUID, playerState) })
         }
         eventBroadcaster.broadcast(
             PlayerStateUpdatedEvent(
+                prevState = prevState,
                 state = playerState,
                 playerUUID = event.playerUUID,
             ),
