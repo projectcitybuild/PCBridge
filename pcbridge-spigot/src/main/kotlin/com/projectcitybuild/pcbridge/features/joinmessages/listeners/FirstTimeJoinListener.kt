@@ -19,12 +19,18 @@ class FirstTimeJoinListener(
 ) : Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     fun onPlayerStateUpdated(event: PlayerJoinEvent) {
+        log.debug { "checking if first time join" }
+
         val playerState = store.state.players[event.player.uniqueId]
         if (playerState == null) {
             log.warn { "Failed to find state for player: ${event.player.uniqueId}" }
             return
         }
-        if (playerState.player?.lastSeenAt != null) {
+        if (playerState.player == null) {
+            log.warn { "No player data found for ${event.player.uniqueId}" }
+            return
+        }
+        if (playerState.player.lastSeenAt != null) {
             log.debug { "Player last seen ${playerState.player.lastSeenAt}. Not sending first-time join message" }
             return
         }
