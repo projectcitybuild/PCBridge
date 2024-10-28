@@ -1,4 +1,4 @@
-package com.projectcitybuild.pcbridge.data
+package com.projectcitybuild.pcbridge.core.pagination
 
 data class Page<T>(
     val items: List<T>,

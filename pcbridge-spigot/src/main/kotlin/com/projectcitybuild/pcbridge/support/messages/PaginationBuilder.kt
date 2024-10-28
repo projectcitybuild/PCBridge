@@ -1,6 +1,6 @@
 package com.projectcitybuild.pcbridge.support.messages
 
-import com.projectcitybuild.pcbridge.data.Page
+import com.projectcitybuild.pcbridge.core.pagination.Page
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextComponent
 import net.kyori.adventure.text.format.NamedTextColor
