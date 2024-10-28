@@ -6,6 +6,7 @@ import io.papermc.paper.chat.ChatRenderer
 import io.papermc.paper.event.player.AsyncChatEvent
 import kotlinx.coroutines.runBlocking
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
@@ -32,6 +33,14 @@ class FormatNameChatListener(
             val badge = chatBadgeRepository.getComponent(uuid)
             val groups = chatGroupRepository.getAggregate(uuid)
 
+            // Only the legacy serializer automatically converts URLs to clickable text
+            val legacySerializer = LegacyComponentSerializer
+                .builder()
+                .extractUrls()
+                .build()
+
+            val messageWithUrls = legacySerializer.serialize(message)
+
             Component.text()
                 .append(
                     badge,
@@ -41,7 +50,7 @@ class FormatNameChatListener(
                     sourceDisplayName,
                     groups.suffix,
                     Component.text(": "),
-                    message,
+                    legacySerializer.deserialize(messageWithUrls),
                 )
                 .build()
         }
