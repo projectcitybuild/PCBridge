@@ -44,6 +44,6 @@ class WebServerDelegate(
 
     override suspend fun syncWarps(warps: List<Warp>) {
         log.debug { "Invalidating warp cache" }
-        warpRepository.invalidate()
+        warpRepository.reload()
     }
 }

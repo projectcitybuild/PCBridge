@@ -83,7 +83,8 @@ class WarpRepository(
         cache = null
     }
 
-    fun invalidate() {
+    suspend fun reload() {
         cache = null
+        all()
     }
 }

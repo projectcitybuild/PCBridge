@@ -14,6 +14,7 @@ import com.projectcitybuild.pcbridge.support.spigot.CommandArgsParser
 import com.projectcitybuild.pcbridge.support.spigot.SpigotCommand
 import com.projectcitybuild.pcbridge.support.spigot.UnauthorizedCommandException
 import com.projectcitybuild.pcbridge.support.tryValueOf
+import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.Server
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
@@ -106,6 +107,13 @@ class WarpsCommand(
                             .parse(args.remainingArgs),
                 )
 
+            Args.Command.Reload -> {
+                warpRepository.reload()
+                sender.sendMessage(
+                    MiniMessage.miniMessage().deserialize("<green>Warps reloaded</green>")
+                )
+            }
+
             Args.Command.Rename ->
                 WarpRenameCommand(
                     warpRepository = warpRepository,
@@ -126,7 +134,7 @@ class WarpsCommand(
     ): List<String>? {
         if (args.isEmpty() || args.first().isEmpty()) {
             return if (sender.hasPermission("pcbridge.warp.manage")) {
-                listOf("create", "delete", "list", "move", "rename")
+                listOf("create", "delete", "list", "move", "reload", "rename")
             } else {
                 listOf("list")
             }
@@ -176,6 +184,7 @@ class WarpsCommand(
             Create,
             Delete,
             Move,
+            Reload,
             Rename,
         }
 
