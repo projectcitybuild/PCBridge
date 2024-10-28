@@ -1,6 +1,5 @@
 package com.projectcitybuild.pcbridge.core.pagination
 
-import com.projectcitybuild.pcbridge.data.Page
 import kotlin.math.ceil
 import kotlin.math.min
 
