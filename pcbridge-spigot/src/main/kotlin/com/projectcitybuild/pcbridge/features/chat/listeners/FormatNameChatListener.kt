@@ -33,14 +33,6 @@ class FormatNameChatListener(
             val badge = chatBadgeRepository.getComponent(uuid)
             val groups = chatGroupRepository.getAggregate(uuid)
 
-            // Only the legacy serializer automatically converts URLs to clickable text
-            val legacySerializer = LegacyComponentSerializer
-                .builder()
-                .extractUrls()
-                .build()
-
-            val messageWithUrls = legacySerializer.serialize(message)
-
             Component.text()
                 .append(
                     badge,
@@ -50,8 +42,20 @@ class FormatNameChatListener(
                     sourceDisplayName,
                     groups.suffix,
                     Component.text(": "),
-                    legacySerializer.deserialize(messageWithUrls),
+                    urlClickable(message),
                 )
                 .build()
         }
+
+    private fun urlClickable(message: Component): Component {
+        // Only the legacy serializer automatically converts URLs to clickable text
+        val legacySerializer = LegacyComponentSerializer
+            .builder()
+            .extractUrls()
+            .build()
+
+        val withUrls = legacySerializer.serialize(message)
+
+        return legacySerializer.deserialize(withUrls)
+    }
 }
