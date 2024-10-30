@@ -1,0 +1,35 @@
+name: PCBridge
+main: com.projectcitybuild.pcbridge.paper.Plugin
+website: https://github.com/projectcitybuild/PCBridge
+author: Andy
+version: 6.3.0
+api-version: 1.20
+
+softdepend:
+  - LuckPerms
+  - dynmap
+  - Essentials
+
+commands:
+  a:
+    permission: pcbridge.chat.staff_channel
+  ban:
+    permission: pcbridge.ban.ban
+  banip:
+    permission: pcbridge.ban.banip
+  code:
+    permission: pcbridge.register.code
+  config:
+    permission: pcbridge.config.reload
+  invisframe:
+    permission: pcbridge.build.invisframe
+  nv:
+    permission: pcbridge.build.nightvision
+  register:
+    permission: pcbridge.register.email
+  sync:
+    permission: pcbridge.sync.login
+  warp:
+    permission: pcbridge.warps.teleport
+  warps:
+    permission: pcbridge.warps.list
