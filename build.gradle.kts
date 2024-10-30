@@ -59,5 +59,8 @@ subprojects {
 
     tasks.test {
         useJUnitPlatform()
+
+        // https://github.com/mockito/mockito/issues/3037
+        jvmArgs("-XX:+EnableDynamicAgentLoading")
     }
 }
