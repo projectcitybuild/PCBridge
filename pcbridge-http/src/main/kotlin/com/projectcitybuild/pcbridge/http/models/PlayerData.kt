@@ -11,6 +11,9 @@ data class PlayerData(
     @SerializedName("player")
     val player: Player? = null,
 
+    @SerializedName("groups")
+    val groups: List<Group> = emptyList(),
+
     @SerializedName("ban")
     val playerBan: PlayerBan? = null,
 
@@ -19,7 +22,4 @@ data class PlayerData(
 
     @SerializedName("badges")
     val badges: List<Badge> = emptyList(),
-
-    @SerializedName("donation_tiers")
-    val donationPerks: List<DonationPerk> = emptyList(),
 )

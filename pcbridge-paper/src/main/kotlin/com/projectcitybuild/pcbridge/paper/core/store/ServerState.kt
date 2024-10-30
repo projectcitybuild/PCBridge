@@ -2,7 +2,7 @@ package com.projectcitybuild.pcbridge.paper.core.store
 
 import com.projectcitybuild.pcbridge.http.models.Account
 import com.projectcitybuild.pcbridge.http.models.Badge
-import com.projectcitybuild.pcbridge.http.models.DonationPerk
+import com.projectcitybuild.pcbridge.http.models.Group
 import com.projectcitybuild.pcbridge.http.models.Player
 import com.projectcitybuild.pcbridge.http.models.PlayerData
 import com.projectcitybuild.pcbridge.http.serialization.serializable.LocalDateTimeSerializer
@@ -38,16 +38,16 @@ data class PlayerState(
     val connectedAt: LocalDateTime?,
     val account: Account? = null,
     val player: Player? = null,
+    val groups: List<Group> = emptyList(),
     val badges: List<Badge> = emptyList(),
-    val donationPerks: List<DonationPerk> = emptyList(),
 ) {
     companion object {
         fun fromPlayerData(data: PlayerData, connectedAt: LocalDateTime) = PlayerState(
             connectedAt = connectedAt,
             account = data.account,
             player = data.player,
+            groups = data.groups,
             badges = data.badges,
-            donationPerks = data.donationPerks,
         )
     }
 }

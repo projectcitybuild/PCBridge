@@ -46,7 +46,6 @@ import com.projectcitybuild.pcbridge.paper.features.staffchat.commands.StaffChat
 import com.projectcitybuild.pcbridge.paper.features.groups.actions.SyncPlayerGroups
 import com.projectcitybuild.pcbridge.paper.features.groups.commands.SyncCommand
 import com.projectcitybuild.pcbridge.paper.features.groups.listener.SyncRankListener
-import com.projectcitybuild.pcbridge.paper.features.groups.repositories.GroupRepository
 import com.projectcitybuild.pcbridge.paper.features.playerstate.listeners.PlayerSyncRequestListener
 import com.projectcitybuild.pcbridge.paper.features.telemetry.listeners.TelemetryPlayerConnectListener
 import com.projectcitybuild.pcbridge.paper.features.telemetry.repositories.TelemetryRepository
@@ -443,9 +442,8 @@ private fun Module.chat() {
 
     factory {
         ChatGroupRepository(
-            permissions = get(),
-            localConfig = get(),
             chatGroupFormatter = get(),
+            store = get(),
             groupCache = get(named("group_cache")),
         )
     }
@@ -455,7 +453,7 @@ private fun Module.chat() {
     }
 
     single(named("group_cache")) {
-        Cache.Builder<UUID, ChatGroupFormatter.Aggregate>().build()
+        Cache.Builder<UUID, Component>().build()
     }
 
     factory {
@@ -532,13 +530,6 @@ private fun Module.groups() {
     factory {
         SyncPlayerGroups(
             permissions = get(),
-            groupRepository = get(),
-        )
-    }
-
-    factory {
-        GroupRepository(
-            localConfig = get(),
         )
     }
 
