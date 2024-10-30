@@ -1,17 +1,21 @@
 package com.projectcitybuild.pcbridge.features.staffchat.commands
 
 import com.projectcitybuild.pcbridge.Permissions
+import com.projectcitybuild.pcbridge.core.remoteconfig.services.RemoteConfig
 import com.projectcitybuild.pcbridge.support.messages.CommandHelpBuilder
 import com.projectcitybuild.pcbridge.support.spigot.BadCommandUsageException
 import com.projectcitybuild.pcbridge.support.spigot.CommandArgsParser
 import com.projectcitybuild.pcbridge.support.spigot.SpigotCommand
 import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.format.NamedTextColor
+import net.kyori.adventure.text.minimessage.MiniMessage
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import org.bukkit.Server
 import org.bukkit.command.CommandSender
 
 class StaffChatCommand(
     private val server: Server,
+    private val remoteConfig: RemoteConfig,
 ) : SpigotCommand<StaffChatCommand.Args> {
     override val label = "a"
 
@@ -21,20 +25,19 @@ class StaffChatCommand(
         sender: CommandSender,
         args: Args,
     ) {
-        val message =
-            Component.text()
-                .append(
-                    Component.text("(Staff) ${sender.name}")
-                        .color(NamedTextColor.YELLOW),
-                )
-                .append(
-                    Component.text(" » ")
-                        .color(NamedTextColor.GRAY),
-                )
-                .append(
-                    Component.text(args.message),
-                )
-                .build()
+        // Only the legacy serializer automatically converts URLs to clickable text
+        val legacySerializer = LegacyComponentSerializer
+            .builder()
+            .extractUrls()
+            .build()
+
+        val format = remoteConfig.latest.config.chat.staffChannel
+
+        val message = MiniMessage.miniMessage().deserialize(
+            format,
+            Placeholder.component("name", Component.text(sender.name)),
+            Placeholder.component("message", legacySerializer.deserialize(args.message)),
+        )
 
         server.onlinePlayers
             .filter { it.hasPermission(Permissions.COMMAND_STAFF_CHAT) }

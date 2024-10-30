@@ -523,6 +523,7 @@ private fun Module.staffChat() {
     factory {
         StaffChatCommand(
             server = get(),
+            remoteConfig = get(),
         )
     }
 }

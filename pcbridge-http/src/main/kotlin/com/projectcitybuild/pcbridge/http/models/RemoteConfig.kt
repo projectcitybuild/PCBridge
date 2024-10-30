@@ -28,6 +28,8 @@ data class RemoteConfigKeyValues(
     data class Chat(
         @SerializedName("badge_icon")
         val badgeIcon: String = "<color:yellow>★</color>",
+        @SerializedName("staff_channel")
+        val staffChannel: String = "<yellow>(Staff) <name>:</yellow> <message>"
     )
 
     @Serializable
@@ -51,8 +53,8 @@ data class RemoteConfigKeyValues(
 
     @Serializable
     data class Messages(
-        val join: String = "<color:green><b>+</b></color> <name> <color:gray>joined the server</color>",
-        val leave: String = "<color:red><b>-</b></color> <name> <color:gray>left the server (online for <time_online>)</color>",
+        val join: String = "<green><b>+</b></green> <name> <gray>joined the server</gray>",
+        val leave: String = "<red><b>-</b></red> <name> <gray>left the server (online for <time_online>)</gray>",
         @SerializedName("first_time_join")
         val firstTimeJoin: String = "<color:AA00AA><b>✦ Welcome §f%name%§d to the server!</b></color>",
         val welcome: String = "<b>Welcome to PCB!</b>",
