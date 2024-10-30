@@ -27,7 +27,7 @@ jobs:
 
       - name: Build with Gradle
         run: gradle shadowJar
-        working-directory: pcbridge-spigot
+        working-directory: pcbridge-paper
 
       - name: Run tests
         run: gradle test --info
