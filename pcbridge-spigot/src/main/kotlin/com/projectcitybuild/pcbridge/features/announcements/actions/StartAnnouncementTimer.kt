@@ -1,6 +1,6 @@
 package com.projectcitybuild.pcbridge.features.announcements.actions
 
-import com.projectcitybuild.pcbridge.core.config.Config
+import com.projectcitybuild.pcbridge.core.remoteconfig.services.RemoteConfig
 import com.projectcitybuild.pcbridge.features.announcements.repositories.AnnouncementRepository
 import com.projectcitybuild.pcbridge.support.spigot.SpigotTimer
 import kotlinx.coroutines.runBlocking
@@ -10,14 +10,14 @@ import java.util.concurrent.TimeUnit
 
 class StartAnnouncementTimer(
     private val repository: AnnouncementRepository,
-    private val config: Config,
+    private val remoteConfig: RemoteConfig,
     private val timer: SpigotTimer,
     private val server: Server,
 ) {
     private val timerId = "scheduled_announcements"
 
-    suspend fun start() {
-        val config = config.get()
+    fun start() {
+        val config = remoteConfig.latest.config
         val intervalInMins = config.announcements.intervalInMins
 
         timer.cancel(timerId)

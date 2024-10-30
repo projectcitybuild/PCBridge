@@ -1,8 +1,8 @@
 package com.projectcitybuild.pcbridge.features.joinmessages.listeners
 
-import com.projectcitybuild.pcbridge.core.config.Config
 import com.projectcitybuild.pcbridge.core.datetime.LocalizedTime
-import com.projectcitybuild.pcbridge.core.state.Store
+import com.projectcitybuild.pcbridge.core.remoteconfig.services.RemoteConfig
+import com.projectcitybuild.pcbridge.core.store.Store
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.MiniMessage
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
@@ -14,7 +14,7 @@ import java.time.Duration
 import java.time.LocalDateTime
 
 class AnnounceQuitListener(
-    private val config: Config,
+    private val remoteConfig: RemoteConfig,
     private val store: Store,
     private val time: LocalizedTime,
 ) : Listener {
@@ -24,7 +24,7 @@ class AnnounceQuitListener(
         val joinTime = playerState?.connectedAt ?: time.now()
         val timeOnline = sessionTime(start = joinTime)
 
-        val leaveMessage = config.get().messages.leave
+        val leaveMessage = remoteConfig.latest.config.messages.leave
 
         event.quitMessage(
             MiniMessage.miniMessage().deserialize(

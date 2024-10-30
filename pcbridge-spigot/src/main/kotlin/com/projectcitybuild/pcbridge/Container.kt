@@ -2,17 +2,19 @@ package com.projectcitybuild.pcbridge
 
 import com.github.shynixn.mccoroutine.bukkit.minecraftDispatcher
 import com.google.gson.reflect.TypeToken
-import com.projectcitybuild.pcbridge.core.config.Config
-import com.projectcitybuild.pcbridge.core.config.JsonStorage
-import com.projectcitybuild.pcbridge.core.database.DatabaseSession
-import com.projectcitybuild.pcbridge.core.database.DatabaseSource
+import com.projectcitybuild.pcbridge.core.localconfig.LocalConfig
+import com.projectcitybuild.pcbridge.core.localconfig.JsonStorage
 import com.projectcitybuild.pcbridge.core.datetime.DateTimeFormatter
 import com.projectcitybuild.pcbridge.core.datetime.LocalizedTime
 import com.projectcitybuild.pcbridge.core.errors.SentryReporter
 import com.projectcitybuild.pcbridge.core.permissions.Permissions
 import com.projectcitybuild.pcbridge.core.permissions.adapters.LuckPermsPermissions
-import com.projectcitybuild.pcbridge.core.state.Store
-import com.projectcitybuild.pcbridge.data.PluginConfig
+import com.projectcitybuild.pcbridge.core.remoteconfig.commands.ConfigCommand
+import com.projectcitybuild.pcbridge.core.remoteconfig.services.RemoteConfig
+import com.projectcitybuild.pcbridge.core.store.Store
+import com.projectcitybuild.pcbridge.core.localconfig.LocalConfigKeyValues
+import com.projectcitybuild.pcbridge.features.announcements.actions.StartAnnouncementTimer
+import com.projectcitybuild.pcbridge.features.announcements.listeners.AnnouncementConfigListener
 import com.projectcitybuild.pcbridge.features.announcements.listeners.AnnouncementEnableListener
 import com.projectcitybuild.pcbridge.features.announcements.repositories.AnnouncementRepository
 import com.projectcitybuild.pcbridge.features.bans.actions.AuthorizeConnection
@@ -22,6 +24,7 @@ import com.projectcitybuild.pcbridge.features.bans.listeners.UUIDBanRequestListe
 import com.projectcitybuild.pcbridge.features.bans.repositories.PlayerRepository
 import com.projectcitybuild.pcbridge.features.chat.ChatBadgeFormatter
 import com.projectcitybuild.pcbridge.features.chat.ChatGroupFormatter
+import com.projectcitybuild.pcbridge.features.chat.listeners.ChatConfigListener
 import com.projectcitybuild.pcbridge.features.chat.listeners.EmojiChatListener
 import com.projectcitybuild.pcbridge.features.chat.listeners.FormatNameChatListener
 import com.projectcitybuild.pcbridge.features.chat.listeners.SyncPlayerChatListener
@@ -35,7 +38,6 @@ import com.projectcitybuild.pcbridge.features.joinmessages.listeners.AnnounceJoi
 import com.projectcitybuild.pcbridge.features.joinmessages.listeners.AnnounceQuitListener
 import com.projectcitybuild.pcbridge.features.joinmessages.listeners.FirstTimeJoinListener
 import com.projectcitybuild.pcbridge.features.joinmessages.listeners.ServerOverviewJoinListener
-import com.projectcitybuild.pcbridge.features.joinmessages.repositories.PlayerConfigRepository
 import com.projectcitybuild.pcbridge.features.nightvision.commands.NightVisionCommand
 import com.projectcitybuild.pcbridge.features.playerstate.listeners.PlayerStateListener
 import com.projectcitybuild.pcbridge.features.register.commands.CodeCommand
@@ -44,11 +46,10 @@ import com.projectcitybuild.pcbridge.features.staffchat.commands.StaffChatComman
 import com.projectcitybuild.pcbridge.features.groups.actions.SyncPlayerGroups
 import com.projectcitybuild.pcbridge.features.groups.commands.SyncCommand
 import com.projectcitybuild.pcbridge.features.groups.listener.SyncRankListener
-import com.projectcitybuild.pcbridge.features.groups.repositories.SyncRepository
+import com.projectcitybuild.pcbridge.features.groups.repositories.GroupRepository
 import com.projectcitybuild.pcbridge.features.playerstate.listeners.PlayerSyncRequestListener
 import com.projectcitybuild.pcbridge.features.telemetry.listeners.TelemetryPlayerConnectListener
 import com.projectcitybuild.pcbridge.features.telemetry.repositories.TelemetryRepository
-import com.projectcitybuild.pcbridge.features.warps.Warp
 import com.projectcitybuild.pcbridge.features.warps.commands.WarpCommand
 import com.projectcitybuild.pcbridge.features.warps.commands.WarpsCommand
 import com.projectcitybuild.pcbridge.features.warps.repositories.WarpRepository
@@ -68,9 +69,6 @@ import net.kyori.adventure.platform.bukkit.BukkitAudiences
 import net.kyori.adventure.text.Component
 import org.bukkit.plugin.java.JavaPlugin
 import org.koin.core.module.Module
-import org.koin.core.module.dsl.createdAtStart
-import org.koin.core.module.dsl.onClose
-import org.koin.core.module.dsl.withOptions
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import org.koin.dsl.onClose
@@ -78,7 +76,6 @@ import java.time.Clock
 import java.time.ZoneId
 import java.util.Locale
 import java.util.UUID
-import kotlin.time.Duration.Companion.minutes
 
 fun pluginModule(_plugin: JavaPlugin) =
     module {
@@ -153,35 +150,22 @@ private fun Module.spigot(plugin: JavaPlugin) {
 
 private fun Module.core() {
     single {
-        Config(
-            jsonStorage =
-                JsonStorage(
-                    file =
-                        get<JavaPlugin>()
-                            .dataFolder
-                            .resolve("config.json"),
-                    typeToken = object : TypeToken<PluginConfig>() {},
-                ),
+        LocalConfig(
+            jsonStorage = JsonStorage(
+                file = get<JavaPlugin>()
+                    .dataFolder
+                    .resolve("config.json"),
+                typeToken = object : TypeToken<LocalConfigKeyValues>() {},
+            ),
         )
     }
 
     single {
-        DatabaseSession().apply {
-            val configProvider = get<Config>()
-            val config = configProvider.get()
-            connect(DatabaseSource.fromConfig(config))
-        }
-    } withOptions {
-        createdAtStart()
-        onClose { it?.disconnect() }
-    }
-
-    single {
         SentryReporter(
-            config = get(),
+            localConfig = get(),
         ).apply {
-            val configProvider = get<Config>()
-            val config = configProvider.get()
+            val localConfigProvider = get<LocalConfig>()
+            val config = localConfigProvider.get()
             if (config.errorReporting.isSentryEnabled) {
                 start()
             }
@@ -191,7 +175,7 @@ private fun Module.core() {
     }
 
     factory {
-        val config = get<Config>().get()
+        val config = get<RemoteConfig>().latest.config
         val zoneId = ZoneId.of(config.localization.timeZone)
 
         LocalizedTime(
@@ -200,7 +184,7 @@ private fun Module.core() {
     }
 
     factory {
-        val config = get<Config>().get()
+        val config = get<RemoteConfig>().latest.config
 
         DateTimeFormatter(
             locale =
@@ -215,19 +199,34 @@ private fun Module.core() {
     }
 
     single { Store() }
+
+    single {
+        RemoteConfig(
+            configHttpService = get<HttpService>().config,
+            eventBroadcaster = get(),
+        )
+    }
+
+    factory {
+        ConfigCommand(
+            remoteConfig = get(),
+        )
+    }
 }
 
 private fun Module.webServer() {
     single {
-        val config = get<Config>().get()
+        val localConfig = get<LocalConfig>().get()
 
         HttpServer(
             config = HttpServerConfig(
-                authToken = config.webServer.token,
-                port = config.webServer.port,
+                authToken = localConfig.webServer.token,
+                port = localConfig.webServer.port,
             ),
             delegate = WebServerDelegate(
                 eventBroadcaster = get(),
+                remoteConfig = get(),
+                warpRepository = get(),
             ),
         )
     }
@@ -235,12 +234,12 @@ private fun Module.webServer() {
 
 private fun Module.http() {
     single {
-        val config = get<Config>().get()
+        val localConfig = get<LocalConfig>().get()
 
         HttpService(
-            authToken = config.api.token,
-            baseURL = config.api.baseUrl,
-            withLogging = config.api.isLoggingEnabled,
+            authToken = localConfig.api.token,
+            baseURL = localConfig.api.baseUrl,
+            withLogging = localConfig.api.isLoggingEnabled,
         )
     }
 }
@@ -249,7 +248,7 @@ private fun Module.integrations() {
     single {
         DynmapIntegration(
             plugin = get(),
-            config = get(),
+            remoteConfig = get(),
             sentry = get(),
             warpRepository = get(),
         )
@@ -270,18 +269,30 @@ private fun Module.integrations() {
 private fun Module.announcements() {
     single {
         AnnouncementRepository(
-            config = get(),
+            remoteConfig = get(),
             store = get(),
+        )
+    }
+
+    single {
+        StartAnnouncementTimer(
+            repository = get(),
+            remoteConfig = get(),
+            timer = get(),
+            server = get(),
         )
     }
 
     factory {
         AnnouncementEnableListener(
-            announcementRepository = get(),
-            config = get(),
-            timer = get(),
-            server = get(),
+            announcementTimer = get(),
             plugin = get(),
+        )
+    }
+
+    factory {
+        AnnouncementConfigListener(
+            announcementTimer = get(),
         )
     }
 }
@@ -289,11 +300,7 @@ private fun Module.announcements() {
 private fun Module.warps() {
     single {
         WarpRepository(
-            db = get(),
-            cache =
-                Cache.Builder<String, Warp>()
-                    .expireAfterWrite(30.minutes)
-                    .build(),
+            warpHttpService = get<HttpService>().warps
         )
     }
 
@@ -307,7 +314,7 @@ private fun Module.warps() {
     factory {
         WarpsCommand(
             warpRepository = get(),
-            config = get(),
+            remoteConfig = get(),
             server = get(),
             time = get(),
         )
@@ -316,20 +323,14 @@ private fun Module.warps() {
 
 private fun Module.joinMessages() {
     factory {
-        PlayerConfigRepository(
-            dataSource = get(),
-        )
-    }
-
-    factory {
         AnnounceJoinListener(
-            config = get(),
+            remoteConfig = get(),
         )
     }
 
     factory {
         AnnounceQuitListener(
-            config = get(),
+            remoteConfig = get(),
             store = get(),
             time = get(),
         )
@@ -337,16 +338,15 @@ private fun Module.joinMessages() {
 
     factory {
         FirstTimeJoinListener(
-            config = get(),
+            remoteConfig = get(),
             server = get(),
-            playerConfigRepository = get(),
-            time = get(),
+            store = get(),
         )
     }
 
     factory {
         ServerOverviewJoinListener(
-            config = get(),
+            remoteConfig = get(),
         )
     }
 }
@@ -435,7 +435,7 @@ private fun Module.chat() {
     factory {
         ChatBadgeRepository(
             store = get(),
-            config = get(),
+            remoteConfig = get(),
             badgeFormatter = get(),
             badgeCache = get(named("badge_cache")),
         )
@@ -444,7 +444,7 @@ private fun Module.chat() {
     factory {
         ChatGroupRepository(
             permissions = get(),
-            config = get(),
+            localConfig = get(),
             chatGroupFormatter = get(),
             groupCache = get(named("group_cache")),
         )
@@ -483,12 +483,16 @@ private fun Module.chat() {
             chatBadgeRepository = get(),
         )
     }
+
+    factory {
+        ChatConfigListener(
+            chatGroupRepository = get(),
+            chatBadgeRepository = get(),
+        )
+    }
 }
 
 private fun Module.register() {
-    factory {
-
-    }
     factory {
         RegisterCommand(
             registerHttpService = get<HttpService>().register,
@@ -519,6 +523,7 @@ private fun Module.staffChat() {
     factory {
         StaffChatCommand(
             server = get(),
+            remoteConfig = get(),
         )
     }
 }
@@ -527,13 +532,13 @@ private fun Module.groups() {
     factory {
         SyncPlayerGroups(
             permissions = get(),
-            syncRepository = get(),
+            groupRepository = get(),
         )
     }
 
     factory {
-        SyncRepository(
-            config = get(),
+        GroupRepository(
+            localConfig = get(),
         )
     }
 

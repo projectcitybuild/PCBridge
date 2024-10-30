@@ -2,7 +2,7 @@ name: PCBridge
 main: com.projectcitybuild.pcbridge.Plugin
 website: https://github.com/projectcitybuild/PCBridge
 author: Andy
-version: 6.1.0
+version: 6.2.0
 api-version: 1.20
 
 softdepend:
@@ -19,6 +19,8 @@ commands:
     permission: pcbridge.ban.banip
   code:
     permission: pcbridge.register.code
+  config:
+    permission: pcbridge.config.reload
   invisframe:
     permission: pcbridge.build.invisframe
   nv:

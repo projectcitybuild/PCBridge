@@ -1,7 +1,7 @@
 package com.projectcitybuild.pcbridge.features.warps.commands
 
-import com.projectcitybuild.pcbridge.core.config.Config
 import com.projectcitybuild.pcbridge.core.datetime.LocalizedTime
+import com.projectcitybuild.pcbridge.core.remoteconfig.services.RemoteConfig
 import com.projectcitybuild.pcbridge.features.warps.commands.warps.WarpCreateCommand
 import com.projectcitybuild.pcbridge.features.warps.commands.warps.WarpDeleteCommand
 import com.projectcitybuild.pcbridge.features.warps.commands.warps.WarpListCommand
@@ -14,12 +14,14 @@ import com.projectcitybuild.pcbridge.support.spigot.CommandArgsParser
 import com.projectcitybuild.pcbridge.support.spigot.SpigotCommand
 import com.projectcitybuild.pcbridge.support.spigot.UnauthorizedCommandException
 import com.projectcitybuild.pcbridge.support.tryValueOf
+import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.Server
+import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 
 class WarpsCommand(
     private val warpRepository: WarpRepository,
-    private val config: Config,
+    private val remoteConfig: RemoteConfig,
     private val server: Server,
     private val time: LocalizedTime,
 ) : SpigotCommand<WarpsCommand.Args> {
@@ -64,7 +66,7 @@ class WarpsCommand(
             Args.Command.List ->
                 WarpListCommand(
                     warpRepository = warpRepository,
-                    itemsPerPage = config.get().warps.itemsPerPage,
+                    itemsPerPage = remoteConfig.latest.config.warps.itemsPerPage,
                 ).run(
                     sender = sender,
                     args =
@@ -105,6 +107,13 @@ class WarpsCommand(
                             .parse(args.remainingArgs),
                 )
 
+            Args.Command.Reload -> {
+                warpRepository.reload()
+                sender.sendMessage(
+                    MiniMessage.miniMessage().deserialize("<green>Warps reloaded</green>")
+                )
+            }
+
             Args.Command.Rename ->
                 WarpRenameCommand(
                     warpRepository = warpRepository,
@@ -117,6 +126,55 @@ class WarpsCommand(
         }
     }
 
+    override suspend fun tabComplete(
+        sender: CommandSender,
+        command: Command,
+        alias: String,
+        args: Array<out String>,
+    ): List<String>? {
+        if (args.isEmpty() || args.first().isEmpty()) {
+            return if (sender.hasPermission("pcbridge.warp.manage")) {
+                listOf("create", "delete", "list", "move", "reload", "rename")
+            } else {
+                listOf("list")
+            }
+        }
+        when (args.first()) {
+            "delete" -> {
+                if (args.size != 2) return null
+                val name = args[1]
+                if (name.isEmpty()) {
+                    return warpRepository.all().map { it.name }
+                }
+                return warpRepository.all()
+                    .filter { it.name.lowercase().startsWith(name.lowercase()) }
+                    .map { it.name }
+            }
+            "move" -> {
+                if (args.size != 2) return null
+                val name = args[1]
+                if (name.isEmpty()) {
+                    return warpRepository.all().map { it.name }
+                }
+                return warpRepository.all()
+                    .filter { it.name.lowercase().startsWith(name.lowercase()) }
+                    .map { it.name }
+            }
+            "rename" -> {
+                if (args.size != 2) return null
+                val name = args[1]
+                if (name.isEmpty()) {
+                    return warpRepository.all().map { it.name }
+                }
+                return warpRepository.all()
+                    .filter { it.name.lowercase().startsWith(name.lowercase()) }
+                    .map { it.name }
+            }
+
+            else -> return null
+        }
+    }
+
     data class Args(
         val command: Command,
         val remainingArgs: List<String>,
@@ -126,15 +184,15 @@ class WarpsCommand(
             Create,
             Delete,
             Move,
+            Reload,
             Rename,
         }
 
         class Parser : CommandArgsParser<Args> {
             override fun parse(args: List<String>): Args {
-                if (args.isEmpty()) {
-                    throw BadCommandUsageException()
-                }
-                val command =
+                val command = if (args.isEmpty())
+                    Command.List
+                else
                     tryValueOf<Command>(args[0].replaceFirstChar { it.uppercase() })
                         ?: throw BadCommandUsageException()
 

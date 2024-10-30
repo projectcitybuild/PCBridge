@@ -1,6 +1,9 @@
 package com.projectcitybuild.pcbridge.http.requests
 
-import com.projectcitybuild.pcbridge.http.responses.PlayerData
+import com.projectcitybuild.pcbridge.http.models.PlayerData
+import com.projectcitybuild.pcbridge.http.models.RemoteConfigVersion
+import com.projectcitybuild.pcbridge.http.models.Warp
+import retrofit2.http.DELETE
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
@@ -17,7 +20,7 @@ internal interface PCBRequest {
     @GET("v2/minecraft/player/{uuid}")
     suspend fun getPlayer(
         @Path(value = "uuid") uuid: String,
-        @Query("ip") ip: String,
+        @Query("ip") ip: String?,
     ): PlayerData
 
     /**
@@ -51,5 +54,44 @@ internal interface PCBRequest {
     suspend fun telemetrySeen(
         @Field(value = "uuid") playerUUID: String,
         @Field(value = "alias") playerName: String,
+    )
+
+    /**
+     * Fetches the latest Minecraft config
+     */
+    @GET("v2/minecraft/config")
+    suspend fun getConfig(): RemoteConfigVersion
+
+    @GET("v2/minecraft/warp")
+    suspend fun getWarps(): List<Warp>
+
+    @POST("v2/minecraft/warp")
+    @FormUrlEncoded
+    suspend fun createWarp(
+        @Field(value = "name") name: String,
+        @Field(value = "world") world: String,
+        @Field(value = "x") x: Double,
+        @Field(value = "y") y: Double,
+        @Field(value = "z") z: Double,
+        @Field(value = "pitch") pitch: Float,
+        @Field(value = "yaw") yaw: Float,
+    ): Warp
+
+    @PUT("v2/minecraft/warp/{id}")
+    @FormUrlEncoded
+    suspend fun updateWarp(
+        @Path(value = "id") id: Int,
+        @Field(value = "name") name: String,
+        @Field(value = "world") world: String,
+        @Field(value = "x") x: Double,
+        @Field(value = "y") y: Double,
+        @Field(value = "z") z: Double,
+        @Field(value = "pitch") pitch: Float,
+        @Field(value = "yaw") yaw: Float,
+    ): Warp
+
+    @DELETE("v2/minecraft/warp/{id}")
+    suspend fun deleteWarp(
+        @Path(value = "id") id: Int,
     )
 }

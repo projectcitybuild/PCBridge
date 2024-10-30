@@ -3,10 +3,14 @@ package com.projectcitybuild.pcbridge
 import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
 import com.projectcitybuild.pcbridge.core.errors.SentryReporter
 import com.projectcitybuild.pcbridge.core.errors.trace
+import com.projectcitybuild.pcbridge.core.remoteconfig.commands.ConfigCommand
+import com.projectcitybuild.pcbridge.core.remoteconfig.services.RemoteConfig
+import com.projectcitybuild.pcbridge.features.announcements.listeners.AnnouncementConfigListener
 import com.projectcitybuild.pcbridge.features.announcements.listeners.AnnouncementEnableListener
 import com.projectcitybuild.pcbridge.features.bans.listeners.AuthorizeConnectionListener
 import com.projectcitybuild.pcbridge.features.bans.listeners.IPBanRequestListener
 import com.projectcitybuild.pcbridge.features.bans.listeners.UUIDBanRequestListener
+import com.projectcitybuild.pcbridge.features.chat.listeners.ChatConfigListener
 import com.projectcitybuild.pcbridge.features.chat.listeners.EmojiChatListener
 import com.projectcitybuild.pcbridge.features.chat.listeners.FormatNameChatListener
 import com.projectcitybuild.pcbridge.features.chat.listeners.SyncPlayerChatListener
@@ -51,11 +55,7 @@ class Plugin : SuspendingJavaPlugin() {
         printLogo()
 
         val module = pluginModule(this)
-        val container =
-            startKoin {
-                modules(module)
-            }
-        this.container = container
+        this.container = startKoin { modules(module) }
 
         Lifecycle().boot().onFailure {
             server.pluginManager.disablePlugin(this)
@@ -84,10 +84,13 @@ private class Lifecycle : KoinComponent {
     private val commandRegistry: SpigotCommandRegistry by inject()
     private val listenerRegistry: SpigotListenerRegistry by inject()
     private val httpServer: HttpServer by inject()
+    private val remoteConfig: RemoteConfig by inject()
 
     suspend fun boot() =
         sentry.trace {
             httpServer.start()
+
+            remoteConfig.fetch()
 
             commandRegistry.apply {
                 register(
@@ -122,12 +125,18 @@ private class Lifecycle : KoinComponent {
                     handler = get<SyncCommand>(),
                     argsParser = SyncCommand.Args.Parser(),
                 )
+                register(
+                    handler = get<ConfigCommand>(),
+                    argsParser = ConfigCommand.Args.Parser(),
+                )
             }
             listenerRegistry.register(
                 get<AnnounceJoinListener>(),
                 get<AnnounceQuitListener>(),
+                get<AnnouncementConfigListener>(),
                 get<AnnouncementEnableListener>(),
                 get<AuthorizeConnectionListener>(),
+                get<ChatConfigListener>(),
                 get<EmojiChatListener>(),
                 get<FirstTimeJoinListener>(),
                 get<FormatNameChatListener>(),

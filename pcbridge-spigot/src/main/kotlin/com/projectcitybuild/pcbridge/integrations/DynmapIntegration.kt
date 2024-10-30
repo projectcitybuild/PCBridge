@@ -1,9 +1,9 @@
 package com.projectcitybuild.pcbridge.integrations
 
 import com.github.shynixn.mccoroutine.bukkit.registerSuspendingEvents
-import com.projectcitybuild.pcbridge.core.config.Config
 import com.projectcitybuild.pcbridge.core.errors.SentryReporter
 import com.projectcitybuild.pcbridge.core.logger.log
+import com.projectcitybuild.pcbridge.core.remoteconfig.services.RemoteConfig
 import com.projectcitybuild.pcbridge.features.warps.events.WarpCreateEvent
 import com.projectcitybuild.pcbridge.features.warps.events.WarpDeleteEvent
 import com.projectcitybuild.pcbridge.features.warps.repositories.WarpRepository
@@ -17,7 +17,7 @@ import org.dynmap.DynmapAPI
 class DynmapIntegration(
     private val plugin: JavaPlugin,
     private val warpRepository: WarpRepository,
-    private val config: Config,
+    private val remoteConfig: RemoteConfig,
     sentry: SentryReporter,
 ) : Listener, SpigotIntegration(
         pluginName = "dynmap",
@@ -83,19 +83,20 @@ class DynmapIntegration(
             markers.forEach { it.deleteMarker() }
         }
 
-        val iconName = config.get().integrations.dynmap.warpIconName
+        val config = remoteConfig.latest.config
+        val iconName = config.integrations.dynmapWarpIconName
         val icon =
             markerAPI.getMarkerIcon(iconName)
                 ?: throw DynmapMarkerIconNotFoundException()
 
-        warpRepository.all(limit = 0).items.forEach { warp ->
+        warpRepository.all().forEach { warp ->
             warpMarkerSet.createMarker(
                 "warp.${warp.name}",
                 warp.name,
-                warp.location.worldName,
-                warp.location.x,
-                warp.location.y,
-                warp.location.z,
+                warp.name,
+                warp.x,
+                warp.y,
+                warp.z,
                 icon,
                 // TODO: what is this?
                 false,

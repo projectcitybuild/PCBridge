@@ -2,8 +2,8 @@ package com.projectcitybuild.pcbridge.features.playerstate.listeners
 
 import com.projectcitybuild.pcbridge.core.datetime.LocalizedTime
 import com.projectcitybuild.pcbridge.core.logger.log
-import com.projectcitybuild.pcbridge.core.state.PlayerState
-import com.projectcitybuild.pcbridge.core.state.Store
+import com.projectcitybuild.pcbridge.core.store.PlayerState
+import com.projectcitybuild.pcbridge.core.store.Store
 import com.projectcitybuild.pcbridge.features.bans.events.ConnectionPermittedEvent
 import com.projectcitybuild.pcbridge.features.playerstate.events.PlayerStateUpdatedEvent
 import com.projectcitybuild.pcbridge.features.playerstate.events.PlayerStateDestroyedEvent
@@ -34,6 +34,7 @@ class PlayerStateListener(
         }
         eventBroadcaster.broadcast(
             PlayerStateUpdatedEvent(
+                prevState = null,
                 state = playerState,
                 playerUUID = event.playerUUID,
             ),
