@@ -64,7 +64,7 @@ data class LocalConfigKeyValues(
     }
 }
 
-fun LocalConfigKeyValues.default() =
+fun LocalConfigKeyValues.Companion.default() =
     LocalConfigKeyValues(
         api =
             LocalConfigKeyValues.Api(
