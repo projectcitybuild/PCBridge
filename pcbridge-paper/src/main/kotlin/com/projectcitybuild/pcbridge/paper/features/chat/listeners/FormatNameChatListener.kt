@@ -50,14 +50,36 @@ class FormatNameChatListener(
         }
 
     private fun urlClickable(message: Component): Component {
+        val withEmojis = message.replaceText { builder ->
+            builder.match(pattern).replacement { match, _ ->
+                val replaced = emojis[match.group().lowercase()] ?: match.group()
+                Component.text(replaced)
+            }
+        }
+
         // Only the legacy serializer automatically converts URLs to clickable text
         val legacySerializer = LegacyComponentSerializer
             .builder()
             .extractUrls()
             .build()
 
-        val withUrls = legacySerializer.serialize(message)
+        val withUrls = legacySerializer.serialize(withEmojis)
 
         return legacySerializer.deserialize(withUrls)
+    }
+
+    private companion object {
+        val emojis: Map<String, String> =
+            mapOf(
+                Pair(":skull:", "☠"),
+                Pair(":heart:", "❤"),
+                Pair(":fire:", "\uD83D\uDD25"),
+                Pair(":tm:", "™"),
+            )
+
+        val pattern =
+            emojis.keys
+                .joinToString(separator = "|")
+                .let { pattern -> "(?i)($pattern)" } // Add case-insensitivity
     }
 }
