@@ -6,12 +6,11 @@ import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.minimessage.MiniMessage
 
-class ChatBadgeFormatter() {
-    fun format(badges: List<Badge>, icon: String): Component {
+class ChatBadgeFormatter {
+    fun format(badges: List<Badge>, icon: String): Component? {
         if (badges.isEmpty()) {
-            return Component.empty()
+            return null
         }
-
         val formattedBadge =
             Component.text().append(
                 Component.text("Badges")

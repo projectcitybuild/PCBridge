@@ -5,12 +5,8 @@ import net.luckperms.api.LuckPerms
 import net.luckperms.api.LuckPermsProvider
 import org.bukkit.event.Listener
 
-class LuckPermsIntegration(
-    // private val plugin: Plugin,
-    // private val chatGroupFormatter: ChatGroupFormatter,
-) : Listener {
+class LuckPermsIntegration : Listener {
     private var luckPerms: LuckPerms? = null
-    // private val eventSubscriptions: MutableList<EventSubscription<*>> = mutableListOf()
 
     fun enable() {
         try {
@@ -20,27 +16,9 @@ class LuckPermsIntegration(
             return
         }
         log.info { "LuckPerms integration enabled" }
-
-        // listenForCacheInvalidation()
     }
 
     fun disable() {
         luckPerms = null
     }
-
-    // TODO
-    // private fun listenForCacheInvalidation() {
-    //     eventSubscriptions.add(
-    //         luckPerms.eventBus.subscribe(plugin, UserDataRecalculateEvent::class.java) { event ->
-    //             chatGroupFormatter.flush(playerUUID = event.user.uniqueId)
-    //         }
-    //     )
-    //     eventSubscriptions.add(
-    //         luckPerms.eventBus.subscribe(plugin, NodeMutateEvent::class.java) { event ->
-    //             if (event.isGroup) {
-    //                 chatGroupFormatter.flushAllCaches()
-    //             }
-    //         }
-    //     )
-    // }
 }

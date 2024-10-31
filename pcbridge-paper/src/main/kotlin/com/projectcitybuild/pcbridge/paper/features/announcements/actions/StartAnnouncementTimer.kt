@@ -20,6 +20,8 @@ class StartAnnouncementTimer(
         val config = remoteConfig.latest.config
         val intervalInMins = config.announcements.intervalInMins
 
+        if (config.announcements.messages.isEmpty()) return
+
         timer.cancel(timerId)
         timer.scheduleRepeating(
             identifier = timerId,

@@ -12,8 +12,7 @@ class SyncRankListener(
     fun onPlayerStateUpdated(event: PlayerStateUpdatedEvent) {
         syncPlayerGroups.execute(
             playerUUID = event.playerUUID,
-            groups = event.state.account?.groups ?: emptyList(),
-            donationPerks = event.state.donationPerks,
+            groups = event.state.groups,
         )
     }
 }

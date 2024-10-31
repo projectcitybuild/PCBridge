@@ -31,20 +31,22 @@ class FormatNameChatListener(
         runBlocking {
             val uuid = source.uniqueId
             val badge = chatBadgeRepository.getComponent(uuid)
-            val groups = chatGroupRepository.getAggregate(uuid)
+            val groups = chatGroupRepository.getGroupsComponent(uuid)
 
-            Component.text()
-                .append(
-                    badge,
-                    groups.prefix,
-                    groups.groups,
-                    Component.space(),
+            Component.text().run {
+                if (badge.value != null) {
+                    append(badge.value).appendSpace()
+                }
+                if (groups.value != null) {
+                    append(groups.value).appendSpace()
+                }
+                append(
                     sourceDisplayName,
-                    groups.suffix,
                     Component.text(": "),
                     urlClickable(message),
                 )
-                .build()
+                build()
+            }
         }
 
     private fun urlClickable(message: Component): Component {

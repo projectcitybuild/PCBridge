@@ -13,4 +13,16 @@ data class Group(
 
     @SerializedName("minecraft_name")
     val minecraftName: String?,
+
+    @SerializedName("minecraft_hover_text")
+    val hoverText: String?,
+
+    @SerializedName("minecraft_display_name")
+    val displayName: String?,
+
+    @SerializedName("group_type")
+    val groupType: String?,
+
+    @SerializedName("display_priority")
+    val displayPriority: Int?,
 )

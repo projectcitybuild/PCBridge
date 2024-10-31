@@ -10,7 +10,4 @@ data class Account(
 
     @SerializedName("username")
     val username: String,
-
-    @SerializedName("groups")
-    val groups: List<Group> = emptyList(),
 )

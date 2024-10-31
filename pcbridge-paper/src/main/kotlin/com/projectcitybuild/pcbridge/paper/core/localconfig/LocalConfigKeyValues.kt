@@ -13,7 +13,6 @@ data class LocalConfigKeyValues(
     val database: Database,
     val webServer: WebServer,
     val errorReporting: ErrorReporting,
-    val groups: Groups,
 ) {
     @Serializable
     data class Api(
@@ -42,26 +41,6 @@ data class LocalConfigKeyValues(
         val isSentryEnabled: Boolean,
         val sentryDsn: String,
     )
-
-    @Serializable
-    data class Groups(
-        val displayPriority: DisplayPriority,
-        val donorTierGroupNames: DonorTierGroupNames,
-    ) {
-        @Serializable
-        data class DisplayPriority(
-            val builder: List<String>,
-            val trust: List<String>,
-            val donor: List<String>,
-        )
-
-        @Serializable
-        data class DonorTierGroupNames(
-            val copper: String,
-            val iron: String,
-            val diamond: String,
-        )
-    }
 }
 
 fun LocalConfigKeyValues.Companion.default() =
@@ -89,38 +68,5 @@ fun LocalConfigKeyValues.Companion.default() =
             LocalConfigKeyValues.ErrorReporting(
                 isSentryEnabled = false,
                 sentryDsn = "https://<key>@sentry.io/<project>",
-            ),
-        groups =
-            LocalConfigKeyValues.Groups(
-                displayPriority =
-                    LocalConfigKeyValues.Groups.DisplayPriority(
-                        builder =
-                            listOf(
-                                "architect",
-                                "engineer",
-                                "planner",
-                                "builder",
-                                "intern",
-                            ),
-                        trust =
-                            listOf(
-                                "developer",
-                                "moderator",
-                                "trusted+",
-                                "trusted",
-                                "member",
-                            ),
-                        donor =
-                            listOf(
-                                "donator",
-                                "legacy-donator",
-                            ),
-                    ),
-                donorTierGroupNames =
-                    LocalConfigKeyValues.Groups.DonorTierGroupNames(
-                        copper = "copper_tier",
-                        iron = "iron_tier",
-                        diamond = "diamond_tier",
-                    ),
             ),
     )
