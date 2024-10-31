@@ -10,10 +10,12 @@ import java.util.UUID
 class ChatBadgeRepository(
     private val remoteConfig: RemoteConfig,
     private val store: Store,
-    private val badgeCache: Cache<UUID, Component>,
+    private val badgeCache: Cache<UUID, CachedComponent>,
     private val badgeFormatter: ChatBadgeFormatter,
 ) {
-    suspend fun getComponent(playerUUID: UUID): Component {
+    data class CachedComponent(val value: Component?)
+
+    suspend fun getComponent(playerUUID: UUID): CachedComponent {
         return badgeCache.get(playerUUID) {
             val badges = store.state.players[playerUUID]?.badges
                 ?: emptyList()
@@ -21,7 +23,7 @@ class ChatBadgeRepository(
             val config = remoteConfig.latest.config
             val icon = config.chat.badgeIcon
 
-            badgeFormatter.format(badges, icon)
+            CachedComponent(badgeFormatter.format(badges, icon))
         }
     }
 

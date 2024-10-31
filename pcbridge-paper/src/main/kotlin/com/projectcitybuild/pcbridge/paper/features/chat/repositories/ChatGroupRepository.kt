@@ -9,13 +9,17 @@ import java.util.UUID
 class ChatGroupRepository(
     private val store: Store,
     private val chatGroupFormatter: ChatGroupFormatter,
-    private val groupCache: Cache<UUID, Component>,
+    private val groupCache: Cache<UUID, CachedComponent>,
 ) {
-    suspend fun getGroupsComponent(playerUUID: UUID): Component = groupCache.get(playerUUID) {
-        val groups = store.state.players[playerUUID]?.groups
-            ?: emptyList()
+    data class CachedComponent(val value: Component?)
 
-        chatGroupFormatter.format(groups.toSet())
+    suspend fun getGroupsComponent(playerUUID: UUID): CachedComponent {
+        return groupCache.get(playerUUID) {
+            val groups = store.state.players[playerUUID]?.groups
+                ?: emptyList()
+
+            CachedComponent(chatGroupFormatter.format(groups.toSet()))
+        }
     }
 
     fun invalidate(playerUUID: UUID) {

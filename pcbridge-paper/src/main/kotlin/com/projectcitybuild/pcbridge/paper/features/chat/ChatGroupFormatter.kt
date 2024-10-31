@@ -6,7 +6,10 @@ import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.minimessage.MiniMessage
 
 class ChatGroupFormatter {
-    fun format(groups: Set<Group>): Component {
+    fun format(groups: Set<Group>): Component? {
+        if (groups.isEmpty()) {
+            return null
+        }
         val mapping = mutableMapOf<String, Group>()
         for (group in groups) {
             val groupType = group.groupType
@@ -19,7 +22,6 @@ class ChatGroupFormatter {
                 mapping[groupType] = group
             }
         }
-
         return Component.text().run {
             mapping["donor"]?.let { append(it::component) }
             mapping["staff"]?.let { append(it::component) }
@@ -33,9 +35,10 @@ class ChatGroupFormatter {
 private fun Group.component() = MiniMessage.miniMessage()
     .deserialize(displayName ?: name)
     .also {
-        if (!hoverText.isNullOrEmpty()) {
-            it.hoverEvent(
-                HoverEvent.showText(Component.text(hoverText!!)),
-            )
+        if (hoverText.isNullOrEmpty()) {
+            return it
         }
+        return it.hoverEvent(
+            HoverEvent.showText(Component.text(hoverText!!)),
+        )
     }

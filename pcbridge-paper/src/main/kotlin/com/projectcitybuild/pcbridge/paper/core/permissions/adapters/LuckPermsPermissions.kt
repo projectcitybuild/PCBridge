@@ -58,42 +58,4 @@ class LuckPermsPermissions : Permissions {
             .collect(Collectors.toSet())
             .toSet()
     }
-
-    override fun getUserPrefix(playerUUID: UUID): String {
-        val user = getUser(playerUUID)
-
-        return user.nodes.stream()
-            .filter(NodeType.PREFIX::matches)
-            .map(NodeType.PREFIX::cast)
-            .map { node -> node.metaValue }
-            .collect(Collectors.toSet())
-            .joinToString(separator = "")
-    }
-
-    override fun getUserSuffix(playerUUID: UUID): String {
-        val user = getUser(playerUUID)
-
-        return user.nodes.stream()
-            .filter(NodeType.SUFFIX::matches)
-            .map(NodeType.SUFFIX::cast)
-            .map { node -> node.metaValue }
-            .collect(Collectors.toSet())
-            .joinToString(separator = "")
-    }
-
-    override fun getGroupMetaData(
-        groupName: String,
-        key: String,
-    ): String? {
-        val group =
-            luckPerms.groupManager.getGroup(groupName)
-                ?: return null
-
-        return group.cachedData.metaData.getMetaValue(key)
-    }
-
-    override fun getGroupDisplayName(groupName: String): String? {
-        // TODO: find better way to get Display Name node
-        return luckPerms.groupManager.getGroup(groupName)?.displayName
-    }
 }

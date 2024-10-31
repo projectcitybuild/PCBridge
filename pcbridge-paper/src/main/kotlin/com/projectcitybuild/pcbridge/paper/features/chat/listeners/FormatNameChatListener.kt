@@ -33,16 +33,20 @@ class FormatNameChatListener(
             val badge = chatBadgeRepository.getComponent(uuid)
             val groups = chatGroupRepository.getGroupsComponent(uuid)
 
-            Component.text()
-                .append(
-                    badge,
-                    groups,
-                    Component.space(),
+            Component.text().run {
+                if (badge.value != null) {
+                    append(badge.value).appendSpace()
+                }
+                if (groups.value != null) {
+                    append(groups.value).appendSpace()
+                }
+                append(
                     sourceDisplayName,
                     Component.text(": "),
                     urlClickable(message),
                 )
-                .build()
+                build()
+            }
         }
 
     private fun urlClickable(message: Component): Component {

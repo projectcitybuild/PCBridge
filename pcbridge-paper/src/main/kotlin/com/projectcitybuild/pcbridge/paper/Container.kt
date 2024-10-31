@@ -449,11 +449,11 @@ private fun Module.chat() {
     }
 
     single(named("badge_cache")) {
-        Cache.Builder<UUID, Component>().build()
+        Cache.Builder<UUID, ChatBadgeRepository.CachedComponent>().build()
     }
 
     single(named("group_cache")) {
-        Cache.Builder<UUID, Component>().build()
+        Cache.Builder<UUID, ChatGroupRepository.CachedComponent>().build()
     }
 
     factory {
