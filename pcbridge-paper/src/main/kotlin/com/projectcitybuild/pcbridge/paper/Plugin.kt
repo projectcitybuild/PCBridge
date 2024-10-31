@@ -11,7 +11,6 @@ import com.projectcitybuild.pcbridge.paper.features.bans.listeners.AuthorizeConn
 import com.projectcitybuild.pcbridge.paper.features.bans.listeners.IPBanRequestListener
 import com.projectcitybuild.pcbridge.paper.features.bans.listeners.UUIDBanRequestListener
 import com.projectcitybuild.pcbridge.paper.features.chat.listeners.ChatConfigListener
-import com.projectcitybuild.pcbridge.paper.features.chat.listeners.EmojiChatListener
 import com.projectcitybuild.pcbridge.paper.features.chat.listeners.FormatNameChatListener
 import com.projectcitybuild.pcbridge.paper.features.chat.listeners.SyncPlayerChatListener
 import com.projectcitybuild.pcbridge.paper.features.groups.commands.SyncCommand
@@ -137,7 +136,6 @@ private class Lifecycle : KoinComponent {
                 get<AnnouncementEnableListener>(),
                 get<AuthorizeConnectionListener>(),
                 get<ChatConfigListener>(),
-                get<EmojiChatListener>(),
                 get<FirstTimeJoinListener>(),
                 get<FormatNameChatListener>(),
                 get<FramePlaceListener>(),

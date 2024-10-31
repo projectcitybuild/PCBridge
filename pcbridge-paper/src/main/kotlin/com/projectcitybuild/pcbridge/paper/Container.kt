@@ -25,7 +25,6 @@ import com.projectcitybuild.pcbridge.paper.features.bans.repositories.PlayerRepo
 import com.projectcitybuild.pcbridge.paper.features.chat.ChatBadgeFormatter
 import com.projectcitybuild.pcbridge.paper.features.chat.ChatGroupFormatter
 import com.projectcitybuild.pcbridge.paper.features.chat.listeners.ChatConfigListener
-import com.projectcitybuild.pcbridge.paper.features.chat.listeners.EmojiChatListener
 import com.projectcitybuild.pcbridge.paper.features.chat.listeners.FormatNameChatListener
 import com.projectcitybuild.pcbridge.paper.features.chat.listeners.SyncPlayerChatListener
 import com.projectcitybuild.pcbridge.paper.features.chat.repositories.ChatBadgeRepository
@@ -65,7 +64,6 @@ import com.projectcitybuild.pcbridge.webserver.HttpServer
 import com.projectcitybuild.pcbridge.webserver.HttpServerConfig
 import io.github.reactivecircus.cache4k.Cache
 import net.kyori.adventure.platform.bukkit.BukkitAudiences
-import net.kyori.adventure.text.Component
 import org.bukkit.plugin.java.JavaPlugin
 import org.koin.core.module.Module
 import org.koin.core.qualifier.named
@@ -462,10 +460,6 @@ private fun Module.chat() {
 
     single {
         ChatGroupFormatter()
-    }
-
-    factory {
-        EmojiChatListener()
     }
 
     factory {
