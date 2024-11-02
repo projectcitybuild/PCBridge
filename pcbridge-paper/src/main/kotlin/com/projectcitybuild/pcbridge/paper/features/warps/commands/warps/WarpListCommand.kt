@@ -2,7 +2,7 @@ package com.projectcitybuild.pcbridge.paper.features.warps.commands.warps
 
 import com.projectcitybuild.pcbridge.paper.core.pagination.Paginator
 import com.projectcitybuild.pcbridge.paper.features.warps.repositories.WarpRepository
-import com.projectcitybuild.pcbridge.http.models.Warp
+import com.projectcitybuild.pcbridge.http.models.pcb.Warp
 import com.projectcitybuild.pcbridge.paper.support.messages.CommandHelpBuilder
 import com.projectcitybuild.pcbridge.paper.support.messages.PaginationBuilder
 import com.projectcitybuild.pcbridge.paper.support.spigot.BadCommandUsageException

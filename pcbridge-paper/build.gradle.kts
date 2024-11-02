@@ -46,6 +46,7 @@ dependencies {
     implementation("net.kyori:adventure-platform-bukkit:4.3.2")
     implementation("net.kyori:adventure-text-minimessage:4.16.0")
     implementation("io.github.oshai:kotlin-logging-jvm:5.1.0")
+    implementation("io.github.petertrr:kotlin-multiplatform-diff:0.7.0")
 
     // Testing
     testImplementation("io.papermc.paper:paper-api:1.20.2-R0.1-SNAPSHOT")

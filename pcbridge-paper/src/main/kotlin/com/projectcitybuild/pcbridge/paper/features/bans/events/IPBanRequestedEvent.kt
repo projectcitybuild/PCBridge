@@ -1,6 +1,6 @@
 package com.projectcitybuild.pcbridge.paper.features.bans.events
 
-import com.projectcitybuild.pcbridge.http.models.IPBan
+import com.projectcitybuild.pcbridge.http.models.pcb.IPBan
 import org.bukkit.event.Event
 import org.bukkit.event.HandlerList
 

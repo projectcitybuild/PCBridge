@@ -1,7 +1,7 @@
 package com.projectcitybuild.pcbridge.paper.features.register.commands
 
 import com.projectcitybuild.pcbridge.http.parsing.ResponseParser
-import com.projectcitybuild.pcbridge.http.services.RegisterHttpService
+import com.projectcitybuild.pcbridge.http.services.pcb.RegisterHttpService
 import com.projectcitybuild.pcbridge.paper.support.messages.CommandHelpBuilder
 import com.projectcitybuild.pcbridge.paper.support.spigot.BadCommandUsageException
 import com.projectcitybuild.pcbridge.paper.support.spigot.CommandArgsParser

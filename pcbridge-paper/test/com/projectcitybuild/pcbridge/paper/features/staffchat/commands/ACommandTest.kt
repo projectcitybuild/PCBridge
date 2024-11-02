@@ -2,8 +2,8 @@ package com.projectcitybuild.pcbridge.paper.features.staffchat.commands
 
 import com.projectcitybuild.pcbridge.paper.Permissions
 import com.projectcitybuild.pcbridge.paper.core.remoteconfig.services.RemoteConfig
-import com.projectcitybuild.pcbridge.http.models.RemoteConfigKeyValues
-import com.projectcitybuild.pcbridge.http.models.RemoteConfigVersion
+import com.projectcitybuild.pcbridge.http.models.pcb.RemoteConfigKeyValues
+import com.projectcitybuild.pcbridge.http.models.pcb.RemoteConfigVersion
 import kotlinx.coroutines.test.runTest
 import net.kyori.adventure.text.Component
 import org.bukkit.Server

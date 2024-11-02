@@ -1,8 +1,9 @@
 package com.projectcitybuild.pcbridge.http.requests
 
-import com.projectcitybuild.pcbridge.http.models.PlayerData
-import com.projectcitybuild.pcbridge.http.models.RemoteConfigVersion
-import com.projectcitybuild.pcbridge.http.models.Warp
+import com.projectcitybuild.pcbridge.http.models.pcb.PlayerData
+import com.projectcitybuild.pcbridge.http.models.pcb.RemoteConfigVersion
+import com.projectcitybuild.pcbridge.http.models.pcb.Warp
+import retrofit2.Retrofit
 import retrofit2.http.DELETE
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
@@ -11,6 +12,8 @@ import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
+
+internal fun Retrofit.pcb() = create(PCBRequest::class.java)
 
 internal interface PCBRequest {
     /**

@@ -23,6 +23,8 @@ commands:
     permission: pcbridge.config.reload
   invisframe:
     permission: pcbridge.build.invisframe
+  itemname:
+    permission: pcbridge.items.rename
   nv:
     permission: pcbridge.build.nightvision
   register:

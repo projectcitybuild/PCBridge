@@ -1,6 +1,7 @@
 package com.projectcitybuild.pcbridge.paper
 
 import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
+import com.projectcitybuild.pcbridge.paper.core.discord.services.DiscordSend
 import com.projectcitybuild.pcbridge.paper.core.errors.SentryReporter
 import com.projectcitybuild.pcbridge.paper.core.errors.trace
 import com.projectcitybuild.pcbridge.paper.core.remoteconfig.commands.ConfigCommand
@@ -32,6 +33,8 @@ import com.projectcitybuild.pcbridge.paper.features.playerstate.listeners.Player
 import com.projectcitybuild.pcbridge.paper.features.telemetry.listeners.TelemetryPlayerConnectListener
 import com.projectcitybuild.pcbridge.paper.features.warps.commands.WarpCommand
 import com.projectcitybuild.pcbridge.paper.features.warps.commands.WarpsCommand
+import com.projectcitybuild.pcbridge.paper.features.watchdog.listeners.ItemTextListener
+import com.projectcitybuild.pcbridge.paper.features.watchdog.listeners.commands.ItemNameCommand
 import com.projectcitybuild.pcbridge.paper.integrations.DynmapIntegration
 import com.projectcitybuild.pcbridge.paper.integrations.EssentialsIntegration
 import com.projectcitybuild.pcbridge.paper.integrations.LuckPermsIntegration
@@ -128,6 +131,10 @@ private class Lifecycle : KoinComponent {
                     handler = get<ConfigCommand>(),
                     argsParser = ConfigCommand.Args.Parser(),
                 )
+                register(
+                    handler = get<ItemNameCommand>(),
+                    argsParser = ItemNameCommand.Args.Parser(),
+                )
             }
             listenerRegistry.register(
                 get<AnnounceJoinListener>(),
@@ -145,6 +152,7 @@ private class Lifecycle : KoinComponent {
                 get<PlayerStateListener>(),
                 get<PlayerSyncRequestListener>(),
                 get<ServerOverviewJoinListener>(),
+                get<ItemTextListener>(),
                 get<SyncPlayerChatListener>(),
                 get<SyncRankListener>(),
                 get<TelemetryPlayerConnectListener>(),
@@ -154,6 +162,8 @@ private class Lifecycle : KoinComponent {
             get<DynmapIntegration>().enable()
             get<EssentialsIntegration>().enable()
             get<LuckPermsIntegration>().enable()
+
+            get<DiscordSend>().startProcessing()
         }
 
     suspend fun shutdown() =
@@ -165,6 +175,8 @@ private class Lifecycle : KoinComponent {
             get<DynmapIntegration>().disable()
             get<EssentialsIntegration>().disable()
             get<LuckPermsIntegration>().disable()
+
+            get<DiscordSend>().stopProcessing()
 
             listenerRegistry.unregisterAll()
             commandRegistry.unregisterAll()

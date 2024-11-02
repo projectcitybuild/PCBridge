@@ -1,10 +1,10 @@
 package com.projectcitybuild.pcbridge.paper.core.store
 
-import com.projectcitybuild.pcbridge.http.models.Account
-import com.projectcitybuild.pcbridge.http.models.Badge
-import com.projectcitybuild.pcbridge.http.models.Group
-import com.projectcitybuild.pcbridge.http.models.Player
-import com.projectcitybuild.pcbridge.http.models.PlayerData
+import com.projectcitybuild.pcbridge.http.models.pcb.Account
+import com.projectcitybuild.pcbridge.http.models.pcb.Badge
+import com.projectcitybuild.pcbridge.http.models.pcb.Group
+import com.projectcitybuild.pcbridge.http.models.pcb.Player
+import com.projectcitybuild.pcbridge.http.models.pcb.PlayerData
 import com.projectcitybuild.pcbridge.http.serialization.serializable.LocalDateTimeSerializer
 import com.projectcitybuild.pcbridge.http.serialization.serializable.UUIDSerializer
 import kotlinx.serialization.Serializable

@@ -1,7 +1,7 @@
 package com.projectcitybuild.pcbridge.paper.features.bans.utilities
 
-import com.projectcitybuild.pcbridge.http.models.IPBan
-import com.projectcitybuild.pcbridge.http.models.PlayerBan
+import com.projectcitybuild.pcbridge.http.models.pcb.IPBan
+import com.projectcitybuild.pcbridge.http.models.pcb.PlayerBan
 import net.kyori.adventure.text.minimessage.MiniMessage
 
 fun PlayerBan.toMiniMessage() = MiniMessage.miniMessage().deserialize(
