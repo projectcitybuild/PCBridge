@@ -3,11 +3,15 @@ package com.projectcitybuild.pcbridge.paper.features.watchdog.listeners
 import com.projectcitybuild.pcbridge.http.models.discord.DiscordAuthorEmbed
 import com.projectcitybuild.pcbridge.http.models.discord.DiscordEmbed
 import com.projectcitybuild.pcbridge.http.models.discord.DiscordFieldEmbed
-import com.projectcitybuild.pcbridge.http.models.discord.DiscordThumbnailEmbed
 import com.projectcitybuild.pcbridge.paper.core.datetime.LocalizedTime
 import com.projectcitybuild.pcbridge.paper.core.datetime.toISO8601
 import com.projectcitybuild.pcbridge.paper.core.discord.services.DiscordSend
 import com.projectcitybuild.pcbridge.paper.features.watchdog.listeners.events.ItemRenamedEvent
+import io.github.petertrr.diffutils.text.DiffRow
+import io.github.petertrr.diffutils.text.DiffRowGenerator
+import io.github.petertrr.diffutils.text.DiffTagGenerator
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -15,6 +19,7 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.block.SignChangeEvent
 import org.bukkit.event.inventory.InventoryClickEvent
+import org.bukkit.event.player.PlayerEditBookEvent
 import org.bukkit.inventory.AnvilInventory
 
 class ItemTextListener(
@@ -31,7 +36,6 @@ class ItemTextListener(
             author = event.player.toDiscordEmbed(),
             description = lines.joinToString(separator = "\n"),
             timestamp = time.now().toISO8601(),
-            thumbnail = DiscordThumbnailEmbed("https://minecraft.wiki/images/Invicon_Oak_Sign.png"),
             fields = listOf(
               DiscordFieldEmbed(
                   name = "Location",
@@ -42,12 +46,53 @@ class ItemTextListener(
         discordSend.send(embed)
     }
 
-    // @EventHandler(priority = EventPriority.MONITOR)
-    // suspend fun onBookChange(event: PlayerEditBookEvent) {
-    //     val message = event.newBookMeta.title
-    //     discordSend.send(message)
-    // https://minecraft.wiki/images/Book_JE2_BE2.png
-    // }
+    @EventHandler(priority = EventPriority.MONITOR)
+    suspend fun onBookChange(event: PlayerEditBookEvent) {
+        val prevMeta = event.previousBookMeta
+        val nextMeta = event.newBookMeta
+
+        if (prevMeta == nextMeta) return
+
+        withContext(Dispatchers.IO) {
+            val serializer = PlainTextComponentSerializer.plainText()
+            val diff = DiffRowGenerator(
+                oldTag = object : DiffTagGenerator {
+                    override fun generateOpen(tag: DiffRow.Tag) = "~"
+                    override fun generateClose(tag: DiffRow.Tag) = "~"
+                },
+                newTag = object : DiffTagGenerator {
+                    override fun generateOpen(tag: DiffRow.Tag) = "**"
+                    override fun generateClose(tag: DiffRow.Tag) = "**"
+                },
+            ).generateDiffRows(
+                original = prevMeta.pages().map(serializer::serialize),
+                revised = nextMeta.pages().map(serializer::serialize),
+            )
+
+            val embed = DiscordEmbed(
+                title = "Book Edited",
+                author = event.player.toDiscordEmbed(),
+                description = diff.joinToString(separator = "\n---\n") { "[OLD] ${it.oldLine}\n[NEW] ${it.newLine}" },
+                timestamp = time.now().toISO8601(),
+                fields = mutableListOf<DiscordFieldEmbed>().also {
+                    if (nextMeta.title != null) {
+                        it.add(DiscordFieldEmbed(
+                            name = "Title",
+                            value = nextMeta.title,
+                        ))
+                    }
+                    if (nextMeta.author != null) {
+                        it.add(DiscordFieldEmbed(
+                            name = "Book Author",
+                            value = nextMeta.author,
+                        ))
+                    }
+                },
+            )
+            discordSend.send(embed)
+        }
+    }
+
 
     @EventHandler(priority = EventPriority.HIGHEST)
     fun onInventoryClick(event: InventoryClickEvent) {
@@ -74,7 +119,6 @@ class ItemTextListener(
             title = "Item Renamed",
             author = event.player.toDiscordEmbed(),
             description = displayName,
-            thumbnail = DiscordThumbnailEmbed("https://minecraft.wiki/images/Name_Tag_JE2_BE2.png"),
             fields = listOf(
                 DiscordFieldEmbed(
                     name = "Item",

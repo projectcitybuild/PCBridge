@@ -26,6 +26,11 @@ class DiscordSend(
     fun startProcessing() {
         log.info { "Starting Discord message queue" }
 
+        if (localConfig.get().discord.contentAlertWebhook.isEmpty()) {
+            log.warn { "No webhook configured for content alerts. No messages will be sent to Discord" }
+            return
+        }
+
         job?.cancel()
         job = CoroutineScope(Dispatchers.IO).launch {
             processRequests()
@@ -39,6 +44,10 @@ class DiscordSend(
     }
 
     fun send(embed: DiscordEmbed) {
+        if (job == null) {
+            log.debug { "Skipping Discord embed queue" }
+            return
+        }
         log.trace { "Queuing Discord embed: $embed" }
         queue.add(embed)
     }
