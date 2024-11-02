@@ -1,6 +1,7 @@
 package com.projectcitybuild.pcbridge.paper.features.watchdog.listeners
 
 import com.projectcitybuild.pcbridge.paper.core.discord.services.DiscordSend
+import com.projectcitybuild.pcbridge.paper.features.watchdog.listeners.events.ItemRenamedEvent
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -28,7 +29,7 @@ class ItemTextListener(
     //     discordSend.send(message)
     // }
 
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.HIGHEST)
     suspend fun onInventoryClick(event: InventoryClickEvent) {
         // Check for a rename when a player and anvil is involved
         if (event.whoClicked !is Player || event.inventory !is AnvilInventory) return
@@ -39,7 +40,12 @@ class ItemTextListener(
         val displayName = event.currentItem?.itemMeta?.displayName()
             ?: return
 
-        val message = PlainTextComponentSerializer.plainText().serialize(displayName)
+        onItemRenamed(ItemRenamedEvent(displayName))
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    suspend fun onItemRenamed(event: ItemRenamedEvent) {
+        val message = PlainTextComponentSerializer.plainText().serialize(event.displayName)
         discordSend.send(message)
     }
 }

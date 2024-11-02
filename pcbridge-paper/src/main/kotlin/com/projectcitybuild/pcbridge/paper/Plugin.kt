@@ -33,6 +33,7 @@ import com.projectcitybuild.pcbridge.paper.features.telemetry.listeners.Telemetr
 import com.projectcitybuild.pcbridge.paper.features.warps.commands.WarpCommand
 import com.projectcitybuild.pcbridge.paper.features.warps.commands.WarpsCommand
 import com.projectcitybuild.pcbridge.paper.features.watchdog.listeners.ItemTextListener
+import com.projectcitybuild.pcbridge.paper.features.watchdog.listeners.commands.ItemNameCommand
 import com.projectcitybuild.pcbridge.paper.integrations.DynmapIntegration
 import com.projectcitybuild.pcbridge.paper.integrations.EssentialsIntegration
 import com.projectcitybuild.pcbridge.paper.integrations.LuckPermsIntegration
@@ -128,6 +129,10 @@ private class Lifecycle : KoinComponent {
                 register(
                     handler = get<ConfigCommand>(),
                     argsParser = ConfigCommand.Args.Parser(),
+                )
+                register(
+                    handler = get<ItemNameCommand>(),
+                    argsParser = ItemNameCommand.Args.Parser(),
                 )
             }
             listenerRegistry.register(

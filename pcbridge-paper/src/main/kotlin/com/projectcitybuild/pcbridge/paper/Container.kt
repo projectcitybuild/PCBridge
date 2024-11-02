@@ -55,6 +55,7 @@ import com.projectcitybuild.pcbridge.paper.features.warps.repositories.WarpRepos
 import com.projectcitybuild.pcbridge.http.PCBHttp
 import com.projectcitybuild.pcbridge.paper.core.discord.services.DiscordSend
 import com.projectcitybuild.pcbridge.paper.features.watchdog.listeners.ItemTextListener
+import com.projectcitybuild.pcbridge.paper.features.watchdog.listeners.commands.ItemNameCommand
 import com.projectcitybuild.pcbridge.paper.integrations.DynmapIntegration
 import com.projectcitybuild.pcbridge.paper.integrations.EssentialsIntegration
 import com.projectcitybuild.pcbridge.paper.integrations.LuckPermsIntegration
@@ -341,6 +342,12 @@ private fun Module.watchdog() {
     factory {
         ItemTextListener(
             discordSend = get(),
+        )
+    }
+
+    factory {
+        ItemNameCommand(
+            eventBroadcaster = get(),
         )
     }
 }
