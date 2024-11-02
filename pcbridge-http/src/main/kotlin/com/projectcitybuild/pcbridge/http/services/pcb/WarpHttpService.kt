@@ -1,8 +1,8 @@
-package com.projectcitybuild.pcbridge.http.services
+package com.projectcitybuild.pcbridge.http.services.pcb
 
 import com.projectcitybuild.pcbridge.http.models.Warp
 import com.projectcitybuild.pcbridge.http.parsing.ResponseParser
-import com.projectcitybuild.pcbridge.http.pcb
+import com.projectcitybuild.pcbridge.http.requests.pcb
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.Retrofit

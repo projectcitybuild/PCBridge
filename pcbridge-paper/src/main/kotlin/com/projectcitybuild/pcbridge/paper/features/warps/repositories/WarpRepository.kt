@@ -1,7 +1,7 @@
 package com.projectcitybuild.pcbridge.paper.features.warps.repositories
 
 import com.projectcitybuild.pcbridge.http.models.Warp
-import com.projectcitybuild.pcbridge.http.services.WarpHttpService
+import com.projectcitybuild.pcbridge.http.services.pcb.WarpHttpService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 

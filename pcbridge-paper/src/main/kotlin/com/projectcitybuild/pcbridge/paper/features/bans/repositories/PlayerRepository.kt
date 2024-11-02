@@ -2,7 +2,7 @@ package com.projectcitybuild.pcbridge.paper.features.bans.repositories
 
 import com.projectcitybuild.pcbridge.paper.features.bans.utilities.Sanitizer
 import com.projectcitybuild.pcbridge.http.models.PlayerData
-import com.projectcitybuild.pcbridge.http.services.PlayerHttpService
+import com.projectcitybuild.pcbridge.http.services.pcb.PlayerHttpService
 import java.net.InetAddress
 import java.util.UUID
 import kotlin.jvm.Throws

@@ -2,6 +2,7 @@ package com.projectcitybuild.pcbridge.paper
 
 import com.github.shynixn.mccoroutine.bukkit.minecraftDispatcher
 import com.google.gson.reflect.TypeToken
+import com.projectcitybuild.pcbridge.http.DiscordHttp
 import com.projectcitybuild.pcbridge.paper.core.localconfig.LocalConfig
 import com.projectcitybuild.pcbridge.paper.core.localconfig.JsonStorage
 import com.projectcitybuild.pcbridge.paper.core.datetime.DateTimeFormatter
@@ -51,7 +52,9 @@ import com.projectcitybuild.pcbridge.paper.features.telemetry.repositories.Telem
 import com.projectcitybuild.pcbridge.paper.features.warps.commands.WarpCommand
 import com.projectcitybuild.pcbridge.paper.features.warps.commands.WarpsCommand
 import com.projectcitybuild.pcbridge.paper.features.warps.repositories.WarpRepository
-import com.projectcitybuild.pcbridge.http.HttpService
+import com.projectcitybuild.pcbridge.http.PCBHttp
+import com.projectcitybuild.pcbridge.paper.core.discord.services.DiscordSend
+import com.projectcitybuild.pcbridge.paper.features.watchdog.listeners.ItemTextListener
 import com.projectcitybuild.pcbridge.paper.integrations.DynmapIntegration
 import com.projectcitybuild.pcbridge.paper.integrations.EssentialsIntegration
 import com.projectcitybuild.pcbridge.paper.integrations.LuckPermsIntegration
@@ -95,6 +98,7 @@ fun pluginModule(_plugin: JavaPlugin) =
         staffChat()
         telemetry()
         warps()
+        watchdog()
     }
 
 private fun Module.spigot(plugin: JavaPlugin) {
@@ -199,7 +203,7 @@ private fun Module.core() {
 
     single {
         RemoteConfig(
-            configHttpService = get<HttpService>().config,
+            configHttpService = get<PCBHttp>().config,
             eventBroadcaster = get(),
         )
     }
@@ -207,6 +211,13 @@ private fun Module.core() {
     factory {
         ConfigCommand(
             remoteConfig = get(),
+        )
+    }
+
+    single {
+        DiscordSend(
+            localConfig = get(),
+            discordHttpService = get<DiscordHttp>().discord,
         )
     }
 }
@@ -233,9 +244,17 @@ private fun Module.http() {
     single {
         val localConfig = get<LocalConfig>().get()
 
-        HttpService(
+        PCBHttp(
             authToken = localConfig.api.token,
             baseURL = localConfig.api.baseUrl,
+            withLogging = localConfig.api.isLoggingEnabled,
+        )
+    }
+
+    single {
+        val localConfig = get<LocalConfig>().get()
+
+        DiscordHttp(
             withLogging = localConfig.api.isLoggingEnabled,
         )
     }
@@ -297,7 +316,7 @@ private fun Module.announcements() {
 private fun Module.warps() {
     single {
         WarpRepository(
-            warpHttpService = get<HttpService>().warps
+            warpHttpService = get<PCBHttp>().warps
         )
     }
 
@@ -314,6 +333,14 @@ private fun Module.warps() {
             remoteConfig = get(),
             server = get(),
             time = get(),
+        )
+    }
+}
+
+private fun Module.watchdog() {
+    factory {
+        ItemTextListener(
+            discordSend = get(),
         )
     }
 }
@@ -370,7 +397,7 @@ private fun Module.playerState() {
 private fun Module.bans() {
     factory {
         PlayerRepository(
-            httpService = get<HttpService>().player,
+            httpService = get<PCBHttp>().player,
         )
     }
 
@@ -487,12 +514,12 @@ private fun Module.chat() {
 private fun Module.register() {
     factory {
         RegisterCommand(
-            registerHttpService = get<HttpService>().register,
+            registerHttpService = get<PCBHttp>().register,
         )
     }
     factory {
         CodeCommand(
-            registerHttpService = get<HttpService>().register,
+            registerHttpService = get<PCBHttp>().register,
         )
     }
 }
@@ -500,7 +527,7 @@ private fun Module.register() {
 private fun Module.telemetry() {
     factory {
         TelemetryRepository(
-            telemetryHttpService = get<HttpService>().telemetry,
+            telemetryHttpService = get<PCBHttp>().telemetry,
         )
     }
 

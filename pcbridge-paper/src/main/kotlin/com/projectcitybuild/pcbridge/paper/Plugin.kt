@@ -32,6 +32,7 @@ import com.projectcitybuild.pcbridge.paper.features.playerstate.listeners.Player
 import com.projectcitybuild.pcbridge.paper.features.telemetry.listeners.TelemetryPlayerConnectListener
 import com.projectcitybuild.pcbridge.paper.features.warps.commands.WarpCommand
 import com.projectcitybuild.pcbridge.paper.features.warps.commands.WarpsCommand
+import com.projectcitybuild.pcbridge.paper.features.watchdog.listeners.ItemTextListener
 import com.projectcitybuild.pcbridge.paper.integrations.DynmapIntegration
 import com.projectcitybuild.pcbridge.paper.integrations.EssentialsIntegration
 import com.projectcitybuild.pcbridge.paper.integrations.LuckPermsIntegration
@@ -145,6 +146,7 @@ private class Lifecycle : KoinComponent {
                 get<PlayerStateListener>(),
                 get<PlayerSyncRequestListener>(),
                 get<ServerOverviewJoinListener>(),
+                get<ItemTextListener>(),
                 get<SyncPlayerChatListener>(),
                 get<SyncRankListener>(),
                 get<TelemetryPlayerConnectListener>(),

@@ -3,6 +3,7 @@
 package com.projectcitybuild.pcbridge.paper.core.localconfig
 
 import kotlinx.serialization.Serializable
+import java.io.Serial
 
 /**
  * Key-values for the plugin configured through the local filesystem
@@ -13,6 +14,7 @@ data class LocalConfigKeyValues(
     val database: Database,
     val webServer: WebServer,
     val errorReporting: ErrorReporting,
+    val discord: Discord,
 ) {
     @Serializable
     data class Api(
@@ -40,6 +42,11 @@ data class LocalConfigKeyValues(
     data class ErrorReporting(
         val isSentryEnabled: Boolean,
         val sentryDsn: String,
+    )
+
+    @Serializable
+    data class Discord(
+        val contentAlertWebhook: String,
     )
 }
 
@@ -69,4 +76,7 @@ fun LocalConfigKeyValues.Companion.default() =
                 isSentryEnabled = false,
                 sentryDsn = "https://<key>@sentry.io/<project>",
             ),
+        discord = LocalConfigKeyValues.Discord(
+            contentAlertWebhook = "FILL_THIS_IN"
+        )
     )
