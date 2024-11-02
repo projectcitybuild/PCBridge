@@ -219,6 +219,7 @@ private fun Module.core() {
         DiscordSend(
             localConfig = get(),
             discordHttpService = get<DiscordHttp>().discord,
+            sentryReporter = get(),
         )
     }
 }
@@ -342,6 +343,7 @@ private fun Module.watchdog() {
     factory {
         ItemTextListener(
             discordSend = get(),
+            time = get(),
         )
     }
 

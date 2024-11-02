@@ -1,6 +1,7 @@
 package com.projectcitybuild.pcbridge.paper
 
 import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
+import com.projectcitybuild.pcbridge.paper.core.discord.services.DiscordSend
 import com.projectcitybuild.pcbridge.paper.core.errors.SentryReporter
 import com.projectcitybuild.pcbridge.paper.core.errors.trace
 import com.projectcitybuild.pcbridge.paper.core.remoteconfig.commands.ConfigCommand
@@ -161,6 +162,8 @@ private class Lifecycle : KoinComponent {
             get<DynmapIntegration>().enable()
             get<EssentialsIntegration>().enable()
             get<LuckPermsIntegration>().enable()
+
+            get<DiscordSend>().startProcessing()
         }
 
     suspend fun shutdown() =
@@ -172,6 +175,8 @@ private class Lifecycle : KoinComponent {
             get<DynmapIntegration>().disable()
             get<EssentialsIntegration>().disable()
             get<LuckPermsIntegration>().disable()
+
+            get<DiscordSend>().stopProcessing()
 
             listenerRegistry.unregisterAll()
             commandRegistry.unregisterAll()

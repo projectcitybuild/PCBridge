@@ -2,8 +2,8 @@ package com.projectcitybuild.pcbridge.paper.core.remoteconfig.services
 
 import com.projectcitybuild.pcbridge.paper.core.logger.log
 import com.projectcitybuild.pcbridge.paper.core.remoteconfig.events.RemoteConfigUpdatedEvent
-import com.projectcitybuild.pcbridge.http.models.RemoteConfigKeyValues
-import com.projectcitybuild.pcbridge.http.models.RemoteConfigVersion
+import com.projectcitybuild.pcbridge.http.models.pcb.RemoteConfigKeyValues
+import com.projectcitybuild.pcbridge.http.models.pcb.RemoteConfigVersion
 import com.projectcitybuild.pcbridge.http.services.pcb.ConfigHttpService
 import com.projectcitybuild.pcbridge.paper.support.spigot.SpigotEventBroadcaster
 

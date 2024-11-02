@@ -1,6 +1,6 @@
 package com.projectcitybuild.pcbridge.http.services.pcb
 
-import com.projectcitybuild.pcbridge.http.models.RemoteConfigVersion
+import com.projectcitybuild.pcbridge.http.models.pcb.RemoteConfigVersion
 import com.projectcitybuild.pcbridge.http.parsing.ResponseParser
 import com.projectcitybuild.pcbridge.http.requests.pcb
 import kotlinx.coroutines.Dispatchers

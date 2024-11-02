@@ -6,8 +6,6 @@ import com.projectcitybuild.pcbridge.paper.support.spigot.BadCommandUsageExcepti
 import com.projectcitybuild.pcbridge.paper.support.spigot.CommandArgsParser
 import com.projectcitybuild.pcbridge.paper.support.spigot.SpigotCommand
 import com.projectcitybuild.pcbridge.paper.support.spigot.SpigotEventBroadcaster
-import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.minimessage.MiniMessage
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
@@ -45,7 +43,7 @@ class ItemNameCommand(
             )
         )
         eventBroadcaster.broadcast(
-            ItemRenamedEvent(displayName = name)
+            ItemRenamedEvent(displayName = name, player = sender)
         )
     }
 

@@ -1,7 +1,7 @@
 package com.projectcitybuild.pcbridge.http.services.pcb
 
 import com.projectcitybuild.pcbridge.http.parsing.ResponseParser
-import com.projectcitybuild.pcbridge.http.models.PlayerData
+import com.projectcitybuild.pcbridge.http.models.pcb.PlayerData
 import com.projectcitybuild.pcbridge.http.requests.pcb
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

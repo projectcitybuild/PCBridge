@@ -1,6 +1,6 @@
 package com.projectcitybuild.pcbridge.paper.features.chat
 
-import com.projectcitybuild.pcbridge.http.models.Group
+import com.projectcitybuild.pcbridge.http.models.pcb.Group
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.minimessage.MiniMessage

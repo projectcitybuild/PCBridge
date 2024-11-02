@@ -1,5 +1,10 @@
 package com.projectcitybuild.pcbridge.paper.features.watchdog.listeners
 
+import com.projectcitybuild.pcbridge.http.models.discord.DiscordAuthorEmbed
+import com.projectcitybuild.pcbridge.http.models.discord.DiscordEmbed
+import com.projectcitybuild.pcbridge.http.models.discord.DiscordFieldEmbed
+import com.projectcitybuild.pcbridge.paper.core.datetime.LocalizedTime
+import com.projectcitybuild.pcbridge.paper.core.datetime.toISO8601
 import com.projectcitybuild.pcbridge.paper.core.discord.services.DiscordSend
 import com.projectcitybuild.pcbridge.paper.features.watchdog.listeners.events.ItemRenamedEvent
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
@@ -13,14 +18,26 @@ import org.bukkit.inventory.AnvilInventory
 
 class ItemTextListener(
     private val discordSend: DiscordSend,
+    private val time: LocalizedTime,
 ) : Listener {
     @EventHandler(priority = EventPriority.MONITOR)
-    suspend fun onSignChange(event: SignChangeEvent) {
+    fun onSignChange(event: SignChangeEvent) {
         val serializer = PlainTextComponentSerializer.plainText()
         val lines = event.lines().map { serializer.serialize(it) }
-        val message = lines.joinToString(separator = "\n")
 
-        discordSend.send(message)
+        val embed = DiscordEmbed(
+            title = "Sign Edited",
+            author = event.player.toDiscordEmbed(),
+            description = lines.joinToString(separator = "\n"),
+            timestamp = time.now().toISO8601(),
+            fields = listOf(
+              DiscordFieldEmbed(
+                  name = "Location",
+                  value = event.block.location.toString(),
+              ),
+            ),
+        )
+        discordSend.send(embed)
     }
 
     // @EventHandler(priority = EventPriority.MONITOR)
@@ -30,9 +47,10 @@ class ItemTextListener(
     // }
 
     @EventHandler(priority = EventPriority.HIGHEST)
-    suspend fun onInventoryClick(event: InventoryClickEvent) {
+    fun onInventoryClick(event: InventoryClickEvent) {
         // Check for a rename when a player and anvil is involved
-        if (event.whoClicked !is Player || event.inventory !is AnvilInventory) return
+        val sender = event.whoClicked
+        if (sender !is Player || event.inventory !is AnvilInventory) return
 
         // Ensure they're actually grabbing it out of the anvil slot
         if (event.rawSlot != 2) return
@@ -40,12 +58,25 @@ class ItemTextListener(
         val displayName = event.currentItem?.itemMeta?.displayName()
             ?: return
 
-        onItemRenamed(ItemRenamedEvent(displayName))
+        onItemRenamed(
+            ItemRenamedEvent(displayName, sender)
+        )
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
-    suspend fun onItemRenamed(event: ItemRenamedEvent) {
-        val message = PlainTextComponentSerializer.plainText().serialize(event.displayName)
-        discordSend.send(message)
+    fun onItemRenamed(event: ItemRenamedEvent) {
+        val displayName = PlainTextComponentSerializer.plainText().serialize(event.displayName)
+
+        val embed = DiscordEmbed(
+            title = "Item Renamed",
+            author = event.player.toDiscordEmbed(),
+            description = displayName,
+        )
+        discordSend.send(embed)
     }
 }
+
+private fun Player.toDiscordEmbed() = DiscordAuthorEmbed(
+    name = name,
+    iconUrl = "https://minotar.net/avatar/${uniqueId}",
+)

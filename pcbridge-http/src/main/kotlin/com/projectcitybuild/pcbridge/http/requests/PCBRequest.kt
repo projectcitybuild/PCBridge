@@ -1,8 +1,8 @@
 package com.projectcitybuild.pcbridge.http.requests
 
-import com.projectcitybuild.pcbridge.http.models.PlayerData
-import com.projectcitybuild.pcbridge.http.models.RemoteConfigVersion
-import com.projectcitybuild.pcbridge.http.models.Warp
+import com.projectcitybuild.pcbridge.http.models.pcb.PlayerData
+import com.projectcitybuild.pcbridge.http.models.pcb.RemoteConfigVersion
+import com.projectcitybuild.pcbridge.http.models.pcb.Warp
 import retrofit2.Retrofit
 import retrofit2.http.DELETE
 import retrofit2.http.Field

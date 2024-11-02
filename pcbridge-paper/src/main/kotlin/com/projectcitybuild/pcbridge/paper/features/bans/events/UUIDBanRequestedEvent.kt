@@ -1,6 +1,6 @@
 package com.projectcitybuild.pcbridge.paper.features.bans.events
 
-import com.projectcitybuild.pcbridge.http.models.PlayerBan
+import com.projectcitybuild.pcbridge.http.models.pcb.PlayerBan
 import org.bukkit.event.Event
 import org.bukkit.event.HandlerList
 

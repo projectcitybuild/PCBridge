@@ -1,4 +1,4 @@
-package com.projectcitybuild.pcbridge.http.models
+package com.projectcitybuild.pcbridge.http.models.pcb
 
 import com.google.gson.annotations.SerializedName
 import kotlinx.serialization.Serializable

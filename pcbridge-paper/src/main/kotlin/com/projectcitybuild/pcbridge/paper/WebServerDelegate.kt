@@ -6,10 +6,10 @@ import com.projectcitybuild.pcbridge.paper.features.bans.events.IPBanRequestedEv
 import com.projectcitybuild.pcbridge.paper.features.bans.events.UUIDBanRequestedEvent
 import com.projectcitybuild.pcbridge.paper.features.groups.events.PlayerSyncRequestedEvent
 import com.projectcitybuild.pcbridge.paper.features.warps.repositories.WarpRepository
-import com.projectcitybuild.pcbridge.http.models.IPBan
-import com.projectcitybuild.pcbridge.http.models.PlayerBan
-import com.projectcitybuild.pcbridge.http.models.RemoteConfigVersion
-import com.projectcitybuild.pcbridge.http.models.Warp
+import com.projectcitybuild.pcbridge.http.models.pcb.IPBan
+import com.projectcitybuild.pcbridge.http.models.pcb.PlayerBan
+import com.projectcitybuild.pcbridge.http.models.pcb.RemoteConfigVersion
+import com.projectcitybuild.pcbridge.http.models.pcb.Warp
 import com.projectcitybuild.pcbridge.paper.support.spigot.SpigotEventBroadcaster
 import com.projectcitybuild.pcbridge.webserver.HttpServerDelegate
 import java.util.UUID
