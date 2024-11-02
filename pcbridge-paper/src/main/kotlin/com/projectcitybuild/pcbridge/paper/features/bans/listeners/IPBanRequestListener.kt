@@ -4,6 +4,7 @@ import com.projectcitybuild.pcbridge.paper.core.logger.log
 import com.projectcitybuild.pcbridge.paper.features.bans.events.IPBanRequestedEvent
 import com.projectcitybuild.pcbridge.paper.features.bans.utilities.Sanitizer
 import com.projectcitybuild.pcbridge.paper.features.bans.utilities.toMiniMessage
+import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.Server
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -31,6 +32,9 @@ class IPBanRequestListener(
         matchingPlayer.kick(
             event.ban.toMiniMessage(),
             PlayerKickEvent.Cause.IP_BANNED,
+        )
+        server.broadcast(
+            MiniMessage.miniMessage().deserialize("<gray>${matchingPlayer.name} has been banned</gray>")
         )
     }
 }
