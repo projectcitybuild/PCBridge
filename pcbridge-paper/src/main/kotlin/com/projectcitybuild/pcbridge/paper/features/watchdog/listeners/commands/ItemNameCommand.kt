@@ -43,7 +43,11 @@ class ItemNameCommand(
             )
         )
         eventBroadcaster.broadcast(
-            ItemRenamedEvent(displayName = name, player = sender)
+            ItemRenamedEvent(
+                displayName = name,
+                item = itemStack,
+                player = sender,
+            )
         )
     }
 
@@ -52,10 +56,10 @@ class ItemNameCommand(
     ) {
         class Parser : CommandArgsParser<Args> {
             override fun parse(args: List<String>): Args {
-                if (args.isEmpty() || args.size > 1 || args[0].isEmpty()) {
+                if (args.isEmpty() || args[0].isEmpty()) {
                     throw BadCommandUsageException()
                 }
-                return Args(name = args[0])
+                return Args(name = args.joinToString(separator = " "))
             }
         }
     }

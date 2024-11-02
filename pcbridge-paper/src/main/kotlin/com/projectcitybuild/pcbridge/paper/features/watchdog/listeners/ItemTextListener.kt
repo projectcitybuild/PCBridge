@@ -3,6 +3,7 @@ package com.projectcitybuild.pcbridge.paper.features.watchdog.listeners
 import com.projectcitybuild.pcbridge.http.models.discord.DiscordAuthorEmbed
 import com.projectcitybuild.pcbridge.http.models.discord.DiscordEmbed
 import com.projectcitybuild.pcbridge.http.models.discord.DiscordFieldEmbed
+import com.projectcitybuild.pcbridge.http.models.discord.DiscordThumbnailEmbed
 import com.projectcitybuild.pcbridge.paper.core.datetime.LocalizedTime
 import com.projectcitybuild.pcbridge.paper.core.datetime.toISO8601
 import com.projectcitybuild.pcbridge.paper.core.discord.services.DiscordSend
@@ -30,6 +31,7 @@ class ItemTextListener(
             author = event.player.toDiscordEmbed(),
             description = lines.joinToString(separator = "\n"),
             timestamp = time.now().toISO8601(),
+            thumbnail = DiscordThumbnailEmbed("https://minecraft.wiki/images/Invicon_Oak_Sign.png"),
             fields = listOf(
               DiscordFieldEmbed(
                   name = "Location",
@@ -44,6 +46,7 @@ class ItemTextListener(
     // suspend fun onBookChange(event: PlayerEditBookEvent) {
     //     val message = event.newBookMeta.title
     //     discordSend.send(message)
+    // https://minecraft.wiki/images/Book_JE2_BE2.png
     // }
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -59,7 +62,7 @@ class ItemTextListener(
             ?: return
 
         onItemRenamed(
-            ItemRenamedEvent(displayName, sender)
+            ItemRenamedEvent(displayName, event.currentItem!!, sender)
         )
     }
 
@@ -71,6 +74,17 @@ class ItemTextListener(
             title = "Item Renamed",
             author = event.player.toDiscordEmbed(),
             description = displayName,
+            thumbnail = DiscordThumbnailEmbed("https://minecraft.wiki/images/Name_Tag_JE2_BE2.png"),
+            fields = listOf(
+                DiscordFieldEmbed(
+                    name = "Item",
+                    value = event.item.type.name,
+                ),
+                DiscordFieldEmbed(
+                    name = "Item Quantity",
+                    value = event.item.amount.toString(),
+                ),
+            ),
         )
         discordSend.send(embed)
     }

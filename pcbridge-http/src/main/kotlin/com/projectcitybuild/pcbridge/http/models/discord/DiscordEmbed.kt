@@ -10,5 +10,6 @@ data class DiscordEmbed(
     val timestamp: String? = null,
     val color: Int? = null,
     val author: DiscordAuthorEmbed? = null,
+    val thumbnail: DiscordThumbnailEmbed? = null,
     val fields: List<DiscordFieldEmbed>? = null,
 )
