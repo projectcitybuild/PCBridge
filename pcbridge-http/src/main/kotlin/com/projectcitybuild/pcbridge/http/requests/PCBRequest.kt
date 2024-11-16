@@ -1,5 +1,8 @@
 package com.projectcitybuild.pcbridge.http.requests
 
+import com.projectcitybuild.pcbridge.http.models.pcb.Build
+import com.projectcitybuild.pcbridge.http.models.pcb.BuildName
+import com.projectcitybuild.pcbridge.http.models.pcb.PaginatedResponse
 import com.projectcitybuild.pcbridge.http.models.pcb.PlayerData
 import com.projectcitybuild.pcbridge.http.models.pcb.RemoteConfigVersion
 import com.projectcitybuild.pcbridge.http.models.pcb.Warp
@@ -97,4 +100,18 @@ internal interface PCBRequest {
     suspend fun deleteWarp(
         @Path(value = "id") id: Int,
     )
+
+    @GET("v2/minecraft/build")
+    suspend fun getBuilds(
+        @Query(value = "page") page: Int,
+        @Query(value = "size") size: Int,
+    ): PaginatedResponse<List<Build>>
+
+    @GET("v2/minecraft/build/{id}")
+    suspend fun getBuild(
+        @Path(value = "id") id: Int,
+    ): Build?
+
+    @GET("v2/minecraft/build/name")
+    suspend fun getNames(): List<BuildName>
 }

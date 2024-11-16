@@ -54,6 +54,10 @@ import com.projectcitybuild.pcbridge.paper.features.warps.commands.WarpsCommand
 import com.projectcitybuild.pcbridge.paper.features.warps.repositories.WarpRepository
 import com.projectcitybuild.pcbridge.http.PCBHttp
 import com.projectcitybuild.pcbridge.paper.core.discord.services.DiscordSend
+import com.projectcitybuild.pcbridge.paper.features.builds.commands.BuildCommand
+import com.projectcitybuild.pcbridge.paper.features.builds.commands.BuildsCommand
+import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildListCommand
+import com.projectcitybuild.pcbridge.paper.features.builds.commands.repositories.BuildRepository
 import com.projectcitybuild.pcbridge.paper.features.watchdog.listeners.ItemTextListener
 import com.projectcitybuild.pcbridge.paper.features.watchdog.listeners.commands.ItemNameCommand
 import com.projectcitybuild.pcbridge.paper.integrations.DynmapIntegration
@@ -67,6 +71,7 @@ import com.projectcitybuild.pcbridge.paper.support.spigot.SpigotTimer
 import com.projectcitybuild.pcbridge.webserver.HttpServer
 import com.projectcitybuild.pcbridge.webserver.HttpServerConfig
 import io.github.reactivecircus.cache4k.Cache
+import io.papermc.paper.plugin.lifecycle.event.LifecycleEventManager
 import net.kyori.adventure.platform.bukkit.BukkitAudiences
 import org.bukkit.plugin.java.JavaPlugin
 import org.koin.core.module.Module
@@ -89,6 +94,7 @@ fun pluginModule(_plugin: JavaPlugin) =
         // Features
         announcements()
         bans()
+        builds()
         chat()
         groups()
         joinMessages()
@@ -311,6 +317,32 @@ private fun Module.announcements() {
     factory {
         AnnouncementConfigListener(
             announcementTimer = get(),
+        )
+    }
+}
+
+private fun Module.builds() {
+    factory {
+        BuildsCommand(
+            buildListCommand = get(),
+        )
+    }
+
+    factory {
+        BuildListCommand(
+            buildRepository = get(),
+        )
+    }
+
+    factory {
+        BuildCommand(
+            buildRepository = get(),
+        )
+    }
+
+    single {
+        BuildRepository(
+            buildHttpService = get<PCBHttp>().builds
         )
     }
 }

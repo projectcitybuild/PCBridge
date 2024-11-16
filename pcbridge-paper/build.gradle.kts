@@ -28,7 +28,7 @@ dependencies {
     implementation(project(":pcbridge-web-server"))
 
     // Paper
-    compileOnly("io.papermc.paper:paper-api:1.20.2-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.21.1-R0.1-SNAPSHOT")
 
     // Integrations
     compileOnly("net.luckperms:api:5.4")
@@ -49,7 +49,7 @@ dependencies {
     implementation("io.github.petertrr:kotlin-multiplatform-diff:0.7.0")
 
     // Testing
-    testImplementation("io.papermc.paper:paper-api:1.20.2-R0.1-SNAPSHOT")
+    testImplementation("io.papermc.paper:paper-api:1.21.1-R0.1-SNAPSHOT")
 }
 
 sourceSets {

@@ -11,6 +11,8 @@ import com.projectcitybuild.pcbridge.paper.features.announcements.listeners.Anno
 import com.projectcitybuild.pcbridge.paper.features.bans.listeners.AuthorizeConnectionListener
 import com.projectcitybuild.pcbridge.paper.features.bans.listeners.IPBanRequestListener
 import com.projectcitybuild.pcbridge.paper.features.bans.listeners.UUIDBanRequestListener
+import com.projectcitybuild.pcbridge.paper.features.builds.commands.BuildCommand
+import com.projectcitybuild.pcbridge.paper.features.builds.commands.BuildsCommand
 import com.projectcitybuild.pcbridge.paper.features.chat.listeners.ChatConfigListener
 import com.projectcitybuild.pcbridge.paper.features.chat.listeners.FormatNameChatListener
 import com.projectcitybuild.pcbridge.paper.features.chat.listeners.SyncPlayerChatListener
@@ -42,7 +44,9 @@ import com.projectcitybuild.pcbridge.paper.support.spigot.SpigotCommandRegistry
 import com.projectcitybuild.pcbridge.paper.support.spigot.SpigotListenerRegistry
 import com.projectcitybuild.pcbridge.paper.support.spigot.SpigotTimer
 import com.projectcitybuild.pcbridge.webserver.HttpServer
+import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents
 import net.kyori.adventure.platform.bukkit.BukkitAudiences
+import org.bukkit.plugin.java.JavaPlugin
 import org.koin.core.KoinApplication
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
@@ -158,6 +162,17 @@ private class Lifecycle : KoinComponent {
                 get<TelemetryPlayerConnectListener>(),
                 get<UUIDBanRequestListener>(),
             )
+
+            get<JavaPlugin>()
+                .lifecycleManager
+                .registerEventHandler(LifecycleEvents.COMMANDS) { event ->
+                    event.registrar().register(
+                        get<BuildsCommand>().buildLiteral(plugin = get<JavaPlugin>())
+                    )
+                    event.registrar().register(
+                        get<BuildCommand>().buildLiteral(plugin = get<JavaPlugin>())
+                    )
+                }
 
             get<DynmapIntegration>().enable()
             get<EssentialsIntegration>().enable()
