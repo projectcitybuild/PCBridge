@@ -167,10 +167,10 @@ private class Lifecycle : KoinComponent {
                 .lifecycleManager
                 .registerEventHandler(LifecycleEvents.COMMANDS) { event ->
                     event.registrar().register(
-                        get<BuildsCommand>().buildLiteral(plugin = get<JavaPlugin>())
+                        get<BuildsCommand>().buildLiteral()
                     )
                     event.registrar().register(
-                        get<BuildCommand>().buildLiteral(plugin = get<JavaPlugin>())
+                        get<BuildCommand>().buildLiteral()
                     )
                 }
 

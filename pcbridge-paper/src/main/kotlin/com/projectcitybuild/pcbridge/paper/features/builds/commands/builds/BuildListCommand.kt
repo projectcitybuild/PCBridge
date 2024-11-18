@@ -12,9 +12,10 @@ import org.bukkit.plugin.Plugin
 
 @Suppress("UnstableApiUsage")
 class BuildListCommand(
+    private val plugin: Plugin,
     private val buildRepository: BuildRepository,
 ) {
-    fun buildLiteral(plugin: Plugin): LiteralCommandNode<CommandSourceStack> {
+    fun buildLiteral(): LiteralCommandNode<CommandSourceStack> {
         return Commands.literal("list")
             .then(
                 Commands.argument("page", IntegerArgumentType.integer())

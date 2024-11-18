@@ -24,7 +24,7 @@ class BuildRepository(
     }
 
     suspend fun get(name: String): Build? {
-        return null
+        return buildHttpService.getByName(name)
     }
 
     suspend fun names(): List<String> {

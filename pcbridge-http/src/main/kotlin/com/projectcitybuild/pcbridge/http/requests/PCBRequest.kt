@@ -107,9 +107,10 @@ internal interface PCBRequest {
         @Query(value = "size") size: Int,
     ): PaginatedResponse<List<Build>>
 
-    @GET("v2/minecraft/build/{id}")
-    suspend fun getBuild(
-        @Path(value = "id") id: Int,
+    @POST("v2/minecraft/build/name/search")
+    @FormUrlEncoded
+    suspend fun getBuildByName(
+        @Field(value = "name") name: String,
     ): Build?
 
     @GET("v2/minecraft/build/name")

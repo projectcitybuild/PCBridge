@@ -16,6 +16,12 @@ class BuildHttpService(
         }
     }
 
+    suspend fun getByName(name: String) = withContext(Dispatchers.IO) {
+        responseParser.parse {
+            retrofit.pcb().getBuildByName(name)
+        }
+    }
+
     suspend fun names() = withContext(Dispatchers.IO) {
         responseParser.parse {
             retrofit.pcb().getNames()

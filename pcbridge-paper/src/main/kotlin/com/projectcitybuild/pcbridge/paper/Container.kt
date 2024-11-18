@@ -336,7 +336,9 @@ private fun Module.builds() {
 
     factory {
         BuildCommand(
+            plugin = get(),
             buildRepository = get(),
+            server = get(),
         )
     }
 
