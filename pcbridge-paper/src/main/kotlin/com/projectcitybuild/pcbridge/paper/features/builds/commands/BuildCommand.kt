@@ -25,8 +25,8 @@ class BuildCommand(
         return Commands.literal("build")
             .then(
                 Commands.argument("name", StringArgumentType.greedyString())
-                    .suggestsSuspending(plugin, this::suggestBuild)
-                    .executesSuspending(plugin, this::execute)
+                    .suggestsSuspending(plugin, ::suggestBuild)
+                    .executesSuspending(plugin, ::execute)
             )
             .build()
     }

@@ -330,13 +330,14 @@ private fun Module.builds() {
 
     factory {
         BuildListCommand(
+            plugin = get<JavaPlugin>(),
             buildRepository = get(),
         )
     }
 
     factory {
         BuildCommand(
-            plugin = get(),
+            plugin = get<JavaPlugin>(),
             buildRepository = get(),
             server = get(),
         )
