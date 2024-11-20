@@ -3,7 +3,7 @@ package com.projectcitybuild.pcbridge.paper.core.pagination
 import kotlin.math.ceil
 import kotlin.math.min
 
-class Paginator<T> {
+class SimplePaginator<T> {
     fun paginate(items: List<T>, pageSize: Int, page: Int): Page<T> {
         check(page >= 1) { "Page must be greater than 0" }
 

@@ -56,6 +56,7 @@ import com.projectcitybuild.pcbridge.http.PCBHttp
 import com.projectcitybuild.pcbridge.paper.core.discord.services.DiscordSend
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.BuildCommand
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.BuildsCommand
+import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildCreateCommand
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildListCommand
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.repositories.BuildRepository
 import com.projectcitybuild.pcbridge.paper.features.watchdog.listeners.ItemTextListener
@@ -325,11 +326,19 @@ private fun Module.builds() {
     factory {
         BuildsCommand(
             buildListCommand = get(),
+            buildCreateCommand = get(),
         )
     }
 
     factory {
         BuildListCommand(
+            plugin = get<JavaPlugin>(),
+            buildRepository = get(),
+        )
+    }
+
+    factory {
+        BuildCreateCommand(
             plugin = get<JavaPlugin>(),
             buildRepository = get(),
         )

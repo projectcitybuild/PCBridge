@@ -115,4 +115,17 @@ internal interface PCBRequest {
 
     @GET("v2/minecraft/build/name")
     suspend fun getNames(): List<BuildName>
+
+    @POST("v2/minecraft/build")
+    @FormUrlEncoded
+    suspend fun createBuild(
+        @Field(value = "player_uuid") playerUUID: String,
+        @Field(value = "name") name: String,
+        @Field(value = "world") world: String,
+        @Field(value = "x") x: Double,
+        @Field(value = "y") y: Double,
+        @Field(value = "z") z: Double,
+        @Field(value = "pitch") pitch: Float,
+        @Field(value = "yaw") yaw: Float,
+    ): Build
 }

@@ -4,6 +4,8 @@ import com.projectcitybuild.pcbridge.http.models.pcb.Build
 import com.projectcitybuild.pcbridge.http.models.pcb.BuildName
 import com.projectcitybuild.pcbridge.http.models.pcb.PaginatedResponse
 import com.projectcitybuild.pcbridge.http.services.pcb.BuildHttpService
+import org.bukkit.Location
+import org.bukkit.entity.Player
 
 class BuildRepository(
     private val buildHttpService: BuildHttpService,
@@ -34,5 +36,18 @@ class BuildRepository(
         return buildHttpService.names()
             .also { names = it }
             .map { it.name }
+    }
+
+    suspend fun create(name: String, world: String, location: Location, player: Player): Build {
+        return buildHttpService.create(
+            playerUUID = player.uniqueId,
+            name = name,
+            world = world,
+            x = location.x,
+            y = location.y,
+            z = location.z,
+            pitch = location.pitch,
+            yaw = location.yaw,
+        )
     }
 }

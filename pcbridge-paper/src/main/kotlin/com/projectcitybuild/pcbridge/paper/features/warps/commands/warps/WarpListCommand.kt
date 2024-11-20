@@ -1,6 +1,6 @@
 package com.projectcitybuild.pcbridge.paper.features.warps.commands.warps
 
-import com.projectcitybuild.pcbridge.paper.core.pagination.Paginator
+import com.projectcitybuild.pcbridge.paper.core.pagination.SimplePaginator
 import com.projectcitybuild.pcbridge.paper.features.warps.repositories.WarpRepository
 import com.projectcitybuild.pcbridge.http.models.pcb.Warp
 import com.projectcitybuild.pcbridge.paper.support.messages.CommandHelpBuilder
@@ -32,7 +32,7 @@ class WarpListCommand(
             throw UnauthorizedCommandException()
         }
         val warps = warpRepository.all()
-        val page = Paginator<Warp>().paginate(
+        val page = SimplePaginator<Warp>().paginate(
             items = warps,
             pageSize = itemsPerPage,
             page = args.page,

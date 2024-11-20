@@ -43,9 +43,10 @@ class BuildListCommand(
     private suspend fun execute(sender: CommandSender, page: Int) {
         val builds = buildRepository.all(page)
         val totalPages = ceil(builds.total.toDouble() / builds.perPage.toDouble()).toInt()
+        val miniMessage = MiniMessage.miniMessage()
 
         sender.sendMessage(
-            MiniMessage.miniMessage().deserialize(
+            miniMessage.deserialize(
                 "<gray>--- <dark_aqua>Build List</dark_aqua> - Page <white>${builds.currentPage}</white>/<white>$totalPages</white> ---</gray>"
             )
         )
@@ -54,10 +55,10 @@ class BuildListCommand(
             val text = "<gray>[<white>${build.id}</white>] \"<aqua>${build.name}</aqua>\" (${build.votes} votes)</gray>"
 
             sender.sendMessage(
-                MiniMessage.miniMessage().deserialize(text)
+                miniMessage.deserialize(text)
                     // Separate handling here to ensure character escaping in the name
-                    .clickEvent(ClickEvent.runCommand("/build '${build.name}"))
-                    .hoverEvent(HoverEvent.showText(Component.text("Click to teleport to ${build.name}")))
+                    .clickEvent(ClickEvent.runCommand("/build ${build.name}"))
+                    .hoverEvent(HoverEvent.showText(Component.text("Teleport to ${build.name}")))
             )
         }
 
@@ -74,7 +75,7 @@ class BuildListCommand(
         }
 
         sender.sendMessage(
-            MiniMessage.miniMessage().deserialize(
+            miniMessage.deserialize(
                 if (totalPages <= 1) "<gray>---</gray>" else footer
             )
         )
