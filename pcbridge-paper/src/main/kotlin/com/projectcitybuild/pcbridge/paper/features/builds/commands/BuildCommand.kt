@@ -8,9 +8,13 @@ import com.projectcitybuild.pcbridge.paper.features.builds.repositories.BuildRep
 import com.projectcitybuild.pcbridge.paper.support.brigadier.BrigadierCommand
 import com.projectcitybuild.pcbridge.paper.support.brigadier.executesSuspending
 import com.projectcitybuild.pcbridge.paper.support.brigadier.suggestsSuspending
+import com.projectcitybuild.pcbridge.paper.support.brigadier.traceCommand
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
+import kotlinx.coroutines.future.await
+import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.MiniMessage
+import net.kyori.adventure.title.Title
 import org.bukkit.Location
 import org.bukkit.Server
 import org.bukkit.event.player.PlayerTeleportEvent
@@ -44,23 +48,14 @@ class BuildCommand(
             .forEach(suggestions::suggest)
     }
 
-    private suspend fun execute(context: CommandContext<CommandSourceStack>) {
+    private suspend fun execute(context: CommandContext<CommandSourceStack>) = traceCommand(context) {
         val name = context.getArgument("name", String::class.java)
 
         val build = buildRepository.get(name = name)
-        if (build == null) {
-            context.source.sender.sendMessage(
-                MiniMessage.miniMessage().deserialize("Build not found")
-            )
-            return
-        }
+        checkNotNull(build) { "Build not found" }
+
         val world = server.getWorld(build.world)
-        if (world == null) {
-            context.source.sender.sendMessage(
-                MiniMessage.miniMessage().deserialize("<red>Error: Could not find world ${build.world}</red>")
-            )
-            return
-        }
+        checkNotNull(world) { "Could not find world {$build.world}" }
 
         context.source.sender.sendMessage(
             MiniMessage.miniMessage().deserialize("<gray>Teleporting to $name...</gray>")
@@ -73,9 +68,18 @@ class BuildCommand(
             build.yaw,
             build.pitch,
         )
-        context.source.executor?.teleportAsync(
+
+        val didTeleport = context.source.executor?.teleportAsync(
             location,
             PlayerTeleportEvent.TeleportCause.COMMAND,
-        )
+        )?.await()
+
+        if (didTeleport == true) {
+            val title = Title.title(
+                Component.text(build.name),
+                Component.text("TODO"),
+            )
+            context.source.executor?.showTitle(title)
+        }
     }
 }

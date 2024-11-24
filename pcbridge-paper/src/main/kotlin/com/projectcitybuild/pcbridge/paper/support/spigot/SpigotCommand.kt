@@ -4,6 +4,7 @@ import com.projectcitybuild.pcbridge.paper.support.messages.CommandHelpBuilder
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 
+@Deprecated("Use Brigadier instead")
 interface SpigotCommand<T> {
     val label: String
     val usage: CommandHelpBuilder
@@ -35,6 +36,7 @@ interface SpigotCommand<T> {
  * Throws [BadCommandUsageException] if expected arguments are not present
  * Throws [IllegalStateException] if present arguments are invalid or malformed
  */
+@Deprecated("Use Brigadier instead")
 interface CommandArgsParser<T> {
     @Throws(IllegalStateException::class, BadCommandUsageException::class)
     fun parse(args: List<String>): T

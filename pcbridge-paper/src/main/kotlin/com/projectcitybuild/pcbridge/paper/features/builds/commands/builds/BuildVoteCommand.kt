@@ -4,11 +4,11 @@ import com.mojang.brigadier.arguments.StringArgumentType
 import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.suggestion.SuggestionsBuilder
 import com.mojang.brigadier.tree.LiteralCommandNode
-import com.projectcitybuild.pcbridge.http.parsing.ResponseParser
 import com.projectcitybuild.pcbridge.paper.features.builds.repositories.BuildRepository
 import com.projectcitybuild.pcbridge.paper.support.brigadier.BrigadierCommand
 import com.projectcitybuild.pcbridge.paper.support.brigadier.executesSuspending
 import com.projectcitybuild.pcbridge.paper.support.brigadier.suggestsSuspending
+import com.projectcitybuild.pcbridge.paper.support.brigadier.traceCommand
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
 import net.kyori.adventure.text.minimessage.MiniMessage
@@ -42,34 +42,16 @@ class BuildVoteCommand(
             .forEach(suggestions::suggest)
     }
 
-    private suspend fun execute(context: CommandContext<CommandSourceStack>) {
+    private suspend fun execute(context: CommandContext<CommandSourceStack>) = traceCommand(context) {
         val name = context.getArgument("name", String::class.java)
         val player = context.source.executor as? Player
 
-        val miniMessage = MiniMessage.miniMessage()
-        if (player == null) {
-            context.source.sender.sendMessage(
-                miniMessage.deserialize("<red>Only a player can use this command</red>")
-            )
-            return
-        }
+        checkNotNull(player) { "Only a player can use this command</red>" }
 
-        val build = try {
-            buildRepository.vote(name = name, player = player)
-        } catch (error: ResponseParser.ValidationError) {
-            context.source.sender.sendMessage(
-                miniMessage.deserialize("<red>Error: ${error.message}</red>")
-            )
-            return
-        } catch (error: Exception) {
-            context.source.sender.sendMessage(
-                miniMessage.deserialize("<red>An unexpected error occurred</red>")
-            )
-            throw error
-        }
+        val build = buildRepository.vote(name = name, player = player)
 
         context.source.sender.sendMessage(
-            miniMessage.deserialize("<green>You voted for ${build.name}</green>")
+            MiniMessage.miniMessage().deserialize("<green>You voted for ${build.name}</green>")
         )
     }
 }

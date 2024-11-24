@@ -143,11 +143,10 @@ internal interface PCBRequest {
     ): Build
 
     @DELETE("v2/minecraft/build/{id}")
-    @FormUrlEncoded
     suspend fun deleteBuild(
         @Path(value = "id") id: Int,
-        @Field(value = "player_uuid") playerUUID: String,
-    ): Build
+        @Query(value = "player_uuid") playerUUID: String,
+    )
 
     @POST("v2/minecraft/build/{id}/vote")
     @FormUrlEncoded
@@ -157,9 +156,8 @@ internal interface PCBRequest {
     ): Build
 
     @DELETE("v2/minecraft/build/{id}/vote")
-    @FormUrlEncoded
     suspend fun buildUnvote(
         @Path(value = "id") id: Int,
-        @Field(value = "player_uuid") playerUUID: String,
+        @Query(value = "player_uuid") playerUUID: String,
     ): Build
 }

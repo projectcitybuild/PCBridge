@@ -7,6 +7,7 @@ import net.kyori.adventure.text.format.NamedTextColor
 
 typealias PageItemTransformer<T> = (IndexedValue<T>) -> TextComponent
 
+@Deprecated("Use SimplePaginator instead")
 class PaginationBuilder<T> {
     private var transformer: PageItemTransformer<T>? = null
 

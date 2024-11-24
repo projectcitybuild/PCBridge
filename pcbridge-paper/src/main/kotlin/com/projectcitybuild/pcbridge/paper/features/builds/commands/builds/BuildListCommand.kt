@@ -1,6 +1,5 @@
 package com.projectcitybuild.pcbridge.paper.features.builds.commands.builds
 
-import com.github.shynixn.mccoroutine.bukkit.launch
 import com.mojang.brigadier.arguments.IntegerArgumentType
 import com.mojang.brigadier.tree.LiteralCommandNode
 import com.projectcitybuild.pcbridge.paper.features.builds.repositories.BuildRepository
@@ -53,7 +52,7 @@ class BuildListCommand(
         )
 
         builds.data.forEach { build ->
-            val text = "<gray>[<white>${build.id}</white>] \"<aqua>${build.name}</aqua>\" (${build.votes} votes)</gray>"
+            val text = "<gray>#${build.id} \"<aqua>${build.name}</aqua>\" (<white>${build.votes}</white> votes)</gray>"
 
             sender.sendMessage(
                 miniMessage.deserialize(text)

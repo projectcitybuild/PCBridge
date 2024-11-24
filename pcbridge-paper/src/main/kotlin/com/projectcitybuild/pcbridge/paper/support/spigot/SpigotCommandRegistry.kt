@@ -12,6 +12,7 @@ import org.bukkit.command.CommandSender
 import org.bukkit.plugin.java.JavaPlugin
 import java.lang.IllegalStateException
 
+@Deprecated("Use Brigadier instead")
 class SpigotCommandRegistry(
     private val plugin: JavaPlugin,
     private val sentry: SentryReporter,

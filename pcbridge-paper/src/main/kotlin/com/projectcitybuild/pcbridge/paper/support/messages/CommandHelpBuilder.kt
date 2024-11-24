@@ -5,6 +5,7 @@ import net.kyori.adventure.text.TextComponent
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextDecoration
 
+@Deprecated("Use Brigadier instead")
 class CommandHelpBuilder(
     private val usage: String?,
 ) {
