@@ -57,8 +57,11 @@ import com.projectcitybuild.pcbridge.paper.core.discord.services.DiscordSend
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.BuildCommand
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.BuildsCommand
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildCreateCommand
+import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildDeleteCommand
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildListCommand
-import com.projectcitybuild.pcbridge.paper.features.builds.commands.repositories.BuildRepository
+import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildMoveCommand
+import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildVoteCommand
+import com.projectcitybuild.pcbridge.paper.features.builds.repositories.BuildRepository
 import com.projectcitybuild.pcbridge.paper.features.watchdog.listeners.ItemTextListener
 import com.projectcitybuild.pcbridge.paper.features.watchdog.listeners.commands.ItemNameCommand
 import com.projectcitybuild.pcbridge.paper.integrations.DynmapIntegration
@@ -325,22 +328,26 @@ private fun Module.announcements() {
 private fun Module.builds() {
     factory {
         BuildsCommand(
-            buildListCommand = get(),
-            buildCreateCommand = get(),
-        )
-    }
-
-    factory {
-        BuildListCommand(
-            plugin = get<JavaPlugin>(),
-            buildRepository = get(),
-        )
-    }
-
-    factory {
-        BuildCreateCommand(
-            plugin = get<JavaPlugin>(),
-            buildRepository = get(),
+            buildListCommand = BuildListCommand(
+                plugin = get<JavaPlugin>(),
+                buildRepository = get(),
+            ),
+            buildCreateCommand = BuildCreateCommand(
+                plugin = get<JavaPlugin>(),
+                buildRepository = get(),
+            ),
+            buildMoveCommand = BuildMoveCommand(
+                plugin = get<JavaPlugin>(),
+                buildRepository = get(),
+            ),
+            buildVoteCommand = BuildVoteCommand(
+                plugin = get<JavaPlugin>(),
+                buildRepository = get(),
+            ),
+            buildDeleteCommand = BuildDeleteCommand(
+                plugin = get<JavaPlugin>(),
+                buildRepository = get(),
+            ),
         )
     }
 

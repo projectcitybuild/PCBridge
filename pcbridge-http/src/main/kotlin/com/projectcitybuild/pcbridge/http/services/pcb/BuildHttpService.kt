@@ -1,6 +1,5 @@
 package com.projectcitybuild.pcbridge.http.services.pcb
 
-import com.projectcitybuild.pcbridge.http.models.pcb.Build
 import com.projectcitybuild.pcbridge.http.models.pcb.Warp
 import com.projectcitybuild.pcbridge.http.parsing.ResponseParser
 import com.projectcitybuild.pcbridge.http.requests.pcb
@@ -19,15 +18,15 @@ class BuildHttpService(
         }
     }
 
-    suspend fun getByName(name: String) = withContext(Dispatchers.IO) {
+    suspend fun get(id: Int) = withContext(Dispatchers.IO) {
         responseParser.parse {
-            retrofit.pcb().getBuildByName(name)
+            retrofit.pcb().getBuild(id)
         }
     }
 
     suspend fun names() = withContext(Dispatchers.IO) {
         responseParser.parse {
-            retrofit.pcb().getNames()
+            retrofit.pcb().getBuildNames()
         }
     }
 
@@ -55,24 +54,50 @@ class BuildHttpService(
         }
     }
 
-    // suspend fun update(warp: Warp) = withContext(Dispatchers.IO) {
-    //     responseParser.parse {
-    //         retrofit.pcb().updateWarp(
-    //             id = warp.id,
-    //             name = warp.name,
-    //             world = warp.world,
-    //             x = warp.x,
-    //             y = warp.y,
-    //             z = warp.z,
-    //             pitch = warp.pitch,
-    //             yaw = warp.yaw,
-    //         )
-    //     }
-    // }
-    //
-    // suspend fun delete(warp: Warp) = withContext(Dispatchers.IO) {
-    //     responseParser.parse {
-    //         retrofit.pcb().deleteWarp(id = warp.id)
-    //     }
-    // }
+    suspend fun update(
+        id: Int,
+        playerUUID: UUID,
+        name: String,
+        world: String,
+        x: Double,
+        y: Double,
+        z: Double,
+        pitch: Float,
+        yaw: Float,
+    ) = withContext(Dispatchers.IO) {
+        responseParser.parse {
+            retrofit.pcb().updateBuild(
+                id = id,
+                playerUUID = playerUUID.toString(),
+                name = name,
+                world = world,
+                x = x,
+                y = y,
+                z = z,
+                pitch = pitch,
+                yaw = yaw,
+            )
+        }
+    }
+
+    suspend fun delete(id: Int, playerUUID: UUID) = withContext(Dispatchers.IO) {
+        responseParser.parse {
+            retrofit.pcb().deleteBuild(
+                id = id,
+                playerUUID = playerUUID.toString(),
+            )
+        }
+    }
+
+    suspend fun vote(
+        id: Int,
+        playerUUID: UUID,
+    ) = withContext(Dispatchers.IO) {
+        responseParser.parse {
+            retrofit.pcb().buildVote(
+                id = id,
+                playerUUID = playerUUID.toString(),
+            )
+        }
+    }
 }

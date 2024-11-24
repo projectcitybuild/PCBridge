@@ -3,7 +3,8 @@ package com.projectcitybuild.pcbridge.paper.features.builds.commands.builds
 import com.github.shynixn.mccoroutine.bukkit.launch
 import com.mojang.brigadier.arguments.IntegerArgumentType
 import com.mojang.brigadier.tree.LiteralCommandNode
-import com.projectcitybuild.pcbridge.paper.features.builds.commands.repositories.BuildRepository
+import com.projectcitybuild.pcbridge.paper.features.builds.repositories.BuildRepository
+import com.projectcitybuild.pcbridge.paper.support.brigadier.BrigadierCommand
 import com.projectcitybuild.pcbridge.paper.support.brigadier.executesSuspending
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
@@ -19,8 +20,8 @@ import kotlin.math.ceil
 class BuildListCommand(
     private val plugin: Plugin,
     private val buildRepository: BuildRepository,
-) {
-    fun buildLiteral(): LiteralCommandNode<CommandSourceStack> {
+): BrigadierCommand {
+    override fun buildLiteral(): LiteralCommandNode<CommandSourceStack> {
         return Commands.literal("list")
             .executesSuspending(plugin) { context ->
                 execute(

@@ -163,15 +163,14 @@ private class Lifecycle : KoinComponent {
                 get<UUIDBanRequestListener>(),
             )
 
+            @Suppress("UnstableApiUsage")
             get<JavaPlugin>()
                 .lifecycleManager
                 .registerEventHandler(LifecycleEvents.COMMANDS) { event ->
-                    event.registrar().register(
-                        get<BuildsCommand>().buildLiteral()
-                    )
-                    event.registrar().register(
-                        get<BuildCommand>().buildLiteral()
-                    )
+                    event.registrar().apply {
+                        register(get<BuildsCommand>().buildLiteral())
+                        register(get<BuildCommand>().buildLiteral())
+                    }
                 }
 
             get<DynmapIntegration>().enable()

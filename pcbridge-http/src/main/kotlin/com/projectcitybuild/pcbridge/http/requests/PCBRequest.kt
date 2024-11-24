@@ -101,20 +101,19 @@ internal interface PCBRequest {
         @Path(value = "id") id: Int,
     )
 
+    @GET("v2/minecraft/build/name")
+    suspend fun getBuildNames(): List<BuildName>
+
     @GET("v2/minecraft/build")
     suspend fun getBuilds(
         @Query(value = "page") page: Int,
         @Query(value = "size") size: Int,
     ): PaginatedResponse<List<Build>>
 
-    @POST("v2/minecraft/build/name/search")
-    @FormUrlEncoded
-    suspend fun getBuildByName(
-        @Field(value = "name") name: String,
+    @GET("v2/minecraft/build/{id}")
+    suspend fun getBuild(
+        @Path(value = "id") id: Int,
     ): Build?
-
-    @GET("v2/minecraft/build/name")
-    suspend fun getNames(): List<BuildName>
 
     @POST("v2/minecraft/build")
     @FormUrlEncoded
@@ -127,5 +126,40 @@ internal interface PCBRequest {
         @Field(value = "z") z: Double,
         @Field(value = "pitch") pitch: Float,
         @Field(value = "yaw") yaw: Float,
+    ): Build
+
+    @PUT("v2/minecraft/build/{id}")
+    @FormUrlEncoded
+    suspend fun updateBuild(
+        @Path(value = "id") id: Int,
+        @Field(value = "player_uuid") playerUUID: String,
+        @Field(value = "name") name: String,
+        @Field(value = "world") world: String,
+        @Field(value = "x") x: Double,
+        @Field(value = "y") y: Double,
+        @Field(value = "z") z: Double,
+        @Field(value = "pitch") pitch: Float,
+        @Field(value = "yaw") yaw: Float,
+    ): Build
+
+    @DELETE("v2/minecraft/build/{id}")
+    @FormUrlEncoded
+    suspend fun deleteBuild(
+        @Path(value = "id") id: Int,
+        @Field(value = "player_uuid") playerUUID: String,
+    ): Build
+
+    @POST("v2/minecraft/build/{id}/vote")
+    @FormUrlEncoded
+    suspend fun buildVote(
+        @Path(value = "id") id: Int,
+        @Field(value = "player_uuid") playerUUID: String,
+    ): Build
+
+    @DELETE("v2/minecraft/build/{id}/vote")
+    @FormUrlEncoded
+    suspend fun buildUnvote(
+        @Path(value = "id") id: Int,
+        @Field(value = "player_uuid") playerUUID: String,
     ): Build
 }

@@ -4,7 +4,8 @@ import com.mojang.brigadier.arguments.StringArgumentType
 import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.tree.LiteralCommandNode
 import com.projectcitybuild.pcbridge.http.parsing.ResponseParser
-import com.projectcitybuild.pcbridge.paper.features.builds.commands.repositories.BuildRepository
+import com.projectcitybuild.pcbridge.paper.features.builds.repositories.BuildRepository
+import com.projectcitybuild.pcbridge.paper.support.brigadier.BrigadierCommand
 import com.projectcitybuild.pcbridge.paper.support.brigadier.executesSuspending
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
@@ -16,8 +17,8 @@ import org.bukkit.plugin.Plugin
 class BuildCreateCommand(
     private val plugin: Plugin,
     private val buildRepository: BuildRepository,
-) {
-    fun buildLiteral(): LiteralCommandNode<CommandSourceStack> {
+): BrigadierCommand {
+    override fun buildLiteral(): LiteralCommandNode<CommandSourceStack> {
         return Commands.literal("create")
             .then(
                 Commands.argument("name", StringArgumentType.greedyString())
@@ -51,7 +52,7 @@ class BuildCreateCommand(
                 miniMessage.deserialize("<red>Error: ${error.message}</red>")
             )
             return
-        } catch (error: ResponseParser.ValidationError) {
+        } catch (error: Exception) {
             context.source.sender.sendMessage(
                 miniMessage.deserialize("<red>An unexpected error occurred</red>")
             )
