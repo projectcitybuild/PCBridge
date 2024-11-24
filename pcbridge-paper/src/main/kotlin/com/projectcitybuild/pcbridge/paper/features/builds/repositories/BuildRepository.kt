@@ -3,47 +3,67 @@ package com.projectcitybuild.pcbridge.paper.features.builds.repositories
 import com.projectcitybuild.pcbridge.http.models.pcb.Build
 import com.projectcitybuild.pcbridge.http.models.pcb.PaginatedResponse
 import com.projectcitybuild.pcbridge.http.services.pcb.BuildHttpService
+import com.projectcitybuild.pcbridge.paper.support.kotlin.Trie
 import org.bukkit.Location
 import org.bukkit.entity.Player
 
 class BuildRepository(
     private val buildHttpService: BuildHttpService,
 ) {
-    private var namesToId: MutableMap<String, Int>? = null
+    class IdMap(
+        initial: Map<String, Int>,
+    ) {
+        private val map: MutableMap<String, Int> = initial.toMutableMap()
+        private val names = Trie().apply {
+            initial.keys.forEach { insert(it) }
+        }
 
-    private suspend fun fetchIdMap(): MutableMap<String, Int> = buildHttpService
+        fun put(build: Build) {
+            map[build.name] = build.id
+            names.insert(build.name)
+        }
+
+        fun get(name: String): Int? {
+            return map[name]
+        }
+
+        fun getNames(prefix: String): List<String> {
+            return names.matchingPrefix(prefix = prefix)
+        }
+
+        fun remove(name: String) {
+            map.remove(name)
+            names.remove(name)
+        }
+    }
+
+    private var cache: IdMap? = null
+
+    private suspend fun fetchIdMap(): Map<String, Int> = buildHttpService
         .names()
         .associateBy({it.name}, {it.id})
-        .toMutableMap()
-        .also { namesToId = it }
+        .also { cache = IdMap(it) }
 
     suspend fun all(page: Int = 1): PaginatedResponse<List<Build>> {
-        val paginated = buildHttpService.all(
+        return buildHttpService.all(
             page = page,
             size = 10,
         )
-        if (namesToId == null) {
-            fetchIdMap()
-        }
-        paginated.data.forEach {
-            namesToId?.put(it.name, it.id)
-        }
-        return paginated
     }
 
     suspend fun get(name: String): Build? {
-        if (namesToId == null) {
+        if (cache == null) {
             fetchIdMap()
         }
-        val id = namesToId?.get(name) ?: return null
+        val id = cache?.get(name) ?: return null
         return buildHttpService.get(id = id)
     }
 
-    suspend fun names(): List<String> {
-        if (namesToId == null) {
+    suspend fun names(prefix: String = ""): List<String> {
+        if (cache == null) {
             fetchIdMap()
         }
-        return namesToId?.map { it.key }?.toList() ?: listOf()
+        return cache?.getNames(prefix) ?: emptyList()
     }
 
     suspend fun create(
@@ -62,10 +82,7 @@ class BuildRepository(
             pitch = location.pitch,
             yaw = location.yaw,
         )
-        if (namesToId == null) {
-            fetchIdMap()
-        }
-        namesToId?.put(build.name, build.id)
+        cache?.put(build)
         return build
     }
 
@@ -75,10 +92,10 @@ class BuildRepository(
         location: Location,
         player: Player,
     ): Build {
-        if (namesToId == null) {
+        if (cache == null) {
             fetchIdMap()
         }
-        val id = namesToId?.get(name) ?: throw Exception("Build not found")
+        val id = cache?.get(name) ?: throw Exception("Build not found")
 
         return buildHttpService.update(
             id = id,
@@ -97,22 +114,23 @@ class BuildRepository(
         name: String,
         player: Player,
     ) {
-        if (namesToId == null) {
+        if (cache == null) {
             fetchIdMap()
         }
-        val id = namesToId?.get(name) ?: throw Exception("Build not found")
+        val id = cache?.get(name) ?: throw Exception("Build not found")
 
         buildHttpService.delete(
             id = id,
             playerUUID = player.uniqueId,
         )
+        cache?.remove(name)
     }
 
     suspend fun vote(name: String, player: Player): Build {
-        if (namesToId == null) {
-            namesToId = buildHttpService.names().associateBy({it.name}, {it.id}).toMutableMap()
+        if (cache == null) {
+            fetchIdMap()
         }
-        val id = namesToId?.get(name) ?: throw Exception("Build not found")
+        val id = cache?.get(name) ?: throw Exception("Build not found")
 
         return buildHttpService.vote(
             id = id,

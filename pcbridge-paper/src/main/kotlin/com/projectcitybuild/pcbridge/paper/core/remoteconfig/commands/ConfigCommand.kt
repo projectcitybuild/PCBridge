@@ -6,7 +6,7 @@ import com.projectcitybuild.pcbridge.paper.support.spigot.BadCommandUsageExcepti
 import com.projectcitybuild.pcbridge.paper.support.spigot.CommandArgsParser
 import com.projectcitybuild.pcbridge.paper.support.spigot.SpigotCommand
 import com.projectcitybuild.pcbridge.paper.support.spigot.UnauthorizedCommandException
-import com.projectcitybuild.pcbridge.paper.support.tryValueOf
+import com.projectcitybuild.pcbridge.paper.support.kotlin.tryValueOf
 import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender

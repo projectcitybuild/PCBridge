@@ -42,7 +42,6 @@ class BuildCommand(
     ) {
         val name = suggestions.remaining.lowercase()
 
-        // TODO: optimize with a Trie later
         buildRepository.names()
             .filter { it.lowercase().startsWith(name) }
             .forEach(suggestions::suggest)
@@ -75,11 +74,12 @@ class BuildCommand(
         )?.await()
 
         if (didTeleport == true) {
-            val title = Title.title(
-                Component.text(build.name),
-                Component.text("TODO"),
+            context.source.executor?.showTitle(
+                Title.title(
+                    Component.text(build.name),
+                    Component.text("TODO"),
+                )
             )
-            context.source.executor?.showTitle(title)
         }
     }
 }

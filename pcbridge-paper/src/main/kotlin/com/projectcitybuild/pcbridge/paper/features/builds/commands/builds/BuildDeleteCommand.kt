@@ -34,11 +34,9 @@ class BuildDeleteCommand(
         context: CommandContext<CommandSourceStack>,
         suggestions: SuggestionsBuilder,
     ) {
-        val name = suggestions.remaining.lowercase()
+        val name = suggestions.remaining
 
-        // TODO: optimize with a Trie later
-        buildRepository.names()
-            .filter { it.lowercase().startsWith(name) }
+        buildRepository.names(prefix = name)
             .forEach(suggestions::suggest)
     }
 
