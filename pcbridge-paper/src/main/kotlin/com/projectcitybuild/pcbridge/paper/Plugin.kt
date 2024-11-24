@@ -1,7 +1,6 @@
 package com.projectcitybuild.pcbridge.paper
 
 import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
-import com.projectcitybuild.pcbridge.paper.core.libs.services.DiscordSend
 import com.projectcitybuild.pcbridge.paper.core.libs.errors.SentryReporter
 import com.projectcitybuild.pcbridge.paper.core.libs.errors.trace
 import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.commands.ConfigCommand
@@ -177,7 +176,7 @@ private class Lifecycle : KoinComponent {
             get<EssentialsIntegration>().enable()
             get<LuckPermsIntegration>().enable()
 
-            get<com.projectcitybuild.pcbridge.paper.core.libs.services.DiscordSend>().startProcessing()
+            get<com.projectcitybuild.pcbridge.paper.core.libs.discord.DiscordSend>().startProcessing()
         }
 
     suspend fun shutdown() =
@@ -190,7 +189,7 @@ private class Lifecycle : KoinComponent {
             get<EssentialsIntegration>().disable()
             get<LuckPermsIntegration>().disable()
 
-            get<com.projectcitybuild.pcbridge.paper.core.libs.services.DiscordSend>().stopProcessing()
+            get<com.projectcitybuild.pcbridge.paper.core.libs.discord.DiscordSend>().stopProcessing()
 
             listenerRegistry.unregisterAll()
             commandRegistry.unregisterAll()

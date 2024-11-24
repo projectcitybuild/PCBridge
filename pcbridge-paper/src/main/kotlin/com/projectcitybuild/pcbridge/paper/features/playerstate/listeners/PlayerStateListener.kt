@@ -1,6 +1,6 @@
 package com.projectcitybuild.pcbridge.paper.features.playerstate.listeners
 
-import com.projectcitybuild.pcbridge.paper.core.libs.datetime.LocalizedTime
+import com.projectcitybuild.pcbridge.paper.core.libs.datetime.services.LocalizedTime
 import com.projectcitybuild.pcbridge.paper.core.libs.logger.log
 import com.projectcitybuild.pcbridge.paper.core.libs.store.PlayerState
 import com.projectcitybuild.pcbridge.paper.core.libs.store.Store

@@ -1,4 +1,4 @@
-package com.projectcitybuild.pcbridge.paper.core.libs.datetime
+package com.projectcitybuild.pcbridge.paper.core.libs.datetime.extensions
 
 import java.time.LocalDateTime
 import java.time.OffsetDateTime

@@ -1,6 +1,6 @@
 package com.projectcitybuild.pcbridge.paper.features.joinmessages.listeners
 
-import com.projectcitybuild.pcbridge.paper.core.libs.datetime.LocalizedTime
+import com.projectcitybuild.pcbridge.paper.core.libs.datetime.services.LocalizedTime
 import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.services.RemoteConfig
 import com.projectcitybuild.pcbridge.paper.core.libs.store.Store
 import net.kyori.adventure.text.Component

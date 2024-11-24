@@ -1,4 +1,4 @@
-package com.projectcitybuild.pcbridge.paper.core.libs.services
+package com.projectcitybuild.pcbridge.paper.core.libs.discord
 
 import com.projectcitybuild.pcbridge.http.services.discord.DiscordHttpService
 import com.projectcitybuild.pcbridge.http.models.discord.DiscordEmbed

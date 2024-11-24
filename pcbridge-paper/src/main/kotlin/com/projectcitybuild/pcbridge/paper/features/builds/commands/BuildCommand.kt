@@ -50,6 +50,7 @@ class BuildCommand(
     }
 
     private suspend fun execute(context: CommandContext<CommandSourceStack>) = traceCommand(context) {
+        val miniMessage = MiniMessage.miniMessage()
         val name = context.getArgument("name", String::class.java)
 
         val build = buildRepository.get(name = name)
@@ -59,7 +60,7 @@ class BuildCommand(
         checkNotNull(world) { "Could not find world {$build.world}" }
 
         context.source.sender.sendMessage(
-            MiniMessage.miniMessage().deserialize("<gray>Teleporting to $name...</gray>")
+            miniMessage.deserialize("<gray>Teleporting to $name...</gray>")
         )
         val location = Location(
             world,
@@ -70,23 +71,29 @@ class BuildCommand(
             build.pitch,
         )
 
-        if (context.source.executor is Player) {
+        val executor = context.source.executor
+        if (executor is Player) {
             server.pluginManager.callEvent(
-                PlayerPreWarpEvent(context.source.executor as Player),
+                PlayerPreWarpEvent(executor),
             )
         }
 
-        val didTeleport = context.source.executor?.teleportAsync(
+        val didTeleport = executor?.teleportAsync(
             location,
             PlayerTeleportEvent.TeleportCause.COMMAND,
         )?.await()
 
-        if (didTeleport == true) {
-            context.source.executor?.showTitle(
-                Title.title(
-                    Component.text(build.name),
-                    Component.text("TODO"),
-                )
+        if (didTeleport != true) return@traceCommand
+
+        executor.showTitle(
+            Title.title(
+                Component.text(build.name),
+                Component.text("TODO"),
+            )
+        )
+        if (!build.description.isNullOrEmpty()) {
+            executor.sendMessage(
+                miniMessage.deserialize("<gray>---<newline>Build Description:<newline>${build.description}</gray>")
             )
         }
     }

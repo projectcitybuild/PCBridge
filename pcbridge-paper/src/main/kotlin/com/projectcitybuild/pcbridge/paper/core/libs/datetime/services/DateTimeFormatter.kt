@@ -1,4 +1,4 @@
-package com.projectcitybuild.pcbridge.paper.core.libs.datetime
+package com.projectcitybuild.pcbridge.paper.core.libs.datetime.services
 
 import java.time.Instant
 import java.time.ZoneId

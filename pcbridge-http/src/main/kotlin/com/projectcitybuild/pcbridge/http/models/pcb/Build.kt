@@ -13,6 +13,9 @@ data class Build(
     @SerializedName("name")
     val name: String,
 
+    @SerializedName("description")
+    val description: String?,
+
     @SerializedName("votes")
     val votes: Int,
 
