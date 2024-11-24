@@ -1,9 +1,9 @@
 package com.projectcitybuild.pcbridge.paper.integrations
 
 import com.github.shynixn.mccoroutine.bukkit.registerSuspendingEvents
-import com.projectcitybuild.pcbridge.paper.core.errors.SentryReporter
-import com.projectcitybuild.pcbridge.paper.core.logger.log
-import com.projectcitybuild.pcbridge.paper.core.remoteconfig.services.RemoteConfig
+import com.projectcitybuild.pcbridge.paper.core.libs.errors.SentryReporter
+import com.projectcitybuild.pcbridge.paper.core.libs.logger.log
+import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.services.RemoteConfig
 import com.projectcitybuild.pcbridge.paper.features.warps.events.WarpCreateEvent
 import com.projectcitybuild.pcbridge.paper.features.warps.events.WarpDeleteEvent
 import com.projectcitybuild.pcbridge.paper.features.warps.repositories.WarpRepository

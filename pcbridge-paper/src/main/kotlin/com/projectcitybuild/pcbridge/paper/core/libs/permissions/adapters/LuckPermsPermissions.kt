@@ -1,7 +1,7 @@
 package com.projectcitybuild.pcbridge.paper.core.libs.permissions.adapters
 
-import com.projectcitybuild.pcbridge.paper.core.logger.log
-import com.projectcitybuild.pcbridge.paper.core.permissions.Permissions
+import com.projectcitybuild.pcbridge.paper.core.libs.logger.log
+import com.projectcitybuild.pcbridge.paper.core.libs.permissions.Permissions
 import net.luckperms.api.LuckPerms
 import net.luckperms.api.LuckPermsProvider
 import net.luckperms.api.model.user.User

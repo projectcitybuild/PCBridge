@@ -3,7 +3,7 @@ package com.projectcitybuild.pcbridge.paper.core.libs.localconfig
 import com.google.gson.FieldNamingPolicy
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
-import com.projectcitybuild.pcbridge.paper.core.logger.log
+import com.projectcitybuild.pcbridge.paper.core.libs.logger.log
 import java.io.File
 import java.io.PrintWriter
 import java.lang.Exception

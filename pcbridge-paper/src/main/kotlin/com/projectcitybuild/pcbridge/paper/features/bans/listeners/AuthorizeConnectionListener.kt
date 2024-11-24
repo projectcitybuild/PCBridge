@@ -1,7 +1,7 @@
 package com.projectcitybuild.pcbridge.paper.features.bans.listeners
 
-import com.projectcitybuild.pcbridge.paper.core.errors.SentryReporter
-import com.projectcitybuild.pcbridge.paper.core.logger.log
+import com.projectcitybuild.pcbridge.paper.core.libs.errors.SentryReporter
+import com.projectcitybuild.pcbridge.paper.core.libs.logger.log
 import com.projectcitybuild.pcbridge.paper.features.bans.actions.AuthorizeConnection
 import com.projectcitybuild.pcbridge.paper.features.bans.events.ConnectionPermittedEvent
 import com.projectcitybuild.pcbridge.paper.features.bans.repositories.PlayerRepository

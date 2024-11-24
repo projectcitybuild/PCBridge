@@ -1,6 +1,6 @@
 package com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.commands
 
-import com.projectcitybuild.pcbridge.paper.core.remoteconfig.services.RemoteConfig
+import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.services.RemoteConfig
 import com.projectcitybuild.pcbridge.paper.core.support.messages.CommandHelpBuilder
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.BadCommandUsageException
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.CommandArgsParser

@@ -1,6 +1,6 @@
 package com.projectcitybuild.pcbridge.paper.features.warps.commands.warps
 
-import com.projectcitybuild.pcbridge.paper.core.pagination.SimplePaginator
+import com.projectcitybuild.pcbridge.paper.core.libs.pagination.SimplePaginator
 import com.projectcitybuild.pcbridge.paper.features.warps.repositories.WarpRepository
 import com.projectcitybuild.pcbridge.http.models.pcb.Warp
 import com.projectcitybuild.pcbridge.paper.core.support.messages.CommandHelpBuilder

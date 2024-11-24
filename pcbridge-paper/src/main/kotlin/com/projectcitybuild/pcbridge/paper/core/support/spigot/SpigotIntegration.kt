@@ -1,7 +1,7 @@
 package com.projectcitybuild.pcbridge.paper.core.support.spigot
 
-import com.projectcitybuild.pcbridge.paper.core.errors.SentryReporter
-import com.projectcitybuild.pcbridge.paper.core.logger.log
+import com.projectcitybuild.pcbridge.paper.core.libs.errors.SentryReporter
+import com.projectcitybuild.pcbridge.paper.core.libs.logger.log
 import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.PluginManager
 

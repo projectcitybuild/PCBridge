@@ -2,8 +2,8 @@ package com.projectcitybuild.pcbridge.paper.integrations
 
 import com.earth2me.essentials.Essentials
 import com.github.shynixn.mccoroutine.bukkit.registerSuspendingEvents
-import com.projectcitybuild.pcbridge.paper.core.errors.SentryReporter
-import com.projectcitybuild.pcbridge.paper.core.logger.log
+import com.projectcitybuild.pcbridge.paper.core.libs.errors.SentryReporter
+import com.projectcitybuild.pcbridge.paper.core.libs.logger.log
 import com.projectcitybuild.pcbridge.paper.features.warps.events.PlayerPreWarpEvent
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotIntegration
 import org.bukkit.event.EventHandler

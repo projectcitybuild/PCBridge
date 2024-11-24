@@ -1,6 +1,6 @@
 package com.projectcitybuild.pcbridge.paper.datetime
 
-import com.projectcitybuild.pcbridge.paper.core.datetime.DateTimeFormatter
+import com.projectcitybuild.pcbridge.paper.core.libs.datetime.DateTimeFormatter
 import org.junit.jupiter.api.Test
 import java.time.ZoneId
 import java.time.format.FormatStyle

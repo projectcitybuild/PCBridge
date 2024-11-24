@@ -1,7 +1,7 @@
 package com.projectcitybuild.pcbridge.paper.features.staffchat.commands
 
 import com.projectcitybuild.pcbridge.paper.Permissions
-import com.projectcitybuild.pcbridge.paper.core.remoteconfig.services.RemoteConfig
+import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.services.RemoteConfig
 import com.projectcitybuild.pcbridge.http.models.pcb.RemoteConfigKeyValues
 import com.projectcitybuild.pcbridge.http.models.pcb.RemoteConfigVersion
 import kotlinx.coroutines.test.runTest

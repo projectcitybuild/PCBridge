@@ -1,6 +1,6 @@
 package com.projectcitybuild.pcbridge.paper.features.announcements.actions
 
-import com.projectcitybuild.pcbridge.paper.core.remoteconfig.services.RemoteConfig
+import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.services.RemoteConfig
 import com.projectcitybuild.pcbridge.paper.features.announcements.repositories.AnnouncementRepository
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotTimer
 import kotlinx.coroutines.runBlocking

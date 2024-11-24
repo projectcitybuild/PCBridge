@@ -1,7 +1,7 @@
 package com.projectcitybuild.pcbridge.paper.core.libs.errors
 
-import com.projectcitybuild.pcbridge.paper.core.localconfig.LocalConfig
-import com.projectcitybuild.pcbridge.paper.core.logger.log
+import com.projectcitybuild.pcbridge.paper.core.libs.localconfig.LocalConfig
+import com.projectcitybuild.pcbridge.paper.core.libs.logger.log
 import io.sentry.Sentry
 
 class SentryReporter(

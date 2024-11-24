@@ -1,6 +1,6 @@
 package com.projectcitybuild.pcbridge.paper.features.playerstate.events
 
-import com.projectcitybuild.pcbridge.paper.core.store.PlayerState
+import com.projectcitybuild.pcbridge.paper.core.libs.store.PlayerState
 import org.bukkit.event.Event
 import org.bukkit.event.HandlerList
 import java.util.UUID

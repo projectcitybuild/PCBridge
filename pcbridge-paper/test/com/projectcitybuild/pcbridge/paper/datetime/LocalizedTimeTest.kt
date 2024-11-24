@@ -1,6 +1,6 @@
 package com.projectcitybuild.pcbridge.paper.datetime
 
-import com.projectcitybuild.pcbridge.paper.core.datetime.LocalizedTime
+import com.projectcitybuild.pcbridge.paper.core.libs.datetime.LocalizedTime
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import java.time.Clock
