@@ -5,7 +5,7 @@ import com.github.shynixn.mccoroutine.bukkit.registerSuspendingEvents
 import com.projectcitybuild.pcbridge.paper.core.errors.SentryReporter
 import com.projectcitybuild.pcbridge.paper.core.logger.log
 import com.projectcitybuild.pcbridge.paper.features.warps.events.PlayerPreWarpEvent
-import com.projectcitybuild.pcbridge.paper.support.spigot.SpigotIntegration
+import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotIntegration
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.plugin.Plugin

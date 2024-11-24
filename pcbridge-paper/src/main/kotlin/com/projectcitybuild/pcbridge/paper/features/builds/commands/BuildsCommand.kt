@@ -6,8 +6,8 @@ import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.Build
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildListCommand
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildMoveCommand
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildVoteCommand
-import com.projectcitybuild.pcbridge.paper.support.brigadier.BrigadierCommand
-import com.projectcitybuild.pcbridge.paper.support.brigadier.then
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierCommand
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.then
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
 

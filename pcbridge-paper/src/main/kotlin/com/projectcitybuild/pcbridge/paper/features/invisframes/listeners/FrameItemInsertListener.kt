@@ -1,6 +1,6 @@
 package com.projectcitybuild.pcbridge.paper.features.invisframes.listeners
 
-import com.projectcitybuild.pcbridge.paper.support.spigot.SpigotNamespace
+import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotNamespace
 import org.bukkit.entity.GlowItemFrame
 import org.bukkit.entity.ItemFrame
 import org.bukkit.event.EventHandler

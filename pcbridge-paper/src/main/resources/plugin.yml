@@ -17,10 +17,6 @@ commands:
     permission: pcbridge.ban.ban
   banip:
     permission: pcbridge.ban.banip
-  build:
-    permission: pcbridge.build
-  builds:
-    permission: pcbridge.builds
   code:
     permission: pcbridge.register.code
   config:

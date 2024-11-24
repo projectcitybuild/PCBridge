@@ -7,7 +7,7 @@ import com.projectcitybuild.pcbridge.paper.core.store.Store
 import com.projectcitybuild.pcbridge.paper.features.bans.events.ConnectionPermittedEvent
 import com.projectcitybuild.pcbridge.paper.features.playerstate.events.PlayerStateUpdatedEvent
 import com.projectcitybuild.pcbridge.paper.features.playerstate.events.PlayerStateDestroyedEvent
-import com.projectcitybuild.pcbridge.paper.support.spigot.SpigotEventBroadcaster
+import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotEventBroadcaster
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener

@@ -6,7 +6,7 @@ import com.projectcitybuild.pcbridge.paper.features.bans.actions.AuthorizeConnec
 import com.projectcitybuild.pcbridge.paper.features.bans.events.ConnectionPermittedEvent
 import com.projectcitybuild.pcbridge.paper.features.bans.repositories.PlayerRepository
 import com.projectcitybuild.pcbridge.paper.features.bans.utilities.toMiniMessage
-import com.projectcitybuild.pcbridge.paper.support.spigot.SpigotEventBroadcaster
+import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotEventBroadcaster
 import kotlinx.coroutines.runBlocking
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority

@@ -53,7 +53,7 @@ import com.projectcitybuild.pcbridge.paper.features.warps.commands.WarpCommand
 import com.projectcitybuild.pcbridge.paper.features.warps.commands.WarpsCommand
 import com.projectcitybuild.pcbridge.paper.features.warps.repositories.WarpRepository
 import com.projectcitybuild.pcbridge.http.PCBHttp
-import com.projectcitybuild.pcbridge.paper.core.discord.services.DiscordSend
+import com.projectcitybuild.pcbridge.paper.core.libs.services.DiscordSend
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.BuildCommand
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.BuildsCommand
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildCreateCommand
@@ -67,15 +67,14 @@ import com.projectcitybuild.pcbridge.paper.features.watchdog.listeners.commands.
 import com.projectcitybuild.pcbridge.paper.integrations.DynmapIntegration
 import com.projectcitybuild.pcbridge.paper.integrations.EssentialsIntegration
 import com.projectcitybuild.pcbridge.paper.integrations.LuckPermsIntegration
-import com.projectcitybuild.pcbridge.paper.support.spigot.SpigotCommandRegistry
-import com.projectcitybuild.pcbridge.paper.support.spigot.SpigotEventBroadcaster
-import com.projectcitybuild.pcbridge.paper.support.spigot.SpigotListenerRegistry
-import com.projectcitybuild.pcbridge.paper.support.spigot.SpigotNamespace
-import com.projectcitybuild.pcbridge.paper.support.spigot.SpigotTimer
+import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotCommandRegistry
+import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotEventBroadcaster
+import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotListenerRegistry
+import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotNamespace
+import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotTimer
 import com.projectcitybuild.pcbridge.webserver.HttpServer
 import com.projectcitybuild.pcbridge.webserver.HttpServerConfig
 import io.github.reactivecircus.cache4k.Cache
-import io.papermc.paper.plugin.lifecycle.event.LifecycleEventManager
 import net.kyori.adventure.platform.bukkit.BukkitAudiences
 import org.bukkit.plugin.java.JavaPlugin
 import org.koin.core.module.Module
@@ -226,7 +225,7 @@ private fun Module.core() {
     }
 
     single {
-        DiscordSend(
+        com.projectcitybuild.pcbridge.paper.core.libs.services.DiscordSend(
             localConfig = get(),
             discordHttpService = get<DiscordHttp>().discord,
             sentryReporter = get(),

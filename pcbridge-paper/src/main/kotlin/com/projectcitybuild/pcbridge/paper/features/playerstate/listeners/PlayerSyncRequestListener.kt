@@ -7,7 +7,7 @@ import com.projectcitybuild.pcbridge.paper.core.store.Store
 import com.projectcitybuild.pcbridge.paper.features.bans.repositories.PlayerRepository
 import com.projectcitybuild.pcbridge.paper.features.playerstate.events.PlayerStateUpdatedEvent
 import com.projectcitybuild.pcbridge.paper.features.groups.events.PlayerSyncRequestedEvent
-import com.projectcitybuild.pcbridge.paper.support.spigot.SpigotEventBroadcaster
+import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotEventBroadcaster
 import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.Server
 import org.bukkit.event.EventHandler

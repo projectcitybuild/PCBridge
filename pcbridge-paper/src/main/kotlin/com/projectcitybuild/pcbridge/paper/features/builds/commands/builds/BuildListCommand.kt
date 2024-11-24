@@ -3,8 +3,8 @@ package com.projectcitybuild.pcbridge.paper.features.builds.commands.builds
 import com.mojang.brigadier.arguments.IntegerArgumentType
 import com.mojang.brigadier.tree.LiteralCommandNode
 import com.projectcitybuild.pcbridge.paper.features.builds.repositories.BuildRepository
-import com.projectcitybuild.pcbridge.paper.support.brigadier.BrigadierCommand
-import com.projectcitybuild.pcbridge.paper.support.brigadier.executesSuspending
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierCommand
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.executesSuspending
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
 import net.kyori.adventure.text.Component

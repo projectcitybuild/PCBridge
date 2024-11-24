@@ -33,11 +33,11 @@ class ACommandTest {
         runTest {
             val regularPlayer =
                 mock(Player::class.java).also {
-                    whenever(it.hasPermission(Permissions.COMMAND_STAFF_CHAT)).thenReturn(false)
+                    whenever(it.hasPermission("pcbridge.chat.staff_channel")).thenReturn(false)
                 }
             val staffPlayer =
                 mock(Player::class.java).also {
-                    whenever(it.hasPermission(Permissions.COMMAND_STAFF_CHAT)).thenReturn(true)
+                    whenever(it.hasPermission("pcbridge.chat.staff_channel")).thenReturn(true)
                 }
             whenever(server.onlinePlayers).thenReturn(
                 listOf(regularPlayer, staffPlayer),

@@ -3,7 +3,7 @@ package com.projectcitybuild.pcbridge.paper.features.builds.repositories
 import com.projectcitybuild.pcbridge.http.models.pcb.Build
 import com.projectcitybuild.pcbridge.http.models.pcb.PaginatedResponse
 import com.projectcitybuild.pcbridge.http.services.pcb.BuildHttpService
-import com.projectcitybuild.pcbridge.paper.support.kotlin.Trie
+import com.projectcitybuild.pcbridge.paper.core.support.kotlin.Trie
 import org.bukkit.Location
 import org.bukkit.entity.Player
 

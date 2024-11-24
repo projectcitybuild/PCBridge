@@ -1,5 +1,6 @@
 package com.projectcitybuild.pcbridge.paper.support.kotlin
 
+import com.projectcitybuild.pcbridge.paper.core.support.kotlin.Trie
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test

@@ -1,7 +1,7 @@
 package com.projectcitybuild.pcbridge.paper
 
 import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
-import com.projectcitybuild.pcbridge.paper.core.discord.services.DiscordSend
+import com.projectcitybuild.pcbridge.paper.core.libs.services.DiscordSend
 import com.projectcitybuild.pcbridge.paper.core.errors.SentryReporter
 import com.projectcitybuild.pcbridge.paper.core.errors.trace
 import com.projectcitybuild.pcbridge.paper.core.remoteconfig.commands.ConfigCommand
@@ -40,9 +40,9 @@ import com.projectcitybuild.pcbridge.paper.features.watchdog.listeners.commands.
 import com.projectcitybuild.pcbridge.paper.integrations.DynmapIntegration
 import com.projectcitybuild.pcbridge.paper.integrations.EssentialsIntegration
 import com.projectcitybuild.pcbridge.paper.integrations.LuckPermsIntegration
-import com.projectcitybuild.pcbridge.paper.support.spigot.SpigotCommandRegistry
-import com.projectcitybuild.pcbridge.paper.support.spigot.SpigotListenerRegistry
-import com.projectcitybuild.pcbridge.paper.support.spigot.SpigotTimer
+import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotCommandRegistry
+import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotListenerRegistry
+import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotTimer
 import com.projectcitybuild.pcbridge.webserver.HttpServer
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents
 import net.kyori.adventure.platform.bukkit.BukkitAudiences
@@ -177,7 +177,7 @@ private class Lifecycle : KoinComponent {
             get<EssentialsIntegration>().enable()
             get<LuckPermsIntegration>().enable()
 
-            get<DiscordSend>().startProcessing()
+            get<com.projectcitybuild.pcbridge.paper.core.libs.services.DiscordSend>().startProcessing()
         }
 
     suspend fun shutdown() =
@@ -190,7 +190,7 @@ private class Lifecycle : KoinComponent {
             get<EssentialsIntegration>().disable()
             get<LuckPermsIntegration>().disable()
 
-            get<DiscordSend>().stopProcessing()
+            get<com.projectcitybuild.pcbridge.paper.core.libs.services.DiscordSend>().stopProcessing()
 
             listenerRegistry.unregisterAll()
             commandRegistry.unregisterAll()

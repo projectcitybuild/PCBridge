@@ -7,7 +7,7 @@ import com.projectcitybuild.pcbridge.paper.core.remoteconfig.services.RemoteConf
 import com.projectcitybuild.pcbridge.paper.features.warps.events.WarpCreateEvent
 import com.projectcitybuild.pcbridge.paper.features.warps.events.WarpDeleteEvent
 import com.projectcitybuild.pcbridge.paper.features.warps.repositories.WarpRepository
-import com.projectcitybuild.pcbridge.paper.support.spigot.SpigotIntegration
+import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotIntegration
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.plugin.Plugin
