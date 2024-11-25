@@ -95,7 +95,7 @@ class BuildRepository(
         if (cache == null) {
             fetchIdMap()
         }
-        val id = cache?.get(name) ?: throw Exception("Build not found")
+        val id = cache?.get(name) ?: throw IllegalStateException("Build not found")
 
         return buildHttpService.update(
             id = id,
@@ -117,7 +117,7 @@ class BuildRepository(
         if (cache == null) {
             fetchIdMap()
         }
-        val id = cache?.get(name) ?: throw Exception("Build not found")
+        val id = cache?.get(name) ?: throw IllegalStateException("Build not found")
 
         buildHttpService.delete(
             id = id,
@@ -130,7 +130,7 @@ class BuildRepository(
         if (cache == null) {
             fetchIdMap()
         }
-        val id = cache?.get(name) ?: throw Exception("Build not found")
+        val id = cache?.get(name) ?: throw IllegalStateException("Build not found")
 
         return buildHttpService.vote(
             id = id,

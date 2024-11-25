@@ -26,7 +26,7 @@ class BuildsCommand(
             .then(command = buildMoveCommand)
             .then(command = buildVoteCommand)
             .then(command = buildDeleteCommand)
-            .redirect(buildListCommand.buildLiteral())
+            .executes(buildListCommand.buildLiteral().command)
             .build()
     }
 }
