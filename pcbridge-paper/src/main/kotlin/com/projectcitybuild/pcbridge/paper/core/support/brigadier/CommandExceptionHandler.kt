@@ -23,12 +23,10 @@ suspend fun traceCommand(
         // TODO: is this still needed?
         context.source.sender.sendError("Error: You do not have permission to use this command")
     } catch (e: ResponseParser.ValidationError) {
-        context.source.sender.sendError("Error: {${e.message}")
+        context.source.sender.sendError("Error: ${e.message}")
     } catch (e: Exception) {
         context.source.sender.sendError("An unexpected error occurred")
-
-        // Rethrow so that it bubbles up to the error reporter
-        throw e
+        throw e // Bubble it up to the error reporter
     }
 }
 

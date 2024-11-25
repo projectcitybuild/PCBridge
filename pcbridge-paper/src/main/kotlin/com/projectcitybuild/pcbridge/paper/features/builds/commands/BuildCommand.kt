@@ -57,11 +57,8 @@ class BuildCommand(
         checkNotNull(build) { "Build not found" }
 
         val world = server.getWorld(build.world)
-        checkNotNull(world) { "Could not find world {$build.world}" }
+        checkNotNull(world) { "Could not find world ${build.world}" }
 
-        context.source.sender.sendMessage(
-            miniMessage.deserialize("<gray>Teleporting to $name...</gray>")
-        )
         val location = Location(
             world,
             build.x,
@@ -91,9 +88,12 @@ class BuildCommand(
                 Component.text("TODO"),
             )
         )
+        context.source.sender.sendMessage(
+            miniMessage.deserialize("<gray>Teleported to $name</gray>")
+        )
         if (!build.description.isNullOrEmpty()) {
             executor.sendMessage(
-                miniMessage.deserialize("<gray>---<newline>Build Description:<newline>${build.description}</gray>")
+                miniMessage.deserialize("<gray>---<newline>Build Description: ${build.description}</gray>")
             )
         }
     }
