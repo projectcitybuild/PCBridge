@@ -72,6 +72,7 @@ import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotListenerReg
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotNamespace
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotTimer
 import com.projectcitybuild.pcbridge.paper.features.architecture.listeners.ExceptionListener
+import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildUnvoteCommand
 import com.projectcitybuild.pcbridge.webserver.HttpServer
 import com.projectcitybuild.pcbridge.webserver.HttpServerConfig
 import io.github.reactivecircus.cache4k.Cache
@@ -340,6 +341,10 @@ private fun Module.builds() {
                 buildRepository = get(),
             ),
             buildVoteCommand = BuildVoteCommand(
+                plugin = get<JavaPlugin>(),
+                buildRepository = get(),
+            ),
+            buildUnvoteCommand = BuildUnvoteCommand(
                 plugin = get<JavaPlugin>(),
                 buildRepository = get(),
             ),

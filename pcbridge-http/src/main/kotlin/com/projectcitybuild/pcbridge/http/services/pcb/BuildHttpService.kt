@@ -102,4 +102,16 @@ class BuildHttpService(
             )
         }
     }
+
+    suspend fun unvote(
+        id: Int,
+        playerUUID: UUID,
+    ) = withContext(Dispatchers.IO) {
+        responseParser.parse {
+            retrofit.pcb().buildUnvote(
+                id = id,
+                playerUUID = playerUUID.toString(),
+            )
+        }
+    }
 }

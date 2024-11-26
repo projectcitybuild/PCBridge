@@ -137,4 +137,16 @@ class BuildRepository(
             playerUUID = player.uniqueId,
         )
     }
+
+    suspend fun unvote(name: String, player: Player): Build {
+        if (cache == null) {
+            fetchIdMap()
+        }
+        val id = cache?.get(name) ?: throw IllegalStateException("Build not found")
+
+        return buildHttpService.unvote(
+            id = id,
+            playerUUID = player.uniqueId,
+        )
+    }
 }
