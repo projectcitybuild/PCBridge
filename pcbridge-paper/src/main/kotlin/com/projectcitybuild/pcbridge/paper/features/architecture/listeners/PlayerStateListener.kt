@@ -1,12 +1,12 @@
-package com.projectcitybuild.pcbridge.paper.features.playerstate.listeners
+package com.projectcitybuild.pcbridge.paper.features.architecture.listeners
 
 import com.projectcitybuild.pcbridge.paper.core.libs.datetime.services.LocalizedTime
 import com.projectcitybuild.pcbridge.paper.core.libs.logger.log
 import com.projectcitybuild.pcbridge.paper.core.libs.store.PlayerState
 import com.projectcitybuild.pcbridge.paper.core.libs.store.Store
 import com.projectcitybuild.pcbridge.paper.features.bans.events.ConnectionPermittedEvent
-import com.projectcitybuild.pcbridge.paper.features.playerstate.events.PlayerStateUpdatedEvent
-import com.projectcitybuild.pcbridge.paper.features.playerstate.events.PlayerStateDestroyedEvent
+import com.projectcitybuild.pcbridge.paper.features.architecture.events.PlayerStateUpdatedEvent
+import com.projectcitybuild.pcbridge.paper.features.architecture.events.PlayerStateDestroyedEvent
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotEventBroadcaster
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority

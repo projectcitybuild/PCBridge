@@ -39,14 +39,14 @@ import com.projectcitybuild.pcbridge.paper.features.joinmessages.listeners.Annou
 import com.projectcitybuild.pcbridge.paper.features.joinmessages.listeners.FirstTimeJoinListener
 import com.projectcitybuild.pcbridge.paper.features.joinmessages.listeners.ServerOverviewJoinListener
 import com.projectcitybuild.pcbridge.paper.features.nightvision.commands.NightVisionCommand
-import com.projectcitybuild.pcbridge.paper.features.playerstate.listeners.PlayerStateListener
+import com.projectcitybuild.pcbridge.paper.features.architecture.listeners.PlayerStateListener
 import com.projectcitybuild.pcbridge.paper.features.register.commands.CodeCommand
 import com.projectcitybuild.pcbridge.paper.features.register.commands.RegisterCommand
 import com.projectcitybuild.pcbridge.paper.features.staffchat.commands.StaffChatCommand
 import com.projectcitybuild.pcbridge.paper.features.groups.actions.SyncPlayerGroups
 import com.projectcitybuild.pcbridge.paper.features.groups.commands.SyncCommand
 import com.projectcitybuild.pcbridge.paper.features.groups.listener.SyncRankListener
-import com.projectcitybuild.pcbridge.paper.features.playerstate.listeners.PlayerSyncRequestListener
+import com.projectcitybuild.pcbridge.paper.features.architecture.listeners.PlayerSyncRequestListener
 import com.projectcitybuild.pcbridge.paper.features.telemetry.listeners.TelemetryPlayerConnectListener
 import com.projectcitybuild.pcbridge.paper.features.telemetry.repositories.TelemetryRepository
 import com.projectcitybuild.pcbridge.paper.features.warps.commands.WarpCommand
@@ -71,6 +71,7 @@ import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotEventBroadc
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotListenerRegistry
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotNamespace
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotTimer
+import com.projectcitybuild.pcbridge.paper.features.architecture.listeners.ExceptionListener
 import com.projectcitybuild.pcbridge.webserver.HttpServer
 import com.projectcitybuild.pcbridge.webserver.HttpServerConfig
 import io.github.reactivecircus.cache4k.Cache
@@ -95,6 +96,7 @@ fun pluginModule(_plugin: JavaPlugin) =
 
         // Features
         announcements()
+        architecture()
         bans()
         builds()
         chat()
@@ -102,7 +104,6 @@ fun pluginModule(_plugin: JavaPlugin) =
         joinMessages()
         invisFrames()
         nightVision()
-        playerState()
         register()
         staffChat()
         telemetry()
@@ -433,7 +434,7 @@ private fun Module.joinMessages() {
     }
 }
 
-private fun Module.playerState() {
+private fun Module.architecture() {
     factory {
         PlayerStateListener(
             store = get(),
@@ -441,6 +442,7 @@ private fun Module.playerState() {
             eventBroadcaster = get(),
         )
     }
+
     factory {
         PlayerSyncRequestListener(
             store = get(),
@@ -448,6 +450,12 @@ private fun Module.playerState() {
             server = get(),
             eventBroadcaster = get(),
             playerRepository = get(),
+        )
+    }
+
+    factory {
+        ExceptionListener(
+            sentryReporter = get(),
         )
     }
 }

@@ -20,7 +20,7 @@ class AuthorizeConnectionListener(
     private val sentry: SentryReporter,
 ) : Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
-    suspend fun handle(event: AsyncPlayerPreLoginEvent) {
+    fun handle(event: AsyncPlayerPreLoginEvent) {
         /**
          * In order to call `event.disallow()`, this function must block until player data
          * has been fetched and processed. Blocking is not a problem because this event

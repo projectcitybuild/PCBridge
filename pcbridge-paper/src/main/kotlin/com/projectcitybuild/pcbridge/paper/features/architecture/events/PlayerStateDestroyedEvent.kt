@@ -1,4 +1,4 @@
-package com.projectcitybuild.pcbridge.paper.features.playerstate.events
+package com.projectcitybuild.pcbridge.paper.features.architecture.events
 
 import com.projectcitybuild.pcbridge.paper.core.libs.store.PlayerState
 import org.bukkit.event.Event

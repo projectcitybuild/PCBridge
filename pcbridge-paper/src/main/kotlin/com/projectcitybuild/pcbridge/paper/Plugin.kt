@@ -1,6 +1,7 @@
 package com.projectcitybuild.pcbridge.paper
 
 import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
+import com.projectcitybuild.pcbridge.paper.core.libs.discord.DiscordSend
 import com.projectcitybuild.pcbridge.paper.core.libs.errors.SentryReporter
 import com.projectcitybuild.pcbridge.paper.core.libs.errors.trace
 import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.commands.ConfigCommand
@@ -25,12 +26,12 @@ import com.projectcitybuild.pcbridge.paper.features.joinmessages.listeners.Annou
 import com.projectcitybuild.pcbridge.paper.features.joinmessages.listeners.FirstTimeJoinListener
 import com.projectcitybuild.pcbridge.paper.features.joinmessages.listeners.ServerOverviewJoinListener
 import com.projectcitybuild.pcbridge.paper.features.nightvision.commands.NightVisionCommand
-import com.projectcitybuild.pcbridge.paper.features.playerstate.listeners.PlayerStateListener
+import com.projectcitybuild.pcbridge.paper.features.architecture.listeners.PlayerStateListener
 import com.projectcitybuild.pcbridge.paper.features.register.commands.CodeCommand
 import com.projectcitybuild.pcbridge.paper.features.register.commands.RegisterCommand
 import com.projectcitybuild.pcbridge.paper.features.staffchat.commands.StaffChatCommand
 import com.projectcitybuild.pcbridge.paper.features.groups.listener.SyncRankListener
-import com.projectcitybuild.pcbridge.paper.features.playerstate.listeners.PlayerSyncRequestListener
+import com.projectcitybuild.pcbridge.paper.features.architecture.listeners.PlayerSyncRequestListener
 import com.projectcitybuild.pcbridge.paper.features.telemetry.listeners.TelemetryPlayerConnectListener
 import com.projectcitybuild.pcbridge.paper.features.warps.commands.WarpCommand
 import com.projectcitybuild.pcbridge.paper.features.warps.commands.WarpsCommand
@@ -42,6 +43,7 @@ import com.projectcitybuild.pcbridge.paper.integrations.LuckPermsIntegration
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotCommandRegistry
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotListenerRegistry
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotTimer
+import com.projectcitybuild.pcbridge.paper.features.architecture.listeners.ExceptionListener
 import com.projectcitybuild.pcbridge.webserver.HttpServer
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents
 import net.kyori.adventure.platform.bukkit.BukkitAudiences
@@ -146,6 +148,7 @@ private class Lifecycle : KoinComponent {
                 get<AnnouncementEnableListener>(),
                 get<AuthorizeConnectionListener>(),
                 get<ChatConfigListener>(),
+                get<ExceptionListener>(),
                 get<FirstTimeJoinListener>(),
                 get<FormatNameChatListener>(),
                 get<FramePlaceListener>(),
@@ -176,7 +179,7 @@ private class Lifecycle : KoinComponent {
             get<EssentialsIntegration>().enable()
             get<LuckPermsIntegration>().enable()
 
-            get<com.projectcitybuild.pcbridge.paper.core.libs.discord.DiscordSend>().startProcessing()
+            get<DiscordSend>().startProcessing()
         }
 
     suspend fun shutdown() =
@@ -189,7 +192,7 @@ private class Lifecycle : KoinComponent {
             get<EssentialsIntegration>().disable()
             get<LuckPermsIntegration>().disable()
 
-            get<com.projectcitybuild.pcbridge.paper.core.libs.discord.DiscordSend>().stopProcessing()
+            get<DiscordSend>().stopProcessing()
 
             listenerRegistry.unregisterAll()
             commandRegistry.unregisterAll()
