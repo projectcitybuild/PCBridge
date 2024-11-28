@@ -48,8 +48,12 @@ class BuildVoteCommand(
 
         val build = buildRepository.vote(name = name, player = player)
 
+        val miniMessage = MiniMessage.miniMessage()
         context.source.sender.sendMessage(
-            MiniMessage.miniMessage().deserialize("<green>You voted for ${build.name}</green>")
+            miniMessage.deserialize("<green>You voted for ${build.name}</green>")
+        )
+        plugin.server.broadcast(
+            miniMessage.deserialize("<gray>${player.name} voted for build \"<white>${build.name}</white>\"</gray>")
         )
     }
 }
