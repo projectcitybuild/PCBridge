@@ -12,6 +12,7 @@ import com.projectcitybuild.pcbridge.paper.core.support.brigadier.suggestsSuspen
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceCommand
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
+import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
 
@@ -27,11 +28,14 @@ class BuildSetCommand(
                     .then(
                         Commands.argument("field", StringArgumentType.word())
                             .suggests { _, suggestions ->
+                                // TODO: clean this up
                                 suggestions.suggest("description")
+                                suggestions.suggest("name")
+                                suggestions.suggest("lore")
                                 suggestions.buildFuture()
                             }
                             .then(
-                                Commands.argument("name", StringArgumentType.greedyString())
+                                Commands.argument("value", StringArgumentType.greedyString())
                                     .suggestsSuspending(plugin, ::suggestDescription)
                                     .executesSuspending(plugin, ::execute)
                             )
@@ -50,11 +54,23 @@ class BuildSetCommand(
     }
 
     private suspend fun execute(context: CommandContext<CommandSourceStack>) = traceCommand(context) {
-        val name = context.getArgument("field", String::class.java)
+        val field = context.getArgument("field", String::class.java)
+        val id = context.getArgument("id", Int::class.java)
+        val value = context.getArgument("value", String::class.java)
         val player = context.source.executor as? Player
 
         checkNotNull(player) { "Only a player can use this command" }
 
-        // TODO
+        val editableField = BuildRepository.EditableField.valueOf(field.uppercase())
+        buildRepository.set(
+            id = id,
+            player = player,
+            field = editableField,
+            value = value,
+        )
+
+        context.source.sender.sendMessage(
+            MiniMessage.miniMessage().deserialize("<green>Build updated</green>")
+        )
     }
 }

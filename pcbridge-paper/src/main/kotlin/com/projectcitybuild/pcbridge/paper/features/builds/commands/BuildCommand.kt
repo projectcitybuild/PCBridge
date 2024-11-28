@@ -87,18 +87,23 @@ class BuildCommand(
         executor.showTitle(
             Title.title(
                 Component.text(build.name),
-                Component.text(
+                miniMessage.deserialize(
                     if (owner.isNullOrEmpty()) ""
                     else "<gray>Created by $owner</gray>"
                 ),
             )
         )
         context.source.sender.sendMessage(
-            miniMessage.deserialize("<gray>Teleported to $name</gray>")
+            miniMessage.deserialize("<gray>Teleported to <aqua>$name</aqua></gray>")
         )
         if (!build.description.isNullOrEmpty()) {
             executor.sendMessage(
-                miniMessage.deserialize("<gray>---<newline>Build Description: ${build.description}</gray>")
+                miniMessage.deserialize("<gray>---<newline>Description: ${build.description}</gray>")
+            )
+        }
+        if (!build.lore.isNullOrEmpty()) {
+            executor.sendMessage(
+                miniMessage.deserialize("<gray>---<newline>Lore: ${build.lore}</gray>")
             )
         }
     }

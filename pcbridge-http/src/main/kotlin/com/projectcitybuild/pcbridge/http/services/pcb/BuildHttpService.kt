@@ -114,4 +114,22 @@ class BuildHttpService(
             )
         }
     }
+
+    suspend fun set(
+        id: Int,
+        playerUUID: UUID,
+        name: String?,
+        description: String?,
+        lore: String?,
+    ) = withContext(Dispatchers.IO) {
+        responseParser.parse {
+            retrofit.pcb().setBuildField(
+                id = id,
+                playerUUID = playerUUID.toString(),
+                name = name,
+                description = description,
+                lore = lore,
+            )
+        }
+    }
 }

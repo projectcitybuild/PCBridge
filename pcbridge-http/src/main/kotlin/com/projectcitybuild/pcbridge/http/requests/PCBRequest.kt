@@ -11,6 +11,7 @@ import retrofit2.http.DELETE
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
@@ -140,6 +141,16 @@ internal interface PCBRequest {
         @Field(value = "z") z: Double,
         @Field(value = "pitch") pitch: Float,
         @Field(value = "yaw") yaw: Float,
+    ): Build
+
+    @PATCH("v2/minecraft/build/{id}/set")
+    @FormUrlEncoded
+    suspend fun setBuildField(
+        @Path(value = "id") id: Int,
+        @Field(value = "player_uuid") playerUUID: String,
+        @Field(value = "name") name: String?,
+        @Field(value = "description") description: String?,
+        @Field(value = "lore") lore: String?,
     ): Build
 
     @DELETE("v2/minecraft/build/{id}")

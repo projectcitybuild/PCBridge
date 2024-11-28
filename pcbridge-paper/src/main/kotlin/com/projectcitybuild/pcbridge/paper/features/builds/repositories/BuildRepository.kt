@@ -10,6 +10,12 @@ import org.bukkit.entity.Player
 class BuildRepository(
     private val buildHttpService: BuildHttpService,
 ) {
+    enum class EditableField {
+        NAME,
+        DESCRIPTION,
+        LORE,
+    }
+
     class IdMap(
         initial: Map<String, Int>,
     ) {
@@ -147,6 +153,21 @@ class BuildRepository(
         return buildHttpService.unvote(
             id = id,
             playerUUID = player.uniqueId,
+        )
+    }
+
+    suspend fun set(
+        id: Int,
+        player: Player,
+        field: EditableField,
+        value: String,
+    ): Build {
+        return buildHttpService.set(
+            id = id,
+            playerUUID = player.uniqueId,
+            name = if (field == EditableField.NAME) value else null,
+            description = if (field == EditableField.DESCRIPTION) value else null,
+            lore = if (field == EditableField.LORE) value else null,
         )
     }
 }

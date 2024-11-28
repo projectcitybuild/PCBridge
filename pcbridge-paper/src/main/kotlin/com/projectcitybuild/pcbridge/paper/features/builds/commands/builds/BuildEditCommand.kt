@@ -52,7 +52,7 @@ class BuildEditCommand(
         val actions = listOf("name", "description", "lore")
         val actionsRow = actions.joinToString(separator = " ") { field ->
             val command = "/builds set ${build.id} $field "
-            "[<white><underline><click:suggest_command:'$command'><hover:show_text:'$command'>${field.uppercase()}</hover></click></underline></white>]"
+            "[<white><underlined><click:suggest_command:'$command'><hover:show_text:'$command'>${field.uppercase()}</hover></click></underlined></white>]"
         }
         context.source.sender.sendMessage(
             MiniMessage.miniMessage().deserialize("<gray>Click a field to edit:<newline>$actionsRow</gray>")
