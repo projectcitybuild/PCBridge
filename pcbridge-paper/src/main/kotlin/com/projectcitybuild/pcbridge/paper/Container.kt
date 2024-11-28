@@ -72,6 +72,8 @@ import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotListenerReg
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotNamespace
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotTimer
 import com.projectcitybuild.pcbridge.paper.features.architecture.listeners.ExceptionListener
+import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildEditCommand
+import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildSetCommand
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildUnvoteCommand
 import com.projectcitybuild.pcbridge.webserver.HttpServer
 import com.projectcitybuild.pcbridge.webserver.HttpServerConfig
@@ -349,6 +351,14 @@ private fun Module.builds() {
                 buildRepository = get(),
             ),
             buildDeleteCommand = BuildDeleteCommand(
+                plugin = get<JavaPlugin>(),
+                buildRepository = get(),
+            ),
+            buildEditCommand = BuildEditCommand(
+                plugin = get<JavaPlugin>(),
+                buildRepository = get(),
+            ),
+            buildSetCommand = BuildSetCommand(
                 plugin = get<JavaPlugin>(),
                 buildRepository = get(),
             ),

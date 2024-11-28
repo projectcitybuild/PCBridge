@@ -82,10 +82,15 @@ class BuildCommand(
 
         if (didTeleport != true) return@traceCommand
 
+        val owner = build.player?.alias
+
         executor.showTitle(
             Title.title(
                 Component.text(build.name),
-                Component.text("TODO"),
+                Component.text(
+                    if (owner.isNullOrEmpty()) ""
+                    else "<gray>Created by $owner</gray>"
+                ),
             )
         )
         context.source.sender.sendMessage(

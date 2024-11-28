@@ -44,4 +44,7 @@ data class Build(
     @SerializedName("updated_at")
     @Serializable(with = LocalDateTimeSerializer::class)
     val updatedAt: LocalDateTime,
+
+    @SerializedName("player")
+    val player: Player?,
 )
