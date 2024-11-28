@@ -3,9 +3,11 @@ package com.projectcitybuild.pcbridge.paper.features.builds.commands.builds
 import com.mojang.brigadier.arguments.StringArgumentType
 import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.tree.LiteralCommandNode
+import com.projectcitybuild.pcbridge.paper.PermissionNode
 import com.projectcitybuild.pcbridge.paper.features.builds.repositories.BuildRepository
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierCommand
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.executesSuspending
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.requiresPermission
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceCommand
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
@@ -20,6 +22,7 @@ class BuildCreateCommand(
 ): BrigadierCommand {
     override fun buildLiteral(): LiteralCommandNode<CommandSourceStack> {
         return Commands.literal("create")
+            .requiresPermission(PermissionNode.BUILD_MANAGE)
             .then(
                 Commands.argument("name", StringArgumentType.greedyString())
                     .executesSuspending(plugin, ::execute)

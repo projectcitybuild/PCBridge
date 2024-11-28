@@ -4,9 +4,11 @@ import com.mojang.brigadier.arguments.StringArgumentType
 import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.suggestion.SuggestionsBuilder
 import com.mojang.brigadier.tree.LiteralCommandNode
+import com.projectcitybuild.pcbridge.paper.PermissionNode
 import com.projectcitybuild.pcbridge.paper.features.builds.repositories.BuildRepository
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierCommand
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.executesSuspending
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.requiresPermission
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.suggestsSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceCommand
 import io.papermc.paper.command.brigadier.CommandSourceStack
@@ -22,6 +24,7 @@ class BuildUnvoteCommand(
 ): BrigadierCommand {
     override fun buildLiteral(): LiteralCommandNode<CommandSourceStack> {
         return Commands.literal("unvote")
+            .requiresPermission(PermissionNode.BUILD_VOTE)
             .then(
                 Commands.argument("name", StringArgumentType.greedyString())
                     .suggestsSuspending(plugin, ::suggestBuild)

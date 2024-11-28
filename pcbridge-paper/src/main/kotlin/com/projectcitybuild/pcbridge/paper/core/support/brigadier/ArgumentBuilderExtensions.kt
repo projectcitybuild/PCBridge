@@ -2,13 +2,11 @@ package com.projectcitybuild.pcbridge.paper.core.support.brigadier
 
 import com.github.shynixn.mccoroutine.bukkit.launch
 import com.mojang.brigadier.Command
-import com.mojang.brigadier.builder.ArgumentBuilder
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import com.mojang.brigadier.builder.RequiredArgumentBuilder
 import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.suggestion.SuggestionsBuilder
-import com.mojang.brigadier.tree.CommandNode
-import com.mojang.brigadier.tree.LiteralCommandNode
+import com.projectcitybuild.pcbridge.paper.PermissionNode
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import org.bukkit.plugin.Plugin
 
@@ -56,3 +54,14 @@ fun LiteralArgumentBuilder<CommandSourceStack>.then(
 ): LiteralArgumentBuilder<CommandSourceStack> {
     return then(command.buildLiteral())
 }
+
+
+@Suppress("UnstableApiUsage")
+fun LiteralArgumentBuilder<CommandSourceStack>.requiresPermission(
+    permission: PermissionNode,
+): LiteralArgumentBuilder<CommandSourceStack> {
+    return requires { context ->
+        context.sender.hasPermission(permission.node)
+    }
+}
+
