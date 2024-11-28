@@ -41,6 +41,16 @@ class BuildRepository(
             map.remove(name)
             names.remove(name)
         }
+
+        fun update(id: Int, newName: String) {
+            val currentNameForId = map.filter { entry -> entry.value == id }.map { it.key }.firstOrNull()
+            if (currentNameForId != null) {
+                map.remove(currentNameForId)
+                map[newName] = id
+                names.remove(currentNameForId)
+                names.insert(newName)
+            }
+        }
     }
 
     private var cache: IdMap? = null
@@ -162,12 +172,16 @@ class BuildRepository(
         field: EditableField,
         value: String,
     ): Build {
-        return buildHttpService.set(
+        val build = buildHttpService.set(
             id = id,
             playerUUID = player.uniqueId,
             name = if (field == EditableField.NAME) value else null,
             description = if (field == EditableField.DESCRIPTION) value else null,
             lore = if (field == EditableField.LORE) value else null,
         )
+        if (field == EditableField.NAME) {
+            cache?.update(id, newName = build.name)
+        }
+        return build
     }
 }

@@ -42,6 +42,7 @@ class BuildSetCommand(
                                     .suggestsSuspending(plugin, ::suggestDescription)
                                     .executesSuspending(plugin, ::execute)
                             )
+                            .executesSuspending(plugin, ::execute)
                     )
             )
             .build()
@@ -59,7 +60,7 @@ class BuildSetCommand(
     private suspend fun execute(context: CommandContext<CommandSourceStack>) = traceCommand(context) {
         val field = context.getArgument("field", String::class.java)
         val id = context.getArgument("id", Int::class.java)
-        val value = context.getArgument("value", String::class.java)
+        val value = runCatching { context.getArgument("value", String::class.java) }.getOrElse { "" }
         val player = context.source.executor as? Player
 
         checkNotNull(player) { "Only a player can use this command" }
