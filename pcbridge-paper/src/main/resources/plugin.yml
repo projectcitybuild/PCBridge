@@ -9,9 +9,3 @@ softdepend:
   - LuckPerms
   - dynmap
   - Essentials
-
-commands:
-  warp:
-    permission: pcbridge.warps.teleport
-  warps:
-    permission: pcbridge.warps.list
