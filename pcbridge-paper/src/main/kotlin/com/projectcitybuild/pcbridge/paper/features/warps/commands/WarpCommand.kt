@@ -31,6 +31,8 @@ class WarpCommand(
     private val warpRepository: WarpRepository,
     private val server: Server,
 ) : BrigadierCommand {
+    override val description: String = "Teleports to a warp"
+
     override fun buildLiteral(): LiteralCommandNode<CommandSourceStack> {
         return Commands.literal("warp")
             .requiresPermission(PermissionNode.WARP_TELEPORT)

@@ -55,7 +55,7 @@ class BuildVoteCommand(
             miniMessage.deserialize("<green>You voted for ${build.name}</green>")
         )
         plugin.server.broadcast(
-            miniMessage.deserialize("<gray><pink>❤</pink> ${player.name} voted for build \"<white><click:run_command:'/build ${build.name}'><hover:show_text:'Click to teleport'>${build.name}</hover></click></white>\"</gray>")
+            miniMessage.deserialize("<gray><red>❤</red> ${player.name} voted for build \"<white><click:run_command:'/build ${build.name}'><hover:show_text:'Click to teleport'>${build.name}</hover></click></white>\"</gray>")
         )
     }
 }

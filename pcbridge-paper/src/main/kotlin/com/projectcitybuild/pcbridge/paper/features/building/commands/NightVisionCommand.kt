@@ -21,6 +21,8 @@ import org.bukkit.potion.PotionEffectType
 class NightVisionCommand(
     private val plugin: Plugin,
 ) : BrigadierCommand {
+    override val description: String = "Toggles night-vision mode"
+
     override fun buildLiteral(): LiteralCommandNode<CommandSourceStack> {
         return Commands.literal("nv")
             .requiresPermission(PermissionNode.BUILDING_NIGHT_VISION)

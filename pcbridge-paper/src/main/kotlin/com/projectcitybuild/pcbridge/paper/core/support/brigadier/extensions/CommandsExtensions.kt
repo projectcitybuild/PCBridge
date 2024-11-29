@@ -4,5 +4,5 @@ import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierComma
 import io.papermc.paper.command.brigadier.Commands
 
 fun Commands.register(vararg commands: BrigadierCommand) = commands.forEach {
-    register(it.buildLiteral())
+    register(it.buildLiteral(), it.description)
 }

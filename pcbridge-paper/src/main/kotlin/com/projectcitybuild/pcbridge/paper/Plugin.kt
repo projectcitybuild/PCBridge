@@ -45,6 +45,7 @@ import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotTimer
 import com.projectcitybuild.pcbridge.paper.architecture.listeners.ExceptionListener
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.register
 import com.projectcitybuild.pcbridge.webserver.HttpServer
+import io.papermc.paper.plugin.lifecycle.event.LifecycleEventManager
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents
 import net.kyori.adventure.platform.bukkit.BukkitAudiences
 import org.bukkit.plugin.java.JavaPlugin

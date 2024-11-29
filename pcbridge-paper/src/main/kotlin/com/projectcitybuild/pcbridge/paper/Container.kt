@@ -221,7 +221,7 @@ private fun Module.core() {
 
     factory {
         ConfigCommand(
-            plugin = get(),
+            plugin = get<JavaPlugin>(),
             remoteConfig = get(),
         )
     }
@@ -382,13 +382,13 @@ private fun Module.builds() {
 private fun Module.building() {
     factory {
         NightVisionCommand(
-            plugin = get(),
+            plugin = get<JavaPlugin>(),
         )
     }
 
     factory {
         ItemNameCommand(
-            plugin = get(),
+            plugin = get<JavaPlugin>(),
             eventBroadcaster = get(),
         )
     }
@@ -403,7 +403,7 @@ private fun Module.warps() {
 
     factory {
         WarpCommand(
-            plugin = get(),
+            plugin = get<JavaPlugin>(),
             warpRepository = get(),
             server = get(),
         )
@@ -412,30 +412,30 @@ private fun Module.warps() {
     factory {
         WarpsCommand(
             createCommand = WarpCreateCommand(
-                plugin = get(),
+                plugin = get<JavaPlugin>(),
                 warpRepository = get(),
                 server = get(),
             ),
             deleteCommand = WarpDeleteCommand(
-                plugin = get(),
+                plugin = get<JavaPlugin>(),
                 warpRepository = get(),
                 server = get(),
             ),
             listCommand = WarpListCommand(
-                plugin = get(),
+                plugin = get<JavaPlugin>(),
                 warpRepository = get(),
                 remoteConfig = get(),
             ),
             moveCommand = WarpMoveCommand(
-                plugin = get(),
+                plugin = get<JavaPlugin>(),
                 warpRepository = get(),
             ),
             reloadCommand = WarpReloadCommand(
-                plugin = get(),
+                plugin = get<JavaPlugin>(),
                 warpRepository = get(),
             ),
             renameCommand = WarpRenameCommand(
-                plugin = get(),
+                plugin = get<JavaPlugin>(),
                 warpRepository = get(),
             ),
         )
@@ -539,7 +539,7 @@ private fun Module.bans() {
 private fun Module.invisFrames() {
     factory {
         InvisFrameCommand(
-            plugin = get(),
+            plugin = get<JavaPlugin>(),
             spigotNamespace = get(),
         )
     }
@@ -622,13 +622,13 @@ private fun Module.chat() {
 private fun Module.register() {
     factory {
         RegisterCommand(
-            plugin = get(),
+            plugin = get<JavaPlugin>(),
             registerHttpService = get<PCBHttp>().register,
         )
     }
     factory {
         CodeCommand(
-            plugin = get(),
+            plugin = get<JavaPlugin>(),
             registerHttpService = get<PCBHttp>().register,
         )
     }
@@ -651,7 +651,7 @@ private fun Module.telemetry() {
 private fun Module.staffChat() {
     factory {
         StaffChatCommand(
-            plugin = get(),
+            plugin = get<JavaPlugin>(),
             server = get(),
             remoteConfig = get(),
         )
@@ -673,7 +673,7 @@ private fun Module.groups() {
 
     factory {
         SyncCommand(
-            plugin = get(),
+            plugin = get<JavaPlugin>(),
             eventBroadcaster = get(),
         )
     }

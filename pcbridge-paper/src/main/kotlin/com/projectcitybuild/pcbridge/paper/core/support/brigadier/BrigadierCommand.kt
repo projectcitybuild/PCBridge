@@ -8,5 +8,8 @@ import io.papermc.paper.command.brigadier.CommandSourceStack
  * registered with Brigadier
  */
 interface BrigadierCommand {
+    val description: String?
+        get() = null
+
     fun buildLiteral(): LiteralCommandNode<CommandSourceStack>
 }
