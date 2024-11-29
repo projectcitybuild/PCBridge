@@ -26,7 +26,6 @@ import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerTeleportEvent
 import org.bukkit.plugin.Plugin
 
-@Suppress("UnstableApiUsage")
 class WarpCommand(
     private val plugin: Plugin,
     private val warpRepository: WarpRepository,

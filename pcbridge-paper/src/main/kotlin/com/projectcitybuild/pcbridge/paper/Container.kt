@@ -66,7 +66,6 @@ import com.projectcitybuild.pcbridge.paper.features.building.commands.ItemNameCo
 import com.projectcitybuild.pcbridge.paper.integrations.DynmapIntegration
 import com.projectcitybuild.pcbridge.paper.integrations.EssentialsIntegration
 import com.projectcitybuild.pcbridge.paper.integrations.LuckPermsIntegration
-import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotCommandRegistry
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotEventBroadcaster
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotListenerRegistry
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotNamespace
@@ -75,6 +74,12 @@ import com.projectcitybuild.pcbridge.paper.architecture.listeners.ExceptionListe
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildEditCommand
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildSetCommand
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildUnvoteCommand
+import com.projectcitybuild.pcbridge.paper.features.warps.commands.warps.WarpCreateCommand
+import com.projectcitybuild.pcbridge.paper.features.warps.commands.warps.WarpDeleteCommand
+import com.projectcitybuild.pcbridge.paper.features.warps.commands.warps.WarpListCommand
+import com.projectcitybuild.pcbridge.paper.features.warps.commands.warps.WarpMoveCommand
+import com.projectcitybuild.pcbridge.paper.features.warps.commands.warps.WarpReloadCommand
+import com.projectcitybuild.pcbridge.paper.features.warps.commands.warps.WarpRenameCommand
 import com.projectcitybuild.pcbridge.webserver.HttpServer
 import com.projectcitybuild.pcbridge.webserver.HttpServerConfig
 import io.github.reactivecircus.cache4k.Cache
@@ -128,13 +133,6 @@ private fun Module.spigot(plugin: JavaPlugin) {
     single {
         SpigotNamespace(
             plugin = get(),
-        )
-    }
-
-    single {
-        SpigotCommandRegistry(
-            plugin = get(),
-            sentry = get(),
         )
     }
 
@@ -405,6 +403,7 @@ private fun Module.warps() {
 
     factory {
         WarpCommand(
+            plugin = get(),
             warpRepository = get(),
             server = get(),
         )
@@ -412,10 +411,33 @@ private fun Module.warps() {
 
     factory {
         WarpsCommand(
-            warpRepository = get(),
-            remoteConfig = get(),
-            server = get(),
-            time = get(),
+            createCommand = WarpCreateCommand(
+                plugin = get(),
+                warpRepository = get(),
+                server = get(),
+            ),
+            deleteCommand = WarpDeleteCommand(
+                plugin = get(),
+                warpRepository = get(),
+                server = get(),
+            ),
+            listCommand = WarpListCommand(
+                plugin = get(),
+                warpRepository = get(),
+                remoteConfig = get(),
+            ),
+            moveCommand = WarpMoveCommand(
+                plugin = get(),
+                warpRepository = get(),
+            ),
+            reloadCommand = WarpReloadCommand(
+                plugin = get(),
+                warpRepository = get(),
+            ),
+            renameCommand = WarpRenameCommand(
+                plugin = get(),
+                warpRepository = get(),
+            ),
         )
     }
 }
@@ -517,6 +539,7 @@ private fun Module.bans() {
 private fun Module.invisFrames() {
     factory {
         InvisFrameCommand(
+            plugin = get(),
             spigotNamespace = get(),
         )
     }
@@ -599,11 +622,13 @@ private fun Module.chat() {
 private fun Module.register() {
     factory {
         RegisterCommand(
+            plugin = get(),
             registerHttpService = get<PCBHttp>().register,
         )
     }
     factory {
         CodeCommand(
+            plugin = get(),
             registerHttpService = get<PCBHttp>().register,
         )
     }

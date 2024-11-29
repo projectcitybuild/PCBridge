@@ -17,7 +17,6 @@ import org.bukkit.command.CommandSender
 import org.bukkit.plugin.Plugin
 import kotlin.math.ceil
 
-@Suppress("UnstableApiUsage")
 class BuildListCommand(
     private val plugin: Plugin,
     private val buildRepository: BuildRepository,

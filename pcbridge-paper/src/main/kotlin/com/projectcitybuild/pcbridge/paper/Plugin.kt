@@ -98,7 +98,6 @@ private class Lifecycle : KoinComponent {
 
             remoteConfig.fetch()
 
-            @Suppress("UnstableApiUsage")
             // TODO: inject lifecycle manager instead
             get<JavaPlugin>()
                 .lifecycleManager

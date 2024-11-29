@@ -18,13 +18,12 @@ import org.bukkit.plugin.Plugin
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 
-@Suppress("UnstableApiUsage")
 class NightVisionCommand(
     private val plugin: Plugin,
 ) : BrigadierCommand {
     override fun buildLiteral(): LiteralCommandNode<CommandSourceStack> {
         return Commands.literal("nv")
-            .requiresPermission(PermissionNode.BUILD_NIGHT_VISION)
+            .requiresPermission(PermissionNode.BUILDING_NIGHT_VISION)
             .then(
                 Commands.argument("enabled", OnOffArgument())
                     .executesSuspending(plugin, ::execute)

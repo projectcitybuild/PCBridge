@@ -19,14 +19,13 @@ import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
 
-@Suppress("UnstableApiUsage")
 class ItemNameCommand(
     private val plugin: Plugin,
     private val eventBroadcaster: SpigotEventBroadcaster,
 ) : BrigadierCommand {
     override fun buildLiteral(): LiteralCommandNode<CommandSourceStack> {
         return Commands.literal("itemname")
-            .requiresPermission(PermissionNode.BUILD_ITEM_RENAME)
+            .requiresPermission(PermissionNode.BUILDING_ITEM_RENAME)
             .then(
                 Commands.argument("name", StringArgumentType.greedyString())
                     .executesSuspending(plugin, ::execute)

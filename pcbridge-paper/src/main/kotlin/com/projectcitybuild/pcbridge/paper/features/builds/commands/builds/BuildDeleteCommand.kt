@@ -17,7 +17,6 @@ import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
 
-@Suppress("UnstableApiUsage")
 class BuildDeleteCommand(
     private val plugin: Plugin,
     private val buildRepository: BuildRepository,

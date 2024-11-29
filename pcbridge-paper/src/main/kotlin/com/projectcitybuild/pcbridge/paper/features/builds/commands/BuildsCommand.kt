@@ -16,7 +16,6 @@ import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.Build
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
 
-@Suppress("UnstableApiUsage")
 class BuildsCommand(
     private val buildCreateCommand: BuildCreateCommand,
     private val buildDeleteCommand: BuildDeleteCommand,

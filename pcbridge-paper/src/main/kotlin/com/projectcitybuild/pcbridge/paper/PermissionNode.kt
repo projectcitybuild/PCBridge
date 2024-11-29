@@ -11,13 +11,13 @@ enum class PermissionNode(val node: String) {
     BUILDS_VOTE("pcbridge.builds.vote"),
 
     // Can toggle nightvision mode
-    BUILD_NIGHT_VISION("pcbridge.build.nightvision"),
+    BUILDING_NIGHT_VISION("pcbridge.build.nightvision"),
 
     // Can rename an item via a command
-    BUILD_ITEM_RENAME("pcbridge.items.rename"),
+    BUILDING_ITEM_RENAME("pcbridge.items.rename"),
 
     // Can get an invisible item frame via a command
-    BUILD_INVIS_FRAME("pcbridge.build.invisframe"),
+    BUILDING_INVIS_FRAME("pcbridge.build.invisframe"),
 
     // Can send and receive staff messages
     STAFF_CHANNEL("pcbridge.chat.staff_channel"),
@@ -30,4 +30,7 @@ enum class PermissionNode(val node: String) {
 
     // Can teleport to a warp
     WARP_TELEPORT("pcbridge.warp.teleport"),
+
+    // Can create, edit or delete warps
+    WARP_MANAGE("pcbridge.warp.manage"),
 }

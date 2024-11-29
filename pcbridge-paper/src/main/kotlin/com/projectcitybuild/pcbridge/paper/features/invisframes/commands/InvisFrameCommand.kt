@@ -20,14 +20,13 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataType
 import org.bukkit.plugin.Plugin
 
-@Suppress("UnstableApiUsage")
 class InvisFrameCommand(
     private val plugin: Plugin,
     private val spigotNamespace: SpigotNamespace,
 ) : BrigadierCommand {
     override fun buildLiteral(): LiteralCommandNode<CommandSourceStack> {
         return Commands.literal("invisframe")
-            .requiresPermission(PermissionNode.BUILD_INVIS_FRAME)
+            .requiresPermission(PermissionNode.BUILDING_INVIS_FRAME)
             .then(
                 Commands.literal("glowing")
                     .executesSuspending(plugin, ::giveGlowing)

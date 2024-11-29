@@ -15,7 +15,6 @@ import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
 
-@Suppress("UnstableApiUsage")
 class CodeCommand(
     private val plugin: Plugin,
     private val registerHttpService: RegisterHttpService,

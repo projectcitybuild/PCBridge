@@ -6,7 +6,6 @@ import io.papermc.paper.command.brigadier.CommandSourceStack
 import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.command.CommandSender
 
-@Suppress("UnstableApiUsage")
 suspend fun traceCommand(
     context: CommandContext<CommandSourceStack>,
     block: suspend (CommandContext<CommandSourceStack>) -> Unit,

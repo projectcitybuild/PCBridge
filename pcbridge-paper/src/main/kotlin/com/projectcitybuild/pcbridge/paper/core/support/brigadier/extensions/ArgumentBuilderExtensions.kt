@@ -50,14 +50,12 @@ fun <S> LiteralArgumentBuilder<S>.executesSuspending(
     }
 }
 
-@Suppress("UnstableApiUsage")
 fun LiteralArgumentBuilder<CommandSourceStack>.then(
     command: BrigadierCommand,
 ): LiteralArgumentBuilder<CommandSourceStack> {
     return then(command.buildLiteral())
 }
 
-@Suppress("UnstableApiUsage")
 fun LiteralArgumentBuilder<CommandSourceStack>.requiresPermission(
     permission: PermissionNode,
 ): LiteralArgumentBuilder<CommandSourceStack> {
@@ -65,7 +63,7 @@ fun LiteralArgumentBuilder<CommandSourceStack>.requiresPermission(
         context.sender.hasPermission(permission.node)
     }
 }
-@Suppress("UnstableApiUsage")
+
 fun <S: CommandSourceStack, T> RequiredArgumentBuilder<S, T>.requiresPermission(
     permission: PermissionNode,
 ): RequiredArgumentBuilder<S, T> {

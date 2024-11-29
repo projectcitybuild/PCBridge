@@ -18,7 +18,6 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import org.bukkit.Server
 import org.bukkit.plugin.Plugin
 
-@Suppress("UnstableApiUsage")
 class StaffChatCommand(
     private val plugin: Plugin,
     private val server: Server,
