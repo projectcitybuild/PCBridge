@@ -101,12 +101,12 @@ class BuildCommand(
         )
         if (!build.description.isNullOrEmpty()) {
             executor.sendMessage(
-                miniMessage.deserialize("<gray>---<newline>Description: ${build.description}</gray>")
+                miniMessage.deserialize("<gray>---<newline>${build.description}</gray>")
             )
         }
         if (!build.lore.isNullOrEmpty()) {
             executor.sendMessage(
-                miniMessage.deserialize("<gray>---<newline>Lore: ${build.lore}</gray>")
+                miniMessage.deserialize("<gray>---<newline><italic>${build.lore}</italic></gray>")
             )
         }
     }
