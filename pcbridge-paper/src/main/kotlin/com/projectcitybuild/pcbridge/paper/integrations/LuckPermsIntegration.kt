@@ -1,6 +1,6 @@
 package com.projectcitybuild.pcbridge.paper.integrations
 
-import com.projectcitybuild.pcbridge.paper.core.logger.log
+import com.projectcitybuild.pcbridge.paper.core.libs.logger.log
 import net.luckperms.api.LuckPerms
 import net.luckperms.api.LuckPermsProvider
 import org.bukkit.event.Listener

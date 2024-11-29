@@ -1,12 +1,12 @@
 package com.projectcitybuild.pcbridge.paper.features.bans.listeners
 
-import com.projectcitybuild.pcbridge.paper.core.errors.SentryReporter
-import com.projectcitybuild.pcbridge.paper.core.logger.log
+import com.projectcitybuild.pcbridge.paper.core.libs.errors.SentryReporter
+import com.projectcitybuild.pcbridge.paper.core.libs.logger.log
 import com.projectcitybuild.pcbridge.paper.features.bans.actions.AuthorizeConnection
 import com.projectcitybuild.pcbridge.paper.features.bans.events.ConnectionPermittedEvent
 import com.projectcitybuild.pcbridge.paper.features.bans.repositories.PlayerRepository
 import com.projectcitybuild.pcbridge.paper.features.bans.utilities.toMiniMessage
-import com.projectcitybuild.pcbridge.paper.support.spigot.SpigotEventBroadcaster
+import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotEventBroadcaster
 import kotlinx.coroutines.runBlocking
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
@@ -20,7 +20,7 @@ class AuthorizeConnectionListener(
     private val sentry: SentryReporter,
 ) : Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
-    suspend fun handle(event: AsyncPlayerPreLoginEvent) {
+    fun handle(event: AsyncPlayerPreLoginEvent) {
         /**
          * In order to call `event.disallow()`, this function must block until player data
          * has been fetched and processed. Blocking is not a problem because this event

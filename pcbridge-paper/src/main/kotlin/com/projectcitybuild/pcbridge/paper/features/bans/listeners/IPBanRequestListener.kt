@@ -1,6 +1,6 @@
 package com.projectcitybuild.pcbridge.paper.features.bans.listeners
 
-import com.projectcitybuild.pcbridge.paper.core.logger.log
+import com.projectcitybuild.pcbridge.paper.core.libs.logger.log
 import com.projectcitybuild.pcbridge.paper.features.bans.events.IPBanRequestedEvent
 import com.projectcitybuild.pcbridge.paper.features.bans.utilities.Sanitizer
 import com.projectcitybuild.pcbridge.paper.features.bans.utilities.toMiniMessage

@@ -1,11 +1,11 @@
 package com.projectcitybuild.pcbridge.paper.features.groups.commands
 
 import com.projectcitybuild.pcbridge.paper.features.groups.events.PlayerSyncRequestedEvent
-import com.projectcitybuild.pcbridge.paper.support.messages.CommandHelpBuilder
-import com.projectcitybuild.pcbridge.paper.support.spigot.BadCommandUsageException
-import com.projectcitybuild.pcbridge.paper.support.spigot.CommandArgsParser
-import com.projectcitybuild.pcbridge.paper.support.spigot.SpigotCommand
-import com.projectcitybuild.pcbridge.paper.support.spigot.SpigotEventBroadcaster
+import com.projectcitybuild.pcbridge.paper.core.support.messages.CommandHelpBuilder
+import com.projectcitybuild.pcbridge.paper.core.support.spigot.BadCommandUsageException
+import com.projectcitybuild.pcbridge.paper.core.support.spigot.CommandArgsParser
+import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotCommand
+import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotEventBroadcaster
 import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.Server
 import org.bukkit.command.CommandSender

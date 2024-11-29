@@ -3,17 +3,17 @@ package com.projectcitybuild.pcbridge.paper
 import com.github.shynixn.mccoroutine.bukkit.minecraftDispatcher
 import com.google.gson.reflect.TypeToken
 import com.projectcitybuild.pcbridge.http.DiscordHttp
-import com.projectcitybuild.pcbridge.paper.core.localconfig.LocalConfig
-import com.projectcitybuild.pcbridge.paper.core.localconfig.JsonStorage
-import com.projectcitybuild.pcbridge.paper.core.datetime.DateTimeFormatter
-import com.projectcitybuild.pcbridge.paper.core.datetime.LocalizedTime
-import com.projectcitybuild.pcbridge.paper.core.errors.SentryReporter
-import com.projectcitybuild.pcbridge.paper.core.permissions.Permissions
-import com.projectcitybuild.pcbridge.paper.core.permissions.adapters.LuckPermsPermissions
-import com.projectcitybuild.pcbridge.paper.core.remoteconfig.commands.ConfigCommand
-import com.projectcitybuild.pcbridge.paper.core.remoteconfig.services.RemoteConfig
-import com.projectcitybuild.pcbridge.paper.core.store.Store
-import com.projectcitybuild.pcbridge.paper.core.localconfig.LocalConfigKeyValues
+import com.projectcitybuild.pcbridge.paper.core.libs.localconfig.LocalConfig
+import com.projectcitybuild.pcbridge.paper.core.libs.localconfig.JsonStorage
+import com.projectcitybuild.pcbridge.paper.core.libs.datetime.services.DateTimeFormatter
+import com.projectcitybuild.pcbridge.paper.core.libs.datetime.services.LocalizedTime
+import com.projectcitybuild.pcbridge.paper.core.libs.errors.SentryReporter
+import com.projectcitybuild.pcbridge.paper.core.libs.permissions.Permissions
+import com.projectcitybuild.pcbridge.paper.core.libs.permissions.adapters.LuckPermsPermissions
+import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.commands.ConfigCommand
+import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.services.RemoteConfig
+import com.projectcitybuild.pcbridge.paper.core.libs.store.Store
+import com.projectcitybuild.pcbridge.paper.core.libs.localconfig.LocalConfigKeyValues
 import com.projectcitybuild.pcbridge.paper.features.announcements.actions.StartAnnouncementTimer
 import com.projectcitybuild.pcbridge.paper.features.announcements.listeners.AnnouncementConfigListener
 import com.projectcitybuild.pcbridge.paper.features.announcements.listeners.AnnouncementEnableListener
@@ -39,31 +39,42 @@ import com.projectcitybuild.pcbridge.paper.features.joinmessages.listeners.Annou
 import com.projectcitybuild.pcbridge.paper.features.joinmessages.listeners.FirstTimeJoinListener
 import com.projectcitybuild.pcbridge.paper.features.joinmessages.listeners.ServerOverviewJoinListener
 import com.projectcitybuild.pcbridge.paper.features.nightvision.commands.NightVisionCommand
-import com.projectcitybuild.pcbridge.paper.features.playerstate.listeners.PlayerStateListener
+import com.projectcitybuild.pcbridge.paper.features.architecture.listeners.PlayerStateListener
 import com.projectcitybuild.pcbridge.paper.features.register.commands.CodeCommand
 import com.projectcitybuild.pcbridge.paper.features.register.commands.RegisterCommand
 import com.projectcitybuild.pcbridge.paper.features.staffchat.commands.StaffChatCommand
 import com.projectcitybuild.pcbridge.paper.features.groups.actions.SyncPlayerGroups
 import com.projectcitybuild.pcbridge.paper.features.groups.commands.SyncCommand
 import com.projectcitybuild.pcbridge.paper.features.groups.listener.SyncRankListener
-import com.projectcitybuild.pcbridge.paper.features.playerstate.listeners.PlayerSyncRequestListener
+import com.projectcitybuild.pcbridge.paper.features.architecture.listeners.PlayerSyncRequestListener
 import com.projectcitybuild.pcbridge.paper.features.telemetry.listeners.TelemetryPlayerConnectListener
 import com.projectcitybuild.pcbridge.paper.features.telemetry.repositories.TelemetryRepository
 import com.projectcitybuild.pcbridge.paper.features.warps.commands.WarpCommand
 import com.projectcitybuild.pcbridge.paper.features.warps.commands.WarpsCommand
 import com.projectcitybuild.pcbridge.paper.features.warps.repositories.WarpRepository
 import com.projectcitybuild.pcbridge.http.PCBHttp
-import com.projectcitybuild.pcbridge.paper.core.discord.services.DiscordSend
+import com.projectcitybuild.pcbridge.paper.features.builds.commands.BuildCommand
+import com.projectcitybuild.pcbridge.paper.features.builds.commands.BuildsCommand
+import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildCreateCommand
+import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildDeleteCommand
+import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildListCommand
+import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildMoveCommand
+import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildVoteCommand
+import com.projectcitybuild.pcbridge.paper.features.builds.repositories.BuildRepository
 import com.projectcitybuild.pcbridge.paper.features.watchdog.listeners.ItemTextListener
 import com.projectcitybuild.pcbridge.paper.features.watchdog.listeners.commands.ItemNameCommand
 import com.projectcitybuild.pcbridge.paper.integrations.DynmapIntegration
 import com.projectcitybuild.pcbridge.paper.integrations.EssentialsIntegration
 import com.projectcitybuild.pcbridge.paper.integrations.LuckPermsIntegration
-import com.projectcitybuild.pcbridge.paper.support.spigot.SpigotCommandRegistry
-import com.projectcitybuild.pcbridge.paper.support.spigot.SpigotEventBroadcaster
-import com.projectcitybuild.pcbridge.paper.support.spigot.SpigotListenerRegistry
-import com.projectcitybuild.pcbridge.paper.support.spigot.SpigotNamespace
-import com.projectcitybuild.pcbridge.paper.support.spigot.SpigotTimer
+import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotCommandRegistry
+import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotEventBroadcaster
+import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotListenerRegistry
+import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotNamespace
+import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotTimer
+import com.projectcitybuild.pcbridge.paper.features.architecture.listeners.ExceptionListener
+import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildEditCommand
+import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildSetCommand
+import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildUnvoteCommand
 import com.projectcitybuild.pcbridge.webserver.HttpServer
 import com.projectcitybuild.pcbridge.webserver.HttpServerConfig
 import io.github.reactivecircus.cache4k.Cache
@@ -88,13 +99,14 @@ fun pluginModule(_plugin: JavaPlugin) =
 
         // Features
         announcements()
+        architecture()
         bans()
+        builds()
         chat()
         groups()
         joinMessages()
         invisFrames()
         nightVision()
-        playerState()
         register()
         staffChat()
         telemetry()
@@ -216,7 +228,7 @@ private fun Module.core() {
     }
 
     single {
-        DiscordSend(
+        com.projectcitybuild.pcbridge.paper.core.libs.discord.DiscordSend(
             localConfig = get(),
             discordHttpService = get<DiscordHttp>().discord,
             sentryReporter = get(),
@@ -315,6 +327,59 @@ private fun Module.announcements() {
     }
 }
 
+private fun Module.builds() {
+    factory {
+        BuildsCommand(
+            buildListCommand = BuildListCommand(
+                plugin = get<JavaPlugin>(),
+                buildRepository = get(),
+            ),
+            buildCreateCommand = BuildCreateCommand(
+                plugin = get<JavaPlugin>(),
+                buildRepository = get(),
+            ),
+            buildMoveCommand = BuildMoveCommand(
+                plugin = get<JavaPlugin>(),
+                buildRepository = get(),
+            ),
+            buildVoteCommand = BuildVoteCommand(
+                plugin = get<JavaPlugin>(),
+                buildRepository = get(),
+            ),
+            buildUnvoteCommand = BuildUnvoteCommand(
+                plugin = get<JavaPlugin>(),
+                buildRepository = get(),
+            ),
+            buildDeleteCommand = BuildDeleteCommand(
+                plugin = get<JavaPlugin>(),
+                buildRepository = get(),
+            ),
+            buildEditCommand = BuildEditCommand(
+                plugin = get<JavaPlugin>(),
+                buildRepository = get(),
+            ),
+            buildSetCommand = BuildSetCommand(
+                plugin = get<JavaPlugin>(),
+                buildRepository = get(),
+            ),
+        )
+    }
+
+    factory {
+        BuildCommand(
+            plugin = get<JavaPlugin>(),
+            buildRepository = get(),
+            server = get(),
+        )
+    }
+
+    single {
+        BuildRepository(
+            buildHttpService = get<PCBHttp>().builds
+        )
+    }
+}
+
 private fun Module.warps() {
     single {
         WarpRepository(
@@ -384,7 +449,7 @@ private fun Module.joinMessages() {
     }
 }
 
-private fun Module.playerState() {
+private fun Module.architecture() {
     factory {
         PlayerStateListener(
             store = get(),
@@ -392,6 +457,7 @@ private fun Module.playerState() {
             eventBroadcaster = get(),
         )
     }
+
     factory {
         PlayerSyncRequestListener(
             store = get(),
@@ -399,6 +465,12 @@ private fun Module.playerState() {
             server = get(),
             eventBroadcaster = get(),
             playerRepository = get(),
+        )
+    }
+
+    factory {
+        ExceptionListener(
+            sentryReporter = get(),
         )
     }
 }

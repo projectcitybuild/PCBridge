@@ -2,6 +2,7 @@ package com.projectcitybuild.pcbridge.http
 
 import com.projectcitybuild.pcbridge.http.clients.PCBClientFactory
 import com.projectcitybuild.pcbridge.http.parsing.ResponseParser
+import com.projectcitybuild.pcbridge.http.services.pcb.BuildHttpService
 import com.projectcitybuild.pcbridge.http.services.pcb.ConfigHttpService
 import com.projectcitybuild.pcbridge.http.services.pcb.RegisterHttpService
 import com.projectcitybuild.pcbridge.http.services.pcb.PlayerHttpService
@@ -23,6 +24,9 @@ class PCBHttp(
 
     private val responseParser: ResponseParser
         get() = ResponseParser()
+
+    val builds
+        get() = BuildHttpService(client, responseParser)
 
     val config
         get() = ConfigHttpService(client, responseParser)

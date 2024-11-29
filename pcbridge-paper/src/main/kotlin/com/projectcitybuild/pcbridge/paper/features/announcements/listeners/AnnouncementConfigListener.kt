@@ -1,7 +1,7 @@
 package com.projectcitybuild.pcbridge.paper.features.announcements.listeners
 
-import com.projectcitybuild.pcbridge.paper.core.logger.log
-import com.projectcitybuild.pcbridge.paper.core.remoteconfig.events.RemoteConfigUpdatedEvent
+import com.projectcitybuild.pcbridge.paper.core.libs.logger.log
+import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.events.RemoteConfigUpdatedEvent
 import com.projectcitybuild.pcbridge.paper.features.announcements.actions.StartAnnouncementTimer
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority

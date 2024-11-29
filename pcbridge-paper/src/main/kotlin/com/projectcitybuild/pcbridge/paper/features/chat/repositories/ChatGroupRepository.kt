@@ -1,6 +1,6 @@
 package com.projectcitybuild.pcbridge.paper.features.chat.repositories
 
-import com.projectcitybuild.pcbridge.paper.core.store.Store
+import com.projectcitybuild.pcbridge.paper.core.libs.store.Store
 import com.projectcitybuild.pcbridge.paper.features.chat.ChatGroupFormatter
 import io.github.reactivecircus.cache4k.Cache
 import net.kyori.adventure.text.Component

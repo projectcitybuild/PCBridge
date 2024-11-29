@@ -3,11 +3,11 @@ package com.projectcitybuild.pcbridge.paper.features.warps.commands
 import com.projectcitybuild.pcbridge.paper.features.warps.events.PlayerPreWarpEvent
 import com.projectcitybuild.pcbridge.paper.features.warps.repositories.WarpRepository
 import com.projectcitybuild.pcbridge.http.models.pcb.Warp
-import com.projectcitybuild.pcbridge.paper.support.messages.CommandHelpBuilder
-import com.projectcitybuild.pcbridge.paper.support.spigot.BadCommandUsageException
-import com.projectcitybuild.pcbridge.paper.support.spigot.CommandArgsParser
-import com.projectcitybuild.pcbridge.paper.support.spigot.SpigotCommand
-import com.projectcitybuild.pcbridge.paper.support.spigot.UnauthorizedCommandException
+import com.projectcitybuild.pcbridge.paper.core.support.messages.CommandHelpBuilder
+import com.projectcitybuild.pcbridge.paper.core.support.spigot.BadCommandUsageException
+import com.projectcitybuild.pcbridge.paper.core.support.spigot.CommandArgsParser
+import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotCommand
+import com.projectcitybuild.pcbridge.paper.core.support.spigot.UnauthorizedCommandException
 import kotlinx.coroutines.future.await
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor

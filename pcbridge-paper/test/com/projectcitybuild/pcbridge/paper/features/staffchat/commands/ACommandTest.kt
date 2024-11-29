@@ -1,7 +1,6 @@
 package com.projectcitybuild.pcbridge.paper.features.staffchat.commands
 
-import com.projectcitybuild.pcbridge.paper.Permissions
-import com.projectcitybuild.pcbridge.paper.core.remoteconfig.services.RemoteConfig
+import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.services.RemoteConfig
 import com.projectcitybuild.pcbridge.http.models.pcb.RemoteConfigKeyValues
 import com.projectcitybuild.pcbridge.http.models.pcb.RemoteConfigVersion
 import kotlinx.coroutines.test.runTest
@@ -33,11 +32,11 @@ class ACommandTest {
         runTest {
             val regularPlayer =
                 mock(Player::class.java).also {
-                    whenever(it.hasPermission(Permissions.COMMAND_STAFF_CHAT)).thenReturn(false)
+                    whenever(it.hasPermission("pcbridge.chat.staff_channel")).thenReturn(false)
                 }
             val staffPlayer =
                 mock(Player::class.java).also {
-                    whenever(it.hasPermission(Permissions.COMMAND_STAFF_CHAT)).thenReturn(true)
+                    whenever(it.hasPermission("pcbridge.chat.staff_channel")).thenReturn(true)
                 }
             whenever(server.onlinePlayers).thenReturn(
                 listOf(regularPlayer, staffPlayer),

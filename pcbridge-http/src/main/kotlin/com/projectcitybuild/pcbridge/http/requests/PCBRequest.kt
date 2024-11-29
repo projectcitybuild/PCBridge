@@ -1,5 +1,8 @@
 package com.projectcitybuild.pcbridge.http.requests
 
+import com.projectcitybuild.pcbridge.http.models.pcb.Build
+import com.projectcitybuild.pcbridge.http.models.pcb.BuildName
+import com.projectcitybuild.pcbridge.http.models.pcb.PaginatedResponse
 import com.projectcitybuild.pcbridge.http.models.pcb.PlayerData
 import com.projectcitybuild.pcbridge.http.models.pcb.RemoteConfigVersion
 import com.projectcitybuild.pcbridge.http.models.pcb.Warp
@@ -8,6 +11,7 @@ import retrofit2.http.DELETE
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
@@ -97,4 +101,74 @@ internal interface PCBRequest {
     suspend fun deleteWarp(
         @Path(value = "id") id: Int,
     )
+
+    @GET("v2/minecraft/build/name")
+    suspend fun getBuildNames(): List<BuildName>
+
+    @GET("v2/minecraft/build")
+    suspend fun getBuilds(
+        @Query(value = "page") page: Int,
+        @Query(value = "size") size: Int,
+    ): PaginatedResponse<List<Build>>
+
+    @GET("v2/minecraft/build/{id}")
+    suspend fun getBuild(
+        @Path(value = "id") id: Int,
+    ): Build?
+
+    @POST("v2/minecraft/build")
+    @FormUrlEncoded
+    suspend fun createBuild(
+        @Field(value = "player_uuid") playerUUID: String,
+        @Field(value = "name") name: String,
+        @Field(value = "world") world: String,
+        @Field(value = "x") x: Double,
+        @Field(value = "y") y: Double,
+        @Field(value = "z") z: Double,
+        @Field(value = "pitch") pitch: Float,
+        @Field(value = "yaw") yaw: Float,
+    ): Build
+
+    @PUT("v2/minecraft/build/{id}")
+    @FormUrlEncoded
+    suspend fun updateBuild(
+        @Path(value = "id") id: Int,
+        @Field(value = "player_uuid") playerUUID: String,
+        @Field(value = "name") name: String,
+        @Field(value = "world") world: String,
+        @Field(value = "x") x: Double,
+        @Field(value = "y") y: Double,
+        @Field(value = "z") z: Double,
+        @Field(value = "pitch") pitch: Float,
+        @Field(value = "yaw") yaw: Float,
+    ): Build
+
+    @PATCH("v2/minecraft/build/{id}/set")
+    @FormUrlEncoded
+    suspend fun setBuildField(
+        @Path(value = "id") id: Int,
+        @Field(value = "player_uuid") playerUUID: String,
+        @Field(value = "name") name: String?,
+        @Field(value = "description") description: String?,
+        @Field(value = "lore") lore: String?,
+    ): Build
+
+    @DELETE("v2/minecraft/build/{id}")
+    suspend fun deleteBuild(
+        @Path(value = "id") id: Int,
+        @Query(value = "player_uuid") playerUUID: String,
+    )
+
+    @POST("v2/minecraft/build/{id}/vote")
+    @FormUrlEncoded
+    suspend fun buildVote(
+        @Path(value = "id") id: Int,
+        @Field(value = "player_uuid") playerUUID: String,
+    ): Build
+
+    @DELETE("v2/minecraft/build/{id}/vote")
+    suspend fun buildUnvote(
+        @Path(value = "id") id: Int,
+        @Query(value = "player_uuid") playerUUID: String,
+    ): Build
 }

@@ -1,16 +1,18 @@
 package com.projectcitybuild.pcbridge.paper
 
 import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
-import com.projectcitybuild.pcbridge.paper.core.discord.services.DiscordSend
-import com.projectcitybuild.pcbridge.paper.core.errors.SentryReporter
-import com.projectcitybuild.pcbridge.paper.core.errors.trace
-import com.projectcitybuild.pcbridge.paper.core.remoteconfig.commands.ConfigCommand
-import com.projectcitybuild.pcbridge.paper.core.remoteconfig.services.RemoteConfig
+import com.projectcitybuild.pcbridge.paper.core.libs.discord.DiscordSend
+import com.projectcitybuild.pcbridge.paper.core.libs.errors.SentryReporter
+import com.projectcitybuild.pcbridge.paper.core.libs.errors.trace
+import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.commands.ConfigCommand
+import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.services.RemoteConfig
 import com.projectcitybuild.pcbridge.paper.features.announcements.listeners.AnnouncementConfigListener
 import com.projectcitybuild.pcbridge.paper.features.announcements.listeners.AnnouncementEnableListener
 import com.projectcitybuild.pcbridge.paper.features.bans.listeners.AuthorizeConnectionListener
 import com.projectcitybuild.pcbridge.paper.features.bans.listeners.IPBanRequestListener
 import com.projectcitybuild.pcbridge.paper.features.bans.listeners.UUIDBanRequestListener
+import com.projectcitybuild.pcbridge.paper.features.builds.commands.BuildCommand
+import com.projectcitybuild.pcbridge.paper.features.builds.commands.BuildsCommand
 import com.projectcitybuild.pcbridge.paper.features.chat.listeners.ChatConfigListener
 import com.projectcitybuild.pcbridge.paper.features.chat.listeners.FormatNameChatListener
 import com.projectcitybuild.pcbridge.paper.features.chat.listeners.SyncPlayerChatListener
@@ -24,12 +26,12 @@ import com.projectcitybuild.pcbridge.paper.features.joinmessages.listeners.Annou
 import com.projectcitybuild.pcbridge.paper.features.joinmessages.listeners.FirstTimeJoinListener
 import com.projectcitybuild.pcbridge.paper.features.joinmessages.listeners.ServerOverviewJoinListener
 import com.projectcitybuild.pcbridge.paper.features.nightvision.commands.NightVisionCommand
-import com.projectcitybuild.pcbridge.paper.features.playerstate.listeners.PlayerStateListener
+import com.projectcitybuild.pcbridge.paper.features.architecture.listeners.PlayerStateListener
 import com.projectcitybuild.pcbridge.paper.features.register.commands.CodeCommand
 import com.projectcitybuild.pcbridge.paper.features.register.commands.RegisterCommand
 import com.projectcitybuild.pcbridge.paper.features.staffchat.commands.StaffChatCommand
 import com.projectcitybuild.pcbridge.paper.features.groups.listener.SyncRankListener
-import com.projectcitybuild.pcbridge.paper.features.playerstate.listeners.PlayerSyncRequestListener
+import com.projectcitybuild.pcbridge.paper.features.architecture.listeners.PlayerSyncRequestListener
 import com.projectcitybuild.pcbridge.paper.features.telemetry.listeners.TelemetryPlayerConnectListener
 import com.projectcitybuild.pcbridge.paper.features.warps.commands.WarpCommand
 import com.projectcitybuild.pcbridge.paper.features.warps.commands.WarpsCommand
@@ -38,11 +40,14 @@ import com.projectcitybuild.pcbridge.paper.features.watchdog.listeners.commands.
 import com.projectcitybuild.pcbridge.paper.integrations.DynmapIntegration
 import com.projectcitybuild.pcbridge.paper.integrations.EssentialsIntegration
 import com.projectcitybuild.pcbridge.paper.integrations.LuckPermsIntegration
-import com.projectcitybuild.pcbridge.paper.support.spigot.SpigotCommandRegistry
-import com.projectcitybuild.pcbridge.paper.support.spigot.SpigotListenerRegistry
-import com.projectcitybuild.pcbridge.paper.support.spigot.SpigotTimer
+import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotCommandRegistry
+import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotListenerRegistry
+import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotTimer
+import com.projectcitybuild.pcbridge.paper.features.architecture.listeners.ExceptionListener
 import com.projectcitybuild.pcbridge.webserver.HttpServer
+import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents
 import net.kyori.adventure.platform.bukkit.BukkitAudiences
+import org.bukkit.plugin.java.JavaPlugin
 import org.koin.core.KoinApplication
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
@@ -143,6 +148,7 @@ private class Lifecycle : KoinComponent {
                 get<AnnouncementEnableListener>(),
                 get<AuthorizeConnectionListener>(),
                 get<ChatConfigListener>(),
+                get<ExceptionListener>(),
                 get<FirstTimeJoinListener>(),
                 get<FormatNameChatListener>(),
                 get<FramePlaceListener>(),
@@ -158,6 +164,16 @@ private class Lifecycle : KoinComponent {
                 get<TelemetryPlayerConnectListener>(),
                 get<UUIDBanRequestListener>(),
             )
+
+            @Suppress("UnstableApiUsage")
+            get<JavaPlugin>()
+                .lifecycleManager
+                .registerEventHandler(LifecycleEvents.COMMANDS) { event ->
+                    event.registrar().apply {
+                        register(get<BuildsCommand>().buildLiteral())
+                        register(get<BuildCommand>().buildLiteral())
+                    }
+                }
 
             get<DynmapIntegration>().enable()
             get<EssentialsIntegration>().enable()
