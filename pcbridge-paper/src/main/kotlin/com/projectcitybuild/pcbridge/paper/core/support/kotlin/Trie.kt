@@ -2,7 +2,7 @@ package com.projectcitybuild.pcbridge.paper.core.support.kotlin
 
 /**
  * Data structure optimized for efficient searching/prefix-matching
- * of strings - trading-off memory for speed. In our case, particularly
+ * of strings, trading-off memory for speed. In our case, particularly
  * useful for command auto-completion and suggestions.
  */
 class Trie {

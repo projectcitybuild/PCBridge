@@ -8,8 +8,8 @@ import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.Build
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildMoveCommand
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildVoteCommand
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierCommand
-import com.projectcitybuild.pcbridge.paper.core.support.brigadier.requiresPermission
-import com.projectcitybuild.pcbridge.paper.core.support.brigadier.then
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.then
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildEditCommand
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildSetCommand
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildUnvoteCommand
@@ -37,7 +37,7 @@ class BuildsCommand(
             .then(command = buildSetCommand)
             .then(command = buildUnvoteCommand)
             .then(command = buildVoteCommand)
-            .requiresPermission(PermissionNode.BUILD_TELEPORT)
+            .requiresPermission(PermissionNode.BUILDS_TELEPORT)
             .executes(buildListCommand.buildLiteral().command)
             .build()
     }

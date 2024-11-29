@@ -1,4 +1,4 @@
-package com.projectcitybuild.pcbridge.paper.core.support.brigadier
+package com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions
 
 import com.github.shynixn.mccoroutine.bukkit.launch
 import com.mojang.brigadier.Command
@@ -7,6 +7,7 @@ import com.mojang.brigadier.builder.RequiredArgumentBuilder
 import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.suggestion.SuggestionsBuilder
 import com.projectcitybuild.pcbridge.paper.PermissionNode
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierCommand
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import org.bukkit.plugin.Plugin
 
@@ -35,6 +36,7 @@ fun <S, T> RequiredArgumentBuilder<S, T>.executesSuspending(
         Command.SINGLE_SUCCESS
     }
 }
+
 /**
  * Same as [LiteralArgumentBuilder.executes] but bridged to a suspending function
  */
@@ -55,11 +57,18 @@ fun LiteralArgumentBuilder<CommandSourceStack>.then(
     return then(command.buildLiteral())
 }
 
-
 @Suppress("UnstableApiUsage")
 fun LiteralArgumentBuilder<CommandSourceStack>.requiresPermission(
     permission: PermissionNode,
 ): LiteralArgumentBuilder<CommandSourceStack> {
+    return requires { context ->
+        context.sender.hasPermission(permission.node)
+    }
+}
+@Suppress("UnstableApiUsage")
+fun <S: CommandSourceStack, T> RequiredArgumentBuilder<S, T>.requiresPermission(
+    permission: PermissionNode,
+): RequiredArgumentBuilder<S, T> {
     return requires { context ->
         context.sender.hasPermission(permission.node)
     }

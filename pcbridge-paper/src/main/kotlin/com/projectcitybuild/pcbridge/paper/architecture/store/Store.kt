@@ -1,4 +1,4 @@
-package com.projectcitybuild.pcbridge.paper.core.libs.store
+package com.projectcitybuild.pcbridge.paper.architecture.store
 
 import com.projectcitybuild.pcbridge.paper.core.libs.logger.log
 import kotlinx.coroutines.Dispatchers

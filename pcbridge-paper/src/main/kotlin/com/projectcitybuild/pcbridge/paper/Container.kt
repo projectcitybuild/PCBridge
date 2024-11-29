@@ -12,7 +12,7 @@ import com.projectcitybuild.pcbridge.paper.core.libs.permissions.Permissions
 import com.projectcitybuild.pcbridge.paper.core.libs.permissions.adapters.LuckPermsPermissions
 import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.commands.ConfigCommand
 import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.services.RemoteConfig
-import com.projectcitybuild.pcbridge.paper.core.libs.store.Store
+import com.projectcitybuild.pcbridge.paper.architecture.store.Store
 import com.projectcitybuild.pcbridge.paper.core.libs.localconfig.LocalConfigKeyValues
 import com.projectcitybuild.pcbridge.paper.features.announcements.actions.StartAnnouncementTimer
 import com.projectcitybuild.pcbridge.paper.features.announcements.listeners.AnnouncementConfigListener
@@ -38,15 +38,15 @@ import com.projectcitybuild.pcbridge.paper.features.joinmessages.listeners.Annou
 import com.projectcitybuild.pcbridge.paper.features.joinmessages.listeners.AnnounceQuitListener
 import com.projectcitybuild.pcbridge.paper.features.joinmessages.listeners.FirstTimeJoinListener
 import com.projectcitybuild.pcbridge.paper.features.joinmessages.listeners.ServerOverviewJoinListener
-import com.projectcitybuild.pcbridge.paper.features.nightvision.commands.NightVisionCommand
-import com.projectcitybuild.pcbridge.paper.features.architecture.listeners.PlayerStateListener
+import com.projectcitybuild.pcbridge.paper.features.building.commands.NightVisionCommand
+import com.projectcitybuild.pcbridge.paper.architecture.listeners.PlayerStateListener
 import com.projectcitybuild.pcbridge.paper.features.register.commands.CodeCommand
 import com.projectcitybuild.pcbridge.paper.features.register.commands.RegisterCommand
 import com.projectcitybuild.pcbridge.paper.features.staffchat.commands.StaffChatCommand
 import com.projectcitybuild.pcbridge.paper.features.groups.actions.SyncPlayerGroups
 import com.projectcitybuild.pcbridge.paper.features.groups.commands.SyncCommand
 import com.projectcitybuild.pcbridge.paper.features.groups.listener.SyncRankListener
-import com.projectcitybuild.pcbridge.paper.features.architecture.listeners.PlayerSyncRequestListener
+import com.projectcitybuild.pcbridge.paper.architecture.listeners.PlayerSyncRequestListener
 import com.projectcitybuild.pcbridge.paper.features.telemetry.listeners.TelemetryPlayerConnectListener
 import com.projectcitybuild.pcbridge.paper.features.telemetry.repositories.TelemetryRepository
 import com.projectcitybuild.pcbridge.paper.features.warps.commands.WarpCommand
@@ -62,7 +62,7 @@ import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.Build
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildVoteCommand
 import com.projectcitybuild.pcbridge.paper.features.builds.repositories.BuildRepository
 import com.projectcitybuild.pcbridge.paper.features.watchdog.listeners.ItemTextListener
-import com.projectcitybuild.pcbridge.paper.features.watchdog.listeners.commands.ItemNameCommand
+import com.projectcitybuild.pcbridge.paper.features.building.commands.ItemNameCommand
 import com.projectcitybuild.pcbridge.paper.integrations.DynmapIntegration
 import com.projectcitybuild.pcbridge.paper.integrations.EssentialsIntegration
 import com.projectcitybuild.pcbridge.paper.integrations.LuckPermsIntegration
@@ -71,7 +71,7 @@ import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotEventBroadc
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotListenerRegistry
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotNamespace
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotTimer
-import com.projectcitybuild.pcbridge.paper.features.architecture.listeners.ExceptionListener
+import com.projectcitybuild.pcbridge.paper.architecture.listeners.ExceptionListener
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildEditCommand
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildSetCommand
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildUnvoteCommand
@@ -101,12 +101,12 @@ fun pluginModule(_plugin: JavaPlugin) =
         announcements()
         architecture()
         bans()
+        building()
         builds()
         chat()
         groups()
         joinMessages()
         invisFrames()
-        nightVision()
         register()
         staffChat()
         telemetry()
@@ -223,6 +223,7 @@ private fun Module.core() {
 
     factory {
         ConfigCommand(
+            plugin = get(),
             remoteConfig = get(),
         )
     }
@@ -380,6 +381,21 @@ private fun Module.builds() {
     }
 }
 
+private fun Module.building() {
+    factory {
+        NightVisionCommand(
+            plugin = get(),
+        )
+    }
+
+    factory {
+        ItemNameCommand(
+            plugin = get(),
+            eventBroadcaster = get(),
+        )
+    }
+}
+
 private fun Module.warps() {
     single {
         WarpRepository(
@@ -409,12 +425,6 @@ private fun Module.watchdog() {
         ItemTextListener(
             discordSend = get(),
             time = get(),
-        )
-    }
-
-    factory {
-        ItemNameCommand(
-            eventBroadcaster = get(),
         )
     }
 }
@@ -501,12 +511,6 @@ private fun Module.bans() {
         IPBanRequestListener(
             server = get(),
         )
-    }
-}
-
-private fun Module.nightVision() {
-    factory {
-        NightVisionCommand()
     }
 }
 
@@ -622,6 +626,7 @@ private fun Module.telemetry() {
 private fun Module.staffChat() {
     factory {
         StaffChatCommand(
+            plugin = get(),
             server = get(),
             remoteConfig = get(),
         )
@@ -643,7 +648,7 @@ private fun Module.groups() {
 
     factory {
         SyncCommand(
-            server = get(),
+            plugin = get(),
             eventBroadcaster = get(),
         )
     }

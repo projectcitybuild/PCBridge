@@ -8,9 +8,9 @@ import com.mojang.brigadier.tree.LiteralCommandNode
 import com.projectcitybuild.pcbridge.paper.PermissionNode
 import com.projectcitybuild.pcbridge.paper.features.builds.repositories.BuildRepository
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierCommand
-import com.projectcitybuild.pcbridge.paper.core.support.brigadier.executesSuspending
-import com.projectcitybuild.pcbridge.paper.core.support.brigadier.requiresPermission
-import com.projectcitybuild.pcbridge.paper.core.support.brigadier.suggestsSuspending
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.suggestsSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceCommand
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
@@ -25,7 +25,7 @@ class BuildSetCommand(
 ): BrigadierCommand {
     override fun buildLiteral(): LiteralCommandNode<CommandSourceStack> {
         return Commands.literal("set")
-            .requiresPermission(PermissionNode.BUILD_MANAGE)
+            .requiresPermission(PermissionNode.BUILDS_MANAGE)
             .then(
                 Commands.argument("id", IntegerArgumentType.integer())
                     .then(

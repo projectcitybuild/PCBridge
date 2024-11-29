@@ -1,14 +1,15 @@
-package com.projectcitybuild.pcbridge.paper.features.architecture.events
+package com.projectcitybuild.pcbridge.paper.features.building.events
 
-import com.projectcitybuild.pcbridge.paper.core.libs.store.PlayerState
+import net.kyori.adventure.text.Component
+import org.bukkit.entity.Player
 import org.bukkit.event.Event
 import org.bukkit.event.HandlerList
-import java.util.UUID
+import org.bukkit.inventory.ItemStack
 
-class PlayerStateUpdatedEvent(
-    val prevState: PlayerState?,
-    val state: PlayerState,
-    val playerUUID: UUID,
+class ItemRenamedEvent(
+    val displayName: Component,
+    val item: ItemStack,
+    val player: Player,
 ) : Event() {
     override fun getHandlers(): HandlerList {
         return HANDLERS

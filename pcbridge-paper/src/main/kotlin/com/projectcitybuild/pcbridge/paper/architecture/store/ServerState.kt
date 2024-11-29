@@ -1,4 +1,4 @@
-package com.projectcitybuild.pcbridge.paper.core.libs.store
+package com.projectcitybuild.pcbridge.paper.architecture.store
 
 import com.projectcitybuild.pcbridge.http.models.pcb.Account
 import com.projectcitybuild.pcbridge.http.models.pcb.Badge

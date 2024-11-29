@@ -1,80 +1,40 @@
 package com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.commands
 
+import com.mojang.brigadier.context.CommandContext
+import com.mojang.brigadier.tree.LiteralCommandNode
+import com.projectcitybuild.pcbridge.paper.PermissionNode
 import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.services.RemoteConfig
-import com.projectcitybuild.pcbridge.paper.core.support.messages.CommandHelpBuilder
-import com.projectcitybuild.pcbridge.paper.core.support.spigot.BadCommandUsageException
-import com.projectcitybuild.pcbridge.paper.core.support.spigot.CommandArgsParser
-import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotCommand
-import com.projectcitybuild.pcbridge.paper.core.support.spigot.UnauthorizedCommandException
-import com.projectcitybuild.pcbridge.paper.core.extensions.tryValueOf
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierCommand
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceCommand
+import io.papermc.paper.command.brigadier.CommandSourceStack
+import io.papermc.paper.command.brigadier.Commands
 import net.kyori.adventure.text.minimessage.MiniMessage
-import org.bukkit.command.Command
-import org.bukkit.command.CommandSender
+import org.bukkit.plugin.Plugin
 
+@Suppress("UnstableApiUsage")
 class ConfigCommand(
+    private val plugin: Plugin,
     private val remoteConfig: RemoteConfig,
-) : SpigotCommand<ConfigCommand.Args> {
-    override val label = "config"
-
-    override val usage =
-        CommandHelpBuilder(usage = "/config")
-            .subcommand(
-                label = "/config reload",
-                description = "force reload the remote config",
-                permission = "pcbridge.config.reload",
+) : BrigadierCommand {
+    override fun buildLiteral(): LiteralCommandNode<CommandSourceStack> {
+        return Commands.literal("config")
+            .requiresPermission(PermissionNode.REMOTE_CONFIG_RELOAD)
+            .then(
+                Commands.literal("reload")
+                    .requiresPermission(PermissionNode.REMOTE_CONFIG_RELOAD)
+                    .executesSuspending(plugin, ::execute)
             )
-
-    override suspend fun run(
-        sender: CommandSender,
-        args: Args,
-    ) {
-        if (!sender.hasPermission("pcbridge.config.reload")) {
-            throw UnauthorizedCommandException()
-        }
-        when (args.command) {
-            Args.Command.Reload -> {
-                sender.sendMessage(MiniMessage.miniMessage().deserialize("<gray>Fetching config...</gray>"))
-                remoteConfig.fetch()
-                sender.sendMessage(MiniMessage.miniMessage().deserialize("<green>Remote config reloaded</green>"))
-            }
-        }
+            .build()
     }
 
-    override suspend fun tabComplete(
-        sender: CommandSender,
-        command: Command,
-        alias: String,
-        args: Array<out String>,
-    ): List<String>? {
-        if (args.isEmpty() || args.first().isEmpty()) {
-            if (sender.hasPermission("pcbridge.config.reload")) {
-                return listOf("reload")
-            }
-        }
-        return emptyList()
-    }
+    private suspend fun execute(context: CommandContext<CommandSourceStack>) = traceCommand(context) {
+        val sender = context.source.sender
+        val miniMessage = MiniMessage.miniMessage()
 
-    data class Args(
-        val command: Command,
-        val remainingArgs: List<String>,
-    ) {
-        enum class Command {
-            Reload,
-        }
-
-        class Parser : CommandArgsParser<Args> {
-            override fun parse(args: List<String>): Args {
-                val command = if (args.isEmpty())
-                    throw BadCommandUsageException()
-                else
-                    tryValueOf<Command>(args[0].replaceFirstChar { it.uppercase() })
-                        ?: throw BadCommandUsageException()
-
-                return Args(
-                    command = command,
-                    remainingArgs = args.drop(1),
-                )
-            }
-        }
+        sender.sendMessage(miniMessage.deserialize("<gray>Fetching config...</gray>"))
+        remoteConfig.fetch()
+        sender.sendMessage(miniMessage.deserialize("<green>Remote config reloaded</green>"))
     }
 }

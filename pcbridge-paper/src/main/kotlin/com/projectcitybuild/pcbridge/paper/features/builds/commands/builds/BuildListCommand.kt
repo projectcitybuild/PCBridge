@@ -5,8 +5,8 @@ import com.mojang.brigadier.tree.LiteralCommandNode
 import com.projectcitybuild.pcbridge.paper.PermissionNode
 import com.projectcitybuild.pcbridge.paper.features.builds.repositories.BuildRepository
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierCommand
-import com.projectcitybuild.pcbridge.paper.core.support.brigadier.executesSuspending
-import com.projectcitybuild.pcbridge.paper.core.support.brigadier.requiresPermission
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
 import net.kyori.adventure.text.Component
@@ -24,7 +24,7 @@ class BuildListCommand(
 ): BrigadierCommand {
     override fun buildLiteral(): LiteralCommandNode<CommandSourceStack> {
         return Commands.literal("list")
-            .requiresPermission(PermissionNode.BUILD_TELEPORT)
+            .requiresPermission(PermissionNode.BUILDS_TELEPORT)
             .executesSuspending(plugin) { context ->
                 execute(
                     sender = context.source.sender,

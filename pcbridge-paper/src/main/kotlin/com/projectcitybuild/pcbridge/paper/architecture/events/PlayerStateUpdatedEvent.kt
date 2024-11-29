@@ -1,12 +1,13 @@
-package com.projectcitybuild.pcbridge.paper.features.architecture.events
+package com.projectcitybuild.pcbridge.paper.architecture.events
 
-import com.projectcitybuild.pcbridge.paper.core.libs.store.PlayerState
+import com.projectcitybuild.pcbridge.paper.architecture.store.PlayerState
 import org.bukkit.event.Event
 import org.bukkit.event.HandlerList
 import java.util.UUID
 
-class PlayerStateDestroyedEvent(
-    val playerData: PlayerState?,
+class PlayerStateUpdatedEvent(
+    val prevState: PlayerState?,
+    val state: PlayerState,
     val playerUUID: UUID,
 ) : Event() {
     override fun getHandlers(): HandlerList {

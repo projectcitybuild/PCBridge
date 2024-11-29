@@ -25,25 +25,25 @@ import com.projectcitybuild.pcbridge.paper.features.joinmessages.listeners.Annou
 import com.projectcitybuild.pcbridge.paper.features.joinmessages.listeners.AnnounceQuitListener
 import com.projectcitybuild.pcbridge.paper.features.joinmessages.listeners.FirstTimeJoinListener
 import com.projectcitybuild.pcbridge.paper.features.joinmessages.listeners.ServerOverviewJoinListener
-import com.projectcitybuild.pcbridge.paper.features.nightvision.commands.NightVisionCommand
-import com.projectcitybuild.pcbridge.paper.features.architecture.listeners.PlayerStateListener
+import com.projectcitybuild.pcbridge.paper.features.building.commands.NightVisionCommand
+import com.projectcitybuild.pcbridge.paper.architecture.listeners.PlayerStateListener
 import com.projectcitybuild.pcbridge.paper.features.register.commands.CodeCommand
 import com.projectcitybuild.pcbridge.paper.features.register.commands.RegisterCommand
 import com.projectcitybuild.pcbridge.paper.features.staffchat.commands.StaffChatCommand
 import com.projectcitybuild.pcbridge.paper.features.groups.listener.SyncRankListener
-import com.projectcitybuild.pcbridge.paper.features.architecture.listeners.PlayerSyncRequestListener
+import com.projectcitybuild.pcbridge.paper.architecture.listeners.PlayerSyncRequestListener
 import com.projectcitybuild.pcbridge.paper.features.telemetry.listeners.TelemetryPlayerConnectListener
 import com.projectcitybuild.pcbridge.paper.features.warps.commands.WarpCommand
 import com.projectcitybuild.pcbridge.paper.features.warps.commands.WarpsCommand
 import com.projectcitybuild.pcbridge.paper.features.watchdog.listeners.ItemTextListener
-import com.projectcitybuild.pcbridge.paper.features.watchdog.listeners.commands.ItemNameCommand
+import com.projectcitybuild.pcbridge.paper.features.building.commands.ItemNameCommand
 import com.projectcitybuild.pcbridge.paper.integrations.DynmapIntegration
 import com.projectcitybuild.pcbridge.paper.integrations.EssentialsIntegration
 import com.projectcitybuild.pcbridge.paper.integrations.LuckPermsIntegration
-import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotCommandRegistry
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotListenerRegistry
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotTimer
-import com.projectcitybuild.pcbridge.paper.features.architecture.listeners.ExceptionListener
+import com.projectcitybuild.pcbridge.paper.architecture.listeners.ExceptionListener
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.register
 import com.projectcitybuild.pcbridge.webserver.HttpServer
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents
 import net.kyori.adventure.platform.bukkit.BukkitAudiences
@@ -88,7 +88,6 @@ class Plugin : SuspendingJavaPlugin() {
 private class Lifecycle : KoinComponent {
     private val audiences: BukkitAudiences = get()
     private val sentry: SentryReporter by inject()
-    private val commandRegistry: SpigotCommandRegistry by inject()
     private val listenerRegistry: SpigotListenerRegistry by inject()
     private val httpServer: HttpServer by inject()
     private val remoteConfig: RemoteConfig by inject()
@@ -99,48 +98,27 @@ private class Lifecycle : KoinComponent {
 
             remoteConfig.fetch()
 
-            commandRegistry.apply {
-                register(
-                    handler = get<WarpCommand>(),
-                    argsParser = WarpCommand.Args.Parser(),
-                )
-                register(
-                    handler = get<WarpsCommand>(),
-                    argsParser = WarpsCommand.Args.Parser(),
-                )
-                register(
-                    handler = get<StaffChatCommand>(),
-                    argsParser = StaffChatCommand.Args.Parser(),
-                )
-                register(
-                    handler = get<NightVisionCommand>(),
-                    argsParser = NightVisionCommand.Args.Parser(),
-                )
-                register(
-                    handler = get<InvisFrameCommand>(),
-                    argsParser = InvisFrameCommand.Args.Parser(),
-                )
-                register(
-                    handler = get<RegisterCommand>(),
-                    argsParser = RegisterCommand.Args.Parser(),
-                )
-                register(
-                    handler = get<CodeCommand>(),
-                    argsParser = CodeCommand.Args.Parser(),
-                )
-                register(
-                    handler = get<SyncCommand>(),
-                    argsParser = SyncCommand.Args.Parser(),
-                )
-                register(
-                    handler = get<ConfigCommand>(),
-                    argsParser = ConfigCommand.Args.Parser(),
-                )
-                register(
-                    handler = get<ItemNameCommand>(),
-                    argsParser = ItemNameCommand.Args.Parser(),
-                )
-            }
+            @Suppress("UnstableApiUsage")
+            // TODO: inject lifecycle manager instead
+            get<JavaPlugin>()
+                .lifecycleManager
+                .registerEventHandler(LifecycleEvents.COMMANDS) { event ->
+                    event.registrar().register(
+                        get<BuildsCommand>(),
+                        get<BuildCommand>(),
+                        get<WarpCommand>(),
+                        get<WarpsCommand>(),
+                        get<StaffChatCommand>(),
+                        get<NightVisionCommand>(),
+                        get<InvisFrameCommand>(),
+                        get<RegisterCommand>(),
+                        get<CodeCommand>(),
+                        get<SyncCommand>(),
+                        get<ConfigCommand>(),
+                        get<ItemNameCommand>(),
+                    )
+                }
+
             listenerRegistry.register(
                 get<AnnounceJoinListener>(),
                 get<AnnounceQuitListener>(),
@@ -165,16 +143,6 @@ private class Lifecycle : KoinComponent {
                 get<UUIDBanRequestListener>(),
             )
 
-            @Suppress("UnstableApiUsage")
-            get<JavaPlugin>()
-                .lifecycleManager
-                .registerEventHandler(LifecycleEvents.COMMANDS) { event ->
-                    event.registrar().apply {
-                        register(get<BuildsCommand>().buildLiteral())
-                        register(get<BuildCommand>().buildLiteral())
-                    }
-                }
-
             get<DynmapIntegration>().enable()
             get<EssentialsIntegration>().enable()
             get<LuckPermsIntegration>().enable()
@@ -195,7 +163,6 @@ private class Lifecycle : KoinComponent {
             get<DiscordSend>().stopProcessing()
 
             listenerRegistry.unregisterAll()
-            commandRegistry.unregisterAll()
             audiences.close()
         }
 }
