@@ -33,7 +33,7 @@ class StaffChatCommand(
             .build()
     }
 
-    private suspend fun execute(context: CommandContext<CommandSourceStack>) = traceCommand(context) {
+    suspend fun execute(context: CommandContext<CommandSourceStack>) = traceCommand(context) {
         // Only the legacy serializer automatically converts URLs to clickable text
         val legacySerializer = LegacyComponentSerializer
             .builder()

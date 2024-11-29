@@ -1,4 +1,4 @@
-package com.projectcitybuild.pcbridge.paper.utils.extensions
+package com.projectcitybuild.pcbridge.paper.core.extensions
 
 import com.projectcitybuild.pcbridge.paper.core.extensions.toDashFormattedUUID
 import org.junit.jupiter.api.Assertions.assertEquals

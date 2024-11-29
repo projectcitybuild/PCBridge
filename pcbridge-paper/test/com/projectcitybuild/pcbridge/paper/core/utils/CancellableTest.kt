@@ -1,4 +1,4 @@
-package com.projectcitybuild.pcbridge.paper.utils
+package com.projectcitybuild.pcbridge.paper.core.utils
 
 import com.projectcitybuild.pcbridge.paper.core.utils.Cancellable
 import org.junit.jupiter.api.Assertions.assertFalse

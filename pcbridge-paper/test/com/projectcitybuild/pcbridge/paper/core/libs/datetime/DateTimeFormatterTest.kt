@@ -1,4 +1,4 @@
-package com.projectcitybuild.pcbridge.paper.datetime
+package com.projectcitybuild.pcbridge.paper.core.libs.datetime
 
 import com.projectcitybuild.pcbridge.paper.core.libs.datetime.services.DateTimeFormatter
 import org.junit.jupiter.api.Test
