@@ -7,7 +7,7 @@ import com.projectcitybuild.pcbridge.paper.core.libs.pagination.SimplePaginator
 import com.projectcitybuild.pcbridge.paper.features.warps.repositories.WarpRepository
 import com.projectcitybuild.pcbridge.http.models.pcb.Warp
 import com.projectcitybuild.pcbridge.paper.PermissionNode
-import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.services.RemoteConfig
+import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.RemoteConfig
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierCommand
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission

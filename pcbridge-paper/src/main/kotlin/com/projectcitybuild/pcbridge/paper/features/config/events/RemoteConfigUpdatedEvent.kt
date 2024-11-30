@@ -1,4 +1,4 @@
-package com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.events
+package com.projectcitybuild.pcbridge.paper.features.config.events
 
 import com.projectcitybuild.pcbridge.http.models.pcb.RemoteConfigVersion
 import org.bukkit.event.Event

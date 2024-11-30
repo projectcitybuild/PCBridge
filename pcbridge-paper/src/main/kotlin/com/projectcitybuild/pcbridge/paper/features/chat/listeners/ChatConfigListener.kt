@@ -1,7 +1,7 @@
 package com.projectcitybuild.pcbridge.paper.features.chat.listeners
 
 import com.projectcitybuild.pcbridge.paper.core.libs.logger.log
-import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.events.RemoteConfigUpdatedEvent
+import com.projectcitybuild.pcbridge.paper.features.config.events.RemoteConfigUpdatedEvent
 import com.projectcitybuild.pcbridge.paper.features.chat.repositories.ChatBadgeRepository
 import com.projectcitybuild.pcbridge.paper.features.chat.repositories.ChatGroupRepository
 import org.bukkit.event.EventHandler

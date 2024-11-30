@@ -23,7 +23,7 @@ class ItemNameCommand(
     private val plugin: Plugin,
     private val eventBroadcaster: SpigotEventBroadcaster,
 ) : BrigadierCommand {
-    override val description: String = "Renames the item currently in your primary hand"
+    override val description: String = "Renames the item in your primary hand"
 
     override fun buildLiteral(): LiteralCommandNode<CommandSourceStack> {
         return Commands.literal("itemname")

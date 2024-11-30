@@ -50,7 +50,7 @@ class PlayerSyncRequestListener(
             ),
         )
         matchingPlayer.sendMessage(
-            MiniMessage.miniMessage().deserialize("<color:green>Your account has been synced</color>")
+            MiniMessage.miniMessage().deserialize("<green>Your account has been synced</green>")
         )
     }
 }

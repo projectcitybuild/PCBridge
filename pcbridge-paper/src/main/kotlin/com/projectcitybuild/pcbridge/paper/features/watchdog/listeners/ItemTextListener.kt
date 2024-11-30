@@ -5,6 +5,7 @@ import com.projectcitybuild.pcbridge.http.models.discord.DiscordEmbed
 import com.projectcitybuild.pcbridge.http.models.discord.DiscordFieldEmbed
 import com.projectcitybuild.pcbridge.paper.core.libs.datetime.services.LocalizedTime
 import com.projectcitybuild.pcbridge.paper.core.libs.datetime.extensions.toISO8601
+import com.projectcitybuild.pcbridge.paper.core.libs.discord.DiscordSend
 import com.projectcitybuild.pcbridge.paper.features.building.events.ItemRenamedEvent
 import io.github.petertrr.diffutils.text.DiffRow
 import io.github.petertrr.diffutils.text.DiffRowGenerator
@@ -22,7 +23,7 @@ import org.bukkit.event.player.PlayerEditBookEvent
 import org.bukkit.inventory.AnvilInventory
 
 class ItemTextListener(
-    private val discordSend: com.projectcitybuild.pcbridge.paper.core.libs.discord.DiscordSend,
+    private val discordSend: DiscordSend,
     private val time: LocalizedTime,
 ) : Listener {
     @EventHandler(priority = EventPriority.MONITOR)

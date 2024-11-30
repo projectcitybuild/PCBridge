@@ -48,13 +48,13 @@ class SyncCommand(
         sync(player, message = "Fetching player data for ${player.name}...")
 
         sender.sendMessage(
-            MiniMessage.miniMessage().deserialize("<color:green>Player data synced</color>")
+            MiniMessage.miniMessage().deserialize("<green>Player data synced</green>")
         )
     }
 
     private suspend fun sync(player: Player, message: String) {
         player.sendMessage(
-            MiniMessage.miniMessage().deserialize("<color:gray>$message</color>")
+            MiniMessage.miniMessage().deserialize("<gray>$message</gray>")
         )
         eventBroadcaster.broadcast(
             PlayerSyncRequestedEvent(playerUUID = player.uniqueId),

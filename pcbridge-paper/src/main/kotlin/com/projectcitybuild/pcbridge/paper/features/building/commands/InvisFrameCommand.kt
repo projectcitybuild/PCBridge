@@ -1,4 +1,4 @@
-package com.projectcitybuild.pcbridge.paper.features.invisframes.commands
+package com.projectcitybuild.pcbridge.paper.features.building.commands
 
 import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.tree.LiteralCommandNode
@@ -24,6 +24,8 @@ class InvisFrameCommand(
     private val plugin: Plugin,
     private val spigotNamespace: SpigotNamespace,
 ) : BrigadierCommand {
+    override val description: String = "Gives you an itemframe that turns invisible when holding an item"
+
     override fun buildLiteral(): LiteralCommandNode<CommandSourceStack> {
         return Commands.literal("invisframe")
             .requiresPermission(PermissionNode.BUILDING_INVIS_FRAME)

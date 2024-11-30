@@ -4,8 +4,8 @@ import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
 import com.projectcitybuild.pcbridge.paper.core.libs.discord.DiscordSend
 import com.projectcitybuild.pcbridge.paper.core.libs.errors.SentryReporter
 import com.projectcitybuild.pcbridge.paper.core.libs.errors.trace
-import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.commands.ConfigCommand
-import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.services.RemoteConfig
+import com.projectcitybuild.pcbridge.paper.features.config.commands.ConfigCommand
+import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.RemoteConfig
 import com.projectcitybuild.pcbridge.paper.features.announcements.listeners.AnnouncementConfigListener
 import com.projectcitybuild.pcbridge.paper.features.announcements.listeners.AnnouncementEnableListener
 import com.projectcitybuild.pcbridge.paper.features.bans.listeners.AuthorizeConnectionListener
@@ -17,10 +17,10 @@ import com.projectcitybuild.pcbridge.paper.features.chat.listeners.ChatConfigLis
 import com.projectcitybuild.pcbridge.paper.features.chat.listeners.FormatNameChatListener
 import com.projectcitybuild.pcbridge.paper.features.chat.listeners.SyncPlayerChatListener
 import com.projectcitybuild.pcbridge.paper.features.groups.commands.SyncCommand
-import com.projectcitybuild.pcbridge.paper.features.invisframes.commands.InvisFrameCommand
-import com.projectcitybuild.pcbridge.paper.features.invisframes.listeners.FrameItemInsertListener
-import com.projectcitybuild.pcbridge.paper.features.invisframes.listeners.FrameItemRemoveListener
-import com.projectcitybuild.pcbridge.paper.features.invisframes.listeners.FramePlaceListener
+import com.projectcitybuild.pcbridge.paper.features.building.commands.InvisFrameCommand
+import com.projectcitybuild.pcbridge.paper.features.building.listeners.FrameItemInsertListener
+import com.projectcitybuild.pcbridge.paper.features.building.listeners.FrameItemRemoveListener
+import com.projectcitybuild.pcbridge.paper.features.building.listeners.FramePlaceListener
 import com.projectcitybuild.pcbridge.paper.features.joinmessages.listeners.AnnounceJoinListener
 import com.projectcitybuild.pcbridge.paper.features.joinmessages.listeners.AnnounceQuitListener
 import com.projectcitybuild.pcbridge.paper.features.joinmessages.listeners.FirstTimeJoinListener
@@ -45,7 +45,6 @@ import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotTimer
 import com.projectcitybuild.pcbridge.paper.architecture.listeners.ExceptionListener
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.register
 import com.projectcitybuild.pcbridge.webserver.HttpServer
-import io.papermc.paper.plugin.lifecycle.event.LifecycleEventManager
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents
 import net.kyori.adventure.platform.bukkit.BukkitAudiences
 import org.bukkit.plugin.java.JavaPlugin
@@ -99,23 +98,22 @@ private class Lifecycle : KoinComponent {
 
             remoteConfig.fetch()
 
-            // TODO: inject lifecycle manager instead
             get<JavaPlugin>()
                 .lifecycleManager
                 .registerEventHandler(LifecycleEvents.COMMANDS) { event ->
                     event.registrar().register(
-                        get<BuildsCommand>(),
                         get<BuildCommand>(),
+                        get<BuildsCommand>(),
+                        get<CodeCommand>(),
+                        get<ConfigCommand>(),
+                        get<InvisFrameCommand>(),
+                        get<ItemNameCommand>(),
+                        get<NightVisionCommand>(),
+                        get<RegisterCommand>(),
+                        get<StaffChatCommand>(),
+                        get<SyncCommand>(),
                         get<WarpCommand>(),
                         get<WarpsCommand>(),
-                        get<StaffChatCommand>(),
-                        get<NightVisionCommand>(),
-                        get<InvisFrameCommand>(),
-                        get<RegisterCommand>(),
-                        get<CodeCommand>(),
-                        get<SyncCommand>(),
-                        get<ConfigCommand>(),
-                        get<ItemNameCommand>(),
                     )
                 }
 

@@ -19,6 +19,8 @@ class CodeCommand(
     private val plugin: Plugin,
     private val registerHttpService: RegisterHttpService,
 ) : BrigadierCommand {
+    override val description: String = "Finishes account registration by verifying a code"
+
     override fun buildLiteral(): LiteralCommandNode<CommandSourceStack> {
         return Commands.literal("code")
             .then(
@@ -45,11 +47,6 @@ class CodeCommand(
         } catch (e: ResponseParser.NotFoundError) {
             sender.sendMessage(
                 Component.text("Error: Code is invalid or expired")
-                    .color(NamedTextColor.RED),
-            )
-        } catch (e: ResponseParser.ValidationError) {
-            sender.sendMessage(
-                Component.text("Error: ${e.message ?: "Unknown error occurred"}")
                     .color(NamedTextColor.RED),
             )
         }

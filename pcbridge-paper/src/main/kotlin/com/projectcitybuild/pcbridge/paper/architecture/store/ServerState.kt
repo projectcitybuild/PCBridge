@@ -23,6 +23,7 @@ data class ServerState(
      * Individual state for each online player
      */
     val players: MutableMap<UUID, PlayerState>,
+
     /**
      * Index of the last announcement broadcast to players on the server.
      *

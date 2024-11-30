@@ -36,6 +36,7 @@ class BuildsCommand(
             .then(command = buildSetCommand)
             .then(command = buildUnvoteCommand)
             .then(command = buildVoteCommand)
+            // TODO: can we use a Redirect here? Would be good to allow a page arg
             .requiresPermission(PermissionNode.BUILDS_TELEPORT)
             .executes(buildListCommand.buildLiteral().command)
             .build()

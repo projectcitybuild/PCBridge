@@ -31,6 +31,9 @@ class WarpsCommand(
             .then(command = moveCommand)
             .then(command = reloadCommand)
             .then(command = renameCommand)
+            // TODO: can we use a Redirect here? Would be good to allow a page arg
+            .requiresPermission(PermissionNode.WARP_TELEPORT)
+            .executes(listCommand.buildLiteral().command)
             .build()
     }
 }

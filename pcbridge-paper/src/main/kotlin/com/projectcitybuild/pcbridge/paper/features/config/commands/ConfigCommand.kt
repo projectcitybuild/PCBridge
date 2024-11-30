@@ -1,9 +1,9 @@
-package com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.commands
+package com.projectcitybuild.pcbridge.paper.features.config.commands
 
 import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.tree.LiteralCommandNode
 import com.projectcitybuild.pcbridge.paper.PermissionNode
-import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.services.RemoteConfig
+import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.RemoteConfig
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierCommand
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission

@@ -10,8 +10,8 @@ import com.projectcitybuild.pcbridge.paper.core.libs.datetime.services.Localized
 import com.projectcitybuild.pcbridge.paper.core.libs.errors.SentryReporter
 import com.projectcitybuild.pcbridge.paper.core.libs.permissions.Permissions
 import com.projectcitybuild.pcbridge.paper.core.libs.permissions.adapters.LuckPermsPermissions
-import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.commands.ConfigCommand
-import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.services.RemoteConfig
+import com.projectcitybuild.pcbridge.paper.features.config.commands.ConfigCommand
+import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.RemoteConfig
 import com.projectcitybuild.pcbridge.paper.architecture.store.Store
 import com.projectcitybuild.pcbridge.paper.core.libs.localconfig.LocalConfigKeyValues
 import com.projectcitybuild.pcbridge.paper.features.announcements.actions.StartAnnouncementTimer
@@ -30,10 +30,10 @@ import com.projectcitybuild.pcbridge.paper.features.chat.listeners.FormatNameCha
 import com.projectcitybuild.pcbridge.paper.features.chat.listeners.SyncPlayerChatListener
 import com.projectcitybuild.pcbridge.paper.features.chat.repositories.ChatBadgeRepository
 import com.projectcitybuild.pcbridge.paper.features.chat.repositories.ChatGroupRepository
-import com.projectcitybuild.pcbridge.paper.features.invisframes.commands.InvisFrameCommand
-import com.projectcitybuild.pcbridge.paper.features.invisframes.listeners.FrameItemInsertListener
-import com.projectcitybuild.pcbridge.paper.features.invisframes.listeners.FrameItemRemoveListener
-import com.projectcitybuild.pcbridge.paper.features.invisframes.listeners.FramePlaceListener
+import com.projectcitybuild.pcbridge.paper.features.building.commands.InvisFrameCommand
+import com.projectcitybuild.pcbridge.paper.features.building.listeners.FrameItemInsertListener
+import com.projectcitybuild.pcbridge.paper.features.building.listeners.FrameItemRemoveListener
+import com.projectcitybuild.pcbridge.paper.features.building.listeners.FramePlaceListener
 import com.projectcitybuild.pcbridge.paper.features.joinmessages.listeners.AnnounceJoinListener
 import com.projectcitybuild.pcbridge.paper.features.joinmessages.listeners.AnnounceQuitListener
 import com.projectcitybuild.pcbridge.paper.features.joinmessages.listeners.FirstTimeJoinListener

@@ -1,19 +1,19 @@
-package com.projectcitybuild.pcbridge.paper.features.invisframes.listeners
+package com.projectcitybuild.pcbridge.paper.features.building.listeners
 
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotNamespace
 import org.bukkit.entity.GlowItemFrame
 import org.bukkit.entity.ItemFrame
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
-import org.bukkit.event.entity.EntityDamageByEntityEvent
+import org.bukkit.event.player.PlayerInteractEntityEvent
 import org.bukkit.persistence.PersistentDataType
 
-class FrameItemRemoveListener(
+class FrameItemInsertListener(
     private val spigotNamespace: SpigotNamespace,
 ) : Listener {
     @EventHandler
-    fun onEntityDamageByEntity(event: EntityDamageByEntityEvent) {
-        val entity = event.entity
+    fun onPlayerInteractEntityEvent(event: PlayerInteractEntityEvent) {
+        val entity = event.rightClicked
 
         val isItemFrame = entity is ItemFrame
         if (!isItemFrame) return
@@ -27,7 +27,7 @@ class FrameItemRemoveListener(
         val isInvisibleFrame = invisibleValue == 1.toByte()
         if (isInvisibleFrame) {
             val itemFrame = entity as ItemFrame
-            itemFrame.isVisible = true
+            itemFrame.isVisible = false
             itemFrame.isGlowing = entity is GlowItemFrame
         }
     }
