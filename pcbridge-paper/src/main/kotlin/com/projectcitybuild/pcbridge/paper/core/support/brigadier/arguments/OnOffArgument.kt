@@ -13,7 +13,6 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import java.util.concurrent.CompletableFuture
 
-@Suppress("UnstableApiUsage")
 class OnOffArgument: CustomArgumentType.Converted<Boolean, String> {
     override fun getNativeType(): ArgumentType<String>
         = StringArgumentType.word()
@@ -33,7 +32,7 @@ class OnOffArgument: CustomArgumentType.Converted<Boolean, String> {
 
     override fun <S : Any> listSuggestions(
         context: CommandContext<S>,
-        builder: SuggestionsBuilder
+        builder: SuggestionsBuilder,
     ): CompletableFuture<Suggestions> = builder
         .apply {
             suggest("on")

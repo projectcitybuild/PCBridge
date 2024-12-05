@@ -1,4 +1,4 @@
-package com.projectcitybuild.pcbridge.paper.core.extensions
+package com.projectcitybuild.pcbridge.paper.core.support.kotlin
 
 import java.lang.Enum.valueOf
 

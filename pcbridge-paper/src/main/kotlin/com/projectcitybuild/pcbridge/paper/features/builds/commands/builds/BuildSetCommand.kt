@@ -8,11 +8,12 @@ import com.mojang.brigadier.tree.LiteralCommandNode
 import com.projectcitybuild.pcbridge.paper.PermissionNode
 import com.projectcitybuild.pcbridge.paper.features.builds.repositories.BuildRepository
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierCommand
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.arguments.EnumArgument
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
-import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.getOptionalArgument
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
-import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.suggestsSuspending
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.getOptionalArgument
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceSuspending
+import com.projectcitybuild.pcbridge.paper.features.builds.data.EditableBuildField
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
 import net.kyori.adventure.text.minimessage.MiniMessage
@@ -29,17 +30,9 @@ class BuildSetCommand(
             .then(
                 Commands.argument("id", IntegerArgumentType.integer())
                     .then(
-                        Commands.argument("field", StringArgumentType.word())
-                            .suggests { _, suggestions ->
-                                // TODO: clean this up
-                                suggestions.suggest("description")
-                                suggestions.suggest("name")
-                                suggestions.suggest("lore")
-                                suggestions.buildFuture()
-                            }
+                        Commands.argument("field", EnumArgument(EditableBuildField::class.java))
                             .then(
                                 Commands.argument("value", StringArgumentType.greedyString())
-                                    .suggestsSuspending(plugin, ::suggestDescription)
                                     .executesSuspending(plugin, ::execute)
                             )
                             .executesSuspending(plugin, ::execute)
@@ -48,28 +41,18 @@ class BuildSetCommand(
             .build()
     }
 
-    private suspend fun suggestDescription(
-        context: CommandContext<CommandSourceStack>,
-        suggestions: SuggestionsBuilder,
-    ) {
-        val id = suggestions.remaining
-
-        // TODO
-    }
-
     private suspend fun execute(context: CommandContext<CommandSourceStack>) = context.traceSuspending {
-        val field = context.getArgument("field", String::class.java)
+        val field = context.getArgument("field", EditableBuildField::class.java)
         val id = context.getArgument("id", Int::class.java)
         val value = context.getOptionalArgument("value", String::class.java) ?: ""
         val player = context.source.executor as? Player
 
         checkNotNull(player) { "Only a player can use this command" }
 
-        val editableField = BuildRepository.EditableField.valueOf(field.uppercase())
         buildRepository.set(
             id = id,
             player = player,
-            field = editableField,
+            field = field,
             value = value,
         )
 

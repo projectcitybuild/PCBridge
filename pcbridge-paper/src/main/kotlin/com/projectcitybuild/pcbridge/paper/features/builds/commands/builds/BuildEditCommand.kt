@@ -11,9 +11,15 @@ import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.exe
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.suggestsSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceSuspending
+import com.projectcitybuild.pcbridge.paper.core.support.component.join
+import com.projectcitybuild.pcbridge.paper.features.builds.data.EditableBuildField
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
-import net.kyori.adventure.text.minimessage.MiniMessage
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.event.ClickEvent
+import net.kyori.adventure.text.event.HoverEvent
+import net.kyori.adventure.text.format.NamedTextColor
+import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
 
@@ -51,13 +57,34 @@ class BuildEditCommand(
         val build = buildRepository.get(name)
         checkNotNull(build) { "Build not found" }
 
-        val actions = listOf("name", "description", "lore")
-        val actionsRow = actions.joinToString(separator = " ") { field ->
-            val command = "/builds set ${build.id} $field "
-            "[<white><underlined><click:suggest_command:'$command'><hover:show_text:'$command'>${field.uppercase()}</hover></click></underlined></white>]"
+        val actions = EditableBuildField.entries
+        val actionComponents = actions.map { field ->
+            val existing = when (field) {
+                EditableBuildField.NAME -> build.name
+                EditableBuildField.DESCRIPTION -> build.description
+                EditableBuildField.LORE -> build.lore
+            }
+            val command = "/builds set ${build.id} ${field.name} ${existing.orEmpty()}"
+            val hoverText = "/builds set ${build.id} $field"
+
+            Component.text()
+                .append(Component.text("["))
+                .append(
+                    Component.text(field.name, NamedTextColor.WHITE)
+                        .decorate(TextDecoration.UNDERLINED)
+                        .clickEvent(ClickEvent.suggestCommand(command))
+                        .hoverEvent(HoverEvent.showText(Component.text(hoverText)))
+                )
+                .append(Component.text("]"))
         }
+        val actionComponent = actionComponents.join(
+            separator = Component.space()
+        )
+
         context.source.sender.sendMessage(
-            MiniMessage.miniMessage().deserialize("<gray>Click a field to edit:<newline>$actionsRow</gray>")
+            Component.text("Click a field to edit:", NamedTextColor.GRAY)
+                .appendNewline()
+                .append(actionComponent)
         )
     }
 }
