@@ -43,8 +43,12 @@ class BuildCreateCommand(
             location = player.location,
         )
 
+        val miniMessage = MiniMessage.miniMessage()
         context.source.sender.sendMessage(
-            MiniMessage.miniMessage().deserialize("<green>${build.name} created</green>")
+            miniMessage.deserialize("<green>${build.name} created</green>")
+        )
+        plugin.server.broadcast(
+            miniMessage.deserialize("<gray>[<red>✎</red>] ${player.name} created build \"<white><click:run_command:'/build ${build.name}'><hover:show_text:'Click to teleport'>${build.name}</hover></click></white>\"</gray>")
         )
     }
 }
