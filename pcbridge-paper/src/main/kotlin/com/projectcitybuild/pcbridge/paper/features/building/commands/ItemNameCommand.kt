@@ -7,7 +7,7 @@ import com.projectcitybuild.pcbridge.paper.PermissionNode
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierCommand
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
-import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceCommand
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceSuspending
 import com.projectcitybuild.pcbridge.paper.features.building.events.ItemRenamedEvent
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotEventBroadcaster
 import io.papermc.paper.command.brigadier.CommandSourceStack
@@ -35,7 +35,7 @@ class ItemNameCommand(
             .build()
     }
 
-    private suspend fun execute(context: CommandContext<CommandSourceStack>) = traceCommand(context) {
+    private suspend fun execute(context: CommandContext<CommandSourceStack>) = context.traceSuspending {
         val sender = context.source.sender
         check(sender is Player) { "Only players can use this command" }
 

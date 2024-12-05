@@ -6,7 +6,7 @@ import com.projectcitybuild.pcbridge.paper.PermissionNode
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierCommand
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
-import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceCommand
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.trace
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotNamespace
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
@@ -37,13 +37,11 @@ class InvisFrameCommand(
             .build()
     }
 
-    // TODO: doesn't need to be suspending
-    private suspend fun giveNormal(context: CommandContext<CommandSourceStack>) = traceCommand(context) {
+    private fun giveNormal(context: CommandContext<CommandSourceStack>) = context.trace {
         give(executor = context.source.executor, glowing = false)
     }
 
-    // TODO: doesn't need to be suspending
-    private suspend fun giveGlowing(context: CommandContext<CommandSourceStack>) = traceCommand(context) {
+    private fun giveGlowing(context: CommandContext<CommandSourceStack>) = context.trace {
         give(executor = context.source.executor, glowing = true)
     }
 

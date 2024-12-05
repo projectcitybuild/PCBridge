@@ -11,7 +11,7 @@ import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierComma
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.suggestsSuspending
-import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceCommand
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceSuspending
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
 import net.kyori.adventure.text.minimessage.MiniMessage
@@ -56,7 +56,7 @@ class BuildSetCommand(
         // TODO
     }
 
-    private suspend fun execute(context: CommandContext<CommandSourceStack>) = traceCommand(context) {
+    private suspend fun execute(context: CommandContext<CommandSourceStack>) = context.traceSuspending {
         val field = context.getArgument("field", String::class.java)
         val id = context.getArgument("id", Int::class.java)
         val value = runCatching { context.getArgument("value", String::class.java) }.getOrElse { "" }

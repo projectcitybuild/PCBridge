@@ -6,19 +6,26 @@ import io.papermc.paper.command.brigadier.CommandSourceStack
 import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.command.CommandSender
 
-suspend fun traceCommand(
-    context: CommandContext<CommandSourceStack>,
+suspend fun CommandContext<CommandSourceStack>.traceSuspending(
     block: suspend (CommandContext<CommandSourceStack>) -> Unit,
 ) {
-    try {
-        block(context)
-    } catch (e: IllegalStateException) {
-        context.source.sender.sendError("Error: ${e.message}")
-    } catch (e: ResponseParser.ValidationError) {
-        context.source.sender.sendError("Error: ${e.message}")
-    } catch (e: Exception) {
-        context.source.sender.sendError("An unexpected error occurred")
-        throw e // Bubble it up to the error reporter
+    runCatching { block(this) }.onFailure(::catch)
+}
+
+fun CommandContext<CommandSourceStack>.trace(
+    block: (CommandContext<CommandSourceStack>) -> Unit,
+) {
+    runCatching { block(this) }.onFailure(::catch)
+}
+
+private fun CommandContext<CommandSourceStack>.catch(e: Throwable) {
+    when (e) {
+        is IllegalStateException -> source.sender.sendError("Error: ${e.message}")
+        is ResponseParser.ValidationError -> source.sender.sendError("Error: ${e.message}")
+        else -> {
+            source.sender.sendError("An unexpected error occurred")
+            throw e // Bubble it up to the error reporter
+        }
     }
 }
 

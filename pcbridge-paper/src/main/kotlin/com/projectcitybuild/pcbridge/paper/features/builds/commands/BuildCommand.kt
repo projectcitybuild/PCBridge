@@ -11,7 +11,7 @@ import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierComma
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.suggestsSuspending
-import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceCommand
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceSuspending
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
 import kotlinx.coroutines.future.await
@@ -51,7 +51,7 @@ class BuildCommand(
             .forEach(suggestions::suggest)
     }
 
-    private suspend fun execute(context: CommandContext<CommandSourceStack>) = traceCommand(context) {
+    private suspend fun execute(context: CommandContext<CommandSourceStack>) = context.traceSuspending {
         val miniMessage = MiniMessage.miniMessage()
         val name = context.getArgument("name", String::class.java)
 
@@ -82,7 +82,7 @@ class BuildCommand(
             PlayerTeleportEvent.TeleportCause.COMMAND,
         )?.await()
 
-        if (didTeleport != true) return@traceCommand
+        if (didTeleport != true) return@traceSuspending
 
         val owner = build.player?.alias
 

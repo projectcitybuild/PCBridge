@@ -71,6 +71,7 @@ import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotListenerReg
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotNamespace
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotTimer
 import com.projectcitybuild.pcbridge.paper.architecture.listeners.ExceptionListener
+import com.projectcitybuild.pcbridge.paper.core.libs.discord.DiscordSend
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildEditCommand
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildSetCommand
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildUnvoteCommand
@@ -227,7 +228,7 @@ private fun Module.core() {
     }
 
     single {
-        com.projectcitybuild.pcbridge.paper.core.libs.discord.DiscordSend(
+        DiscordSend(
             localConfig = get(),
             discordHttpService = get<DiscordHttp>().discord,
             sentryReporter = get(),

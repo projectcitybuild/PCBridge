@@ -11,7 +11,7 @@ import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.RemoteConfig
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierCommand
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
-import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceCommand
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.messages.PaginationBuilder
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
@@ -38,7 +38,7 @@ class WarpListCommand(
             .build()
     }
 
-    private suspend fun execute(context: CommandContext<CommandSourceStack>) = traceCommand(context) {
+    private suspend fun execute(context: CommandContext<CommandSourceStack>) = context.traceSuspending {
         val pageNumber = runCatching {
             context.getArgument("page", Int::class.java)
         }.getOrElse { 1 }
@@ -56,7 +56,7 @@ class WarpListCommand(
                 Component.text("No warps available")
                     .color(NamedTextColor.GRAY),
             )
-            return@traceCommand
+            return@traceSuspending
         }
 
         val message = PaginationBuilder<Warp>()

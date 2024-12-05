@@ -8,7 +8,7 @@ import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.RemoteConfig
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierCommand
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
-import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceCommand
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceSuspending
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
 import net.kyori.adventure.text.Component
@@ -33,7 +33,7 @@ class StaffChatCommand(
             .build()
     }
 
-    suspend fun execute(context: CommandContext<CommandSourceStack>) = traceCommand(context) {
+    suspend fun execute(context: CommandContext<CommandSourceStack>) = context.traceSuspending {
         // Only the legacy serializer automatically converts URLs to clickable text
         val legacySerializer = LegacyComponentSerializer
             .builder()
