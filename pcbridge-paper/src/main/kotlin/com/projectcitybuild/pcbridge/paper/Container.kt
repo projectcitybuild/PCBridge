@@ -242,7 +242,7 @@ private fun Module.webServer() {
                 authToken = localConfig.webServer.token,
                 port = localConfig.webServer.port,
             ),
-            delegate = WebServerDelegate(
+            webhookDelegate = WebServerDelegate(
                 eventBroadcaster = get(),
             ),
         )
