@@ -7,7 +7,9 @@ import io.papermc.paper.command.brigadier.CommandSourceStack
  * Represents either a command or subcommand that can be
  * registered with Brigadier
  */
-@Suppress("UnstableApiUsage")
 interface BrigadierCommand {
+    val description: String?
+        get() = null
+
     fun buildLiteral(): LiteralCommandNode<CommandSourceStack>
 }

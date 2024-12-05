@@ -5,6 +5,7 @@ import net.luckperms.api.LuckPerms
 import net.luckperms.api.LuckPermsProvider
 import org.bukkit.event.Listener
 
+// TODO: consolidate this with [LuckPermsPermissions]
 class LuckPermsIntegration : Listener {
     private var luckPerms: LuckPerms? = null
 

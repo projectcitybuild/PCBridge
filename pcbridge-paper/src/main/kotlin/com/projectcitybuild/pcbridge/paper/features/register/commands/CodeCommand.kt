@@ -1,33 +1,43 @@
 package com.projectcitybuild.pcbridge.paper.features.register.commands
 
+import com.mojang.brigadier.arguments.StringArgumentType
+import com.mojang.brigadier.context.CommandContext
+import com.mojang.brigadier.tree.LiteralCommandNode
 import com.projectcitybuild.pcbridge.http.parsing.ResponseParser
 import com.projectcitybuild.pcbridge.http.services.pcb.RegisterHttpService
-import com.projectcitybuild.pcbridge.paper.core.support.messages.CommandHelpBuilder
-import com.projectcitybuild.pcbridge.paper.core.support.spigot.BadCommandUsageException
-import com.projectcitybuild.pcbridge.paper.core.support.spigot.CommandArgsParser
-import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotCommand
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierCommand
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceSuspending
+import io.papermc.paper.command.brigadier.CommandSourceStack
+import io.papermc.paper.command.brigadier.Commands
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
-import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
+import org.bukkit.plugin.Plugin
 
 class CodeCommand(
+    private val plugin: Plugin,
     private val registerHttpService: RegisterHttpService,
-) : SpigotCommand<CodeCommand.Args> {
-    override val label = "code"
+) : BrigadierCommand {
+    override val description: String = "Finishes account registration by verifying a code"
 
-    override val usage = CommandHelpBuilder(usage = "/code <code>")
+    override fun buildLiteral(): LiteralCommandNode<CommandSourceStack> {
+        return Commands.literal("code")
+            .then(
+                Commands.argument("code", StringArgumentType.string())
+                    .executesSuspending(plugin, ::execute)
+            )
+            .build()
+    }
 
-    override suspend fun run(
-        sender: CommandSender,
-        args: Args,
-    ) {
-        check(sender is Player) {
-            "Only players can use this command"
-        }
+    private suspend fun execute(context: CommandContext<CommandSourceStack>) = context.traceSuspending {
+        val code = context.getArgument("code", String::class.java)
+        val sender = context.source.executor
+        check(sender is Player) { "Only players can use this command" }
+
         try {
             registerHttpService.verifyCode(
-                code = args.code,
+                code = code,
                 playerUUID = sender.uniqueId,
             )
             sender.sendMessage(
@@ -39,27 +49,6 @@ class CodeCommand(
                 Component.text("Error: Code is invalid or expired")
                     .color(NamedTextColor.RED),
             )
-        } catch (e: ResponseParser.ValidationError) {
-            sender.sendMessage(
-                Component.text("Error: ${e.message ?: "Unknown error occurred"}")
-                    .color(NamedTextColor.RED),
-            )
-        }
-    }
-
-    data class Args(
-        val code: String,
-    ) {
-        class Parser : CommandArgsParser<Args> {
-            override fun parse(args: List<String>): Args {
-                if (args.isEmpty()) {
-                    throw BadCommandUsageException()
-                }
-                if (args.size > 1) {
-                    throw BadCommandUsageException()
-                }
-                return Args(code = args[0])
-            }
         }
     }
 }

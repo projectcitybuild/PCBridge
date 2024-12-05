@@ -1,8 +1,8 @@
 package com.projectcitybuild.pcbridge.paper.features.joinmessages.listeners
 
 import com.projectcitybuild.pcbridge.paper.core.libs.logger.log
-import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.services.RemoteConfig
-import com.projectcitybuild.pcbridge.paper.core.libs.store.Store
+import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.RemoteConfig
+import com.projectcitybuild.pcbridge.paper.architecture.store.Store
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.MiniMessage
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
@@ -19,7 +19,7 @@ class FirstTimeJoinListener(
 ) : Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     fun onPlayerStateUpdated(event: PlayerJoinEvent) {
-        log.debug { "checking if first time join" }
+        log.debug { "Checking if first time join" }
 
         val playerState = store.state.players[event.player.uniqueId]
         if (playerState == null) {
@@ -43,11 +43,10 @@ class FirstTimeJoinListener(
         }
 
         val config = remoteConfig.latest.config
-        val message =
-            MiniMessage.miniMessage().deserialize(
-                config.messages.firstTimeJoin,
-                Placeholder.component("name", Component.text(event.player.name)),
-            )
+        val message = MiniMessage.miniMessage().deserialize(
+            config.messages.firstTimeJoin,
+            Placeholder.component("name", Component.text(event.player.name)),
+        )
         server.onlinePlayers
             .filter { it.uniqueId != event.player.uniqueId }
             .forEach { it.sendMessage(message) }

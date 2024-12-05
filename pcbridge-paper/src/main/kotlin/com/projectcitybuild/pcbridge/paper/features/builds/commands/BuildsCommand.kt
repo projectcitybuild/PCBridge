@@ -8,15 +8,14 @@ import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.Build
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildMoveCommand
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildVoteCommand
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierCommand
-import com.projectcitybuild.pcbridge.paper.core.support.brigadier.requiresPermission
-import com.projectcitybuild.pcbridge.paper.core.support.brigadier.then
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.then
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildEditCommand
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildSetCommand
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildUnvoteCommand
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
 
-@Suppress("UnstableApiUsage")
 class BuildsCommand(
     private val buildCreateCommand: BuildCreateCommand,
     private val buildDeleteCommand: BuildDeleteCommand,
@@ -37,7 +36,8 @@ class BuildsCommand(
             .then(command = buildSetCommand)
             .then(command = buildUnvoteCommand)
             .then(command = buildVoteCommand)
-            .requiresPermission(PermissionNode.BUILD_TELEPORT)
+            // TODO: can we use a Redirect here? Would be good to allow a page arg
+            .requiresPermission(PermissionNode.BUILDS_TELEPORT)
             .executes(buildListCommand.buildLiteral().command)
             .build()
     }

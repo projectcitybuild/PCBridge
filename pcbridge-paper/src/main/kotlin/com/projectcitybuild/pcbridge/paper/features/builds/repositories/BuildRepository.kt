@@ -4,18 +4,13 @@ import com.projectcitybuild.pcbridge.http.models.pcb.Build
 import com.projectcitybuild.pcbridge.http.models.pcb.PaginatedResponse
 import com.projectcitybuild.pcbridge.http.services.pcb.BuildHttpService
 import com.projectcitybuild.pcbridge.paper.core.support.kotlin.Trie
+import com.projectcitybuild.pcbridge.paper.features.builds.data.EditableBuildField
 import org.bukkit.Location
 import org.bukkit.entity.Player
 
 class BuildRepository(
     private val buildHttpService: BuildHttpService,
 ) {
-    enum class EditableField {
-        NAME,
-        DESCRIPTION,
-        LORE,
-    }
-
     class IdMap(
         initial: Map<String, Int>,
     ) {
@@ -169,17 +164,17 @@ class BuildRepository(
     suspend fun set(
         id: Int,
         player: Player,
-        field: EditableField,
+        field: EditableBuildField,
         value: String,
     ): Build {
         val build = buildHttpService.set(
             id = id,
             playerUUID = player.uniqueId,
-            name = if (field == EditableField.NAME) value else null,
-            description = if (field == EditableField.DESCRIPTION) value else null,
-            lore = if (field == EditableField.LORE) value else null,
+            name = if (field == EditableBuildField.NAME) value else null,
+            description = if (field == EditableBuildField.DESCRIPTION) value else null,
+            lore = if (field == EditableBuildField.LORE) value else null,
         )
-        if (field == EditableField.NAME) {
+        if (field == EditableBuildField.NAME) {
             cache?.update(id, newName = build.name)
         }
         return build

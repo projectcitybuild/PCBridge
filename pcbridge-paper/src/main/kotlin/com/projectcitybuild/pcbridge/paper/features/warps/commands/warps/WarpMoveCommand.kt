@@ -1,59 +1,69 @@
 package com.projectcitybuild.pcbridge.paper.features.warps.commands.warps
 
+import com.mojang.brigadier.arguments.StringArgumentType
+import com.mojang.brigadier.context.CommandContext
+import com.mojang.brigadier.suggestion.SuggestionsBuilder
+import com.mojang.brigadier.tree.LiteralCommandNode
+import com.projectcitybuild.pcbridge.paper.PermissionNode
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierCommand
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.suggestsSuspending
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceSuspending
 import com.projectcitybuild.pcbridge.paper.features.warps.repositories.WarpRepository
-import com.projectcitybuild.pcbridge.paper.core.support.messages.CommandHelpBuilder
-import com.projectcitybuild.pcbridge.paper.core.support.spigot.BadCommandUsageException
-import com.projectcitybuild.pcbridge.paper.core.support.spigot.CommandArgsParser
-import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotCommand
-import com.projectcitybuild.pcbridge.paper.core.support.spigot.UnauthorizedCommandException
+import io.papermc.paper.command.brigadier.CommandSourceStack
+import io.papermc.paper.command.brigadier.Commands
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
-import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
+import org.bukkit.plugin.Plugin
 
 class WarpMoveCommand(
+    private val plugin: Plugin,
     private val warpRepository: WarpRepository,
-) : SpigotCommand<WarpMoveCommand.Args> {
-    override val label = "move"
-
-    override val usage = CommandHelpBuilder(usage = "/warps move <name>")
-
-    override suspend fun run(
-        sender: CommandSender,
-        args: Args,
-    ) {
-        if (!sender.hasPermission("pcbridge.warp.manage")) {
-            throw UnauthorizedCommandException()
-        }
-        val player = sender as? Player
-        checkNotNull(player) {
-            "Only players can use this command"
-        }
-        warpRepository.move(
-            name = args.warpName,
-            world = player.location.world.name,
-            x = player.location.x,
-            y = player.location.y,
-            z = player.location.z,
-            pitch = player.location.pitch,
-            yaw = player.location.yaw,
-        )
-        sender.sendMessage(
-            Component.text("${args.warpName} warp moved")
-                .color(NamedTextColor.GREEN),
-        )
+) : BrigadierCommand {
+    override fun buildLiteral(): LiteralCommandNode<CommandSourceStack> {
+        return Commands.literal("move")
+            .requiresPermission(PermissionNode.WARP_MANAGE)
+            .then(
+                Commands.argument("name", StringArgumentType.string())
+                    .suggestsSuspending(plugin, ::suggestWarp)
+                    .executesSuspending(plugin, ::execute)
+            )
+            .build()
     }
 
-    data class Args(
-        val warpName: String,
+    private suspend fun suggestWarp(
+        context: CommandContext<CommandSourceStack>,
+        suggestions: SuggestionsBuilder,
     ) {
-        class Parser : CommandArgsParser<Args> {
-            override fun parse(args: List<String>): Args {
-                if (args.size != 1) {
-                    throw BadCommandUsageException()
-                }
-                return Args(warpName = args[0])
-            }
-        }
+        val name = suggestions.remaining.lowercase()
+
+        return warpRepository.all()
+            .filter { it.name.lowercase().startsWith(name) }
+            .map { it.name }
+            .forEach(suggestions::suggest)
+    }
+
+    private suspend fun execute(context: CommandContext<CommandSourceStack>) = context.traceSuspending {
+        val warpName = context.getArgument("name", String::class.java)
+        val player = context.source.executor as? Player
+        checkNotNull(player) { "Only players can use this command" }
+
+        val location = player.location
+        warpRepository.move(
+            name = warpName,
+            world = location.world.name,
+            x = location.x,
+            y = location.y,
+            z = location.z,
+            pitch = location.pitch,
+            yaw = location.yaw,
+        )
+
+        context.source.sender.sendMessage(
+            Component.text("$warpName warp moved")
+                .color(NamedTextColor.GREEN),
+        )
     }
 }
