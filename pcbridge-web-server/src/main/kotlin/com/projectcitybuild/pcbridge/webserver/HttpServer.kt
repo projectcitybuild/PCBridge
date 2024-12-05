@@ -5,6 +5,13 @@ import com.projectcitybuild.pcbridge.http.models.pcb.PlayerBan
 import com.projectcitybuild.pcbridge.http.models.pcb.RemoteConfigVersion
 import com.projectcitybuild.pcbridge.http.models.pcb.Warp
 import com.projectcitybuild.pcbridge.http.serialization.gson.LocalDateTimeTypeAdapter
+import com.projectcitybuild.pcbridge.webserver.data.HttpServerConfig
+import com.projectcitybuild.pcbridge.webserver.data.IPBanRequestedWebhook
+import com.projectcitybuild.pcbridge.webserver.data.requests.PlayerSyncRequest
+import com.projectcitybuild.pcbridge.webserver.data.PlayerSyncRequestedWebhook
+import com.projectcitybuild.pcbridge.webserver.data.SyncRemoteConfigWebhook
+import com.projectcitybuild.pcbridge.webserver.data.SyncWarpsWebhook
+import com.projectcitybuild.pcbridge.webserver.data.UUIDBanRequestedWebhook
 import io.ktor.http.HttpStatusCode
 import io.ktor.serialization.gson.gson
 import io.ktor.server.application.install
@@ -28,17 +35,9 @@ import java.math.BigInteger
 import java.time.LocalDateTime
 import java.util.UUID
 
-interface HttpServerDelegate {
-    suspend fun syncPlayer(uuid: UUID)
-    suspend fun banPlayer(ban: PlayerBan)
-    suspend fun banIP(ban: IPBan)
-    suspend fun updateConfig(config: RemoteConfigVersion)
-    suspend fun syncWarps(warps: List<Warp>)
-}
-
 class HttpServer(
     private val config: HttpServerConfig,
-    private val delegate: HttpServerDelegate,
+    private val delegate: WebhookDelegate,
 ) {
     private var server: EmbeddedServer<NettyApplicationEngine, NettyApplicationEngine.Configuration>? = null
 
@@ -92,7 +91,7 @@ class HttpServer(
                             return@post
                         }
                         call.application.environment.log.info("Syncing player: $uuid")
-                        delegate.syncPlayer(uuid)
+                        delegate.handle(PlayerSyncRequestedWebhook(uuid))
                         call.respond(HttpStatusCode.OK)
                     }
                     post("events/ban/uuid") {
@@ -103,7 +102,7 @@ class HttpServer(
                             throw e
                         }
                         call.application.environment.log.info("Banning player: ${ban.bannedPlayer?.uuid}")
-                        delegate.banPlayer(ban)
+                        delegate.handle(UUIDBanRequestedWebhook(ban))
                         call.respond(HttpStatusCode.OK)
                     }
                     post("events/ban/ip") {
@@ -114,7 +113,7 @@ class HttpServer(
                             throw e
                         }
                         call.application.environment.log.info("Banning ip: ${ban.ipAddress}")
-                        delegate.banIP(ban)
+                        delegate.handle(IPBanRequestedWebhook(ban))
                         call.respond(HttpStatusCode.OK)
                     }
                     post("events/config") {
@@ -125,7 +124,7 @@ class HttpServer(
                             throw e
                         }
                         call.application.environment.log.info("Received config version ${config.version}")
-                        delegate.updateConfig(config)
+                        delegate.handle(SyncRemoteConfigWebhook(config))
                         call.respond(HttpStatusCode.OK)
                     }
                     post("events/warps/sync") {
@@ -136,7 +135,7 @@ class HttpServer(
                             throw e
                         }
                         call.application.environment.log.info("Received warps (count: ${warps.size})")
-                        delegate.syncWarps(warps)
+                        delegate.handle(SyncWarpsWebhook(warps))
                         call.respond(HttpStatusCode.OK)
                     }
                 }

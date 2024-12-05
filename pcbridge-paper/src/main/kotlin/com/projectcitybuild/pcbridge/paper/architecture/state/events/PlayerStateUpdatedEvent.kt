@@ -1,11 +1,14 @@
-package com.projectcitybuild.pcbridge.paper.features.bans.events
+package com.projectcitybuild.pcbridge.paper.architecture.state.events
 
-import com.projectcitybuild.pcbridge.http.models.pcb.IPBan
+import com.projectcitybuild.pcbridge.paper.architecture.state.data.PlayerState
 import org.bukkit.event.Event
 import org.bukkit.event.HandlerList
+import java.util.UUID
 
-class IPBanRequestedEvent(
-    val ban: IPBan,
+class PlayerStateUpdatedEvent(
+    val prevState: PlayerState?,
+    val state: PlayerState,
+    val playerUUID: UUID,
 ) : Event() {
     override fun getHandlers(): HandlerList {
         return HANDLERS

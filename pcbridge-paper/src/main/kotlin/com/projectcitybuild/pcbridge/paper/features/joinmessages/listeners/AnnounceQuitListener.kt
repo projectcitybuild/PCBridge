@@ -2,7 +2,7 @@ package com.projectcitybuild.pcbridge.paper.features.joinmessages.listeners
 
 import com.projectcitybuild.pcbridge.paper.core.libs.datetime.services.LocalizedTime
 import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.RemoteConfig
-import com.projectcitybuild.pcbridge.paper.architecture.store.Store
+import com.projectcitybuild.pcbridge.paper.architecture.state.Store
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.MiniMessage
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder

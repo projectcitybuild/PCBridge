@@ -1,11 +1,11 @@
-package com.projectcitybuild.pcbridge.paper.architecture.listeners
+package com.projectcitybuild.pcbridge.paper.architecture.state.listeners
 
 import com.projectcitybuild.pcbridge.paper.core.libs.datetime.services.LocalizedTime
 import com.projectcitybuild.pcbridge.paper.core.libs.logger.log
-import com.projectcitybuild.pcbridge.paper.architecture.store.PlayerState
-import com.projectcitybuild.pcbridge.paper.architecture.store.Store
+import com.projectcitybuild.pcbridge.paper.architecture.state.data.PlayerState
+import com.projectcitybuild.pcbridge.paper.architecture.state.Store
 import com.projectcitybuild.pcbridge.paper.features.bans.repositories.PlayerRepository
-import com.projectcitybuild.pcbridge.paper.architecture.events.PlayerStateUpdatedEvent
+import com.projectcitybuild.pcbridge.paper.architecture.state.events.PlayerStateUpdatedEvent
 import com.projectcitybuild.pcbridge.paper.features.groups.events.PlayerSyncRequestedEvent
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotEventBroadcaster
 import net.kyori.adventure.text.minimessage.MiniMessage

@@ -1,5 +1,6 @@
-package com.projectcitybuild.pcbridge.paper.architecture.store
+package com.projectcitybuild.pcbridge.paper.architecture.state
 
+import com.projectcitybuild.pcbridge.paper.architecture.state.data.ServerState
 import com.projectcitybuild.pcbridge.paper.core.libs.logger.log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
