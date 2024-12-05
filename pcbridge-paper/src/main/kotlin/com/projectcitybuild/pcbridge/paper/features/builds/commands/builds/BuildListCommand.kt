@@ -7,6 +7,7 @@ import com.projectcitybuild.pcbridge.paper.PermissionNode
 import com.projectcitybuild.pcbridge.paper.features.builds.repositories.BuildRepository
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierCommand
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.getOptionalArgument
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceSuspending
 import io.papermc.paper.command.brigadier.CommandSourceStack
@@ -34,7 +35,7 @@ class BuildListCommand(
     }
 
     private suspend fun execute(context: CommandContext<CommandSourceStack>) = context.traceSuspending {
-        val page = runCatching { context.getArgument("page", Int::class.java) }.getOrElse { 1 }
+        val page = context.getOptionalArgument("page", Int::class.java) ?: 1
         val builds = buildRepository.all(page)
         val totalPages = ceil(builds.total.toDouble() / builds.perPage.toDouble()).toInt()
         val miniMessage = MiniMessage.miniMessage()

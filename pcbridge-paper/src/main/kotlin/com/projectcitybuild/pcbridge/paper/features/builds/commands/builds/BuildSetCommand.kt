@@ -9,6 +9,7 @@ import com.projectcitybuild.pcbridge.paper.PermissionNode
 import com.projectcitybuild.pcbridge.paper.features.builds.repositories.BuildRepository
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierCommand
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.getOptionalArgument
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.suggestsSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceSuspending
@@ -59,7 +60,7 @@ class BuildSetCommand(
     private suspend fun execute(context: CommandContext<CommandSourceStack>) = context.traceSuspending {
         val field = context.getArgument("field", String::class.java)
         val id = context.getArgument("id", Int::class.java)
-        val value = runCatching { context.getArgument("value", String::class.java) }.getOrElse { "" }
+        val value = context.getOptionalArgument("value", String::class.java) ?: ""
         val player = context.source.executor as? Player
 
         checkNotNull(player) { "Only a player can use this command" }

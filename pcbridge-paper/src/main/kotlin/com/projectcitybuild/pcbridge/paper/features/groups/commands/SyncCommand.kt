@@ -5,6 +5,7 @@ import com.mojang.brigadier.tree.LiteralCommandNode
 import com.projectcitybuild.pcbridge.paper.PermissionNode
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierCommand
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.getOptionalArgument
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceSuspending
 import com.projectcitybuild.pcbridge.paper.features.groups.events.PlayerSyncRequestedEvent
@@ -35,7 +36,7 @@ class SyncCommand(
         val sender = context.source.sender
         check(sender is Player) { "Only players can use this command" }
 
-        val player = runCatching { context.getArgument("player", Player::class.java) }.getOrNull()
+        val player = context.getOptionalArgument("player", Player::class.java)
 
         if (player == null) {
             sync(sender, message = "Fetching player data...")
