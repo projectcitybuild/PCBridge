@@ -1,7 +1,7 @@
 package com.projectcitybuild.pcbridge.paper.core.support.brigadier
 
 import com.mojang.brigadier.context.CommandContext
-import com.projectcitybuild.pcbridge.http.parsing.ResponseParser
+import com.projectcitybuild.pcbridge.http.shared.parsing.ResponseParser
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.command.CommandSender

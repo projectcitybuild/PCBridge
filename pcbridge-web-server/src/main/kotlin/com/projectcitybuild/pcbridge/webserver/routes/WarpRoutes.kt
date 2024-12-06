@@ -1,6 +1,6 @@
 package com.projectcitybuild.pcbridge.webserver.routes
 
-import com.projectcitybuild.pcbridge.http.models.pcb.Warp
+import com.projectcitybuild.pcbridge.http.pcb.models.Warp
 import com.projectcitybuild.pcbridge.webserver.WebhookDelegate
 import com.projectcitybuild.pcbridge.webserver.data.SyncWarpsWebhook
 import io.ktor.http.HttpStatusCode

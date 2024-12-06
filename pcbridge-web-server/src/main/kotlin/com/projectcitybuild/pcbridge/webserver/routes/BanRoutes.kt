@@ -1,7 +1,7 @@
 package com.projectcitybuild.pcbridge.webserver.routes
 
-import com.projectcitybuild.pcbridge.http.models.pcb.IPBan
-import com.projectcitybuild.pcbridge.http.models.pcb.PlayerBan
+import com.projectcitybuild.pcbridge.http.pcb.models.IPBan
+import com.projectcitybuild.pcbridge.http.pcb.models.PlayerBan
 import com.projectcitybuild.pcbridge.webserver.WebhookDelegate
 import com.projectcitybuild.pcbridge.webserver.data.IPBanRequestedWebhook
 import com.projectcitybuild.pcbridge.webserver.data.UUIDBanRequestedWebhook

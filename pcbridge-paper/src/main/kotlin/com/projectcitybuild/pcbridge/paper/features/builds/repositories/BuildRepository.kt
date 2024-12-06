@@ -1,8 +1,8 @@
 package com.projectcitybuild.pcbridge.paper.features.builds.repositories
 
-import com.projectcitybuild.pcbridge.http.models.pcb.Build
-import com.projectcitybuild.pcbridge.http.models.pcb.PaginatedResponse
-import com.projectcitybuild.pcbridge.http.services.pcb.BuildHttpService
+import com.projectcitybuild.pcbridge.http.pcb.models.Build
+import com.projectcitybuild.pcbridge.http.pcb.models.PaginatedResponse
+import com.projectcitybuild.pcbridge.http.pcb.services.BuildHttpService
 import com.projectcitybuild.pcbridge.paper.core.support.kotlin.Trie
 import com.projectcitybuild.pcbridge.paper.features.builds.data.EditableBuildField
 import org.bukkit.Location

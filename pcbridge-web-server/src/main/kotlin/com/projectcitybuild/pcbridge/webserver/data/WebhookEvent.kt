@@ -1,9 +1,9 @@
 package com.projectcitybuild.pcbridge.webserver.data
 
-import com.projectcitybuild.pcbridge.http.models.pcb.IPBan
-import com.projectcitybuild.pcbridge.http.models.pcb.PlayerBan
-import com.projectcitybuild.pcbridge.http.models.pcb.RemoteConfigVersion
-import com.projectcitybuild.pcbridge.http.models.pcb.Warp
+import com.projectcitybuild.pcbridge.http.pcb.models.IPBan
+import com.projectcitybuild.pcbridge.http.pcb.models.PlayerBan
+import com.projectcitybuild.pcbridge.http.pcb.models.RemoteConfigVersion
+import com.projectcitybuild.pcbridge.http.pcb.models.Warp
 import java.util.UUID
 
 sealed class WebhookEvent

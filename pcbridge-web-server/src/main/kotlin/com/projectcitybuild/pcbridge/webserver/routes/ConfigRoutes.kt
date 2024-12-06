@@ -1,6 +1,6 @@
 package com.projectcitybuild.pcbridge.webserver.routes
 
-import com.projectcitybuild.pcbridge.http.models.pcb.RemoteConfigVersion
+import com.projectcitybuild.pcbridge.http.pcb.models.RemoteConfigVersion
 import com.projectcitybuild.pcbridge.webserver.WebhookDelegate
 import com.projectcitybuild.pcbridge.webserver.data.SyncRemoteConfigWebhook
 import io.ktor.http.HttpStatusCode

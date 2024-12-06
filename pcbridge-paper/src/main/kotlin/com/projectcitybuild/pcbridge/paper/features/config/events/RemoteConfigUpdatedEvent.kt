@@ -1,6 +1,6 @@
 package com.projectcitybuild.pcbridge.paper.features.config.events
 
-import com.projectcitybuild.pcbridge.http.models.pcb.RemoteConfigVersion
+import com.projectcitybuild.pcbridge.http.pcb.models.RemoteConfigVersion
 import org.bukkit.event.Event
 import org.bukkit.event.HandlerList
 

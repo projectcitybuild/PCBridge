@@ -1,12 +1,12 @@
 package com.projectcitybuild.pcbridge.paper.architecture.state.data
 
-import com.projectcitybuild.pcbridge.http.models.pcb.Account
-import com.projectcitybuild.pcbridge.http.models.pcb.Badge
-import com.projectcitybuild.pcbridge.http.models.pcb.Group
-import com.projectcitybuild.pcbridge.http.models.pcb.Player
-import com.projectcitybuild.pcbridge.http.models.pcb.PlayerData
-import com.projectcitybuild.pcbridge.http.serialization.serializable.LocalDateTimeSerializer
-import com.projectcitybuild.pcbridge.http.serialization.serializable.UUIDSerializer
+import com.projectcitybuild.pcbridge.http.pcb.models.Account
+import com.projectcitybuild.pcbridge.http.pcb.models.Badge
+import com.projectcitybuild.pcbridge.http.pcb.models.Group
+import com.projectcitybuild.pcbridge.http.pcb.models.Player
+import com.projectcitybuild.pcbridge.http.pcb.models.PlayerData
+import com.projectcitybuild.pcbridge.http.shared.serialization.serializable.LocalDateTimeSerializer
+import com.projectcitybuild.pcbridge.http.shared.serialization.serializable.UUIDSerializer
 import kotlinx.serialization.Serializable
 import java.time.LocalDateTime
 import java.util.UUID

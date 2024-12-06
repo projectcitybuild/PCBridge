@@ -2,7 +2,7 @@ package com.projectcitybuild.pcbridge.paper
 
 import com.github.shynixn.mccoroutine.bukkit.minecraftDispatcher
 import com.google.gson.reflect.TypeToken
-import com.projectcitybuild.pcbridge.http.DiscordHttp
+import com.projectcitybuild.pcbridge.http.discord.DiscordHttp
 import com.projectcitybuild.pcbridge.paper.core.libs.localconfig.LocalConfig
 import com.projectcitybuild.pcbridge.paper.core.libs.localconfig.JsonStorage
 import com.projectcitybuild.pcbridge.paper.core.libs.datetime.services.DateTimeFormatter
@@ -51,7 +51,7 @@ import com.projectcitybuild.pcbridge.paper.features.telemetry.repositories.Telem
 import com.projectcitybuild.pcbridge.paper.features.warps.commands.WarpCommand
 import com.projectcitybuild.pcbridge.paper.features.warps.commands.WarpsCommand
 import com.projectcitybuild.pcbridge.paper.features.warps.repositories.WarpRepository
-import com.projectcitybuild.pcbridge.http.PCBHttp
+import com.projectcitybuild.pcbridge.http.pcb.PCBHttp
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.BuildCommand
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.BuildsCommand
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildCreateCommand

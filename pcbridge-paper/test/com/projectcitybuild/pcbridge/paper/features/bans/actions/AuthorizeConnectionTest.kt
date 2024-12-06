@@ -1,8 +1,8 @@
 package com.projectcitybuild.pcbridge.paper.features.bans.actions
 
-import com.projectcitybuild.pcbridge.http.models.pcb.PlayerData
-import com.projectcitybuild.pcbridge.http.models.pcb.IPBan
-import com.projectcitybuild.pcbridge.http.models.pcb.PlayerBan
+import com.projectcitybuild.pcbridge.http.pcb.models.PlayerData
+import com.projectcitybuild.pcbridge.http.pcb.models.IPBan
+import com.projectcitybuild.pcbridge.http.pcb.models.PlayerBan
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach

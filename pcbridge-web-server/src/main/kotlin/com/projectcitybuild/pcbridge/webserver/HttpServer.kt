@@ -1,6 +1,6 @@
 package com.projectcitybuild.pcbridge.webserver
 
-import com.projectcitybuild.pcbridge.http.serialization.gson.LocalDateTimeTypeAdapter
+import com.projectcitybuild.pcbridge.http.shared.serialization.gson.LocalDateTimeTypeAdapter
 import com.projectcitybuild.pcbridge.webserver.data.HttpServerConfig
 import com.projectcitybuild.pcbridge.webserver.routes.ipBanRoute
 import com.projectcitybuild.pcbridge.webserver.routes.playerSyncRoute
