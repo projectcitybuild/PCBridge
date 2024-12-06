@@ -1,4 +1,4 @@
-package com.projectcitybuild.pcbridge.paper.core.support.kotlin
+package com.projectcitybuild.pcbridge.paper.core.utils
 
 /**
  * Data structure optimized for efficient searching/prefix-matching

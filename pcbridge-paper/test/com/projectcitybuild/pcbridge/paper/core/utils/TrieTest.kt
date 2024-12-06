@@ -1,6 +1,5 @@
-package com.projectcitybuild.pcbridge.paper.core.support.kotlin
+package com.projectcitybuild.pcbridge.paper.core.utils
 
-import com.projectcitybuild.pcbridge.paper.core.support.kotlin.Trie
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -40,24 +39,32 @@ class TrieTest {
             insert("tester")
             insert("foo")
         }
-        assertListsEquivalent(trie.matchingPrefix("t"), listOf(
-            "test",
-            "testing",
-            "tester",
-        ))
-        assertListsEquivalent(trie.matchingPrefix("tes"), listOf(
-            "test",
-            "testing",
-            "tester",
-        ))
-        assertListsEquivalent(trie.matchingPrefix("test"), listOf(
-            "test",
-            "testing",
-            "tester",
-        ))
-        assertListsEquivalent(trie.matchingPrefix("testi"), listOf(
-            "testing",
-        ))
+        assertListsEquivalent(
+            trie.matchingPrefix("t"), listOf(
+                "test",
+                "testing",
+                "tester",
+            )
+        )
+        assertListsEquivalent(
+            trie.matchingPrefix("tes"), listOf(
+                "test",
+                "testing",
+                "tester",
+            )
+        )
+        assertListsEquivalent(
+            trie.matchingPrefix("test"), listOf(
+                "test",
+                "testing",
+                "tester",
+            )
+        )
+        assertListsEquivalent(
+            trie.matchingPrefix("testi"), listOf(
+                "testing",
+            )
+        )
     }
 
     @Test
