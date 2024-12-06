@@ -1,6 +1,6 @@
 package com.projectcitybuild.pcbridge.paper.features.telemetry.repositories
 
-import com.projectcitybuild.pcbridge.http.services.pcb.TelemetryHttpService
+import com.projectcitybuild.pcbridge.http.pcb.services.TelemetryHttpService
 import java.util.UUID
 
 class TelemetryRepository(

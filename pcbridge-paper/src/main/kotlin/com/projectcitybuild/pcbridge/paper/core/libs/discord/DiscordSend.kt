@@ -1,7 +1,7 @@
 package com.projectcitybuild.pcbridge.paper.core.libs.discord
 
-import com.projectcitybuild.pcbridge.http.services.discord.DiscordHttpService
-import com.projectcitybuild.pcbridge.http.models.discord.DiscordEmbed
+import com.projectcitybuild.pcbridge.http.discord.services.DiscordHttpService
+import com.projectcitybuild.pcbridge.http.discord.models.DiscordEmbed
 import com.projectcitybuild.pcbridge.paper.core.libs.errors.SentryReporter
 import com.projectcitybuild.pcbridge.paper.core.libs.localconfig.LocalConfig
 import com.projectcitybuild.pcbridge.paper.core.libs.logger.log

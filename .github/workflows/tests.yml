@@ -26,4 +26,4 @@ jobs:
         uses: ./.github/actions/setup-java
 
       - name: Run tests
-        run: gradle pcbridge-paper:test --info
+        run: gradle test --info

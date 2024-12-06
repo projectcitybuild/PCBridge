@@ -32,11 +32,11 @@ class OnOffArgument: CustomArgumentType.Converted<Boolean, String> {
 
     override fun <S : Any> listSuggestions(
         context: CommandContext<S>,
-        builder: SuggestionsBuilder,
-    ): CompletableFuture<Suggestions> = builder
-        .apply {
+        builder: SuggestionsBuilder
+    ): CompletableFuture<Suggestions> {
+        return builder.apply {
             suggest("on")
             suggest("off")
-        }
-        .buildFuture()
+        }.buildFuture()
+    }
 }

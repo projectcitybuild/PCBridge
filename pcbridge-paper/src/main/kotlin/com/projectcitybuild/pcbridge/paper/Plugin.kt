@@ -9,8 +9,7 @@ import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.RemoteConfig
 import com.projectcitybuild.pcbridge.paper.features.announcements.listeners.AnnouncementConfigListener
 import com.projectcitybuild.pcbridge.paper.features.announcements.listeners.AnnouncementEnableListener
 import com.projectcitybuild.pcbridge.paper.features.bans.listeners.AuthorizeConnectionListener
-import com.projectcitybuild.pcbridge.paper.features.bans.listeners.IPBanRequestListener
-import com.projectcitybuild.pcbridge.paper.features.bans.listeners.UUIDBanRequestListener
+import com.projectcitybuild.pcbridge.paper.features.bans.listeners.BanWebhookListener
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.BuildCommand
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.BuildsCommand
 import com.projectcitybuild.pcbridge.paper.features.chat.listeners.ChatConfigListener
@@ -26,12 +25,12 @@ import com.projectcitybuild.pcbridge.paper.features.joinmessages.listeners.Annou
 import com.projectcitybuild.pcbridge.paper.features.joinmessages.listeners.FirstTimeJoinListener
 import com.projectcitybuild.pcbridge.paper.features.joinmessages.listeners.ServerOverviewJoinListener
 import com.projectcitybuild.pcbridge.paper.features.building.commands.NightVisionCommand
-import com.projectcitybuild.pcbridge.paper.architecture.listeners.PlayerStateListener
+import com.projectcitybuild.pcbridge.paper.architecture.state.listeners.PlayerStateListener
 import com.projectcitybuild.pcbridge.paper.features.register.commands.CodeCommand
 import com.projectcitybuild.pcbridge.paper.features.register.commands.RegisterCommand
 import com.projectcitybuild.pcbridge.paper.features.staffchat.commands.StaffChatCommand
 import com.projectcitybuild.pcbridge.paper.features.groups.listener.SyncRankListener
-import com.projectcitybuild.pcbridge.paper.architecture.listeners.PlayerSyncRequestListener
+import com.projectcitybuild.pcbridge.paper.architecture.state.listeners.PlayerSyncRequestListener
 import com.projectcitybuild.pcbridge.paper.features.telemetry.listeners.TelemetryPlayerConnectListener
 import com.projectcitybuild.pcbridge.paper.features.warps.commands.WarpCommand
 import com.projectcitybuild.pcbridge.paper.features.warps.commands.WarpsCommand
@@ -42,8 +41,11 @@ import com.projectcitybuild.pcbridge.paper.integrations.EssentialsIntegration
 import com.projectcitybuild.pcbridge.paper.integrations.LuckPermsIntegration
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotListenerRegistry
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotTimer
-import com.projectcitybuild.pcbridge.paper.architecture.listeners.ExceptionListener
+import com.projectcitybuild.pcbridge.paper.architecture.exceptions.listeners.CoroutineExceptionListener
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.register
+import com.projectcitybuild.pcbridge.paper.features.config.listeners.ConfigWebhookListener
+import com.projectcitybuild.pcbridge.paper.features.groups.listener.PlayerSyncWebhookListener
+import com.projectcitybuild.pcbridge.paper.features.warps.listeners.WarpWebhookListener
 import com.projectcitybuild.pcbridge.webserver.HttpServer
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents
 import net.kyori.adventure.platform.bukkit.BukkitAudiences
@@ -124,21 +126,23 @@ private class Lifecycle : KoinComponent {
                 get<AnnouncementEnableListener>(),
                 get<AuthorizeConnectionListener>(),
                 get<ChatConfigListener>(),
-                get<ExceptionListener>(),
+                get<ConfigWebhookListener>(),
+                get<CoroutineExceptionListener>(),
                 get<FirstTimeJoinListener>(),
                 get<FormatNameChatListener>(),
                 get<FramePlaceListener>(),
                 get<FrameItemInsertListener>(),
                 get<FrameItemRemoveListener>(),
-                get<IPBanRequestListener>(),
+                get<BanWebhookListener>(),
                 get<PlayerStateListener>(),
                 get<PlayerSyncRequestListener>(),
+                get<PlayerSyncWebhookListener>(),
                 get<ServerOverviewJoinListener>(),
                 get<ItemTextListener>(),
                 get<SyncPlayerChatListener>(),
                 get<SyncRankListener>(),
                 get<TelemetryPlayerConnectListener>(),
-                get<UUIDBanRequestListener>(),
+                get<WarpWebhookListener>(),
             )
 
             get<DynmapIntegration>().enable()

@@ -2,7 +2,7 @@ package com.projectcitybuild.pcbridge.paper
 
 import com.github.shynixn.mccoroutine.bukkit.minecraftDispatcher
 import com.google.gson.reflect.TypeToken
-import com.projectcitybuild.pcbridge.http.DiscordHttp
+import com.projectcitybuild.pcbridge.http.discord.DiscordHttp
 import com.projectcitybuild.pcbridge.paper.core.libs.localconfig.LocalConfig
 import com.projectcitybuild.pcbridge.paper.core.libs.localconfig.JsonStorage
 import com.projectcitybuild.pcbridge.paper.core.libs.datetime.services.DateTimeFormatter
@@ -12,7 +12,7 @@ import com.projectcitybuild.pcbridge.paper.core.libs.permissions.Permissions
 import com.projectcitybuild.pcbridge.paper.core.libs.permissions.adapters.LuckPermsPermissions
 import com.projectcitybuild.pcbridge.paper.features.config.commands.ConfigCommand
 import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.RemoteConfig
-import com.projectcitybuild.pcbridge.paper.architecture.store.Store
+import com.projectcitybuild.pcbridge.paper.architecture.state.Store
 import com.projectcitybuild.pcbridge.paper.core.libs.localconfig.LocalConfigKeyValues
 import com.projectcitybuild.pcbridge.paper.features.announcements.actions.StartAnnouncementTimer
 import com.projectcitybuild.pcbridge.paper.features.announcements.listeners.AnnouncementConfigListener
@@ -20,8 +20,7 @@ import com.projectcitybuild.pcbridge.paper.features.announcements.listeners.Anno
 import com.projectcitybuild.pcbridge.paper.features.announcements.repositories.AnnouncementRepository
 import com.projectcitybuild.pcbridge.paper.features.bans.actions.AuthorizeConnection
 import com.projectcitybuild.pcbridge.paper.features.bans.listeners.AuthorizeConnectionListener
-import com.projectcitybuild.pcbridge.paper.features.bans.listeners.IPBanRequestListener
-import com.projectcitybuild.pcbridge.paper.features.bans.listeners.UUIDBanRequestListener
+import com.projectcitybuild.pcbridge.paper.features.bans.listeners.BanWebhookListener
 import com.projectcitybuild.pcbridge.paper.features.bans.repositories.PlayerRepository
 import com.projectcitybuild.pcbridge.paper.features.chat.ChatBadgeFormatter
 import com.projectcitybuild.pcbridge.paper.features.chat.ChatGroupFormatter
@@ -39,20 +38,20 @@ import com.projectcitybuild.pcbridge.paper.features.joinmessages.listeners.Annou
 import com.projectcitybuild.pcbridge.paper.features.joinmessages.listeners.FirstTimeJoinListener
 import com.projectcitybuild.pcbridge.paper.features.joinmessages.listeners.ServerOverviewJoinListener
 import com.projectcitybuild.pcbridge.paper.features.building.commands.NightVisionCommand
-import com.projectcitybuild.pcbridge.paper.architecture.listeners.PlayerStateListener
+import com.projectcitybuild.pcbridge.paper.architecture.state.listeners.PlayerStateListener
 import com.projectcitybuild.pcbridge.paper.features.register.commands.CodeCommand
 import com.projectcitybuild.pcbridge.paper.features.register.commands.RegisterCommand
 import com.projectcitybuild.pcbridge.paper.features.staffchat.commands.StaffChatCommand
 import com.projectcitybuild.pcbridge.paper.features.groups.actions.SyncPlayerGroups
 import com.projectcitybuild.pcbridge.paper.features.groups.commands.SyncCommand
 import com.projectcitybuild.pcbridge.paper.features.groups.listener.SyncRankListener
-import com.projectcitybuild.pcbridge.paper.architecture.listeners.PlayerSyncRequestListener
+import com.projectcitybuild.pcbridge.paper.architecture.state.listeners.PlayerSyncRequestListener
 import com.projectcitybuild.pcbridge.paper.features.telemetry.listeners.TelemetryPlayerConnectListener
 import com.projectcitybuild.pcbridge.paper.features.telemetry.repositories.TelemetryRepository
 import com.projectcitybuild.pcbridge.paper.features.warps.commands.WarpCommand
 import com.projectcitybuild.pcbridge.paper.features.warps.commands.WarpsCommand
 import com.projectcitybuild.pcbridge.paper.features.warps.repositories.WarpRepository
-import com.projectcitybuild.pcbridge.http.PCBHttp
+import com.projectcitybuild.pcbridge.http.pcb.PCBHttp
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.BuildCommand
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.BuildsCommand
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildCreateCommand
@@ -70,19 +69,23 @@ import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotEventBroadc
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotListenerRegistry
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotNamespace
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotTimer
-import com.projectcitybuild.pcbridge.paper.architecture.listeners.ExceptionListener
+import com.projectcitybuild.pcbridge.paper.architecture.exceptions.listeners.CoroutineExceptionListener
+import com.projectcitybuild.pcbridge.paper.architecture.webhooks.WebServerDelegate
 import com.projectcitybuild.pcbridge.paper.core.libs.discord.DiscordSend
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildEditCommand
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildSetCommand
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildUnvoteCommand
+import com.projectcitybuild.pcbridge.paper.features.config.listeners.ConfigWebhookListener
+import com.projectcitybuild.pcbridge.paper.features.groups.listener.PlayerSyncWebhookListener
 import com.projectcitybuild.pcbridge.paper.features.warps.commands.warps.WarpCreateCommand
 import com.projectcitybuild.pcbridge.paper.features.warps.commands.warps.WarpDeleteCommand
 import com.projectcitybuild.pcbridge.paper.features.warps.commands.warps.WarpListCommand
 import com.projectcitybuild.pcbridge.paper.features.warps.commands.warps.WarpMoveCommand
 import com.projectcitybuild.pcbridge.paper.features.warps.commands.warps.WarpReloadCommand
 import com.projectcitybuild.pcbridge.paper.features.warps.commands.warps.WarpRenameCommand
+import com.projectcitybuild.pcbridge.paper.features.warps.listeners.WarpWebhookListener
 import com.projectcitybuild.pcbridge.webserver.HttpServer
-import com.projectcitybuild.pcbridge.webserver.HttpServerConfig
+import com.projectcitybuild.pcbridge.webserver.data.HttpServerConfig
 import io.github.reactivecircus.cache4k.Cache
 import net.kyori.adventure.platform.bukkit.BukkitAudiences
 import org.bukkit.plugin.java.JavaPlugin
@@ -110,6 +113,7 @@ fun pluginModule(_plugin: JavaPlugin) =
         building()
         builds()
         chat()
+        config()
         groups()
         joinMessages()
         invisFrames()
@@ -220,13 +224,6 @@ private fun Module.core() {
         )
     }
 
-    factory {
-        ConfigCommand(
-            plugin = get<JavaPlugin>(),
-            remoteConfig = get(),
-        )
-    }
-
     single {
         DiscordSend(
             localConfig = get(),
@@ -245,10 +242,8 @@ private fun Module.webServer() {
                 authToken = localConfig.webServer.token,
                 port = localConfig.webServer.port,
             ),
-            delegate = WebServerDelegate(
+            webhookDelegate = WebServerDelegate(
                 eventBroadcaster = get(),
-                remoteConfig = get(),
-                warpRepository = get(),
             ),
         )
     }
@@ -395,6 +390,21 @@ private fun Module.building() {
     }
 }
 
+private fun Module.config() {
+    factory {
+        ConfigCommand(
+            plugin = get<JavaPlugin>(),
+            remoteConfig = get(),
+        )
+    }
+
+    factory {
+        ConfigWebhookListener(
+            remoteConfig = get(),
+        )
+    }
+}
+
 private fun Module.warps() {
     single {
         WarpRepository(
@@ -439,6 +449,12 @@ private fun Module.warps() {
                 plugin = get<JavaPlugin>(),
                 warpRepository = get(),
             ),
+        )
+    }
+
+    factory {
+        WarpWebhookListener(
+            warpRepository = get(),
         )
     }
 }
@@ -502,7 +518,7 @@ private fun Module.architecture() {
     }
 
     factory {
-        ExceptionListener(
+        CoroutineExceptionListener(
             sentryReporter = get(),
         )
     }
@@ -525,13 +541,7 @@ private fun Module.bans() {
     }
 
     factory {
-        UUIDBanRequestListener(
-            server = get(),
-        )
-    }
-
-    factory {
-        IPBanRequestListener(
+        BanWebhookListener(
             server = get(),
         )
     }
@@ -669,6 +679,12 @@ private fun Module.groups() {
     factory {
         SyncRankListener(
             syncPlayerGroups = get(),
+        )
+    }
+
+    factory {
+        PlayerSyncWebhookListener(
+            eventBroadcaster = get(),
         )
     }
 

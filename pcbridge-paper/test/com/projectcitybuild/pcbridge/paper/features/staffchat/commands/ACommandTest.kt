@@ -2,8 +2,8 @@ package com.projectcitybuild.pcbridge.paper.features.staffchat.commands
 
 import com.mojang.brigadier.context.CommandContext
 import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.RemoteConfig
-import com.projectcitybuild.pcbridge.http.models.pcb.RemoteConfigKeyValues
-import com.projectcitybuild.pcbridge.http.models.pcb.RemoteConfigVersion
+import com.projectcitybuild.pcbridge.http.pcb.models.RemoteConfigKeyValues
+import com.projectcitybuild.pcbridge.http.pcb.models.RemoteConfigVersion
 import com.projectcitybuild.pcbridge.paper.PermissionNode
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.extensions.hasPermission
 import io.papermc.paper.command.brigadier.CommandSourceStack
