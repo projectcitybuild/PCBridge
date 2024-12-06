@@ -31,6 +31,8 @@ class ItemTextListener(
         val serializer = PlainTextComponentSerializer.plainText()
         val lines = event.lines().map { serializer.serialize(it) }
 
+        if (lines.isEmpty()) return
+
         val embed = DiscordEmbed(
             title = "Sign Edited",
             author = event.player.toDiscordEmbed(),
@@ -76,16 +78,20 @@ class ItemTextListener(
                 timestamp = time.now().toISO8601(),
                 fields = mutableListOf<DiscordFieldEmbed>().also {
                     if (nextMeta.title != null) {
-                        it.add(DiscordFieldEmbed(
-                            name = "Title",
-                            value = nextMeta.title,
-                        ))
+                        it.add(
+                            DiscordFieldEmbed(
+                                name = "Title",
+                                value = nextMeta.title,
+                            )
+                        )
                     }
                     if (nextMeta.author != null) {
-                        it.add(DiscordFieldEmbed(
-                            name = "Book Author",
-                            value = nextMeta.author,
-                        ))
+                        it.add(
+                            DiscordFieldEmbed(
+                                name = "Book Author",
+                                value = nextMeta.author,
+                            )
+                        )
                     }
                 },
             )
