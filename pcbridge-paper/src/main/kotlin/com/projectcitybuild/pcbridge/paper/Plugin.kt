@@ -43,8 +43,10 @@ import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotListenerReg
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotTimer
 import com.projectcitybuild.pcbridge.paper.architecture.exceptions.listeners.CoroutineExceptionListener
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.register
+import com.projectcitybuild.pcbridge.paper.features.bans.commands.BanCommand
 import com.projectcitybuild.pcbridge.paper.features.config.listeners.ConfigWebhookListener
 import com.projectcitybuild.pcbridge.paper.features.groups.listener.PlayerSyncWebhookListener
+import com.projectcitybuild.pcbridge.paper.features.warnings.commands.WarnCommand
 import com.projectcitybuild.pcbridge.paper.features.warps.listeners.WarpWebhookListener
 import com.projectcitybuild.pcbridge.webserver.HttpServer
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents
@@ -104,6 +106,7 @@ private class Lifecycle : KoinComponent {
                 .lifecycleManager
                 .registerEventHandler(LifecycleEvents.COMMANDS) { event ->
                     event.registrar().register(
+                        get<BanCommand>(),
                         get<BuildCommand>(),
                         get<BuildsCommand>(),
                         get<CodeCommand>(),
@@ -116,6 +119,7 @@ private class Lifecycle : KoinComponent {
                         get<SyncCommand>(),
                         get<WarpCommand>(),
                         get<WarpsCommand>(),
+                        get<WarnCommand>(),
                     )
                 }
 

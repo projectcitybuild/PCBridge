@@ -1,6 +1,9 @@
 package com.projectcitybuild.pcbridge.paper
 
 enum class PermissionNode(val node: String) {
+    // Can ban a player
+    BANS_MANAGE("pcbridge.bans.manage"),
+
     // Can teleport to a build
     BUILDS_TELEPORT("pcbridge.builds.teleport"),
 
@@ -33,4 +36,7 @@ enum class PermissionNode(val node: String) {
 
     // Can create, edit or delete warps
     WARP_MANAGE("pcbridge.warp.manage"),
+
+    // Can warn a player
+    WARNS_MANAGE("pcbridge.warnings.manage"),
 }

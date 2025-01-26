@@ -72,11 +72,14 @@ import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotTimer
 import com.projectcitybuild.pcbridge.paper.architecture.exceptions.listeners.CoroutineExceptionListener
 import com.projectcitybuild.pcbridge.paper.architecture.webhooks.WebServerDelegate
 import com.projectcitybuild.pcbridge.paper.core.libs.discord.DiscordSend
+import com.projectcitybuild.pcbridge.paper.core.libs.pcbmanage.ManageUrlGenerator
+import com.projectcitybuild.pcbridge.paper.features.bans.commands.BanCommand
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildEditCommand
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildSetCommand
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildUnvoteCommand
 import com.projectcitybuild.pcbridge.paper.features.config.listeners.ConfigWebhookListener
 import com.projectcitybuild.pcbridge.paper.features.groups.listener.PlayerSyncWebhookListener
+import com.projectcitybuild.pcbridge.paper.features.warnings.commands.WarnCommand
 import com.projectcitybuild.pcbridge.paper.features.warps.commands.warps.WarpCreateCommand
 import com.projectcitybuild.pcbridge.paper.features.warps.commands.warps.WarpDeleteCommand
 import com.projectcitybuild.pcbridge.paper.features.warps.commands.warps.WarpListCommand
@@ -122,6 +125,7 @@ fun pluginModule(_plugin: JavaPlugin) =
         telemetry()
         warps()
         watchdog()
+        warnings()
     }
 
 private fun Module.spigot(plugin: JavaPlugin) {
@@ -229,6 +233,13 @@ private fun Module.core() {
             localConfig = get(),
             discordHttpService = get<DiscordHttp>().discord,
             sentryReporter = get(),
+        )
+    }
+
+    factory {
+        ManageUrlGenerator(
+            server = get(),
+            localConfig = get(),
         )
     }
 }
@@ -545,6 +556,14 @@ private fun Module.bans() {
             server = get(),
         )
     }
+
+    factory {
+        BanCommand(
+            plugin = get<JavaPlugin>(),
+            server = get(),
+            manageUrlGenerator = get(),
+        )
+    }
 }
 
 private fun Module.invisFrames() {
@@ -692,6 +711,16 @@ private fun Module.groups() {
         SyncCommand(
             plugin = get<JavaPlugin>(),
             eventBroadcaster = get(),
+        )
+    }
+}
+
+private fun Module.warnings() {
+    factory {
+        WarnCommand(
+            plugin = get<JavaPlugin>(),
+            server = get(),
+            manageUrlGenerator = get(),
         )
     }
 }

@@ -4,7 +4,7 @@ import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.tree.LiteralCommandNode
 import com.projectcitybuild.pcbridge.paper.PermissionNode
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierCommand
-import com.projectcitybuild.pcbridge.paper.core.support.brigadier.arguments.SinglePlayerArgument
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.arguments.SingleOnlinePlayerArgument
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.getOptionalArgument
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
@@ -24,7 +24,7 @@ class SyncCommand(
     override fun buildLiteral(): LiteralCommandNode<CommandSourceStack> {
         return Commands.literal("sync")
             .then(
-                Commands.argument("player", SinglePlayerArgument(plugin.server))
+                Commands.argument("player", SingleOnlinePlayerArgument(plugin.server))
                     .requiresPermission(PermissionNode.PLAYER_SYNC_OTHER)
                     .executesSuspending(plugin, ::execute)
             )
