@@ -14,26 +14,25 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
 
       - name: Install Java
         uses: ./.github/actions/setup-java
 
       - name: Get version from build.gradle.kts
         id: plugin_version
-        working-directory: pcbridge-spigot
+        working-directory: pcbridge-paper
         run: |
           version="$(gradle properties -q | grep "version:" | awk '{print $2}')"
           echo "plugin_version=$version" >> $GITHUB_OUTPUT
 
       - name: Build with Gradle
-        run: gradle shadowJar
-        working-directory: pcbridge-spigot
+        run: gradle pcbridge-paper:shadowJar
 
       - name: Upload jar file as artifact
-        uses: actions/upload-artifact@v2.2.4
+        uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08
         with:
-          path: pcbridge-spigot/build/release/pcbridge*.jar
+          path: pcbridge-paper/build/release/pcbridge*.jar
           if-no-files-found: warn
 
       - name: Create git tag
@@ -45,9 +44,9 @@ jobs:
           echo "tag=$new_tag" >> "$GITHUB_OUTPUT"
 
       - name: Create release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@c062e08bd532815e2082a85e87e3ef29c3e6d191
         with:
           tag_name: ${{ steps.tag.outputs.tag }}
-          files: pcbridge-spigot/build/release/pcbridge*.jar
+          files: pcbridge-paper/build/release/pcbridge*.jar
           fail_on_unmatched_files: true
           generate_release_notes: true

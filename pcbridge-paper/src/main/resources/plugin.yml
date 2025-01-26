@@ -1,0 +1,11 @@
+name: PCBridge
+main: com.projectcitybuild.pcbridge.paper.Plugin
+website: https://github.com/projectcitybuild/PCBridge
+author: Andy
+version: 6.4.0
+api-version: 1.21.1
+
+softdepend:
+  - LuckPerms
+  - dynmap
+  - Essentials

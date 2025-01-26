@@ -25,9 +25,5 @@ jobs:
       - name: Install Java
         uses: ./.github/actions/setup-java
 
-      - name: Build with Gradle
-        run: gradle shadowJar
-        working-directory: pcbridge-spigot
-
       - name: Run tests
         run: gradle test --info
