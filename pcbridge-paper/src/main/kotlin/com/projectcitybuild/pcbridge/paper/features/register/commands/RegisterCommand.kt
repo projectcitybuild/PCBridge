@@ -1,5 +1,6 @@
 package com.projectcitybuild.pcbridge.paper.features.register.commands
 
+import com.mojang.brigadier.Command
 import com.mojang.brigadier.arguments.StringArgumentType
 import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.tree.LiteralCommandNode
@@ -25,6 +26,13 @@ class RegisterCommand(
                 Commands.argument("email", StringArgumentType.greedyString())
                     .executesSuspending(plugin, ::execute)
             )
+            .executes { context ->
+                val message = MiniMessage.miniMessage().deserialize(
+                    "<red>Error: Please specify an email address to receive your registration code</red>",
+                )
+                context.source.sender.sendMessage(message)
+                return@executes Command.SINGLE_SUCCESS
+            }
             .build()
     }
 
