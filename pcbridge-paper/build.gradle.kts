@@ -19,7 +19,7 @@ repositories {
     }
     maven {
         name = "papermc"
-        url = uri("https://papermc.io/repo/repository/maven-public/")
+        url = uri("https://repo.papermc.io/repository/maven-public/")
     }
 }
 
@@ -82,7 +82,7 @@ tasks {
         systemProperty("com.mojang.eula.agree", "true")
 
         downloadPlugins {
-            url("https://download.luckperms.net/1560/bukkit/loader/LuckPerms-Bukkit-5.4.145.jar")
+            url("https://download.luckperms.net/1570/bukkit/loader/LuckPerms-Bukkit-5.4.153.jar")
             url("https://cdn.modrinth.com/data/fRQREgAc/versions/AdtrWcU2/Dynmap-3.7-beta-7-spigot.jar")
             github("EssentialsX", "Essentials", "2.20.1", "EssentialsX-2.20.1.jar")
         }
