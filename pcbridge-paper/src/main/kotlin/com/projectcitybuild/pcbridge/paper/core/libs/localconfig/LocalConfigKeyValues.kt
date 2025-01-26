@@ -3,7 +3,6 @@
 package com.projectcitybuild.pcbridge.paper.core.libs.localconfig
 
 import kotlinx.serialization.Serializable
-import java.io.Serial
 
 /**
  * Key-values for the plugin configured through the local filesystem
