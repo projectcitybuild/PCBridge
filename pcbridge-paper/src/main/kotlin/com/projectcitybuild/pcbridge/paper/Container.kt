@@ -80,6 +80,13 @@ import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.Build
 import com.projectcitybuild.pcbridge.paper.features.config.listeners.ConfigWebhookListener
 import com.projectcitybuild.pcbridge.paper.features.groups.commands.SyncDebugCommand
 import com.projectcitybuild.pcbridge.paper.features.groups.listener.PlayerSyncWebhookListener
+import com.projectcitybuild.pcbridge.paper.features.homes.commands.HomeCommand
+import com.projectcitybuild.pcbridge.paper.features.homes.commands.HomesCommand
+import com.projectcitybuild.pcbridge.paper.features.homes.commands.homes.HomeCreateCommand
+import com.projectcitybuild.pcbridge.paper.features.homes.commands.homes.HomeDeleteCommand
+import com.projectcitybuild.pcbridge.paper.features.homes.commands.homes.HomeListCommand
+import com.projectcitybuild.pcbridge.paper.features.homes.commands.homes.HomeMoveCommand
+import com.projectcitybuild.pcbridge.paper.features.homes.repositories.HomeRepository
 import com.projectcitybuild.pcbridge.paper.features.warnings.commands.WarnCommand
 import com.projectcitybuild.pcbridge.paper.features.warps.commands.warps.WarpCreateCommand
 import com.projectcitybuild.pcbridge.paper.features.warps.commands.warps.WarpDeleteCommand
@@ -119,6 +126,7 @@ fun pluginModule(_plugin: JavaPlugin) =
         chat()
         config()
         groups()
+        homes()
         joinMessages()
         invisFrames()
         register()
@@ -718,6 +726,43 @@ private fun Module.groups() {
         SyncDebugCommand(
             plugin = get<JavaPlugin>(),
             permissions = get(),
+        )
+    }
+}
+
+private fun Module.homes() {
+    factory {
+        HomeRepository(
+            homeHttpService = get<PCBHttp>().homes,
+        )
+    }
+
+    factory {
+        HomeCommand(
+            homeRepository = get(),
+            plugin = get<JavaPlugin>(),
+            server = get(),
+        )
+    }
+
+    factory {
+        HomesCommand(
+            homeListCommand = HomeListCommand(
+                plugin = get<JavaPlugin>(),
+                homeRepository = get(),
+            ),
+            homeCreateCommand = HomeCreateCommand(
+                plugin = get<JavaPlugin>(),
+                homeRepository = get(),
+            ),
+            homeMoveCommand = HomeMoveCommand(
+                plugin = get<JavaPlugin>(),
+                homeRepository = get(),
+            ),
+            homeDeleteCommand = HomeDeleteCommand(
+                plugin = get<JavaPlugin>(),
+                homeRepository = get(),
+            ),
         )
     }
 }

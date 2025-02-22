@@ -22,7 +22,7 @@ class WarnCommand(
 ): BrigadierCommand {
     override fun buildLiteral(): LiteralCommandNode<CommandSourceStack> {
         return Commands.literal("warn")
-            .requiresPermission(PermissionNode.WARNS_MANAGE)
+            .requiresPermission(PermissionNode.WARNINGS_MANAGE)
             .then(
                 Commands.argument("player", OnlinePlayerNameArgument(server))
                     .executesSuspending(plugin, ::execute)

@@ -47,6 +47,8 @@ import com.projectcitybuild.pcbridge.paper.features.bans.commands.BanCommand
 import com.projectcitybuild.pcbridge.paper.features.config.listeners.ConfigWebhookListener
 import com.projectcitybuild.pcbridge.paper.features.groups.commands.SyncDebugCommand
 import com.projectcitybuild.pcbridge.paper.features.groups.listener.PlayerSyncWebhookListener
+import com.projectcitybuild.pcbridge.paper.features.homes.commands.HomeCommand
+import com.projectcitybuild.pcbridge.paper.features.homes.commands.HomesCommand
 import com.projectcitybuild.pcbridge.paper.features.warnings.commands.WarnCommand
 import com.projectcitybuild.pcbridge.paper.features.warps.listeners.WarpWebhookListener
 import com.projectcitybuild.pcbridge.webserver.HttpServer
@@ -112,6 +114,8 @@ private class Lifecycle : KoinComponent {
                         get<BuildsCommand>(),
                         get<CodeCommand>(),
                         get<ConfigCommand>(),
+                        get<HomesCommand>(),
+                        get<HomeCommand>(),
                         get<InvisFrameCommand>(),
                         get<ItemNameCommand>(),
                         get<NightVisionCommand>(),
