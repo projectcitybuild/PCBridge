@@ -286,7 +286,6 @@ private fun Module.integrations() {
         DynmapIntegration(
             plugin = get(),
             remoteConfig = get(),
-            sentry = get(),
             warpRepository = get(),
         )
     }
