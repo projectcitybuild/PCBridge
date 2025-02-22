@@ -5,7 +5,7 @@ import java.util.UUID
 interface Permissions {
     fun setUserGroups(
         playerUUID: UUID,
-        groupNames: List<String>,
+        groupNames: Set<String>,
     )
 
     fun getUserGroups(playerUUID: UUID): Set<String>

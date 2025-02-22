@@ -78,6 +78,7 @@ import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.Build
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildSetCommand
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildUnvoteCommand
 import com.projectcitybuild.pcbridge.paper.features.config.listeners.ConfigWebhookListener
+import com.projectcitybuild.pcbridge.paper.features.groups.commands.SyncDebugCommand
 import com.projectcitybuild.pcbridge.paper.features.groups.listener.PlayerSyncWebhookListener
 import com.projectcitybuild.pcbridge.paper.features.warnings.commands.WarnCommand
 import com.projectcitybuild.pcbridge.paper.features.warps.commands.warps.WarpCreateCommand
@@ -285,7 +286,6 @@ private fun Module.integrations() {
         DynmapIntegration(
             plugin = get(),
             remoteConfig = get(),
-            sentry = get(),
             warpRepository = get(),
         )
     }
@@ -711,6 +711,13 @@ private fun Module.groups() {
         SyncCommand(
             plugin = get<JavaPlugin>(),
             eventBroadcaster = get(),
+        )
+    }
+
+    factory {
+        SyncDebugCommand(
+            plugin = get<JavaPlugin>(),
+            permissions = get(),
         )
     }
 }
