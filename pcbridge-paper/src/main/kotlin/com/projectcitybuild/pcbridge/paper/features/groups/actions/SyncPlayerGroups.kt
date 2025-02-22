@@ -11,7 +11,7 @@ class SyncPlayerGroups(
         playerUUID: UUID,
         groups: List<Group>,
     ) {
-        val groupSet = groups.map { it.minecraftName }.toSet()
-        permissions.setUserGroups(playerUUID, groupSet.toList().requireNoNulls())
+        val groupSet = groups.mapNotNull { it.minecraftName }.toSet()
+        permissions.setUserGroups(playerUUID, groupSet)
     }
 }

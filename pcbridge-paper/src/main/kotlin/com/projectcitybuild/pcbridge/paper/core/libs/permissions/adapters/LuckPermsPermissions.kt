@@ -27,7 +27,7 @@ class LuckPermsPermissions : Permissions {
 
     override fun setUserGroups(
         playerUUID: UUID,
-        groupNames: List<String>,
+        groupNames: Set<String>,
     ) {
         val user = getUser(playerUUID)
 
