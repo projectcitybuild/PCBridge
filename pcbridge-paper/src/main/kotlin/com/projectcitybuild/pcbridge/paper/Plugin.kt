@@ -45,6 +45,7 @@ import com.projectcitybuild.pcbridge.paper.architecture.exceptions.listeners.Cor
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.register
 import com.projectcitybuild.pcbridge.paper.features.bans.commands.BanCommand
 import com.projectcitybuild.pcbridge.paper.features.config.listeners.ConfigWebhookListener
+import com.projectcitybuild.pcbridge.paper.features.groups.commands.SyncDebugCommand
 import com.projectcitybuild.pcbridge.paper.features.groups.listener.PlayerSyncWebhookListener
 import com.projectcitybuild.pcbridge.paper.features.warnings.commands.WarnCommand
 import com.projectcitybuild.pcbridge.paper.features.warps.listeners.WarpWebhookListener
@@ -117,6 +118,7 @@ private class Lifecycle : KoinComponent {
                         get<RegisterCommand>(),
                         get<StaffChatCommand>(),
                         get<SyncCommand>(),
+                        get<SyncDebugCommand>(),
                         get<WarpCommand>(),
                         get<WarpsCommand>(),
                         get<WarnCommand>(),
