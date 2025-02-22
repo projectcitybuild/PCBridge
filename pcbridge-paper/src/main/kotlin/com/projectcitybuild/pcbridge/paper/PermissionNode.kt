@@ -28,6 +28,9 @@ enum class PermissionNode(val node: String) {
     // Can force sync another player (in addition to yourself)
     PLAYER_SYNC_OTHER("pcbridge.sync.other"),
 
+    // Can use the syncdebug command
+    PLAYER_SYNC_DEBUG("pcbridge.sync.debug"),
+
     // Can force reload the remote config
     REMOTE_CONFIG_RELOAD("pcbridge.config.reload"),
 
