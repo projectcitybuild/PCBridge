@@ -3,6 +3,7 @@ package com.projectcitybuild.pcbridge.paper.integrations
 import com.github.shynixn.mccoroutine.bukkit.registerSuspendingEvents
 import com.projectcitybuild.pcbridge.paper.core.libs.logger.log
 import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.RemoteConfig
+import com.projectcitybuild.pcbridge.paper.features.config.events.RemoteConfigUpdatedEvent
 import com.projectcitybuild.pcbridge.paper.features.warps.events.WarpCreateEvent
 import com.projectcitybuild.pcbridge.paper.features.warps.events.WarpDeleteEvent
 import com.projectcitybuild.pcbridge.paper.features.warps.repositories.WarpRepository
@@ -56,6 +57,16 @@ class DynmapIntegration(
 
     @EventHandler
     suspend fun onWarpDelete(event: WarpDeleteEvent) = updateWarpMarkers()
+
+    @EventHandler
+    suspend fun onRemoteConfigUpdated(event: RemoteConfigUpdatedEvent) {
+        val prev = event.prev?.config
+        val next = event.next.config
+
+        if (prev?.integrations?.dynmapWarpIconName != next.integrations.dynmapWarpIconName) {
+            updateWarpMarkers()
+        }
+    }
 
     private suspend fun updateWarpMarkers() {
         val dynmap = dynmap
