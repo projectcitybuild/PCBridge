@@ -29,14 +29,15 @@ class ItemTextListener(
     @EventHandler(priority = EventPriority.MONITOR)
     fun onSignChange(event: SignChangeEvent) {
         val serializer = PlainTextComponentSerializer.plainText()
-        val lines = event.lines().map { serializer.serialize(it) }
+        val lines = event.lines().mapNotNull { serializer.serialize(it) }
+        val description = lines.joinToString(separator = "\n")
 
-        if (lines.isEmpty()) return
+        if (lines.isEmpty() || description.isEmpty()) return
 
         val embed = DiscordEmbed(
             title = "Sign Edited",
             author = event.player.toDiscordEmbed(),
-            description = lines.joinToString(separator = "\n"),
+            description = description,
             timestamp = time.now().toISO8601(),
             fields = listOf(
               DiscordFieldEmbed(
