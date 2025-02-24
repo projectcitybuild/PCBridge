@@ -24,5 +24,5 @@ class SpigotSanitizer private constructor() {
 }
 
 fun InetAddress.sanitized(): String {
-    return SpigotSanitizer.ipAddress(address.toString())
+    return SpigotSanitizer.ipAddress(toString())
 }
