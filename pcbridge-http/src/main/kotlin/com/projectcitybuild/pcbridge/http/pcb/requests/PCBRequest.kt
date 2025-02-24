@@ -61,6 +61,7 @@ internal interface PCBRequest {
     suspend fun telemetrySeen(
         @Field(value = "uuid") playerUUID: String,
         @Field(value = "alias") playerName: String,
+        @Field(value = "ip") ip: String?,
     )
 
     /**
