@@ -12,8 +12,8 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import kotlin.random.Random
 
-class AuthorizeConnectionTest {
-    private lateinit var useCase: AuthorizeConnection
+class CheckBanTest {
+    private lateinit var useCase: CheckBan
 
     private fun playerBan() = PlayerBan(
         id = Random.nextInt(),
@@ -32,7 +32,7 @@ class AuthorizeConnectionTest {
 
     @BeforeEach
     fun setUp() {
-        useCase = AuthorizeConnection()
+        useCase = CheckBan()
     }
 
     @Test
@@ -44,8 +44,8 @@ class AuthorizeConnectionTest {
                     PlayerData(playerBan = ban),
                 )
             assertEquals(
-                AuthorizeConnection.ConnectResult.Denied(
-                    AuthorizeConnection.Ban.UUID(ban),
+                CheckBan.ConnectResult.Denied(
+                    CheckBan.Ban.UUID(ban),
                 ),
                 result,
             )
@@ -66,7 +66,7 @@ class AuthorizeConnectionTest {
                     PlayerData(playerBan = ban),
                 )
             assertEquals(
-                AuthorizeConnection.ConnectResult.Allowed,
+                CheckBan.ConnectResult.Allowed,
                 result,
             )
         }
@@ -80,8 +80,8 @@ class AuthorizeConnectionTest {
                     PlayerData(ipBan = ban),
                 )
             assertEquals(
-                AuthorizeConnection.ConnectResult.Denied(
-                    AuthorizeConnection.Ban.IP(ban),
+                CheckBan.ConnectResult.Denied(
+                    CheckBan.Ban.IP(ban),
                 ),
                 result,
             )
@@ -99,7 +99,7 @@ class AuthorizeConnectionTest {
                     PlayerData(ipBan = ban),
                 )
             assertEquals(
-                AuthorizeConnection.ConnectResult.Allowed,
+                CheckBan.ConnectResult.Allowed,
                 result,
             )
         }
@@ -112,7 +112,7 @@ class AuthorizeConnectionTest {
                     PlayerData(playerBan = null, ipBan = null),
                 )
             assertEquals(
-                AuthorizeConnection.ConnectResult.Allowed,
+                CheckBan.ConnectResult.Allowed,
                 result,
             )
         }
