@@ -24,7 +24,7 @@ class AuthorizeConnectionListener(
         /**
          * In order to call `event.disallow()`, this function must block until player data
          * has been fetched and processed. Blocking is not a problem because this event
-         * handler function is called asynchronously by Spigot/Paper.
+         * handler function is called asynchronously by Paper.
          *
          * The `event.disallow()` function works by mutating a boolean on the Event class instance.
          * The final value is read from the instance after all event handlers have had their turn.

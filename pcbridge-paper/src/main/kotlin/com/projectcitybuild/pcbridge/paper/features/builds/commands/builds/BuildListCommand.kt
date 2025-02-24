@@ -4,6 +4,7 @@ import com.mojang.brigadier.arguments.IntegerArgumentType
 import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.tree.LiteralCommandNode
 import com.projectcitybuild.pcbridge.paper.PermissionNode
+import com.projectcitybuild.pcbridge.paper.core.libs.pagination.LengthAwarePaginator
 import com.projectcitybuild.pcbridge.paper.features.builds.repositories.BuildRepository
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierCommand
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
@@ -17,7 +18,6 @@ import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.plugin.Plugin
-import kotlin.math.ceil
 
 class BuildListCommand(
     private val plugin: Plugin,
@@ -37,42 +37,21 @@ class BuildListCommand(
     private suspend fun execute(context: CommandContext<CommandSourceStack>) = context.traceSuspending {
         val page = context.getOptionalArgument("page", Int::class.java) ?: 1
         val builds = buildRepository.all(page)
-        val totalPages = ceil(builds.total.toDouble() / builds.perPage.toDouble()).toInt()
-        val miniMessage = MiniMessage.miniMessage()
         val sender = context.source.sender
 
         sender.sendMessage(
-            miniMessage.deserialize(
-                "<gray>--- <dark_aqua>Build List</dark_aqua> - Page <white>${builds.currentPage}</white>/<white>$totalPages</white> ---</gray>"
-            )
-        )
+            LengthAwarePaginator().component(
+                title = "Build List",
+                paginatedData = builds,
+                pageCommandBuilder = { pageIndex -> "/homes list $pageIndex" },
+                itemDecorator = { build ->
+                    val text = "<gray>#${build.id} \"<aqua>${build.name}</aqua>\" (<white>${build.votes}</white> votes)</gray>"
 
-        builds.data.forEach { build ->
-            val text = "<gray>#${build.id} \"<aqua>${build.name}</aqua>\" (<white>${build.votes}</white> votes)</gray>"
-
-            sender.sendMessage(
-                miniMessage.deserialize(text)
-                    // Separate handling here to ensure character escaping in the name
-                    .clickEvent(ClickEvent.runCommand("/build ${build.name}"))
-                    .hoverEvent(HoverEvent.showText(Component.text("Teleport to ${build.name}")))
-            )
-        }
-
-        val footer = buildString {
-            append("<gray>---</gray>")
-
-            if (page > 1) {
-                append(" <click:run_command:'/builds list ${page - 1}'>[← Prev]</click>")
-            }
-            if (page < totalPages) {
-                append(" <click:run_command:'/builds list ${page + 1}'>[Next →]</click>")
-            }
-            append(" <gray>---</gray>")
-        }
-
-        sender.sendMessage(
-            miniMessage.deserialize(
-                if (totalPages <= 1) "<gray>---</gray>" else footer
+                    MiniMessage.miniMessage().deserialize(text)
+                        // Separate handling here to ensure character escaping in the name
+                        .clickEvent(ClickEvent.runCommand("/build ${build.name}"))
+                        .hoverEvent(HoverEvent.showText(Component.text("Teleport to ${build.name}")))
+                },
             )
         )
     }

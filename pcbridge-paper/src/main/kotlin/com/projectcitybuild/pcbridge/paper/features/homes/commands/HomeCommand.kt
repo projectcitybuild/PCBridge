@@ -31,7 +31,7 @@ class HomeCommand(
 ): BrigadierCommand {
     override fun buildLiteral(): LiteralCommandNode<CommandSourceStack> {
         return Commands.literal("home")
-            .requiresPermission(PermissionNode.BUILDS_TELEPORT)
+            .requiresPermission(PermissionNode.HOMES_USE)
             .then(
                 Commands.argument("name", StringArgumentType.greedyString())
                     .executesSuspending(plugin, ::execute)
