@@ -18,10 +18,9 @@ import com.projectcitybuild.pcbridge.paper.features.announcements.actions.StartA
 import com.projectcitybuild.pcbridge.paper.features.announcements.listeners.AnnouncementConfigListener
 import com.projectcitybuild.pcbridge.paper.features.announcements.listeners.AnnouncementEnableListener
 import com.projectcitybuild.pcbridge.paper.features.announcements.repositories.AnnouncementRepository
-import com.projectcitybuild.pcbridge.paper.features.bans.actions.AuthorizeConnection
-import com.projectcitybuild.pcbridge.paper.features.bans.listeners.AuthorizeConnectionListener
+import com.projectcitybuild.pcbridge.paper.features.bans.actions.CheckBan
 import com.projectcitybuild.pcbridge.paper.features.bans.listeners.BanWebhookListener
-import com.projectcitybuild.pcbridge.paper.features.bans.repositories.PlayerRepository
+import com.projectcitybuild.pcbridge.paper.architecture.connection.repositories.PlayerRepository
 import com.projectcitybuild.pcbridge.paper.features.chat.ChatBadgeFormatter
 import com.projectcitybuild.pcbridge.paper.features.chat.ChatGroupFormatter
 import com.projectcitybuild.pcbridge.paper.features.chat.listeners.ChatConfigListener
@@ -52,6 +51,8 @@ import com.projectcitybuild.pcbridge.paper.features.warps.commands.WarpCommand
 import com.projectcitybuild.pcbridge.paper.features.warps.commands.WarpsCommand
 import com.projectcitybuild.pcbridge.paper.features.warps.repositories.WarpRepository
 import com.projectcitybuild.pcbridge.http.pcb.PCBHttp
+import com.projectcitybuild.pcbridge.paper.architecture.connection.listeners.AuthorizeConnectionListener
+import com.projectcitybuild.pcbridge.paper.architecture.connection.middleware.ConnectionMiddlewareChain
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.BuildCommand
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.BuildsCommand
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildCreateCommand
@@ -74,6 +75,7 @@ import com.projectcitybuild.pcbridge.paper.architecture.webhooks.WebServerDelega
 import com.projectcitybuild.pcbridge.paper.core.libs.discord.DiscordSend
 import com.projectcitybuild.pcbridge.paper.core.libs.pcbmanage.ManageUrlGenerator
 import com.projectcitybuild.pcbridge.paper.features.bans.commands.BanCommand
+import com.projectcitybuild.pcbridge.paper.features.bans.middleware.BanConnectionMiddleware
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildEditCommand
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildSetCommand
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildUnvoteCommand
@@ -109,10 +111,10 @@ fun pluginModule(_plugin: JavaPlugin) =
         http()
         webServer()
         integrations()
+        architecture()
 
         // Features
         announcements()
-        architecture()
         bans()
         building()
         builds()
@@ -533,6 +535,19 @@ private fun Module.architecture() {
             sentryReporter = get(),
         )
     }
+
+    single {
+        ConnectionMiddlewareChain()
+    }
+
+    factory {
+        AuthorizeConnectionListener(
+            middlewareChain = get(),
+            playerRepository = get(),
+            sentry = get(),
+            eventBroadcaster = get(),
+        )
+    }
 }
 
 private fun Module.bans() {
@@ -543,11 +558,8 @@ private fun Module.bans() {
     }
 
     factory {
-        AuthorizeConnectionListener(
-            playerRepository = get(),
-            authorizeConnection = AuthorizeConnection(),
-            sentry = get(),
-            eventBroadcaster = get(),
+        BanConnectionMiddleware(
+            checkBan = CheckBan(),
         )
     }
 

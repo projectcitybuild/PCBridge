@@ -1,4 +1,4 @@
-package com.projectcitybuild.pcbridge.paper.features.bans.repositories
+package com.projectcitybuild.pcbridge.paper.architecture.connection.repositories
 
 import com.projectcitybuild.pcbridge.paper.features.bans.utilities.Sanitizer
 import com.projectcitybuild.pcbridge.http.pcb.models.PlayerData
@@ -12,12 +12,10 @@ class PlayerRepository(
 ) {
     @Throws(Exception::class)
     suspend fun get(
-        playerUUID: UUID,
+        uuid: UUID,
         ip: InetAddress?,
-    ): PlayerData {
-        return httpService.get(
-            playerUUID = playerUUID,
-            ip = ip?.let { Sanitizer.sanitizedIP(it.toString()) },
-        )
-    }
+    ): PlayerData = httpService.get(
+        playerUUID = uuid,
+        ip = ip?.let { Sanitizer.sanitizedIP(it.toString()) },
+    )
 }

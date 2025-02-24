@@ -4,28 +4,13 @@ import com.projectcitybuild.pcbridge.http.pcb.models.PlayerData
 import com.projectcitybuild.pcbridge.http.pcb.models.IPBan
 import com.projectcitybuild.pcbridge.http.pcb.models.PlayerBan
 
-class AuthorizeConnection {
-    sealed class ConnectResult {
-        object Allowed : ConnectResult()
-
-        data class Denied(val ban: Ban) : ConnectResult()
-    }
-
+class CheckBan {
     sealed class Ban {
         data class UUID(val value: PlayerBan) : Ban()
-
         data class IP(val value: IPBan) : Ban()
     }
 
-    fun authorize(playerData: PlayerData): ConnectResult {
-        val ban = getBan(playerData)
-        if (ban != null) {
-            return ConnectResult.Denied(ban = ban)
-        }
-        return ConnectResult.Allowed
-    }
-
-    private fun getBan(playerData: PlayerData): Ban? {
+    fun get(playerData: PlayerData): Ban? {
         val playerBan = playerData.playerBan
         if (playerBan != null && playerBan.isActive) {
             return Ban.UUID(playerBan)

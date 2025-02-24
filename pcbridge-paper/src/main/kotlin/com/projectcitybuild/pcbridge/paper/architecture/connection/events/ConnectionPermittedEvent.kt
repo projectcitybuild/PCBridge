@@ -1,4 +1,4 @@
-package com.projectcitybuild.pcbridge.paper.features.bans.events
+package com.projectcitybuild.pcbridge.paper.architecture.connection.events
 
 import com.projectcitybuild.pcbridge.http.pcb.models.PlayerData
 import org.bukkit.event.Event
