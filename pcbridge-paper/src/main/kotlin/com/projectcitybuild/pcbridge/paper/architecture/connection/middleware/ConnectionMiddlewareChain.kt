@@ -3,9 +3,9 @@ package com.projectcitybuild.pcbridge.paper.architecture.connection.middleware
 import com.projectcitybuild.pcbridge.http.pcb.models.PlayerData
 import java.util.UUID
 
-class ConnectionMiddlewareChain {
-    private val middlewares = mutableSetOf<ConnectionMiddleware>()
-
+class ConnectionMiddlewareChain(
+    private val middlewares: MutableSet<ConnectionMiddleware> = mutableSetOf(),
+) {
     fun register(vararg middleware: ConnectionMiddleware) = middleware.forEach {
         middlewares.add(it)
     }
