@@ -4,13 +4,13 @@ import com.projectcitybuild.pcbridge.http.pcb.models.PlayerData
 import java.util.UUID
 
 class ConnectionMiddlewareChain(
-    private val middlewares: MutableSet<ConnectionMiddleware> = mutableSetOf(),
+    private val middlewares: MutableList<ConnectionMiddleware> = mutableListOf(),
 ) {
     fun register(vararg middleware: ConnectionMiddleware) = middleware.forEach {
         middlewares.add(it)
     }
 
-    suspend fun run(
+    suspend fun pipe(
         uuid: UUID,
         ip: java.net.InetAddress,
         playerData: PlayerData,

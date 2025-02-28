@@ -43,7 +43,7 @@ class AuthorizeConnectionListener(
                     uuid = event.uniqueId,
                     ip = event.address,
                 )
-                val result = middlewareChain.run(
+                val result = middlewareChain.pipe(
                     uuid = event.uniqueId,
                     ip = event.address,
                     playerData = playerData,

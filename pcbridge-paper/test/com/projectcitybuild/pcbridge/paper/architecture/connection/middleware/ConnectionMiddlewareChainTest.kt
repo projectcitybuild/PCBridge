@@ -50,7 +50,7 @@ class ConnectionMiddlewareChainTest {
                 secondDeny,
             )
         )
-        val result = chain.run(uuid, address, playerData)
+        val result = chain.pipe(uuid, address, playerData)
 
         assertTrue(result is ConnectionResult.Denied)
 
@@ -69,7 +69,7 @@ class ConnectionMiddlewareChainTest {
                 alwaysAllow(),
             )
         )
-        val result = chain.run(uuid, address, playerData)
+        val result = chain.pipe(uuid, address, playerData)
 
         assertTrue(result is ConnectionResult.Allowed)
     }
@@ -79,7 +79,7 @@ class ConnectionMiddlewareChainTest {
         val chain = ConnectionMiddlewareChain(
             middlewares = mutableSetOf()
         )
-        val result = chain.run(uuid, address, playerData)
+        val result = chain.pipe(uuid, address, playerData)
 
         assertTrue(result is ConnectionResult.Allowed)
     }
