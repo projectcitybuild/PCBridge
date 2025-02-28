@@ -1,6 +1,8 @@
 package com.projectcitybuild.pcbridge.paper
 
 import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
+import com.projectcitybuild.pcbridge.paper.architecture.chat.listeners.AsyncChatListener
+import com.projectcitybuild.pcbridge.paper.architecture.chat.middleware.ChatMiddlewareChain
 import com.projectcitybuild.pcbridge.paper.architecture.connection.listeners.AuthorizeConnectionListener
 import com.projectcitybuild.pcbridge.paper.architecture.connection.middleware.ConnectionMiddlewareChain
 import com.projectcitybuild.pcbridge.paper.core.libs.discord.DiscordSend
@@ -14,7 +16,6 @@ import com.projectcitybuild.pcbridge.paper.features.bans.listeners.BanWebhookLis
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.BuildCommand
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.BuildsCommand
 import com.projectcitybuild.pcbridge.paper.features.chat.listeners.ChatConfigListener
-import com.projectcitybuild.pcbridge.paper.features.chat.listeners.FormatNameChatListener
 import com.projectcitybuild.pcbridge.paper.features.chat.listeners.SyncPlayerChatListener
 import com.projectcitybuild.pcbridge.paper.features.groups.commands.SyncCommand
 import com.projectcitybuild.pcbridge.paper.features.building.commands.InvisFrameCommand
@@ -46,6 +47,10 @@ import com.projectcitybuild.pcbridge.paper.architecture.exceptions.listeners.Cor
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.register
 import com.projectcitybuild.pcbridge.paper.features.bans.commands.BanCommand
 import com.projectcitybuild.pcbridge.paper.features.bans.middleware.BanConnectionMiddleware
+import com.projectcitybuild.pcbridge.paper.features.chat.middleware.ChatBadgeMiddleware
+import com.projectcitybuild.pcbridge.paper.features.chat.middleware.ChatEmojiMiddleware
+import com.projectcitybuild.pcbridge.paper.features.chat.middleware.ChatGroupMiddleware
+import com.projectcitybuild.pcbridge.paper.features.chat.middleware.ChatUrlMiddleware
 import com.projectcitybuild.pcbridge.paper.features.config.listeners.ConfigWebhookListener
 import com.projectcitybuild.pcbridge.paper.features.groups.commands.SyncDebugCommand
 import com.projectcitybuild.pcbridge.paper.features.groups.listener.PlayerSyncWebhookListener
@@ -108,6 +113,12 @@ private class Lifecycle : KoinComponent {
             get<ConnectionMiddlewareChain>().register(
                 get<BanConnectionMiddleware>(),
             )
+            get<ChatMiddlewareChain>().register(
+                get<ChatEmojiMiddleware>(),
+                get<ChatUrlMiddleware>(),
+                get<ChatGroupMiddleware>(),
+                get<ChatBadgeMiddleware>(),
+            )
 
             get<JavaPlugin>()
                 .lifecycleManager
@@ -136,12 +147,12 @@ private class Lifecycle : KoinComponent {
                 get<AnnounceQuitListener>(),
                 get<AnnouncementConfigListener>(),
                 get<AnnouncementEnableListener>(),
+                get<AsyncChatListener>(),
                 get<AuthorizeConnectionListener>(),
                 get<ChatConfigListener>(),
                 get<ConfigWebhookListener>(),
                 get<CoroutineExceptionListener>(),
                 get<FirstTimeJoinListener>(),
-                get<FormatNameChatListener>(),
                 get<FramePlaceListener>(),
                 get<FrameItemInsertListener>(),
                 get<FrameItemRemoveListener>(),

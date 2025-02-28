@@ -43,14 +43,14 @@ class ConnectionMiddlewareChainTest {
         val secondDeny = alwaysDeny()
 
         val chain = ConnectionMiddlewareChain(
-            middlewares = mutableSetOf(
+            middlewares = mutableListOf(
                 firstAllow,
                 firstDeny,
                 secondAllow,
                 secondDeny,
             )
         )
-        val result = chain.run(uuid, address, playerData)
+        val result = chain.pipe(uuid, address, playerData)
 
         assertTrue(result is ConnectionResult.Denied)
 
@@ -63,13 +63,13 @@ class ConnectionMiddlewareChainTest {
     @Test
     fun `allows if no middleware denies`() = runTest {
         val chain = ConnectionMiddlewareChain(
-            middlewares = mutableSetOf(
+            middlewares = mutableListOf(
                 alwaysAllow(),
                 alwaysAllow(),
                 alwaysAllow(),
             )
         )
-        val result = chain.run(uuid, address, playerData)
+        val result = chain.pipe(uuid, address, playerData)
 
         assertTrue(result is ConnectionResult.Allowed)
     }
@@ -77,9 +77,9 @@ class ConnectionMiddlewareChainTest {
     @Test
     fun `allows if no middleware registered`() = runTest {
         val chain = ConnectionMiddlewareChain(
-            middlewares = mutableSetOf()
+            middlewares = mutableListOf()
         )
-        val result = chain.run(uuid, address, playerData)
+        val result = chain.pipe(uuid, address, playerData)
 
         assertTrue(result is ConnectionResult.Allowed)
     }

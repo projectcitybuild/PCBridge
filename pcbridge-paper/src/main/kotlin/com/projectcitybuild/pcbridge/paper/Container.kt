@@ -24,7 +24,6 @@ import com.projectcitybuild.pcbridge.paper.architecture.connection.repositories.
 import com.projectcitybuild.pcbridge.paper.features.chat.ChatBadgeFormatter
 import com.projectcitybuild.pcbridge.paper.features.chat.ChatGroupFormatter
 import com.projectcitybuild.pcbridge.paper.features.chat.listeners.ChatConfigListener
-import com.projectcitybuild.pcbridge.paper.features.chat.listeners.FormatNameChatListener
 import com.projectcitybuild.pcbridge.paper.features.chat.listeners.SyncPlayerChatListener
 import com.projectcitybuild.pcbridge.paper.features.chat.repositories.ChatBadgeRepository
 import com.projectcitybuild.pcbridge.paper.features.chat.repositories.ChatGroupRepository
@@ -51,6 +50,8 @@ import com.projectcitybuild.pcbridge.paper.features.warps.commands.WarpCommand
 import com.projectcitybuild.pcbridge.paper.features.warps.commands.WarpsCommand
 import com.projectcitybuild.pcbridge.paper.features.warps.repositories.WarpRepository
 import com.projectcitybuild.pcbridge.http.pcb.PCBHttp
+import com.projectcitybuild.pcbridge.paper.architecture.chat.listeners.AsyncChatListener
+import com.projectcitybuild.pcbridge.paper.architecture.chat.middleware.ChatMiddlewareChain
 import com.projectcitybuild.pcbridge.paper.architecture.connection.listeners.AuthorizeConnectionListener
 import com.projectcitybuild.pcbridge.paper.architecture.connection.middleware.ConnectionMiddlewareChain
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.BuildCommand
@@ -79,6 +80,10 @@ import com.projectcitybuild.pcbridge.paper.features.bans.middleware.BanConnectio
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildEditCommand
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildSetCommand
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildUnvoteCommand
+import com.projectcitybuild.pcbridge.paper.features.chat.middleware.ChatBadgeMiddleware
+import com.projectcitybuild.pcbridge.paper.features.chat.middleware.ChatEmojiMiddleware
+import com.projectcitybuild.pcbridge.paper.features.chat.middleware.ChatGroupMiddleware
+import com.projectcitybuild.pcbridge.paper.features.chat.middleware.ChatUrlMiddleware
 import com.projectcitybuild.pcbridge.paper.features.config.listeners.ConfigWebhookListener
 import com.projectcitybuild.pcbridge.paper.features.groups.commands.SyncDebugCommand
 import com.projectcitybuild.pcbridge.paper.features.groups.listener.PlayerSyncWebhookListener
@@ -548,6 +553,16 @@ private fun Module.architecture() {
             eventBroadcaster = get(),
         )
     }
+
+    single {
+        ChatMiddlewareChain()
+    }
+
+    factory {
+        AsyncChatListener(
+            middlewareChain = get(),
+        )
+    }
 }
 
 private fun Module.bans() {
@@ -640,13 +655,6 @@ private fun Module.chat() {
     }
 
     factory {
-        FormatNameChatListener(
-            chatBadgeRepository = get(),
-            chatGroupRepository = get(),
-        )
-    }
-
-    factory {
         SyncPlayerChatListener(
             chatGroupRepository = get(),
             chatBadgeRepository = get(),
@@ -656,6 +664,26 @@ private fun Module.chat() {
     factory {
         ChatConfigListener(
             chatGroupRepository = get(),
+            chatBadgeRepository = get(),
+        )
+    }
+
+    factory {
+        ChatEmojiMiddleware()
+    }
+
+    factory {
+        ChatUrlMiddleware()
+    }
+
+    factory {
+        ChatGroupMiddleware(
+            chatGroupRepository = get(),
+        )
+    }
+
+    factory {
+        ChatBadgeMiddleware(
             chatBadgeRepository = get(),
         )
     }
