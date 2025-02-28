@@ -1,10 +1,9 @@
-package com.projectcitybuild.pcbridge.paper.features.bans
+package com.projectcitybuild.pcbridge.paper.core.support.spigot.utilities
 
-import com.projectcitybuild.pcbridge.paper.features.bans.utilities.Sanitizer
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
-class SanitizerTest {
+class SpigotSanitizerTest {
     @Test
     fun `sanitize ip should strip slashes and ports`() {
         arrayOf(
@@ -12,7 +11,7 @@ class SanitizerTest {
             "/127.0.0.1",
             "/127.0.0.1:12345",
         ).forEach {
-            val sanitized = Sanitizer.sanitizedIP(it)
+            val sanitized = SpigotSanitizer.ipAddress(it)
             assertEquals("127.0.0.1", sanitized)
         }
     }

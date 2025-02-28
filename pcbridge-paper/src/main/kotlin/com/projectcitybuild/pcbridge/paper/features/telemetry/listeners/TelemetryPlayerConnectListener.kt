@@ -20,6 +20,7 @@ class TelemetryPlayerConnectListener(
         telemetryRepository.playerSeen(
             playerUUID = player.uniqueId,
             playerName = player.name,
+            ip = player.address?.address,
         )
     }
 }

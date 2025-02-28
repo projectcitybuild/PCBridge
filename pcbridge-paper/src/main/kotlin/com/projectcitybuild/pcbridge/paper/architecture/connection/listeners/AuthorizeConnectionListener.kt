@@ -1,12 +1,12 @@
-package com.projectcitybuild.pcbridge.paper.features.bans.listeners
+package com.projectcitybuild.pcbridge.paper.architecture.connection.listeners
 
+import com.projectcitybuild.pcbridge.paper.architecture.connection.events.ConnectionPermittedEvent
+import com.projectcitybuild.pcbridge.paper.architecture.connection.middleware.ConnectionMiddlewareChain
+import com.projectcitybuild.pcbridge.paper.architecture.connection.middleware.ConnectionResult
 import com.projectcitybuild.pcbridge.paper.core.libs.errors.SentryReporter
 import com.projectcitybuild.pcbridge.paper.core.libs.logger.log
-import com.projectcitybuild.pcbridge.paper.features.bans.actions.AuthorizeConnection
-import com.projectcitybuild.pcbridge.paper.features.bans.events.ConnectionPermittedEvent
-import com.projectcitybuild.pcbridge.paper.features.bans.repositories.PlayerRepository
-import com.projectcitybuild.pcbridge.paper.features.bans.utilities.toMiniMessage
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotEventBroadcaster
+import com.projectcitybuild.pcbridge.paper.architecture.connection.repositories.PlayerRepository
 import kotlinx.coroutines.runBlocking
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
@@ -14,8 +14,8 @@ import org.bukkit.event.Listener
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent
 
 class AuthorizeConnectionListener(
+    private val middlewareChain: ConnectionMiddlewareChain,
     private val playerRepository: PlayerRepository,
-    private val authorizeConnection: AuthorizeConnection,
     private val eventBroadcaster: SpigotEventBroadcaster,
     private val sentry: SentryReporter,
 ) : Listener {
@@ -40,19 +40,24 @@ class AuthorizeConnectionListener(
         runBlocking {
             runCatching {
                 val playerData = playerRepository.get(
-                    playerUUID = event.uniqueId,
+                    uuid = event.uniqueId,
                     ip = event.address,
                 )
-                when (val result = authorizeConnection.authorize(playerData)) {
-                    is AuthorizeConnection.ConnectResult.Denied -> event.disallow(
-                        AsyncPlayerPreLoginEvent.Result.KICK_BANNED,
-                        result.ban.toMessage(),
-                    )
-                    is AuthorizeConnection.ConnectResult.Allowed -> eventBroadcaster.broadcast(
+                val result = middlewareChain.run(
+                    uuid = event.uniqueId,
+                    ip = event.address,
+                    playerData = playerData,
+                )
+                when (result) {
+                    is ConnectionResult.Allowed -> eventBroadcaster.broadcast(
                         ConnectionPermittedEvent(
                             playerData = playerData,
                             playerUUID = event.uniqueId,
                         ),
+                    )
+                    is ConnectionResult.Denied -> event.disallow(
+                        AsyncPlayerPreLoginEvent.Result.KICK_BANNED,
+                        result.reason,
                     )
                 }
             }.onFailure {
@@ -61,16 +66,13 @@ class AuthorizeConnectionListener(
 
                 // If something goes wrong, permit the connection without player data
                 // so that their permissions are all stripped
-                ConnectionPermittedEvent(
-                    playerData = null,
-                    playerUUID = event.uniqueId,
+                eventBroadcaster.broadcast(
+                    ConnectionPermittedEvent(
+                        playerData = null,
+                        playerUUID = event.uniqueId,
+                    ),
                 )
             }
         }
     }
-}
-
-private fun AuthorizeConnection.Ban.toMessage() = when (this) {
-    is AuthorizeConnection.Ban.UUID -> value.toMiniMessage()
-    is AuthorizeConnection.Ban.IP -> value.toMiniMessage()
 }

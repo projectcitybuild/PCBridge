@@ -2,7 +2,7 @@ package com.projectcitybuild.pcbridge.paper.features.bans.listeners
 
 import com.projectcitybuild.pcbridge.paper.architecture.webhooks.events.WebhookReceivedEvent
 import com.projectcitybuild.pcbridge.paper.core.libs.logger.log
-import com.projectcitybuild.pcbridge.paper.features.bans.utilities.Sanitizer
+import com.projectcitybuild.pcbridge.paper.core.support.spigot.utilities.SpigotSanitizer
 import com.projectcitybuild.pcbridge.paper.features.bans.utilities.toMiniMessage
 import com.projectcitybuild.pcbridge.webserver.data.IPBanRequestedWebhook
 import com.projectcitybuild.pcbridge.webserver.data.UUIDBanRequestedWebhook
@@ -25,7 +25,7 @@ class BanWebhookListener(
 
         val ban = event.webhook.ban
         val matchingPlayer = server.onlinePlayers.firstOrNull {
-            Sanitizer.sanitizedIP(it.address?.address.toString()) == Sanitizer.sanitizedIP(ban.ipAddress)
+            SpigotSanitizer.ipAddress(it.address?.address.toString()) == SpigotSanitizer.ipAddress(ban.ipAddress)
         }
         if (matchingPlayer == null) {
             log.info { "Skipping ban fulfillment, ip address (${ban.ipAddress}) not found" }

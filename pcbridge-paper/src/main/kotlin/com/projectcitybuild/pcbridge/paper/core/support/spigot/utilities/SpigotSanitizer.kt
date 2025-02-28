@@ -1,6 +1,8 @@
-package com.projectcitybuild.pcbridge.paper.features.bans.utilities
+package com.projectcitybuild.pcbridge.paper.core.support.spigot.utilities
 
-class Sanitizer private constructor() {
+import java.net.InetAddress
+
+class SpigotSanitizer private constructor() {
     companion object {
         private val ipPortPattern = Regex("^.*:[0-9]+$")
 
@@ -10,7 +12,7 @@ class Sanitizer private constructor() {
          *
          * eg. /127.0.0.1:1234 becomes 127.0.0.1
          */
-        fun sanitizedIP(ip: String): String {
+        fun ipAddress(ip: String): String {
             var sanitized = ip.replace("/", "")
             if (sanitized.matches(ipPortPattern)) {
                 val colonIndex = sanitized.indexOf(":")
@@ -19,4 +21,8 @@ class Sanitizer private constructor() {
             return sanitized
         }
     }
+}
+
+fun InetAddress.sanitized(): String {
+    return SpigotSanitizer.ipAddress(toString())
 }

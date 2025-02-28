@@ -14,11 +14,13 @@ class TelemetryHttpService(
     suspend fun playerSeen(
         playerUUID: UUID,
         playerName: String,
+        ip: String?,
     ) = withContext(Dispatchers.IO) {
         responseParser.parse {
             retrofit.pcb().telemetrySeen(
                 playerUUID = playerUUID.toString(),
                 playerName = playerName,
+                ip = ip,
             )
         }
     }

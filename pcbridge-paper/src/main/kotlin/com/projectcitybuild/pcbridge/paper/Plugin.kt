@@ -1,6 +1,8 @@
 package com.projectcitybuild.pcbridge.paper
 
 import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
+import com.projectcitybuild.pcbridge.paper.architecture.connection.listeners.AuthorizeConnectionListener
+import com.projectcitybuild.pcbridge.paper.architecture.connection.middleware.ConnectionMiddlewareChain
 import com.projectcitybuild.pcbridge.paper.core.libs.discord.DiscordSend
 import com.projectcitybuild.pcbridge.paper.core.libs.errors.SentryReporter
 import com.projectcitybuild.pcbridge.paper.core.libs.errors.trace
@@ -8,7 +10,6 @@ import com.projectcitybuild.pcbridge.paper.features.config.commands.ConfigComman
 import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.RemoteConfig
 import com.projectcitybuild.pcbridge.paper.features.announcements.listeners.AnnouncementConfigListener
 import com.projectcitybuild.pcbridge.paper.features.announcements.listeners.AnnouncementEnableListener
-import com.projectcitybuild.pcbridge.paper.features.bans.listeners.AuthorizeConnectionListener
 import com.projectcitybuild.pcbridge.paper.features.bans.listeners.BanWebhookListener
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.BuildCommand
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.BuildsCommand
@@ -44,6 +45,7 @@ import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotTimer
 import com.projectcitybuild.pcbridge.paper.architecture.exceptions.listeners.CoroutineExceptionListener
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.register
 import com.projectcitybuild.pcbridge.paper.features.bans.commands.BanCommand
+import com.projectcitybuild.pcbridge.paper.features.bans.middleware.BanConnectionMiddleware
 import com.projectcitybuild.pcbridge.paper.features.config.listeners.ConfigWebhookListener
 import com.projectcitybuild.pcbridge.paper.features.groups.commands.SyncDebugCommand
 import com.projectcitybuild.pcbridge.paper.features.groups.listener.PlayerSyncWebhookListener
@@ -102,6 +104,10 @@ private class Lifecycle : KoinComponent {
             httpServer.start()
 
             remoteConfig.fetch()
+
+            get<ConnectionMiddlewareChain>().register(
+                get<BanConnectionMiddleware>(),
+            )
 
             get<JavaPlugin>()
                 .lifecycleManager
