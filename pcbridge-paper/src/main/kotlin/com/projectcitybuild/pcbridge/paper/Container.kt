@@ -90,8 +90,9 @@ import com.projectcitybuild.pcbridge.paper.features.groups.commands.SyncDebugCom
 import com.projectcitybuild.pcbridge.paper.features.groups.listener.PlayerSyncWebhookListener
 import com.projectcitybuild.pcbridge.paper.features.maintenance.commands.MaintenanceCommand
 import com.projectcitybuild.pcbridge.paper.features.maintenance.listener.MaintenanceReminderListener
-import com.projectcitybuild.pcbridge.paper.features.maintenance.listener.MotdListener
+import com.projectcitybuild.pcbridge.paper.features.maintenance.listener.MaintenanceMotdListener
 import com.projectcitybuild.pcbridge.paper.features.maintenance.middleware.MaintenanceConnectionMiddleware
+import com.projectcitybuild.pcbridge.paper.features.motd.listeners.MotdListener
 import com.projectcitybuild.pcbridge.paper.features.warnings.commands.WarnCommand
 import com.projectcitybuild.pcbridge.paper.features.warps.commands.warps.WarpCreateCommand
 import com.projectcitybuild.pcbridge.paper.features.warps.commands.warps.WarpDeleteCommand
@@ -134,6 +135,7 @@ fun pluginModule(_plugin: JavaPlugin) =
         joinMessages()
         invisFrames()
         maintenance()
+        motd()
         register()
         staffChat()
         telemetry()
@@ -712,7 +714,7 @@ private fun Module.maintenance() {
     }
 
     factory {
-        MotdListener(
+        MaintenanceMotdListener(
             store = get(),
         )
     }
@@ -731,6 +733,14 @@ private fun Module.maintenance() {
             server = get(),
             store = get(),
             eventBroadcaster = get(),
+        )
+    }
+}
+
+private fun Module.motd() {
+    factory {
+        MotdListener(
+            remoteConfig = get(),
         )
     }
 }

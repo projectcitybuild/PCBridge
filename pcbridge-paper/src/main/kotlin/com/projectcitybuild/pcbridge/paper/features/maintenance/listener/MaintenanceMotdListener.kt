@@ -6,7 +6,7 @@ import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 
-class MotdListener(
+class MaintenanceMotdListener(
     private val store: Store,
 ) : Listener {
     @EventHandler
