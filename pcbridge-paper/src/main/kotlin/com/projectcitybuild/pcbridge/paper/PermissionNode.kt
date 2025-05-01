@@ -37,6 +37,9 @@ enum class PermissionNode(val node: String) {
     // Can force reload the remote config
     REMOTE_CONFIG_RELOAD("pcbridge.config.reload"),
 
+    // Can teleport to a random location
+    TELEPORT_RANDOM("pcbridge.teleport.random"),
+
     // Can teleport to a warp
     WARP_TELEPORT("pcbridge.warp.teleport"),
 

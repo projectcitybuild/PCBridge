@@ -93,6 +93,7 @@ import com.projectcitybuild.pcbridge.paper.features.maintenance.listener.Mainten
 import com.projectcitybuild.pcbridge.paper.features.maintenance.listener.MaintenanceMotdListener
 import com.projectcitybuild.pcbridge.paper.features.maintenance.middleware.MaintenanceConnectionMiddleware
 import com.projectcitybuild.pcbridge.paper.features.motd.listeners.MotdListener
+import com.projectcitybuild.pcbridge.paper.features.teleport.commands.RtpCommand
 import com.projectcitybuild.pcbridge.paper.features.warnings.commands.WarnCommand
 import com.projectcitybuild.pcbridge.paper.features.warps.commands.warps.WarpCreateCommand
 import com.projectcitybuild.pcbridge.paper.features.warps.commands.warps.WarpDeleteCommand
@@ -139,6 +140,7 @@ fun pluginModule(_plugin: JavaPlugin) =
         register()
         staffChat()
         telemetry()
+        teleport()
         warps()
         watchdog()
         warnings()
@@ -770,6 +772,15 @@ private fun Module.telemetry() {
     factory {
         TelemetryPlayerConnectListener(
             telemetryRepository = get(),
+        )
+    }
+}
+
+private fun Module.teleport() {
+    factory {
+        RtpCommand(
+            plugin = get<JavaPlugin>(),
+            eventBroadcaster = get(),
         )
     }
 }

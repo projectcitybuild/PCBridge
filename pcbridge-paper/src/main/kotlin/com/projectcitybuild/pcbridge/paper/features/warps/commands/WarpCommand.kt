@@ -74,6 +74,8 @@ class WarpCommand(
             PlayerPreWarpEvent(player),
         )
 
+        world.getChunkAtAsyncUrgently(location).await()
+
         player.teleportAsync(
             location,
             PlayerTeleportEvent.TeleportCause.COMMAND,
