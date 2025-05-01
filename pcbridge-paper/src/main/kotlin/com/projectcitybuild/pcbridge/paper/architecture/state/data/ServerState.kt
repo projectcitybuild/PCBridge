@@ -31,7 +31,20 @@ data class ServerState(
      * which one was last broadcast when reloading
      */
     val lastBroadcastIndex: Int,
-)
+
+    /**
+     * Whether the server is in maintenance mode or not
+     */
+    val maintenance: Boolean,
+) {
+    companion object {
+        fun default() = ServerState(
+            players = mutableMapOf(),
+            lastBroadcastIndex = 0,
+            maintenance = false,
+        )
+    }
+}
 
 @Serializable
 data class PlayerState(

@@ -87,6 +87,9 @@ import com.projectcitybuild.pcbridge.paper.features.chat.middleware.ChatUrlMiddl
 import com.projectcitybuild.pcbridge.paper.features.config.listeners.ConfigWebhookListener
 import com.projectcitybuild.pcbridge.paper.features.groups.commands.SyncDebugCommand
 import com.projectcitybuild.pcbridge.paper.features.groups.listener.PlayerSyncWebhookListener
+import com.projectcitybuild.pcbridge.paper.features.maintenance.commands.MaintenanceCommand
+import com.projectcitybuild.pcbridge.paper.features.maintenance.listener.MotdListener
+import com.projectcitybuild.pcbridge.paper.features.maintenance.middleware.MaintenanceConnectionMiddleware
 import com.projectcitybuild.pcbridge.paper.features.warnings.commands.WarnCommand
 import com.projectcitybuild.pcbridge.paper.features.warps.commands.warps.WarpCreateCommand
 import com.projectcitybuild.pcbridge.paper.features.warps.commands.warps.WarpDeleteCommand
@@ -128,6 +131,7 @@ fun pluginModule(_plugin: JavaPlugin) =
         groups()
         joinMessages()
         invisFrames()
+        maintenance()
         register()
         staffChat()
         telemetry()
@@ -227,7 +231,9 @@ private fun Module.core() {
         )
     }
 
-    single { Store() }
+    single { Store(
+
+    ) }
 
     single {
         RemoteConfig(
@@ -685,6 +691,28 @@ private fun Module.chat() {
     factory {
         ChatBadgeMiddleware(
             chatBadgeRepository = get(),
+        )
+    }
+}
+
+private fun Module.maintenance() {
+    factory {
+        MaintenanceConnectionMiddleware(
+            store = get(),
+        )
+    }
+
+    factory {
+        MotdListener(
+            store = get(),
+        )
+    }
+
+    factory {
+        MaintenanceCommand(
+            plugin = get<JavaPlugin>(),
+            server = get(),
+            store = get(),
         )
     }
 }
