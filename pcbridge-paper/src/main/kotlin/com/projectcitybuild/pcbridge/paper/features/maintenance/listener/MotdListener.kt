@@ -10,7 +10,7 @@ class MotdListener(
     private val store: Store,
 ) : Listener {
     @EventHandler
-    fun onPing(event: PaperServerListPingEvent) {
+    fun onServerListPing(event: PaperServerListPingEvent) {
         val state = store.state
         if (state.maintenance) {
             event.motd(

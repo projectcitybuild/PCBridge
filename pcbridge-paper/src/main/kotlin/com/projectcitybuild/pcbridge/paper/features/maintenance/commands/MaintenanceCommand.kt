@@ -10,17 +10,19 @@ import com.projectcitybuild.pcbridge.paper.core.support.brigadier.arguments.OnOf
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceSuspending
+import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotEventBroadcaster
+import com.projectcitybuild.pcbridge.paper.features.maintenance.events.MaintenanceToggledEvent
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
 import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.Server
-import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
 
 class MaintenanceCommand(
     private val plugin: Plugin,
     private val server: Server,
     private val store: Store,
+    private val eventBroadcaster: SpigotEventBroadcaster,
 ): BrigadierCommand {
     override fun buildLiteral(): LiteralCommandNode<CommandSourceStack> {
         return Commands.literal("maintenance")
@@ -50,6 +52,9 @@ class MaintenanceCommand(
         store.mutate {
             store.state.copy(maintenance = desiredState)
         }
+        eventBroadcaster.broadcast(
+            MaintenanceToggledEvent(enabled = desiredState)
+        )
         server.broadcast(
             miniMessage.deserialize("<yellow>Maintenance mode is now ${desiredState.onOff().uppercase()}</yellow>")
         )

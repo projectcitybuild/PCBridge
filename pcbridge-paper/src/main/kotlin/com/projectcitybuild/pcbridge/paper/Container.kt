@@ -73,7 +73,6 @@ import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotNamespace
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotTimer
 import com.projectcitybuild.pcbridge.paper.architecture.exceptions.listeners.CoroutineExceptionListener
 import com.projectcitybuild.pcbridge.paper.architecture.state.data.PersistedServerState
-import com.projectcitybuild.pcbridge.paper.architecture.state.data.ServerState
 import com.projectcitybuild.pcbridge.paper.architecture.webhooks.WebServerDelegate
 import com.projectcitybuild.pcbridge.paper.core.libs.discord.DiscordSend
 import com.projectcitybuild.pcbridge.paper.core.libs.pcbmanage.ManageUrlGenerator
@@ -90,6 +89,7 @@ import com.projectcitybuild.pcbridge.paper.features.config.listeners.ConfigWebho
 import com.projectcitybuild.pcbridge.paper.features.groups.commands.SyncDebugCommand
 import com.projectcitybuild.pcbridge.paper.features.groups.listener.PlayerSyncWebhookListener
 import com.projectcitybuild.pcbridge.paper.features.maintenance.commands.MaintenanceCommand
+import com.projectcitybuild.pcbridge.paper.features.maintenance.listener.MaintenanceReminderListener
 import com.projectcitybuild.pcbridge.paper.features.maintenance.listener.MotdListener
 import com.projectcitybuild.pcbridge.paper.features.maintenance.middleware.MaintenanceConnectionMiddleware
 import com.projectcitybuild.pcbridge.paper.features.warnings.commands.WarnCommand
@@ -718,10 +718,19 @@ private fun Module.maintenance() {
     }
 
     factory {
+        MaintenanceReminderListener(
+            store = get(),
+            server = get(),
+            timer = get(),
+        )
+    }
+
+    factory {
         MaintenanceCommand(
             plugin = get<JavaPlugin>(),
             server = get(),
             store = get(),
+            eventBroadcaster = get(),
         )
     }
 }

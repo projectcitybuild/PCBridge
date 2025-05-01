@@ -18,8 +18,7 @@ class MaintenanceConnectionMiddleware(
     ): ConnectionResult {
         if (!store.state.maintenance) return ConnectionResult.Allowed
 
-        val isStaff = playerData.groups.firstOrNull { it.groupType?.lowercase() == "staff" } != null
-        if (isStaff) {
+        if (playerData.isStaff) {
             return ConnectionResult.Allowed
         }
         val message = "<bold>Server Maintenance</bold><newline><newline><gray>Please try again later</gray>"
