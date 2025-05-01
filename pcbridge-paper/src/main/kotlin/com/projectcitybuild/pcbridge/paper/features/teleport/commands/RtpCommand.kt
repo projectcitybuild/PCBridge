@@ -75,6 +75,9 @@ class RtpCommand(
         val bounds = world.worldBorder
         val center = bounds.center
         val size = bounds.size
+
+        // If a WorldBorder is not set, the API still returns an enormous bounds
+        // (60 mil in both axis) so we need to always clamp this
         val xRange = (center.x - size).coerceAtLeast(-15_000.0).toInt()..
             (center.x + size).coerceAtMost(15_000.0).toInt()
         val zRange = (center.z - size).coerceAtLeast(-15_000.0).toInt()..
