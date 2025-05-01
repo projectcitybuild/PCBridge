@@ -22,6 +22,9 @@ enum class PermissionNode(val node: String) {
     // Can get an invisible item frame via a command
     BUILDING_INVIS_FRAME("pcbridge.build.invisframe"),
 
+    // Can toggle maintenance mode on or off
+    MAINTENANCE_MANAGE("pcbridge.maintenance.manage"),
+
     // Can send and receive staff messages
     STAFF_CHANNEL("pcbridge.chat.staff_channel"),
 

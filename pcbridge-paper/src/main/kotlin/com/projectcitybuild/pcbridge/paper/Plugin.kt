@@ -44,6 +44,7 @@ import com.projectcitybuild.pcbridge.paper.integrations.LuckPermsIntegration
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotListenerRegistry
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotTimer
 import com.projectcitybuild.pcbridge.paper.architecture.exceptions.listeners.CoroutineExceptionListener
+import com.projectcitybuild.pcbridge.paper.architecture.state.Store
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.register
 import com.projectcitybuild.pcbridge.paper.features.bans.commands.BanCommand
 import com.projectcitybuild.pcbridge.paper.features.bans.middleware.BanConnectionMiddleware
@@ -54,6 +55,10 @@ import com.projectcitybuild.pcbridge.paper.features.chat.middleware.ChatUrlMiddl
 import com.projectcitybuild.pcbridge.paper.features.config.listeners.ConfigWebhookListener
 import com.projectcitybuild.pcbridge.paper.features.groups.commands.SyncDebugCommand
 import com.projectcitybuild.pcbridge.paper.features.groups.listener.PlayerSyncWebhookListener
+import com.projectcitybuild.pcbridge.paper.features.maintenance.commands.MaintenanceCommand
+import com.projectcitybuild.pcbridge.paper.features.maintenance.listener.MaintenanceReminderListener
+import com.projectcitybuild.pcbridge.paper.features.maintenance.listener.MotdListener
+import com.projectcitybuild.pcbridge.paper.features.maintenance.middleware.MaintenanceConnectionMiddleware
 import com.projectcitybuild.pcbridge.paper.features.warnings.commands.WarnCommand
 import com.projectcitybuild.pcbridge.paper.features.warps.listeners.WarpWebhookListener
 import com.projectcitybuild.pcbridge.webserver.HttpServer
@@ -103,15 +108,17 @@ private class Lifecycle : KoinComponent {
     private val listenerRegistry: SpigotListenerRegistry by inject()
     private val httpServer: HttpServer by inject()
     private val remoteConfig: RemoteConfig by inject()
+    private val store: Store by inject()
 
     suspend fun boot() =
         sentry.trace {
             httpServer.start()
-
             remoteConfig.fetch()
+            store.hydrate()
 
             get<ConnectionMiddlewareChain>().register(
                 get<BanConnectionMiddleware>(),
+                get<MaintenanceConnectionMiddleware>(),
             )
             get<ChatMiddlewareChain>().register(
                 get<ChatEmojiMiddleware>(),
@@ -131,6 +138,7 @@ private class Lifecycle : KoinComponent {
                         get<ConfigCommand>(),
                         get<InvisFrameCommand>(),
                         get<ItemNameCommand>(),
+                        get<MaintenanceCommand>(),
                         get<NightVisionCommand>(),
                         get<RegisterCommand>(),
                         get<StaffChatCommand>(),
@@ -157,6 +165,8 @@ private class Lifecycle : KoinComponent {
                 get<FrameItemInsertListener>(),
                 get<FrameItemRemoveListener>(),
                 get<BanWebhookListener>(),
+                get<MaintenanceReminderListener>(),
+                get<MotdListener>(),
                 get<PlayerStateListener>(),
                 get<PlayerSyncRequestListener>(),
                 get<PlayerSyncWebhookListener>(),
@@ -178,6 +188,7 @@ private class Lifecycle : KoinComponent {
     suspend fun shutdown() =
         sentry.trace {
             httpServer.stop()
+            store.persist()
 
             get<SpigotTimer>().cancelAll()
 
