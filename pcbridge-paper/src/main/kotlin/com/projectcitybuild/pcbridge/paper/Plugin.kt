@@ -57,8 +57,9 @@ import com.projectcitybuild.pcbridge.paper.features.groups.commands.SyncDebugCom
 import com.projectcitybuild.pcbridge.paper.features.groups.listener.PlayerSyncWebhookListener
 import com.projectcitybuild.pcbridge.paper.features.maintenance.commands.MaintenanceCommand
 import com.projectcitybuild.pcbridge.paper.features.maintenance.listener.MaintenanceReminderListener
-import com.projectcitybuild.pcbridge.paper.features.maintenance.listener.MotdListener
+import com.projectcitybuild.pcbridge.paper.features.maintenance.listener.MaintenanceMotdListener
 import com.projectcitybuild.pcbridge.paper.features.maintenance.middleware.MaintenanceConnectionMiddleware
+import com.projectcitybuild.pcbridge.paper.features.motd.listeners.MotdListener
 import com.projectcitybuild.pcbridge.paper.features.warnings.commands.WarnCommand
 import com.projectcitybuild.pcbridge.paper.features.warps.listeners.WarpWebhookListener
 import com.projectcitybuild.pcbridge.webserver.HttpServer
@@ -166,6 +167,7 @@ private class Lifecycle : KoinComponent {
                 get<FrameItemRemoveListener>(),
                 get<BanWebhookListener>(),
                 get<MaintenanceReminderListener>(),
+                get<MaintenanceMotdListener>(),
                 get<MotdListener>(),
                 get<PlayerStateListener>(),
                 get<PlayerSyncRequestListener>(),

@@ -16,6 +16,7 @@ data class RemoteConfigKeyValues(
     val integrations: Integrations = Integrations(),
     val announcements: Announcements = Announcements(),
     val messages: Messages = Messages(),
+    val motd: String = "",
 ) {
     @Serializable
     data class Localization(
