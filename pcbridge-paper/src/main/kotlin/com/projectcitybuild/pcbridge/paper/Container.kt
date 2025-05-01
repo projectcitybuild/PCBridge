@@ -72,6 +72,8 @@ import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotListenerReg
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotNamespace
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotTimer
 import com.projectcitybuild.pcbridge.paper.architecture.exceptions.listeners.CoroutineExceptionListener
+import com.projectcitybuild.pcbridge.paper.architecture.state.data.PersistedServerState
+import com.projectcitybuild.pcbridge.paper.architecture.state.data.ServerState
 import com.projectcitybuild.pcbridge.paper.architecture.webhooks.WebServerDelegate
 import com.projectcitybuild.pcbridge.paper.core.libs.discord.DiscordSend
 import com.projectcitybuild.pcbridge.paper.core.libs.pcbmanage.ManageUrlGenerator
@@ -231,9 +233,16 @@ private fun Module.core() {
         )
     }
 
-    single { Store(
-
-    ) }
+    single {
+        Store(
+            jsonStorage = JsonStorage(
+                file = get<JavaPlugin>()
+                    .dataFolder
+                    .resolve("cache/server_state.json"),
+                typeToken = object : TypeToken<PersistedServerState>() {},
+            ),
+        )
+    }
 
     single {
         RemoteConfig(

@@ -36,7 +36,6 @@ class MaintenanceCommand(
     private suspend fun toggle(context: CommandContext<CommandSourceStack>) = context.traceSuspending {
         val miniMessage = MiniMessage.miniMessage()
         val sender = context.source.sender
-        check(sender is Player) { "Only players can use this command" }
 
         val desiredState = context.getArgument("enabled", Boolean::class.java)
         val currentState = store.state.maintenance
