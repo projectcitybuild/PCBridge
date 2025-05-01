@@ -60,6 +60,7 @@ import com.projectcitybuild.pcbridge.paper.features.maintenance.listener.Mainten
 import com.projectcitybuild.pcbridge.paper.features.maintenance.listener.MaintenanceMotdListener
 import com.projectcitybuild.pcbridge.paper.features.maintenance.middleware.MaintenanceConnectionMiddleware
 import com.projectcitybuild.pcbridge.paper.features.motd.listeners.MotdListener
+import com.projectcitybuild.pcbridge.paper.features.teleport.commands.RtpCommand
 import com.projectcitybuild.pcbridge.paper.features.warnings.commands.WarnCommand
 import com.projectcitybuild.pcbridge.paper.features.warps.listeners.WarpWebhookListener
 import com.projectcitybuild.pcbridge.webserver.HttpServer
@@ -142,6 +143,7 @@ private class Lifecycle : KoinComponent {
                         get<MaintenanceCommand>(),
                         get<NightVisionCommand>(),
                         get<RegisterCommand>(),
+                        get<RtpCommand>(),
                         get<StaffChatCommand>(),
                         get<SyncCommand>(),
                         get<SyncDebugCommand>(),
