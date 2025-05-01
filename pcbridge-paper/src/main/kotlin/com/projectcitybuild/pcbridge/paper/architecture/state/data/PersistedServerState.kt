@@ -4,7 +4,7 @@ data class PersistedServerState(
     val lastBroadcastIndex: Int,
     val maintenance: Boolean,
 ) {
-    fun toServerState() = ServerState.default().copy(
+    fun toServerState() = ServerState(
         lastBroadcastIndex = lastBroadcastIndex,
         maintenance = maintenance,
     )

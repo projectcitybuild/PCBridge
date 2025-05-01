@@ -18,7 +18,7 @@ class Store(
     val state: ServerState
         get() = _state
 
-    private var _state = ServerState.default()
+    private var _state = ServerState()
 
     /**
      * Restores the state from storage
