@@ -16,14 +16,9 @@ import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.World
-import org.bukkit.WorldBorder
-import org.bukkit.block.Block
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerTeleportEvent
 import org.bukkit.plugin.Plugin
-import java.lang.Double.min
-import kotlin.math.max
-import kotlin.random.Random
 
 class RtpCommand(
     private val plugin: Plugin,
