@@ -1,6 +1,6 @@
 package com.projectcitybuild.pcbridge.paper.architecture.chat.listeners
 
-import com.projectcitybuild.pcbridge.paper.architecture.chat.middleware.Chat
+import com.projectcitybuild.pcbridge.paper.architecture.chat.middleware.ChatMessage
 import com.projectcitybuild.pcbridge.paper.architecture.chat.middleware.ChatMiddlewareChain
 import io.papermc.paper.chat.ChatRenderer
 import io.papermc.paper.event.player.AsyncChatEvent
@@ -11,6 +11,14 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 
+/**
+ * Only one event listener per plugin can be the designated
+ * [ChatRenderer] delegate.
+ *
+ * Therefore, we'll funnel everything through this listener,
+ * but let every feature module have a say by enabling them to
+ * register a [ChatMiddleware] that's called as part of a chain
+ */
 class AsyncChatListener(
     private val middlewareChain: ChatMiddlewareChain,
 ) : Listener, ChatRenderer.ViewerUnaware {
@@ -27,14 +35,14 @@ class AsyncChatListener(
         message: Component,
     ): Component =
         runBlocking {
-            val chat = middlewareChain.pipe(
-                Chat(source, sourceDisplayName, message)
+            val chatMessage = middlewareChain.pipe(
+                ChatMessage(source, sourceDisplayName, message)
             )
             Component.text().run {
                 append(
-                    chat.sourceDisplayName,
+                    chatMessage.sourceDisplayName,
                     Component.text(": "),
-                    chat.message,
+                    chatMessage.message,
                 )
                 build()
             }

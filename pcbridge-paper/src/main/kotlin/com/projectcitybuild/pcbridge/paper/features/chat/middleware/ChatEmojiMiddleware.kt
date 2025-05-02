@@ -1,13 +1,13 @@
 package com.projectcitybuild.pcbridge.paper.features.chat.middleware
 
-import com.projectcitybuild.pcbridge.paper.architecture.chat.middleware.Chat
+import com.projectcitybuild.pcbridge.paper.architecture.chat.middleware.ChatMessage
 import com.projectcitybuild.pcbridge.paper.architecture.chat.middleware.ChatMiddleware
 import net.kyori.adventure.text.Component
 
 class ChatEmojiMiddleware : ChatMiddleware {
-    override suspend fun handle(chat: Chat): Chat {
-        return chat.copy(
-            message = chat.message.replaceText { builder ->
+    override suspend fun handle(chatMessage: ChatMessage): ChatMessage {
+        return chatMessage.copy(
+            message = chatMessage.message.replaceText { builder ->
                 builder.match(pattern).replacement { match, _ ->
                     val replaced = emojis[match.group().lowercase()] ?: match.group()
                     Component.text(replaced)
