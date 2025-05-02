@@ -18,12 +18,12 @@ abstract class SpigotIntegration(
         runCatching {
             val integratedPlugin = pluginManager.getPlugin(pluginName)
             if (integratedPlugin == null) {
-                log.warn { "Cannot find dynmap plugin. Disabling marker integration" }
+                log.warn { "Cannot find $pluginName plugin. Disabling integration" }
                 return@runCatching
             }
             onEnable(integratedPlugin)
         }.onFailure {
-            log.error { "Failed to enable Dynmap integration: ${it.localizedMessage}" }
+            log.error { "Failed to enable $pluginName integration: ${it.localizedMessage}" }
             sentry.report(it)
         }
 

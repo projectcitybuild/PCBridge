@@ -3,6 +3,7 @@ package com.projectcitybuild.pcbridge.paper.features.tab.listeners
 import com.projectcitybuild.pcbridge.paper.architecture.state.Store
 import com.projectcitybuild.pcbridge.paper.architecture.state.data.PlayerState
 import com.projectcitybuild.pcbridge.paper.architecture.state.events.PlayerStateUpdatedEvent
+import com.projectcitybuild.pcbridge.paper.core.libs.roles.RolesFilter
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextDecoration
@@ -19,6 +20,7 @@ import java.util.UUID
 class TabNameListener(
     private val server: Server,
     private val store: Store,
+    private val rolesFilter: RolesFilter,
 ) : Listener {
     @EventHandler
     fun onPlayerStateUpdated(event: PlayerStateUpdatedEvent) {
@@ -74,6 +76,8 @@ class TabNameListener(
     private fun updateTabListForPlayer(player: Player) {
         val playerState = store.state.players[player.uniqueId]
 
+        val roles = rolesFilter.filter(playerState?.groups?.toSet() ?: emptySet())
+
         val miniMessage = MiniMessage.miniMessage()
         val header = miniMessage.deserialize(
             header(
@@ -81,7 +85,7 @@ class TabNameListener(
                     worldName = player.location.world.name,
                     onlinePlayers = server.onlinePlayers.size,
                     maxPlayers = server.maxPlayers,
-                    groups = playerState?.groups?.mapNotNull { it.minecraftName },
+                    roles = roles.values.mapNotNull { it.minecraftName },
                 )
             )
         )
@@ -93,9 +97,9 @@ class TabNameListener(
     }
 
     private fun header(header: TabHeader): String {
-        val groups = if (header.groups == null) "Unknown"
-            else if (header.groups.isEmpty()) "Guest"
-            else header.groups.joinToString(separator = ", ")
+        val groups = if (header.roles == null) "Unknown"
+            else if (header.roles.isEmpty()) "Guest"
+            else header.roles.joinToString(separator = ", ")
 
         return listOf(
             "<gradient:dark_aqua:green>────────────>>> <bold><white>Project</white> <gold>City</gold> <blue>Build</blue></bold> <<<────────────</gradient>",
@@ -124,5 +128,5 @@ data class TabHeader(
     val worldName: String,
     val onlinePlayers: Int,
     val maxPlayers: Int,
-    val groups: List<String>?,
+    val roles: List<String>?,
 )

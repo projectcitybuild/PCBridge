@@ -1,32 +1,25 @@
 package com.projectcitybuild.pcbridge.paper.features.chat
 
 import com.projectcitybuild.pcbridge.http.pcb.models.Group
+import com.projectcitybuild.pcbridge.paper.core.libs.roles.RoleType
+import com.projectcitybuild.pcbridge.paper.core.libs.roles.RolesFilter
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.minimessage.MiniMessage
 
-class ChatGroupFormatter {
+class ChatGroupFormatter(
+    private val rolesFilter: RolesFilter,
+) {
     fun format(groups: Set<Group>): Component? {
-        if (groups.isEmpty()) {
+        val roles = rolesFilter.filter(groups)
+        if (roles.isEmpty()) {
             return null
         }
-        val mapping = mutableMapOf<String, Group>()
-        for (group in groups) {
-            val groupType = group.groupType
-            val displayPriority = group.displayPriority
-
-            if (groupType == null || displayPriority == null) continue;
-
-            val existing = mapping[groupType]
-            if (existing == null || existing.displayPriority!! < displayPriority) {
-                mapping[groupType] = group
-            }
-        }
         return Component.text().run {
-            mapping["donor"]?.let { append(it::component) }
-            mapping["staff"]?.let { append(it::component) }
-            mapping["trust"]?.let { append(it::component) }
-            mapping["build"]?.let { append(it::component) }
+            roles[RoleType.DONOR]?.let { append(it::component) }
+            roles[RoleType.STAFF]?.let { append(it::component) }
+            roles[RoleType.TRUST]?.let { append(it::component) }
+            roles[RoleType.BUILD]?.let { append(it::component) }
             build()
         }
     }
