@@ -3,8 +3,9 @@ package com.projectcitybuild.pcbridge.paper.features.tab.listeners
 import com.projectcitybuild.pcbridge.paper.architecture.state.Store
 import com.projectcitybuild.pcbridge.paper.architecture.state.data.PlayerState
 import com.projectcitybuild.pcbridge.paper.architecture.state.events.PlayerStateUpdatedEvent
-import com.projectcitybuild.pcbridge.paper.core.libs.logger.log
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.NamedTextColor
+import net.kyori.adventure.text.format.TextDecoration
 import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.Server
 import org.bukkit.entity.Player
@@ -21,8 +22,6 @@ class TabNameListener(
 ) : Listener {
     @EventHandler
     fun onPlayerStateUpdated(event: PlayerStateUpdatedEvent) {
-        log.info { "test" }
-
         updatePlayerName(
             uuid = event.playerUUID,
             playerState = event.state,
@@ -56,15 +55,15 @@ class TabNameListener(
     }
 
     private fun updatePlayerName(uuid: UUID, playerState: PlayerState) {
-        log.info { "Updating tab name for player $uuid" }
         val player = server.getPlayer(uuid) ?: return
         var name = player.displayName()
 
         if (playerState.afk) {
-            name = Component.text("[AFK]").append(name)
+            name = Component.text("⌚ ")
+                .color(NamedTextColor.GRAY)
+                .decorate(TextDecoration.BOLD)
+                .append(name.decorate(TextDecoration.ITALIC))
         }
-        log.info { "AFK: ${playerState.afk}" }
-        log.info { "Name: $name" }
         player.playerListName(name)
     }
 
@@ -73,6 +72,8 @@ class TabNameListener(
     }
 
     private fun updateTabListForPlayer(player: Player) {
+        val playerState = store.state.players[player.uniqueId]
+
         val miniMessage = MiniMessage.miniMessage()
         val header = miniMessage.deserialize(
             header(
@@ -80,30 +81,42 @@ class TabNameListener(
                     worldName = player.location.world.name,
                     onlinePlayers = server.onlinePlayers.size,
                     maxPlayers = server.maxPlayers,
+                    groups = playerState?.groups?.mapNotNull { it.minecraftName },
                 )
             )
         )
-        val footer = miniMessage.deserialize(footer(player))
+        val footer = miniMessage.deserialize(
+            footer(playerState)
+        )
 
         player.sendPlayerListHeaderAndFooter(header, footer)
     }
 
     private fun header(header: TabHeader): String {
+        val groups = if (header.groups == null) "Unknown"
+            else if (header.groups.isEmpty()) "Guest"
+            else header.groups.joinToString(separator = ", ")
+
         return listOf(
-            "<gradient:dark_aqua:green>────────────>>> <bold><white>Project</white> <yellow>City</yellow> <blue>Build</blue></bold> <<<────────────</gradient>",
-            "<gray>projectcitybuild.com</gray>",
+            "<gradient:dark_aqua:green>────────────>>> <bold><white>Project</white> <gold>City</gold> <blue>Build</blue></bold> <<<────────────</gradient>",
             "<gray>World:</gray> <aqua>${header.worldName}</aqua>",
             "<gray>Online:</gray> <aqua>${header.onlinePlayers}/${header.maxPlayers}</aqua>",
+            groups,
             "",
         ).joinToString(separator = "<newline>")
     }
 
-    private fun footer(player: Player): String {
-        return listOf(
+    private fun footer(playerState: PlayerState?): String {
+        val result = mutableListOf(
             "",
-            "<gray>Rank up to Member with <red><bold>/register</bold></red></gray>",
-            "<gradient:dark_aqua:green>───────────────────────────────────────</gradient>",
-        ).joinToString(separator = "<newline>")
+            "<gray>Join us on <bold>/discord</bold></gray>",
+            "<gray>projectcitybuild.com</gray>",
+            "<gradient:dark_aqua:green>────────────────────────────────────────</gradient>",
+        )
+        if (playerState == null || playerState.groups.isEmpty()) {
+            result.add(1, "<gray>Rank up to Member with </gray><bold><red>/register</red></bold>")
+        }
+        return result.joinToString(separator = "<newline>")
     }
 }
 
@@ -111,4 +124,5 @@ data class TabHeader(
     val worldName: String,
     val onlinePlayers: Int,
     val maxPlayers: Int,
+    val groups: List<String>?,
 )
