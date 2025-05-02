@@ -46,6 +46,7 @@ data class PlayerState(
     val player: Player? = null,
     val groups: List<Group> = emptyList(),
     val badges: List<Badge> = emptyList(),
+    val afk: Boolean = false,
 ) {
     companion object {
         fun fromPlayerData(data: PlayerData, connectedAt: LocalDateTime) = PlayerState(

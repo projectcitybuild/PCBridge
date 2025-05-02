@@ -93,6 +93,7 @@ import com.projectcitybuild.pcbridge.paper.features.maintenance.listener.Mainten
 import com.projectcitybuild.pcbridge.paper.features.maintenance.listener.MaintenanceMotdListener
 import com.projectcitybuild.pcbridge.paper.features.maintenance.middleware.MaintenanceConnectionMiddleware
 import com.projectcitybuild.pcbridge.paper.features.motd.listeners.MotdListener
+import com.projectcitybuild.pcbridge.paper.features.tab.listeners.TabNameListener
 import com.projectcitybuild.pcbridge.paper.features.teleport.commands.RtpCommand
 import com.projectcitybuild.pcbridge.paper.features.warnings.commands.WarnCommand
 import com.projectcitybuild.pcbridge.paper.features.warps.commands.warps.WarpCreateCommand
@@ -139,6 +140,7 @@ fun pluginModule(_plugin: JavaPlugin) =
         motd()
         register()
         staffChat()
+        tab()
         telemetry()
         teleport()
         warps()
@@ -320,6 +322,8 @@ private fun Module.integrations() {
         EssentialsIntegration(
             plugin = get(),
             sentry = get(),
+            store = get(),
+            eventBroadcaster = get(),
         )
     }
 
@@ -758,6 +762,15 @@ private fun Module.register() {
         CodeCommand(
             plugin = get<JavaPlugin>(),
             registerHttpService = get<PCBHttp>().register,
+        )
+    }
+}
+
+private fun Module.tab() {
+    factory {
+        TabNameListener(
+            server = get(),
+            store = get(),
         )
     }
 }
