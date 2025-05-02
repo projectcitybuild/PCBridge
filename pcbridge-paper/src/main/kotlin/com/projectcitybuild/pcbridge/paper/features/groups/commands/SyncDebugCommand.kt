@@ -37,7 +37,7 @@ class SyncDebugCommand(
         val groups = groupsArg.split(" ").toSet()
         check(groups.isNotEmpty()) { "No groups specified" }
 
-        permissions.setUserGroups(sender.uniqueId, groups)
+        permissions.provider.setUserRoles(sender.uniqueId, groups)
 
         sender.sendMessage(
             MiniMessage.miniMessage().deserialize(

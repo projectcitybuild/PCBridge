@@ -8,8 +8,6 @@ import com.projectcitybuild.pcbridge.paper.core.libs.localconfig.JsonStorage
 import com.projectcitybuild.pcbridge.paper.core.libs.datetime.services.DateTimeFormatter
 import com.projectcitybuild.pcbridge.paper.core.libs.datetime.services.LocalizedTime
 import com.projectcitybuild.pcbridge.paper.core.libs.errors.SentryReporter
-import com.projectcitybuild.pcbridge.paper.core.libs.permissions.Permissions
-import com.projectcitybuild.pcbridge.paper.core.libs.permissions.adapters.LuckPermsPermissions
 import com.projectcitybuild.pcbridge.paper.features.config.commands.ConfigCommand
 import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.RemoteConfig
 import com.projectcitybuild.pcbridge.paper.architecture.state.Store
@@ -64,9 +62,9 @@ import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.Build
 import com.projectcitybuild.pcbridge.paper.features.builds.repositories.BuildRepository
 import com.projectcitybuild.pcbridge.paper.features.watchdog.listeners.ItemTextListener
 import com.projectcitybuild.pcbridge.paper.features.building.commands.ItemNameCommand
-import com.projectcitybuild.pcbridge.paper.integrations.DynmapIntegration
-import com.projectcitybuild.pcbridge.paper.integrations.EssentialsIntegration
-import com.projectcitybuild.pcbridge.paper.integrations.LuckPermsIntegration
+import com.projectcitybuild.pcbridge.paper.integrations.dynmap.DynmapIntegration
+import com.projectcitybuild.pcbridge.paper.integrations.essentials.EssentialsIntegration
+import com.projectcitybuild.pcbridge.paper.integrations.luckperms.LuckPermsIntegration
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotEventBroadcaster
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotListenerRegistry
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotNamespace
@@ -76,6 +74,8 @@ import com.projectcitybuild.pcbridge.paper.architecture.state.data.PersistedServ
 import com.projectcitybuild.pcbridge.paper.architecture.webhooks.WebServerDelegate
 import com.projectcitybuild.pcbridge.paper.core.libs.discord.DiscordSend
 import com.projectcitybuild.pcbridge.paper.core.libs.pcbmanage.ManageUrlGenerator
+import com.projectcitybuild.pcbridge.paper.core.libs.permissions.Permissions
+import com.projectcitybuild.pcbridge.paper.core.libs.roles.RolesFilter
 import com.projectcitybuild.pcbridge.paper.features.bans.commands.BanCommand
 import com.projectcitybuild.pcbridge.paper.features.bans.middleware.BanConnectionMiddleware
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildEditCommand
@@ -172,7 +172,7 @@ private fun Module.spigot(plugin: JavaPlugin) {
     }
 
     single<Permissions> {
-        LuckPermsPermissions()
+        Permissions()
     }
 
     factory {
@@ -271,6 +271,10 @@ private fun Module.core() {
             localConfig = get(),
         )
     }
+
+    single {
+        Permissions()
+    }
 }
 
 private fun Module.webServer() {
@@ -328,7 +332,9 @@ private fun Module.integrations() {
     }
 
     single {
-        LuckPermsIntegration()
+        LuckPermsIntegration(
+            permissions = get(),
+        )
     }
 }
 
@@ -674,7 +680,9 @@ private fun Module.chat() {
     }
 
     single {
-        ChatGroupFormatter()
+        ChatGroupFormatter(
+            rolesFilter = RolesFilter(),
+        )
     }
 
     factory {
@@ -771,6 +779,7 @@ private fun Module.tab() {
         TabNameListener(
             server = get(),
             store = get(),
+            rolesFilter = RolesFilter(),
         )
     }
 }

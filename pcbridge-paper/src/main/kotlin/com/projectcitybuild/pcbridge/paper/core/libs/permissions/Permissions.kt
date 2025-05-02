@@ -1,12 +1,12 @@
 package com.projectcitybuild.pcbridge.paper.core.libs.permissions
 
-import java.util.UUID
+class Permissions {
+    private var permissionsProvider: PermissionsProvider = BasicPermissionsProvider()
 
-interface Permissions {
-    fun setUserGroups(
-        playerUUID: UUID,
-        groupNames: Set<String>,
-    )
+    val provider: PermissionsProvider
+        get() = permissionsProvider
 
-    fun getUserGroups(playerUUID: UUID): Set<String>
+    fun setProvider(provider: PermissionsProvider?) {
+        permissionsProvider = provider ?: BasicPermissionsProvider()
+    }
 }

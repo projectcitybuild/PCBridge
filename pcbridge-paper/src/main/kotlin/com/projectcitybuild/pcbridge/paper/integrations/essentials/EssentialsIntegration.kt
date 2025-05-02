@@ -1,4 +1,4 @@
-package com.projectcitybuild.pcbridge.paper.integrations
+package com.projectcitybuild.pcbridge.paper.integrations.essentials
 
 import com.earth2me.essentials.Essentials
 import com.github.shynixn.mccoroutine.bukkit.registerSuspendingEvents
