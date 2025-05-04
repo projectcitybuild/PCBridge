@@ -11,10 +11,10 @@ class ServerListPingListener(
 ) : Listener {
     @EventHandler
     suspend fun onServerListPing(event: PaperServerListPingEvent) {
-        val serverListing = ServerListing(
-            motd = event.motd(),
-        )
+        val serverListing = ServerListing()
         val decorated = decorators.pipe(serverListing)
-        event.motd(decorated.motd)
+        if (decorated.motd != null) {
+            event.motd(decorated.motd)
+        }
     }
 }
