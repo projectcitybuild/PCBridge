@@ -18,11 +18,10 @@ import com.projectcitybuild.pcbridge.paper.features.announcements.listeners.Anno
 import com.projectcitybuild.pcbridge.paper.features.announcements.repositories.AnnouncementRepository
 import com.projectcitybuild.pcbridge.paper.features.bans.actions.CheckBan
 import com.projectcitybuild.pcbridge.paper.features.bans.listeners.BanWebhookListener
-import com.projectcitybuild.pcbridge.paper.architecture.connection.repositories.PlayerRepository
-import com.projectcitybuild.pcbridge.paper.features.chat.ChatGroupFormatter
-import com.projectcitybuild.pcbridge.paper.features.chat.listeners.ChatConfigListener
-import com.projectcitybuild.pcbridge.paper.features.chat.listeners.SyncPlayerChatListener
-import com.projectcitybuild.pcbridge.paper.features.chat.repositories.ChatGroupRepository
+import com.projectcitybuild.pcbridge.paper.features.sync.repositories.PlayerRepository
+import com.projectcitybuild.pcbridge.paper.features.groups.ChatGroupFormatter
+import com.projectcitybuild.pcbridge.paper.features.groups.listener.ChatGroupInvalidateListener
+import com.projectcitybuild.pcbridge.paper.features.groups.repositories.ChatGroupRepository
 import com.projectcitybuild.pcbridge.paper.features.building.commands.InvisFrameCommand
 import com.projectcitybuild.pcbridge.paper.features.building.listeners.FrameItemInsertListener
 import com.projectcitybuild.pcbridge.paper.features.building.listeners.FrameItemRemoveListener
@@ -36,10 +35,10 @@ import com.projectcitybuild.pcbridge.paper.architecture.state.listeners.PlayerSt
 import com.projectcitybuild.pcbridge.paper.features.register.commands.CodeCommand
 import com.projectcitybuild.pcbridge.paper.features.register.commands.RegisterCommand
 import com.projectcitybuild.pcbridge.paper.features.staffchat.commands.StaffChatCommand
-import com.projectcitybuild.pcbridge.paper.features.groups.actions.SyncPlayerGroups
-import com.projectcitybuild.pcbridge.paper.features.groups.commands.SyncCommand
-import com.projectcitybuild.pcbridge.paper.features.groups.listener.SyncRankListener
-import com.projectcitybuild.pcbridge.paper.architecture.state.listeners.PlayerSyncRequestListener
+import com.projectcitybuild.pcbridge.paper.features.sync.actions.SyncPlayer
+import com.projectcitybuild.pcbridge.paper.features.sync.commands.SyncCommand
+import com.projectcitybuild.pcbridge.paper.features.groups.listener.RoleStateChangeListener
+import com.projectcitybuild.pcbridge.paper.features.sync.listener.PlayerSyncRequestListener
 import com.projectcitybuild.pcbridge.paper.features.telemetry.listeners.TelemetryPlayerConnectListener
 import com.projectcitybuild.pcbridge.paper.features.telemetry.repositories.TelemetryRepository
 import com.projectcitybuild.pcbridge.paper.features.warps.commands.WarpCommand
@@ -73,23 +72,22 @@ import com.projectcitybuild.pcbridge.paper.architecture.webhooks.WebServerDelega
 import com.projectcitybuild.pcbridge.paper.core.libs.discord.DiscordSend
 import com.projectcitybuild.pcbridge.paper.core.libs.pcbmanage.ManageUrlGenerator
 import com.projectcitybuild.pcbridge.paper.architecture.permissions.Permissions
-import com.projectcitybuild.pcbridge.paper.core.libs.roles.RolesFilter
+import com.projectcitybuild.pcbridge.paper.features.groups.RolesFilter
 import com.projectcitybuild.pcbridge.paper.core.utils.PeriodicRunner
-import com.projectcitybuild.pcbridge.paper.features.badge.ChatBadgeFormatter
-import com.projectcitybuild.pcbridge.paper.features.badge.listeners.BadgeInvalidateListener
-import com.projectcitybuild.pcbridge.paper.features.badge.middleware.ChatBadgeMiddleware
-import com.projectcitybuild.pcbridge.paper.features.badge.repositories.ChatBadgeRepository
+import com.projectcitybuild.pcbridge.paper.features.chatbadge.ChatBadgeFormatter
+import com.projectcitybuild.pcbridge.paper.features.chatbadge.listeners.ChatBadgeInvalidateListener
+import com.projectcitybuild.pcbridge.paper.features.chatbadge.middleware.ChatBadgeMiddleware
+import com.projectcitybuild.pcbridge.paper.features.chatbadge.repositories.ChatBadgeRepository
 import com.projectcitybuild.pcbridge.paper.features.bans.commands.BanCommand
 import com.projectcitybuild.pcbridge.paper.features.bans.middleware.BanConnectionMiddleware
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildEditCommand
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildSetCommand
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildUnvoteCommand
-import com.projectcitybuild.pcbridge.paper.features.chat.middleware.ChatEmojiMiddleware
-import com.projectcitybuild.pcbridge.paper.features.chat.middleware.ChatGroupMiddleware
-import com.projectcitybuild.pcbridge.paper.features.chat.middleware.ChatUrlMiddleware
+import com.projectcitybuild.pcbridge.paper.features.chatemojis.middleware.ChatEmojiMiddleware
+import com.projectcitybuild.pcbridge.paper.features.groups.middleware.ChatGroupMiddleware
+import com.projectcitybuild.pcbridge.paper.features.chaturls.middleware.ChatUrlMiddleware
 import com.projectcitybuild.pcbridge.paper.features.config.listeners.ConfigWebhookListener
-import com.projectcitybuild.pcbridge.paper.features.groups.commands.SyncDebugCommand
-import com.projectcitybuild.pcbridge.paper.features.groups.listener.PlayerSyncWebhookListener
+import com.projectcitybuild.pcbridge.paper.features.sync.commands.SyncDebugCommand
 import com.projectcitybuild.pcbridge.paper.features.maintenance.commands.MaintenanceCommand
 import com.projectcitybuild.pcbridge.paper.features.maintenance.listener.MaintenanceReminderListener
 import com.projectcitybuild.pcbridge.paper.features.maintenance.listener.MaintenanceMotdListener
@@ -131,11 +129,12 @@ fun pluginModule(_plugin: JavaPlugin) =
 
         // Features
         announcements()
-        badge()
         bans()
         building()
         builds()
-        chat()
+        chatBadge()
+        chatEmojis()
+        chatUrls()
         config()
         groups()
         joinMessages()
@@ -144,6 +143,7 @@ fun pluginModule(_plugin: JavaPlugin) =
         motd()
         register()
         staffChat()
+        sync()
         tab()
         telemetry()
         teleport()
@@ -370,6 +370,71 @@ private fun Module.announcements() {
     }
 }
 
+private fun Module.architecture() {
+    factory {
+        PlayerStateListener(
+            store = get(),
+            time = get(),
+            eventBroadcaster = get(),
+        )
+    }
+
+    factory {
+        CoroutineExceptionListener(
+            sentryReporter = get(),
+        )
+    }
+
+    single {
+        ConnectionMiddlewareChain()
+    }
+
+    factory {
+        AuthorizeConnectionListener(
+            middlewareChain = get(),
+            playerDataProvider = get(),
+            sentry = get(),
+            eventBroadcaster = get(),
+        )
+    }
+
+    single {
+        ChatMiddlewareChain()
+    }
+
+    factory {
+        AsyncChatListener(
+            middlewareChain = get(),
+        )
+    }
+
+    single<Permissions> {
+        Permissions()
+    }
+}
+
+private fun Module.bans() {
+    factory {
+        BanConnectionMiddleware(
+            checkBan = CheckBan(),
+        )
+    }
+
+    factory {
+        BanWebhookListener(
+            server = get(),
+        )
+    }
+
+    factory {
+        BanCommand(
+            plugin = get<JavaPlugin>(),
+            server = get(),
+            manageUrlGenerator = get(),
+        )
+    }
+}
+
 private fun Module.builds() {
     factory {
         BuildsCommand(
@@ -438,170 +503,9 @@ private fun Module.building() {
     }
 }
 
-private fun Module.config() {
+private fun Module.chatBadge() {
     factory {
-        ConfigCommand(
-            plugin = get<JavaPlugin>(),
-            remoteConfig = get(),
-        )
-    }
-
-    factory {
-        ConfigWebhookListener(
-            remoteConfig = get(),
-        )
-    }
-}
-
-private fun Module.warps() {
-    single {
-        WarpRepository(
-            warpHttpService = get<PCBHttp>().warps
-        )
-    }
-
-    factory {
-        WarpCommand(
-            plugin = get<JavaPlugin>(),
-            warpRepository = get(),
-            server = get(),
-        )
-    }
-
-    factory {
-        WarpsCommand(
-            createCommand = WarpCreateCommand(
-                plugin = get<JavaPlugin>(),
-                warpRepository = get(),
-                server = get(),
-            ),
-            deleteCommand = WarpDeleteCommand(
-                plugin = get<JavaPlugin>(),
-                warpRepository = get(),
-                server = get(),
-            ),
-            listCommand = WarpListCommand(
-                plugin = get<JavaPlugin>(),
-                warpRepository = get(),
-                remoteConfig = get(),
-            ),
-            moveCommand = WarpMoveCommand(
-                plugin = get<JavaPlugin>(),
-                warpRepository = get(),
-            ),
-            reloadCommand = WarpReloadCommand(
-                plugin = get<JavaPlugin>(),
-                warpRepository = get(),
-            ),
-            renameCommand = WarpRenameCommand(
-                plugin = get<JavaPlugin>(),
-                warpRepository = get(),
-            ),
-        )
-    }
-
-    factory {
-        WarpWebhookListener(
-            warpRepository = get(),
-        )
-    }
-}
-
-private fun Module.watchdog() {
-    factory {
-        ItemTextListener(
-            discordSend = get(),
-            time = get(),
-        )
-    }
-}
-
-private fun Module.joinMessages() {
-    factory {
-        AnnounceJoinListener(
-            remoteConfig = get(),
-        )
-    }
-
-    factory {
-        AnnounceQuitListener(
-            remoteConfig = get(),
-            store = get(),
-            time = get(),
-        )
-    }
-
-    factory {
-        FirstTimeJoinListener(
-            remoteConfig = get(),
-            server = get(),
-            store = get(),
-        )
-    }
-
-    factory {
-        ServerOverviewJoinListener(
-            remoteConfig = get(),
-        )
-    }
-}
-
-private fun Module.architecture() {
-    factory {
-        PlayerStateListener(
-            store = get(),
-            time = get(),
-            eventBroadcaster = get(),
-        )
-    }
-
-    factory {
-        PlayerSyncRequestListener(
-            store = get(),
-            time = get(),
-            server = get(),
-            eventBroadcaster = get(),
-            playerRepository = get(),
-        )
-    }
-
-    factory {
-        CoroutineExceptionListener(
-            sentryReporter = get(),
-        )
-    }
-
-    single {
-        ConnectionMiddlewareChain()
-    }
-
-    factory {
-        AuthorizeConnectionListener(
-            middlewareChain = get(),
-            playerRepository = get(),
-            sentry = get(),
-            eventBroadcaster = get(),
-        )
-    }
-
-    single {
-        ChatMiddlewareChain()
-    }
-
-    factory {
-        AsyncChatListener(
-            middlewareChain = get(),
-        )
-    }
-
-    single<Permissions> {
-        Permissions()
-    }
-}
-
-private fun Module.badge() {
-    factory {
-        BadgeInvalidateListener(
+        ChatBadgeInvalidateListener(
             chatBadgeRepository = get(),
         )
     }
@@ -630,30 +534,67 @@ private fun Module.badge() {
     }
 }
 
-private fun Module.bans() {
+private fun Module.chatEmojis() {
     factory {
-        PlayerRepository(
-            httpService = get<PCBHttp>().player,
-        )
+        ChatEmojiMiddleware()
     }
+}
 
+private fun Module.chatUrls() {
     factory {
-        BanConnectionMiddleware(
-            checkBan = CheckBan(),
-        )
+        ChatUrlMiddleware()
     }
+}
 
+private fun Module.config() {
     factory {
-        BanWebhookListener(
-            server = get(),
-        )
-    }
-
-    factory {
-        BanCommand(
+        ConfigCommand(
             plugin = get<JavaPlugin>(),
-            server = get(),
-            manageUrlGenerator = get(),
+            remoteConfig = get(),
+        )
+    }
+
+    factory {
+        ConfigWebhookListener(
+            remoteConfig = get(),
+        )
+    }
+}
+
+private fun Module.groups() {
+    factory {
+        ChatGroupInvalidateListener(
+            chatGroupRepository = get(),
+        )
+    }
+
+    factory {
+        RoleStateChangeListener(
+            permissions = get(),
+        )
+    }
+
+    factory {
+        ChatGroupMiddleware(
+            chatGroupRepository = get(),
+        )
+    }
+
+    factory {
+        ChatGroupRepository(
+            chatGroupFormatter = get(),
+            store = get(),
+            groupCache = get(named("group_cache")),
+        )
+    }
+
+    single(named("group_cache")) {
+        Cache.Builder<UUID, ChatGroupRepository.CachedComponent>().build()
+    }
+
+    factory {
+        ChatGroupFormatter(
+            rolesFilter = RolesFilter(),
         )
     }
 }
@@ -685,48 +626,32 @@ private fun Module.invisFrames() {
     }
 }
 
-private fun Module.chat() {
+private fun Module.joinMessages() {
     factory {
-        ChatGroupRepository(
-            chatGroupFormatter = get(),
+        AnnounceJoinListener(
+            remoteConfig = get(),
+        )
+    }
+
+    factory {
+        AnnounceQuitListener(
+            remoteConfig = get(),
             store = get(),
-            groupCache = get(named("group_cache")),
-        )
-    }
-
-    single(named("group_cache")) {
-        Cache.Builder<UUID, ChatGroupRepository.CachedComponent>().build()
-    }
-
-    single {
-        ChatGroupFormatter(
-            rolesFilter = RolesFilter(),
+            time = get(),
         )
     }
 
     factory {
-        SyncPlayerChatListener(
-            chatGroupRepository = get(),
+        FirstTimeJoinListener(
+            remoteConfig = get(),
+            server = get(),
+            store = get(),
         )
     }
 
     factory {
-        ChatConfigListener(
-            chatGroupRepository = get(),
-        )
-    }
-
-    factory {
-        ChatEmojiMiddleware()
-    }
-
-    factory {
-        ChatUrlMiddleware()
-    }
-
-    factory {
-        ChatGroupMiddleware(
-            chatGroupRepository = get(),
+        ServerOverviewJoinListener(
+            remoteConfig = get(),
         )
     }
 }
@@ -828,29 +753,21 @@ private fun Module.staffChat() {
     }
 }
 
-private fun Module.groups() {
+private fun Module.sync() {
     factory {
-        SyncPlayerGroups(
-            permissions = get(),
-        )
-    }
-
-    factory {
-        SyncRankListener(
-            syncPlayerGroups = get(),
-        )
-    }
-
-    factory {
-        PlayerSyncWebhookListener(
+        SyncPlayer(
+            store = get(),
+            time = get(),
+            server = get(),
             eventBroadcaster = get(),
+            playerRepository = get(),
         )
     }
 
     factory {
         SyncCommand(
             plugin = get<JavaPlugin>(),
-            eventBroadcaster = get(),
+            syncPlayer = get(),
         )
     }
 
@@ -858,6 +775,18 @@ private fun Module.groups() {
         SyncDebugCommand(
             plugin = get<JavaPlugin>(),
             permissions = get(),
+        )
+    }
+
+    factory {
+        PlayerSyncRequestListener(
+            syncPlayer = get(),
+        )
+    }
+
+    factory {
+        PlayerRepository(
+            httpService = get<PCBHttp>().player,
         )
     }
 }
@@ -868,6 +797,69 @@ private fun Module.warnings() {
             plugin = get<JavaPlugin>(),
             server = get(),
             manageUrlGenerator = get(),
+        )
+    }
+}
+
+private fun Module.warps() {
+    single {
+        WarpRepository(
+            warpHttpService = get<PCBHttp>().warps
+        )
+    }
+
+    factory {
+        WarpCommand(
+            plugin = get<JavaPlugin>(),
+            warpRepository = get(),
+            server = get(),
+        )
+    }
+
+    factory {
+        WarpsCommand(
+            createCommand = WarpCreateCommand(
+                plugin = get<JavaPlugin>(),
+                warpRepository = get(),
+                server = get(),
+            ),
+            deleteCommand = WarpDeleteCommand(
+                plugin = get<JavaPlugin>(),
+                warpRepository = get(),
+                server = get(),
+            ),
+            listCommand = WarpListCommand(
+                plugin = get<JavaPlugin>(),
+                warpRepository = get(),
+                remoteConfig = get(),
+            ),
+            moveCommand = WarpMoveCommand(
+                plugin = get<JavaPlugin>(),
+                warpRepository = get(),
+            ),
+            reloadCommand = WarpReloadCommand(
+                plugin = get<JavaPlugin>(),
+                warpRepository = get(),
+            ),
+            renameCommand = WarpRenameCommand(
+                plugin = get<JavaPlugin>(),
+                warpRepository = get(),
+            ),
+        )
+    }
+
+    factory {
+        WarpWebhookListener(
+            warpRepository = get(),
+        )
+    }
+}
+
+private fun Module.watchdog() {
+    factory {
+        ItemTextListener(
+            discordSend = get(),
+            time = get(),
         )
     }
 }
