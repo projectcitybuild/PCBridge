@@ -1,4 +1,4 @@
-package com.projectcitybuild.pcbridge.paper.core.libs.permissions
+package com.projectcitybuild.pcbridge.paper.architecture.permissions
 
 import java.util.UUID
 

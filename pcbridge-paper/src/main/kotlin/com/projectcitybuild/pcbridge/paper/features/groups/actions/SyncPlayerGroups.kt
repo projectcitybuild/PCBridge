@@ -1,7 +1,7 @@
 package com.projectcitybuild.pcbridge.paper.features.groups.actions
 
 import com.projectcitybuild.pcbridge.http.pcb.models.Group
-import com.projectcitybuild.pcbridge.paper.core.libs.permissions.Permissions
+import com.projectcitybuild.pcbridge.paper.architecture.permissions.Permissions
 import java.util.UUID
 
 class SyncPlayerGroups(

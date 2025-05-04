@@ -187,8 +187,6 @@ private class Lifecycle : KoinComponent {
             get<DynmapIntegration>().enable()
             get<EssentialsIntegration>().enable()
             get<LuckPermsIntegration>().enable()
-
-            get<DiscordSend>().startProcessing()
         }
 
     suspend fun shutdown() =
@@ -201,8 +199,6 @@ private class Lifecycle : KoinComponent {
             get<DynmapIntegration>().disable()
             get<EssentialsIntegration>().disable()
             get<LuckPermsIntegration>().disable()
-
-            get<DiscordSend>().stopProcessing()
 
             listenerRegistry.unregisterAll()
             audiences.close()

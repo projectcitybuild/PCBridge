@@ -4,9 +4,9 @@ import com.projectcitybuild.pcbridge.paper.architecture.state.Store
 import com.projectcitybuild.pcbridge.paper.architecture.state.data.PlayerState
 import com.projectcitybuild.pcbridge.paper.architecture.state.events.PlayerStateUpdatedEvent
 import com.projectcitybuild.pcbridge.paper.core.libs.roles.RolesFilter
+import com.projectcitybuild.pcbridge.paper.core.utils.PeriodicRunner
+import com.projectcitybuild.pcbridge.paper.core.utils.Throttle
 import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.format.NamedTextColor
-import net.kyori.adventure.text.format.TextDecoration
 import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.Server
 import org.bukkit.entity.Player
@@ -58,13 +58,18 @@ class TabNameListener(
 
     private fun updatePlayerName(uuid: UUID, playerState: PlayerState) {
         val player = server.getPlayer(uuid) ?: return
-        var name = player.displayName()
 
-        if (playerState.afk) {
-            name = Component.text("⌚ ")
-                .color(NamedTextColor.GRAY)
-                .decorate(TextDecoration.BOLD)
-                .append(name.decorate(TextDecoration.ITALIC))
+        val miniMessage = MiniMessage.miniMessage()
+        val name = Component.text("").apply {
+            append(player.displayName())
+            // append(
+            //     miniMessage.deserialize(" <gray>[${ping(player)}]</gray>")
+            // )
+            if (playerState.afk) {
+                append(
+                    miniMessage.deserialize(" <yellow>AFK</yellow>")
+                )
+            }
         }
         player.playerListName(name)
     }
@@ -94,6 +99,17 @@ class TabNameListener(
         )
 
         player.sendPlayerListHeaderAndFooter(header, footer)
+    }
+
+    private fun ping(player: Player): Component {
+        val ping = player.ping
+        val color = when {
+            ping <= 100 -> "green"
+            ping <= 200 -> "yellow"
+            ping <= 400 -> "orange"
+            else -> "red"
+        }
+        return MiniMessage.miniMessage().deserialize("<$color>${ping}ms</$color>")
     }
 
     private fun header(header: TabHeader): String {

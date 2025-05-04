@@ -74,8 +74,9 @@ import com.projectcitybuild.pcbridge.paper.architecture.state.data.PersistedServ
 import com.projectcitybuild.pcbridge.paper.architecture.webhooks.WebServerDelegate
 import com.projectcitybuild.pcbridge.paper.core.libs.discord.DiscordSend
 import com.projectcitybuild.pcbridge.paper.core.libs.pcbmanage.ManageUrlGenerator
-import com.projectcitybuild.pcbridge.paper.core.libs.permissions.Permissions
+import com.projectcitybuild.pcbridge.paper.architecture.permissions.Permissions
 import com.projectcitybuild.pcbridge.paper.core.libs.roles.RolesFilter
+import com.projectcitybuild.pcbridge.paper.core.utils.PeriodicRunner
 import com.projectcitybuild.pcbridge.paper.features.bans.commands.BanCommand
 import com.projectcitybuild.pcbridge.paper.features.bans.middleware.BanConnectionMiddleware
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildEditCommand
@@ -116,6 +117,7 @@ import java.time.Clock
 import java.time.ZoneId
 import java.util.Locale
 import java.util.UUID
+import kotlin.time.Duration.Companion.seconds
 
 fun pluginModule(_plugin: JavaPlugin) =
     module {
@@ -169,10 +171,6 @@ private fun Module.spigot(plugin: JavaPlugin) {
         SpigotListenerRegistry(
             plugin = get(),
         )
-    }
-
-    single<Permissions> {
-        Permissions()
     }
 
     factory {
@@ -262,6 +260,7 @@ private fun Module.core() {
             localConfig = get(),
             discordHttpService = get<DiscordHttp>().discord,
             sentryReporter = get(),
+            periodicRunner = PeriodicRunner(processInterval = 10.seconds)
         )
     }
 
@@ -591,6 +590,10 @@ private fun Module.architecture() {
         AsyncChatListener(
             middlewareChain = get(),
         )
+    }
+
+    single<Permissions> {
+        Permissions()
     }
 }
 
