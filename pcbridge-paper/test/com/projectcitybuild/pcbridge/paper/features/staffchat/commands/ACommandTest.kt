@@ -7,7 +7,9 @@ import com.projectcitybuild.pcbridge.http.pcb.models.RemoteConfigVersion
 import com.projectcitybuild.pcbridge.paper.PermissionNode
 import com.projectcitybuild.pcbridge.paper.architecture.chat.decorators.ChatDecoratorChain
 import com.projectcitybuild.pcbridge.paper.architecture.chat.decorators.ChatMessage
+import com.projectcitybuild.pcbridge.paper.architecture.chat.decorators.ChatMessageDecorator
 import com.projectcitybuild.pcbridge.paper.architecture.chat.decorators.ChatSender
+import com.projectcitybuild.pcbridge.paper.architecture.chat.decorators.ChatSenderDecorator
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.extensions.hasPermission
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import kotlinx.coroutines.test.runTest
@@ -78,5 +80,44 @@ class ACommandTest {
                 assertTrue(firstValue.toString().contains("staff: user123 foo bar"))
             }
             verify(regularPlayer, never()).sendMessage(any<Component>())
+        }
+
+    @Test
+    fun `decorates messages`() =
+        runTest {
+            decoratorChain.addMessage(object : ChatMessageDecorator {
+                override suspend fun handle(prev: ChatMessage): ChatMessage {
+                    return prev.copy(message = Component.text("replaced_message"))
+                }
+            })
+
+            val staffPlayer =
+                mock(Player::class.java).also {
+                    whenever(it.hasPermission(PermissionNode.STAFF_CHANNEL)).thenReturn(true)
+                }
+            whenever(server.onlinePlayers).thenReturn(listOf(staffPlayer))
+            whenever(remoteConfig.latest).thenReturn(
+                RemoteConfigVersion(
+                    version = 1,
+                    config = RemoteConfigKeyValues(
+                        chat = RemoteConfigKeyValues.Chat(staffChannel = "staff: <name> <message>")
+                    ),
+                )
+            )
+
+            whenever(staffPlayer.name).thenReturn("user123")
+
+            val context: CommandContext<CommandSourceStack> = mock()
+            val source = mock(CommandSourceStack::class.java)
+            whenever(context.source).thenReturn(source)
+            whenever(source.sender).thenReturn(staffPlayer)
+            whenever(context.getArgument("message", String::class.java)).thenReturn("foo bar")
+
+            StaffChatCommand(plugin, server, remoteConfig, decoratorChain).execute(context)
+
+            argumentCaptor<Component>().apply {
+                verify(staffPlayer).sendMessage(capture())
+                assertTrue(firstValue.toString().contains("staff: user123 replaced_message"))
+            }
         }
 }
