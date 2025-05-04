@@ -1,8 +1,8 @@
-package com.projectcitybuild.pcbridge.paper.features.chat.middleware
+package com.projectcitybuild.pcbridge.paper.features.badge.middleware
 
 import com.projectcitybuild.pcbridge.paper.architecture.chat.middleware.ChatMessage
 import com.projectcitybuild.pcbridge.paper.architecture.chat.middleware.ChatMiddleware
-import com.projectcitybuild.pcbridge.paper.features.chat.repositories.ChatBadgeRepository
+import com.projectcitybuild.pcbridge.paper.features.badge.repositories.ChatBadgeRepository
 import net.kyori.adventure.text.Component
 
 class ChatBadgeMiddleware(
