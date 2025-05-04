@@ -45,8 +45,11 @@ import com.projectcitybuild.pcbridge.paper.features.warps.commands.WarpCommand
 import com.projectcitybuild.pcbridge.paper.features.warps.commands.WarpsCommand
 import com.projectcitybuild.pcbridge.paper.features.warps.repositories.WarpRepository
 import com.projectcitybuild.pcbridge.http.pcb.PCBHttp
+import com.projectcitybuild.pcbridge.paper.architecture.PlayerDataProvider
 import com.projectcitybuild.pcbridge.paper.architecture.chat.listeners.AsyncChatListener
-import com.projectcitybuild.pcbridge.paper.architecture.chat.middleware.ChatMiddlewareChain
+import com.projectcitybuild.pcbridge.paper.architecture.chat.decorators.ChatDecoratorChain
+import com.projectcitybuild.pcbridge.paper.architecture.chat.decorators.ChatMessage
+import com.projectcitybuild.pcbridge.paper.architecture.chat.decorators.ChatSender
 import com.projectcitybuild.pcbridge.paper.architecture.connection.listeners.AuthorizeConnectionListener
 import com.projectcitybuild.pcbridge.paper.architecture.connection.middleware.ConnectionMiddlewareChain
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.BuildCommand
@@ -76,16 +79,16 @@ import com.projectcitybuild.pcbridge.paper.features.groups.RolesFilter
 import com.projectcitybuild.pcbridge.paper.core.utils.PeriodicRunner
 import com.projectcitybuild.pcbridge.paper.features.chatbadge.ChatBadgeFormatter
 import com.projectcitybuild.pcbridge.paper.features.chatbadge.listeners.ChatBadgeInvalidateListener
-import com.projectcitybuild.pcbridge.paper.features.chatbadge.middleware.ChatBadgeMiddleware
+import com.projectcitybuild.pcbridge.paper.features.chatbadge.decorators.ChatBadgeDecorator
 import com.projectcitybuild.pcbridge.paper.features.chatbadge.repositories.ChatBadgeRepository
 import com.projectcitybuild.pcbridge.paper.features.bans.commands.BanCommand
 import com.projectcitybuild.pcbridge.paper.features.bans.middleware.BanConnectionMiddleware
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildEditCommand
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildSetCommand
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildUnvoteCommand
-import com.projectcitybuild.pcbridge.paper.features.chatemojis.middleware.ChatEmojiMiddleware
-import com.projectcitybuild.pcbridge.paper.features.groups.middleware.ChatGroupMiddleware
-import com.projectcitybuild.pcbridge.paper.features.chaturls.middleware.ChatUrlMiddleware
+import com.projectcitybuild.pcbridge.paper.features.chatemojis.decorators.ChatEmojiDecorator
+import com.projectcitybuild.pcbridge.paper.features.groups.decorators.ChatGroupDecorator
+import com.projectcitybuild.pcbridge.paper.features.chaturls.decorators.ChatUrlDecorator
 import com.projectcitybuild.pcbridge.paper.features.config.listeners.ConfigWebhookListener
 import com.projectcitybuild.pcbridge.paper.features.sync.commands.SyncDebugCommand
 import com.projectcitybuild.pcbridge.paper.features.maintenance.commands.MaintenanceCommand
@@ -110,6 +113,7 @@ import net.kyori.adventure.platform.bukkit.BukkitAudiences
 import org.bukkit.plugin.java.JavaPlugin
 import org.koin.core.module.Module
 import org.koin.core.qualifier.named
+import org.koin.dsl.bind
 import org.koin.dsl.module
 import org.koin.dsl.onClose
 import java.time.Clock
@@ -399,12 +403,12 @@ private fun Module.architecture() {
     }
 
     single {
-        ChatMiddlewareChain()
+        ChatDecoratorChain()
     }
 
     factory {
         AsyncChatListener(
-            middlewareChain = get(),
+            decorators = get(),
         )
     }
 
@@ -528,7 +532,7 @@ private fun Module.chatBadge() {
     }
 
     factory {
-        ChatBadgeMiddleware(
+        ChatBadgeDecorator(
             chatBadgeRepository = get(),
         )
     }
@@ -536,13 +540,13 @@ private fun Module.chatBadge() {
 
 private fun Module.chatEmojis() {
     factory {
-        ChatEmojiMiddleware()
+        ChatEmojiDecorator()
     }
 }
 
 private fun Module.chatUrls() {
     factory {
-        ChatUrlMiddleware()
+        ChatUrlDecorator()
     }
 }
 
@@ -575,7 +579,7 @@ private fun Module.groups() {
     }
 
     factory {
-        ChatGroupMiddleware(
+        ChatGroupDecorator(
             chatGroupRepository = get(),
         )
     }
@@ -749,6 +753,7 @@ private fun Module.staffChat() {
             plugin = get<JavaPlugin>(),
             server = get(),
             remoteConfig = get(),
+            decorators = get(),
         )
     }
 }
@@ -788,7 +793,7 @@ private fun Module.sync() {
         PlayerRepository(
             httpService = get<PCBHttp>().player,
         )
-    }
+    }.bind<PlayerDataProvider>()
 }
 
 private fun Module.warnings() {

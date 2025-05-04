@@ -1,7 +1,7 @@
 package com.projectcitybuild.pcbridge.paper
 
 import com.projectcitybuild.pcbridge.paper.architecture.chat.listeners.AsyncChatListener
-import com.projectcitybuild.pcbridge.paper.architecture.chat.middleware.ChatMiddlewareChain
+import com.projectcitybuild.pcbridge.paper.architecture.chat.decorators.ChatDecoratorChain
 import com.projectcitybuild.pcbridge.paper.architecture.connection.listeners.AuthorizeConnectionListener
 import com.projectcitybuild.pcbridge.paper.architecture.connection.middleware.ConnectionMiddlewareChain
 import com.projectcitybuild.pcbridge.paper.architecture.exceptions.listeners.CoroutineExceptionListener
@@ -27,14 +27,14 @@ import com.projectcitybuild.pcbridge.paper.features.building.listeners.FramePlac
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.BuildCommand
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.BuildsCommand
 import com.projectcitybuild.pcbridge.paper.features.chatbadge.listeners.ChatBadgeInvalidateListener
-import com.projectcitybuild.pcbridge.paper.features.chatbadge.middleware.ChatBadgeMiddleware
-import com.projectcitybuild.pcbridge.paper.features.chatemojis.middleware.ChatEmojiMiddleware
-import com.projectcitybuild.pcbridge.paper.features.chaturls.middleware.ChatUrlMiddleware
+import com.projectcitybuild.pcbridge.paper.features.chatbadge.decorators.ChatBadgeDecorator
+import com.projectcitybuild.pcbridge.paper.features.chatemojis.decorators.ChatEmojiDecorator
+import com.projectcitybuild.pcbridge.paper.features.chaturls.decorators.ChatUrlDecorator
 import com.projectcitybuild.pcbridge.paper.features.config.commands.ConfigCommand
 import com.projectcitybuild.pcbridge.paper.features.config.listeners.ConfigWebhookListener
 import com.projectcitybuild.pcbridge.paper.features.groups.listener.ChatGroupInvalidateListener
 import com.projectcitybuild.pcbridge.paper.features.groups.listener.RoleStateChangeListener
-import com.projectcitybuild.pcbridge.paper.features.groups.middleware.ChatGroupMiddleware
+import com.projectcitybuild.pcbridge.paper.features.groups.decorators.ChatGroupDecorator
 import com.projectcitybuild.pcbridge.paper.features.joinmessages.listeners.AnnounceJoinListener
 import com.projectcitybuild.pcbridge.paper.features.joinmessages.listeners.AnnounceQuitListener
 import com.projectcitybuild.pcbridge.paper.features.joinmessages.listeners.FirstTimeJoinListener
@@ -86,12 +86,16 @@ class PluginLifecycle : KoinComponent {
             get<BanConnectionMiddleware>(),
             get<MaintenanceConnectionMiddleware>(),
         )
-        get<ChatMiddlewareChain>().register(
-            get<ChatEmojiMiddleware>(),
-            get<ChatUrlMiddleware>(),
-            get<ChatGroupMiddleware>(),
-            get<ChatBadgeMiddleware>(),
-        )
+        get<ChatDecoratorChain>().apply{
+            addSender(
+                get<ChatGroupDecorator>(),
+                get<ChatBadgeDecorator>(),
+            )
+            addMessage(
+                get<ChatEmojiDecorator>(),
+                get<ChatUrlDecorator>(),
+            )
+        }
 
         get<JavaPlugin>()
             .lifecycleManager

@@ -4,6 +4,8 @@ import com.mojang.brigadier.arguments.StringArgumentType
 import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.tree.LiteralCommandNode
 import com.projectcitybuild.pcbridge.paper.PermissionNode
+import com.projectcitybuild.pcbridge.paper.architecture.chat.decorators.ChatDecoratorChain
+import com.projectcitybuild.pcbridge.paper.architecture.chat.decorators.ChatMessage
 import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.RemoteConfig
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierCommand
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
@@ -14,14 +16,15 @@ import io.papermc.paper.command.brigadier.Commands
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.MiniMessage
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import org.bukkit.Server
+import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
 
 class StaffChatCommand(
     private val plugin: Plugin,
     private val server: Server,
     private val remoteConfig: RemoteConfig,
+    private val decorators: ChatDecoratorChain,
 ) : BrigadierCommand {
     override fun buildLiteral(): LiteralCommandNode<CommandSourceStack> {
         return Commands.literal("a")
@@ -34,20 +37,19 @@ class StaffChatCommand(
     }
 
     suspend fun execute(context: CommandContext<CommandSourceStack>) = context.traceSuspending {
-        // Only the legacy serializer automatically converts URLs to clickable text
-        val legacySerializer = LegacyComponentSerializer
-            .builder()
-            .extractUrls()
-            .build()
+        val sender = context.source.sender
+        check(sender is Player) { "Only players can use this command" }
+
+        val rawMessage = context.getArgument("message", String::class.java)
 
         val format = remoteConfig.latest.config.chat.staffChannel
-
-        val sender = context.source.sender
-        val rawMessage = context.getArgument("message", String::class.java)
+        val decoratedMessage = decorators.pipe(
+            ChatMessage(sender, Component.text(rawMessage))
+        )
         val message = MiniMessage.miniMessage().deserialize(
             format,
             Placeholder.component("name", Component.text(sender.name)),
-            Placeholder.component("message", legacySerializer.deserialize(rawMessage)),
+            Placeholder.component("message", decoratedMessage.message),
         )
 
         server.onlinePlayers
