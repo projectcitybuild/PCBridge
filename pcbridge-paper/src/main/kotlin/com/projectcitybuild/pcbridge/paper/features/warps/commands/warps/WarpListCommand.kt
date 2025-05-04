@@ -7,19 +7,19 @@ import com.projectcitybuild.pcbridge.paper.core.libs.pagination.SimplePaginator
 import com.projectcitybuild.pcbridge.paper.features.warps.repositories.WarpRepository
 import com.projectcitybuild.pcbridge.http.pcb.models.Warp
 import com.projectcitybuild.pcbridge.paper.PermissionNode
+import com.projectcitybuild.pcbridge.paper.core.libs.pagination.PaginationBuilder
 import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.RemoteConfig
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierCommand
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceSuspending
-import com.projectcitybuild.pcbridge.paper.core.libs.pagination.PaginationBuilder
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.getOptionalArgument
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.event.HoverEvent
-import net.kyori.adventure.text.format.NamedTextColor
-import net.kyori.adventure.text.format.TextDecoration
+import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.plugin.Plugin
 
 class WarpListCommand(
@@ -39,48 +39,34 @@ class WarpListCommand(
     }
 
     private suspend fun execute(context: CommandContext<CommandSourceStack>) = context.traceSuspending {
-        val pageNumber = runCatching {
-            context.getArgument("page", Int::class.java)
-        }.getOrElse { 1 }
-
+        val pageNumber = context.getOptionalArgument("page", Int::class.java) ?: 1
+        val miniMessage = MiniMessage.miniMessage()
         val sender = context.source.sender
-        val itemsPerPage = remoteConfig.latest.config.warps.itemsPerPage
+
         val warps = warpRepository.all()
         val page = SimplePaginator<Warp>().paginate(
             items = warps,
-            pageSize = itemsPerPage,
+            pageSize = remoteConfig.latest.config.warps.itemsPerPage,
             page = pageNumber,
         )
         if (page.items.isEmpty()) {
             sender.sendMessage(
-                Component.text("No warps available")
-                    .color(NamedTextColor.GRAY),
+                miniMessage.deserialize("<gray>No warps available</gray>")
             )
             return@traceSuspending
         }
-
-        val message = PaginationBuilder<Warp>()
-            .items { (index, warp) ->
-                val rawCommand = "/warp ${warp.name}"
-                val component =
-                    Component.text()
-                        .content(warp.name)
-                        .color(NamedTextColor.AQUA)
-                        .decorate(TextDecoration.UNDERLINED)
-                        .clickEvent(ClickEvent.runCommand(rawCommand))
-                        .hoverEvent(HoverEvent.showText(Component.text(rawCommand)))
-
-                if (index < page.items.size - 1) {
-                    component.append(
-                        Component.text(" / ")
-                            .color(NamedTextColor.WHITE)
-                            .decoration(TextDecoration.UNDERLINED, false),
-                    )
-                }
-                component.build()
-            }
-            .build(page)
-
+        val message = PaginationBuilder().build(
+            title = "Warps",
+            items = page.items,
+            pageNumber = pageNumber,
+            totalPages = page.totalPages,
+            pageCommand = { index -> "/warps list $index" },
+            itemClickCommand = { "/warp ${it.name}" },
+            itemHover = { "Teleport to ${it.name}" },
+            itemDecorator = {
+                "<gray>\"<aqua><u>${it.name}</u></aqua>\" (${it.world})</gray>"
+            },
+        )
         sender.sendMessage(message)
     }
 }
