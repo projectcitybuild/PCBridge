@@ -3,7 +3,9 @@ package com.projectcitybuild.pcbridge.paper.features.builds.commands.builds
 import com.mojang.brigadier.arguments.IntegerArgumentType
 import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.tree.LiteralCommandNode
+import com.projectcitybuild.pcbridge.http.pcb.models.Build
 import com.projectcitybuild.pcbridge.paper.PermissionNode
+import com.projectcitybuild.pcbridge.paper.core.libs.pagination.PaginationBuilder
 import com.projectcitybuild.pcbridge.paper.features.builds.repositories.BuildRepository
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierCommand
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
@@ -35,45 +37,30 @@ class BuildListCommand(
     }
 
     private suspend fun execute(context: CommandContext<CommandSourceStack>) = context.traceSuspending {
-        val page = context.getOptionalArgument("page", Int::class.java) ?: 1
-        val builds = buildRepository.all(page)
+        val pageNumber = context.getOptionalArgument("page", Int::class.java) ?: 1
+        val builds = buildRepository.all(pageNumber)
         val totalPages = ceil(builds.total.toDouble() / builds.perPage.toDouble()).toInt()
         val miniMessage = MiniMessage.miniMessage()
         val sender = context.source.sender
 
-        sender.sendMessage(
-            miniMessage.deserialize(
-                "<gray>--- <dark_aqua>Build List</dark_aqua> - Page <white>${builds.currentPage}</white>/<white>$totalPages</white> ---</gray>"
-            )
-        )
-
-        builds.data.forEach { build ->
-            val text = "<gray>#${build.id} \"<aqua>${build.name}</aqua>\" (<white>${build.votes}</white> votes)</gray>"
-
+        if (builds.data.isEmpty()) {
             sender.sendMessage(
-                miniMessage.deserialize(text)
-                    // Separate handling here to ensure character escaping in the name
-                    .clickEvent(ClickEvent.runCommand("/build ${build.name}"))
-                    .hoverEvent(HoverEvent.showText(Component.text("Teleport to ${build.name}")))
+                miniMessage.deserialize("<gray>No builds available</gray>")
             )
+            return@traceSuspending
         }
-
-        val footer = buildString {
-            append("<gray>---</gray>")
-
-            if (page > 1) {
-                append(" <click:run_command:'/builds list ${page - 1}'>[← Prev]</click>")
-            }
-            if (page < totalPages) {
-                append(" <click:run_command:'/builds list ${page + 1}'>[Next →]</click>")
-            }
-            append(" <gray>---</gray>")
-        }
-
-        sender.sendMessage(
-            miniMessage.deserialize(
-                if (totalPages <= 1) "<gray>---</gray>" else footer
-            )
+        val message = PaginationBuilder().build(
+            title = "Build List",
+            items = builds.data,
+            pageNumber = pageNumber,
+            totalPages = totalPages,
+            pageCommand = { index -> "/builds list $index" },
+            itemClickCommand = { "/build ${it.name}" },
+            itemHover = { "Teleport to ${it.name}" },
+            itemDecorator = {
+                "<gray>#${it.id} \"<aqua>${it.name}</aqua>\" (<white>${it.votes}</white> votes)</gray>"
+            },
         )
+        sender.sendMessage(message)
     }
 }
