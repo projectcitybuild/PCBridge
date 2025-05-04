@@ -5,6 +5,7 @@ import com.projectcitybuild.pcbridge.paper.architecture.chat.decorators.ChatDeco
 import com.projectcitybuild.pcbridge.paper.architecture.connection.listeners.AuthorizeConnectionListener
 import com.projectcitybuild.pcbridge.paper.architecture.connection.middleware.ConnectionMiddlewareChain
 import com.projectcitybuild.pcbridge.paper.architecture.exceptions.listeners.CoroutineExceptionListener
+import com.projectcitybuild.pcbridge.paper.architecture.serverlist.decorators.ServerListingDecoratorChain
 import com.projectcitybuild.pcbridge.paper.architecture.state.Store
 import com.projectcitybuild.pcbridge.paper.architecture.state.listeners.PlayerStateListener
 import com.projectcitybuild.pcbridge.paper.core.libs.errors.SentryReporter
@@ -40,10 +41,10 @@ import com.projectcitybuild.pcbridge.paper.features.joinmessages.listeners.Annou
 import com.projectcitybuild.pcbridge.paper.features.joinmessages.listeners.FirstTimeJoinListener
 import com.projectcitybuild.pcbridge.paper.features.joinmessages.listeners.ServerOverviewJoinListener
 import com.projectcitybuild.pcbridge.paper.features.maintenance.commands.MaintenanceCommand
-import com.projectcitybuild.pcbridge.paper.features.maintenance.listener.MaintenanceMotdListener
+import com.projectcitybuild.pcbridge.paper.features.maintenance.decorators.MaintenanceMotdDecorator
 import com.projectcitybuild.pcbridge.paper.features.maintenance.listener.MaintenanceReminderListener
 import com.projectcitybuild.pcbridge.paper.features.maintenance.middleware.MaintenanceConnectionMiddleware
-import com.projectcitybuild.pcbridge.paper.features.motd.listeners.MotdListener
+import com.projectcitybuild.pcbridge.paper.features.motd.decorators.GeneralMotdDecorator
 import com.projectcitybuild.pcbridge.paper.features.register.commands.CodeCommand
 import com.projectcitybuild.pcbridge.paper.features.register.commands.RegisterCommand
 import com.projectcitybuild.pcbridge.paper.features.staffchat.commands.StaffChatCommand
@@ -96,6 +97,10 @@ class PluginLifecycle : KoinComponent {
                 get<ChatUrlDecorator>(),
             )
         }
+        get<ServerListingDecoratorChain>().register(
+            get<MaintenanceMotdDecorator>(),
+            get<GeneralMotdDecorator>(),
+        )
 
         get<JavaPlugin>()
             .lifecycleManager
@@ -139,8 +144,6 @@ class PluginLifecycle : KoinComponent {
             get<FrameItemRemoveListener>(),
             get<ItemTextListener>(),
             get<MaintenanceReminderListener>(),
-            get<MaintenanceMotdListener>(),
-            get<MotdListener>(),
             get<PlayerStateListener>(),
             get<PlayerSyncRequestListener>(),
             get<ServerOverviewJoinListener>(),

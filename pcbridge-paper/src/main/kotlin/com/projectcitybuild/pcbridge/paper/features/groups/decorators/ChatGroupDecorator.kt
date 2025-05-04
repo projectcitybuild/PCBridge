@@ -8,7 +8,7 @@ import net.kyori.adventure.text.Component
 class ChatGroupDecorator(
     private val chatGroupRepository: ChatGroupRepository,
 ): ChatSenderDecorator {
-    override suspend fun handle(prev: ChatSender): ChatSender {
+    override suspend fun decorate(prev: ChatSender): ChatSender {
         val uuid = prev.sender.uniqueId
         val cached = chatGroupRepository.getGroupsComponent(uuid)
 
