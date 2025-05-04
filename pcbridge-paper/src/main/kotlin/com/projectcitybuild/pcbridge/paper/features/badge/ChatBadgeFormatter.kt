@@ -1,4 +1,4 @@
-package com.projectcitybuild.pcbridge.paper.features.chat
+package com.projectcitybuild.pcbridge.paper.features.badge
 
 import com.projectcitybuild.pcbridge.http.pcb.models.Badge
 import net.kyori.adventure.text.Component

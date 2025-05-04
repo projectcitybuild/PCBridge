@@ -19,11 +19,9 @@ import com.projectcitybuild.pcbridge.paper.features.announcements.repositories.A
 import com.projectcitybuild.pcbridge.paper.features.bans.actions.CheckBan
 import com.projectcitybuild.pcbridge.paper.features.bans.listeners.BanWebhookListener
 import com.projectcitybuild.pcbridge.paper.architecture.connection.repositories.PlayerRepository
-import com.projectcitybuild.pcbridge.paper.features.chat.ChatBadgeFormatter
 import com.projectcitybuild.pcbridge.paper.features.chat.ChatGroupFormatter
 import com.projectcitybuild.pcbridge.paper.features.chat.listeners.ChatConfigListener
 import com.projectcitybuild.pcbridge.paper.features.chat.listeners.SyncPlayerChatListener
-import com.projectcitybuild.pcbridge.paper.features.chat.repositories.ChatBadgeRepository
 import com.projectcitybuild.pcbridge.paper.features.chat.repositories.ChatGroupRepository
 import com.projectcitybuild.pcbridge.paper.features.building.commands.InvisFrameCommand
 import com.projectcitybuild.pcbridge.paper.features.building.listeners.FrameItemInsertListener
@@ -77,12 +75,15 @@ import com.projectcitybuild.pcbridge.paper.core.libs.pcbmanage.ManageUrlGenerato
 import com.projectcitybuild.pcbridge.paper.architecture.permissions.Permissions
 import com.projectcitybuild.pcbridge.paper.core.libs.roles.RolesFilter
 import com.projectcitybuild.pcbridge.paper.core.utils.PeriodicRunner
+import com.projectcitybuild.pcbridge.paper.features.badge.ChatBadgeFormatter
+import com.projectcitybuild.pcbridge.paper.features.badge.listeners.BadgeInvalidateListener
+import com.projectcitybuild.pcbridge.paper.features.badge.middleware.ChatBadgeMiddleware
+import com.projectcitybuild.pcbridge.paper.features.badge.repositories.ChatBadgeRepository
 import com.projectcitybuild.pcbridge.paper.features.bans.commands.BanCommand
 import com.projectcitybuild.pcbridge.paper.features.bans.middleware.BanConnectionMiddleware
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildEditCommand
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildSetCommand
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildUnvoteCommand
-import com.projectcitybuild.pcbridge.paper.features.chat.middleware.ChatBadgeMiddleware
 import com.projectcitybuild.pcbridge.paper.features.chat.middleware.ChatEmojiMiddleware
 import com.projectcitybuild.pcbridge.paper.features.chat.middleware.ChatGroupMiddleware
 import com.projectcitybuild.pcbridge.paper.features.chat.middleware.ChatUrlMiddleware
@@ -130,6 +131,7 @@ fun pluginModule(_plugin: JavaPlugin) =
 
         // Features
         announcements()
+        badge()
         bans()
         building()
         builds()
@@ -597,6 +599,37 @@ private fun Module.architecture() {
     }
 }
 
+private fun Module.badge() {
+    factory {
+        BadgeInvalidateListener(
+            chatBadgeRepository = get(),
+        )
+    }
+
+    factory {
+        ChatBadgeRepository(
+            store = get(),
+            remoteConfig = get(),
+            badgeFormatter = get(),
+            badgeCache = get(named("badge_cache")),
+        )
+    }
+
+    factory {
+        ChatBadgeFormatter()
+    }
+
+    single(named("badge_cache")) {
+        Cache.Builder<UUID, ChatBadgeRepository.CachedComponent>().build()
+    }
+
+    factory {
+        ChatBadgeMiddleware(
+            chatBadgeRepository = get(),
+        )
+    }
+}
+
 private fun Module.bans() {
     factory {
         PlayerRepository(
@@ -654,15 +687,6 @@ private fun Module.invisFrames() {
 
 private fun Module.chat() {
     factory {
-        ChatBadgeRepository(
-            store = get(),
-            remoteConfig = get(),
-            badgeFormatter = get(),
-            badgeCache = get(named("badge_cache")),
-        )
-    }
-
-    factory {
         ChatGroupRepository(
             chatGroupFormatter = get(),
             store = get(),
@@ -670,16 +694,8 @@ private fun Module.chat() {
         )
     }
 
-    single(named("badge_cache")) {
-        Cache.Builder<UUID, ChatBadgeRepository.CachedComponent>().build()
-    }
-
     single(named("group_cache")) {
         Cache.Builder<UUID, ChatGroupRepository.CachedComponent>().build()
-    }
-
-    factory {
-        ChatBadgeFormatter()
     }
 
     single {
@@ -691,14 +707,12 @@ private fun Module.chat() {
     factory {
         SyncPlayerChatListener(
             chatGroupRepository = get(),
-            chatBadgeRepository = get(),
         )
     }
 
     factory {
         ChatConfigListener(
             chatGroupRepository = get(),
-            chatBadgeRepository = get(),
         )
     }
 
@@ -713,12 +727,6 @@ private fun Module.chat() {
     factory {
         ChatGroupMiddleware(
             chatGroupRepository = get(),
-        )
-    }
-
-    factory {
-        ChatBadgeMiddleware(
-            chatBadgeRepository = get(),
         )
     }
 }

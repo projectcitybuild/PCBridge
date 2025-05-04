@@ -46,9 +46,10 @@ import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotTimer
 import com.projectcitybuild.pcbridge.paper.architecture.exceptions.listeners.CoroutineExceptionListener
 import com.projectcitybuild.pcbridge.paper.architecture.state.Store
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.register
+import com.projectcitybuild.pcbridge.paper.features.badge.listeners.BadgeInvalidateListener
+import com.projectcitybuild.pcbridge.paper.features.badge.middleware.ChatBadgeMiddleware
 import com.projectcitybuild.pcbridge.paper.features.bans.commands.BanCommand
 import com.projectcitybuild.pcbridge.paper.features.bans.middleware.BanConnectionMiddleware
-import com.projectcitybuild.pcbridge.paper.features.chat.middleware.ChatBadgeMiddleware
 import com.projectcitybuild.pcbridge.paper.features.chat.middleware.ChatEmojiMiddleware
 import com.projectcitybuild.pcbridge.paper.features.chat.middleware.ChatGroupMiddleware
 import com.projectcitybuild.pcbridge.paper.features.chat.middleware.ChatUrlMiddleware
@@ -162,6 +163,7 @@ private class Lifecycle : KoinComponent {
                 get<AsyncChatListener>(),
                 get<AuthorizeConnectionListener>(),
                 get<BanWebhookListener>(),
+                get<BadgeInvalidateListener>(),
                 get<ChatConfigListener>(),
                 get<ConfigWebhookListener>(),
                 get<CoroutineExceptionListener>(),
