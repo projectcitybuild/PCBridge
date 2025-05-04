@@ -48,8 +48,6 @@ import com.projectcitybuild.pcbridge.http.pcb.PCBHttp
 import com.projectcitybuild.pcbridge.paper.architecture.PlayerDataProvider
 import com.projectcitybuild.pcbridge.paper.architecture.chat.listeners.AsyncChatListener
 import com.projectcitybuild.pcbridge.paper.architecture.chat.decorators.ChatDecoratorChain
-import com.projectcitybuild.pcbridge.paper.architecture.chat.decorators.ChatMessage
-import com.projectcitybuild.pcbridge.paper.architecture.chat.decorators.ChatSender
 import com.projectcitybuild.pcbridge.paper.architecture.connection.listeners.AuthorizeConnectionListener
 import com.projectcitybuild.pcbridge.paper.architecture.connection.middleware.ConnectionMiddlewareChain
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.BuildCommand
@@ -75,6 +73,8 @@ import com.projectcitybuild.pcbridge.paper.architecture.webhooks.WebServerDelega
 import com.projectcitybuild.pcbridge.paper.core.libs.discord.DiscordSend
 import com.projectcitybuild.pcbridge.paper.core.libs.pcbmanage.ManageUrlGenerator
 import com.projectcitybuild.pcbridge.paper.architecture.permissions.Permissions
+import com.projectcitybuild.pcbridge.paper.architecture.serverlist.decorators.ServerListingDecoratorChain
+import com.projectcitybuild.pcbridge.paper.architecture.serverlist.listeners.ServerListPingListener
 import com.projectcitybuild.pcbridge.paper.features.groups.RolesFilter
 import com.projectcitybuild.pcbridge.paper.core.utils.PeriodicRunner
 import com.projectcitybuild.pcbridge.paper.features.chatbadge.ChatBadgeFormatter
@@ -93,9 +93,9 @@ import com.projectcitybuild.pcbridge.paper.features.config.listeners.ConfigWebho
 import com.projectcitybuild.pcbridge.paper.features.sync.commands.SyncDebugCommand
 import com.projectcitybuild.pcbridge.paper.features.maintenance.commands.MaintenanceCommand
 import com.projectcitybuild.pcbridge.paper.features.maintenance.listener.MaintenanceReminderListener
-import com.projectcitybuild.pcbridge.paper.features.maintenance.listener.MaintenanceMotdListener
+import com.projectcitybuild.pcbridge.paper.features.maintenance.decorators.MaintenanceMotdDecorator
 import com.projectcitybuild.pcbridge.paper.features.maintenance.middleware.MaintenanceConnectionMiddleware
-import com.projectcitybuild.pcbridge.paper.features.motd.listeners.MotdListener
+import com.projectcitybuild.pcbridge.paper.features.motd.decorators.GeneralMotdDecorator
 import com.projectcitybuild.pcbridge.paper.features.tab.listeners.TabNameListener
 import com.projectcitybuild.pcbridge.paper.features.teleport.commands.RtpCommand
 import com.projectcitybuild.pcbridge.paper.features.warnings.commands.WarnCommand
@@ -412,6 +412,16 @@ private fun Module.architecture() {
         )
     }
 
+    single {
+        ServerListingDecoratorChain()
+    }
+
+    factory {
+        ServerListPingListener(
+            decorators = get(),
+        )
+    }
+
     single<Permissions> {
         Permissions()
     }
@@ -668,7 +678,7 @@ private fun Module.maintenance() {
     }
 
     factory {
-        MaintenanceMotdListener(
+        MaintenanceMotdDecorator(
             store = get(),
         )
     }
@@ -693,7 +703,7 @@ private fun Module.maintenance() {
 
 private fun Module.motd() {
     factory {
-        MotdListener(
+        GeneralMotdDecorator(
             remoteConfig = get(),
         )
     }

@@ -5,7 +5,7 @@ import com.projectcitybuild.pcbridge.paper.architecture.chat.decorators.ChatMess
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 
 class ChatUrlDecorator: ChatMessageDecorator {
-    override suspend fun handle(prev: ChatMessage): ChatMessage {
+    override suspend fun decorate(prev: ChatMessage): ChatMessage {
         // Only the legacy serializer automatically converts URLs to clickable text
         val legacySerializer = LegacyComponentSerializer
             .builder()

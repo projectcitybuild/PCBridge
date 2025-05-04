@@ -86,7 +86,7 @@ class ACommandTest {
     fun `decorates messages`() =
         runTest {
             decoratorChain.addMessage(object : ChatMessageDecorator {
-                override suspend fun handle(prev: ChatMessage): ChatMessage {
+                override suspend fun decorate(prev: ChatMessage): ChatMessage {
                     return prev.copy(message = Component.text("replaced_message"))
                 }
             })

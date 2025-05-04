@@ -5,7 +5,7 @@ import com.projectcitybuild.pcbridge.paper.architecture.chat.decorators.ChatMess
 import net.kyori.adventure.text.Component
 
 class ChatEmojiDecorator: ChatMessageDecorator {
-    override suspend fun handle(prev: ChatMessage): ChatMessage {
+    override suspend fun decorate(prev: ChatMessage): ChatMessage {
         return prev.copy(
             message = prev.message.replaceText { builder ->
                 builder.match(pattern).replacement { match, _ ->
