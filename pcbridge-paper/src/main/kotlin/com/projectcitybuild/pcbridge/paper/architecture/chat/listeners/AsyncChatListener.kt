@@ -1,7 +1,8 @@
 package com.projectcitybuild.pcbridge.paper.architecture.chat.listeners
 
-import com.projectcitybuild.pcbridge.paper.architecture.chat.middleware.ChatMessage
-import com.projectcitybuild.pcbridge.paper.architecture.chat.middleware.ChatMiddlewareChain
+import com.projectcitybuild.pcbridge.paper.architecture.chat.decorators.ChatMessage
+import com.projectcitybuild.pcbridge.paper.architecture.chat.decorators.ChatDecoratorChain
+import com.projectcitybuild.pcbridge.paper.architecture.chat.decorators.ChatSender
 import io.papermc.paper.chat.ChatRenderer
 import io.papermc.paper.event.player.AsyncChatEvent
 import kotlinx.coroutines.runBlocking
@@ -20,7 +21,7 @@ import org.bukkit.event.Listener
  * register a [ChatMiddleware] that's called as part of a chain
  */
 class AsyncChatListener(
-    private val middlewareChain: ChatMiddlewareChain,
+    private val decorators: ChatDecoratorChain,
 ) : Listener, ChatRenderer.ViewerUnaware {
     @EventHandler(priority = EventPriority.HIGHEST)
     fun onChat(event: AsyncChatEvent) {
@@ -35,12 +36,15 @@ class AsyncChatListener(
         message: Component,
     ): Component =
         runBlocking {
-            val chatMessage = middlewareChain.pipe(
-                ChatMessage(source, sourceDisplayName, message)
+            val chatSender = decorators.pipe(
+                ChatSender(source, sourceDisplayName)
+            )
+            val chatMessage = decorators.pipe(
+                ChatMessage(source, message)
             )
             Component.text().run {
                 append(
-                    chatMessage.sourceDisplayName,
+                    chatSender.sourceDisplayName,
                     Component.text(": "),
                     chatMessage.message,
                 )

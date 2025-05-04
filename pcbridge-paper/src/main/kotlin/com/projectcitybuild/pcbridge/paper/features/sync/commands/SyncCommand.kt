@@ -44,6 +44,10 @@ class SyncCommand(
         val sender = context.source.sender
         val player = context.getArgument("player", Player::class.java)
 
+        if (sender is Player && sender.equals(player)) {
+            syncSelf(context)
+            return@traceSuspending
+        }
         sender.sendMessage(
             MiniMessage.miniMessage().deserialize("<gray>Fetching player data for ${player.name}...</gray>")
         )
