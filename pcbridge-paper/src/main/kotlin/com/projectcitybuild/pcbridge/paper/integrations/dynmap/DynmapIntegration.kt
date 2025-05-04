@@ -1,4 +1,4 @@
-package com.projectcitybuild.pcbridge.paper.integrations
+package com.projectcitybuild.pcbridge.paper.integrations.dynmap
 
 import com.github.shynixn.mccoroutine.bukkit.registerSuspendingEvents
 import com.projectcitybuild.pcbridge.paper.core.libs.logger.log

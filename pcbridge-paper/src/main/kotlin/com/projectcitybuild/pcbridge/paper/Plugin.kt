@@ -38,9 +38,9 @@ import com.projectcitybuild.pcbridge.paper.features.warps.commands.WarpCommand
 import com.projectcitybuild.pcbridge.paper.features.warps.commands.WarpsCommand
 import com.projectcitybuild.pcbridge.paper.features.watchdog.listeners.ItemTextListener
 import com.projectcitybuild.pcbridge.paper.features.building.commands.ItemNameCommand
-import com.projectcitybuild.pcbridge.paper.integrations.DynmapIntegration
-import com.projectcitybuild.pcbridge.paper.integrations.EssentialsIntegration
-import com.projectcitybuild.pcbridge.paper.integrations.LuckPermsIntegration
+import com.projectcitybuild.pcbridge.paper.integrations.dynmap.DynmapIntegration
+import com.projectcitybuild.pcbridge.paper.integrations.essentials.EssentialsIntegration
+import com.projectcitybuild.pcbridge.paper.integrations.luckperms.LuckPermsIntegration
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotListenerRegistry
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotTimer
 import com.projectcitybuild.pcbridge.paper.architecture.exceptions.listeners.CoroutineExceptionListener
@@ -60,6 +60,7 @@ import com.projectcitybuild.pcbridge.paper.features.maintenance.listener.Mainten
 import com.projectcitybuild.pcbridge.paper.features.maintenance.listener.MaintenanceMotdListener
 import com.projectcitybuild.pcbridge.paper.features.maintenance.middleware.MaintenanceConnectionMiddleware
 import com.projectcitybuild.pcbridge.paper.features.motd.listeners.MotdListener
+import com.projectcitybuild.pcbridge.paper.features.tab.listeners.TabNameListener
 import com.projectcitybuild.pcbridge.paper.features.teleport.commands.RtpCommand
 import com.projectcitybuild.pcbridge.paper.features.warnings.commands.WarnCommand
 import com.projectcitybuild.pcbridge.paper.features.warps.listeners.WarpWebhookListener
@@ -160,6 +161,7 @@ private class Lifecycle : KoinComponent {
                 get<AnnouncementEnableListener>(),
                 get<AsyncChatListener>(),
                 get<AuthorizeConnectionListener>(),
+                get<BanWebhookListener>(),
                 get<ChatConfigListener>(),
                 get<ConfigWebhookListener>(),
                 get<CoroutineExceptionListener>(),
@@ -167,7 +169,7 @@ private class Lifecycle : KoinComponent {
                 get<FramePlaceListener>(),
                 get<FrameItemInsertListener>(),
                 get<FrameItemRemoveListener>(),
-                get<BanWebhookListener>(),
+                get<ItemTextListener>(),
                 get<MaintenanceReminderListener>(),
                 get<MaintenanceMotdListener>(),
                 get<MotdListener>(),
@@ -175,9 +177,9 @@ private class Lifecycle : KoinComponent {
                 get<PlayerSyncRequestListener>(),
                 get<PlayerSyncWebhookListener>(),
                 get<ServerOverviewJoinListener>(),
-                get<ItemTextListener>(),
                 get<SyncPlayerChatListener>(),
                 get<SyncRankListener>(),
+                get<TabNameListener>(),
                 get<TelemetryPlayerConnectListener>(),
                 get<WarpWebhookListener>(),
             )
@@ -185,8 +187,6 @@ private class Lifecycle : KoinComponent {
             get<DynmapIntegration>().enable()
             get<EssentialsIntegration>().enable()
             get<LuckPermsIntegration>().enable()
-
-            get<DiscordSend>().startProcessing()
         }
 
     suspend fun shutdown() =
@@ -199,8 +199,6 @@ private class Lifecycle : KoinComponent {
             get<DynmapIntegration>().disable()
             get<EssentialsIntegration>().disable()
             get<LuckPermsIntegration>().disable()
-
-            get<DiscordSend>().stopProcessing()
 
             listenerRegistry.unregisterAll()
             audiences.close()

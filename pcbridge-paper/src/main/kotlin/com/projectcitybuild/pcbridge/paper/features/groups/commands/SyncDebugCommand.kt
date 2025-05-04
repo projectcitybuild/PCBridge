@@ -4,7 +4,7 @@ import com.mojang.brigadier.arguments.StringArgumentType
 import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.tree.LiteralCommandNode
 import com.projectcitybuild.pcbridge.paper.PermissionNode
-import com.projectcitybuild.pcbridge.paper.core.libs.permissions.Permissions
+import com.projectcitybuild.pcbridge.paper.architecture.permissions.Permissions
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierCommand
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
@@ -37,7 +37,7 @@ class SyncDebugCommand(
         val groups = groupsArg.split(" ").toSet()
         check(groups.isNotEmpty()) { "No groups specified" }
 
-        permissions.setUserGroups(sender.uniqueId, groups)
+        permissions.provider.setUserRoles(sender.uniqueId, groups)
 
         sender.sendMessage(
             MiniMessage.miniMessage().deserialize(

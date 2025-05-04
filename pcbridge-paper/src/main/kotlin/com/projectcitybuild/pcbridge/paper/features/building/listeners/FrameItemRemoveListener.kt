@@ -1,6 +1,7 @@
 package com.projectcitybuild.pcbridge.paper.features.building.listeners
 
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotNamespace
+import com.projectcitybuild.pcbridge.paper.features.building.data.InvisFrameKey
 import org.bukkit.entity.GlowItemFrame
 import org.bukkit.entity.ItemFrame
 import org.bukkit.event.EventHandler
@@ -20,7 +21,7 @@ class FrameItemRemoveListener(
 
         val invisibleValue =
             entity.persistentDataContainer.getOrDefault(
-                spigotNamespace.invisibleKey,
+                spigotNamespace.get(InvisFrameKey()),
                 PersistentDataType.BYTE,
                 0,
             )

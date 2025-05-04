@@ -7,8 +7,8 @@ class ChatMiddlewareChain(
         middlewares.add(it)
     }
 
-    suspend fun pipe(chat: Chat): Chat {
-        var updated = chat
+    suspend fun pipe(chatMessage: ChatMessage): ChatMessage {
+        var updated = chatMessage
         for (middleware in middlewares) {
             updated = middleware.handle(updated)
         }

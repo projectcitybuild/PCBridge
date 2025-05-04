@@ -8,8 +8,6 @@ import com.projectcitybuild.pcbridge.paper.core.libs.localconfig.JsonStorage
 import com.projectcitybuild.pcbridge.paper.core.libs.datetime.services.DateTimeFormatter
 import com.projectcitybuild.pcbridge.paper.core.libs.datetime.services.LocalizedTime
 import com.projectcitybuild.pcbridge.paper.core.libs.errors.SentryReporter
-import com.projectcitybuild.pcbridge.paper.core.libs.permissions.Permissions
-import com.projectcitybuild.pcbridge.paper.core.libs.permissions.adapters.LuckPermsPermissions
 import com.projectcitybuild.pcbridge.paper.features.config.commands.ConfigCommand
 import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.RemoteConfig
 import com.projectcitybuild.pcbridge.paper.architecture.state.Store
@@ -64,9 +62,9 @@ import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.Build
 import com.projectcitybuild.pcbridge.paper.features.builds.repositories.BuildRepository
 import com.projectcitybuild.pcbridge.paper.features.watchdog.listeners.ItemTextListener
 import com.projectcitybuild.pcbridge.paper.features.building.commands.ItemNameCommand
-import com.projectcitybuild.pcbridge.paper.integrations.DynmapIntegration
-import com.projectcitybuild.pcbridge.paper.integrations.EssentialsIntegration
-import com.projectcitybuild.pcbridge.paper.integrations.LuckPermsIntegration
+import com.projectcitybuild.pcbridge.paper.integrations.dynmap.DynmapIntegration
+import com.projectcitybuild.pcbridge.paper.integrations.essentials.EssentialsIntegration
+import com.projectcitybuild.pcbridge.paper.integrations.luckperms.LuckPermsIntegration
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotEventBroadcaster
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotListenerRegistry
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotNamespace
@@ -76,6 +74,9 @@ import com.projectcitybuild.pcbridge.paper.architecture.state.data.PersistedServ
 import com.projectcitybuild.pcbridge.paper.architecture.webhooks.WebServerDelegate
 import com.projectcitybuild.pcbridge.paper.core.libs.discord.DiscordSend
 import com.projectcitybuild.pcbridge.paper.core.libs.pcbmanage.ManageUrlGenerator
+import com.projectcitybuild.pcbridge.paper.architecture.permissions.Permissions
+import com.projectcitybuild.pcbridge.paper.core.libs.roles.RolesFilter
+import com.projectcitybuild.pcbridge.paper.core.utils.PeriodicRunner
 import com.projectcitybuild.pcbridge.paper.features.bans.commands.BanCommand
 import com.projectcitybuild.pcbridge.paper.features.bans.middleware.BanConnectionMiddleware
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildEditCommand
@@ -93,6 +94,7 @@ import com.projectcitybuild.pcbridge.paper.features.maintenance.listener.Mainten
 import com.projectcitybuild.pcbridge.paper.features.maintenance.listener.MaintenanceMotdListener
 import com.projectcitybuild.pcbridge.paper.features.maintenance.middleware.MaintenanceConnectionMiddleware
 import com.projectcitybuild.pcbridge.paper.features.motd.listeners.MotdListener
+import com.projectcitybuild.pcbridge.paper.features.tab.listeners.TabNameListener
 import com.projectcitybuild.pcbridge.paper.features.teleport.commands.RtpCommand
 import com.projectcitybuild.pcbridge.paper.features.warnings.commands.WarnCommand
 import com.projectcitybuild.pcbridge.paper.features.warps.commands.warps.WarpCreateCommand
@@ -115,6 +117,7 @@ import java.time.Clock
 import java.time.ZoneId
 import java.util.Locale
 import java.util.UUID
+import kotlin.time.Duration.Companion.seconds
 
 fun pluginModule(_plugin: JavaPlugin) =
     module {
@@ -139,6 +142,7 @@ fun pluginModule(_plugin: JavaPlugin) =
         motd()
         register()
         staffChat()
+        tab()
         telemetry()
         teleport()
         warps()
@@ -167,10 +171,6 @@ private fun Module.spigot(plugin: JavaPlugin) {
         SpigotListenerRegistry(
             plugin = get(),
         )
-    }
-
-    single<Permissions> {
-        LuckPermsPermissions()
     }
 
     factory {
@@ -260,6 +260,7 @@ private fun Module.core() {
             localConfig = get(),
             discordHttpService = get<DiscordHttp>().discord,
             sentryReporter = get(),
+            periodicRunner = PeriodicRunner(processInterval = 10.seconds)
         )
     }
 
@@ -268,6 +269,10 @@ private fun Module.core() {
             server = get(),
             localConfig = get(),
         )
+    }
+
+    single {
+        Permissions()
     }
 }
 
@@ -320,11 +325,15 @@ private fun Module.integrations() {
         EssentialsIntegration(
             plugin = get(),
             sentry = get(),
+            store = get(),
+            eventBroadcaster = get(),
         )
     }
 
     single {
-        LuckPermsIntegration()
+        LuckPermsIntegration(
+            permissions = get(),
+        )
     }
 }
 
@@ -582,6 +591,10 @@ private fun Module.architecture() {
             middlewareChain = get(),
         )
     }
+
+    single<Permissions> {
+        Permissions()
+    }
 }
 
 private fun Module.bans() {
@@ -670,7 +683,9 @@ private fun Module.chat() {
     }
 
     single {
-        ChatGroupFormatter()
+        ChatGroupFormatter(
+            rolesFilter = RolesFilter(),
+        )
     }
 
     factory {
@@ -758,6 +773,16 @@ private fun Module.register() {
         CodeCommand(
             plugin = get<JavaPlugin>(),
             registerHttpService = get<PCBHttp>().register,
+        )
+    }
+}
+
+private fun Module.tab() {
+    factory {
+        TabNameListener(
+            server = get(),
+            store = get(),
+            rolesFilter = RolesFilter(),
         )
     }
 }

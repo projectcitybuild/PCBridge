@@ -1,6 +1,7 @@
 package com.projectcitybuild.pcbridge.paper.features.building.listeners
 
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotNamespace
+import com.projectcitybuild.pcbridge.paper.features.building.data.InvisFrameKey
 import org.bukkit.entity.ItemFrame
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -17,7 +18,7 @@ class FramePlaceListener(
 
         val invisibleValue =
             event.itemStack?.itemMeta?.persistentDataContainer?.getOrDefault(
-                spigotNamespace.invisibleKey,
+                spigotNamespace.get(InvisFrameKey()),
                 PersistentDataType.BYTE,
                 0,
             ) ?: 0.toByte()
@@ -25,7 +26,7 @@ class FramePlaceListener(
         val isInvisibleFrame = invisibleValue == 1.toByte()
         if (isInvisibleFrame) {
             event.entity.persistentDataContainer.set(
-                spigotNamespace.invisibleKey,
+                spigotNamespace.get(InvisFrameKey()),
                 PersistentDataType.BYTE,
                 1,
             )
