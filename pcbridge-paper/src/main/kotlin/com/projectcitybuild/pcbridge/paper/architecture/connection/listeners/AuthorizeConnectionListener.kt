@@ -1,12 +1,12 @@
 package com.projectcitybuild.pcbridge.paper.architecture.connection.listeners
 
+import com.projectcitybuild.pcbridge.paper.architecture.PlayerDataProvider
 import com.projectcitybuild.pcbridge.paper.architecture.connection.events.ConnectionPermittedEvent
 import com.projectcitybuild.pcbridge.paper.architecture.connection.middleware.ConnectionMiddlewareChain
 import com.projectcitybuild.pcbridge.paper.architecture.connection.middleware.ConnectionResult
 import com.projectcitybuild.pcbridge.paper.core.libs.errors.SentryReporter
 import com.projectcitybuild.pcbridge.paper.core.libs.logger.log
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotEventBroadcaster
-import com.projectcitybuild.pcbridge.paper.architecture.connection.repositories.PlayerRepository
 import kotlinx.coroutines.runBlocking
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
@@ -15,7 +15,7 @@ import org.bukkit.event.player.AsyncPlayerPreLoginEvent
 
 class AuthorizeConnectionListener(
     private val middlewareChain: ConnectionMiddlewareChain,
-    private val playerRepository: PlayerRepository,
+    private val playerDataProvider: PlayerDataProvider,
     private val eventBroadcaster: SpigotEventBroadcaster,
     private val sentry: SentryReporter,
 ) : Listener {
@@ -39,7 +39,7 @@ class AuthorizeConnectionListener(
          */
         runBlocking {
             runCatching {
-                val playerData = playerRepository.get(
+                val playerData = playerDataProvider.get(
                     uuid = event.uniqueId,
                     ip = event.address,
                 )
