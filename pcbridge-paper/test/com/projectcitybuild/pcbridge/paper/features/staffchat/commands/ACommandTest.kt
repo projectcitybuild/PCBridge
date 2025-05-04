@@ -5,6 +5,9 @@ import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.RemoteConfig
 import com.projectcitybuild.pcbridge.http.pcb.models.RemoteConfigKeyValues
 import com.projectcitybuild.pcbridge.http.pcb.models.RemoteConfigVersion
 import com.projectcitybuild.pcbridge.paper.PermissionNode
+import com.projectcitybuild.pcbridge.paper.architecture.chat.decorators.ChatDecoratorChain
+import com.projectcitybuild.pcbridge.paper.architecture.chat.decorators.ChatMessage
+import com.projectcitybuild.pcbridge.paper.architecture.chat.decorators.ChatSender
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.extensions.hasPermission
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import kotlinx.coroutines.test.runTest
@@ -26,12 +29,14 @@ class ACommandTest {
     private lateinit var plugin: Plugin
     private lateinit var server: Server
     private lateinit var remoteConfig: RemoteConfig
+    private lateinit var decoratorChain: ChatDecoratorChain
 
     @BeforeEach
     fun setUp() {
         plugin = mock(Plugin::class.java)
         server = mock(Server::class.java)
         remoteConfig = mock(RemoteConfig::class.java)
+        decoratorChain = ChatDecoratorChain()
     }
 
     @Test
@@ -66,7 +71,7 @@ class ACommandTest {
             whenever(source.sender).thenReturn(sender)
             whenever(context.getArgument("message", String::class.java)).thenReturn("foo bar")
 
-            StaffChatCommand(plugin, server, remoteConfig).execute(context)
+            StaffChatCommand(plugin, server, remoteConfig, decoratorChain).execute(context)
 
             argumentCaptor<Component>().apply {
                 verify(staffPlayer).sendMessage(capture())
