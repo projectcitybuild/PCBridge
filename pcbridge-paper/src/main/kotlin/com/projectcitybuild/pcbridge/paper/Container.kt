@@ -75,6 +75,10 @@ import com.projectcitybuild.pcbridge.paper.core.libs.pcbmanage.ManageUrlGenerato
 import com.projectcitybuild.pcbridge.paper.architecture.permissions.Permissions
 import com.projectcitybuild.pcbridge.paper.architecture.serverlist.decorators.ServerListingDecoratorChain
 import com.projectcitybuild.pcbridge.paper.architecture.serverlist.listeners.ServerListPingListener
+import com.projectcitybuild.pcbridge.paper.core.libs.teleportation.PlayerTeleporter
+import com.projectcitybuild.pcbridge.paper.features.randomteleport.actions.FindRandomLocation
+import com.projectcitybuild.pcbridge.paper.core.libs.teleportation.SafeYLocationFinder
+import com.projectcitybuild.pcbridge.paper.core.libs.teleportation.storage.TeleportHistoryStorage
 import com.projectcitybuild.pcbridge.paper.features.groups.RolesFilter
 import com.projectcitybuild.pcbridge.paper.core.utils.PeriodicRunner
 import com.projectcitybuild.pcbridge.paper.features.chatbadge.ChatBadgeFormatter
@@ -97,7 +101,7 @@ import com.projectcitybuild.pcbridge.paper.features.maintenance.decorators.Maint
 import com.projectcitybuild.pcbridge.paper.features.maintenance.middleware.MaintenanceConnectionMiddleware
 import com.projectcitybuild.pcbridge.paper.features.motd.decorators.GeneralMotdDecorator
 import com.projectcitybuild.pcbridge.paper.features.tab.listeners.TabNameListener
-import com.projectcitybuild.pcbridge.paper.features.teleport.commands.RtpCommand
+import com.projectcitybuild.pcbridge.paper.features.randomteleport.commands.RtpCommand
 import com.projectcitybuild.pcbridge.paper.features.warnings.commands.WarnCommand
 import com.projectcitybuild.pcbridge.paper.features.warps.commands.warps.WarpCreateCommand
 import com.projectcitybuild.pcbridge.paper.features.warps.commands.warps.WarpDeleteCommand
@@ -145,12 +149,12 @@ fun pluginModule(_plugin: JavaPlugin) =
         invisFrames()
         maintenance()
         motd()
+        randomTeleport()
         register()
         staffChat()
         sync()
         tab()
         telemetry()
-        teleport()
         warps()
         watchdog()
         warnings()
@@ -279,6 +283,23 @@ private fun Module.core() {
 
     single {
         Permissions()
+    }
+
+    factory {
+        PlayerTeleporter(
+            safeYLocationFinder = get(),
+            teleportHistoryStorage = get(),
+        )
+    }
+
+    factory {
+        TeleportHistoryStorage(
+            eventBroadcaster = get(),
+        )
+    }
+
+    factory {
+        SafeYLocationFinder()
     }
 }
 
@@ -492,6 +513,7 @@ private fun Module.builds() {
             plugin = get<JavaPlugin>(),
             buildRepository = get(),
             server = get(),
+            playerTeleporter = get(),
         )
     }
 
@@ -709,6 +731,32 @@ private fun Module.motd() {
     }
 }
 
+private fun Module.randomTeleport() {
+    factory {
+        RtpCommand(
+            plugin = get<JavaPlugin>(),
+            findRandomLocation = get(),
+        )
+    }
+
+    factory {
+        FindRandomLocation(
+            playerTeleporter = get(),
+        )
+    }
+}
+
+private fun Module.staffChat() {
+    factory {
+        StaffChatCommand(
+            plugin = get<JavaPlugin>(),
+            server = get(),
+            remoteConfig = get(),
+            decorators = get(),
+        )
+    }
+}
+
 private fun Module.register() {
     factory {
         RegisterCommand(
@@ -744,26 +792,6 @@ private fun Module.telemetry() {
     factory {
         TelemetryPlayerConnectListener(
             telemetryRepository = get(),
-        )
-    }
-}
-
-private fun Module.teleport() {
-    factory {
-        RtpCommand(
-            plugin = get<JavaPlugin>(),
-            eventBroadcaster = get(),
-        )
-    }
-}
-
-private fun Module.staffChat() {
-    factory {
-        StaffChatCommand(
-            plugin = get<JavaPlugin>(),
-            server = get(),
-            remoteConfig = get(),
-            decorators = get(),
         )
     }
 }
@@ -828,6 +856,7 @@ private fun Module.warps() {
             plugin = get<JavaPlugin>(),
             warpRepository = get(),
             server = get(),
+            playerTeleporter = get(),
         )
     }
 
