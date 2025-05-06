@@ -75,6 +75,7 @@ import com.projectcitybuild.pcbridge.paper.core.libs.pcbmanage.ManageUrlGenerato
 import com.projectcitybuild.pcbridge.paper.architecture.permissions.Permissions
 import com.projectcitybuild.pcbridge.paper.architecture.serverlist.decorators.ServerListingDecoratorChain
 import com.projectcitybuild.pcbridge.paper.architecture.serverlist.listeners.ServerListPingListener
+import com.projectcitybuild.pcbridge.paper.core.libs.cooldowns.Cooldown
 import com.projectcitybuild.pcbridge.paper.core.libs.teleportation.PlayerTeleporter
 import com.projectcitybuild.pcbridge.paper.features.randomteleport.actions.FindRandomLocation
 import com.projectcitybuild.pcbridge.paper.core.libs.teleportation.SafeYLocationFinder
@@ -300,6 +301,12 @@ private fun Module.core() {
 
     factory {
         SafeYLocationFinder()
+    }
+
+    single {
+        Cooldown(
+            timer = get(),
+        )
     }
 }
 
@@ -736,6 +743,7 @@ private fun Module.randomTeleport() {
         RtpCommand(
             plugin = get<JavaPlugin>(),
             findRandomLocation = get(),
+            cooldown = get(),
         )
     }
 

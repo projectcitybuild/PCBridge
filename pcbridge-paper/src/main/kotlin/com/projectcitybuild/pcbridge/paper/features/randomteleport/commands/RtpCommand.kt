@@ -3,6 +3,7 @@ package com.projectcitybuild.pcbridge.paper.features.randomteleport.commands
 import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.tree.LiteralCommandNode
 import com.projectcitybuild.pcbridge.paper.PermissionNode
+import com.projectcitybuild.pcbridge.paper.core.libs.cooldowns.Cooldown
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierCommand
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
@@ -13,9 +14,11 @@ import io.papermc.paper.command.brigadier.Commands
 import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
+import kotlin.time.Duration.Companion.seconds
 
 class RtpCommand(
     private val plugin: Plugin,
+    private val cooldown: Cooldown,
     private val findRandomLocation: FindRandomLocation,
 ) : BrigadierCommand {
     override fun buildLiteral(): LiteralCommandNode<CommandSourceStack> {
@@ -30,6 +33,8 @@ class RtpCommand(
         val executor = context.source.executor
         val player = executor as? Player
         checkNotNull(player) { "Only players can use this command" }
+
+        cooldown.throttle(5.seconds, player, "rtp")
 
         executor.sendMessage(
             miniMessage.deserialize("<gray><italic>Searching for a safe location...</italic></gray>")

@@ -7,6 +7,7 @@ import kotlinx.coroutines.runBlocking
 import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.Server
 import java.util.concurrent.TimeUnit
+import kotlin.time.Duration.Companion.minutes
 
 class StartAnnouncementTimer(
     private val repository: AnnouncementRepository,
@@ -18,17 +19,15 @@ class StartAnnouncementTimer(
 
     fun start() {
         val config = remoteConfig.latest.config
-        val intervalInMins = config.announcements.intervalInMins
+        val interval = config.announcements.intervalInMins.minutes
 
         if (config.announcements.messages.isEmpty()) return
 
         timer.cancel(timerId)
         timer.scheduleRepeating(
             identifier = timerId,
-            // No point doing an announcement just as the server starts
-            delay = intervalInMins.toLong(),
-            repeatingInterval = intervalInMins.toLong(),
-            unit = TimeUnit.MINUTES,
+            delay = interval, // No point doing an announcement just as the server starts
+            repeatingInterval = interval,
             work = {
                 val message = runBlocking { repository.getNextAnnouncement() }
                 server.broadcast(
