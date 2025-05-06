@@ -4,7 +4,6 @@ import com.mojang.brigadier.arguments.StringArgumentType
 import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.suggestion.SuggestionsBuilder
 import com.mojang.brigadier.tree.LiteralCommandNode
-import com.projectcitybuild.pcbridge.paper.core.libs.teleportation.events.PlayerPreTeleportEvent
 import com.projectcitybuild.pcbridge.paper.features.warps.repositories.WarpRepository
 import com.projectcitybuild.pcbridge.http.pcb.models.Warp
 import com.projectcitybuild.pcbridge.paper.PermissionNode
@@ -16,7 +15,6 @@ import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.sug
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceSuspending
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
-import kotlinx.coroutines.future.await
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextDecoration
@@ -73,9 +71,9 @@ class WarpCommand(
         playerTeleporter.move(
             player,
             destination = warp.toLocation(world),
+            cause = PlayerTeleportEvent.TeleportCause.COMMAND,
             options = PlayerTeleporter.TeleportOptions(
-                cause = PlayerTeleportEvent.TeleportCause.COMMAND,
-                preloadDestinationChunks = true,
+                preloadDestinationChunk = true,
             ),
         )
 
@@ -87,11 +85,5 @@ class WarpCommand(
     }
 }
 
-private fun Warp.toLocation(world: World) = Location(
-    world,
-    x,
-    y,
-    z,
-    yaw,
-    pitch,
-)
+private fun Warp.toLocation(world: World)
+    = Location(world, x, y, z, yaw, pitch,)

@@ -14,8 +14,7 @@ class PlayerTeleporter(
     private val teleportHistoryStorage: TeleportHistoryStorage,
 ) {
     data class TeleportOptions(
-        val cause: TeleportCause = TeleportCause.PLUGIN,
-        val preloadDestinationChunks: Boolean = false,
+        val preloadDestinationChunk: Boolean = false,
         val adjustYForSafety: Boolean = false,
         val snapToBlockCenter: Boolean = false,
     )
@@ -23,16 +22,16 @@ class PlayerTeleporter(
     suspend fun move(
         player: Player,
         destination: Location,
+        cause: TeleportCause = TeleportCause.PLUGIN,
         options: TeleportOptions = TeleportOptions(),
     ) {
         val currentLocation = player.location.clone()
-
-        if (options.preloadDestinationChunks) {
-            destination.world.getChunkAtAsyncUrgently(destination).await()
-        }
         val teleportLocation = adjustedDestination(destination, options)
 
-        val success = player.teleportAsync(teleportLocation, options.cause).await()
+        if (options.preloadDestinationChunk) {
+            destination.world.getChunkAtAsyncUrgently(teleportLocation).await()
+        }
+        val success = player.teleportAsync(teleportLocation, cause).await()
         if (!success) {
            log.warn { "Teleport failed ($teleportLocation)" }
            throw TeleportFailedException("Failed to teleport to destination")

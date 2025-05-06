@@ -69,9 +69,9 @@ class BuildCommand(
         playerTeleporter.move(
             player,
             destination = build.toLocation(world),
+            cause = PlayerTeleportEvent.TeleportCause.COMMAND,
             options = PlayerTeleporter.TeleportOptions(
-                cause = PlayerTeleportEvent.TeleportCause.COMMAND,
-                preloadDestinationChunks = true,
+                preloadDestinationChunk = true,
             ),
         )
         val owner = build.player?.alias
@@ -101,6 +101,5 @@ class BuildCommand(
     }
 }
 
-private fun Build.toLocation(world: World): Location {
-    return Location(world, x, y, z, yaw, pitch)
-}
+private fun Build.toLocation(world: World)
+    = Location(world, x, y, z, yaw, pitch)

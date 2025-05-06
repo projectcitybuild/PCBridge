@@ -26,9 +26,9 @@ class FindRandomLocation(
                 playerTeleporter.move(
                     player,
                     location,
+                    cause = PlayerTeleportEvent.TeleportCause.COMMAND,
                     options = PlayerTeleporter.TeleportOptions(
-                        cause = PlayerTeleportEvent.TeleportCause.COMMAND,
-                        preloadDestinationChunks = true,
+                        preloadDestinationChunk = true,
                         adjustYForSafety = true,
                         snapToBlockCenter = true,
                     ),
