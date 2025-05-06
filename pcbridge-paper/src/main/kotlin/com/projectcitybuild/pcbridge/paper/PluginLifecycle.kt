@@ -53,7 +53,7 @@ import com.projectcitybuild.pcbridge.paper.features.sync.commands.SyncDebugComma
 import com.projectcitybuild.pcbridge.paper.features.sync.listener.PlayerSyncRequestListener
 import com.projectcitybuild.pcbridge.paper.features.tab.listeners.TabNameListener
 import com.projectcitybuild.pcbridge.paper.features.telemetry.listeners.TelemetryPlayerConnectListener
-import com.projectcitybuild.pcbridge.paper.features.teleport.commands.RtpCommand
+import com.projectcitybuild.pcbridge.paper.features.randomteleport.commands.RtpCommand
 import com.projectcitybuild.pcbridge.paper.features.warnings.commands.WarnCommand
 import com.projectcitybuild.pcbridge.paper.features.warps.commands.WarpCommand
 import com.projectcitybuild.pcbridge.paper.features.warps.commands.WarpsCommand

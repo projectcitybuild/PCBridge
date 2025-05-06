@@ -2,6 +2,7 @@ package com.projectcitybuild.pcbridge.paper.core.libs.teleportation
 
 import com.projectcitybuild.pcbridge.paper.core.libs.logger.log
 import com.projectcitybuild.pcbridge.paper.core.libs.teleportation.exceptions.SafeDestinationNotFoundException
+import com.projectcitybuild.pcbridge.paper.core.libs.teleportation.exceptions.TeleportFailedException
 import com.projectcitybuild.pcbridge.paper.core.libs.teleportation.storage.TeleportHistoryStorage
 import kotlinx.coroutines.future.await
 import org.bukkit.Location
@@ -33,7 +34,7 @@ class PlayerTeleporter(
         val success = player.teleportAsync(teleportLocation, options.cause).await()
         if (!success) {
            log.warn { "Teleport failed ($teleportLocation)" }
-           throw Exception("Failed to teleport to destination")
+           throw TeleportFailedException("Failed to teleport to destination")
         }
 
         teleportHistoryStorage.put(
