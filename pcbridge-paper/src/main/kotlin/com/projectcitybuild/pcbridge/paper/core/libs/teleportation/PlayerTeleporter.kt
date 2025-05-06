@@ -25,12 +25,13 @@ class PlayerTeleporter(
         destination: Location,
         options: TeleportOptions = TeleportOptions(),
     ) {
+        val currentLocation = player.location.clone()
+
         if (options.preloadDestinationChunks) {
             destination.world.getChunkAtAsyncUrgently(destination).await()
         }
         val teleportLocation = adjustedDestination(destination, options)
 
-        val prev = player.location.clone()
         val success = player.teleportAsync(teleportLocation, options.cause).await()
         if (!success) {
            log.warn { "Teleport failed ($teleportLocation)" }
@@ -38,25 +39,25 @@ class PlayerTeleporter(
         }
 
         teleportHistoryStorage.put(
-            prev = prev,
+            prev = currentLocation,
             next = teleportLocation,
             player = player,
         )
     }
 
     private fun adjustedDestination(destination: Location, options: TeleportOptions): Location {
-        var location = destination
+        var location = destination.clone()
         if (options.adjustYForSafety) {
             location = safeLocation(location)
         }
         if (options.snapToBlockCenter) {
-            location = location.clone().toCenterLocation()
+            location = location.toCenterLocation()
         }
         return location
     }
 
     private fun safeLocation(initial: Location): Location {
-        return initial.clone().apply {
+        return initial.apply {
             y = safeYLocationFinder.findY(
                 world = world,
                 x = x.toInt(),
