@@ -3,7 +3,7 @@ package com.projectcitybuild.pcbridge.paper.core.support.spigot
 import com.projectcitybuild.pcbridge.paper.core.utils.Cancellable
 import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.scheduler.BukkitTask
-import java.util.concurrent.TimeUnit
+import kotlin.time.Duration
 
 // TODO: replace these with coroutines + delay later
 class SpigotTimer(
@@ -13,15 +13,15 @@ class SpigotTimer(
 
     fun scheduleOnce(
         identifier: String,
-        delay: Long,
-        unit: TimeUnit,
+        delay: Duration,
         work: () -> Unit,
     ): Cancellable {
         val task =
             plugin.server.scheduler.runTaskLater(
                 plugin,
                 work,
-                unit.toSeconds(delay),
+                // Times are all in ticks (20 ticks per second)
+                delay.inWholeSeconds * 20,
             )
         tasks[identifier] = task
 
@@ -32,9 +32,8 @@ class SpigotTimer(
 
     fun scheduleRepeating(
         identifier: String,
-        delay: Long,
-        repeatingInterval: Long,
-        unit: TimeUnit,
+        delay: Duration,
+        repeatingInterval: Duration,
         work: () -> Unit,
     ): Cancellable {
         val task =
@@ -42,8 +41,8 @@ class SpigotTimer(
                 plugin,
                 work,
                 // Times are all in ticks (20 ticks per second)
-                unit.toSeconds(delay) * 20,
-                unit.toSeconds(repeatingInterval) * 20,
+                delay.inWholeSeconds * 20,
+                repeatingInterval.inWholeSeconds * 20,
             )
         tasks[identifier] = task
 

@@ -6,6 +6,7 @@ import com.projectcitybuild.pcbridge.paper.architecture.connection.listeners.Aut
 import com.projectcitybuild.pcbridge.paper.architecture.connection.middleware.ConnectionMiddlewareChain
 import com.projectcitybuild.pcbridge.paper.architecture.exceptions.listeners.CoroutineExceptionListener
 import com.projectcitybuild.pcbridge.paper.architecture.serverlist.decorators.ServerListingDecoratorChain
+import com.projectcitybuild.pcbridge.paper.architecture.serverlist.listeners.ServerListPingListener
 import com.projectcitybuild.pcbridge.paper.architecture.state.Store
 import com.projectcitybuild.pcbridge.paper.architecture.state.listeners.PlayerStateListener
 import com.projectcitybuild.pcbridge.paper.core.libs.errors.SentryReporter
@@ -147,6 +148,7 @@ class PluginLifecycle : KoinComponent {
             get<PlayerStateListener>(),
             get<PlayerSyncRequestListener>(),
             get<ServerOverviewJoinListener>(),
+            get<ServerListPingListener>(),
             get<RoleStateChangeListener>(),
             get<TabNameListener>(),
             get<TelemetryPlayerConnectListener>(),

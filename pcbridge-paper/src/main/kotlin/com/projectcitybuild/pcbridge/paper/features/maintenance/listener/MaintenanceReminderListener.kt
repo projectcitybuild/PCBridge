@@ -10,7 +10,7 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.server.PluginDisableEvent
 import org.bukkit.event.server.PluginEnableEvent
-import java.util.concurrent.TimeUnit
+import kotlin.time.Duration.Companion.minutes
 
 class MaintenanceReminderListener(
     private val store: Store,
@@ -44,9 +44,8 @@ class MaintenanceReminderListener(
         cancellable?.cancel()
         cancellable = timer.scheduleRepeating(
             identifier = timerId,
-            delay = 5,
-            repeatingInterval = 5,
-            unit = TimeUnit.MINUTES,
+            delay = 5.minutes,
+            repeatingInterval = 5.minutes,
             work = {
                 server.broadcast(
                     MiniMessage.miniMessage().deserialize(
