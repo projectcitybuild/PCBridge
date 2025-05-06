@@ -7,7 +7,7 @@ import com.projectcitybuild.pcbridge.paper.architecture.state.events.PlayerState
 import com.projectcitybuild.pcbridge.paper.core.libs.errors.SentryReporter
 import com.projectcitybuild.pcbridge.paper.core.libs.logger.log
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotEventBroadcaster
-import com.projectcitybuild.pcbridge.paper.features.warps.events.PlayerPreWarpEvent
+import com.projectcitybuild.pcbridge.paper.core.libs.teleportation.events.PlayerPreTeleportEvent
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotIntegration
 import kotlinx.coroutines.runBlocking
 import net.ess3.api.events.AfkStatusChangeEvent
@@ -39,7 +39,7 @@ class EssentialsIntegration(
 
     override suspend fun onDisable() {
         if (essentials != null) {
-            PlayerPreWarpEvent.getHandlerList().unregister(this)
+            PlayerPreTeleportEvent.getHandlerList().unregister(this)
             essentials = null
         }
     }
@@ -49,7 +49,7 @@ class EssentialsIntegration(
      * in Essentials
      */
     @EventHandler
-    fun onPlayerPreWarp(event: PlayerPreWarpEvent) = runCatching {
+    fun onPlayerPreWarp(event: PlayerPreTeleportEvent) = runCatching {
         if (essentials == null) {
             log.warn { "Essentials integration disabled but it's still listening to events" }
             return@runCatching

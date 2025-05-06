@@ -75,6 +75,10 @@ import com.projectcitybuild.pcbridge.paper.core.libs.pcbmanage.ManageUrlGenerato
 import com.projectcitybuild.pcbridge.paper.architecture.permissions.Permissions
 import com.projectcitybuild.pcbridge.paper.architecture.serverlist.decorators.ServerListingDecoratorChain
 import com.projectcitybuild.pcbridge.paper.architecture.serverlist.listeners.ServerListPingListener
+import com.projectcitybuild.pcbridge.paper.core.libs.teleportation.PlayerTeleporter
+import com.projectcitybuild.pcbridge.paper.core.libs.teleportation.RandomLocationFinder
+import com.projectcitybuild.pcbridge.paper.core.libs.teleportation.SafeYLocationFinder
+import com.projectcitybuild.pcbridge.paper.core.libs.teleportation.storage.TeleportHistoryStorage
 import com.projectcitybuild.pcbridge.paper.features.groups.RolesFilter
 import com.projectcitybuild.pcbridge.paper.core.utils.PeriodicRunner
 import com.projectcitybuild.pcbridge.paper.features.chatbadge.ChatBadgeFormatter
@@ -279,6 +283,29 @@ private fun Module.core() {
 
     single {
         Permissions()
+    }
+
+    factory {
+        PlayerTeleporter(
+            safeYLocationFinder = get(),
+            teleportHistoryStorage = get(),
+        )
+    }
+
+    factory {
+        TeleportHistoryStorage(
+            eventBroadcaster = get(),
+        )
+    }
+
+    factory {
+        SafeYLocationFinder()
+    }
+
+    factory {
+        RandomLocationFinder(
+            safeYLocationFinder = get(),
+        )
     }
 }
 
@@ -492,6 +519,7 @@ private fun Module.builds() {
             plugin = get<JavaPlugin>(),
             buildRepository = get(),
             server = get(),
+            playerTeleporter = get(),
         )
     }
 
@@ -752,7 +780,8 @@ private fun Module.teleport() {
     factory {
         RtpCommand(
             plugin = get<JavaPlugin>(),
-            eventBroadcaster = get(),
+            randomLocationFinder = get(),
+            playerTeleporter = get(),
         )
     }
 }
@@ -828,6 +857,7 @@ private fun Module.warps() {
             plugin = get<JavaPlugin>(),
             warpRepository = get(),
             server = get(),
+            playerTeleporter = get(),
         )
     }
 
