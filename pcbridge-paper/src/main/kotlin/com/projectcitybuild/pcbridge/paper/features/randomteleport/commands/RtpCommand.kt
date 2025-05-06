@@ -32,7 +32,7 @@ class RtpCommand(
         checkNotNull(player) { "Only players can use this command" }
 
         executor.sendMessage(
-            miniMessage.deserialize("<gray><italic>Teleporting...</italic></gray>")
+            miniMessage.deserialize("<gray><italic>Searching for a safe location...</italic></gray>")
         )
 
         val location = findRandomLocation.teleport(player, attempts = 5)
@@ -43,7 +43,7 @@ class RtpCommand(
             return@traceSuspending
         }
         executor.sendMessage(
-            miniMessage.deserialize("<green>Teleported to </green><gray>x=${location.x}, y=${location.y}, z=${location.z}</gray>")
+            miniMessage.deserialize("<green>⚡ Teleported to </green><gray>x=${location.x.toInt()}, y=${location.y.toInt()}, z=${location.z.toInt()}</gray>")
         )
     }
 }

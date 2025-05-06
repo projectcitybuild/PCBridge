@@ -49,7 +49,7 @@ class EssentialsIntegration(
      * in Essentials
      */
     @EventHandler
-    fun onPlayerPreWarp(event: PlayerPreTeleportEvent) = runCatching {
+    fun onPlayerPreTeleport(event: PlayerPreTeleportEvent) = runCatching {
         if (essentials == null) {
             log.warn { "Essentials integration disabled but it's still listening to events" }
             return@runCatching
