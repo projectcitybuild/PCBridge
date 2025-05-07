@@ -8,11 +8,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
+import java.io.File
 
 private val mutex = Mutex()
 
 // TODO: splice the store so that each feature can maintain its own state slice
 class Store(
+    private val file: File,
     private val jsonStorage: JsonStorage<PersistedServerState>,
 ) {
     val state: ServerState
@@ -26,7 +28,7 @@ class Store(
     suspend fun hydrate() {
         log.info { "Hydrating Store state from storage" }
 
-        val deserialized = jsonStorage.read()
+        val deserialized = jsonStorage.read(file)
         if (deserialized != null) {
             mutate { deserialized.toServerState() }
         } else {
@@ -40,8 +42,9 @@ class Store(
     fun persist() {
         log.info { "Persisting Store state to storage" }
 
-        jsonStorage.write(
-            PersistedServerState.fromServerState(_state)
+        jsonStorage.writeSync(
+            file = file,
+            data = PersistedServerState.fromServerState(_state)
         )
     }
 

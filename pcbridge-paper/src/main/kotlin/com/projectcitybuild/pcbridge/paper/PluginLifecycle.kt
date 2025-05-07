@@ -55,6 +55,9 @@ import com.projectcitybuild.pcbridge.paper.features.sync.listener.PlayerSyncRequ
 import com.projectcitybuild.pcbridge.paper.features.tab.listeners.TabNameListener
 import com.projectcitybuild.pcbridge.paper.features.telemetry.listeners.TelemetryPlayerConnectListener
 import com.projectcitybuild.pcbridge.paper.features.randomteleport.commands.RtpCommand
+import com.projectcitybuild.pcbridge.paper.features.spawns.commands.SetSpawnCommand
+import com.projectcitybuild.pcbridge.paper.features.spawns.commands.SpawnCommand
+import com.projectcitybuild.pcbridge.paper.features.spawns.listeners.PlayerRespawnListener
 import com.projectcitybuild.pcbridge.paper.features.warnings.commands.WarnCommand
 import com.projectcitybuild.pcbridge.paper.features.warps.commands.WarpCommand
 import com.projectcitybuild.pcbridge.paper.features.warps.commands.WarpsCommand
@@ -118,6 +121,8 @@ class PluginLifecycle : KoinComponent {
                     get<NightVisionCommand>(),
                     get<RegisterCommand>(),
                     get<RtpCommand>(),
+                    get<SetSpawnCommand>(),
+                    get<SpawnCommand>(),
                     get<StaffChatCommand>(),
                     get<SyncCommand>(),
                     get<SyncDebugCommand>(),
@@ -145,6 +150,7 @@ class PluginLifecycle : KoinComponent {
             get<FrameItemRemoveListener>(),
             get<ItemTextListener>(),
             get<MaintenanceReminderListener>(),
+            get<PlayerRespawnListener>(),
             get<PlayerStateListener>(),
             get<PlayerSyncRequestListener>(),
             get<ServerOverviewJoinListener>(),

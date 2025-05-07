@@ -4,12 +4,13 @@ import com.google.gson.FieldNamingPolicy
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import com.projectcitybuild.pcbridge.paper.core.libs.logger.log
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.PrintWriter
 import java.lang.Exception
 
 class JsonStorage<T>(
-    private val file: File,
     private val typeToken: TypeToken<T>,
 ) {
     private val gson =
@@ -18,7 +19,15 @@ class JsonStorage<T>(
             .disableHtmlEscaping()
             .create()
 
-    fun read(): T? {
+    suspend fun read(file: File): T? = withContext(Dispatchers.IO) {
+        readSync(file)
+    }
+
+    suspend fun write(file: File, data: T) = withContext(Dispatchers.IO) {
+        writeSync(file, data)
+    }
+
+    fun readSync(file: File): T? {
         return try {
             if (!file.exists()) return null
 
@@ -34,7 +43,7 @@ class JsonStorage<T>(
         }
     }
 
-    fun write(data: T) {
+    fun writeSync(file: File, data: T) {
         return try {
             file.parentFile.mkdirs()
             file.createNewFile()

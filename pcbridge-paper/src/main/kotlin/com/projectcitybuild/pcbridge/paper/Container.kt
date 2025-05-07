@@ -103,6 +103,11 @@ import com.projectcitybuild.pcbridge.paper.features.maintenance.middleware.Maint
 import com.projectcitybuild.pcbridge.paper.features.motd.decorators.GeneralMotdDecorator
 import com.projectcitybuild.pcbridge.paper.features.tab.listeners.TabNameListener
 import com.projectcitybuild.pcbridge.paper.features.randomteleport.commands.RtpCommand
+import com.projectcitybuild.pcbridge.paper.features.spawns.commands.SetSpawnCommand
+import com.projectcitybuild.pcbridge.paper.features.spawns.commands.SpawnCommand
+import com.projectcitybuild.pcbridge.paper.features.spawns.data.SerializableSpawn
+import com.projectcitybuild.pcbridge.paper.features.spawns.listeners.PlayerRespawnListener
+import com.projectcitybuild.pcbridge.paper.features.spawns.repositories.SpawnRepository
 import com.projectcitybuild.pcbridge.paper.features.warnings.commands.WarnCommand
 import com.projectcitybuild.pcbridge.paper.features.warps.commands.warps.WarpCreateCommand
 import com.projectcitybuild.pcbridge.paper.features.warps.commands.warps.WarpDeleteCommand
@@ -152,6 +157,7 @@ fun pluginModule(_plugin: JavaPlugin) =
         motd()
         randomTeleport()
         register()
+        spawn()
         staffChat()
         sync()
         tab()
@@ -201,10 +207,10 @@ private fun Module.spigot(plugin: JavaPlugin) {
 private fun Module.core() {
     single {
         LocalConfig(
+            file = get<JavaPlugin>()
+                .dataFolder
+                .resolve("config.json"),
             jsonStorage = JsonStorage(
-                file = get<JavaPlugin>()
-                    .dataFolder
-                    .resolve("config.json"),
                 typeToken = object : TypeToken<LocalConfigKeyValues>() {},
             ),
         )
@@ -250,10 +256,10 @@ private fun Module.core() {
 
     single {
         Store(
+            file = get<JavaPlugin>()
+                .dataFolder
+                .resolve("cache/server_state.json"),
             jsonStorage = JsonStorage(
-                file = get<JavaPlugin>()
-                    .dataFolder
-                    .resolve("cache/server_state.json"),
                 typeToken = object : TypeToken<PersistedServerState>() {},
             ),
         )
@@ -750,6 +756,37 @@ private fun Module.randomTeleport() {
     factory {
         FindRandomLocation(
             playerTeleporter = get(),
+        )
+    }
+}
+
+private fun Module.spawn() {
+    factory {
+        SpawnCommand(
+            plugin = get<JavaPlugin>(),
+            spawnRepository = get(),
+            playerTeleporter = get(),
+        )
+    }
+
+    factory {
+        SetSpawnCommand(
+            plugin = get<JavaPlugin>(),
+            spawnRepository = get(),
+        )
+    }
+
+    factory {
+        PlayerRespawnListener(
+            spawnRepository = get(),
+        )
+    }
+
+    single {
+        SpawnRepository(
+            storage = JsonStorage(
+                typeToken = object : TypeToken<SerializableSpawn>() {},
+            ),
         )
     }
 }
