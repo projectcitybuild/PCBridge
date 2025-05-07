@@ -23,11 +23,14 @@ class PlayerBorderCheck(
         val border = worldBorderRepository.get(location.world)
         if (border != null && !border.contains(player.location)) {
             val clamped = border.clamp(location)
-            clamped.y = safeYLocationFinder.findY(
-                world = location.world,
-                x = clamped.x.toInt(),
-                z = clamped.z.toInt(),
-            )?.toDouble() ?: clamped.y
+
+            if (!player.isFlying) {
+                clamped.y = safeYLocationFinder.findY(
+                    world = location.world,
+                    x = clamped.x.toInt(),
+                    z = clamped.z.toInt(),
+                )?.toDouble() ?: clamped.y
+            }
 
             player.sendRichMessage("<gray><i>You've reached the world border</i></gray>")
             player.teleport(clamped)
@@ -35,7 +38,7 @@ class PlayerBorderCheck(
                 Sound.sound(
                     org.bukkit.Sound.ENTITY_GHAST_SHOOT,
                     Sound.Source.NEUTRAL,
-                    1.0f,
+                    0.7f,
                     1.0f,
                 )
             )
