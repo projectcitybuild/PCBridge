@@ -1,6 +1,6 @@
 package com.projectcitybuild.pcbridge.paper.features.spawns.repositories
 
-import com.projectcitybuild.pcbridge.paper.core.libs.localconfig.JsonStorage
+import com.projectcitybuild.pcbridge.paper.core.libs.storage.JsonStorage
 import com.projectcitybuild.pcbridge.paper.features.spawns.data.SerializableSpawn
 import org.bukkit.Location
 import org.bukkit.World

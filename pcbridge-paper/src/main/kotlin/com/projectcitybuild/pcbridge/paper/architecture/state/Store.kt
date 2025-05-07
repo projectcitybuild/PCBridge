@@ -2,7 +2,7 @@ package com.projectcitybuild.pcbridge.paper.architecture.state
 
 import com.projectcitybuild.pcbridge.paper.architecture.state.data.PersistedServerState
 import com.projectcitybuild.pcbridge.paper.architecture.state.data.ServerState
-import com.projectcitybuild.pcbridge.paper.core.libs.localconfig.JsonStorage
+import com.projectcitybuild.pcbridge.paper.core.libs.storage.JsonStorage
 import com.projectcitybuild.pcbridge.paper.core.libs.logger.log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
@@ -39,10 +39,10 @@ class Store(
     /**
      * Saves the state to storage
      */
-    fun persist() {
+    suspend fun persist() {
         log.info { "Persisting Store state to storage" }
 
-        jsonStorage.writeSync(
+        jsonStorage.write(
             file = file,
             data = PersistedServerState.fromServerState(_state)
         )

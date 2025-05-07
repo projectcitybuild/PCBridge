@@ -4,6 +4,9 @@ enum class PermissionNode(val node: String) {
     // Can ban a player
     BANS_MANAGE("pcbridge.bans.manage"),
 
+    // Can create, edit or delete world borders
+    BORDER_MANAGE("pcbridge.border.manage"),
+
     // Can teleport to a build
     BUILDS_TELEPORT("pcbridge.builds.teleport"),
 

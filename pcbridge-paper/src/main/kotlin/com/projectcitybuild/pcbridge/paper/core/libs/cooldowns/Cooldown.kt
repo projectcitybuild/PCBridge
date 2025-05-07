@@ -12,7 +12,7 @@ class Cooldown(
     private val timeSource = TimeSource.Monotonic
     private val cooldowns = mutableMapOf<String, TimeSource.Monotonic.ValueTimeMark>()
 
-    fun throttle(duration: Duration, identifier: String) {
+    fun consume(duration: Duration, identifier: String) {
         val now = timeSource.markNow()
         val cooldown = cooldowns[identifier]
 
@@ -36,11 +36,11 @@ class Cooldown(
         log.debug { "Registered cooldown ($identifier). Expires in ${duration.inWholeMilliseconds} ms" }
     }
 
-    fun throttle(
+    fun consume(
         duration: Duration,
         player: Player,
         identifier: String,
-    ) = throttle(
+    ) = consume(
         duration = duration,
         identifier = "${player.uniqueId}_$identifier",
     )

@@ -12,7 +12,9 @@ import com.projectcitybuild.pcbridge.paper.architecture.state.listeners.PlayerSt
 import com.projectcitybuild.pcbridge.paper.core.libs.errors.SentryReporter
 import com.projectcitybuild.pcbridge.paper.core.libs.errors.trace
 import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.RemoteConfig
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierCommand
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.register
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.registerAll
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotListenerRegistry
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotTimer
 import com.projectcitybuild.pcbridge.paper.features.announcements.listeners.AnnouncementConfigListener
@@ -20,6 +22,9 @@ import com.projectcitybuild.pcbridge.paper.features.announcements.listeners.Anno
 import com.projectcitybuild.pcbridge.paper.features.bans.commands.BanCommand
 import com.projectcitybuild.pcbridge.paper.features.bans.listeners.BanWebhookListener
 import com.projectcitybuild.pcbridge.paper.features.bans.middleware.BanConnectionMiddleware
+import com.projectcitybuild.pcbridge.paper.features.borders.commands.BorderCommand
+import com.projectcitybuild.pcbridge.paper.features.borders.listeners.BorderBoundsListener
+import com.projectcitybuild.pcbridge.paper.features.borders.listeners.BorderTaskListener
 import com.projectcitybuild.pcbridge.paper.features.building.commands.InvisFrameCommand
 import com.projectcitybuild.pcbridge.paper.features.building.commands.ItemNameCommand
 import com.projectcitybuild.pcbridge.paper.features.building.commands.NightVisionCommand
@@ -68,6 +73,7 @@ import com.projectcitybuild.pcbridge.paper.integrations.essentials.EssentialsInt
 import com.projectcitybuild.pcbridge.paper.integrations.luckperms.LuckPermsIntegration
 import com.projectcitybuild.pcbridge.webserver.HttpServer
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents
+import kotlinx.coroutines.runBlocking
 import net.kyori.adventure.platform.bukkit.BukkitAudiences
 import org.bukkit.plugin.java.JavaPlugin
 import org.koin.core.component.KoinComponent
@@ -81,17 +87,44 @@ class PluginLifecycle : KoinComponent {
     private val httpServer: HttpServer by inject()
     private val remoteConfig: RemoteConfig by inject()
     private val store: Store by inject()
+    private val connectionMiddleware: ConnectionMiddlewareChain by inject()
 
     suspend fun boot() = sentry.trace {
         httpServer.start()
         remoteConfig.fetch()
         store.hydrate()
 
-        get<ConnectionMiddlewareChain>().register(
-            get<BanConnectionMiddleware>(),
-            get<MaintenanceConnectionMiddleware>(),
-        )
-        get<ChatDecoratorChain>().apply{
+        registerMiddleware()
+        registerDecorators()
+        registerCommands()
+        registerListeners()
+
+        get<DynmapIntegration>().enable()
+        get<EssentialsIntegration>().enable()
+        get<LuckPermsIntegration>().enable()
+    }
+
+    suspend fun shutdown() = sentry.trace {
+        httpServer.stop()
+        runBlocking { store.persist() }
+
+        get<SpigotTimer>().cancelAll()
+
+        get<DynmapIntegration>().disable()
+        get<EssentialsIntegration>().disable()
+        get<LuckPermsIntegration>().disable()
+
+        listenerRegistry.unregisterAll()
+        audiences.close()
+    }
+
+    private fun registerMiddleware() = connectionMiddleware.register(
+        get<BanConnectionMiddleware>(),
+        get<MaintenanceConnectionMiddleware>(),
+    )
+
+    private fun registerDecorators() {
+        get<ChatDecoratorChain>().apply {
             addSender(
                 get<ChatGroupDecorator>(),
                 get<ChatBadgeDecorator>(),
@@ -105,78 +138,66 @@ class PluginLifecycle : KoinComponent {
             get<MaintenanceMotdDecorator>(),
             get<GeneralMotdDecorator>(),
         )
-
-        get<JavaPlugin>()
-            .lifecycleManager
-            .registerEventHandler(LifecycleEvents.COMMANDS) { event ->
-                event.registrar().register(
-                    get<BanCommand>(),
-                    get<BuildCommand>(),
-                    get<BuildsCommand>(),
-                    get<CodeCommand>(),
-                    get<ConfigCommand>(),
-                    get<InvisFrameCommand>(),
-                    get<ItemNameCommand>(),
-                    get<MaintenanceCommand>(),
-                    get<NightVisionCommand>(),
-                    get<RegisterCommand>(),
-                    get<RtpCommand>(),
-                    get<SetSpawnCommand>(),
-                    get<SpawnCommand>(),
-                    get<StaffChatCommand>(),
-                    get<SyncCommand>(),
-                    get<SyncDebugCommand>(),
-                    get<WarpCommand>(),
-                    get<WarpsCommand>(),
-                    get<WarnCommand>(),
-                )
-            }
-
-        listenerRegistry.register(
-            get<AnnounceJoinListener>(),
-            get<AnnounceQuitListener>(),
-            get<AnnouncementConfigListener>(),
-            get<AnnouncementEnableListener>(),
-            get<AsyncChatListener>(),
-            get<AuthorizeConnectionListener>(),
-            get<BanWebhookListener>(),
-            get<ChatBadgeInvalidateListener>(),
-            get<ChatGroupInvalidateListener>(),
-            get<ConfigWebhookListener>(),
-            get<CoroutineExceptionListener>(),
-            get<FirstTimeJoinListener>(),
-            get<FramePlaceListener>(),
-            get<FrameItemInsertListener>(),
-            get<FrameItemRemoveListener>(),
-            get<ItemTextListener>(),
-            get<MaintenanceReminderListener>(),
-            get<PlayerRespawnListener>(),
-            get<PlayerStateListener>(),
-            get<PlayerSyncRequestListener>(),
-            get<ServerOverviewJoinListener>(),
-            get<ServerListPingListener>(),
-            get<RoleStateChangeListener>(),
-            get<TabNameListener>(),
-            get<TelemetryPlayerConnectListener>(),
-            get<WarpWebhookListener>(),
-        )
-
-        get<DynmapIntegration>().enable()
-        get<EssentialsIntegration>().enable()
-        get<LuckPermsIntegration>().enable()
     }
 
-    suspend fun shutdown() = sentry.trace {
-        httpServer.stop()
-        store.persist()
+    private fun registerCommands() = get<JavaPlugin>().registerCommands(
+        get<BanCommand>(),
+        get<BorderCommand>(),
+        get<BuildCommand>(),
+        get<BuildsCommand>(),
+        get<CodeCommand>(),
+        get<ConfigCommand>(),
+        get<InvisFrameCommand>(),
+        get<ItemNameCommand>(),
+        get<MaintenanceCommand>(),
+        get<NightVisionCommand>(),
+        get<RegisterCommand>(),
+        get<RtpCommand>(),
+        get<SetSpawnCommand>(),
+        get<SpawnCommand>(),
+        get<StaffChatCommand>(),
+        get<SyncCommand>(),
+        get<SyncDebugCommand>(),
+        get<WarpCommand>(),
+        get<WarpsCommand>(),
+        get<WarnCommand>(),
+    )
 
-        get<SpigotTimer>().cancelAll()
+    private fun registerListeners() = listenerRegistry.register(
+        get<AnnounceJoinListener>(),
+        get<AnnounceQuitListener>(),
+        get<AnnouncementConfigListener>(),
+        get<AnnouncementEnableListener>(),
+        get<AsyncChatListener>(),
+        get<AuthorizeConnectionListener>(),
+        get<BanWebhookListener>(),
+        get<BorderBoundsListener>(),
+        get<BorderTaskListener>(),
+        get<ChatBadgeInvalidateListener>(),
+        get<ChatGroupInvalidateListener>(),
+        get<ConfigWebhookListener>(),
+        get<CoroutineExceptionListener>(),
+        get<FirstTimeJoinListener>(),
+        get<FramePlaceListener>(),
+        get<FrameItemInsertListener>(),
+        get<FrameItemRemoveListener>(),
+        get<ItemTextListener>(),
+        get<MaintenanceReminderListener>(),
+        get<PlayerRespawnListener>(),
+        get<PlayerStateListener>(),
+        get<PlayerSyncRequestListener>(),
+        get<ServerOverviewJoinListener>(),
+        get<ServerListPingListener>(),
+        get<RoleStateChangeListener>(),
+        get<TabNameListener>(),
+        get<TelemetryPlayerConnectListener>(),
+        get<WarpWebhookListener>(),
+    )
+}
 
-        get<DynmapIntegration>().disable()
-        get<EssentialsIntegration>().disable()
-        get<LuckPermsIntegration>().disable()
-
-        listenerRegistry.unregisterAll()
-        audiences.close()
-    }
+private fun JavaPlugin.registerCommands(vararg commands: BrigadierCommand) {
+    lifecycleManager
+        .registerEventHandler(LifecycleEvents.COMMANDS) { event ->
+            event.registrar().registerAll(commands)
+        }
 }

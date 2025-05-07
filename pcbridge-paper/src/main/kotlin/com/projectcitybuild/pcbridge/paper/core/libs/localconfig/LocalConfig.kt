@@ -1,5 +1,6 @@
 package com.projectcitybuild.pcbridge.paper.core.libs.localconfig
 
+import com.projectcitybuild.pcbridge.paper.core.libs.storage.JsonStorage
 import java.io.File
 
 class LocalConfig(

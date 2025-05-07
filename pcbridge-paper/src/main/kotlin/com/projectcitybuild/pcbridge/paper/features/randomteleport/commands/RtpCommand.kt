@@ -34,7 +34,7 @@ class RtpCommand(
         val player = executor as? Player
         checkNotNull(player) { "Only players can use this command" }
 
-        cooldown.throttle(5.seconds, player, "rtp")
+        cooldown.consume(5.seconds, player, "rtp")
 
         executor.sendMessage(
             miniMessage.deserialize("<gray><italic>Searching for a safe location...</italic></gray>")
