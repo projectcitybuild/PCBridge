@@ -1,4 +1,4 @@
-package com.projectcitybuild.pcbridge.paper.core.libs.localconfig
+package com.projectcitybuild.pcbridge.paper.core.libs.storage
 
 import com.google.gson.FieldNamingPolicy
 import com.google.gson.GsonBuilder
@@ -12,11 +12,13 @@ import java.lang.Exception
 
 class JsonStorage<T>(
     private val typeToken: TypeToken<T>,
+    private val configuration: ((GsonBuilder) -> Unit)? = null,
 ) {
     private val gson =
         GsonBuilder()
             .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
             .disableHtmlEscaping()
+            .also { configuration?.invoke(it) }
             .create()
 
     suspend fun read(file: File): T? = withContext(Dispatchers.IO) {
@@ -25,6 +27,15 @@ class JsonStorage<T>(
 
     suspend fun write(file: File, data: T) = withContext(Dispatchers.IO) {
         writeSync(file, data)
+    }
+
+    suspend fun delete(file: File) = withContext(Dispatchers.IO) {
+        try {
+            if (!file.exists()) return@withContext
+            file.delete()
+        } catch (e: Exception) {
+            log.error(e) { "Failed to delete file: ${file.path}" }
+        }
     }
 
     fun readSync(file: File): T? {

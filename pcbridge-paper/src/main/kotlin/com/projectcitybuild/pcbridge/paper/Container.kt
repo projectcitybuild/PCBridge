@@ -4,7 +4,7 @@ import com.github.shynixn.mccoroutine.bukkit.minecraftDispatcher
 import com.google.gson.reflect.TypeToken
 import com.projectcitybuild.pcbridge.http.discord.DiscordHttp
 import com.projectcitybuild.pcbridge.paper.core.libs.localconfig.LocalConfig
-import com.projectcitybuild.pcbridge.paper.core.libs.localconfig.JsonStorage
+import com.projectcitybuild.pcbridge.paper.core.libs.storage.JsonStorage
 import com.projectcitybuild.pcbridge.paper.core.libs.datetime.services.DateTimeFormatter
 import com.projectcitybuild.pcbridge.paper.core.libs.datetime.services.LocalizedTime
 import com.projectcitybuild.pcbridge.paper.core.libs.errors.SentryReporter
@@ -88,6 +88,16 @@ import com.projectcitybuild.pcbridge.paper.features.chatbadge.decorators.ChatBad
 import com.projectcitybuild.pcbridge.paper.features.chatbadge.repositories.ChatBadgeRepository
 import com.projectcitybuild.pcbridge.paper.features.bans.commands.BanCommand
 import com.projectcitybuild.pcbridge.paper.features.bans.middleware.BanConnectionMiddleware
+import com.projectcitybuild.pcbridge.paper.features.borders.data.BorderTypeAdapter
+import com.projectcitybuild.pcbridge.paper.features.borders.actions.PlayerBorderCheck
+import com.projectcitybuild.pcbridge.paper.features.borders.commands.BorderCommand
+import com.projectcitybuild.pcbridge.paper.features.borders.commands.border.BorderDeleteCommand
+import com.projectcitybuild.pcbridge.paper.features.borders.commands.border.BorderSetCommand
+import com.projectcitybuild.pcbridge.paper.features.borders.commands.border.BorderSetRectangleCommand
+import com.projectcitybuild.pcbridge.paper.features.borders.data.Border
+import com.projectcitybuild.pcbridge.paper.features.borders.listeners.BorderBoundsListener
+import com.projectcitybuild.pcbridge.paper.features.borders.listeners.BorderTaskListener
+import com.projectcitybuild.pcbridge.paper.features.borders.repositories.WorldBorderRepository
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildEditCommand
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildSetCommand
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildUnvoteCommand
@@ -144,6 +154,7 @@ fun pluginModule(_plugin: JavaPlugin) =
         // Features
         announcements()
         bans()
+        border()
         building()
         builds()
         chatBadge()
@@ -479,6 +490,59 @@ private fun Module.bans() {
             plugin = get<JavaPlugin>(),
             server = get(),
             manageUrlGenerator = get(),
+        )
+    }
+}
+
+private fun Module.border() {
+    factory {
+        BorderCommand(
+            borderSetCommand = BorderSetCommand(
+                borderSetRectangleCommand = BorderSetRectangleCommand(
+                    plugin = get<JavaPlugin>(),
+                    server = get(),
+                    worldBorderRepository = get(),
+                    playerBorderCheck = get(),
+                )
+            ),
+            borderDeleteCommand = BorderDeleteCommand(
+                plugin = get<JavaPlugin>(),
+                worldBorderRepository = get(),
+            ),
+        )
+    }
+
+    factory {
+        BorderBoundsListener(
+            worldBorderRepository = get(),
+            playerBorderCheck = get(),
+        )
+    }
+
+    factory {
+        BorderTaskListener(
+            plugin = get<JavaPlugin>(),
+            server = get(),
+            spigotTimer = get(),
+            playerBorderCheck = get(),
+        )
+    }
+
+    single {
+        WorldBorderRepository(
+            storage = JsonStorage(
+                typeToken = object : TypeToken<Border>() {},
+                configuration = { gson ->
+                    gson.registerTypeAdapter(Border::class.java, BorderTypeAdapter())
+                }
+            ),
+        )
+    }
+
+    single {
+        PlayerBorderCheck(
+            worldBorderRepository = get(),
+            safeYLocationFinder = get(),
         )
     }
 }

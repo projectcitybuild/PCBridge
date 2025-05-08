@@ -1,5 +1,6 @@
 package com.projectcitybuild.pcbridge.paper.features.randomteleport.actions
 
+import com.projectcitybuild.pcbridge.paper.core.data.Coordinate2
 import com.projectcitybuild.pcbridge.paper.core.libs.teleportation.PlayerTeleporter
 import com.projectcitybuild.pcbridge.paper.core.libs.teleportation.exceptions.SafeDestinationNotFoundException
 import com.projectcitybuild.pcbridge.paper.core.libs.teleportation.exceptions.TeleportFailedException
@@ -18,9 +19,9 @@ class FindRandomLocation(
             val coordinate2 = randomCoordinate2(world)
             val location = Location(
                 world,
-                coordinate2.x.toDouble(),
+                coordinate2.x,
                 0.0,
-                coordinate2.z.toDouble()
+                coordinate2.z
             )
             try {
                 playerTeleporter.move(
@@ -56,15 +57,10 @@ class FindRandomLocation(
             (center.z + size).coerceAtMost(BORDER_MAX).toInt()
 
         return Coordinate2(
-            x = xRange.random(),
-            z = zRange.random(),
+            x = xRange.random().toDouble(),
+            z = zRange.random().toDouble(),
         )
     }
-
-    private data class Coordinate2(
-        val x: Int,
-        val z: Int,
-    )
 
     private companion object {
         const val BORDER_MAX = 15_000.0

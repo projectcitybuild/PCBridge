@@ -13,7 +13,7 @@ class SpigotTimer(
 
     fun scheduleOnce(
         identifier: String,
-        delay: Duration,
+        delay: Duration = Duration.ZERO,
         work: () -> Unit,
     ): Cancellable {
         val task =
@@ -32,7 +32,7 @@ class SpigotTimer(
 
     fun scheduleRepeating(
         identifier: String,
-        delay: Duration,
+        delay: Duration = Duration.ZERO,
         repeatingInterval: Duration,
         work: () -> Unit,
     ): Cancellable {
@@ -43,6 +43,26 @@ class SpigotTimer(
                 // Times are all in ticks (20 ticks per second)
                 delay.inWholeSeconds * 20,
                 repeatingInterval.inWholeSeconds * 20,
+            )
+        tasks[identifier] = task
+
+        return Cancellable {
+            cancel(identifier = identifier)
+        }
+    }
+
+    fun scheduleRepeating(
+        identifier: String,
+        delayTicks: Long = 0,
+        repeatingIntervalTicks: Long,
+        work: () -> Unit,
+    ): Cancellable {
+        val task =
+            plugin.server.scheduler.runTaskTimer(
+                plugin,
+                work,
+                delayTicks,
+                repeatingIntervalTicks,
             )
         tasks[identifier] = task
 
