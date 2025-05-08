@@ -35,7 +35,7 @@ class BorderTaskListener(
                     if (job?.isCancelled == true) return@scheduleRepeating
 
                     runBlocking {
-                        playerBorderCheck.check(player)
+                        playerBorderCheck.moveIfNeeded(player)
                     }
                 }
             }

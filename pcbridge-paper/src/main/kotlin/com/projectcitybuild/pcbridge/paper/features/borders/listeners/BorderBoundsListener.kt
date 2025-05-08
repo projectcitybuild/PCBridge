@@ -10,18 +10,30 @@ import org.bukkit.event.block.BlockPlaceEvent
 import org.bukkit.event.entity.CreatureSpawnEvent
 import org.bukkit.event.player.PlayerPortalEvent
 import org.bukkit.event.player.PlayerTeleportEvent
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause
 
 class BorderBoundsListener(
     private val worldBorderRepository: WorldBorderRepository,
     private val playerBorderCheck: PlayerBorderCheck,
 ): Listener {
     @EventHandler(ignoreCancelled = true)
-    suspend fun onPlayerTeleport(event: PlayerTeleportEvent)
-        = playerBorderCheck.check(event.player)
+    suspend fun onPlayerTeleport(event: PlayerTeleportEvent) {
+        playerBorderCheck.moveIfNeeded(event.player)
+
+        // Reduce unnecessary chunk loads if possible (eg. from
+        // an ender pearl teleport)
+        val interactables = listOf(
+            TeleportCause.ENDER_PEARL,
+            TeleportCause.CHORUS_FRUIT,
+        )
+        if (event.cause in interactables) {
+            cancelIfOutsideBorder(event.player.location, event)
+        }
+    }
 
     @EventHandler(ignoreCancelled = true)
     suspend fun onPlayerPortal(event: PlayerPortalEvent)
-        = playerBorderCheck.check(event.player)
+        = playerBorderCheck.moveIfNeeded(event.player)
 
     @EventHandler(ignoreCancelled = true)
     suspend fun onCreatureSpawn(event: CreatureSpawnEvent)

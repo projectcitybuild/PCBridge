@@ -60,7 +60,7 @@ class BorderSetRectangleCommand(
         player.sendRichMessage("<gray>World border for <yellow>${world.name}</yellow> set to <yellow>(${border.minX}, ${border.minZ}) - (${border.maxX}, ${border.maxZ})</yellow></gray>")
 
         server.onlinePlayers.forEach {
-            playerBorderCheck.check(it)
+            playerBorderCheck.moveIfNeeded(it)
         }
     }
 }
