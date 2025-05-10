@@ -67,6 +67,8 @@ data class RemoteConfigKeyValues(
         val header: List<String> = emptyList(),
         val footer: List<String> = emptyList(),
         val player: String = "%name%",
+        @SerializedName("player_column_length")
+        val playerColumnLength: Int = 32,
     )
 }
 
