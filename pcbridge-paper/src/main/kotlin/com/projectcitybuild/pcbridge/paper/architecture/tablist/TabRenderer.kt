@@ -3,9 +3,12 @@ package com.projectcitybuild.pcbridge.paper.architecture.tablist
 import com.projectcitybuild.pcbridge.paper.core.libs.logger.log
 import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.RemoteConfig
 import com.projectcitybuild.pcbridge.paper.core.support.component.deserialize
+import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.MiniMessage
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import org.bukkit.entity.Player
+import kotlin.math.max
 
 class TabRenderer(
     private val remoteConfig: RemoteConfig,
@@ -21,13 +24,31 @@ class TabRenderer(
 
         val config = remoteConfig.latest.config.tab
 
-        val placeholders = tabPlaceholders.player.map { it.resolve(player) }
+        val initialPlaceholders = tabPlaceholders
+            .player
+            .map { it.resolve(player) }
+            .toMutableSet()
 
         val name = miniMessage.deserialize(
             config.player,
-            placeholders,
+            initialPlaceholders.apply {
+                add(Placeholder.component("spacer", Component.empty()))
+            },
         )
-        player.playerListName(name)
+
+        // Determine how many visible characters are present so that
+        // we can provide a <spacer> placeholder to fill available space
+        val serializer = PlainTextComponentSerializer.plainText()
+        val unformatted = serializer.serialize(name)
+        val availableSpace = max(0, config.playerColumnLength - unformatted.length)
+
+        val finalizedName = miniMessage.deserialize(
+            config.player,
+            initialPlaceholders.apply {
+                add(Placeholder.component("spacer", Component.text(" ".repeat(availableSpace))))
+            },
+        )
+        player.playerListName(finalizedName)
     }
 
     /**

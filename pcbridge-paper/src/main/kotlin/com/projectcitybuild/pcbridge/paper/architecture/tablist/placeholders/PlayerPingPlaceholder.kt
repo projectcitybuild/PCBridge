@@ -30,13 +30,7 @@ class PlayerPingPlaceholder(
 
     override suspend fun value(player: Player): Component {
         val ping = player.ping
-        val color = when {
-            ping <= 100 -> "green"
-            ping <= 200 -> "yellow"
-            ping <= 400 -> "orange"
-            else -> "red"
-        }
-        return MiniMessage.miniMessage().deserialize(" <gray>[<$color>${ping}ms</$color>]</gray>")
+        return MiniMessage.miniMessage().deserialize(" <gray>${ping}</gray>")
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
