@@ -11,13 +11,13 @@ import org.bukkit.Server
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 
-class TabGroupPlaceholder(
+class TabGroupListPlaceholder(
     private val rolesFilter: RolesFilter,
     private val store: Store,
     private val server: Server,
     private val tabRenderer: TabRenderer,
 ): UpdatableTabPlaceholder {
-    override val placeholder: String = "groups"
+    override val placeholder: String = "group_list"
 
     override suspend fun value(player: Player): Component {
         val playerState = store.state.players[player.uniqueId]
@@ -33,7 +33,9 @@ class TabGroupPlaceholder(
 
     @EventHandler
     suspend fun onPlayerStateUpdated(event: PlayerStateUpdatedEvent) {
-        log.debug { "PlayerStateUpdatedEvent: updating tab groups for player" }
+        if (event.prevState?.groups == event.state.groups) return
+
+        log.debug { "PlayerStateUpdatedEvent: updating tab group list for player" }
 
         server.getPlayer(event.playerUUID)?.let { player ->
             tabRenderer.updateHeaderAndFooter(player)

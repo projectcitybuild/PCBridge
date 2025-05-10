@@ -45,7 +45,8 @@ import com.projectcitybuild.pcbridge.paper.features.config.listeners.ConfigWebho
 import com.projectcitybuild.pcbridge.paper.features.groups.listener.ChatGroupInvalidateListener
 import com.projectcitybuild.pcbridge.paper.features.groups.listener.RoleStateChangeListener
 import com.projectcitybuild.pcbridge.paper.features.groups.decorators.ChatGroupDecorator
-import com.projectcitybuild.pcbridge.paper.features.groups.placeholders.TabGroupPlaceholder
+import com.projectcitybuild.pcbridge.paper.features.groups.placeholders.TabGroupListPlaceholder
+import com.projectcitybuild.pcbridge.paper.features.groups.placeholders.TabGroupsPlaceholder
 import com.projectcitybuild.pcbridge.paper.features.joinmessages.listeners.AnnounceJoinListener
 import com.projectcitybuild.pcbridge.paper.features.joinmessages.listeners.AnnounceQuitListener
 import com.projectcitybuild.pcbridge.paper.features.joinmessages.listeners.FirstTimeJoinListener
@@ -115,11 +116,12 @@ class PluginLifecycle : KoinComponent {
             section(get<OnlinePlayerCountPlaceholder>())
             section(get<MaxPlayerCountPlaceholder>())
             section(get<PlayerWorldPlaceholder>())
-            section(get<TabGroupPlaceholder>())
+            section(get<TabGroupListPlaceholder>())
 
             player(get<PlayerNamePlaceholder>())
             player(get<PlayerAFKPlaceholder>())
             player(get<PlayerPingPlaceholder>())
+            player(get<TabGroupsPlaceholder>())
         }
 
         get<JavaPlugin>()

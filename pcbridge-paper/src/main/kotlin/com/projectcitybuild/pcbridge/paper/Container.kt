@@ -104,7 +104,8 @@ import com.projectcitybuild.pcbridge.paper.features.chatemojis.decorators.ChatEm
 import com.projectcitybuild.pcbridge.paper.features.groups.decorators.ChatGroupDecorator
 import com.projectcitybuild.pcbridge.paper.features.chaturls.decorators.ChatUrlDecorator
 import com.projectcitybuild.pcbridge.paper.features.config.listeners.ConfigWebhookListener
-import com.projectcitybuild.pcbridge.paper.features.groups.placeholders.TabGroupPlaceholder
+import com.projectcitybuild.pcbridge.paper.features.groups.placeholders.TabGroupListPlaceholder
+import com.projectcitybuild.pcbridge.paper.features.groups.placeholders.TabGroupsPlaceholder
 import com.projectcitybuild.pcbridge.paper.features.sync.commands.SyncDebugCommand
 import com.projectcitybuild.pcbridge.paper.features.maintenance.commands.MaintenanceCommand
 import com.projectcitybuild.pcbridge.paper.features.maintenance.listener.MaintenanceReminderListener
@@ -697,9 +698,17 @@ private fun Module.groups() {
     }
 
     factory {
-        TabGroupPlaceholder(
+        TabGroupListPlaceholder(
             rolesFilter = get(),
             store = get(),
+            server = get(),
+            tabRenderer = get(),
+        )
+    }
+
+    factory {
+        TabGroupsPlaceholder(
+            chatGroupRepository = get(),
             server = get(),
             tabRenderer = get(),
         )

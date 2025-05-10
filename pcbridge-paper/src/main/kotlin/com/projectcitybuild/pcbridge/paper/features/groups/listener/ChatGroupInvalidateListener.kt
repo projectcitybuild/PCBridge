@@ -11,8 +11,9 @@ class ChatGroupInvalidateListener(
 ) : Listener {
     @EventHandler
     fun onPlayerStateUpdated(event: PlayerStateUpdatedEvent) {
-        log.info { "Invalidating chat group cache for ${event.playerUUID}" }
+        if (event.prevState?.groups == event.state.groups) return
 
+        log.info { "Invalidating chat group cache for ${event.playerUUID}" }
         chatGroupRepository.invalidate(event.playerUUID)
     }
 }

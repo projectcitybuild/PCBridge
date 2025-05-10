@@ -25,8 +25,9 @@ class ChatBadgeInvalidateListener(
 
     @EventHandler
     fun onPlayerStateUpdated(event: PlayerStateUpdatedEvent) {
-        log.info { "Invalidating chat badge cache for ${event.playerUUID}" }
+        if (event.prevState?.badges == event.state.badges) return
 
+        log.info { "Invalidating chat badge cache for ${event.playerUUID}" }
         chatBadgeRepository.invalidate(event.playerUUID)
     }
 }

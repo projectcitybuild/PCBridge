@@ -31,7 +31,7 @@ class TabPlaceholders(
         sectionPlaceholders.add(placeholder)
 
         if (placeholder is UpdatableTabPlaceholder) {
-            listenerRegistry.register()
+            listenerRegistry.register(placeholder)
         }
     }
 
@@ -41,7 +41,7 @@ class TabPlaceholders(
         playerPlaceholders.add(placeholder)
 
         if (placeholder is UpdatableTabPlaceholder) {
-            listenerRegistry.register()
+            listenerRegistry.register(placeholder)
         }
     }
 }

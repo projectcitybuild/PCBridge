@@ -19,7 +19,7 @@ class RolesFilter {
 
             if (rawRoleType == null || displayPriority == null) continue;
 
-            val roleType = runCatching { RoleType.valueOf(rawRoleType) }.getOrNull()
+            val roleType = runCatching { RoleType.valueOf(rawRoleType.uppercase()) }.getOrNull()
             if (roleType == null) {
                 log.error { "$rawRoleType is not a recoginzed role type" }
                 continue
