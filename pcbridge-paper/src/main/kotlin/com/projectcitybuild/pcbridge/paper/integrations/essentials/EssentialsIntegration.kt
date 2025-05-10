@@ -4,6 +4,7 @@ import com.earth2me.essentials.Essentials
 import com.github.shynixn.mccoroutine.bukkit.registerSuspendingEvents
 import com.projectcitybuild.pcbridge.paper.architecture.state.Store
 import com.projectcitybuild.pcbridge.paper.architecture.state.events.PlayerStateUpdatedEvent
+import com.projectcitybuild.pcbridge.paper.architecture.tablist.TabRenderer
 import com.projectcitybuild.pcbridge.paper.core.libs.errors.SentryReporter
 import com.projectcitybuild.pcbridge.paper.core.libs.logger.log
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotEventBroadcaster
@@ -12,6 +13,7 @@ import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotIntegration
 import kotlinx.coroutines.runBlocking
 import net.ess3.api.events.AfkStatusChangeEvent
 import net.ess3.api.events.NickChangeEvent
+import org.bukkit.Server
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.plugin.Plugin
@@ -19,8 +21,10 @@ import org.bukkit.plugin.java.JavaPlugin
 
 class EssentialsIntegration(
     private val plugin: JavaPlugin,
+    private val server: Server,
     private val store: Store,
     private val eventBroadcaster: SpigotEventBroadcaster,
+    private val tabRenderer: TabRenderer,
     sentry: SentryReporter,
 ) : Listener, SpigotIntegration(
         pluginName = "Essentials",
@@ -96,19 +100,11 @@ class EssentialsIntegration(
 
     @EventHandler
     suspend fun onPlayerNicknameChange(event: NickChangeEvent) {
-        // No point storing the nickname since this is currently controlled by Essentials,
-        // and it already updates the player's display name. We'll just emit a player state
-        // update event so that features using nicknames will know to re-fetch it
         val playerUuid = event.affected.uuid
-        val state = store.state.players[playerUuid]
-        if (state != null) {
-            eventBroadcaster.broadcast(
-                PlayerStateUpdatedEvent(
-                    prevState = state,
-                    state = state,
-                    playerUUID = playerUuid,
-                ),
-            )
+        log.info { "Player nickname changed (${event.value}, $playerUuid)" }
+
+        server.getPlayer(playerUuid)?.let { player ->
+            tabRenderer.updatePlayerName(player)
         }
     }
 }

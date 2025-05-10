@@ -371,9 +371,11 @@ private fun Module.integrations() {
     single {
         EssentialsIntegration(
             plugin = get(),
+            server = get(),
             sentry = get(),
             store = get(),
             eventBroadcaster = get(),
+            tabRenderer = get(),
         )
     }
 
