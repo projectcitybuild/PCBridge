@@ -12,21 +12,6 @@ class SpawnRepository(
 ) {
     private val cache: MutableMap<UUID, Location> = mutableMapOf()
 
-    suspend fun set(location: Location) {
-        val world = location.world
-
-        world.setSpawnLocation(location)
-
-        // Minecraft API does not save yaw and pitch, so we unfortunately need to
-        // handle this ourselves. We'll store the data in a folder nested inside the
-        // world's folder to keep it synced (i.e. make clean up unnecessary)
-        storage.write(
-            file = world.spawnMetaFile(),
-            data = SerializableSpawn.fromLocation(location),
-        )
-        cache[world.uid] = location
-    }
-
     suspend fun get(world: World): Location {
         val cached = cache[world.uid]
         if (cached != null) {
@@ -40,6 +25,21 @@ class SpawnRepository(
         }
         // Fallback to world spawn without yaw and pitch
         return world.spawnLocation
+    }
+
+    suspend fun set(location: Location) {
+        val world = location.world
+
+        world.setSpawnLocation(location)
+
+        // Minecraft API does not save yaw and pitch, so we unfortunately need to
+        // handle this ourselves. We'll store the data in a folder nested inside the
+        // world's folder to keep it synced (i.e. make clean up unnecessary)
+        storage.write(
+            file = world.spawnMetaFile(),
+            data = SerializableSpawn.fromLocation(location),
+        )
+        cache[world.uid] = location
     }
 }
 

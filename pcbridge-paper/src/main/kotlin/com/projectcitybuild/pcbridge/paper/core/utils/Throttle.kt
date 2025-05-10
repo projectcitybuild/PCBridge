@@ -4,9 +4,7 @@ import kotlin.time.Duration
 import kotlin.time.DurationUnit
 import kotlin.time.toDuration
 
-class Throttle(
-    private val interval: Duration,
-) {
+class Throttle {
     private var lastExecutionTime = Duration.ZERO
     private var isWaiting = false
 
@@ -14,10 +12,10 @@ class Throttle(
      * Throttles the execution of the provided [action]. Ensures that the action
      * is invoked at most once every [interval].
      */
-    suspend fun throttle(action: suspend () -> Unit) {
+    suspend fun attempt(interval: Duration, action: suspend () -> Unit) {
         val currentTime = System.currentTimeMillis().toDuration(DurationUnit.MILLISECONDS)
 
-        if (currentTime - lastExecutionTime >= interval && !isWaiting) {
+        if (!isWaiting && currentTime - lastExecutionTime >= interval) {
             isWaiting = true
             try {
                 action()

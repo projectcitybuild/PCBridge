@@ -75,6 +75,15 @@ import com.projectcitybuild.pcbridge.paper.core.libs.pcbmanage.ManageUrlGenerato
 import com.projectcitybuild.pcbridge.paper.architecture.permissions.Permissions
 import com.projectcitybuild.pcbridge.paper.architecture.serverlist.decorators.ServerListingDecoratorChain
 import com.projectcitybuild.pcbridge.paper.architecture.serverlist.listeners.ServerListPingListener
+import com.projectcitybuild.pcbridge.paper.architecture.tablist.TabRenderer
+import com.projectcitybuild.pcbridge.paper.architecture.tablist.TabPlaceholders
+import com.projectcitybuild.pcbridge.paper.architecture.tablist.listeners.TabListeners
+import com.projectcitybuild.pcbridge.paper.architecture.tablist.placeholders.MaxPlayerCountPlaceholder
+import com.projectcitybuild.pcbridge.paper.architecture.tablist.placeholders.OnlinePlayerCountPlaceholder
+import com.projectcitybuild.pcbridge.paper.architecture.tablist.placeholders.PlayerAFKPlaceholder
+import com.projectcitybuild.pcbridge.paper.architecture.tablist.placeholders.PlayerNamePlaceholder
+import com.projectcitybuild.pcbridge.paper.architecture.tablist.placeholders.PlayerPingPlaceholder
+import com.projectcitybuild.pcbridge.paper.architecture.tablist.placeholders.PlayerWorldPlaceholder
 import com.projectcitybuild.pcbridge.paper.core.libs.cooldowns.Cooldown
 import com.projectcitybuild.pcbridge.paper.core.libs.teleportation.PlayerTeleporter
 import com.projectcitybuild.pcbridge.paper.features.randomteleport.actions.FindRandomLocation
@@ -95,12 +104,12 @@ import com.projectcitybuild.pcbridge.paper.features.chatemojis.decorators.ChatEm
 import com.projectcitybuild.pcbridge.paper.features.groups.decorators.ChatGroupDecorator
 import com.projectcitybuild.pcbridge.paper.features.chaturls.decorators.ChatUrlDecorator
 import com.projectcitybuild.pcbridge.paper.features.config.listeners.ConfigWebhookListener
+import com.projectcitybuild.pcbridge.paper.features.groups.decorators.TabGroupPlaceholder
 import com.projectcitybuild.pcbridge.paper.features.sync.commands.SyncDebugCommand
 import com.projectcitybuild.pcbridge.paper.features.maintenance.commands.MaintenanceCommand
 import com.projectcitybuild.pcbridge.paper.features.maintenance.listener.MaintenanceReminderListener
 import com.projectcitybuild.pcbridge.paper.features.maintenance.decorators.MaintenanceMotdDecorator
 import com.projectcitybuild.pcbridge.paper.features.maintenance.middleware.MaintenanceConnectionMiddleware
-import com.projectcitybuild.pcbridge.paper.features.motd.decorators.GeneralMotdDecorator
 import com.projectcitybuild.pcbridge.paper.features.tab.listeners.TabNameListener
 import com.projectcitybuild.pcbridge.paper.features.randomteleport.commands.RtpCommand
 import com.projectcitybuild.pcbridge.paper.features.spawns.commands.SetSpawnCommand
@@ -154,13 +163,11 @@ fun pluginModule(_plugin: JavaPlugin) =
         joinMessages()
         invisFrames()
         maintenance()
-        motd()
         randomTeleport()
         register()
         spawn()
         staffChat()
         sync()
-        tab()
         telemetry()
         warps()
         watchdog()
@@ -452,12 +459,72 @@ private fun Module.architecture() {
 
     factory {
         ServerListPingListener(
+            remoteConfig = get(),
             decorators = get(),
         )
     }
 
-    single<Permissions> {
+    single {
         Permissions()
+    }
+
+    single {
+        TabRenderer(
+            remoteConfig = get(),
+            tabPlaceholders = get(),
+        )
+    }
+
+    single {
+        TabPlaceholders(
+            listenerRegistry = get(),
+        )
+    }
+
+    factory {
+        TabListeners(
+            server = get(),
+            tabRenderer = get(),
+        )
+    }
+
+    factory {
+        MaxPlayerCountPlaceholder(
+            server = get(),
+        )
+    }
+
+    factory {
+        OnlinePlayerCountPlaceholder(
+            server = get(),
+            tabRenderer = get(),
+        )
+    }
+
+    factory {
+        PlayerAFKPlaceholder(
+            server = get(),
+            tabRenderer = get(),
+        )
+    }
+
+    factory {
+        PlayerNamePlaceholder()
+    }
+
+    factory {
+        PlayerPingPlaceholder(
+            plugin = get<JavaPlugin>(),
+            server = get(),
+            tabRenderer = get(),
+            spigotTimer = get(),
+        )
+    }
+
+    factory {
+        PlayerWorldPlaceholder(
+            tabRenderer = get(),
+        )
     }
 }
 
@@ -630,6 +697,13 @@ private fun Module.groups() {
     }
 
     factory {
+        TabGroupPlaceholder(
+            rolesFilter = get(),
+            store = get(),
+        )
+    }
+
+    factory {
         ChatGroupRepository(
             chatGroupFormatter = get(),
             store = get(),
@@ -643,8 +717,12 @@ private fun Module.groups() {
 
     factory {
         ChatGroupFormatter(
-            rolesFilter = RolesFilter(),
+            rolesFilter = get(),
         )
+    }
+
+    factory {
+        RolesFilter()
     }
 }
 
@@ -736,14 +814,6 @@ private fun Module.maintenance() {
     }
 }
 
-private fun Module.motd() {
-    factory {
-        GeneralMotdDecorator(
-            remoteConfig = get(),
-        )
-    }
-}
-
 private fun Module.randomTeleport() {
     factory {
         RtpCommand(
@@ -813,16 +883,6 @@ private fun Module.register() {
         CodeCommand(
             plugin = get<JavaPlugin>(),
             registerHttpService = get<PCBHttp>().register,
-        )
-    }
-}
-
-private fun Module.tab() {
-    factory {
-        TabNameListener(
-            server = get(),
-            store = get(),
-            rolesFilter = RolesFilter(),
         )
     }
 }

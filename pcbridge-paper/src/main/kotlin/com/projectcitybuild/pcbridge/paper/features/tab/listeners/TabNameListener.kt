@@ -18,98 +18,7 @@ import java.util.UUID
 class TabNameListener(
     private val server: Server,
     private val store: Store,
-    private val rolesFilter: RolesFilter,
 ) : Listener {
-    @EventHandler
-    fun onPlayerStateUpdated(event: PlayerStateUpdatedEvent) {
-        updatePlayerName(
-            uuid = event.playerUUID,
-            playerState = event.state,
-        )
-        updateTabListForEveryone()
-    }
-
-    @EventHandler
-    fun onPlayerJoin(event: PlayerJoinEvent) {
-        val uuid = event.player.uniqueId
-
-        // [PlayerStateUpdatedEvent] is fired before the player joins when their
-        // state is initially created. For just this case we need to watch for player
-        // join events
-        val playerState = store.state.players[uuid]
-        if (playerState != null) {
-            updatePlayerName(uuid, playerState)
-        }
-
-        updateTabListForEveryone()
-    }
-
-    @EventHandler
-    fun onPlayerQuit(event: PlayerQuitEvent) {
-        updateTabListForEveryone()
-    }
-
-    @EventHandler
-    fun onPlayerChangedWorld(event: PlayerChangedWorldEvent) {
-        updateTabListForPlayer(event.player)
-    }
-
-    private fun updatePlayerName(uuid: UUID, playerState: PlayerState) {
-        val player = server.getPlayer(uuid) ?: return
-
-        val miniMessage = MiniMessage.miniMessage()
-        val name = Component.text("").apply {
-            append(player.displayName())
-            // append(
-            //     miniMessage.deserialize(" <gray>[${ping(player)}]</gray>")
-            // )
-            if (playerState.afk) {
-                append(
-                    miniMessage.deserialize(" <yellow>AFK</yellow>")
-                )
-            }
-        }
-        player.playerListName(name)
-    }
-
-    private fun updateTabListForEveryone() {
-        server.onlinePlayers.forEach(::updateTabListForPlayer)
-    }
-
-    private fun updateTabListForPlayer(player: Player) {
-        val playerState = store.state.players[player.uniqueId]
-
-        val roles = rolesFilter.filter(playerState?.groups?.toSet() ?: emptySet())
-
-        val miniMessage = MiniMessage.miniMessage()
-        val header = miniMessage.deserialize(
-            header(
-                TabHeader(
-                    worldName = player.location.world.name,
-                    onlinePlayers = server.onlinePlayers.size,
-                    maxPlayers = server.maxPlayers,
-                    roles = roles.values.mapNotNull { it.minecraftName },
-                )
-            )
-        )
-        val footer = miniMessage.deserialize(
-            footer(playerState)
-        )
-
-        player.sendPlayerListHeaderAndFooter(header, footer)
-    }
-
-    private fun ping(player: Player): Component {
-        val ping = player.ping
-        val color = when {
-            ping <= 100 -> "green"
-            ping <= 200 -> "yellow"
-            ping <= 400 -> "orange"
-            else -> "red"
-        }
-        return MiniMessage.miniMessage().deserialize("<$color>${ping}ms</$color>")
-    }
-
     private fun header(header: TabHeader): String {
         val groups = if (header.roles == null) "Unknown"
             else if (header.roles.isEmpty()) "Guest"
@@ -131,16 +40,6 @@ class TabNameListener(
             "<gray>projectcitybuild.com</gray>",
             "<gradient:dark_aqua:green>────────────────────────────────────────</gradient>",
         )
-        if (playerState == null || playerState.groups.isEmpty()) {
-            result.add(1, "<gray>Rank up to Member with </gray><bold><red>/register</red></bold>")
-        }
         return result.joinToString(separator = "<newline>")
     }
 }
-
-data class TabHeader(
-    val worldName: String,
-    val onlinePlayers: Int,
-    val maxPlayers: Int,
-    val roles: List<String>?,
-)

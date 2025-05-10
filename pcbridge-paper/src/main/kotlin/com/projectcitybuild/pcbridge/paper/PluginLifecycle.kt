@@ -9,6 +9,13 @@ import com.projectcitybuild.pcbridge.paper.architecture.serverlist.decorators.Se
 import com.projectcitybuild.pcbridge.paper.architecture.serverlist.listeners.ServerListPingListener
 import com.projectcitybuild.pcbridge.paper.architecture.state.Store
 import com.projectcitybuild.pcbridge.paper.architecture.state.listeners.PlayerStateListener
+import com.projectcitybuild.pcbridge.paper.architecture.tablist.TabPlaceholders
+import com.projectcitybuild.pcbridge.paper.architecture.tablist.placeholders.MaxPlayerCountPlaceholder
+import com.projectcitybuild.pcbridge.paper.architecture.tablist.placeholders.OnlinePlayerCountPlaceholder
+import com.projectcitybuild.pcbridge.paper.architecture.tablist.placeholders.PlayerAFKPlaceholder
+import com.projectcitybuild.pcbridge.paper.architecture.tablist.placeholders.PlayerNamePlaceholder
+import com.projectcitybuild.pcbridge.paper.architecture.tablist.placeholders.PlayerPingPlaceholder
+import com.projectcitybuild.pcbridge.paper.architecture.tablist.placeholders.PlayerWorldPlaceholder
 import com.projectcitybuild.pcbridge.paper.core.libs.errors.SentryReporter
 import com.projectcitybuild.pcbridge.paper.core.libs.errors.trace
 import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.RemoteConfig
@@ -37,6 +44,7 @@ import com.projectcitybuild.pcbridge.paper.features.config.listeners.ConfigWebho
 import com.projectcitybuild.pcbridge.paper.features.groups.listener.ChatGroupInvalidateListener
 import com.projectcitybuild.pcbridge.paper.features.groups.listener.RoleStateChangeListener
 import com.projectcitybuild.pcbridge.paper.features.groups.decorators.ChatGroupDecorator
+import com.projectcitybuild.pcbridge.paper.features.groups.decorators.TabGroupPlaceholder
 import com.projectcitybuild.pcbridge.paper.features.joinmessages.listeners.AnnounceJoinListener
 import com.projectcitybuild.pcbridge.paper.features.joinmessages.listeners.AnnounceQuitListener
 import com.projectcitybuild.pcbridge.paper.features.joinmessages.listeners.FirstTimeJoinListener
@@ -45,7 +53,6 @@ import com.projectcitybuild.pcbridge.paper.features.maintenance.commands.Mainten
 import com.projectcitybuild.pcbridge.paper.features.maintenance.decorators.MaintenanceMotdDecorator
 import com.projectcitybuild.pcbridge.paper.features.maintenance.listener.MaintenanceReminderListener
 import com.projectcitybuild.pcbridge.paper.features.maintenance.middleware.MaintenanceConnectionMiddleware
-import com.projectcitybuild.pcbridge.paper.features.motd.decorators.GeneralMotdDecorator
 import com.projectcitybuild.pcbridge.paper.features.register.commands.CodeCommand
 import com.projectcitybuild.pcbridge.paper.features.register.commands.RegisterCommand
 import com.projectcitybuild.pcbridge.paper.features.staffchat.commands.StaffChatCommand
@@ -103,8 +110,17 @@ class PluginLifecycle : KoinComponent {
         }
         get<ServerListingDecoratorChain>().register(
             get<MaintenanceMotdDecorator>(),
-            get<GeneralMotdDecorator>(),
         )
+        get<TabPlaceholders>().apply {
+            section(get<OnlinePlayerCountPlaceholder>())
+            section(get<MaxPlayerCountPlaceholder>())
+            section(get<PlayerWorldPlaceholder>())
+            section(get<TabGroupPlaceholder>())
+
+            player(get<PlayerNamePlaceholder>())
+            player(get<PlayerAFKPlaceholder>())
+            player(get<PlayerPingPlaceholder>())
+        }
 
         get<JavaPlugin>()
             .lifecycleManager
