@@ -2,6 +2,9 @@ package com.projectcitybuild.pcbridge.paper.core.support.component
 
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextComponent
+import net.kyori.adventure.text.minimessage.MiniMessage
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
+import org.jetbrains.annotations.NotNull
 
 /**
  * Joins a collection of components together with the given [separator]
@@ -19,3 +22,8 @@ fun List<TextComponent.Builder>.join(separator: Component): TextComponent.Builde
     }
     return component
 }
+
+fun MiniMessage.deserialize(input: String, resolvers: Iterable<TagResolver>) = deserialize(
+    input,
+    TagResolver.resolver(resolvers),
+)

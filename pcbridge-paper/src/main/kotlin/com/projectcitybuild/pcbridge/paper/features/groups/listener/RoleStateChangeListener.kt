@@ -10,6 +10,8 @@ class RoleStateChangeListener(
 ) : Listener {
     @EventHandler
     fun onPlayerStateUpdated(event: PlayerStateUpdatedEvent) {
+        if (event.prevState?.groups == event.state.groups) return
+
         val groupSet = event.state.groups.mapNotNull { it.minecraftName }.toSet()
         permissions.provider.setUserRoles(event.playerUUID, groupSet)
     }

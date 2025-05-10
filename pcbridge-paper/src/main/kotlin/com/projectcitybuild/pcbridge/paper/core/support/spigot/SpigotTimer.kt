@@ -32,7 +32,7 @@ class SpigotTimer(
 
     fun scheduleRepeating(
         identifier: String,
-        delay: Duration,
+        delay: Duration = Duration.ZERO,
         repeatingInterval: Duration,
         work: () -> Unit,
     ): Cancellable {

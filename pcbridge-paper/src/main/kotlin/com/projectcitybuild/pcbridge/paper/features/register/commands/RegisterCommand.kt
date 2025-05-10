@@ -28,7 +28,7 @@ class RegisterCommand(
             )
             .executes { context ->
                 val message = MiniMessage.miniMessage().deserialize(
-                    "<red>Error: Please specify an email address to receive your registration code</red>",
+                    "<red>Error: Please specify an email address to receive your registration code</red><newline><gray>Example Usage: <bold>/register your@email.com</bold></gray>",
                 )
                 context.source.sender.sendMessage(message)
                 return@executes Command.SINGLE_SUCCESS

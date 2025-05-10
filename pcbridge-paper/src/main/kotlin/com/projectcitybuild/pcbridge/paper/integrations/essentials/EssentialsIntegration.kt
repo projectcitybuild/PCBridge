@@ -11,6 +11,7 @@ import com.projectcitybuild.pcbridge.paper.core.libs.teleportation.events.Player
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotIntegration
 import kotlinx.coroutines.runBlocking
 import net.ess3.api.events.AfkStatusChangeEvent
+import net.ess3.api.events.NickChangeEvent
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.plugin.Plugin
@@ -90,6 +91,24 @@ class EssentialsIntegration(
                     ),
                 )
             }
+        }
+    }
+
+    @EventHandler
+    suspend fun onPlayerNicknameChange(event: NickChangeEvent) {
+        // No point storing the nickname since this is currently controlled by Essentials,
+        // and it already updates the player's display name. We'll just emit a player state
+        // update event so that features using nicknames will know to re-fetch it
+        val playerUuid = event.affected.uuid
+        val state = store.state.players[playerUuid]
+        if (state != null) {
+            eventBroadcaster.broadcast(
+                PlayerStateUpdatedEvent(
+                    prevState = state,
+                    state = state,
+                    playerUUID = playerUuid,
+                ),
+            )
         }
     }
 }
