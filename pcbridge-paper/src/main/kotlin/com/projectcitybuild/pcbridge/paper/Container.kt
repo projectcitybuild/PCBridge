@@ -104,13 +104,12 @@ import com.projectcitybuild.pcbridge.paper.features.chatemojis.decorators.ChatEm
 import com.projectcitybuild.pcbridge.paper.features.groups.decorators.ChatGroupDecorator
 import com.projectcitybuild.pcbridge.paper.features.chaturls.decorators.ChatUrlDecorator
 import com.projectcitybuild.pcbridge.paper.features.config.listeners.ConfigWebhookListener
-import com.projectcitybuild.pcbridge.paper.features.groups.decorators.TabGroupPlaceholder
+import com.projectcitybuild.pcbridge.paper.features.groups.placeholders.TabGroupPlaceholder
 import com.projectcitybuild.pcbridge.paper.features.sync.commands.SyncDebugCommand
 import com.projectcitybuild.pcbridge.paper.features.maintenance.commands.MaintenanceCommand
 import com.projectcitybuild.pcbridge.paper.features.maintenance.listener.MaintenanceReminderListener
 import com.projectcitybuild.pcbridge.paper.features.maintenance.decorators.MaintenanceMotdDecorator
 import com.projectcitybuild.pcbridge.paper.features.maintenance.middleware.MaintenanceConnectionMiddleware
-import com.projectcitybuild.pcbridge.paper.features.tab.listeners.TabNameListener
 import com.projectcitybuild.pcbridge.paper.features.randomteleport.commands.RtpCommand
 import com.projectcitybuild.pcbridge.paper.features.spawns.commands.SetSpawnCommand
 import com.projectcitybuild.pcbridge.paper.features.spawns.commands.SpawnCommand
@@ -505,6 +504,7 @@ private fun Module.architecture() {
         PlayerAFKPlaceholder(
             server = get(),
             tabRenderer = get(),
+            store = get(),
         )
     }
 
@@ -700,6 +700,8 @@ private fun Module.groups() {
         TabGroupPlaceholder(
             rolesFilter = get(),
             store = get(),
+            server = get(),
+            tabRenderer = get(),
         )
     }
 

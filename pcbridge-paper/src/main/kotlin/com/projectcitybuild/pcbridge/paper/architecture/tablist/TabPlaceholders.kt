@@ -1,5 +1,6 @@
 package com.projectcitybuild.pcbridge.paper.architecture.tablist
 
+import com.projectcitybuild.pcbridge.paper.core.libs.logger.log
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotListenerRegistry
 import net.kyori.adventure.text.Component
 import org.bukkit.entity.Player
@@ -25,6 +26,8 @@ class TabPlaceholders(
     val section get() = sectionPlaceholders.toSet()
 
     fun section(placeholder: TabPlaceholder) {
+        log.info { "Registering tab section placeholder: ${placeholder::class.simpleName}" }
+
         sectionPlaceholders.add(placeholder)
 
         if (placeholder is UpdatableTabPlaceholder) {
@@ -33,6 +36,8 @@ class TabPlaceholders(
     }
 
     fun player(placeholder: TabPlaceholder) {
+        log.info { "Registering tab player placeholder: ${placeholder::class.simpleName}" }
+
         playerPlaceholders.add(placeholder)
 
         if (placeholder is UpdatableTabPlaceholder) {

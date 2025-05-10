@@ -10,6 +10,7 @@ import com.projectcitybuild.pcbridge.paper.architecture.serverlist.listeners.Ser
 import com.projectcitybuild.pcbridge.paper.architecture.state.Store
 import com.projectcitybuild.pcbridge.paper.architecture.state.listeners.PlayerStateListener
 import com.projectcitybuild.pcbridge.paper.architecture.tablist.TabPlaceholders
+import com.projectcitybuild.pcbridge.paper.architecture.tablist.listeners.TabListeners
 import com.projectcitybuild.pcbridge.paper.architecture.tablist.placeholders.MaxPlayerCountPlaceholder
 import com.projectcitybuild.pcbridge.paper.architecture.tablist.placeholders.OnlinePlayerCountPlaceholder
 import com.projectcitybuild.pcbridge.paper.architecture.tablist.placeholders.PlayerAFKPlaceholder
@@ -44,7 +45,7 @@ import com.projectcitybuild.pcbridge.paper.features.config.listeners.ConfigWebho
 import com.projectcitybuild.pcbridge.paper.features.groups.listener.ChatGroupInvalidateListener
 import com.projectcitybuild.pcbridge.paper.features.groups.listener.RoleStateChangeListener
 import com.projectcitybuild.pcbridge.paper.features.groups.decorators.ChatGroupDecorator
-import com.projectcitybuild.pcbridge.paper.features.groups.decorators.TabGroupPlaceholder
+import com.projectcitybuild.pcbridge.paper.features.groups.placeholders.TabGroupPlaceholder
 import com.projectcitybuild.pcbridge.paper.features.joinmessages.listeners.AnnounceJoinListener
 import com.projectcitybuild.pcbridge.paper.features.joinmessages.listeners.AnnounceQuitListener
 import com.projectcitybuild.pcbridge.paper.features.joinmessages.listeners.FirstTimeJoinListener
@@ -59,7 +60,6 @@ import com.projectcitybuild.pcbridge.paper.features.staffchat.commands.StaffChat
 import com.projectcitybuild.pcbridge.paper.features.sync.commands.SyncCommand
 import com.projectcitybuild.pcbridge.paper.features.sync.commands.SyncDebugCommand
 import com.projectcitybuild.pcbridge.paper.features.sync.listener.PlayerSyncRequestListener
-import com.projectcitybuild.pcbridge.paper.features.tab.listeners.TabNameListener
 import com.projectcitybuild.pcbridge.paper.features.telemetry.listeners.TelemetryPlayerConnectListener
 import com.projectcitybuild.pcbridge.paper.features.randomteleport.commands.RtpCommand
 import com.projectcitybuild.pcbridge.paper.features.spawns.commands.SetSpawnCommand
@@ -172,7 +172,7 @@ class PluginLifecycle : KoinComponent {
             get<ServerOverviewJoinListener>(),
             get<ServerListPingListener>(),
             get<RoleStateChangeListener>(),
-            get<TabNameListener>(),
+            get<TabListeners>(),
             get<TelemetryPlayerConnectListener>(),
             get<WarpWebhookListener>(),
         )

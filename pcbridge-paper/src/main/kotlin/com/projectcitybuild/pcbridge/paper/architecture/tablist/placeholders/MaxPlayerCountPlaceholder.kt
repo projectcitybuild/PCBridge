@@ -8,7 +8,7 @@ import org.bukkit.entity.Player
 class MaxPlayerCountPlaceholder(
     private val server: Server,
 ): TabPlaceholder {
-    override val placeholder: String = "%max_players%"
+    override val placeholder: String = "max_players"
 
     override suspend fun value(player: Player): Component
         = Component.text(server.maxPlayers)
