@@ -4,10 +4,10 @@ class ChatDecoratorChain(
     private val senderDecorators: MutableList<ChatSenderDecorator> = mutableListOf(),
     private val messageDecorators: MutableList<ChatMessageDecorator> = mutableListOf(),
 ) {
-    fun addSender(vararg decorator: ChatSenderDecorator)
+    fun senders(vararg decorator: ChatSenderDecorator)
         = decorator.forEach { senderDecorators.add(it) }
 
-    fun addMessage(vararg decorator: ChatMessageDecorator)
+    fun messages(vararg decorator: ChatMessageDecorator)
         = decorator.forEach { messageDecorators.add(it) }
 
     suspend fun pipe(sender: ChatSender): ChatSender {
