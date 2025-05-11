@@ -25,7 +25,7 @@ class TabPlaceholders(
 
     val section get() = sectionPlaceholders.toSet()
 
-    fun section(placeholder: TabPlaceholder) {
+    fun sections(vararg placeholders: TabPlaceholder) = placeholders.forEach { placeholder ->
         log.info { "Registering tab section placeholder: ${placeholder::class.simpleName}" }
 
         sectionPlaceholders.add(placeholder)
@@ -35,7 +35,7 @@ class TabPlaceholders(
         }
     }
 
-    fun player(placeholder: TabPlaceholder) {
+    fun players(vararg placeholders: TabPlaceholder) = placeholders.forEach { placeholder ->
         log.info { "Registering tab player placeholder: ${placeholder::class.simpleName}" }
 
         playerPlaceholders.add(placeholder)

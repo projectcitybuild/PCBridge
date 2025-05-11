@@ -112,6 +112,7 @@ import com.projectcitybuild.pcbridge.paper.features.maintenance.listener.Mainten
 import com.projectcitybuild.pcbridge.paper.features.maintenance.decorators.MaintenanceMotdDecorator
 import com.projectcitybuild.pcbridge.paper.features.maintenance.middleware.MaintenanceConnectionMiddleware
 import com.projectcitybuild.pcbridge.paper.features.randomteleport.commands.RtpCommand
+import com.projectcitybuild.pcbridge.paper.features.serverlinks.listeners.ServerLinkListener
 import com.projectcitybuild.pcbridge.paper.features.spawns.commands.SetSpawnCommand
 import com.projectcitybuild.pcbridge.paper.features.spawns.commands.SpawnCommand
 import com.projectcitybuild.pcbridge.paper.features.spawns.data.SerializableSpawn
@@ -165,6 +166,7 @@ fun pluginModule(_plugin: JavaPlugin) =
         maintenance()
         randomTeleport()
         register()
+        serverLinks()
         spawn()
         staffChat()
         sync()
@@ -839,6 +841,14 @@ private fun Module.randomTeleport() {
     factory {
         FindRandomLocation(
             playerTeleporter = get(),
+        )
+    }
+}
+
+private fun Module.serverLinks() {
+    factory {
+        ServerLinkListener(
+            remoteConfig = get(),
         )
     }
 }

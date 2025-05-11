@@ -18,6 +18,8 @@ data class RemoteConfigKeyValues(
     val messages: Messages = Messages(),
     val motd: String = "",
     val tab: Tab = Tab(),
+    @SerializedName("server_links")
+    val serverLinks: ServerLinks = ServerLinks(),
 ) {
     @Serializable
     data class Localization(
@@ -69,6 +71,12 @@ data class RemoteConfigKeyValues(
         val player: String = "%name%",
         @SerializedName("player_column_length")
         val playerColumnLength: Int = 32,
+    )
+
+    @Serializable
+    data class ServerLinks(
+        val website: String = "",
+        val custom: Map<String, String> = mapOf(),
     )
 }
 

@@ -8,8 +8,6 @@ import com.projectcitybuild.pcbridge.paper.PermissionNode
 import com.projectcitybuild.pcbridge.paper.architecture.chat.decorators.ChatDecoratorChain
 import com.projectcitybuild.pcbridge.paper.architecture.chat.decorators.ChatMessage
 import com.projectcitybuild.pcbridge.paper.architecture.chat.decorators.ChatMessageDecorator
-import com.projectcitybuild.pcbridge.paper.architecture.chat.decorators.ChatSender
-import com.projectcitybuild.pcbridge.paper.architecture.chat.decorators.ChatSenderDecorator
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.extensions.hasPermission
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import kotlinx.coroutines.test.runTest
@@ -85,7 +83,7 @@ class ACommandTest {
     @Test
     fun `decorates messages`() =
         runTest {
-            decoratorChain.addMessage(object : ChatMessageDecorator {
+            decoratorChain.messages(object : ChatMessageDecorator {
                 override suspend fun decorate(prev: ChatMessage): ChatMessage {
                     return prev.copy(message = Component.text("replaced_message"))
                 }
