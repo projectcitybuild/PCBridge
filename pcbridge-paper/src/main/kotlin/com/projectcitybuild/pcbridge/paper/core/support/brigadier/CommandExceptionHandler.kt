@@ -2,6 +2,7 @@ package com.projectcitybuild.pcbridge.paper.core.support.brigadier
 
 import com.mojang.brigadier.context.CommandContext
 import com.projectcitybuild.pcbridge.http.shared.parsing.ResponseParser
+import com.projectcitybuild.pcbridge.paper.core.libs.cooldowns.CooldownException
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.command.CommandSender
@@ -27,6 +28,7 @@ class CommandExceptionHandler private constructor() {
         fun catch(sender: CommandSender, e: Throwable) = when (e) {
             is IllegalStateException -> sender.sendError("Error: ${e.message}")
             is ResponseParser.ValidationError -> sender.sendError("Error: ${e.message}")
+            is CooldownException -> sender.sendError("Error: Please wait ${e.remainingTime.inWholeMilliseconds} seconds before trying again")
             else -> {
                 sender.sendError("An unexpected error occurred")
                 throw e // Bubble it up to the error reporter

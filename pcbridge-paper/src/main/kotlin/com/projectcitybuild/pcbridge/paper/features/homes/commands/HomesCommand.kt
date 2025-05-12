@@ -24,7 +24,6 @@ class HomesCommand(
             .then(command = homeDeleteCommand)
             .then(command = homeListCommand)
             .then(command = homeMoveCommand)
-            // TODO: can we use a Redirect here? Would be good to allow a page arg
             .requiresPermission(PermissionNode.HOMES_USE)
             .executes(homeListCommand.buildLiteral().command)
             .build()

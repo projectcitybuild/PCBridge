@@ -6,7 +6,7 @@ import net.kyori.adventure.text.minimessage.MiniMessage
 
 fun PlayerBan.toMiniMessage() = MiniMessage.miniMessage().deserialize(
     """
-        <color:red><b>You are currently banned.</b></color>
+        <color:red><b>This account is banned.</b></color>
                 
         <color:gray>Reason:</color> ${reason ?: "No reason provided"}
         <color:gray>Expires:</color> ${expiresAt ?: "Never"}
@@ -17,7 +17,7 @@ fun PlayerBan.toMiniMessage() = MiniMessage.miniMessage().deserialize(
 
 fun IPBan.toMiniMessage() = MiniMessage.miniMessage().deserialize(
     """
-        <color:red><b>You are currently IP banned.</b></color>
+        <color:red><b>This IP address is banned.</b></color>
                 
         <color:gray>Reason:</color> ${reason ?: "No reason provided" }
                 

@@ -16,6 +16,10 @@ data class RemoteConfigKeyValues(
     val integrations: Integrations = Integrations(),
     val announcements: Announcements = Announcements(),
     val messages: Messages = Messages(),
+    val motd: String = "",
+    val tab: Tab = Tab(),
+    @SerializedName("server_links")
+    val serverLinks: ServerLinks = ServerLinks(),
 ) {
     @Serializable
     data class Localization(
@@ -58,6 +62,21 @@ data class RemoteConfigKeyValues(
         @SerializedName("first_time_join")
         val firstTimeJoin: String = "<color:AA00AA><b>✦ Welcome §f%name%§d to the server!</b></color>",
         val welcome: String = "<b>Welcome to PCB!</b>",
+    )
+
+    @Serializable
+    data class Tab(
+        val header: List<String> = emptyList(),
+        val footer: List<String> = emptyList(),
+        val player: String = "%name%",
+        @SerializedName("player_column_length")
+        val playerColumnLength: Int = 32,
+    )
+
+    @Serializable
+    data class ServerLinks(
+        val website: String = "",
+        val custom: Map<String, String> = mapOf(),
     )
 }
 

@@ -1,5 +1,6 @@
 package com.projectcitybuild.pcbridge.paper.features.register.commands
 
+import com.mojang.brigadier.Command
 import com.mojang.brigadier.arguments.StringArgumentType
 import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.tree.LiteralCommandNode
@@ -12,6 +13,7 @@ import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
+import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
 
@@ -27,6 +29,13 @@ class CodeCommand(
                 Commands.argument("code", StringArgumentType.string())
                     .executesSuspending(plugin, ::execute)
             )
+            .executes { context ->
+                val message = MiniMessage.miniMessage().deserialize(
+                    "<red>Error: You did not specify a code</red><newline><gray>Example Usage: <bold>/code 123456</bold></gray>",
+                )
+                context.source.sender.sendMessage(message)
+                return@executes Command.SINGLE_SUCCESS
+            }
             .build()
     }
 

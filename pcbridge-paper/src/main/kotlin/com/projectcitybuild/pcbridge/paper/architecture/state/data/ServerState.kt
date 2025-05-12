@@ -22,7 +22,7 @@ data class ServerState(
     /**
      * Individual state for each online player
      */
-    val players: MutableMap<UUID, PlayerState>,
+    val players: MutableMap<UUID, PlayerState> = mutableMapOf(),
 
     /**
      * Index of the last announcement broadcast to players on the server.
@@ -30,7 +30,12 @@ data class ServerState(
      * This is used to enumerate over the announcement list, and remember
      * which one was last broadcast when reloading
      */
-    val lastBroadcastIndex: Int,
+    val lastBroadcastIndex: Int = 0,
+
+    /**
+     * Whether the server is in maintenance mode or not
+     */
+    val maintenance: Boolean = false,
 )
 
 @Serializable
@@ -41,6 +46,7 @@ data class PlayerState(
     val player: Player? = null,
     val groups: List<Group> = emptyList(),
     val badges: List<Badge> = emptyList(),
+    val afk: Boolean = false,
 ) {
     companion object {
         fun fromPlayerData(data: PlayerData, connectedAt: LocalDateTime) = PlayerState(

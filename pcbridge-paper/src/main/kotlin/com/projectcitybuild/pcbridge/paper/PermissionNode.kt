@@ -25,6 +25,12 @@ enum class PermissionNode(val node: String) {
     // Can create/edit/get their own player homes
     HOMES_USE("pcbridge.homes.use"),
 
+    // Can toggle maintenance mode on or off
+    MAINTENANCE_MANAGE("pcbridge.maintenance.manage"),
+
+    // Can set the spawn location of a world
+    SPAWN_MANAGE("pcbridge.spawn.manage"),
+
     // Can send and receive staff messages
     STAFF_CHANNEL("pcbridge.chat.staff_channel"),
 
@@ -36,6 +42,9 @@ enum class PermissionNode(val node: String) {
 
     // Can force reload the remote config
     REMOTE_CONFIG_RELOAD("pcbridge.config.reload"),
+
+    // Can teleport to a random location
+    TELEPORT_RANDOM("pcbridge.teleport.random"),
 
     // Can teleport to a warp
     WARP_TELEPORT("pcbridge.warp.teleport"),

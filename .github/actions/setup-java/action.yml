@@ -6,13 +6,13 @@ runs:
   using: "composite"
   steps:
     - name: Set up JDK
-      uses: actions/setup-java@8df1039502a15bceb9433410b1a100fbe190c53b
+      uses: actions/setup-java@f4f1212c880fdec8162ea9a6493f4495191887b4
       with:
         java-version: '21'
         distribution: 'temurin'
 
     - name: Cache Gradle packages
-      uses: actions/cache@6849a6489940f00c2f30c0fb92c6274307ccb58a
+      uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684
       with:
         path: ~/.gradle/caches
         key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
