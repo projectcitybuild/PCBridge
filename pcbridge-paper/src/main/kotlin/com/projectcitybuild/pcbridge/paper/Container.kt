@@ -12,12 +12,6 @@ import com.projectcitybuild.pcbridge.paper.features.config.commands.ConfigComman
 import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.RemoteConfig
 import com.projectcitybuild.pcbridge.paper.architecture.state.Store
 import com.projectcitybuild.pcbridge.paper.core.libs.localconfig.LocalConfigKeyValues
-import com.projectcitybuild.pcbridge.paper.features.announcements.actions.StartAnnouncementTimer
-import com.projectcitybuild.pcbridge.paper.features.announcements.listeners.AnnouncementConfigListener
-import com.projectcitybuild.pcbridge.paper.features.announcements.listeners.AnnouncementEnableListener
-import com.projectcitybuild.pcbridge.paper.features.announcements.repositories.AnnouncementRepository
-import com.projectcitybuild.pcbridge.paper.features.bans.actions.CheckBan
-import com.projectcitybuild.pcbridge.paper.features.bans.listeners.BanWebhookListener
 import com.projectcitybuild.pcbridge.paper.features.sync.repositories.PlayerRepository
 import com.projectcitybuild.pcbridge.paper.features.groups.ChatGroupFormatter
 import com.projectcitybuild.pcbridge.paper.features.groups.listener.ChatGroupInvalidateListener
@@ -91,12 +85,14 @@ import com.projectcitybuild.pcbridge.paper.core.libs.teleportation.SafeYLocation
 import com.projectcitybuild.pcbridge.paper.core.libs.teleportation.storage.TeleportHistoryStorage
 import com.projectcitybuild.pcbridge.paper.features.groups.RolesFilter
 import com.projectcitybuild.pcbridge.paper.core.utils.PeriodicRunner
+import com.projectcitybuild.pcbridge.paper.features.announcements.announcementsModule
+import com.projectcitybuild.pcbridge.paper.features.bans.bansModule
+import com.projectcitybuild.pcbridge.paper.features.building.buildingModule
+import com.projectcitybuild.pcbridge.paper.features.builds.buildsModule
 import com.projectcitybuild.pcbridge.paper.features.chatbadge.ChatBadgeFormatter
 import com.projectcitybuild.pcbridge.paper.features.chatbadge.listeners.ChatBadgeInvalidateListener
 import com.projectcitybuild.pcbridge.paper.features.chatbadge.decorators.ChatBadgeDecorator
 import com.projectcitybuild.pcbridge.paper.features.chatbadge.repositories.ChatBadgeRepository
-import com.projectcitybuild.pcbridge.paper.features.bans.commands.BanCommand
-import com.projectcitybuild.pcbridge.paper.features.bans.middleware.BanConnectionMiddleware
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildEditCommand
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildSetCommand
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildUnvoteCommand
@@ -142,39 +138,42 @@ import java.util.Locale
 import java.util.UUID
 import kotlin.time.Duration.Companion.seconds
 
-fun pluginModule(_plugin: JavaPlugin) =
-    module {
-        spigot(_plugin)
-        core()
-        http()
-        webServer()
-        integrations()
-        architecture()
+fun pluginModules(plugin: JavaPlugin) = listOf(
+    mainModule(plugin),
+    announcementsModule,
+    bansModule,
+    buildingModule,
+    buildsModule,
+)
 
-        // Features
-        announcements()
-        bans()
-        building()
-        builds()
-        chatBadge()
-        chatEmojis()
-        chatUrls()
-        config()
-        groups()
-        joinMessages()
-        invisFrames()
-        maintenance()
-        randomTeleport()
-        register()
-        serverLinks()
-        spawn()
-        staffChat()
-        sync()
-        telemetry()
-        warps()
-        watchdog()
-        warnings()
-    }
+private fun mainModule(plugin: JavaPlugin) = module {
+    spigot(plugin)
+    core()
+    http()
+    webServer()
+    integrations()
+    architecture()
+
+    // Features
+    chatBadge()
+    chatEmojis()
+    chatUrls()
+    config()
+    groups()
+    joinMessages()
+    invisFrames()
+    maintenance()
+    randomTeleport()
+    register()
+    serverLinks()
+    spawn()
+    staffChat()
+    sync()
+    telemetry()
+    warps()
+    watchdog()
+    warnings()
+}
 
 private fun Module.spigot(plugin: JavaPlugin) {
     single { plugin }
@@ -388,37 +387,6 @@ private fun Module.integrations() {
     }
 }
 
-private fun Module.announcements() {
-    single {
-        AnnouncementRepository(
-            remoteConfig = get(),
-            store = get(),
-        )
-    }
-
-    single {
-        StartAnnouncementTimer(
-            repository = get(),
-            remoteConfig = get(),
-            timer = get(),
-            server = get(),
-        )
-    }
-
-    factory {
-        AnnouncementEnableListener(
-            announcementTimer = get(),
-            plugin = get(),
-        )
-    }
-
-    factory {
-        AnnouncementConfigListener(
-            announcementTimer = get(),
-        )
-    }
-}
-
 private fun Module.architecture() {
     factory {
         PlayerStateListener(
@@ -529,97 +497,6 @@ private fun Module.architecture() {
     factory {
         PlayerWorldPlaceholder(
             tabRenderer = get(),
-        )
-    }
-}
-
-private fun Module.bans() {
-    factory {
-        BanConnectionMiddleware(
-            checkBan = CheckBan(),
-        )
-    }
-
-    factory {
-        BanWebhookListener(
-            server = get(),
-        )
-    }
-
-    factory {
-        BanCommand(
-            plugin = get<JavaPlugin>(),
-            server = get(),
-            manageUrlGenerator = get(),
-        )
-    }
-}
-
-private fun Module.builds() {
-    factory {
-        BuildsCommand(
-            buildListCommand = BuildListCommand(
-                plugin = get<JavaPlugin>(),
-                buildRepository = get(),
-            ),
-            buildCreateCommand = BuildCreateCommand(
-                plugin = get<JavaPlugin>(),
-                buildRepository = get(),
-            ),
-            buildMoveCommand = BuildMoveCommand(
-                plugin = get<JavaPlugin>(),
-                buildRepository = get(),
-            ),
-            buildVoteCommand = BuildVoteCommand(
-                plugin = get<JavaPlugin>(),
-                buildRepository = get(),
-            ),
-            buildUnvoteCommand = BuildUnvoteCommand(
-                plugin = get<JavaPlugin>(),
-                buildRepository = get(),
-            ),
-            buildDeleteCommand = BuildDeleteCommand(
-                plugin = get<JavaPlugin>(),
-                buildRepository = get(),
-            ),
-            buildEditCommand = BuildEditCommand(
-                plugin = get<JavaPlugin>(),
-                buildRepository = get(),
-            ),
-            buildSetCommand = BuildSetCommand(
-                plugin = get<JavaPlugin>(),
-                buildRepository = get(),
-            ),
-        )
-    }
-
-    factory {
-        BuildCommand(
-            plugin = get<JavaPlugin>(),
-            buildRepository = get(),
-            server = get(),
-            playerTeleporter = get(),
-        )
-    }
-
-    single {
-        BuildRepository(
-            buildHttpService = get<PCBHttp>().builds
-        )
-    }
-}
-
-private fun Module.building() {
-    factory {
-        NightVisionCommand(
-            plugin = get<JavaPlugin>(),
-        )
-    }
-
-    factory {
-        ItemNameCommand(
-            plugin = get<JavaPlugin>(),
-            eventBroadcaster = get(),
         )
     }
 }
