@@ -13,7 +13,6 @@ import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.req
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceSuspending
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
-import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.plugin.Plugin
 import kotlin.math.ceil
 
@@ -36,13 +35,10 @@ class BuildListCommand(
         val pageNumber = context.getOptionalArgument("page", Int::class.java) ?: 1
         val builds = buildRepository.all(pageNumber)
         val totalPages = ceil(builds.total.toDouble() / builds.perPage.toDouble()).toInt()
-        val miniMessage = MiniMessage.miniMessage()
         val sender = context.source.sender
 
         if (builds.data.isEmpty()) {
-            sender.sendMessage(
-                miniMessage.deserialize("<gray>No builds available</gray>")
-            )
+            sender.sendRichMessage("<gray>No builds available</gray>")
             return@traceSuspending
         }
         val message = PaginationBuilder().build(

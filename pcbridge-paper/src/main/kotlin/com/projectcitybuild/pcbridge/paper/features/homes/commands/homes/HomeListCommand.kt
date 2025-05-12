@@ -4,7 +4,7 @@ import com.mojang.brigadier.arguments.IntegerArgumentType
 import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.tree.LiteralCommandNode
 import com.projectcitybuild.pcbridge.paper.PermissionNode
-import com.projectcitybuild.pcbridge.paper.core.libs.pagination.LengthAwarePaginator
+import com.projectcitybuild.pcbridge.paper.core.libs.pagination.PaginationBuilder
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierCommand
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.getOptionalArgument
@@ -13,10 +13,6 @@ import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceSuspendin
 import com.projectcitybuild.pcbridge.paper.features.homes.repositories.HomeRepository
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
-import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.event.ClickEvent
-import net.kyori.adventure.text.event.HoverEvent
-import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
 
@@ -36,26 +32,28 @@ class HomeListCommand(
     }
 
     private suspend fun execute(context: CommandContext<CommandSourceStack>) = context.traceSuspending {
-        val page = context.getOptionalArgument("page", Int::class.java) ?: 1
+        val pageNumber = context.getOptionalArgument("page", Int::class.java) ?: 1
         val sender = context.source.sender
         check(sender is Player) { "Only players can use this command" }
 
-        val homes = homeRepository.all(playerUUID = sender.uniqueId, page = page)
+        val homes = homeRepository.all(playerUUID = sender.uniqueId, page = pageNumber)
 
-        sender.sendMessage(
-            LengthAwarePaginator().component(
-                title = "Your Homes",
-                paginatedData = homes,
-                pageCommandBuilder = { pageIndex -> "/homes list $pageIndex" },
-                itemDecorator = { home ->
-                    val text = "<gray>#${home.id} \"<aqua>${home.name}</aqua>\"</gray>"
-
-                    MiniMessage.miniMessage().deserialize(text)
-                        // Separate handling here to ensure character escaping in the name
-                        .clickEvent(ClickEvent.runCommand("/home ${home.name}"))
-                        .hoverEvent(HoverEvent.showText(Component.text("Teleport to ${home.name}")))
-                },
-            )
+        if (homes.data.isEmpty()) {
+            sender.sendRichMessage("<gray>No builds available</gray>")
+            return@traceSuspending
+        }
+        val message = PaginationBuilder().build(
+            title = "Your Homes",
+            items = homes.data,
+            pageNumber = homes.currentPage,
+            totalPages = homes.total,
+            pageCommand = { index -> "/homes list $index" },
+            itemClickCommand = { "/home ${it.name}" },
+            itemHover = { "Teleport to ${it.name}" },
+            itemDecorator = {
+                "<gray>#${it.id} \"<aqua>${it.name}</aqua>\"</gray>"
+            },
         )
+        sender.sendMessage(message)
     }
 }
