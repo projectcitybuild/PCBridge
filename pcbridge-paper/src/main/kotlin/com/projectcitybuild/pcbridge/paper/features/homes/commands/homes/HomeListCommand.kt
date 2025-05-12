@@ -15,6 +15,7 @@ import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
+import kotlin.math.ceil
 
 class HomeListCommand(
     private val plugin: Plugin,
@@ -46,7 +47,7 @@ class HomeListCommand(
             title = "Your Homes",
             items = homes.data,
             pageNumber = homes.currentPage,
-            totalPages = homes.total,
+            totalPages = ceil(homes.total.toDouble() / homes.perPage.toDouble()).toInt(),
             pageCommand = { index -> "/homes list $index" },
             itemClickCommand = { "/home ${it.name}" },
             itemHover = { "Teleport to ${it.name}" },
