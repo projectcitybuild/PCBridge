@@ -7,9 +7,11 @@ import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.req
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.then
 import com.projectcitybuild.pcbridge.paper.features.homes.commands.homes.HomeCreateCommand
 import com.projectcitybuild.pcbridge.paper.features.homes.commands.homes.HomeDeleteCommand
+import com.projectcitybuild.pcbridge.paper.features.homes.commands.homes.HomeEditCommand
 import com.projectcitybuild.pcbridge.paper.features.homes.commands.homes.HomeLimitCommand
 import com.projectcitybuild.pcbridge.paper.features.homes.commands.homes.HomeListCommand
 import com.projectcitybuild.pcbridge.paper.features.homes.commands.homes.HomeMoveCommand
+import com.projectcitybuild.pcbridge.paper.features.homes.commands.homes.HomeSetFieldCommand
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
 
@@ -19,6 +21,8 @@ class HomesCommand(
     private val homeListCommand: HomeListCommand,
     private val homeMoveCommand: HomeMoveCommand,
     private val homeLimitCommand: HomeLimitCommand,
+    private val homeEditCommand: HomeEditCommand,
+    private val homeSetFieldCommand: HomeSetFieldCommand,
 ): BrigadierCommand {
     override fun buildLiteral(): LiteralCommandNode<CommandSourceStack> {
         return Commands.literal("homes")
@@ -28,6 +32,8 @@ class HomesCommand(
             .then(command = homeListCommand)
             .then(command = homeMoveCommand)
             .then(command = homeLimitCommand)
+            .then(command = homeEditCommand)
+            .then(command = homeSetFieldCommand)
             .executes(homeListCommand.buildLiteral().command)
             .build()
     }

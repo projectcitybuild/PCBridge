@@ -110,9 +110,11 @@ import com.projectcitybuild.pcbridge.paper.features.homes.commands.HomeCommand
 import com.projectcitybuild.pcbridge.paper.features.homes.commands.HomesCommand
 import com.projectcitybuild.pcbridge.paper.features.homes.commands.homes.HomeCreateCommand
 import com.projectcitybuild.pcbridge.paper.features.homes.commands.homes.HomeDeleteCommand
+import com.projectcitybuild.pcbridge.paper.features.homes.commands.homes.HomeEditCommand
 import com.projectcitybuild.pcbridge.paper.features.homes.commands.homes.HomeLimitCommand
 import com.projectcitybuild.pcbridge.paper.features.homes.commands.homes.HomeListCommand
 import com.projectcitybuild.pcbridge.paper.features.homes.commands.homes.HomeMoveCommand
+import com.projectcitybuild.pcbridge.paper.features.homes.commands.homes.HomeSetFieldCommand
 import com.projectcitybuild.pcbridge.paper.features.homes.repositories.HomeRepository
 import com.projectcitybuild.pcbridge.paper.features.sync.commands.SyncDebugCommand
 import com.projectcitybuild.pcbridge.paper.features.maintenance.commands.MaintenanceCommand
@@ -1006,6 +1008,14 @@ private fun Module.homes() {
                 homeRepository = get(),
             ),
             homeLimitCommand = HomeLimitCommand(
+                plugin = get<JavaPlugin>(),
+                homeRepository = get(),
+            ),
+            homeEditCommand = HomeEditCommand(
+                plugin = get<JavaPlugin>(),
+                homeRepository = get(),
+            ),
+            homeSetFieldCommand = HomeSetFieldCommand(
                 plugin = get<JavaPlugin>(),
                 homeRepository = get(),
             ),
