@@ -1,5 +1,6 @@
 package com.projectcitybuild.pcbridge.paper.features.homes.repositories
 
+import com.projectcitybuild.pcbridge.http.pcb.models.Build
 import com.projectcitybuild.pcbridge.http.pcb.models.Home
 import com.projectcitybuild.pcbridge.http.pcb.models.HomeLimit
 import com.projectcitybuild.pcbridge.http.pcb.models.NamedResource
@@ -76,6 +77,56 @@ class HomeRepository(
             }
 
         return home
+    }
+
+    suspend fun move(
+        name: String,
+        world: String,
+        location: Location,
+        player: Player,
+    ): Home {
+        val nameList = names(player.uniqueId)
+        val home = nameList.firstOrNull { it.name == name }
+        checkNotNull(home) { "Home ($name) not found" }
+
+        val updatedHome = homeHttpService.update(
+            id = home.id,
+            playerUUID = player.uniqueId,
+            name = name,
+            world = world,
+            x = location.x,
+            y = location.y,
+            z = location.z,
+            pitch = location.pitch,
+            yaw = location.yaw,
+        )
+        return updatedHome
+    }
+
+    suspend fun rename(
+        id: Int,
+        newName: String,
+        player: Player,
+    ): Home {
+        val home = homeHttpService.get(player.uniqueId, id)
+        checkNotNull(home) { "Home not found" }
+
+        val updatedHome = homeHttpService.update(
+            id = id,
+            playerUUID = player.uniqueId,
+            name = newName,
+            world = home.world,
+            x = home.x,
+            y = home.y,
+            z = home.z,
+            pitch = home.pitch,
+            yaw = home.yaw,
+        )
+        namesPerPlayer[player.uniqueId] = names(player.uniqueId).map {
+            if (it.id == updatedHome.id) NamedResource.fromHome(updatedHome)
+            else it
+        }
+        return updatedHome
     }
 
     suspend fun delete(

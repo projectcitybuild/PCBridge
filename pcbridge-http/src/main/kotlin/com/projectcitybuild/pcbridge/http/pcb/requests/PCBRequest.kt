@@ -195,6 +195,20 @@ internal interface PCBRequest {
         @Field(value = "yaw") yaw: Float,
     ): Home
 
+    @PUT("v2/minecraft/player/{player_uuid}/home/{id}")
+    @FormUrlEncoded
+    suspend fun updateHome(
+        @Path(value = "player_uuid") playerUUID: String,
+        @Path(value = "id") id: Int,
+        @Field(value = "name") name: String,
+        @Field(value = "world") world: String,
+        @Field(value = "x") x: Double,
+        @Field(value = "y") y: Double,
+        @Field(value = "z") z: Double,
+        @Field(value = "pitch") pitch: Float,
+        @Field(value = "yaw") yaw: Float,
+    ): Home
+
     @DELETE("v2/minecraft/player/{player_uuid}/home/{id}")
     suspend fun deleteHome(
         @Path(value = "player_uuid") playerUUID: String,

@@ -47,6 +47,32 @@ class HomeHttpService(
         }
     }
 
+    suspend fun update(
+        id: Int,
+        playerUUID: UUID,
+        name: String,
+        world: String,
+        x: Double,
+        y: Double,
+        z: Double,
+        pitch: Float,
+        yaw: Float,
+    ) = withContext(Dispatchers.IO) {
+        responseParser.parse {
+            retrofit.pcb().updateHome(
+                id = id,
+                playerUUID = playerUUID.toString(),
+                name = name,
+                world = world,
+                x = x,
+                y = y,
+                z = z,
+                pitch = pitch,
+                yaw = yaw,
+            )
+        }
+    }
+
     suspend fun delete(
         playerUUID: UUID,
         id: Int,
