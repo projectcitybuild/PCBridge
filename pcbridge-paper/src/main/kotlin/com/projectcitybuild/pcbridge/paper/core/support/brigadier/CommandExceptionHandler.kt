@@ -29,6 +29,7 @@ class CommandExceptionHandler private constructor() {
             is ResponseParserError -> when (e) {
                 is ResponseParserError.Validation -> sender.sendError("Error: ${e.message}")
                 is ResponseParserError.NotFound -> sender.sendError("Error: Not found")
+                is ResponseParserError.Forbidden -> sender.sendError("Error: Not permitted to perform this action")
             }
             is CooldownException -> sender.sendError("Error: Please wait ${e.remainingTime.inWholeMilliseconds} seconds before trying again")
             else -> {

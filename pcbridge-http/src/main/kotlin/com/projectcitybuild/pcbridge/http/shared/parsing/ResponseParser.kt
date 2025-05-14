@@ -20,6 +20,7 @@ class ResponseParser {
                 throw e
             } catch (e: HttpException) {
                 when (e.code()) {
+                    403 -> throw ResponseParserError.Forbidden()
                     404 -> throw ResponseParserError.NotFound()
                     422 -> {
                         val body = e.response()?.errorBody()?.string().let {
