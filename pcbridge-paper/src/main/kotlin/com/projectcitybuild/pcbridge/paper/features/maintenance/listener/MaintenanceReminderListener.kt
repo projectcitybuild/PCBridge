@@ -1,6 +1,6 @@
 package com.projectcitybuild.pcbridge.paper.features.maintenance.listener
 
-import com.projectcitybuild.pcbridge.paper.architecture.state.Store
+import com.projectcitybuild.pcbridge.paper.core.libs.store.Store
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotTimer
 import com.projectcitybuild.pcbridge.paper.core.utils.Cancellable
 import com.projectcitybuild.pcbridge.paper.features.maintenance.events.MaintenanceToggledEvent

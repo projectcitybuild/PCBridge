@@ -4,7 +4,7 @@ import com.projectcitybuild.pcbridge.paper.architecture.connection.events.Connec
 import com.projectcitybuild.pcbridge.paper.core.libs.datetime.services.LocalizedTime
 import com.projectcitybuild.pcbridge.paper.core.libs.logger.log
 import com.projectcitybuild.pcbridge.paper.architecture.state.data.PlayerState
-import com.projectcitybuild.pcbridge.paper.architecture.state.Store
+import com.projectcitybuild.pcbridge.paper.core.libs.store.Store
 import com.projectcitybuild.pcbridge.paper.architecture.state.events.PlayerStateUpdatedEvent
 import com.projectcitybuild.pcbridge.paper.architecture.state.events.PlayerStateDestroyedEvent
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotEventBroadcaster

@@ -1,6 +1,6 @@
 package com.projectcitybuild.pcbridge.paper.features.groups.repositories
 
-import com.projectcitybuild.pcbridge.paper.architecture.state.Store
+import com.projectcitybuild.pcbridge.paper.core.libs.store.Store
 import com.projectcitybuild.pcbridge.paper.features.groups.ChatGroupFormatter
 import io.github.reactivecircus.cache4k.Cache
 import net.kyori.adventure.text.Component

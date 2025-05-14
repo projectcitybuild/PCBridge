@@ -10,7 +10,7 @@ import com.projectcitybuild.pcbridge.paper.core.libs.datetime.services.Localized
 import com.projectcitybuild.pcbridge.paper.core.libs.errors.SentryReporter
 import com.projectcitybuild.pcbridge.paper.features.config.commands.ConfigCommand
 import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.RemoteConfig
-import com.projectcitybuild.pcbridge.paper.architecture.state.Store
+import com.projectcitybuild.pcbridge.paper.core.libs.store.Store
 import com.projectcitybuild.pcbridge.paper.core.libs.localconfig.LocalConfigKeyValues
 import com.projectcitybuild.pcbridge.paper.features.announcements.actions.StartAnnouncementTimer
 import com.projectcitybuild.pcbridge.paper.features.announcements.listeners.AnnouncementConfigListener

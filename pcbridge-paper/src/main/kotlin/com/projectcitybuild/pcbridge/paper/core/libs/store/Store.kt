@@ -1,4 +1,4 @@
-package com.projectcitybuild.pcbridge.paper.architecture.state
+package com.projectcitybuild.pcbridge.paper.core.libs.store
 
 import com.projectcitybuild.pcbridge.paper.architecture.state.data.PersistedServerState
 import com.projectcitybuild.pcbridge.paper.architecture.state.data.ServerState

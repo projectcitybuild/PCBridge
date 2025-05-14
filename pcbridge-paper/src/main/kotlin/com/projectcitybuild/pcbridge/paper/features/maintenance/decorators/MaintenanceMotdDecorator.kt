@@ -2,7 +2,7 @@ package com.projectcitybuild.pcbridge.paper.features.maintenance.decorators
 
 import com.projectcitybuild.pcbridge.paper.architecture.serverlist.decorators.ServerListing
 import com.projectcitybuild.pcbridge.paper.architecture.serverlist.decorators.ServerListingDecorator
-import com.projectcitybuild.pcbridge.paper.architecture.state.Store
+import com.projectcitybuild.pcbridge.paper.core.libs.store.Store
 import net.kyori.adventure.text.minimessage.MiniMessage
 
 class MaintenanceMotdDecorator(

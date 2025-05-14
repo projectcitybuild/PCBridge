@@ -7,7 +7,7 @@ import com.projectcitybuild.pcbridge.paper.architecture.connection.middleware.Co
 import com.projectcitybuild.pcbridge.paper.architecture.exceptions.listeners.CoroutineExceptionListener
 import com.projectcitybuild.pcbridge.paper.architecture.serverlist.decorators.ServerListingDecoratorChain
 import com.projectcitybuild.pcbridge.paper.architecture.serverlist.listeners.ServerListPingListener
-import com.projectcitybuild.pcbridge.paper.architecture.state.Store
+import com.projectcitybuild.pcbridge.paper.core.libs.store.Store
 import com.projectcitybuild.pcbridge.paper.architecture.state.listeners.PlayerStateListener
 import com.projectcitybuild.pcbridge.paper.architecture.tablist.TabPlaceholders
 import com.projectcitybuild.pcbridge.paper.architecture.tablist.listeners.TabListeners
