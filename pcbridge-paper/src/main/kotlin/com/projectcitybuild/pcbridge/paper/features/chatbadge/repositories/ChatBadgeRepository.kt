@@ -1,7 +1,7 @@
 package com.projectcitybuild.pcbridge.paper.features.chatbadge.repositories
 
 import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.RemoteConfig
-import com.projectcitybuild.pcbridge.paper.architecture.state.Store
+import com.projectcitybuild.pcbridge.paper.core.libs.store.Store
 import com.projectcitybuild.pcbridge.paper.features.chatbadge.ChatBadgeFormatter
 import io.github.reactivecircus.cache4k.Cache
 import net.kyori.adventure.text.Component

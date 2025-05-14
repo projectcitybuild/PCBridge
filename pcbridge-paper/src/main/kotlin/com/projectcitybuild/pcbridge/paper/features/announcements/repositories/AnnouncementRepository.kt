@@ -1,7 +1,7 @@
 package com.projectcitybuild.pcbridge.paper.features.announcements.repositories
 
 import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.RemoteConfig
-import com.projectcitybuild.pcbridge.paper.architecture.state.Store
+import com.projectcitybuild.pcbridge.paper.core.libs.store.Store
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 

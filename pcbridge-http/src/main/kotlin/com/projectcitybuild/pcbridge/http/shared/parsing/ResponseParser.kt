@@ -12,10 +12,6 @@ class ResponseParser {
         val errors: Map<String, List<String>>?
     )
 
-    class NotFoundError : Exception()
-
-    class ValidationError(message: String?) : Exception(message)
-
     suspend fun <T> parse(apiCall: suspend () -> T): T =
         withContext(Dispatchers.IO) {
             try {
@@ -24,13 +20,14 @@ class ResponseParser {
                 throw e
             } catch (e: HttpException) {
                 when (e.code()) {
-                    404 -> throw NotFoundError()
+                    403 -> throw ResponseParserError.Forbidden()
+                    404 -> throw ResponseParserError.NotFound()
                     422 -> {
                         val body = e.response()?.errorBody()?.string().let {
                             val errorBody = Gson().fromJson(it, ValidationErrorBody::class.java)
                             errorBody
                         }
-                        throw ValidationError(body.message)
+                        throw ResponseParserError.Validation(body.message)
                     }
                     else -> throw e
                 }

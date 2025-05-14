@@ -22,6 +22,9 @@ enum class PermissionNode(val node: String) {
     // Can get an invisible item frame via a command
     BUILDING_INVIS_FRAME("pcbridge.build.invisframe"),
 
+    // Can create/edit/get their own player homes
+    HOMES_USE("pcbridge.homes.use"),
+
     // Can toggle maintenance mode on or off
     MAINTENANCE_MANAGE("pcbridge.maintenance.manage"),
 
@@ -50,5 +53,5 @@ enum class PermissionNode(val node: String) {
     WARP_MANAGE("pcbridge.warp.manage"),
 
     // Can warn a player
-    WARNS_MANAGE("pcbridge.warnings.manage"),
+    WARNINGS_MANAGE("pcbridge.warnings.manage"),
 }

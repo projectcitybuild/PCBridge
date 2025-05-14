@@ -1,10 +1,9 @@
 package com.projectcitybuild.pcbridge.paper.core.support.brigadier
 
 import com.mojang.brigadier.context.CommandContext
-import com.projectcitybuild.pcbridge.http.shared.parsing.ResponseParser
+import com.projectcitybuild.pcbridge.http.shared.parsing.ResponseParserError
 import com.projectcitybuild.pcbridge.paper.core.libs.cooldowns.CooldownException
 import io.papermc.paper.command.brigadier.CommandSourceStack
-import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.command.CommandSender
 
 suspend fun <S: CommandSourceStack> CommandContext<S>.traceSuspending(
@@ -27,7 +26,11 @@ class CommandExceptionHandler private constructor() {
     companion object {
         fun catch(sender: CommandSender, e: Throwable) = when (e) {
             is IllegalStateException -> sender.sendError("Error: ${e.message}")
-            is ResponseParser.ValidationError -> sender.sendError("Error: ${e.message}")
+            is ResponseParserError -> when (e) {
+                is ResponseParserError.Validation -> sender.sendError("Error: ${e.message}")
+                is ResponseParserError.NotFound -> sender.sendError("Error: Not found")
+                is ResponseParserError.Forbidden -> sender.sendError("Error: Not permitted to perform this action")
+            }
             is CooldownException -> sender.sendError("Error: Please wait ${e.remainingTime.inWholeMilliseconds} seconds before trying again")
             else -> {
                 sender.sendError("An unexpected error occurred")
@@ -37,8 +40,5 @@ class CommandExceptionHandler private constructor() {
     }
 }
 
-private fun CommandSender.sendError(message: String) {
-    sendMessage(
-        MiniMessage.miniMessage().deserialize("<red>$message</red>")
-    )
-}
+private fun CommandSender.sendError(message: String)
+    = sendRichMessage("<red>$message</red>")
