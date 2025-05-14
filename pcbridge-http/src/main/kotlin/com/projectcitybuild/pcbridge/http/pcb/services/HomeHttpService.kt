@@ -17,6 +17,12 @@ class HomeHttpService(
         }
     }
 
+    suspend fun get(playerUUID: UUID, id: Int) = withContext(Dispatchers.IO) {
+        responseParser.parse {
+            retrofit.pcb().getHome(playerUUID.toString(), id)
+        }
+    }
+
     suspend fun create(
         playerUUID: UUID,
         name: String,
@@ -50,6 +56,18 @@ class HomeHttpService(
                 playerUUID = playerUUID.toString(),
                 id = id,
             )
+        }
+    }
+
+    suspend fun names(playerUUID: UUID) = withContext(Dispatchers.IO) {
+        responseParser.parse {
+            retrofit.pcb().getHomeNames(playerUUID.toString())
+        }
+    }
+
+    suspend fun limit(playerUUID: UUID) = withContext(Dispatchers.IO) {
+        responseParser.parse {
+            retrofit.pcb().getHomeLimit(playerUUID = playerUUID.toString())
         }
     }
 }

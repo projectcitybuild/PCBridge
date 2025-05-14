@@ -38,7 +38,10 @@ class BuildListCommand(
         val sender = context.source.sender
 
         if (builds.data.isEmpty()) {
-            sender.sendRichMessage("<gray>No builds available</gray>")
+            sender.sendRichMessage(
+                if (pageNumber == 1) "<gray>No builds available</gray>"
+                else "<gray>Page not found</gray>"
+            )
             return@traceSuspending
         }
         val message = PaginationBuilder().build(

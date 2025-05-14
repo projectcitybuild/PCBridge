@@ -110,6 +110,7 @@ import com.projectcitybuild.pcbridge.paper.features.homes.commands.HomeCommand
 import com.projectcitybuild.pcbridge.paper.features.homes.commands.HomesCommand
 import com.projectcitybuild.pcbridge.paper.features.homes.commands.homes.HomeCreateCommand
 import com.projectcitybuild.pcbridge.paper.features.homes.commands.homes.HomeDeleteCommand
+import com.projectcitybuild.pcbridge.paper.features.homes.commands.homes.HomeLimitCommand
 import com.projectcitybuild.pcbridge.paper.features.homes.commands.homes.HomeListCommand
 import com.projectcitybuild.pcbridge.paper.features.homes.commands.homes.HomeMoveCommand
 import com.projectcitybuild.pcbridge.paper.features.homes.repositories.HomeRepository
@@ -971,7 +972,7 @@ private fun Module.sync() {
 }
 
 private fun Module.homes() {
-    factory {
+    single {
         HomeRepository(
             homeHttpService = get<PCBHttp>().homes,
         )
@@ -979,9 +980,10 @@ private fun Module.homes() {
 
     factory {
         HomeCommand(
-            homeRepository = get(),
             plugin = get<JavaPlugin>(),
             server = get(),
+            playerTeleporter = get(),
+            homeRepository = get(),
         )
     }
 
@@ -1000,6 +1002,10 @@ private fun Module.homes() {
                 homeRepository = get(),
             ),
             homeDeleteCommand = HomeDeleteCommand(
+                plugin = get<JavaPlugin>(),
+                homeRepository = get(),
+            ),
+            homeLimitCommand = HomeLimitCommand(
                 plugin = get<JavaPlugin>(),
                 homeRepository = get(),
             ),

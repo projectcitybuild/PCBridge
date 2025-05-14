@@ -101,5 +101,6 @@ class BuildCommand(
     }
 }
 
+// TODO: reuse
 private fun Build.toLocation(world: World)
     = Location(world, x, y, z, yaw, pitch)

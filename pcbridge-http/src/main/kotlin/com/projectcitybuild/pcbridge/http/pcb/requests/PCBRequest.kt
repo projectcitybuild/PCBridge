@@ -1,8 +1,9 @@
 package com.projectcitybuild.pcbridge.http.pcb.requests
 
 import com.projectcitybuild.pcbridge.http.pcb.models.Build
-import com.projectcitybuild.pcbridge.http.pcb.models.BuildName
+import com.projectcitybuild.pcbridge.http.pcb.models.NamedResource
 import com.projectcitybuild.pcbridge.http.pcb.models.Home
+import com.projectcitybuild.pcbridge.http.pcb.models.HomeLimit
 import com.projectcitybuild.pcbridge.http.pcb.models.PaginatedResponse
 import com.projectcitybuild.pcbridge.http.pcb.models.PlayerData
 import com.projectcitybuild.pcbridge.http.pcb.models.RemoteConfigVersion
@@ -105,7 +106,7 @@ internal interface PCBRequest {
     )
 
     @GET("v2/minecraft/build/name")
-    suspend fun getBuildNames(): List<BuildName>
+    suspend fun getBuildNames(): List<NamedResource>
 
     @GET("v2/minecraft/build")
     suspend fun getBuilds(
@@ -199,4 +200,20 @@ internal interface PCBRequest {
         @Path(value = "player_uuid") playerUUID: String,
         @Path(value = "id") id: Int,
     )
+
+    @GET("v2/minecraft/player/{player_uuid}/home/{id}")
+    suspend fun getHome(
+        @Path(value = "player_uuid") playerUUID: String,
+        @Path(value = "id") id: Int,
+    ): Home?
+
+    @GET("v2/minecraft/player/{player_uuid}/home/name")
+    suspend fun getHomeNames(
+        @Path(value = "player_uuid") playerUUID: String,
+    ): List<NamedResource>
+
+    @GET("v2/minecraft/player/{player_uuid}/home/limit")
+    suspend fun getHomeLimit(
+        @Path(value = "player_uuid") playerUUID: String,
+    ): HomeLimit
 }

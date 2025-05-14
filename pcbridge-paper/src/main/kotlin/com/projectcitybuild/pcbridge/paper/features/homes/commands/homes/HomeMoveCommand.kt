@@ -19,7 +19,6 @@ class HomeMoveCommand(
 ): BrigadierCommand {
     override fun buildLiteral(): LiteralCommandNode<CommandSourceStack> {
         return Commands.literal("move")
-            .requiresPermission(PermissionNode.BUILDS_MANAGE)
             .then(
                 Commands.argument("name", StringArgumentType.greedyString())
                     .executesSuspending(plugin, ::execute)
