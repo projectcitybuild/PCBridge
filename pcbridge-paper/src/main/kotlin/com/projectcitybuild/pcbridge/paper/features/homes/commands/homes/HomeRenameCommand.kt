@@ -7,24 +7,25 @@ import com.mojang.brigadier.tree.LiteralCommandNode
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierCommand
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.suggestsSuspending
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.trace
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceSuspending
 import com.projectcitybuild.pcbridge.paper.features.homes.repositories.HomeRepository
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
-import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.event.ClickEvent
-import net.kyori.adventure.text.event.HoverEvent
-import net.kyori.adventure.text.format.NamedTextColor
-import net.kyori.adventure.text.format.TextDecoration
+import kotlinx.coroutines.runBlocking
+import org.bukkit.conversations.ConversationContext
+import org.bukkit.conversations.ConversationFactory
+import org.bukkit.conversations.Prompt
+import org.bukkit.conversations.StringPrompt
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
 
-class HomeEditCommand(
+class HomeRenameCommand(
     private val plugin: Plugin,
     private val homeRepository: HomeRepository,
 ): BrigadierCommand {
     override fun buildLiteral(): LiteralCommandNode<CommandSourceStack> {
-        return Commands.literal("edit")
+        return Commands.literal("rename")
             .then(
                 Commands.argument("name", StringArgumentType.greedyString())
                     .suggestsSuspending(plugin, ::suggest)
@@ -56,15 +57,37 @@ class HomeEditCommand(
         val home = homeRepository.get(player.uniqueId, name)
         checkNotNull(home) { "Home ($name) not found" }
 
-        val component = Component.text("[name]", NamedTextColor.WHITE)
-            .decorate(TextDecoration.UNDERLINED)
-            .clickEvent(ClickEvent.suggestCommand("/homes setfield ${home.id} name "))
-            .hoverEvent(HoverEvent.showText(Component.text("/homes setfield ${home.id} name")))
+        // TODO: this could do with some Kotlin good-ness...
+        ConversationFactory(plugin)
+            .withModality(true)
+            .withLocalEcho(false)
+            .withEscapeSequence("cancel")
+            .withTimeout(30)
+            .withFirstPrompt(object : StringPrompt() {
+                override fun getPromptText(context: ConversationContext): String
+                    = "Enter a new name (or type 'cancel' to abort):"
 
-        context.source.sender.sendMessage(
-            Component.text("Click a field to edit:", NamedTextColor.GRAY)
-                .appendNewline()
-                .append(component)
-        )
+                override fun acceptInput(convoContext: ConversationContext, input: String?): Prompt? {
+                    if (input == null) {
+                        return null
+                    }
+                    context.trace {
+                        runBlocking {
+                            homeRepository.rename(
+                                id = home.id,
+                                newName = input,
+                                player = player,
+                            )
+                        }
+                        player.sendRichMessage(
+                            "<green>Home renamed to <aqua>$input</aqua></green>"
+                        )
+                    }
+                    return Prompt.END_OF_CONVERSATION
+                }
+            })
+            .addConversationAbandonedListener { player.sendRichMessage("<gray>Renaming ended</gray>") }
+            .buildConversation(player)
+            .begin()
     }
 }
