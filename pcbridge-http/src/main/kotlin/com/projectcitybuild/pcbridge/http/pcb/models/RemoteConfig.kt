@@ -20,6 +20,7 @@ data class RemoteConfigKeyValues(
     val tab: Tab = Tab(),
     @SerializedName("server_links")
     val serverLinks: ServerLinks = ServerLinks(),
+    val hub: Hub? = null,
 ) {
     @Serializable
     data class Localization(
@@ -77,6 +78,17 @@ data class RemoteConfigKeyValues(
     data class ServerLinks(
         val website: String = "",
         val custom: Map<String, String> = mapOf(),
+    )
+
+    @Serializable
+    data class Hub(
+        @SerializedName("world_id")
+        val worldId: String,
+        val x: Double,
+        val y: Double,
+        val z: Double,
+        val yaw: Float,
+        val pitch: Float,
     )
 }
 

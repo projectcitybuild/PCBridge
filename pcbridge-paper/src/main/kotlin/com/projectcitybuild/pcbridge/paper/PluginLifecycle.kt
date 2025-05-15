@@ -61,6 +61,7 @@ import com.projectcitybuild.pcbridge.paper.features.randomteleport.commands.RtpC
 import com.projectcitybuild.pcbridge.paper.features.register.commands.CodeCommand
 import com.projectcitybuild.pcbridge.paper.features.register.commands.RegisterCommand
 import com.projectcitybuild.pcbridge.paper.features.serverlinks.listeners.ServerLinkListener
+import com.projectcitybuild.pcbridge.paper.features.spawns.commands.HubCommand
 import com.projectcitybuild.pcbridge.paper.features.spawns.commands.SetSpawnCommand
 import com.projectcitybuild.pcbridge.paper.features.spawns.commands.SpawnCommand
 import com.projectcitybuild.pcbridge.paper.features.spawns.listeners.PlayerRespawnListener
@@ -136,6 +137,7 @@ class PluginLifecycle : KoinComponent {
         get<ConfigCommand>(),
         get<HomeCommand>(),
         get<HomesCommand>(),
+        get<HubCommand>(),
         get<InvisFrameCommand>(),
         get<ItemNameCommand>(),
         get<MaintenanceCommand>(),

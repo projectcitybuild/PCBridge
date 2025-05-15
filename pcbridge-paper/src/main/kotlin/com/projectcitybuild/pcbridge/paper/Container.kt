@@ -122,6 +122,7 @@ import com.projectcitybuild.pcbridge.paper.features.maintenance.decorators.Maint
 import com.projectcitybuild.pcbridge.paper.features.maintenance.middleware.MaintenanceConnectionMiddleware
 import com.projectcitybuild.pcbridge.paper.features.randomteleport.commands.RtpCommand
 import com.projectcitybuild.pcbridge.paper.features.serverlinks.listeners.ServerLinkListener
+import com.projectcitybuild.pcbridge.paper.features.spawns.commands.HubCommand
 import com.projectcitybuild.pcbridge.paper.features.spawns.commands.SetSpawnCommand
 import com.projectcitybuild.pcbridge.paper.features.spawns.commands.SpawnCommand
 import com.projectcitybuild.pcbridge.paper.features.spawns.data.SerializableSpawn
@@ -876,6 +877,16 @@ private fun Module.spawn() {
         SetSpawnCommand(
             plugin = get<JavaPlugin>(),
             spawnRepository = get(),
+        )
+    }
+
+    factory {
+        HubCommand(
+            plugin = get<JavaPlugin>(),
+            server = get(),
+            remoteConfig = get(),
+            spawnRepository = get(),
+            playerTeleporter = get(),
         )
     }
 
