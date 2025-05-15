@@ -23,6 +23,13 @@ class ChatEmojiDecorator: ChatMessageDecorator {
                 Pair(":heart:", "❤"),
                 Pair(":fire:", "\uD83D\uDD25"),
                 Pair(":tm:", "™"),
+                Pair(":sad:", "☹"),
+                Pair(":smile:", "☺"),
+                Pair(":mail:", "✉"),
+                Pair(":check:", "✔"),
+                Pair(":note:", "♪"),
+                Pair(":notes:", "♬"),
+                Pair(":hash:", "♯"),
             )
 
         val pattern =
