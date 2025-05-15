@@ -11,9 +11,9 @@ import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.exe
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.suggestsSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceSuspending
+import com.projectcitybuild.pcbridge.paper.core.support.spigot.extensions.broadcastRich
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
-import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
 
@@ -50,12 +50,11 @@ class BuildVoteCommand(
 
         val build = buildRepository.vote(name = name, player = player)
 
-        val miniMessage = MiniMessage.miniMessage()
-        context.source.sender.sendMessage(
-            miniMessage.deserialize("<green>You voted for ${build.name}</green>")
+        context.source.sender.sendRichMessage(
+            "<green>You voted for ${build.name}</green>"
         )
-        plugin.server.broadcast(
-            miniMessage.deserialize("<gray>[<red>❤</red>] ${player.name} voted for build \"<white><click:run_command:'/build ${build.name}'><hover:show_text:'Click to teleport'>${build.name}</hover></click></white>\"</gray>")
+        plugin.server.broadcastRich(
+            "<gray>[<red>❤</red>] ${player.name} voted for build \"<white><click:run_command:'/build ${build.name}'><hover:show_text:'Click to teleport'>${build.name}</hover></click></white>\"</gray>",
         )
     }
 }

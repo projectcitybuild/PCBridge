@@ -16,10 +16,6 @@ import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceSuspendin
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.getOptionalArgument
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
-import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.event.ClickEvent
-import net.kyori.adventure.text.event.HoverEvent
-import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.plugin.Plugin
 
 class WarpListCommand(
@@ -40,7 +36,6 @@ class WarpListCommand(
 
     private suspend fun execute(context: CommandContext<CommandSourceStack>) = context.traceSuspending {
         val pageNumber = context.getOptionalArgument("page", Int::class.java) ?: 1
-        val miniMessage = MiniMessage.miniMessage()
         val sender = context.source.sender
 
         val warps = warpRepository.all()
@@ -50,9 +45,7 @@ class WarpListCommand(
             page = pageNumber,
         )
         if (page.items.isEmpty()) {
-            sender.sendMessage(
-                miniMessage.deserialize("<gray>No warps available</gray>")
-            )
+            sender.sendRichMessage("<gray>No warps available</gray>")
             return@traceSuspending
         }
         val message = PaginationBuilder().build(

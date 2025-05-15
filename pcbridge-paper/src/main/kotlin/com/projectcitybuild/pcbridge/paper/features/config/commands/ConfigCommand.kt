@@ -10,7 +10,6 @@ import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.req
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceSuspending
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
-import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.plugin.Plugin
 
 class ConfigCommand(
@@ -30,10 +29,9 @@ class ConfigCommand(
 
     private suspend fun execute(context: CommandContext<CommandSourceStack>) = context.traceSuspending {
         val sender = context.source.sender
-        val miniMessage = MiniMessage.miniMessage()
 
-        sender.sendMessage(miniMessage.deserialize("<gray>Fetching config...</gray>"))
+        sender.sendRichMessage("<gray>Fetching config...</gray>")
         remoteConfig.fetch()
-        sender.sendMessage(miniMessage.deserialize("<green>Remote config reloaded</green>"))
+        sender.sendRichMessage("<green>Remote config reloaded</green>")
     }
 }
