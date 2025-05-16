@@ -21,6 +21,7 @@ data class RemoteConfigKeyValues(
     @SerializedName("server_links")
     val serverLinks: ServerLinks = ServerLinks(),
     val hub: Hub? = null,
+    val emojis: Map<String, String> = mapOf(),
 ) {
     @Serializable
     data class Localization(

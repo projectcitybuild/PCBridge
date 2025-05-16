@@ -39,6 +39,7 @@ import com.projectcitybuild.pcbridge.paper.features.builds.commands.BuildsComman
 import com.projectcitybuild.pcbridge.paper.features.chatbadge.decorators.ChatBadgeDecorator
 import com.projectcitybuild.pcbridge.paper.features.chatbadge.listeners.ChatBadgeInvalidateListener
 import com.projectcitybuild.pcbridge.paper.features.chatemojis.decorators.ChatEmojiDecorator
+import com.projectcitybuild.pcbridge.paper.features.chatemojis.listeners.EmojiConfigListener
 import com.projectcitybuild.pcbridge.paper.features.chaturls.decorators.ChatUrlDecorator
 import com.projectcitybuild.pcbridge.paper.features.config.commands.ConfigCommand
 import com.projectcitybuild.pcbridge.paper.features.config.listeners.ConfigWebhookListener
@@ -166,6 +167,7 @@ class PluginLifecycle : KoinComponent {
         get<ChatGroupInvalidateListener>(),
         get<ConfigWebhookListener>(),
         get<CoroutineExceptionListener>(),
+        get<EmojiConfigListener>(),
         get<FirstTimeJoinListener>(),
         get<FramePlaceListener>(),
         get<FrameItemInsertListener>(),

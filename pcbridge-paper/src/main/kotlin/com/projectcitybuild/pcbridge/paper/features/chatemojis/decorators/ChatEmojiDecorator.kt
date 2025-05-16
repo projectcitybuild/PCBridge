@@ -2,39 +2,22 @@ package com.projectcitybuild.pcbridge.paper.features.chatemojis.decorators
 
 import com.projectcitybuild.pcbridge.paper.architecture.chat.decorators.ChatMessage
 import com.projectcitybuild.pcbridge.paper.architecture.chat.decorators.ChatMessageDecorator
+import com.projectcitybuild.pcbridge.paper.features.chatemojis.repositories.EmojiRepository
 import net.kyori.adventure.text.Component
 
-class ChatEmojiDecorator: ChatMessageDecorator {
+class ChatEmojiDecorator(
+    private val emojiRepository: EmojiRepository,
+): ChatMessageDecorator {
     override suspend fun decorate(prev: ChatMessage): ChatMessage {
+        val emojiPattern = emojiRepository.emojiPattern
+
         return prev.copy(
             message = prev.message.replaceText { builder ->
-                builder.match(pattern).replacement { match, _ ->
-                    val replaced = emojis[match.group().lowercase()] ?: match.group()
+                builder.match(emojiPattern).replacement { match, _ ->
+                    val replaced = emojiRepository.emoji(match.group().lowercase()) ?: match.group()
                     Component.text(replaced)
                 }
             }
         )
-    }
-
-    private companion object {
-        val emojis: Map<String, String> =
-            mapOf(
-                Pair(":skull:", "☠"),
-                Pair(":heart:", "❤"),
-                Pair(":fire:", "\uD83D\uDD25"),
-                Pair(":tm:", "™"),
-                Pair(":sad:", "☹"),
-                Pair(":smile:", "☺"),
-                Pair(":mail:", "✉"),
-                Pair(":check:", "✔"),
-                Pair(":note:", "♪"),
-                Pair(":notes:", "♬"),
-                Pair(":hash:", "♯"),
-            )
-
-        val pattern =
-            emojis.keys
-                .joinToString(separator = "|")
-                .let { pattern -> "(?i)($pattern)" } // Add case-insensitivity
     }
 }
