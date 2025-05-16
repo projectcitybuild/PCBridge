@@ -6,6 +6,7 @@ import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.tree.LiteralCommandNode
 import com.projectcitybuild.pcbridge.http.shared.parsing.ResponseParser
 import com.projectcitybuild.pcbridge.http.pcb.services.RegisterHttpService
+import com.projectcitybuild.pcbridge.http.shared.parsing.ResponseParserError
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierCommand
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceSuspending
@@ -53,7 +54,7 @@ class CodeCommand(
                 Component.text("Registration complete! Your account will be synced momentarily...")
                     .color(NamedTextColor.GREEN),
             )
-        } catch (e: ResponseParser.NotFoundError) {
+        } catch (e: ResponseParserError.NotFound) {
             sender.sendMessage(
                 Component.text("Error: Code is invalid or expired")
                     .color(NamedTextColor.RED),

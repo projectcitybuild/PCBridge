@@ -1,60 +1,62 @@
-package com.projectcitybuild.pcbridge.paper.features.builds.commands.builds
+package com.projectcitybuild.pcbridge.paper.features.homes.commands.homes
 
 import com.mojang.brigadier.arguments.StringArgumentType
 import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.suggestion.SuggestionsBuilder
 import com.mojang.brigadier.tree.LiteralCommandNode
-import com.projectcitybuild.pcbridge.paper.PermissionNode
-import com.projectcitybuild.pcbridge.paper.features.builds.repositories.BuildRepository
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierCommand
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
-import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.suggestsSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceSuspending
-import com.projectcitybuild.pcbridge.paper.core.support.spigot.extensions.broadcastRich
+import com.projectcitybuild.pcbridge.paper.features.homes.repositories.HomeRepository
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
 
-class BuildVoteCommand(
+class HomeMoveCommand(
     private val plugin: Plugin,
-    private val buildRepository: BuildRepository,
+    private val homeRepository: HomeRepository,
 ): BrigadierCommand {
     override fun buildLiteral(): LiteralCommandNode<CommandSourceStack> {
-        return Commands.literal("vote")
-            .requiresPermission(PermissionNode.BUILDS_VOTE)
+        return Commands.literal("move")
             .then(
                 Commands.argument("name", StringArgumentType.greedyString())
-                    .suggestsSuspending(plugin, ::suggestBuild)
+                    .suggestsSuspending(plugin, ::suggest)
                     .executesSuspending(plugin, ::execute)
             )
             .build()
     }
 
-    private suspend fun suggestBuild(
+    private suspend fun suggest(
         context: CommandContext<CommandSourceStack>,
         suggestions: SuggestionsBuilder,
     ) {
-        val name = suggestions.remaining
+        val player = context.source.executor as? Player
+            ?: return
 
-        buildRepository.names(prefix = name)
+        val input = suggestions.remaining.lowercase()
+
+        homeRepository.names(playerUUID = player.uniqueId)
+            .filter { it.name.startsWith(input) }
+            .map { it.name }
             .forEach(suggestions::suggest)
     }
 
     private suspend fun execute(context: CommandContext<CommandSourceStack>) = context.traceSuspending {
         val name = context.getArgument("name", String::class.java)
         val player = context.source.executor as? Player
+        checkNotNull(player) { "Only a player can use this command" }
 
-        checkNotNull(player) { "Only a player can use this command</red>" }
-
-        val build = buildRepository.vote(name = name, player = player)
-
-        context.source.sender.sendRichMessage(
-            "<green>You voted for ${build.name}</green>"
+        val location = player.location
+        val home = homeRepository.move(
+            name = name,
+            player = player,
+            world = location.world.name,
+            location = player.location,
         )
-        plugin.server.broadcastRich(
-            "<gray>[<red>❤</red>] ${player.name} voted for build \"<white><click:run_command:'/build ${build.name}'><hover:show_text:'Click to teleport'>${build.name}</hover></click></white>\"</gray>",
+        context.source.sender.sendRichMessage(
+            "<green>${home.name} moved to your location</green>",
         )
     }
 }

@@ -10,7 +10,7 @@ import com.projectcitybuild.pcbridge.paper.core.libs.datetime.services.Localized
 import com.projectcitybuild.pcbridge.paper.core.libs.errors.SentryReporter
 import com.projectcitybuild.pcbridge.paper.features.config.commands.ConfigCommand
 import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.RemoteConfig
-import com.projectcitybuild.pcbridge.paper.architecture.state.Store
+import com.projectcitybuild.pcbridge.paper.core.libs.store.Store
 import com.projectcitybuild.pcbridge.paper.core.libs.localconfig.LocalConfigKeyValues
 import com.projectcitybuild.pcbridge.paper.features.sync.repositories.PlayerRepository
 import com.projectcitybuild.pcbridge.paper.features.groups.ChatGroupFormatter
@@ -102,6 +102,15 @@ import com.projectcitybuild.pcbridge.paper.features.chaturls.decorators.ChatUrlD
 import com.projectcitybuild.pcbridge.paper.features.config.listeners.ConfigWebhookListener
 import com.projectcitybuild.pcbridge.paper.features.groups.placeholders.TabGroupListPlaceholder
 import com.projectcitybuild.pcbridge.paper.features.groups.placeholders.TabGroupsPlaceholder
+import com.projectcitybuild.pcbridge.paper.features.homes.commands.HomeCommand
+import com.projectcitybuild.pcbridge.paper.features.homes.commands.HomesCommand
+import com.projectcitybuild.pcbridge.paper.features.homes.commands.homes.HomeCreateCommand
+import com.projectcitybuild.pcbridge.paper.features.homes.commands.homes.HomeDeleteCommand
+import com.projectcitybuild.pcbridge.paper.features.homes.commands.homes.HomeRenameCommand
+import com.projectcitybuild.pcbridge.paper.features.homes.commands.homes.HomeLimitCommand
+import com.projectcitybuild.pcbridge.paper.features.homes.commands.homes.HomeListCommand
+import com.projectcitybuild.pcbridge.paper.features.homes.commands.homes.HomeMoveCommand
+import com.projectcitybuild.pcbridge.paper.features.homes.repositories.HomeRepository
 import com.projectcitybuild.pcbridge.paper.features.sync.commands.SyncDebugCommand
 import com.projectcitybuild.pcbridge.paper.features.maintenance.commands.MaintenanceCommand
 import com.projectcitybuild.pcbridge.paper.features.maintenance.listener.MaintenanceReminderListener
@@ -160,6 +169,7 @@ private fun mainModule(plugin: JavaPlugin) = module {
     chatUrls()
     config()
     groups()
+    homes()
     joinMessages()
     invisFrames()
     maintenance()
@@ -837,6 +847,52 @@ private fun Module.sync() {
             httpService = get<PCBHttp>().player,
         )
     }.bind<PlayerDataProvider>()
+}
+
+private fun Module.homes() {
+    single {
+        HomeRepository(
+            homeHttpService = get<PCBHttp>().homes,
+        )
+    }
+
+    factory {
+        HomeCommand(
+            plugin = get<JavaPlugin>(),
+            server = get(),
+            playerTeleporter = get(),
+            homeRepository = get(),
+        )
+    }
+
+    factory {
+        HomesCommand(
+            homeListCommand = HomeListCommand(
+                plugin = get<JavaPlugin>(),
+                homeRepository = get(),
+            ),
+            homeCreateCommand = HomeCreateCommand(
+                plugin = get<JavaPlugin>(),
+                homeRepository = get(),
+            ),
+            homeMoveCommand = HomeMoveCommand(
+                plugin = get<JavaPlugin>(),
+                homeRepository = get(),
+            ),
+            homeDeleteCommand = HomeDeleteCommand(
+                plugin = get<JavaPlugin>(),
+                homeRepository = get(),
+            ),
+            homeLimitCommand = HomeLimitCommand(
+                plugin = get<JavaPlugin>(),
+                homeRepository = get(),
+            ),
+            homeRenameCommand = HomeRenameCommand(
+                plugin = get<JavaPlugin>(),
+                homeRepository = get(),
+            ),
+        )
+    }
 }
 
 private fun Module.warnings() {

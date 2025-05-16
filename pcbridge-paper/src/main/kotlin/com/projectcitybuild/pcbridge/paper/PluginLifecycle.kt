@@ -7,7 +7,7 @@ import com.projectcitybuild.pcbridge.paper.architecture.connection.middleware.Co
 import com.projectcitybuild.pcbridge.paper.architecture.exceptions.listeners.CoroutineExceptionListener
 import com.projectcitybuild.pcbridge.paper.architecture.serverlist.decorators.ServerListingDecoratorChain
 import com.projectcitybuild.pcbridge.paper.architecture.serverlist.listeners.ServerListPingListener
-import com.projectcitybuild.pcbridge.paper.architecture.state.Store
+import com.projectcitybuild.pcbridge.paper.core.libs.store.Store
 import com.projectcitybuild.pcbridge.paper.architecture.state.listeners.PlayerStateListener
 import com.projectcitybuild.pcbridge.paper.architecture.tablist.TabPlaceholders
 import com.projectcitybuild.pcbridge.paper.architecture.tablist.listeners.TabListeners
@@ -47,6 +47,8 @@ import com.projectcitybuild.pcbridge.paper.features.groups.listener.ChatGroupInv
 import com.projectcitybuild.pcbridge.paper.features.groups.listener.RoleStateChangeListener
 import com.projectcitybuild.pcbridge.paper.features.groups.placeholders.TabGroupListPlaceholder
 import com.projectcitybuild.pcbridge.paper.features.groups.placeholders.TabGroupsPlaceholder
+import com.projectcitybuild.pcbridge.paper.features.homes.commands.HomeCommand
+import com.projectcitybuild.pcbridge.paper.features.homes.commands.HomesCommand
 import com.projectcitybuild.pcbridge.paper.features.joinmessages.listeners.AnnounceJoinListener
 import com.projectcitybuild.pcbridge.paper.features.joinmessages.listeners.AnnounceQuitListener
 import com.projectcitybuild.pcbridge.paper.features.joinmessages.listeners.FirstTimeJoinListener
@@ -132,6 +134,8 @@ class PluginLifecycle : KoinComponent {
         get<BuildsCommand>(),
         get<CodeCommand>(),
         get<ConfigCommand>(),
+        get<HomeCommand>(),
+        get<HomesCommand>(),
         get<InvisFrameCommand>(),
         get<ItemNameCommand>(),
         get<MaintenanceCommand>(),

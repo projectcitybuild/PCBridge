@@ -38,8 +38,6 @@ class SpawnCommand(
             destination = spawn,
             cause = PlayerTeleportEvent.TeleportCause.COMMAND,
         )
-        executor.sendMessage(
-            miniMessage.deserialize("<green>⚡ Teleported to spawn</green>")
-        )
+        executor.sendRichMessage("<green>⚡ Teleported to spawn</green>")
     }
 }

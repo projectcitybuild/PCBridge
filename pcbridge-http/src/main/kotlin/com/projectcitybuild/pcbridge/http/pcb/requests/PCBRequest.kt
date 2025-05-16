@@ -1,7 +1,9 @@
 package com.projectcitybuild.pcbridge.http.pcb.requests
 
 import com.projectcitybuild.pcbridge.http.pcb.models.Build
-import com.projectcitybuild.pcbridge.http.pcb.models.BuildName
+import com.projectcitybuild.pcbridge.http.pcb.models.NamedResource
+import com.projectcitybuild.pcbridge.http.pcb.models.Home
+import com.projectcitybuild.pcbridge.http.pcb.models.HomeLimit
 import com.projectcitybuild.pcbridge.http.pcb.models.PaginatedResponse
 import com.projectcitybuild.pcbridge.http.pcb.models.PlayerData
 import com.projectcitybuild.pcbridge.http.pcb.models.RemoteConfigVersion
@@ -104,7 +106,7 @@ internal interface PCBRequest {
     )
 
     @GET("v2/minecraft/build/name")
-    suspend fun getBuildNames(): List<BuildName>
+    suspend fun getBuildNames(): List<NamedResource>
 
     @GET("v2/minecraft/build")
     suspend fun getBuilds(
@@ -172,4 +174,60 @@ internal interface PCBRequest {
         @Path(value = "id") id: Int,
         @Query(value = "player_uuid") playerUUID: String,
     ): Build
+
+    @GET("v2/minecraft/player/{player_uuid}/home")
+    suspend fun getHomes(
+        @Path(value = "player_uuid") playerUUID: String,
+        @Query(value = "page") page: Int,
+        @Query(value = "size") size: Int,
+    ): PaginatedResponse<List<Home>>
+
+    @POST("v2/minecraft/player/{player_uuid}/home")
+    @FormUrlEncoded
+    suspend fun createHome(
+        @Path(value = "player_uuid") playerUUID: String,
+        @Field(value = "name") name: String,
+        @Field(value = "world") world: String,
+        @Field(value = "x") x: Double,
+        @Field(value = "y") y: Double,
+        @Field(value = "z") z: Double,
+        @Field(value = "pitch") pitch: Float,
+        @Field(value = "yaw") yaw: Float,
+    ): Home
+
+    @PUT("v2/minecraft/player/{player_uuid}/home/{id}")
+    @FormUrlEncoded
+    suspend fun updateHome(
+        @Path(value = "player_uuid") playerUUID: String,
+        @Path(value = "id") id: Int,
+        @Field(value = "name") name: String,
+        @Field(value = "world") world: String,
+        @Field(value = "x") x: Double,
+        @Field(value = "y") y: Double,
+        @Field(value = "z") z: Double,
+        @Field(value = "pitch") pitch: Float,
+        @Field(value = "yaw") yaw: Float,
+    ): Home
+
+    @DELETE("v2/minecraft/player/{player_uuid}/home/{id}")
+    suspend fun deleteHome(
+        @Path(value = "player_uuid") playerUUID: String,
+        @Path(value = "id") id: Int,
+    )
+
+    @GET("v2/minecraft/player/{player_uuid}/home/{id}")
+    suspend fun getHome(
+        @Path(value = "player_uuid") playerUUID: String,
+        @Path(value = "id") id: Int,
+    ): Home?
+
+    @GET("v2/minecraft/player/{player_uuid}/home/name")
+    suspend fun getHomeNames(
+        @Path(value = "player_uuid") playerUUID: String,
+    ): List<NamedResource>
+
+    @GET("v2/minecraft/player/{player_uuid}/home/limit")
+    suspend fun getHomeLimit(
+        @Path(value = "player_uuid") playerUUID: String,
+    ): HomeLimit
 }

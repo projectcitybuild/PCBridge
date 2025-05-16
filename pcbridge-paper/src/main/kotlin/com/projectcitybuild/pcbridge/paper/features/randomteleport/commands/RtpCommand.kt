@@ -11,7 +11,6 @@ import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceSuspendin
 import com.projectcitybuild.pcbridge.paper.features.randomteleport.actions.FindRandomLocation
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
-import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
 import kotlin.time.Duration.Companion.seconds
@@ -29,26 +28,23 @@ class RtpCommand(
     }
 
     suspend fun execute(context: CommandContext<CommandSourceStack>) = context.traceSuspending {
-        val miniMessage = MiniMessage.miniMessage()
         val executor = context.source.executor
         val player = executor as? Player
         checkNotNull(player) { "Only players can use this command" }
 
         cooldown.throttle(5.seconds, player, "rtp")
 
-        executor.sendMessage(
-            miniMessage.deserialize("<gray><italic>Searching for a safe location...</italic></gray>")
+        executor.sendRichMessage(
+            "<gray><italic>Searching for a safe location...</italic></gray>",
         )
 
         val location = findRandomLocation.teleport(player, attempts = 5)
         if (location == null) {
-            executor.sendMessage(
-                miniMessage.deserialize("<red>Failed to find a safe location</red>")
-            )
+            executor.sendRichMessage("<red>Failed to find a safe location</red>")
             return@traceSuspending
         }
-        executor.sendMessage(
-            miniMessage.deserialize("<green>⚡ Teleported to </green><gray>x=${location.x.toInt()}, y=${location.y.toInt()}, z=${location.z.toInt()}</gray>")
+        executor.sendRichMessage(
+            "<green>⚡ Teleported to </green><gray>x=${location.x.toInt()}, y=${location.y.toInt()}, z=${location.z.toInt()}</gray>",
         )
     }
 }

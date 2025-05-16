@@ -3,6 +3,7 @@ package com.projectcitybuild.pcbridge.http.pcb
 import com.projectcitybuild.pcbridge.http.shared.parsing.ResponseParser
 import com.projectcitybuild.pcbridge.http.pcb.services.BuildHttpService
 import com.projectcitybuild.pcbridge.http.pcb.services.ConfigHttpService
+import com.projectcitybuild.pcbridge.http.pcb.services.HomeHttpService
 import com.projectcitybuild.pcbridge.http.pcb.services.RegisterHttpService
 import com.projectcitybuild.pcbridge.http.pcb.services.PlayerHttpService
 import com.projectcitybuild.pcbridge.http.pcb.services.TelemetryHttpService
@@ -29,6 +30,9 @@ class PCBHttp(
 
     val config
         get() = ConfigHttpService(client, responseParser)
+
+    val homes
+        get() = HomeHttpService(client, responseParser)
 
     val player
         get() = PlayerHttpService(client, responseParser)
