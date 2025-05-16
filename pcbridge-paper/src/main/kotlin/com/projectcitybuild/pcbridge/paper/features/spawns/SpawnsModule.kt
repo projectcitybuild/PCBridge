@@ -2,6 +2,7 @@ package com.projectcitybuild.pcbridge.paper.features.spawns
 
 import com.google.gson.reflect.TypeToken
 import com.projectcitybuild.pcbridge.paper.core.libs.localconfig.JsonStorage
+import com.projectcitybuild.pcbridge.paper.features.spawns.commands.HubCommand
 import com.projectcitybuild.pcbridge.paper.features.spawns.commands.SetSpawnCommand
 import com.projectcitybuild.pcbridge.paper.features.spawns.commands.SpawnCommand
 import com.projectcitybuild.pcbridge.paper.features.spawns.data.SerializableSpawn
@@ -23,6 +24,15 @@ val spawnsModule = module {
         SetSpawnCommand(
             plugin = get<JavaPlugin>(),
             spawnRepository = get(),
+        )
+    }
+
+    factory {
+        HubCommand(
+            plugin = get<JavaPlugin>(),
+            server = get(),
+            remoteConfig = get(),
+            playerTeleporter = get(),
         )
     }
 

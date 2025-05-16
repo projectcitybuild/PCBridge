@@ -14,7 +14,7 @@ class PlayerTeleporter(
     private val teleportHistoryStorage: TeleportHistoryStorage,
 ) {
     data class TeleportOptions(
-        val preloadDestinationChunk: Boolean = false,
+        val preloadDestinationChunk: Boolean = true,
         val adjustYForSafety: Boolean = false,
         val snapToBlockCenter: Boolean = false,
     )

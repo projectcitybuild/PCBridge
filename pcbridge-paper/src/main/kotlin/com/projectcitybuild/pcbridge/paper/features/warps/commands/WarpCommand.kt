@@ -72,11 +72,7 @@ class WarpCommand(
             player,
             destination = warp.toLocation(world),
             cause = PlayerTeleportEvent.TeleportCause.COMMAND,
-            options = PlayerTeleporter.TeleportOptions(
-                preloadDestinationChunk = true,
-            ),
         )
-
         executor.sendMessage(
             Component.text("Warped to ${warp.name}")
                 .color(NamedTextColor.GRAY)
