@@ -11,8 +11,8 @@ class Plugin : SuspendingJavaPlugin() {
     override suspend fun onEnableAsync() {
         printLogo()
 
-        val module = pluginModule(this)
-        this.container = startKoin { modules(module) }
+        val moduleList = pluginModules(this)
+        this.container = startKoin { modules(moduleList) }
 
         PluginLifecycle().boot().onFailure {
             server.pluginManager.disablePlugin(this)
