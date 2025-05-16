@@ -32,7 +32,6 @@ val spawnsModule = module {
             plugin = get<JavaPlugin>(),
             server = get(),
             remoteConfig = get(),
-            spawnRepository = get(),
             playerTeleporter = get(),
         )
     }

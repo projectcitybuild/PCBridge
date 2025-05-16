@@ -10,6 +10,7 @@ import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceSuspendin
 import com.projectcitybuild.pcbridge.paper.features.spawns.repositories.SpawnRepository
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
+import org.bukkit.Location
 import org.bukkit.Server
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerTeleportEvent
@@ -20,7 +21,6 @@ class HubCommand(
     private val plugin: Plugin,
     private val server: Server,
     private val remoteConfig: RemoteConfig,
-    private val spawnRepository: SpawnRepository,
     private val playerTeleporter: PlayerTeleporter,
 ) : BrigadierCommand {
     override fun buildLiteral(): LiteralCommandNode<CommandSourceStack> {
@@ -43,11 +43,11 @@ class HubCommand(
             executor.sendRichMessage("<red>Error: Could not find hub world</red>")
             return@traceSuspending
         }
-        val spawn = spawnRepository.get(world)
+        val location = Location(world, hub.x, hub.y, hub.z, hub.yaw, hub.pitch)
 
         playerTeleporter.move(
             player = player,
-            destination = spawn,
+            destination = location,
             cause = PlayerTeleportEvent.TeleportCause.COMMAND,
         )
         executor.sendRichMessage("<green>⚡ Teleported to hub</green>")

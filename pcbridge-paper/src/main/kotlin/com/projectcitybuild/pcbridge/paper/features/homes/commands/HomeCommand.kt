@@ -70,9 +70,6 @@ class HomeCommand(
             player,
             destination = home.toLocation(world),
             cause = PlayerTeleportEvent.TeleportCause.COMMAND,
-            options = PlayerTeleporter.TeleportOptions(
-                preloadDestinationChunk = true,
-            ),
         )
         context.source.sender.sendRichMessage(
             "<gray>Teleported to <aqua>$name</aqua></gray>",
