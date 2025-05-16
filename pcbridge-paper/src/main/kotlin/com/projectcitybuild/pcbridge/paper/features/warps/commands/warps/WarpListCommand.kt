@@ -45,7 +45,7 @@ class WarpListCommand(
             page = pageNumber,
         )
         if (page.items.isEmpty()) {
-            sender.sendRichMessage("<gray>No warps available</gray>")
+            sender.sendRichMessage("<gray>No warps found</gray>")
             return@traceSuspending
         }
         val message = PaginationBuilder().build(

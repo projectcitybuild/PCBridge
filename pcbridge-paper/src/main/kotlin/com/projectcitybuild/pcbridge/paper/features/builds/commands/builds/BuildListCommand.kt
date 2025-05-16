@@ -39,7 +39,7 @@ class BuildListCommand(
 
         if (builds.data.isEmpty()) {
             sender.sendRichMessage(
-                if (pageNumber == 1) "<gray>No builds available</gray>"
+                if (pageNumber == 1) "<gray>No builds found</gray>"
                 else "<gray>Page not found</gray>"
             )
             return@traceSuspending

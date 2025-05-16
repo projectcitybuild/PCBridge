@@ -38,7 +38,7 @@ class HomeListCommand(
 
         if (homes.data.isEmpty()) {
             sender.sendRichMessage(
-                if (pageNumber == 1) "<gray>No homes available</gray>"
+                if (pageNumber == 1) "<gray>No homes found</gray>"
                 else "<gray>Page not found</gray>"
             )
             return@traceSuspending
