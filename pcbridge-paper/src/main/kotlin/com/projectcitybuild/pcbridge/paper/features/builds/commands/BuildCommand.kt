@@ -85,18 +85,14 @@ class BuildCommand(
                 ),
             )
         )
-        context.source.sender.sendMessage(
-            miniMessage.deserialize("<gray>Teleported to <aqua>$name</aqua></gray>")
+        context.source.sender.sendRichMessage(
+            "<gray>Teleported to <aqua>$name</aqua></gray>",
         )
         if (!build.description.isNullOrEmpty()) {
-            player.sendMessage(
-                miniMessage.deserialize("<gray>---<newline>${build.description}</gray>")
-            )
+            player.sendRichMessage("<gray>---<newline>${build.description}</gray>")
         }
         if (!build.lore.isNullOrEmpty()) {
-            player.sendMessage(
-                miniMessage.deserialize("<gray>---<newline><italic>${build.lore}</italic></gray>")
-            )
+            player.sendRichMessage("<gray>---<newline><italic>${build.lore}</italic></gray>")
         }
     }
 }

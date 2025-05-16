@@ -9,9 +9,9 @@ import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierComma
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceSuspending
+import com.projectcitybuild.pcbridge.paper.core.support.spigot.extensions.broadcastRich
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
-import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
 
@@ -43,12 +43,11 @@ class BuildCreateCommand(
             location = player.location,
         )
 
-        val miniMessage = MiniMessage.miniMessage()
-        context.source.sender.sendMessage(
-            miniMessage.deserialize("<green>${build.name} created</green>")
+        context.source.sender.sendRichMessage(
+            "<green>${build.name} created</green>",
         )
-        plugin.server.broadcast(
-            miniMessage.deserialize("<gray>[<red>✎</red>] ${player.name} created build \"<white><click:run_command:'/build ${build.name}'><hover:show_text:'Click to teleport'>${build.name}</hover></click></white>\"</gray>")
+        plugin.server.broadcastRich(
+            "<gray>[<red>✎</red>] ${player.name} created build \"<white><click:run_command:'/build ${build.name}'><hover:show_text:'Click to teleport'>${build.name}</hover></click></white>\"</gray>",
         )
     }
 }

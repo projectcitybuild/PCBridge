@@ -10,7 +10,6 @@ import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceSuspendin
 import com.projectcitybuild.pcbridge.paper.features.spawns.repositories.SpawnRepository
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
-import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
 
@@ -26,7 +25,6 @@ class SetSpawnCommand(
     }
 
     suspend fun execute(context: CommandContext<CommandSourceStack>) = context.traceSuspending {
-        val miniMessage = MiniMessage.miniMessage()
         val executor = context.source.executor
         val player = executor as? Player
         checkNotNull(player) { "Only players can use this command" }
@@ -34,8 +32,8 @@ class SetSpawnCommand(
         val location = player.location
         spawnRepository.set(location)
 
-        executor.sendMessage(
-            miniMessage.deserialize("<green>Set the world spawn point to <gray>${location.x} ${location.y} ${location.z} ${location.pitch} ${location.yaw}</gray></green>")
+        executor.sendRichMessage(
+            "<green>Set the world spawn point to <gray>${location.x} ${location.y} ${location.z} ${location.pitch} ${location.yaw}</gray></green>",
         )
     }
 }

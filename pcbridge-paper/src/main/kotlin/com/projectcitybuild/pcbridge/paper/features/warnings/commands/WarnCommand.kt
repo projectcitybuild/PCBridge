@@ -11,7 +11,6 @@ import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.req
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceSuspending
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
-import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.Server
 import org.bukkit.plugin.Plugin
 
@@ -38,17 +37,12 @@ class WarnCommand(
             path = "manage/warnings/create"
         )
 
-        val miniMessage = MiniMessage.miniMessage()
         val sender = context.source.sender
-        sender.sendMessage(
-            miniMessage.deserialize(
-                "<gray>Click the link below to create a warning for this player</gray>"
-            )
+        sender.sendRichMessage(
+            "<gray>Click the link below to create a warning for this player</gray>"
         )
-        sender.sendMessage(
-            miniMessage.deserialize(
+        sender.sendRichMessage(
             "<click:OPEN_URL:$url><aqua><underlined>$url</underlined></aqua></click>"
-            )
         )
     }
 }
