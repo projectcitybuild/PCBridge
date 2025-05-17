@@ -9,6 +9,7 @@ import com.projectcitybuild.pcbridge.paper.architecture.chat.decorators.ChatMess
 import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.RemoteConfig
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierCommand
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceSuspending
 import io.papermc.paper.command.brigadier.CommandSourceStack
@@ -17,7 +18,6 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.MiniMessage
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.bukkit.Server
-import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
 
 class StaffChatCommand(
@@ -37,18 +37,16 @@ class StaffChatCommand(
     }
 
     suspend fun execute(context: CommandContext<CommandSourceStack>) = context.traceSuspending {
-        val sender = context.source.sender
-        check(sender is Player) { "Only players can use this command" }
-
+        val player = context.source.requirePlayer()
         val rawMessage = context.getArgument("message", String::class.java)
 
         val format = remoteConfig.latest.config.chat.staffChannel
         val decoratedMessage = decorators.pipe(
-            ChatMessage(sender, Component.text(rawMessage))
+            ChatMessage(player, Component.text(rawMessage))
         )
         val message = MiniMessage.miniMessage().deserialize(
             format,
-            Placeholder.component("name", Component.text(sender.name)),
+            Placeholder.component("name", Component.text(player.name)),
             Placeholder.component("message", decoratedMessage.message),
         )
 

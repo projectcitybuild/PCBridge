@@ -7,10 +7,11 @@ import com.mojang.brigadier.tree.LiteralCommandNode
 import com.projectcitybuild.pcbridge.http.pcb.services.RegisterHttpService
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierCommand
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceSuspending
+import com.projectcitybuild.pcbridge.paper.l10n.l10n
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
-import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
 
 class RegisterCommand(
@@ -26,27 +27,21 @@ class RegisterCommand(
                     .executesSuspending(plugin, ::execute)
             )
             .executes { context ->
-                context.source.sender.sendRichMessage(
-                    "<red>Error: Please specify an email address to receive your registration code</red><newline><gray>Example Usage: <bold>/register your@email.com</bold></gray>",
-                )
+                context.source.sender.sendRichMessage(l10n.errorNoRegisterEmailSpecified)
                 return@executes Command.SINGLE_SUCCESS
             }
             .build()
     }
 
     private suspend fun execute(context: CommandContext<CommandSourceStack>) = context.traceSuspending {
+        val player = context.source.requirePlayer()
         val email = context.getArgument("email", String::class.java)
-        val sender = context.source.sender
-        check(sender is Player) { "Only players can use this command" }
 
         registerHttpService.sendCode(
             email = email,
-            playerAlias = sender.name,
-            playerUUID = sender.uniqueId,
+            playerAlias = player.name,
+            playerUUID = player.uniqueId,
         )
-        sender.sendRichMessage(
-            "<gray>A code has been emailed to $email.<newline>" +
-            "Please type it in with <aqua><bold><hover:show_text:'/code'><click:suggest_command:/code >/code [code]</click></hover></bold></aqua></gray>"
-        )
+        player.sendRichMessage(l10n.codeHasBeenEmailed(email))
     }
 }

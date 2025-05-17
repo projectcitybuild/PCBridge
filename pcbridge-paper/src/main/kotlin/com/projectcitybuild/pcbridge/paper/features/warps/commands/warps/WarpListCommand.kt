@@ -7,13 +7,14 @@ import com.projectcitybuild.pcbridge.paper.core.libs.pagination.SimplePaginator
 import com.projectcitybuild.pcbridge.paper.features.warps.repositories.WarpRepository
 import com.projectcitybuild.pcbridge.http.pcb.models.Warp
 import com.projectcitybuild.pcbridge.paper.PermissionNode
-import com.projectcitybuild.pcbridge.paper.core.libs.pagination.PaginationBuilder
+import com.projectcitybuild.pcbridge.paper.core.libs.pagination.PageComponentBuilder
 import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.RemoteConfig
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierCommand
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.getOptionalArgument
+import com.projectcitybuild.pcbridge.paper.l10n.l10n
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
 import org.bukkit.plugin.Plugin
@@ -45,10 +46,10 @@ class WarpListCommand(
             page = pageNumber,
         )
         if (page.items.isEmpty()) {
-            sender.sendRichMessage("<gray>No warps found</gray>")
+            sender.sendRichMessage(l10n.noWarpsFound)
             return@traceSuspending
         }
-        val message = PaginationBuilder().build(
+        val message = PageComponentBuilder().build(
             title = "Warps",
             items = page.items,
             pageNumber = pageNumber,

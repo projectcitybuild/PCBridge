@@ -11,6 +11,7 @@ import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.req
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.suggestsSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceSuspending
 import com.projectcitybuild.pcbridge.paper.features.warps.repositories.WarpRepository
+import com.projectcitybuild.pcbridge.paper.l10n.l10n
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
 import org.bukkit.plugin.Plugin
@@ -54,7 +55,7 @@ class WarpRenameCommand(
             newName = newName,
         )
         context.source.sender.sendRichMessage(
-            "<green>$oldName renamed to $newName</green>",
+            l10n.warpRenamed(newName),
         )
     }
 }

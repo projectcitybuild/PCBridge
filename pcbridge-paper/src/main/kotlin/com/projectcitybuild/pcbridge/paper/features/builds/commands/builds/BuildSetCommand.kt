@@ -11,12 +11,11 @@ import com.projectcitybuild.pcbridge.paper.core.support.brigadier.arguments.Enum
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.getOptionalArgument
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceSuspending
 import com.projectcitybuild.pcbridge.paper.features.builds.data.EditableBuildField
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
-import net.kyori.adventure.text.minimessage.MiniMessage
-import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
 
 class BuildSetCommand(
@@ -41,12 +40,10 @@ class BuildSetCommand(
     }
 
     private suspend fun execute(context: CommandContext<CommandSourceStack>) = context.traceSuspending {
+        val player = context.source.requirePlayer()
         val field = context.getArgument("field", EditableBuildField::class.java)
         val id = context.getArgument("id", Int::class.java)
         val value = context.getOptionalArgument("value", String::class.java) ?: ""
-        val player = context.source.executor as? Player
-
-        checkNotNull(player) { "Only a player can use this command" }
 
         buildRepository.set(
             id = id,
@@ -54,7 +51,6 @@ class BuildSetCommand(
             field = field,
             value = value,
         )
-
         context.source.sender.sendRichMessage(
             "<green>Build updated</green>",
         )

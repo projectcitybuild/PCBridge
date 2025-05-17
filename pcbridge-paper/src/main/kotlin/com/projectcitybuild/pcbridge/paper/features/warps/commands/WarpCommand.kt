@@ -10,15 +10,16 @@ import com.projectcitybuild.pcbridge.paper.PermissionNode
 import com.projectcitybuild.pcbridge.paper.core.libs.teleportation.PlayerTeleporter
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierCommand
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.suggestsSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceSuspending
+import com.projectcitybuild.pcbridge.paper.l10n.l10n
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
 import org.bukkit.Location
 import org.bukkit.Server
 import org.bukkit.World
-import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerTeleportEvent
 import org.bukkit.plugin.Plugin
 
@@ -54,23 +55,21 @@ class WarpCommand(
     }
 
     private suspend fun execute(context: CommandContext<CommandSourceStack>) = context.traceSuspending {
+        val player = context.source.requirePlayer()
         val warpName = context.getArgument("name", String::class.java)
-        val executor = context.source.executor
-        val player = executor as? Player
-        checkNotNull(player) { "Only players can use this command" }
 
         val warp = warpRepository.get(name = warpName)
-        checkNotNull(warp) { "Warp $warpName not found" }
+        checkNotNull(warp) { l10n.errorWarpNotFound(warpName) }
 
         val world = server.getWorld(warp.world)
-        checkNotNull(world) { "World ${warp.world} does not exist" }
+        checkNotNull(world) { l10n.errorWorldNotFound(warp.world) }
 
         playerTeleporter.move(
             player,
             destination = warp.toLocation(world),
             cause = PlayerTeleportEvent.TeleportCause.COMMAND,
         )
-        executor.sendRichMessage("<gray><i>Warped to ${warp.name}</i></gray>")
+        player.sendRichMessage(l10n.teleportedToName(warp.name))
     }
 }
 

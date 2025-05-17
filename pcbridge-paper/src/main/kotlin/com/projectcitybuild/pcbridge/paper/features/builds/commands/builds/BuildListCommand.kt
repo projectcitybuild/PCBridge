@@ -4,13 +4,14 @@ import com.mojang.brigadier.arguments.IntegerArgumentType
 import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.tree.LiteralCommandNode
 import com.projectcitybuild.pcbridge.paper.PermissionNode
-import com.projectcitybuild.pcbridge.paper.core.libs.pagination.PaginationBuilder
+import com.projectcitybuild.pcbridge.paper.core.libs.pagination.PageComponentBuilder
 import com.projectcitybuild.pcbridge.paper.features.builds.repositories.BuildRepository
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierCommand
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.getOptionalArgument
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceSuspending
+import com.projectcitybuild.pcbridge.paper.l10n.l10n
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
 import org.bukkit.plugin.Plugin
@@ -40,11 +41,11 @@ class BuildListCommand(
         if (builds.data.isEmpty()) {
             sender.sendRichMessage(
                 if (pageNumber == 1) "<gray>No builds found</gray>"
-                else "<gray>Page not found</gray>"
+                else l10n.errorPageNotFound
             )
             return@traceSuspending
         }
-        val message = PaginationBuilder().build(
+        val message = PageComponentBuilder().build(
             title = "Build List",
             items = builds.data,
             pageNumber = pageNumber,

@@ -6,6 +6,7 @@ import com.projectcitybuild.pcbridge.paper.PermissionNode
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierCommand
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.arguments.SingleOnlinePlayerArgument
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceSuspending
 import com.projectcitybuild.pcbridge.paper.features.sync.actions.SyncPlayer
@@ -30,11 +31,10 @@ class SyncCommand(
     }
 
     private suspend fun syncSelf(context: CommandContext<CommandSourceStack>) = context.traceSuspending {
-        val sender = context.source.sender
-        check(sender is Player) { "Only players can use this command" }
+        val player = context.source.requirePlayer()
 
-        sender.sendRichMessage("<gray>Fetching player data...</gray>")
-        syncPlayer.execute(playerUUID = sender.uniqueId)
+        player.sendRichMessage("<gray>Fetching player data...</gray>")
+        syncPlayer.execute(playerUUID = player.uniqueId)
     }
 
     private suspend fun syncOther(context: CommandContext<CommandSourceStack>) = context.traceSuspending {

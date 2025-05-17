@@ -5,17 +5,18 @@ import com.mojang.brigadier.tree.LiteralCommandNode
 import com.projectcitybuild.pcbridge.paper.PermissionNode
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierCommand
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.trace
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotNamespace
 import com.projectcitybuild.pcbridge.paper.features.building.data.InvisFrameKey
+import com.projectcitybuild.pcbridge.paper.l10n.l10n
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.Material
-import org.bukkit.entity.Entity
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataType
@@ -39,17 +40,20 @@ class InvisFrameCommand(
     }
 
     private fun giveNormal(context: CommandContext<CommandSourceStack>) = context.trace {
-        give(executor = context.source.executor, glowing = false)
+        give(
+            player = context.source.requirePlayer(),
+            glowing = false,
+        )
     }
 
     private fun giveGlowing(context: CommandContext<CommandSourceStack>) = context.trace {
-        give(executor = context.source.executor, glowing = true)
+        give(
+            player = context.source.requirePlayer(),
+            glowing = true,
+        )
     }
 
-    private fun give(executor: Entity?, glowing: Boolean) {
-        val player = executor as? Player
-        checkNotNull(player) { "Only players can use this command" }
-
+    private fun give(player: Player, glowing: Boolean) {
         val itemStack = if (glowing) {
             ItemStack(Material.GLOW_ITEM_FRAME)
         } else {
@@ -71,26 +75,24 @@ class InvisFrameCommand(
                  * - When the player places an item in the tagged frame (PlayerInteractEntityEvent), we hide the frame
                  * - When the player takes an item from the tagged frame (EntityDamageByEntityEvent), we show the frame
                  */
-                if (itemMeta == null) throw Exception("ItemMeta cannot be null")
-                itemMeta =
-                    itemMeta?.apply {
-                        displayName(
-                            Component.text(itemName)
-                                .color(NamedTextColor.LIGHT_PURPLE)
-                                .decorate(TextDecoration.ITALIC),
-                        )
-                        persistentDataContainer.set(
-                            spigotNamespace.get(InvisFrameKey()),
-                            PersistentDataType.BYTE,
-                            1,
-                        )
-                    }
+                checkNotNull(itemMeta) { "ItemMeta cannot be null" }
+                itemMeta = itemMeta?.apply {
+                    displayName(
+                        Component.text(itemName)
+                            .color(NamedTextColor.LIGHT_PURPLE)
+                            .decorate(TextDecoration.ITALIC),
+                    )
+                    persistentDataContainer.set(
+                        spigotNamespace.get(InvisFrameKey()),
+                        PersistentDataType.BYTE,
+                        1,
+                    )
+                }
             },
         )
-
-        val message = if (glowing) "You received an invisible glowing frame"
-            else "You received an invisible item frame"
-
-        player.sendRichMessage("<gray><i>$message</i></gray>")
+        player.sendRichMessage(
+            if (glowing) l10n.receivedInvisFrameGlowing
+            else l10n.receivedInvisFrame
+        )
     }
 }
