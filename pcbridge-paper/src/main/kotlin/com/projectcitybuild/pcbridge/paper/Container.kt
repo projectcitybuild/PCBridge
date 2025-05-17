@@ -70,7 +70,6 @@ import com.projectcitybuild.pcbridge.paper.integrations.essentials.EssentialsInt
 import com.projectcitybuild.pcbridge.paper.integrations.luckperms.LuckPermsIntegration
 import com.projectcitybuild.pcbridge.webserver.HttpServer
 import com.projectcitybuild.pcbridge.webserver.data.HttpServerConfig
-import net.kyori.adventure.platform.bukkit.BukkitAudiences
 import org.bukkit.plugin.java.JavaPlugin
 import org.koin.core.module.Module
 import org.koin.dsl.module
@@ -124,10 +123,6 @@ private fun Module.spigot(plugin: JavaPlugin) {
 
     factory {
         get<JavaPlugin>().server
-    }
-
-    single {
-        BukkitAudiences.create(get<JavaPlugin>())
     }
 
     single {

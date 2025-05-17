@@ -1,5 +1,3 @@
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-
 plugins {
     id("com.github.johnrengelman.shadow") version "8.1.1"
     id("xyz.jpenilla.run-paper") version "2.3.1"
@@ -36,29 +34,16 @@ dependencies {
     compileOnly("us.dynmap:DynmapCoreAPI:3.7-beta-6")
 
     // Libraries
-    implementation(kotlin("reflect"))
     implementation("com.github.shynixn.mccoroutine:mccoroutine-bukkit-api:2.15.0")
     implementation("com.github.shynixn.mccoroutine:mccoroutine-bukkit-core:2.15.0")
     implementation("io.sentry:sentry:5.7.4")
     implementation("io.insert-koin:koin-core:3.5.6")
     implementation("io.github.reactivecircus.cache4k:cache4k:0.13.0")
-    implementation("net.kyori:adventure-platform-bukkit:4.3.2")
-    implementation("net.kyori:adventure-text-minimessage:4.16.0")
     implementation("io.github.oshai:kotlin-logging-jvm:5.1.0")
     implementation("io.github.petertrr:kotlin-multiplatform-diff:0.7.0")
 
     // Testing
     testImplementation("io.papermc.paper:paper-api:1.21.3-R0.1-SNAPSHOT")
-}
-
-sourceSets {
-    main {
-        kotlin {
-            // TODO: is this still needed?
-            // Bundle generated resources with the output jar
-            output.dir("${layout.buildDirectory}/generated-resources")
-        }
-    }
 }
 
 tasks {
@@ -76,7 +61,7 @@ tasks {
         archiveVersion.set(project.version.toString())
     }
     runServer {
-        minecraftVersion("1.21.1")
+        minecraftVersion("1.21.3")
 
         systemProperty("com.mojang.eula.agree", "true")
 
