@@ -48,9 +48,8 @@ class InvisFrameCommand(
 
     private fun give(executor: Entity?, glowing: Boolean) {
         val player = executor as? Player
-        checkNotNull(player) {
-            "Only players can use this command"
-        }
+        checkNotNull(player) { "Only players can use this command" }
+
         val itemStack = if (glowing) {
             ItemStack(Material.GLOW_ITEM_FRAME)
         } else {
@@ -92,10 +91,6 @@ class InvisFrameCommand(
         val message = if (glowing) "You received an invisible glowing frame"
             else "You received an invisible item frame"
 
-        player.sendMessage(
-            Component.text(message)
-                .color(NamedTextColor.GRAY)
-                .decorate(TextDecoration.ITALIC),
-        )
+        player.sendRichMessage("<gray><i>$message</i></gray>")
     }
 }

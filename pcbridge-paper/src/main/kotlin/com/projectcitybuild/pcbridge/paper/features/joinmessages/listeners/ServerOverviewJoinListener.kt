@@ -1,7 +1,6 @@
 package com.projectcitybuild.pcbridge.paper.features.joinmessages.listeners
 
 import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.RemoteConfig
-import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
@@ -15,8 +14,6 @@ class ServerOverviewJoinListener(
         val config = remoteConfig.latest.config
         val message = config.messages.welcome
 
-        event.player.sendMessage(
-            MiniMessage.miniMessage().deserialize(message),
-        )
+        event.player.sendRichMessage(message)
     }
 }

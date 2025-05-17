@@ -13,7 +13,6 @@ import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.sug
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceSuspending
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
-import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
 
@@ -52,9 +51,6 @@ class BuildDeleteCommand(
             name = name,
             player = player,
         )
-
-        context.source.sender.sendMessage(
-            MiniMessage.miniMessage().deserialize("<green>${name} deleted</green>")
-        )
+        context.source.sender.sendRichMessage("<green>${name} deleted</green>")
     }
 }

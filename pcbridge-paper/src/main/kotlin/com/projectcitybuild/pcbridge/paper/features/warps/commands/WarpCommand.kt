@@ -15,9 +15,6 @@ import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.sug
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceSuspending
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
-import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.format.NamedTextColor
-import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.Location
 import org.bukkit.Server
 import org.bukkit.World
@@ -73,11 +70,7 @@ class WarpCommand(
             destination = warp.toLocation(world),
             cause = PlayerTeleportEvent.TeleportCause.COMMAND,
         )
-        executor.sendMessage(
-            Component.text("Warped to ${warp.name}")
-                .color(NamedTextColor.GRAY)
-                .decorate(TextDecoration.ITALIC),
-        )
+        executor.sendRichMessage("<gray><i>Warped to ${warp.name}</i></gray>")
     }
 }
 

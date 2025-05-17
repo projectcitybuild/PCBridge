@@ -58,16 +58,12 @@ class NightVisionCommand(
 
         if (toggleOn) {
             sender.addPotionEffect(potionEffect)
-            sender.sendMessage(
-                Component.text("NightVision toggled on. Type /nv to turn it off")
-                    .color(NamedTextColor.GRAY)
-                    .decorate(TextDecoration.ITALIC),
+            sender.sendRichMessage(
+                "<gray><i>NightVision toggled on. Type /nv to turn it off</i></gray>",
             )
         } else {
-            sender.sendMessage(
-                Component.text("NightVision toggled off")
-                    .color(NamedTextColor.GRAY)
-                    .decorate(TextDecoration.ITALIC),
+            sender.sendRichMessage(
+                "<gray><i>NightVision toggled off</i></gray>",
             )
         }
     }

@@ -46,8 +46,6 @@ class SyncPlayer(
                 playerUUID = playerUUID,
             ),
         )
-        matchingPlayer.sendMessage(
-            MiniMessage.miniMessage().deserialize("<green>Your account has been synced</green>")
-        )
+        matchingPlayer.sendRichMessage("<green>Your account has been synced</green>")
     }
 }

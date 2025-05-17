@@ -4,7 +4,6 @@ import com.mojang.brigadier.Command
 import com.mojang.brigadier.arguments.StringArgumentType
 import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.tree.LiteralCommandNode
-import com.projectcitybuild.pcbridge.http.shared.parsing.ResponseParser
 import com.projectcitybuild.pcbridge.http.pcb.services.RegisterHttpService
 import com.projectcitybuild.pcbridge.http.shared.parsing.ResponseParserError
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierCommand
@@ -12,9 +11,6 @@ import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.exe
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceSuspending
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
-import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.format.NamedTextColor
-import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
 
@@ -31,10 +27,9 @@ class CodeCommand(
                     .executesSuspending(plugin, ::execute)
             )
             .executes { context ->
-                val message = MiniMessage.miniMessage().deserialize(
+                context.source.sender.sendRichMessage(
                     "<red>Error: You did not specify a code</red><newline><gray>Example Usage: <bold>/code 123456</bold></gray>",
                 )
-                context.source.sender.sendMessage(message)
                 return@executes Command.SINGLE_SUCCESS
             }
             .build()
@@ -50,14 +45,12 @@ class CodeCommand(
                 code = code,
                 playerUUID = sender.uniqueId,
             )
-            sender.sendMessage(
-                Component.text("Registration complete! Your account will be synced momentarily...")
-                    .color(NamedTextColor.GREEN),
+            sender.sendRichMessage(
+                "<green>Registration complete! Your account will be synced momentarily...</green>",
             )
         } catch (e: ResponseParserError.NotFound) {
-            sender.sendMessage(
-                Component.text("Error: Code is invalid or expired")
-                    .color(NamedTextColor.RED),
+            sender.sendRichMessage(
+                "<red>Error: Code is invalid or expired</red>",
             )
         }
     }

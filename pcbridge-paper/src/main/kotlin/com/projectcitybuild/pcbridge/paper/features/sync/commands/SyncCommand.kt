@@ -11,7 +11,6 @@ import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceSuspendin
 import com.projectcitybuild.pcbridge.paper.features.sync.actions.SyncPlayer
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
-import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
 
@@ -34,9 +33,7 @@ class SyncCommand(
         val sender = context.source.sender
         check(sender is Player) { "Only players can use this command" }
 
-        sender.sendMessage(
-            MiniMessage.miniMessage().deserialize("<gray>Fetching player data...</gray>")
-        )
+        sender.sendRichMessage("<gray>Fetching player data...</gray>")
         syncPlayer.execute(playerUUID = sender.uniqueId)
     }
 
@@ -48,12 +45,8 @@ class SyncCommand(
             syncSelf(context)
             return@traceSuspending
         }
-        sender.sendMessage(
-            MiniMessage.miniMessage().deserialize("<gray>Fetching player data for ${player.name}...</gray>")
-        )
+        sender.sendRichMessage("<gray>Fetching player data for ${player.name}...</gray>")
         syncPlayer.execute(playerUUID = player.uniqueId)
-        sender.sendMessage(
-            MiniMessage.miniMessage().deserialize("<green>Player data synced</green>")
-        )
+        sender.sendRichMessage("<green>Player data synced</green>")
     }
 }
