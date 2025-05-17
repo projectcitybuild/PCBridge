@@ -4,6 +4,8 @@ import com.github.shynixn.mccoroutine.bukkit.registerSuspendingEvents
 import com.projectcitybuild.pcbridge.paper.core.libs.logger.log
 import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.RemoteConfig
 import com.projectcitybuild.pcbridge.paper.features.config.events.RemoteConfigUpdatedEvent
+import com.projectcitybuild.pcbridge.paper.features.spawns.events.SpawnUpdatedEvent
+import com.projectcitybuild.pcbridge.paper.features.spawns.repositories.SpawnRepository
 import com.projectcitybuild.pcbridge.paper.features.warps.events.WarpCreateEvent
 import com.projectcitybuild.pcbridge.paper.features.warps.events.WarpDeleteEvent
 import com.projectcitybuild.pcbridge.paper.features.warps.repositories.WarpRepository
@@ -12,9 +14,12 @@ import org.bukkit.event.Listener
 import org.bukkit.plugin.java.JavaPlugin
 import org.dynmap.DynmapCommonAPI
 import org.dynmap.DynmapCommonAPIListener
+import org.dynmap.markers.MarkerAPI
+import org.dynmap.markers.MarkerSet
 
 class DynmapIntegration(
     private val plugin: JavaPlugin,
+    private val spawnRepository: SpawnRepository,
     private val warpRepository: WarpRepository,
     private val remoteConfig: RemoteConfig,
 ) : Listener, DynmapCommonAPIListener() {
@@ -26,6 +31,7 @@ class DynmapIntegration(
         plugin.server.pluginManager.registerSuspendingEvents(this, plugin)
 
         updateWarpMarkers()
+        updateSpawnMarkers()
     }
 
     fun disable() {
@@ -59,6 +65,9 @@ class DynmapIntegration(
     suspend fun onWarpDelete(event: WarpDeleteEvent) = updateWarpMarkers()
 
     @EventHandler
+    suspend fun onSpawnUpdate(event: SpawnUpdatedEvent) = updateSpawnMarkers()
+
+    @EventHandler
     suspend fun onRemoteConfigUpdated(event: RemoteConfigUpdatedEvent) {
         val prev = event.prev?.config
         val next = event.next.config
@@ -66,33 +75,15 @@ class DynmapIntegration(
         if (prev?.integrations?.dynmapWarpIconName != next.integrations.dynmapWarpIconName) {
             updateWarpMarkers()
         }
+        if (prev?.integrations?.dynmapSpawnIconName != next.integrations.dynmapSpawnIconName) {
+            updateSpawnMarkers()
+        }
     }
 
-    private suspend fun updateWarpMarkers() {
-        val dynmap = dynmap
-        if (dynmap == null) {
-            log.warn { "Dynmap integration disabled but attempted to draw warp markers" }
-            return
-        }
-
-        log.debug { "Redrawing warp markers..." }
-
-        val markerAPI = dynmap.markerAPI
-        val warpMarkerSet = markerAPI.getMarkerSet(MARKER_SET_NAME)
-            ?: markerAPI.createMarkerSet(
-                MARKER_SET_NAME,    // Marker set ID
-                "Warps",            // Marker set label (appears in dynmap web UI)
-                null,               // Set of permitted marker icons
-                false,              // Is marker set persistent
-            )
-
-        warpMarkerSet.apply {
-            layerPriority = 1
-            hideByDefault = false
-
-            markers.forEach { it.deleteMarker() }
-        }
-
+    private suspend fun updateWarpMarkers() = rebuildMarketSet(
+        setId = "pcbridge_warps",
+        setLabel = "Warps",
+    ) { markerAPI, markerSet ->
         val config = remoteConfig.latest.config
         val iconName = config.integrations.dynmapWarpIconName
         val icon = markerAPI.getMarkerIcon(iconName)
@@ -101,11 +92,11 @@ class DynmapIntegration(
             }
 
         warpRepository.all().forEach { warp ->
-            warpMarkerSet.createMarker(
+            markerSet.createMarker(
                 "warp_${warp.id}",  // Marker ID
                 warp.name,          // Marker label
                 false,              // Process label as HTML
-                warp.world,         // World to display  marker in
+                warp.world,         // World to display marker in
                 warp.x,             // x
                 warp.y,             // y
                 warp.z,             // z
@@ -115,7 +106,60 @@ class DynmapIntegration(
         }
     }
 
-    private companion object {
-        const val MARKER_SET_NAME = "pcbridge"
+    private suspend fun updateSpawnMarkers() = rebuildMarketSet(
+        setId = "pcbridge_spawns",
+        setLabel = "Spawns",
+    ) { markerAPI, markerSet ->
+        val config = remoteConfig.latest.config
+        val iconName = config.integrations.dynmapSpawnIconName
+        val icon = markerAPI.getMarkerIcon(iconName)
+            ?: markerAPI.getMarkerIcon("world").also {
+                log.warn { "$iconName is not a valid dynmap icon name. Falling back to default icon" }
+            }
+
+        spawnRepository.allLoaded().forEach { location ->
+            markerSet.createMarker(
+                "spawn_${location.world.uid}",  // Marker ID
+                "Spawn",          // Marker label
+                false,            // Process label as HTML
+                location.world.name,  // World to display marker in
+                location.x,       // x
+                location.y,       // y
+                location.z,       // z
+                icon,             // Related MarkerIcon object
+                false,            // Marker is persistent
+            )
+        }
+    }
+
+    private suspend fun rebuildMarketSet(
+        setId: String,
+        setLabel: String,
+        block: suspend (MarkerAPI, MarkerSet) -> Unit,
+    ) {
+        val dynmap = dynmap
+        if (dynmap == null) {
+            log.warn { "Dynmap integration disabled but attempted to draw \"$setLabel\" markers" }
+            return
+        }
+
+        log.debug { "Redrawing \"$setLabel\" markers..." }
+
+        val markerAPI = dynmap.markerAPI
+        val markerSet = markerAPI.getMarkerSet(setId)
+            ?: markerAPI.createMarkerSet(
+                setId,              // Marker set ID
+                setLabel,           // Marker set label (appears in dynmap web UI)
+                null,               // Set of permitted marker icons
+                false,              // Is marker set persistent
+            )
+
+        markerSet.apply {
+            layerPriority = 1
+            hideByDefault = false
+
+            markers.forEach { it.deleteMarker() }
+        }
+        block(markerAPI, markerSet)
     }
 }

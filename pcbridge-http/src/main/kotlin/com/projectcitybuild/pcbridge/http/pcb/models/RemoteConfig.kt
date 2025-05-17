@@ -48,6 +48,8 @@ data class RemoteConfigKeyValues(
     data class Integrations(
         @SerializedName("dynmap_warp_icon_name")
         val dynmapWarpIconName: String = "portal",
+        @SerializedName("dynmap_spawn_icon_name")
+        val dynmapSpawnIconName: String = "world",
     )
 
     @Serializable

@@ -8,6 +8,8 @@ import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.exe
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceSuspending
+import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotEventBroadcaster
+import com.projectcitybuild.pcbridge.paper.features.spawns.events.SpawnUpdatedEvent
 import com.projectcitybuild.pcbridge.paper.features.spawns.repositories.SpawnRepository
 import com.projectcitybuild.pcbridge.paper.l10n.l10n
 import io.papermc.paper.command.brigadier.CommandSourceStack
@@ -17,6 +19,7 @@ import org.bukkit.plugin.Plugin
 class SetSpawnCommand(
     private val plugin: Plugin,
     private val spawnRepository: SpawnRepository,
+    private val eventBroadcaster: SpigotEventBroadcaster,
 ) : BrigadierCommand {
     override fun buildLiteral(): LiteralCommandNode<CommandSourceStack> {
         return Commands.literal("setspawn")
@@ -27,10 +30,13 @@ class SetSpawnCommand(
 
     suspend fun execute(context: CommandContext<CommandSourceStack>) = context.traceSuspending {
         val player = context.source.requirePlayer()
-
         val location = player.location
+
         spawnRepository.set(location)
 
+        eventBroadcaster.broadcast(
+            SpawnUpdatedEvent(location.world.uid, location)
+        )
         player.sendRichMessage(l10n.spawnSet(location))
     }
 }
