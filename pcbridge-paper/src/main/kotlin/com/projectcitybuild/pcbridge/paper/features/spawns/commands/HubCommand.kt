@@ -8,6 +8,7 @@ import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierComma
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceSuspending
+import com.projectcitybuild.pcbridge.paper.l10n.l10n
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
 import org.bukkit.Location
@@ -37,7 +38,7 @@ class HubCommand(
         val worldId = UUID.fromString(hub.worldId)
         val world = server.getWorld(worldId)
         if (world == null) {
-            player.sendRichMessage("<red>Error: Could not find hub world</red>")
+            player.sendRichMessage(l10n.errorHubWorldNotFound)
             return@traceSuspending
         }
         val location = Location(world, hub.x, hub.y, hub.z, hub.yaw, hub.pitch)
@@ -47,6 +48,6 @@ class HubCommand(
             destination = location,
             cause = PlayerTeleportEvent.TeleportCause.COMMAND,
         )
-        player.sendRichMessage("<green>⚡ Teleported to hub</green>")
+        player.sendRichMessage(l10n.teleportedToHub)
     }
 }

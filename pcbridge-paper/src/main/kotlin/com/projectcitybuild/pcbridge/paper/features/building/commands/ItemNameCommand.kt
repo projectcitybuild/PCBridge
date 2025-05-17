@@ -11,6 +11,7 @@ import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.req
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceSuspending
 import com.projectcitybuild.pcbridge.paper.features.building.events.ItemRenamedEvent
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotEventBroadcaster
+import com.projectcitybuild.pcbridge.paper.l10n.l10n
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
@@ -38,7 +39,7 @@ class ItemNameCommand(
         val player = context.source.requirePlayer()
 
         val itemStack = player.inventory.itemInMainHand
-        check(itemStack.type != Material.AIR) { "No item in hand to rename" }
+        check(itemStack.type != Material.AIR) { l10n.errorNoItemToRename }
 
         val rawName = context.getArgument("name", String::class.java)
         val name = LegacyComponentSerializer.legacyAmpersand().deserialize(rawName)
@@ -47,7 +48,7 @@ class ItemNameCommand(
         itemStack.setItemMeta(itemMeta)
 
         player.sendRichMessage(
-            "<gray>Renamed item in hand to <red><name></red></gray>",
+            l10n.renamedItem("<name>"),
             Placeholder.component("name", name),
         )
         eventBroadcaster.broadcast(

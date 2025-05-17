@@ -34,7 +34,7 @@ class PlayerTeleporter(
         val success = player.teleportAsync(teleportLocation, cause).await()
         if (!success) {
            log.warn { "Teleport failed ($teleportLocation)" }
-           throw TeleportFailedException("Failed to teleport to destination")
+           throw TeleportFailedException("Failed to teleport to $destination")
         }
 
         teleportHistoryStorage.put(

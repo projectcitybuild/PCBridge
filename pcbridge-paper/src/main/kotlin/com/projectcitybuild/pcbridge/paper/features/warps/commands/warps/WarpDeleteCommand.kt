@@ -12,6 +12,7 @@ import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.sug
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceSuspending
 import com.projectcitybuild.pcbridge.paper.features.warps.events.WarpDeleteEvent
 import com.projectcitybuild.pcbridge.paper.features.warps.repositories.WarpRepository
+import com.projectcitybuild.pcbridge.paper.l10n.l10n
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
 import net.kyori.adventure.text.Component
@@ -55,7 +56,7 @@ class WarpDeleteCommand(
         server.pluginManager.callEvent(WarpDeleteEvent())
 
         context.source.sender.sendRichMessage(
-            "<green>$warpName warp deleted</green>",
+            l10n.warpDeleted(warpName),
         )
     }
 }

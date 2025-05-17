@@ -9,6 +9,7 @@ import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierComma
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceSuspending
+import com.projectcitybuild.pcbridge.paper.l10n.l10n
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
 import org.bukkit.plugin.Plugin
@@ -26,9 +27,7 @@ class RegisterCommand(
                     .executesSuspending(plugin, ::execute)
             )
             .executes { context ->
-                context.source.sender.sendRichMessage(
-                    "<red>Error: Please specify an email address to receive your registration code</red><newline><gray>Example Usage: <bold>/register your@email.com</bold></gray>",
-                )
+                context.source.sender.sendRichMessage(l10n.errorNoRegisterEmailSpecified)
                 return@executes Command.SINGLE_SUCCESS
             }
             .build()
@@ -43,9 +42,6 @@ class RegisterCommand(
             playerAlias = player.name,
             playerUUID = player.uniqueId,
         )
-        player.sendRichMessage(
-            "<gray>A code has been emailed to $email.<newline>" +
-            "Please type it in with <aqua><bold><hover:show_text:'/code'><click:suggest_command:/code >/code [code]</click></hover></bold></aqua></gray>"
-        )
+        player.sendRichMessage(l10n.codeHasBeenEmailed(email))
     }
 }

@@ -12,6 +12,7 @@ import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.req
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.suggestsSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceSuspending
 import com.projectcitybuild.pcbridge.paper.features.warps.repositories.WarpRepository
+import com.projectcitybuild.pcbridge.paper.l10n.l10n
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
 import org.bukkit.plugin.Plugin
@@ -58,7 +59,7 @@ class WarpMoveCommand(
             yaw = location.yaw,
         )
         context.source.sender.sendRichMessage(
-            "<green>$warpName warp moved</green>",
+            l10n.warpMoved(warpName),
         )
     }
 }

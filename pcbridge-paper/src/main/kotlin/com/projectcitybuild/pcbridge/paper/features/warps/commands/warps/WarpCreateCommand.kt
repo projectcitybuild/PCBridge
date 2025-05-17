@@ -12,6 +12,7 @@ import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.exe
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceSuspending
+import com.projectcitybuild.pcbridge.paper.l10n.l10n
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
 import org.bukkit.Server
@@ -51,6 +52,6 @@ class WarpCreateCommand(
 
         server.pluginManager.callEvent(WarpCreateEvent())
 
-        player.sendRichMessage("<green>${warp.name} warp created</green>")
+        player.sendRichMessage(l10n.warpCreated(warp.name))
     }
 }

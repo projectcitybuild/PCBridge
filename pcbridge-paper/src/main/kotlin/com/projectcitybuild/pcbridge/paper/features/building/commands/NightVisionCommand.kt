@@ -9,6 +9,7 @@ import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.exe
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceSuspending
+import com.projectcitybuild.pcbridge.paper.l10n.l10n
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
 import org.bukkit.plugin.Plugin
@@ -54,13 +55,9 @@ class NightVisionCommand(
 
         if (toggleOn) {
             player.addPotionEffect(potionEffect)
-            player.sendRichMessage(
-                "<gray><i>NightVision toggled on. Type /nv to turn it off</i></gray>",
-            )
+            player.sendRichMessage(l10n.nightVisionToggledOn)
         } else {
-            player.sendRichMessage(
-                "<gray><i>NightVision toggled off</i></gray>",
-            )
+            player.sendRichMessage(l10n.nightVisionToggledOff)
         }
     }
 }

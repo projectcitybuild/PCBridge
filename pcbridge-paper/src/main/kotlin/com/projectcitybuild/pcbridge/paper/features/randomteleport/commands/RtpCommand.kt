@@ -10,6 +10,7 @@ import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.req
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceSuspending
 import com.projectcitybuild.pcbridge.paper.features.randomteleport.actions.FindRandomLocation
+import com.projectcitybuild.pcbridge.paper.l10n.l10n
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
 import org.bukkit.plugin.Plugin
@@ -32,17 +33,15 @@ class RtpCommand(
 
         cooldown.throttle(5.seconds, player, "rtp")
 
-        player.sendRichMessage(
-            "<gray><italic>Searching for a safe location...</italic></gray>",
-        )
+        player.sendRichMessage(l10n.searchingForSafeLocation)
 
         val location = findRandomLocation.teleport(player, attempts = 5)
         if (location == null) {
-            player.sendRichMessage("<red>Failed to find a safe location</red>")
+            player.sendRichMessage(l10n.errorCouldNotFindSafeLocation)
             return@traceSuspending
         }
         player.sendRichMessage(
-            "<green>⚡ Teleported to </green><gray>x=${location.x.toInt()}, y=${location.y.toInt()}, z=${location.z.toInt()}</gray>",
+            l10n.teleportedToCoordinate(location.x.toInt(), location.y.toInt(), location.z.toInt())
         )
     }
 }

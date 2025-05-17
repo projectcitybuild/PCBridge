@@ -10,6 +10,7 @@ import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierComma
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceSuspending
+import com.projectcitybuild.pcbridge.paper.l10n.l10n
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
 import org.bukkit.plugin.Plugin
@@ -27,9 +28,7 @@ class CodeCommand(
                     .executesSuspending(plugin, ::execute)
             )
             .executes { context ->
-                context.source.sender.sendRichMessage(
-                    "<red>Error: You did not specify a code</red><newline><gray>Example Usage: <bold>/code 123456</bold></gray>",
-                )
+                context.source.sender.sendRichMessage(l10n.errorNoCodeSpecified)
                 return@executes Command.SINGLE_SUCCESS
             }
             .build()
@@ -48,9 +47,7 @@ class CodeCommand(
                 "<green>Registration complete! Your account will be synced momentarily...</green>",
             )
         } catch (e: ResponseParserError.NotFound) {
-            player.sendRichMessage(
-                "<red>Error: Code is invalid or expired</red>",
-            )
+            player.sendRichMessage(l10n.errorCodeInvalidOrExpired)
         }
     }
 }

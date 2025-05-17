@@ -14,6 +14,7 @@ import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.exe
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.getOptionalArgument
+import com.projectcitybuild.pcbridge.paper.l10n.l10n
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
 import org.bukkit.plugin.Plugin
@@ -45,7 +46,7 @@ class WarpListCommand(
             page = pageNumber,
         )
         if (page.items.isEmpty()) {
-            sender.sendRichMessage("<gray>No warps found</gray>")
+            sender.sendRichMessage(l10n.noWarpsFound)
             return@traceSuspending
         }
         val message = PageComponentBuilder().build(
