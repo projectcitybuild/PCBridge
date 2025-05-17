@@ -54,9 +54,8 @@ class WarpDeleteCommand(
 
         server.pluginManager.callEvent(WarpDeleteEvent())
 
-        context.source.sender.sendMessage(
-            Component.text("$warpName warp deleted")
-                .color(NamedTextColor.GREEN),
+        context.source.sender.sendRichMessage(
+            "<green>$warpName warp deleted</green>",
         )
     }
 }

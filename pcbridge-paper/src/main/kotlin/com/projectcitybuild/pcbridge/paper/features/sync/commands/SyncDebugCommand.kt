@@ -11,7 +11,6 @@ import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.req
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceSuspending
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
-import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
 
@@ -39,11 +38,9 @@ class SyncDebugCommand(
 
         permissions.provider.setUserRoles(sender.uniqueId, groups)
 
-        sender.sendMessage(
-            MiniMessage.miniMessage().deserialize(
-                "<red>Your groups have been set to ${groups.joinToString(",")}</red>\n" +
-                    "<gray>Use /sync or reconnect to revert this</gray>"
-            )
+        sender.sendRichMessage(
+            "<red>Your groups have been set to ${groups.joinToString(",")}</red>\n" +
+            "<gray>Use /sync or reconnect to revert this</gray>"
         )
     }
 }

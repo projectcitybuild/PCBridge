@@ -55,8 +55,8 @@ class BuildSetCommand(
             value = value,
         )
 
-        context.source.sender.sendMessage(
-            MiniMessage.miniMessage().deserialize("<green>Build updated</green>")
+        context.source.sender.sendRichMessage(
+            "<green>Build updated</green>",
         )
     }
 }

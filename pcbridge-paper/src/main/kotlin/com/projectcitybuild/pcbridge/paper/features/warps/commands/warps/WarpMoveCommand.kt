@@ -13,8 +13,6 @@ import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceSuspendin
 import com.projectcitybuild.pcbridge.paper.features.warps.repositories.WarpRepository
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
-import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
 
@@ -60,10 +58,8 @@ class WarpMoveCommand(
             pitch = location.pitch,
             yaw = location.yaw,
         )
-
-        context.source.sender.sendMessage(
-            Component.text("$warpName warp moved")
-                .color(NamedTextColor.GREEN),
+        context.source.sender.sendRichMessage(
+            "<green>$warpName warp moved</green>",
         )
     }
 }

@@ -10,7 +10,6 @@ import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceSuspendin
 import com.projectcitybuild.pcbridge.paper.features.warps.repositories.WarpRepository
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
-import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.plugin.Plugin
 
 class WarpReloadCommand(
@@ -27,8 +26,6 @@ class WarpReloadCommand(
     private suspend fun execute(context: CommandContext<CommandSourceStack>) = context.traceSuspending {
         warpRepository.reload()
 
-        context.source.sender.sendMessage(
-            MiniMessage.miniMessage().deserialize("<green>Warps reloaded</green>")
-        )
+        context.source.sender.sendRichMessage("<green>Warps reloaded</green>")
     }
 }

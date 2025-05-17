@@ -13,8 +13,6 @@ import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.req
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceSuspending
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
-import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.Server
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
@@ -54,9 +52,6 @@ class WarpCreateCommand(
 
         server.pluginManager.callEvent(WarpCreateEvent())
 
-        player.sendMessage(
-            Component.text("${warp.name} warp created")
-                .color(NamedTextColor.GREEN),
-        )
+        player.sendRichMessage("<green>${warp.name} warp created</green>")
     }
 }

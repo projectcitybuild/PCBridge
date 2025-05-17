@@ -18,7 +18,7 @@ class FirstTimeJoinListener(
     private val remoteConfig: RemoteConfig,
 ) : Listener {
     @EventHandler(priority = EventPriority.MONITOR)
-    fun onPlayerStateUpdated(event: PlayerJoinEvent) {
+    fun onPlayJoinEvent(event: PlayerJoinEvent) {
         log.debug { "Checking if first time join" }
 
         val playerState = store.state.players[event.player.uniqueId]

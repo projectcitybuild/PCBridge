@@ -10,7 +10,6 @@ import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.exe
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceSuspending
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
-import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
 
@@ -27,10 +26,9 @@ class RegisterCommand(
                     .executesSuspending(plugin, ::execute)
             )
             .executes { context ->
-                val message = MiniMessage.miniMessage().deserialize(
+                context.source.sender.sendRichMessage(
                     "<red>Error: Please specify an email address to receive your registration code</red><newline><gray>Example Usage: <bold>/register your@email.com</bold></gray>",
                 )
-                context.source.sender.sendMessage(message)
                 return@executes Command.SINGLE_SUCCESS
             }
             .build()
@@ -46,11 +44,9 @@ class RegisterCommand(
             playerAlias = sender.name,
             playerUUID = sender.uniqueId,
         )
-        sender.sendMessage(
-            MiniMessage.miniMessage().deserialize(
-                "<gray>A code has been emailed to $email.<newline>" +
-                    "Please type it in with <aqua><bold><hover:show_text:'/code'><click:suggest_command:/code >/code [code]</click></hover></bold></aqua></gray>"
-            )
+        sender.sendRichMessage(
+            "<gray>A code has been emailed to $email.<newline>" +
+            "Please type it in with <aqua><bold><hover:show_text:'/code'><click:suggest_command:/code >/code [code]</click></hover></bold></aqua></gray>"
         )
     }
 }

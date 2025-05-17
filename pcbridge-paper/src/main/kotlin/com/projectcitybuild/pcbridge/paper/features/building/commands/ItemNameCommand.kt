@@ -12,7 +12,6 @@ import com.projectcitybuild.pcbridge.paper.features.building.events.ItemRenamedE
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotEventBroadcaster
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
-import net.kyori.adventure.text.minimessage.MiniMessage
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import org.bukkit.Material
@@ -48,11 +47,9 @@ class ItemNameCommand(
         itemMeta.displayName(name)
         itemStack.setItemMeta(itemMeta)
 
-        sender.sendMessage(
-            MiniMessage.miniMessage().deserialize(
-                "<gray>Renamed item in hand to <red><name></red></gray>",
-                Placeholder.component("name", name),
-            )
+        sender.sendRichMessage(
+            "<gray>Renamed item in hand to <red><name></red></gray>",
+            Placeholder.component("name", name),
         )
         eventBroadcaster.broadcast(
             ItemRenamedEvent(
