@@ -80,7 +80,6 @@ import com.projectcitybuild.pcbridge.paper.integrations.dynmap.DynmapIntegration
 import com.projectcitybuild.pcbridge.paper.integrations.essentials.EssentialsIntegration
 import com.projectcitybuild.pcbridge.paper.integrations.luckperms.LuckPermsIntegration
 import com.projectcitybuild.pcbridge.webserver.HttpServer
-import net.kyori.adventure.platform.bukkit.BukkitAudiences
 import org.bukkit.plugin.java.JavaPlugin
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
@@ -88,7 +87,6 @@ import org.koin.core.component.inject
 
 class PluginLifecycle : KoinComponent {
     private val plugin: JavaPlugin = get()
-    private val audiences: BukkitAudiences = get()
     private val sentry: SentryReporter by inject()
     private val listenerRegistry: SpigotListenerRegistry by inject()
     private val httpServer: HttpServer by inject()
@@ -122,7 +120,6 @@ class PluginLifecycle : KoinComponent {
         get<LuckPermsIntegration>().disable()
 
         listenerRegistry.unregisterAll()
-        audiences.close()
     }
 
     private fun registerMiddleware() = get<ConnectionMiddlewareChain>().register(
