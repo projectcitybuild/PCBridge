@@ -2,12 +2,16 @@ package com.projectcitybuild.pcbridge.paper.features.spawns.repositories
 
 import com.projectcitybuild.pcbridge.paper.core.libs.localconfig.JsonStorage
 import com.projectcitybuild.pcbridge.paper.features.spawns.data.SerializableSpawn
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import org.bukkit.Location
+import org.bukkit.Server
 import org.bukkit.World
 import java.io.File
 import java.util.UUID
 
 class SpawnRepository(
+    private val server: Server,
     private val storage: JsonStorage<SerializableSpawn>,
 ) {
     private val cache: MutableMap<UUID, Location> = mutableMapOf()
@@ -40,6 +44,13 @@ class SpawnRepository(
             data = SerializableSpawn.fromLocation(location),
         )
         cache[world.uid] = location
+    }
+
+    suspend fun allLoaded(): List<Location> {
+        // TODO: is this concurrent?
+        return coroutineScope {
+            server.worlds.map { get(it) }
+        }
     }
 }
 

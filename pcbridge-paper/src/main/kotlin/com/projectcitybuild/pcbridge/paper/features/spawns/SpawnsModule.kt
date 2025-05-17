@@ -24,6 +24,7 @@ val spawnsModule = module {
         SetSpawnCommand(
             plugin = get<JavaPlugin>(),
             spawnRepository = get(),
+            eventBroadcaster = get(),
         )
     }
 
@@ -47,6 +48,7 @@ val spawnsModule = module {
             storage = JsonStorage(
                 typeToken = object : TypeToken<SerializableSpawn>() {},
             ),
+            server = get(),
         )
     }
 }
