@@ -6,9 +6,11 @@ import com.mojang.brigadier.suggestion.SuggestionsBuilder
 import com.mojang.brigadier.tree.LiteralCommandNode
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierCommand
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.suggestsSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceSuspending
 import com.projectcitybuild.pcbridge.paper.features.homes.repositories.HomeRepository
+import com.projectcitybuild.pcbridge.paper.l10n.l10n
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
 import org.bukkit.entity.Player
@@ -44,9 +46,8 @@ class HomeMoveCommand(
     }
 
     private suspend fun execute(context: CommandContext<CommandSourceStack>) = context.traceSuspending {
+        val player = context.source.requirePlayer()
         val name = context.getArgument("name", String::class.java)
-        val player = context.source.executor as? Player
-        checkNotNull(player) { "Only a player can use this command" }
 
         val location = player.location
         val home = homeRepository.move(
@@ -56,7 +57,7 @@ class HomeMoveCommand(
             location = player.location,
         )
         context.source.sender.sendRichMessage(
-            "<green>${home.name} moved to your location</green>",
+            l10n.homeMoved(home.name),
         )
     }
 }

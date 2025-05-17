@@ -8,10 +8,10 @@ import com.projectcitybuild.pcbridge.http.pcb.services.RegisterHttpService
 import com.projectcitybuild.pcbridge.http.shared.parsing.ResponseParserError
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierCommand
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceSuspending
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
-import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
 
 class CodeCommand(
@@ -36,20 +36,19 @@ class CodeCommand(
     }
 
     private suspend fun execute(context: CommandContext<CommandSourceStack>) = context.traceSuspending {
+        val player = context.source.requirePlayer()
         val code = context.getArgument("code", String::class.java)
-        val sender = context.source.executor
-        check(sender is Player) { "Only players can use this command" }
 
         try {
             registerHttpService.verifyCode(
                 code = code,
-                playerUUID = sender.uniqueId,
+                playerUUID = player.uniqueId,
             )
-            sender.sendRichMessage(
+            player.sendRichMessage(
                 "<green>Registration complete! Your account will be synced momentarily...</green>",
             )
         } catch (e: ResponseParserError.NotFound) {
-            sender.sendRichMessage(
+            player.sendRichMessage(
                 "<red>Error: Code is invalid or expired</red>",
             )
         }

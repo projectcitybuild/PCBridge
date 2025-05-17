@@ -7,7 +7,7 @@ import com.projectcitybuild.pcbridge.paper.core.libs.pagination.SimplePaginator
 import com.projectcitybuild.pcbridge.paper.features.warps.repositories.WarpRepository
 import com.projectcitybuild.pcbridge.http.pcb.models.Warp
 import com.projectcitybuild.pcbridge.paper.PermissionNode
-import com.projectcitybuild.pcbridge.paper.core.libs.pagination.PaginationBuilder
+import com.projectcitybuild.pcbridge.paper.core.libs.pagination.PageComponentBuilder
 import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.RemoteConfig
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierCommand
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
@@ -48,7 +48,7 @@ class WarpListCommand(
             sender.sendRichMessage("<gray>No warps found</gray>")
             return@traceSuspending
         }
-        val message = PaginationBuilder().build(
+        val message = PageComponentBuilder().build(
             title = "Warps",
             items = page.items,
             pageNumber = pageNumber,

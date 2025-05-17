@@ -1,11 +1,12 @@
 package com.projectcitybuild.pcbridge.paper.core.libs.pagination
 
+import com.projectcitybuild.pcbridge.paper.l10n.l10n
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.minimessage.MiniMessage
 
-class PaginationBuilder {
+class PageComponentBuilder {
     fun <T> build(
         title: String,
         items: List<T>,
@@ -86,14 +87,14 @@ class PaginationBuilder {
     }
 
     private fun prevButton(command: String): Component {
-        return MiniMessage.miniMessage().deserialize("<white>[← Prev]</white> ")
+        return MiniMessage.miniMessage().deserialize("${l10n.pagePrevButton} ")
             .clickEvent(ClickEvent.runCommand(command))
-            .hoverEvent(HoverEvent.showText(Component.text("Click for previous page")))
+            .hoverEvent(HoverEvent.showText(Component.text(l10n.pagePrevButtonHover)))
     }
 
     private fun nextButton(command: String): Component {
-        return MiniMessage.miniMessage().deserialize("<white>[Next →]</white> ")
+        return MiniMessage.miniMessage().deserialize("${l10n.pageNextButton} ")
             .clickEvent(ClickEvent.runCommand(command))
-            .hoverEvent(HoverEvent.showText(Component.text("Click for next page")))
+            .hoverEvent(HoverEvent.showText(Component.text(l10n.pageNextButtonHover)))
     }
 }

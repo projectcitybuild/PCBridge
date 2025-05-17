@@ -7,10 +7,10 @@ import com.mojang.brigadier.tree.LiteralCommandNode
 import com.projectcitybuild.pcbridge.http.pcb.services.RegisterHttpService
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierCommand
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceSuspending
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
-import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
 
 class RegisterCommand(
@@ -35,16 +35,15 @@ class RegisterCommand(
     }
 
     private suspend fun execute(context: CommandContext<CommandSourceStack>) = context.traceSuspending {
+        val player = context.source.requirePlayer()
         val email = context.getArgument("email", String::class.java)
-        val sender = context.source.sender
-        check(sender is Player) { "Only players can use this command" }
 
         registerHttpService.sendCode(
             email = email,
-            playerAlias = sender.name,
-            playerUUID = sender.uniqueId,
+            playerAlias = player.name,
+            playerUUID = player.uniqueId,
         )
-        sender.sendRichMessage(
+        player.sendRichMessage(
             "<gray>A code has been emailed to $email.<newline>" +
             "Please type it in with <aqua><bold><hover:show_text:'/code'><click:suggest_command:/code >/code [code]</click></hover></bold></aqua></gray>"
         )

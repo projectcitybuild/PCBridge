@@ -5,12 +5,12 @@ import com.mojang.brigadier.tree.LiteralCommandNode
 import com.projectcitybuild.pcbridge.paper.PermissionNode
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierCommand
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceSuspending
 import com.projectcitybuild.pcbridge.paper.features.spawns.repositories.SpawnRepository
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
-import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
 
 class SetSpawnCommand(
@@ -25,14 +25,12 @@ class SetSpawnCommand(
     }
 
     suspend fun execute(context: CommandContext<CommandSourceStack>) = context.traceSuspending {
-        val executor = context.source.executor
-        val player = executor as? Player
-        checkNotNull(player) { "Only players can use this command" }
+        val player = context.source.requirePlayer()
 
         val location = player.location
         spawnRepository.set(location)
 
-        executor.sendRichMessage(
+        player.sendRichMessage(
             "<green>Set the world spawn point to <gray>${location.x} ${location.y} ${location.z} ${location.pitch} ${location.yaw}</gray></green>",
         )
     }

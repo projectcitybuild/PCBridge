@@ -10,9 +10,11 @@ import com.projectcitybuild.pcbridge.paper.core.libs.teleportation.PlayerTelepor
 import com.projectcitybuild.pcbridge.paper.features.builds.repositories.BuildRepository
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierCommand
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.suggestsSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceSuspending
+import com.projectcitybuild.pcbridge.paper.l10n.l10n
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
 import net.kyori.adventure.text.Component
@@ -21,7 +23,6 @@ import net.kyori.adventure.title.Title
 import org.bukkit.Location
 import org.bukkit.Server
 import org.bukkit.World
-import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerTeleportEvent
 import org.bukkit.plugin.Plugin
 
@@ -54,17 +55,14 @@ class BuildCommand(
     }
 
     private suspend fun execute(context: CommandContext<CommandSourceStack>) = context.traceSuspending {
-        val miniMessage = MiniMessage.miniMessage()
+        val player = context.source.requirePlayer()
         val name = context.getArgument("name", String::class.java)
-
-        val player = context.source.sender as? Player
-        checkNotNull(player) { "Only players can use this command" }
 
         val build = buildRepository.get(name = name)
         checkNotNull(build) { "Build not found" }
 
         val world = server.getWorld(build.world)
-        checkNotNull(world) { "Could not find world ${build.world}" }
+        checkNotNull(world) { l10n.errorWorldNotFound(build.world) }
 
         playerTeleporter.move(
             player,
@@ -79,7 +77,7 @@ class BuildCommand(
         player.showTitle(
             Title.title(
                 Component.text(build.name),
-                miniMessage.deserialize(
+                MiniMessage.miniMessage().deserialize(
                     if (owner.isNullOrEmpty()) ""
                     else "<gray>Created by $owner</gray>"
                 ),

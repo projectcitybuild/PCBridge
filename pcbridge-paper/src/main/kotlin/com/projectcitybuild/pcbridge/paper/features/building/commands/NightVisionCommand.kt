@@ -6,14 +6,11 @@ import com.projectcitybuild.pcbridge.paper.PermissionNode
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierCommand
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.arguments.OnOffArgument
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceSuspending
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
-import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.format.NamedTextColor
-import net.kyori.adventure.text.format.TextDecoration
-import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
@@ -35,8 +32,7 @@ class NightVisionCommand(
     }
 
     private suspend fun execute(context: CommandContext<CommandSourceStack>) = context.traceSuspending {
-        val sender = context.source.sender
-        check(sender is Player) { "Only players can use this command" }
+        val player = context.source.requirePlayer()
 
         val duration = Integer.MAX_VALUE
         val amplifier = 1
@@ -49,20 +45,20 @@ class NightVisionCommand(
 
         val toggleOn =
             if (desiredState == null) {
-                !sender.hasPotionEffect(potionEffectType)
+                !player.hasPotionEffect(potionEffectType)
             } else {
                 desiredState == true
             }
 
-        sender.removePotionEffect(potionEffectType)
+        player.removePotionEffect(potionEffectType)
 
         if (toggleOn) {
-            sender.addPotionEffect(potionEffect)
-            sender.sendRichMessage(
+            player.addPotionEffect(potionEffect)
+            player.sendRichMessage(
                 "<gray><i>NightVision toggled on. Type /nv to turn it off</i></gray>",
             )
         } else {
-            sender.sendRichMessage(
+            player.sendRichMessage(
                 "<gray><i>NightVision toggled off</i></gray>",
             )
         }

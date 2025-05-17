@@ -9,10 +9,12 @@ import com.projectcitybuild.pcbridge.paper.PermissionNode
 import com.projectcitybuild.pcbridge.paper.core.libs.teleportation.PlayerTeleporter
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierCommand
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.suggestsSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceSuspending
 import com.projectcitybuild.pcbridge.paper.features.homes.repositories.HomeRepository
+import com.projectcitybuild.pcbridge.paper.l10n.l10n
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
 import org.bukkit.Location
@@ -55,16 +57,14 @@ class HomeCommand(
     }
 
     private suspend fun execute(context: CommandContext<CommandSourceStack>) = context.traceSuspending {
+        val player = context.source.requirePlayer()
         val name = context.getArgument("name", String::class.java)
 
-        val player = context.source.sender as? Player
-        checkNotNull(player) { "Only players can use this command" }
-
         val home = homeRepository.get(player.uniqueId, name)
-        checkNotNull(home) { "Home ($home) not found" }
+        checkNotNull(home) { l10n.errorHomeNotFound(name) }
 
         val world = server.getWorld(home.world)
-        checkNotNull(world) { "Could not find world ${home.world}" }
+        checkNotNull(world) { l10n.errorWorldNotFound(home.world) }
 
         playerTeleporter.move(
             player,
@@ -72,7 +72,7 @@ class HomeCommand(
             cause = PlayerTeleportEvent.TeleportCause.COMMAND,
         )
         context.source.sender.sendRichMessage(
-            "<gray>Teleported to <aqua>$name</aqua></gray>",
+            l10n.teleportedToName(home.name),
         )
     }
 }

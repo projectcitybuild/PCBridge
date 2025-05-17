@@ -7,11 +7,11 @@ import com.projectcitybuild.pcbridge.paper.PermissionNode
 import com.projectcitybuild.pcbridge.paper.architecture.permissions.Permissions
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierCommand
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceSuspending
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
-import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
 
 class SyncDebugCommand(
@@ -29,16 +29,15 @@ class SyncDebugCommand(
     }
 
     private suspend fun execute(context: CommandContext<CommandSourceStack>) = context.traceSuspending {
-        val sender = context.source.sender
-        check(sender is Player) { "Only players can use this command" }
+        val player = context.source.requirePlayer()
 
         val groupsArg = context.getArgument("groups", String::class.java)
         val groups = groupsArg.split(" ").toSet()
         check(groups.isNotEmpty()) { "No groups specified" }
 
-        permissions.provider.setUserRoles(sender.uniqueId, groups)
+        permissions.provider.setUserRoles(player.uniqueId, groups)
 
-        sender.sendRichMessage(
+        player.sendRichMessage(
             "<red>Your groups have been set to ${groups.joinToString(",")}</red>\n" +
             "<gray>Use /sync or reconnect to revert this</gray>"
         )

@@ -6,10 +6,12 @@ import com.mojang.brigadier.suggestion.SuggestionsBuilder
 import com.mojang.brigadier.tree.LiteralCommandNode
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierCommand
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.suggestsSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.trace
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceSuspending
 import com.projectcitybuild.pcbridge.paper.features.homes.repositories.HomeRepository
+import com.projectcitybuild.pcbridge.paper.l10n.l10n
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
 import kotlinx.coroutines.runBlocking
@@ -50,12 +52,11 @@ class HomeRenameCommand(
     }
 
     private suspend fun execute(context: CommandContext<CommandSourceStack>) = context.traceSuspending {
+        val player = context.source.requirePlayer()
         val name = context.getArgument("name", String::class.java)
-        val player = context.source.executor as? Player
-        checkNotNull(player) { "Only a player can use this command" }
 
         val home = homeRepository.get(player.uniqueId, name)
-        checkNotNull(home) { "Home ($name) not found" }
+        checkNotNull(home) { l10n.errorHomeNotFound(name) }
 
         // TODO: this could do with some Kotlin good-ness...
         ConversationFactory(plugin)
@@ -79,9 +80,7 @@ class HomeRenameCommand(
                                 player = player,
                             )
                         }
-                        player.sendRichMessage(
-                            "<green>Home renamed to <aqua>$input</aqua></green>"
-                        )
+                        player.sendRichMessage(l10n.homeRenamed(input))
                     }
                     return Prompt.END_OF_CONVERSATION
                 }

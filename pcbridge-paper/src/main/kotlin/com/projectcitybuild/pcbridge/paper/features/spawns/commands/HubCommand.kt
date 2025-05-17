@@ -6,13 +6,12 @@ import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.RemoteConfig
 import com.projectcitybuild.pcbridge.paper.core.libs.teleportation.PlayerTeleporter
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierCommand
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceSuspending
-import com.projectcitybuild.pcbridge.paper.features.spawns.repositories.SpawnRepository
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
 import org.bukkit.Location
 import org.bukkit.Server
-import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerTeleportEvent
 import org.bukkit.plugin.Plugin
 import java.util.UUID
@@ -30,9 +29,7 @@ class HubCommand(
     }
 
     suspend fun execute(context: CommandContext<CommandSourceStack>) = context.traceSuspending {
-        val executor = context.source.executor
-        val player = executor as? Player
-        checkNotNull(player) { "Only players can use this command" }
+        val player = context.source.requirePlayer()
 
         val hub = remoteConfig.latest.config.hub
             ?: throw Exception("Hub world not set")
@@ -40,7 +37,7 @@ class HubCommand(
         val worldId = UUID.fromString(hub.worldId)
         val world = server.getWorld(worldId)
         if (world == null) {
-            executor.sendRichMessage("<red>Error: Could not find hub world</red>")
+            player.sendRichMessage("<red>Error: Could not find hub world</red>")
             return@traceSuspending
         }
         val location = Location(world, hub.x, hub.y, hub.z, hub.yaw, hub.pitch)
@@ -50,6 +47,6 @@ class HubCommand(
             destination = location,
             cause = PlayerTeleportEvent.TeleportCause.COMMAND,
         )
-        executor.sendRichMessage("<green>⚡ Teleported to hub</green>")
+        player.sendRichMessage("<green>⚡ Teleported to hub</green>")
     }
 }

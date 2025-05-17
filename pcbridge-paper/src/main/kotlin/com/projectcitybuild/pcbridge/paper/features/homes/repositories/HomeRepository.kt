@@ -109,7 +109,7 @@ class HomeRepository(
         player: Player,
     ): Home {
         val home = homeHttpService.get(player.uniqueId, id)
-        checkNotNull(home) { "Home not found" }
+        checkNotNull(home) { "Home (id: $id) not found" }
 
         val updatedHome = homeHttpService.update(
             id = id,

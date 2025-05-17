@@ -5,6 +5,7 @@ import com.mojang.brigadier.tree.LiteralCommandNode
 import com.projectcitybuild.pcbridge.paper.PermissionNode
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierCommand
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.trace
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotNamespace
@@ -15,7 +16,6 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.Material
-import org.bukkit.entity.Entity
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataType
@@ -39,17 +39,20 @@ class InvisFrameCommand(
     }
 
     private fun giveNormal(context: CommandContext<CommandSourceStack>) = context.trace {
-        give(executor = context.source.executor, glowing = false)
+        give(
+            player = context.source.requirePlayer(),
+            glowing = false,
+        )
     }
 
     private fun giveGlowing(context: CommandContext<CommandSourceStack>) = context.trace {
-        give(executor = context.source.executor, glowing = true)
+        give(
+            player = context.source.requirePlayer(),
+            glowing = true,
+        )
     }
 
-    private fun give(executor: Entity?, glowing: Boolean) {
-        val player = executor as? Player
-        checkNotNull(player) { "Only players can use this command" }
-
+    private fun give(player: Player, glowing: Boolean) {
         val itemStack = if (glowing) {
             ItemStack(Material.GLOW_ITEM_FRAME)
         } else {
