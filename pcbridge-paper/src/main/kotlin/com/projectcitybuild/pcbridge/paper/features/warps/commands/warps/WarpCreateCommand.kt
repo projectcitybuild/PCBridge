@@ -5,23 +5,22 @@ import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.tree.LiteralCommandNode
 import com.projectcitybuild.pcbridge.paper.features.warps.events.WarpCreateEvent
 import com.projectcitybuild.pcbridge.paper.features.warps.repositories.WarpRepository
-import com.projectcitybuild.pcbridge.http.pcb.models.Warp
 import com.projectcitybuild.pcbridge.paper.PermissionNode
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierCommand
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceSuspending
+import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotEventBroadcaster
 import com.projectcitybuild.pcbridge.paper.l10n.l10n
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
-import org.bukkit.Server
 import org.bukkit.plugin.Plugin
 
 class WarpCreateCommand(
     private val plugin: Plugin,
     private val warpRepository: WarpRepository,
-    private val server: Server,
+    private val eventBroadcaster: SpigotEventBroadcaster,
 ) : BrigadierCommand {
     override fun buildLiteral(): LiteralCommandNode<CommandSourceStack> {
         return Commands.literal("create")
@@ -37,20 +36,12 @@ class WarpCreateCommand(
         val player = context.source.requirePlayer()
         val warpName = context.getArgument("name", String::class.java)
 
-        val location = player.location
-        val warp = Warp(
-            id = -1,
+        val warp = warpRepository.create(
             name = warpName,
-            world = location.world.name,
-            x = location.x,
-            y = location.y,
-            z = location.z,
-            yaw = location.yaw,
-            pitch = location.pitch,
+            location = player.location,
         )
-        warpRepository.create(warp)
 
-        server.pluginManager.callEvent(WarpCreateEvent())
+        eventBroadcaster.broadcast(WarpCreateEvent())
 
         player.sendRichMessage(l10n.warpCreated(warp.name))
     }

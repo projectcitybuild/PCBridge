@@ -1,11 +1,10 @@
 package com.projectcitybuild.pcbridge.paper.features.builds.repositories
 
 import com.projectcitybuild.pcbridge.http.pcb.models.Build
-import com.projectcitybuild.pcbridge.http.pcb.models.PaginatedResponse
+import com.projectcitybuild.pcbridge.http.pcb.models.PaginatedList
 import com.projectcitybuild.pcbridge.http.pcb.services.BuildHttpService
 import com.projectcitybuild.pcbridge.paper.core.utils.Trie
 import com.projectcitybuild.pcbridge.paper.features.builds.data.EditableBuildField
-import com.projectcitybuild.pcbridge.paper.features.homes.data.EditableHomeField
 import org.bukkit.Location
 import org.bukkit.entity.Player
 
@@ -56,7 +55,7 @@ class BuildRepository(
         .associateBy({it.name}, {it.id})
         .also { cache = IdMap(it) }
 
-    suspend fun all(page: Int = 1): PaginatedResponse<List<Build>> {
+    suspend fun all(page: Int = 1): PaginatedList<Build> {
         return buildHttpService.all(
             page = page,
             size = 10,

@@ -1,10 +1,9 @@
 package com.projectcitybuild.pcbridge.paper.features.homes.repositories
 
-import com.projectcitybuild.pcbridge.http.pcb.models.Build
 import com.projectcitybuild.pcbridge.http.pcb.models.Home
 import com.projectcitybuild.pcbridge.http.pcb.models.HomeLimit
 import com.projectcitybuild.pcbridge.http.pcb.models.NamedResource
-import com.projectcitybuild.pcbridge.http.pcb.models.PaginatedResponse
+import com.projectcitybuild.pcbridge.http.pcb.models.PaginatedList
 import com.projectcitybuild.pcbridge.http.pcb.services.HomeHttpService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -31,11 +30,12 @@ class HomeRepository(
     suspend fun all(
         playerUUID: UUID,
         page: Int = 1,
-    ): PaginatedResponse<List<Home>> {
+        size: Int,
+    ): PaginatedList<Home> {
         return homeHttpService.all(
             playerUUID = playerUUID,
             page = page,
-            size = 10,
+            size = size,
         )
     }
 
@@ -52,14 +52,13 @@ class HomeRepository(
 
     suspend fun create(
         name: String,
-        world: String,
         location: Location,
         player: Player,
     ): Home {
         val home = homeHttpService.create(
             playerUUID = player.uniqueId,
             name = name,
-            world = world,
+            world = location.world.name,
             x = location.x,
             y = location.y,
             z = location.z,
@@ -72,16 +71,14 @@ class HomeRepository(
                 val namedResource = NamedResource.fromHome(home)
                 // In case names() fetched from remote and already has the fresh data
                 if (!it.contains(namedResource)) {
-                    it.add(NamedResource.fromHome(home))
+                    it.add(namedResource)
                 }
             }
-
         return home
     }
 
     suspend fun move(
         name: String,
-        world: String,
         location: Location,
         player: Player,
     ): Home {
@@ -89,18 +86,17 @@ class HomeRepository(
         val home = nameList.firstOrNull { it.name == name }
         checkNotNull(home) { "Home ($name) not found" }
 
-        val updatedHome = homeHttpService.update(
+        return homeHttpService.update(
             id = home.id,
             playerUUID = player.uniqueId,
             name = name,
-            world = world,
+            world = location.world.name,
             x = location.x,
             y = location.y,
             z = location.z,
             pitch = location.pitch,
             yaw = location.yaw,
         )
-        return updatedHome
     }
 
     suspend fun rename(

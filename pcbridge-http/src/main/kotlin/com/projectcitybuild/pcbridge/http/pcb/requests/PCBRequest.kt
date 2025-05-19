@@ -4,7 +4,7 @@ import com.projectcitybuild.pcbridge.http.pcb.models.Build
 import com.projectcitybuild.pcbridge.http.pcb.models.NamedResource
 import com.projectcitybuild.pcbridge.http.pcb.models.Home
 import com.projectcitybuild.pcbridge.http.pcb.models.HomeLimit
-import com.projectcitybuild.pcbridge.http.pcb.models.PaginatedResponse
+import com.projectcitybuild.pcbridge.http.pcb.models.PaginatedList
 import com.projectcitybuild.pcbridge.http.pcb.models.PlayerData
 import com.projectcitybuild.pcbridge.http.pcb.models.RemoteConfigVersion
 import com.projectcitybuild.pcbridge.http.pcb.models.Warp
@@ -73,7 +73,15 @@ internal interface PCBRequest {
     suspend fun getConfig(): RemoteConfigVersion
 
     @GET("v2/minecraft/warp")
-    suspend fun getWarps(): List<Warp>
+    suspend fun getWarps(
+        @Query(value = "page") page: Int,
+        @Query(value = "size") size: Int,
+    ): PaginatedList<Warp>
+
+    @GET("v2/minecraft/warp/{id}")
+    suspend fun getWarp(
+        @Path(value = "id") id: Int,
+    ): Warp?
 
     @POST("v2/minecraft/warp")
     @FormUrlEncoded
@@ -105,6 +113,9 @@ internal interface PCBRequest {
         @Path(value = "id") id: Int,
     )
 
+    @GET("v2/minecraft/warp/name")
+    suspend fun getWarpNames(): List<NamedResource>
+
     @GET("v2/minecraft/build/name")
     suspend fun getBuildNames(): List<NamedResource>
 
@@ -112,7 +123,7 @@ internal interface PCBRequest {
     suspend fun getBuilds(
         @Query(value = "page") page: Int,
         @Query(value = "size") size: Int,
-    ): PaginatedResponse<List<Build>>
+    ): PaginatedList<Build>
 
     @GET("v2/minecraft/build/{id}")
     suspend fun getBuild(
@@ -180,7 +191,7 @@ internal interface PCBRequest {
         @Path(value = "player_uuid") playerUUID: String,
         @Query(value = "page") page: Int,
         @Query(value = "size") size: Int,
-    ): PaginatedResponse<List<Home>>
+    ): PaginatedList<Home>
 
     @POST("v2/minecraft/player/{player_uuid}/home")
     @FormUrlEncoded

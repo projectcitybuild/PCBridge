@@ -2,7 +2,6 @@ package com.projectcitybuild.pcbridge.paper.features.warps.commands.warps
 
 import com.mojang.brigadier.arguments.StringArgumentType
 import com.mojang.brigadier.context.CommandContext
-import com.mojang.brigadier.suggestion.SuggestionsBuilder
 import com.mojang.brigadier.tree.LiteralCommandNode
 import com.projectcitybuild.pcbridge.paper.PermissionNode
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierCommand
@@ -11,6 +10,7 @@ import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.req
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.suggestsSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceSuspending
+import com.projectcitybuild.pcbridge.paper.features.warps.commands.WarpNameSuggester
 import com.projectcitybuild.pcbridge.paper.features.warps.repositories.WarpRepository
 import com.projectcitybuild.pcbridge.paper.l10n.l10n
 import io.papermc.paper.command.brigadier.CommandSourceStack
@@ -19,6 +19,7 @@ import org.bukkit.plugin.Plugin
 
 class WarpMoveCommand(
     private val plugin: Plugin,
+    private val warpNameSuggester: WarpNameSuggester,
     private val warpRepository: WarpRepository,
 ) : BrigadierCommand {
     override fun buildLiteral(): LiteralCommandNode<CommandSourceStack> {
@@ -26,37 +27,19 @@ class WarpMoveCommand(
             .requiresPermission(PermissionNode.WARP_MANAGE)
             .then(
                 Commands.argument("name", StringArgumentType.string())
-                    .suggestsSuspending(plugin, ::suggestWarp)
+                    .suggestsSuspending(plugin, warpNameSuggester::suggest)
                     .executesSuspending(plugin, ::execute)
             )
             .build()
-    }
-
-    private suspend fun suggestWarp(
-        context: CommandContext<CommandSourceStack>,
-        suggestions: SuggestionsBuilder,
-    ) {
-        val name = suggestions.remaining.lowercase()
-
-        return warpRepository.all()
-            .filter { it.name.lowercase().startsWith(name) }
-            .map { it.name }
-            .forEach(suggestions::suggest)
     }
 
     private suspend fun execute(context: CommandContext<CommandSourceStack>) = context.traceSuspending {
         val player = context.source.requirePlayer()
         val warpName = context.getArgument("name", String::class.java)
 
-        val location = player.location
         warpRepository.move(
             name = warpName,
-            world = location.world.name,
-            x = location.x,
-            y = location.y,
-            z = location.z,
-            pitch = location.pitch,
-            yaw = location.yaw,
+            location = player.location,
         )
         context.source.sender.sendRichMessage(
             l10n.warpMoved(warpName),

@@ -4,6 +4,7 @@ import com.mojang.brigadier.arguments.IntegerArgumentType
 import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.tree.LiteralCommandNode
 import com.projectcitybuild.pcbridge.paper.core.libs.pagination.PageComponentBuilder
+import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.RemoteConfig
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierCommand
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.getOptionalArgument
@@ -19,6 +20,7 @@ import kotlin.math.ceil
 class HomeListCommand(
     private val plugin: Plugin,
     private val homeRepository: HomeRepository,
+    private val remoteConfig: RemoteConfig,
 ): BrigadierCommand {
     override fun buildLiteral(): LiteralCommandNode<CommandSourceStack> {
         return Commands.literal("list")
@@ -34,7 +36,11 @@ class HomeListCommand(
         val player = context.source.requirePlayer()
         val pageNumber = context.getOptionalArgument("page", Int::class.java) ?: 1
 
-        val homes = homeRepository.all(playerUUID = player.uniqueId, page = pageNumber)
+        val homes = homeRepository.all(
+            playerUUID = player.uniqueId,
+            page = pageNumber,
+            size = remoteConfig.latest.config.warps.itemsPerPage, // TODO: make separate entry?
+        )
 
         if (homes.data.isEmpty()) {
             player.sendRichMessage(
@@ -45,9 +51,7 @@ class HomeListCommand(
         }
         val message = PageComponentBuilder().build(
             title = "Your Homes",
-            items = homes.data,
-            pageNumber = homes.currentPage,
-            totalPages = ceil(homes.total.toDouble() / homes.perPage.toDouble()).toInt(),
+            paginated = homes,
             pageCommand = { index -> "/homes list $index" },
             itemClickCommand = { "/home ${it.name}" },
             itemHover = { "Teleport to ${it.name}" },

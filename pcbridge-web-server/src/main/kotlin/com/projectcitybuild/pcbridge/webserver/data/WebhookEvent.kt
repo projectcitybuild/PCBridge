@@ -1,6 +1,7 @@
 package com.projectcitybuild.pcbridge.webserver.data
 
 import com.projectcitybuild.pcbridge.http.pcb.models.IPBan
+import com.projectcitybuild.pcbridge.http.pcb.models.NamedResource
 import com.projectcitybuild.pcbridge.http.pcb.models.PlayerBan
 import com.projectcitybuild.pcbridge.http.pcb.models.RemoteConfigVersion
 import com.projectcitybuild.pcbridge.http.pcb.models.Warp
@@ -21,7 +22,7 @@ data class IPBanRequestedWebhook(
 ): WebhookEvent()
 
 data class SyncWarpsWebhook(
-    val warps: List<Warp>,
+    val warpNames: List<NamedResource>,
 ): WebhookEvent()
 
 data class SyncRemoteConfigWebhook(

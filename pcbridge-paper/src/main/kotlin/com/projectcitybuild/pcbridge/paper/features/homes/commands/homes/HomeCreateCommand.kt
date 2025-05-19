@@ -34,7 +34,6 @@ class HomeCreateCommand(
         val home = homeRepository.create(
             name = name,
             player = player,
-            world = location.world.name,
             location = player.location,
         )
         context.source.sender.sendRichMessage(
