@@ -2,7 +2,7 @@ package com.projectcitybuild.pcbridge.paper.core.libs.discord
 
 import com.projectcitybuild.pcbridge.http.discord.services.DiscordHttpService
 import com.projectcitybuild.pcbridge.http.discord.models.DiscordEmbed
-import com.projectcitybuild.pcbridge.paper.core.libs.errors.SentryReporter
+import com.projectcitybuild.pcbridge.paper.core.libs.errors.ErrorReporter
 import com.projectcitybuild.pcbridge.paper.core.libs.localconfig.LocalConfig
 import com.projectcitybuild.pcbridge.paper.core.libs.logger.log
 import com.projectcitybuild.pcbridge.paper.core.utils.PeriodicRunner
@@ -10,7 +10,7 @@ import com.projectcitybuild.pcbridge.paper.core.utils.PeriodicRunner
 class DiscordSend(
     private val localConfig: LocalConfig,
     private val discordHttpService: DiscordHttpService,
-    private val sentryReporter: SentryReporter,
+    private val errorReporter: ErrorReporter,
     private val periodicRunner: PeriodicRunner,
 ) {
     private val queue = mutableListOf<DiscordEmbed>()
@@ -60,7 +60,7 @@ class DiscordSend(
         } catch (e: Exception) {
             log.error { "Failed to send Discord message: ${e.message}" }
             e.printStackTrace()
-            sentryReporter.report(e)
+            errorReporter.report(e)
         }
     }
 }

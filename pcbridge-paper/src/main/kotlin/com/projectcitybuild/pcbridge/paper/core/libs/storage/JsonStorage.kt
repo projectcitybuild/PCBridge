@@ -1,9 +1,8 @@
-package com.projectcitybuild.pcbridge.paper.core.libs.localconfig
+package com.projectcitybuild.pcbridge.paper.core.libs.storage
 
 import com.google.gson.FieldNamingPolicy
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
-import com.projectcitybuild.pcbridge.paper.core.libs.errors.SentryReporter
 import com.projectcitybuild.pcbridge.paper.core.libs.logger.log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -13,22 +12,22 @@ import java.lang.Exception
 
 class JsonStorage<T>(
     private val typeToken: TypeToken<T>,
-) {
+): Storage<T> {
     private val gson =
         GsonBuilder()
             .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
             .disableHtmlEscaping()
             .create()
 
-    suspend fun read(file: File): T? = withContext(Dispatchers.IO) {
+    override suspend fun read(file: File): T? = withContext(Dispatchers.IO) {
         readSync(file)
     }
 
-    suspend fun write(file: File, data: T) = withContext(Dispatchers.IO) {
+    override suspend fun write(file: File, data: T) = withContext(Dispatchers.IO) {
         writeSync(file, data)
     }
 
-    fun readSync(file: File): T? {
+    override fun readSync(file: File): T? {
         return try {
             if (!file.exists()) return null
 
@@ -45,7 +44,7 @@ class JsonStorage<T>(
         }
     }
 
-    fun writeSync(file: File, data: T) {
+    override fun writeSync(file: File, data: T) {
         return try {
             file.parentFile.mkdirs()
             file.createNewFile()

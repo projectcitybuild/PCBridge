@@ -1,9 +1,8 @@
 package com.projectcitybuild.pcbridge.paper.features.spawns.repositories
 
-import com.projectcitybuild.pcbridge.paper.core.libs.localconfig.JsonStorage
+import com.projectcitybuild.pcbridge.paper.core.libs.storage.Storage
 import com.projectcitybuild.pcbridge.paper.features.spawns.data.SerializableSpawn
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
 import org.bukkit.Location
 import org.bukkit.Server
 import org.bukkit.World
@@ -12,7 +11,7 @@ import java.util.UUID
 
 class SpawnRepository(
     private val server: Server,
-    private val storage: JsonStorage<SerializableSpawn>,
+    private val storage: Storage<SerializableSpawn>,
 ) {
     private val cache: MutableMap<UUID, Location> = mutableMapOf()
 

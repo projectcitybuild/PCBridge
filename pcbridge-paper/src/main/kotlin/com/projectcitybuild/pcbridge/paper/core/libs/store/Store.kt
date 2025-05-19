@@ -2,8 +2,8 @@ package com.projectcitybuild.pcbridge.paper.core.libs.store
 
 import com.projectcitybuild.pcbridge.paper.architecture.state.data.PersistedServerState
 import com.projectcitybuild.pcbridge.paper.architecture.state.data.ServerState
-import com.projectcitybuild.pcbridge.paper.core.libs.localconfig.JsonStorage
 import com.projectcitybuild.pcbridge.paper.core.libs.logger.log
+import com.projectcitybuild.pcbridge.paper.core.libs.storage.Storage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -15,7 +15,7 @@ private val mutex = Mutex()
 // TODO: splice the store so that each feature can maintain its own state slice
 class Store(
     private val file: File,
-    private val jsonStorage: JsonStorage<PersistedServerState>,
+    private val storage: Storage<PersistedServerState>,
 ) {
     val state: ServerState
         get() = _state
@@ -28,7 +28,7 @@ class Store(
     suspend fun hydrate() {
         log.info { "Hydrating Store state from storage" }
 
-        val deserialized = jsonStorage.read(file)
+        val deserialized = storage.read(file)
         if (deserialized != null) {
             mutate { deserialized.toServerState() }
         } else {
@@ -42,7 +42,7 @@ class Store(
     fun persist() {
         log.info { "Persisting Store state to storage" }
 
-        jsonStorage.writeSync(
+        storage.writeSync(
             file = file,
             data = PersistedServerState.fromServerState(_state)
         )
