@@ -1,6 +1,6 @@
 package com.projectcitybuild.pcbridge.paper.core.support.spigot
 
-import com.projectcitybuild.pcbridge.paper.core.libs.errors.SentryReporter
+import com.projectcitybuild.pcbridge.paper.core.libs.errors.ErrorReporter
 import com.projectcitybuild.pcbridge.paper.core.libs.logger.log
 import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.PluginManager
@@ -8,7 +8,7 @@ import org.bukkit.plugin.PluginManager
 abstract class SpigotIntegration(
     private val pluginName: String,
     private val pluginManager: PluginManager,
-    private val sentry: SentryReporter,
+    private val errorReporter: ErrorReporter,
 ) {
     protected abstract suspend fun onEnable(loadedPlugin: Plugin)
 
@@ -24,7 +24,7 @@ abstract class SpigotIntegration(
             onEnable(integratedPlugin)
         }.onFailure {
             log.error { "Failed to enable $pluginName integration: ${it.localizedMessage}" }
-            sentry.report(it)
+            errorReporter.report(it)
         }
 
     suspend fun disable() = onDisable()

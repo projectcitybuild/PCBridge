@@ -5,7 +5,7 @@ import com.github.shynixn.mccoroutine.bukkit.registerSuspendingEvents
 import com.projectcitybuild.pcbridge.paper.core.libs.store.Store
 import com.projectcitybuild.pcbridge.paper.architecture.state.events.PlayerStateUpdatedEvent
 import com.projectcitybuild.pcbridge.paper.architecture.tablist.TabRenderer
-import com.projectcitybuild.pcbridge.paper.core.libs.errors.SentryReporter
+import com.projectcitybuild.pcbridge.paper.core.libs.errors.ErrorReporter
 import com.projectcitybuild.pcbridge.paper.core.libs.logger.log
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotEventBroadcaster
 import com.projectcitybuild.pcbridge.paper.core.libs.teleportation.events.PlayerPreTeleportEvent
@@ -25,11 +25,11 @@ class EssentialsIntegration(
     private val store: Store,
     private val eventBroadcaster: SpigotEventBroadcaster,
     private val tabRenderer: TabRenderer,
-    sentry: SentryReporter,
+    errorReporter: ErrorReporter,
 ) : Listener, SpigotIntegration(
         pluginName = "Essentials",
         pluginManager = plugin.server.pluginManager,
-        sentry = sentry,
+        errorReporter = errorReporter,
     ) {
     private var essentials: Essentials? = null
 

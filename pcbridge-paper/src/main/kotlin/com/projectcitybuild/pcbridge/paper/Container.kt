@@ -29,8 +29,8 @@ import com.projectcitybuild.pcbridge.paper.core.libs.cooldowns.Cooldown
 import com.projectcitybuild.pcbridge.paper.core.libs.datetime.services.DateTimeFormatter
 import com.projectcitybuild.pcbridge.paper.core.libs.datetime.services.LocalizedTime
 import com.projectcitybuild.pcbridge.paper.core.libs.discord.DiscordSend
-import com.projectcitybuild.pcbridge.paper.core.libs.errors.SentryReporter
-import com.projectcitybuild.pcbridge.paper.core.libs.localconfig.JsonStorage
+import com.projectcitybuild.pcbridge.paper.core.libs.errors.ErrorReporter
+import com.projectcitybuild.pcbridge.paper.core.libs.storage.JsonStorage
 import com.projectcitybuild.pcbridge.paper.core.libs.localconfig.LocalConfig
 import com.projectcitybuild.pcbridge.paper.core.libs.localconfig.LocalConfigKeyValues
 import com.projectcitybuild.pcbridge.paper.core.libs.pcbmanage.ManageUrlGenerator
@@ -158,22 +158,16 @@ private fun Module.core() {
             file = get<JavaPlugin>()
                 .dataFolder
                 .resolve("config.json"),
-            jsonStorage = JsonStorage(
+            storage = JsonStorage(
                 typeToken = object : TypeToken<LocalConfigKeyValues>() {},
             ),
         )
     }
 
     single {
-        SentryReporter(
+        ErrorReporter(
             localConfig = get(),
-        ).apply {
-            val localConfigProvider = get<LocalConfig>()
-            val config = localConfigProvider.get()
-            if (config.errorReporting.isSentryEnabled) {
-                start()
-            }
-        }
+        )
     } onClose {
         it?.close()
     }
@@ -207,7 +201,7 @@ private fun Module.core() {
             file = get<JavaPlugin>()
                 .dataFolder
                 .resolve("cache/server_state.json"),
-            jsonStorage = JsonStorage(
+            storage = JsonStorage(
                 typeToken = object : TypeToken<PersistedServerState>() {},
             ),
         )
@@ -220,7 +214,7 @@ private fun Module.core() {
             file = get<JavaPlugin>()
                 .dataFolder
                 .resolve("cache/remote_config.json"),
-            jsonStorage = JsonStorage(
+            storage = JsonStorage(
                 typeToken = object : TypeToken<RemoteConfigVersion>() {},
             ),
             errorReporter = get(),
@@ -231,7 +225,7 @@ private fun Module.core() {
         DiscordSend(
             localConfig = get(),
             discordHttpService = get<DiscordHttp>().discord,
-            sentryReporter = get(),
+            errorReporter = get(),
             periodicRunner = PeriodicRunner(processInterval = 10.seconds)
         )
     }
@@ -321,7 +315,7 @@ private fun Module.integrations() {
         EssentialsIntegration(
             plugin = get(),
             server = get(),
-            sentry = get(),
+            errorReporter = get(),
             store = get(),
             eventBroadcaster = get(),
             tabRenderer = get(),
@@ -346,7 +340,7 @@ private fun Module.architecture() {
 
     factory {
         CoroutineExceptionListener(
-            sentryReporter = get(),
+            errorReporter = get(),
         )
     }
 
@@ -358,7 +352,7 @@ private fun Module.architecture() {
         AuthorizeConnectionListener(
             middlewareChain = get(),
             playerDataProvider = get(),
-            sentry = get(),
+            errorReporter = get(),
             eventBroadcaster = get(),
         )
     }

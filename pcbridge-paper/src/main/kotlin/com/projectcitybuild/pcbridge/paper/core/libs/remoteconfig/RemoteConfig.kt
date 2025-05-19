@@ -5,8 +5,8 @@ import com.projectcitybuild.pcbridge.paper.features.config.events.RemoteConfigUp
 import com.projectcitybuild.pcbridge.http.pcb.models.RemoteConfigKeyValues
 import com.projectcitybuild.pcbridge.http.pcb.models.RemoteConfigVersion
 import com.projectcitybuild.pcbridge.http.pcb.services.ConfigHttpService
-import com.projectcitybuild.pcbridge.paper.core.libs.errors.SentryReporter
-import com.projectcitybuild.pcbridge.paper.core.libs.localconfig.JsonStorage
+import com.projectcitybuild.pcbridge.paper.core.libs.errors.ErrorReporter
+import com.projectcitybuild.pcbridge.paper.core.libs.storage.Storage
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotEventBroadcaster
 import java.io.File
 
@@ -14,8 +14,8 @@ class RemoteConfig(
     private val configHttpService: ConfigHttpService,
     private val eventBroadcaster: SpigotEventBroadcaster,
     private val file: File,
-    private val jsonStorage: JsonStorage<RemoteConfigVersion>,
-    private val errorReporter: SentryReporter,
+    private val storage: Storage<RemoteConfigVersion>,
+    private val errorReporter: ErrorReporter,
 ) {
     private var cached: RemoteConfigVersion? = null
 
@@ -60,7 +60,7 @@ class RemoteConfig(
             .getOrNull()
 
     private suspend fun fetchFromCache(): RemoteConfigVersion?
-        = jsonStorage.read(file).also {
+        = storage.read(file).also {
             if (it == null) {
                 log.warn { "No cached remote config. Falling back to default config..." }
             }
@@ -68,7 +68,7 @@ class RemoteConfig(
 
     private suspend fun persistToCache(config: RemoteConfigVersion)
         = runCatching {
-            jsonStorage.write(file, config)
+            storage.write(file, config)
         }.onFailure { e ->
             log.error { "Failed to persist remote config" }
             e.printStackTrace()

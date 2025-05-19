@@ -1,7 +1,7 @@
 package com.projectcitybuild.pcbridge.paper.features.spawns
 
 import com.google.gson.reflect.TypeToken
-import com.projectcitybuild.pcbridge.paper.core.libs.localconfig.JsonStorage
+import com.projectcitybuild.pcbridge.paper.core.libs.storage.JsonStorage
 import com.projectcitybuild.pcbridge.paper.features.spawns.commands.HubCommand
 import com.projectcitybuild.pcbridge.paper.features.spawns.commands.SetSpawnCommand
 import com.projectcitybuild.pcbridge.paper.features.spawns.commands.SpawnCommand

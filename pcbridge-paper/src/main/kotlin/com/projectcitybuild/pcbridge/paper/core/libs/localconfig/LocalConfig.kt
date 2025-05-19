@@ -1,25 +1,16 @@
 package com.projectcitybuild.pcbridge.paper.core.libs.localconfig
 
+import com.projectcitybuild.pcbridge.paper.core.libs.storage.Storage
 import java.io.File
 
 class LocalConfig(
-    private val file: File,
-    private val jsonStorage: JsonStorage<LocalConfigKeyValues>,
+    file: File,
+    storage: Storage<LocalConfigKeyValues>,
 ) {
-    private var cache: LocalConfigKeyValues? = null
+    // Not so nice, but we need the local config immediately without
+    // a suspending function, due to the tricky dependency tree
+    private val cached: LocalConfigKeyValues = storage.readSync(file)
+        ?: LocalConfigKeyValues.default()
 
-    // TODO: this should really be suspending
-    fun get(): LocalConfigKeyValues {
-        val cache = cache
-        if (cache != null) {
-            return cache
-        }
-        return (jsonStorage.readSync(file) ?: LocalConfigKeyValues.default())
-            .also { this.cache = it }
-    }
-
-    fun flush() {
-        cache = null
-        get()
-    }
+    fun get(): LocalConfigKeyValues = cached
 }
