@@ -340,7 +340,7 @@ private fun Module.architecture() {
 
     factory {
         CoroutineExceptionListener(
-            sentryReporter = get(),
+            errorReporter = get(),
         )
     }
 
