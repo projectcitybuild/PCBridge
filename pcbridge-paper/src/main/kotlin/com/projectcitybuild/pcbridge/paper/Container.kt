@@ -4,6 +4,7 @@ import com.github.shynixn.mccoroutine.bukkit.minecraftDispatcher
 import com.google.gson.reflect.TypeToken
 import com.projectcitybuild.pcbridge.http.discord.DiscordHttp
 import com.projectcitybuild.pcbridge.http.pcb.PCBHttp
+import com.projectcitybuild.pcbridge.http.pcb.models.RemoteConfigVersion
 import com.projectcitybuild.pcbridge.paper.architecture.chat.decorators.ChatDecoratorChain
 import com.projectcitybuild.pcbridge.paper.architecture.chat.listeners.AsyncChatListener
 import com.projectcitybuild.pcbridge.paper.architecture.connection.listeners.AuthorizeConnectionListener
@@ -216,6 +217,13 @@ private fun Module.core() {
         RemoteConfig(
             configHttpService = get<PCBHttp>().config,
             eventBroadcaster = get(),
+            file = get<JavaPlugin>()
+                .dataFolder
+                .resolve("cache/remote_config.json"),
+            jsonStorage = JsonStorage(
+                typeToken = object : TypeToken<RemoteConfigVersion>() {},
+            ),
+            errorReporter = get(),
         )
     }
 

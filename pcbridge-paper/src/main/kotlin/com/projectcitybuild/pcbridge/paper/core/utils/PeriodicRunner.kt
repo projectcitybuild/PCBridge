@@ -25,7 +25,7 @@ class PeriodicRunner(
         this.action = action
         this.jobId = uuid
 
-        log.info { "Starting job queue (id: $uuid)" }
+        log.debug { "Starting job queue (id: $uuid)" }
 
         job?.cancel()
         job = scope.launch {
@@ -34,7 +34,7 @@ class PeriodicRunner(
     }
 
     fun stop() {
-        log.info { "Stopping job queue (id: $jobId)" }
+        log.debug { "Stopping job queue (id: $jobId)" }
 
         job?.cancel()
         job?.let {
@@ -59,6 +59,6 @@ class PeriodicRunner(
             }
             kotlinx.coroutines.delay(processInterval)
         }
-        log.info { "Job $jobId has been cancelled or completed." }
+        log.debug { "Job $jobId has been cancelled or completed." }
     }
 }
