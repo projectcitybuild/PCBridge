@@ -3,6 +3,7 @@ package com.projectcitybuild.pcbridge.paper.core.libs.localconfig
 import com.google.gson.FieldNamingPolicy
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
+import com.projectcitybuild.pcbridge.paper.core.libs.errors.SentryReporter
 import com.projectcitybuild.pcbridge.paper.core.libs.logger.log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -38,6 +39,7 @@ class JsonStorage<T>(
             file.inputStream().bufferedReader().forEachLine { jsonString += it }
             gson.fromJson(jsonString, typeToken.type)
         } catch (e: Exception) {
+            // TODO: throw errors instead of handling them here
             log.error(e) { "Failed to deserialize from json" }
             null
         }
@@ -52,6 +54,7 @@ class JsonStorage<T>(
                 gson.toJson(data, typeToken.type, writer)
             }
         } catch (e: Exception) {
+            // TODO: throw errors instead of handling them here
             log.error(e) { "Failed to serialize to json" }
         }
     }
