@@ -27,6 +27,8 @@ class WarpRepository(
         )
     }
 
+    suspend fun all(): List<Warp> = warpHttpService.all()
+
     suspend fun get(name: String): Warp? {
         val nameList = names()
         val match = nameList.firstOrNull { it.name == name }

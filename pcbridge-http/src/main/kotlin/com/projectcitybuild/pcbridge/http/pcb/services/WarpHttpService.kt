@@ -1,12 +1,10 @@
 package com.projectcitybuild.pcbridge.http.pcb.services
 
-import com.projectcitybuild.pcbridge.http.pcb.models.Warp
 import com.projectcitybuild.pcbridge.http.shared.parsing.ResponseParser
 import com.projectcitybuild.pcbridge.http.pcb.requests.pcb
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.Retrofit
-import java.util.UUID
 
 class WarpHttpService(
     private val retrofit: Retrofit,
@@ -15,6 +13,12 @@ class WarpHttpService(
     suspend fun all(page: Int, size: Int) = withContext(Dispatchers.IO) {
         responseParser.parse {
             retrofit.pcb().getWarps(page, size)
+        }
+    }
+
+    suspend fun all() = withContext(Dispatchers.IO) {
+        responseParser.parse {
+            retrofit.pcb().getAllWarps()
         }
     }
 

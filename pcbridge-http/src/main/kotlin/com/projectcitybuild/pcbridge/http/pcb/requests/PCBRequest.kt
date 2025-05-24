@@ -78,6 +78,9 @@ internal interface PCBRequest {
         @Query(value = "size") size: Int,
     ): PaginatedList<Warp>
 
+    @GET("v2/minecraft/warp/all")
+    suspend fun getAllWarps(): List<Warp>
+
     @GET("v2/minecraft/warp/{id}")
     suspend fun getWarp(
         @Path(value = "id") id: Int,
