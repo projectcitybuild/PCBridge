@@ -2,6 +2,7 @@ package com.projectcitybuild.pcbridge.paper.features.builds
 
 import com.projectcitybuild.pcbridge.http.pcb.PCBHttp
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.BuildCommand
+import com.projectcitybuild.pcbridge.paper.features.builds.commands.BuildNameSuggester
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.BuildsCommand
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildCreateCommand
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildDeleteCommand
@@ -28,22 +29,27 @@ val buildsModule = module {
             ),
             buildMoveCommand = BuildMoveCommand(
                 plugin = get<JavaPlugin>(),
+                buildNameSuggester = get(),
                 buildRepository = get(),
             ),
             buildVoteCommand = BuildVoteCommand(
                 plugin = get<JavaPlugin>(),
+                buildNameSuggester = get(),
                 buildRepository = get(),
             ),
             buildUnvoteCommand = BuildUnvoteCommand(
                 plugin = get<JavaPlugin>(),
+                buildNameSuggester = get(),
                 buildRepository = get(),
             ),
             buildDeleteCommand = BuildDeleteCommand(
                 plugin = get<JavaPlugin>(),
+                buildNameSuggester = get(),
                 buildRepository = get(),
             ),
             buildEditCommand = BuildEditCommand(
                 plugin = get<JavaPlugin>(),
+                buildNameSuggester = get(),
                 buildRepository = get(),
             ),
             buildSetCommand = BuildSetCommand(
@@ -56,6 +62,7 @@ val buildsModule = module {
     factory {
         BuildCommand(
             plugin = get<JavaPlugin>(),
+            buildNameSuggester = get(),
             buildRepository = get(),
             server = get(),
             playerTeleporter = get(),
@@ -65,6 +72,12 @@ val buildsModule = module {
     single {
         BuildRepository(
             buildHttpService = get<PCBHttp>().builds
+        )
+    }
+
+    factory {
+        BuildNameSuggester(
+            buildRepository = get(),
         )
     }
 }
