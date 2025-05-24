@@ -2,6 +2,7 @@ package com.projectcitybuild.pcbridge.paper.features.homes
 
 import com.projectcitybuild.pcbridge.http.pcb.PCBHttp
 import com.projectcitybuild.pcbridge.paper.features.homes.commands.HomeCommand
+import com.projectcitybuild.pcbridge.paper.features.homes.commands.HomeNameSuggester
 import com.projectcitybuild.pcbridge.paper.features.homes.commands.HomesCommand
 import com.projectcitybuild.pcbridge.paper.features.homes.commands.homes.HomeCreateCommand
 import com.projectcitybuild.pcbridge.paper.features.homes.commands.homes.HomeDeleteCommand
@@ -21,10 +22,17 @@ val homesModule = module {
     }
 
     factory {
+        HomeNameSuggester(
+            homeRepository = get(),
+        )
+    }
+
+    factory {
         HomeCommand(
             plugin = get<JavaPlugin>(),
             server = get(),
             playerTeleporter = get(),
+            homeNameSuggester = get(),
             homeRepository = get(),
         )
     }
@@ -34,6 +42,7 @@ val homesModule = module {
             homeListCommand = HomeListCommand(
                 plugin = get<JavaPlugin>(),
                 homeRepository = get(),
+                remoteConfig = get(),
             ),
             homeCreateCommand = HomeCreateCommand(
                 plugin = get<JavaPlugin>(),
@@ -41,10 +50,12 @@ val homesModule = module {
             ),
             homeMoveCommand = HomeMoveCommand(
                 plugin = get<JavaPlugin>(),
+                homeNameSuggester = get(),
                 homeRepository = get(),
             ),
             homeDeleteCommand = HomeDeleteCommand(
                 plugin = get<JavaPlugin>(),
+                homeNameSuggester = get(),
                 homeRepository = get(),
             ),
             homeLimitCommand = HomeLimitCommand(
@@ -53,6 +64,7 @@ val homesModule = module {
             ),
             homeRenameCommand = HomeRenameCommand(
                 plugin = get<JavaPlugin>(),
+                homeNameSuggester = get(),
                 homeRepository = get(),
             ),
         )

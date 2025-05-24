@@ -2,7 +2,6 @@ package com.projectcitybuild.pcbridge.paper.features.warps.commands
 
 import com.mojang.brigadier.arguments.StringArgumentType
 import com.mojang.brigadier.context.CommandContext
-import com.mojang.brigadier.suggestion.SuggestionsBuilder
 import com.mojang.brigadier.tree.LiteralCommandNode
 import com.projectcitybuild.pcbridge.paper.features.warps.repositories.WarpRepository
 import com.projectcitybuild.pcbridge.http.pcb.models.Warp
@@ -25,6 +24,7 @@ import org.bukkit.plugin.Plugin
 
 class WarpCommand(
     private val plugin: Plugin,
+    private val warpNameSuggester: WarpNameSuggester,
     private val warpRepository: WarpRepository,
     private val server: Server,
     private val playerTeleporter: PlayerTeleporter,
@@ -36,22 +36,10 @@ class WarpCommand(
             .requiresPermission(PermissionNode.WARP_TELEPORT)
             .then(
                 Commands.argument("name", StringArgumentType.string())
-                    .suggestsSuspending(plugin, ::suggestWarp)
+                    .suggestsSuspending(plugin, warpNameSuggester::suggest)
                     .executesSuspending(plugin, ::execute)
             )
             .build()
-    }
-
-    private suspend fun suggestWarp(
-        context: CommandContext<CommandSourceStack>,
-        suggestions: SuggestionsBuilder,
-    ) {
-        val name = suggestions.remaining.lowercase()
-
-        return warpRepository.all()
-            .filter { it.name.lowercase().startsWith(name) }
-            .map { it.name }
-            .forEach(suggestions::suggest)
     }
 
     private suspend fun execute(context: CommandContext<CommandSourceStack>) = context.traceSuspending {

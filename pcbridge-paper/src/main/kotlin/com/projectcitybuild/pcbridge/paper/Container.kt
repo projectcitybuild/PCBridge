@@ -308,6 +308,7 @@ private fun Module.integrations() {
             remoteConfig = get(),
             spawnRepository = get(),
             warpRepository = get(),
+            errorReporter = get(),
         )
     }
 

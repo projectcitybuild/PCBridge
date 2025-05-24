@@ -4,9 +4,9 @@ import com.google.gson.annotations.SerializedName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class PaginatedResponse<T>(
+data class PaginatedList<T>(
     @SerializedName("data")
-    val data: T,
+    val data: List<T>,
 
     @SerializedName("current_page")
     val currentPage: Int,

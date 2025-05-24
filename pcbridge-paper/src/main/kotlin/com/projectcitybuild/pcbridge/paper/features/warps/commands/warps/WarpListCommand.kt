@@ -3,9 +3,7 @@ package com.projectcitybuild.pcbridge.paper.features.warps.commands.warps
 import com.mojang.brigadier.arguments.IntegerArgumentType
 import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.tree.LiteralCommandNode
-import com.projectcitybuild.pcbridge.paper.core.libs.pagination.SimplePaginator
 import com.projectcitybuild.pcbridge.paper.features.warps.repositories.WarpRepository
-import com.projectcitybuild.pcbridge.http.pcb.models.Warp
 import com.projectcitybuild.pcbridge.paper.PermissionNode
 import com.projectcitybuild.pcbridge.paper.core.libs.pagination.PageComponentBuilder
 import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.RemoteConfig
@@ -39,21 +37,21 @@ class WarpListCommand(
         val pageNumber = context.getOptionalArgument("page", Int::class.java) ?: 1
         val sender = context.source.sender
 
-        val warps = warpRepository.all()
-        val page = SimplePaginator<Warp>().paginate(
-            items = warps,
-            pageSize = remoteConfig.latest.config.warps.itemsPerPage,
+
+        val warps = warpRepository.all(
             page = pageNumber,
+            size = remoteConfig.latest.config.warps.itemsPerPage,
         )
-        if (page.items.isEmpty()) {
-            sender.sendRichMessage(l10n.noWarpsFound)
+        if (warps.data.isEmpty()) {
+            sender.sendRichMessage(
+                if (pageNumber == 1) l10n.noWarpsFound
+                else l10n.errorPageNotFound
+            )
             return@traceSuspending
         }
         val message = PageComponentBuilder().build(
             title = "Warps",
-            items = page.items,
-            pageNumber = pageNumber,
-            totalPages = page.totalPages,
+            paginated = warps,
             pageCommand = { index -> "/warps list $index" },
             itemClickCommand = { "/warp ${it.name}" },
             itemHover = { "Teleport to ${it.name}" },

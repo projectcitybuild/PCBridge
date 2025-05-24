@@ -10,9 +10,9 @@ class WarpWebhookListener(
     private val warpRepository: WarpRepository,
 ) : Listener {
     @EventHandler
-    suspend fun onWarpsUpdated(event: WebhookReceivedEvent) {
+    fun onWarpsUpdated(event: WebhookReceivedEvent) {
         if (event.webhook !is SyncWarpsWebhook) return
 
-        warpRepository.reload()
+        warpRepository.setNames(event.webhook.warpNames)
     }
 }

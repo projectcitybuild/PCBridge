@@ -1,6 +1,7 @@
 package com.projectcitybuild.pcbridge.paper.integrations.dynmap
 
 import com.github.shynixn.mccoroutine.bukkit.registerSuspendingEvents
+import com.projectcitybuild.pcbridge.paper.core.libs.errors.ErrorReporter
 import com.projectcitybuild.pcbridge.paper.core.libs.logger.log
 import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.RemoteConfig
 import com.projectcitybuild.pcbridge.paper.features.config.events.RemoteConfigUpdatedEvent
@@ -22,6 +23,7 @@ class DynmapIntegration(
     private val spawnRepository: SpawnRepository,
     private val warpRepository: WarpRepository,
     private val remoteConfig: RemoteConfig,
+    private val errorReporter: ErrorReporter,
 ) : Listener, DynmapCommonAPIListener() {
     private var dynmap: DynmapCommonAPI? = null
 
@@ -43,7 +45,7 @@ class DynmapIntegration(
     }
 
     override fun apiEnabled(p0: DynmapCommonAPI?) {
-        log.trace { "apiEnabled called by dynmap" }
+        log.debug { "apiEnabled called by dynmap" }
 
         if (p0 == null) {
             log.error { "Dynmap integration was passed a null API instance. Disabling integration..." }
@@ -54,7 +56,7 @@ class DynmapIntegration(
     }
 
     override fun apiDisabled(api: DynmapCommonAPI?) {
-        log.trace { "apiDisabled called by dynmap" }
+        log.debug { "apiDisabled called by dynmap" }
         disable()
     }
 
@@ -143,23 +145,29 @@ class DynmapIntegration(
             return
         }
 
-        log.debug { "Redrawing \"$setLabel\" markers..." }
+        try {
+            log.debug { "Redrawing \"$setLabel\" markers..." }
 
-        val markerAPI = dynmap.markerAPI
-        val markerSet = markerAPI.getMarkerSet(setId)
-            ?: markerAPI.createMarkerSet(
-                setId,              // Marker set ID
-                setLabel,           // Marker set label (appears in dynmap web UI)
-                null,               // Set of permitted marker icons
-                false,              // Is marker set persistent
-            )
+            val markerAPI = dynmap.markerAPI
+            val markerSet = markerAPI.getMarkerSet(setId)
+                ?: markerAPI.createMarkerSet(
+                    setId,              // Marker set ID
+                    setLabel,           // Marker set label (appears in dynmap web UI)
+                    null,               // Set of permitted marker icons
+                    false,              // Is marker set persistent
+                )
 
-        markerSet.apply {
-            layerPriority = 1
-            hideByDefault = false
+            markerSet.apply {
+                layerPriority = 1
+                hideByDefault = false
 
-            markers.forEach { it.deleteMarker() }
+                markers.forEach { it.deleteMarker() }
+            }
+            block(markerAPI, markerSet)
+        } catch (e: Exception) {
+            log.error { "Failed to rebuild market set $setId ($setLabel)" }
+            e.printStackTrace()
+            errorReporter.report(e)
         }
-        block(markerAPI, markerSet)
     }
 }

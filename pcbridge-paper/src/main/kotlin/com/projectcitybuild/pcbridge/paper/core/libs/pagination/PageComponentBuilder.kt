@@ -1,12 +1,32 @@
 package com.projectcitybuild.pcbridge.paper.core.libs.pagination
 
+import com.projectcitybuild.pcbridge.http.pcb.models.PaginatedList
 import com.projectcitybuild.pcbridge.paper.l10n.l10n
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.minimessage.MiniMessage
+import kotlin.math.ceil
 
 class PageComponentBuilder {
+    fun <T> build(
+        title: String,
+        paginated: PaginatedList<T>,
+        pageCommand: (Int) -> String,
+        itemClickCommand: ((T) -> String)? = null,
+        itemHover: ((T) -> String)? = null,
+        itemDecorator: (T) -> String,
+    ): Component = build(
+        title = title,
+        items = paginated.data,
+        pageNumber = paginated.currentPage,
+        totalPages = ceil(paginated.total.toDouble() / paginated.perPage.toDouble()).toInt(),
+        pageCommand = pageCommand,
+        itemClickCommand = itemClickCommand,
+        itemHover = itemHover,
+        itemDecorator = itemDecorator,
+    )
+
     fun <T> build(
         title: String,
         items: List<T>,
