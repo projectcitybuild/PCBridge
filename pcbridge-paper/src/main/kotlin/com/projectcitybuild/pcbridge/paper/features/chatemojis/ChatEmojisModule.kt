@@ -19,6 +19,8 @@ val chatEmojisModule = module {
     }
 
     single {
-        EmojiRepository()
+        EmojiRepository(
+            remoteConfig = get(),
+        )
     }
 }
