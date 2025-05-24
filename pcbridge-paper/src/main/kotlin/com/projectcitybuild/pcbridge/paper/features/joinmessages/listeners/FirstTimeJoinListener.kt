@@ -18,7 +18,7 @@ class FirstTimeJoinListener(
     private val remoteConfig: RemoteConfig,
 ) : Listener {
     @EventHandler(priority = EventPriority.MONITOR)
-    fun onPlayJoinEvent(event: PlayerJoinEvent) {
+    fun onPlayerJoin(event: PlayerJoinEvent) {
         log.debug { "Checking if first time join" }
 
         val playerState = store.state.players[event.player.uniqueId]
@@ -26,19 +26,15 @@ class FirstTimeJoinListener(
             log.warn { "Failed to find state for player: ${event.player.uniqueId}" }
             return
         }
-        if (playerState.player == null) {
-            log.warn { "No player data found for ${event.player.uniqueId}" }
-            return
-        }
-        if (playerState.player.lastSeenAt != null) {
-            log.debug { "Player last seen ${playerState.player.lastSeenAt}. Not sending first-time join message" }
+        if (playerState.player?.lastSeenAt != null) {
+            log.info { "Player last seen ${playerState.player.lastSeenAt}. Not sending first-time join message" }
             return
         }
 
         log.info { "Sending first-time welcome message for ${event.player.name}" }
 
         if (server.onlinePlayers.isEmpty()) {
-            log.debug { "Skipping. No players online..." }
+            log.info { "Skipping. No players online..." }
             return
         }
 
