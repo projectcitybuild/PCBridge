@@ -2,7 +2,6 @@ package com.projectcitybuild.pcbridge.paper.features.builds.commands
 
 import com.mojang.brigadier.arguments.StringArgumentType
 import com.mojang.brigadier.context.CommandContext
-import com.mojang.brigadier.suggestion.SuggestionsBuilder
 import com.mojang.brigadier.tree.LiteralCommandNode
 import com.projectcitybuild.pcbridge.http.pcb.models.Build
 import com.projectcitybuild.pcbridge.paper.PermissionNode
@@ -28,6 +27,7 @@ import org.bukkit.plugin.Plugin
 
 class BuildCommand(
     private val plugin: Plugin,
+    private val buildNameSuggester: BuildNameSuggester,
     private val buildRepository: BuildRepository,
     private val server: Server,
     private val playerTeleporter: PlayerTeleporter,
@@ -37,21 +37,10 @@ class BuildCommand(
             .requiresPermission(PermissionNode.BUILDS_TELEPORT)
             .then(
                 Commands.argument("name", StringArgumentType.greedyString())
-                    .suggestsSuspending(plugin, ::suggestBuild)
+                    .suggestsSuspending(plugin, buildNameSuggester::suggest)
                     .executesSuspending(plugin, ::execute)
             )
             .build()
-    }
-
-    private suspend fun suggestBuild(
-        context: CommandContext<CommandSourceStack>,
-        suggestions: SuggestionsBuilder,
-    ) {
-        val name = suggestions.remaining.lowercase()
-
-        buildRepository.names()
-            .filter { it.lowercase().startsWith(name) }
-            .forEach(suggestions::suggest)
     }
 
     private suspend fun execute(context: CommandContext<CommandSourceStack>) = context.traceSuspending {

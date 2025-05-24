@@ -2,7 +2,6 @@ package com.projectcitybuild.pcbridge.paper.features.builds.commands.builds
 
 import com.mojang.brigadier.arguments.StringArgumentType
 import com.mojang.brigadier.context.CommandContext
-import com.mojang.brigadier.suggestion.SuggestionsBuilder
 import com.mojang.brigadier.tree.LiteralCommandNode
 import com.projectcitybuild.pcbridge.paper.PermissionNode
 import com.projectcitybuild.pcbridge.paper.features.builds.repositories.BuildRepository
@@ -13,12 +12,14 @@ import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.req
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.suggestsSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.extensions.broadcastRich
+import com.projectcitybuild.pcbridge.paper.features.builds.commands.BuildNameSuggester
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
 import org.bukkit.plugin.Plugin
 
 class BuildVoteCommand(
     private val plugin: Plugin,
+    private val buildNameSuggester: BuildNameSuggester,
     private val buildRepository: BuildRepository,
 ): BrigadierCommand {
     override fun buildLiteral(): LiteralCommandNode<CommandSourceStack> {
@@ -26,20 +27,10 @@ class BuildVoteCommand(
             .requiresPermission(PermissionNode.BUILDS_VOTE)
             .then(
                 Commands.argument("name", StringArgumentType.greedyString())
-                    .suggestsSuspending(plugin, ::suggestBuild)
+                    .suggestsSuspending(plugin, buildNameSuggester::suggest)
                     .executesSuspending(plugin, ::execute)
             )
             .build()
-    }
-
-    private suspend fun suggestBuild(
-        context: CommandContext<CommandSourceStack>,
-        suggestions: SuggestionsBuilder,
-    ) {
-        val name = suggestions.remaining
-
-        buildRepository.names(prefix = name)
-            .forEach(suggestions::suggest)
     }
 
     private suspend fun execute(context: CommandContext<CommandSourceStack>) = context.traceSuspending {
