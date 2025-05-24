@@ -1,8 +1,16 @@
 package com.projectcitybuild.pcbridge.paper.features.chatemojis.repositories
 
-class EmojiRepository {
+import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.RemoteConfig
+
+class EmojiRepository(
+    remoteConfig: RemoteConfig,
+) {
     private var mapping: Map<String, String> = mapOf()
     private var pattern: String = ""
+
+    init {
+        set(remoteConfig.latest.config.emojis)
+    }
 
     val emojiPattern: String
         get() = pattern
