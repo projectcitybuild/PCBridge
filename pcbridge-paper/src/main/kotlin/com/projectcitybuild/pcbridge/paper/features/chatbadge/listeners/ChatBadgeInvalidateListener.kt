@@ -1,5 +1,6 @@
 package com.projectcitybuild.pcbridge.paper.features.chatbadge.listeners
 
+import com.projectcitybuild.pcbridge.paper.architecture.state.events.PlayerStateCreatedEvent
 import com.projectcitybuild.pcbridge.paper.architecture.state.events.PlayerStateUpdatedEvent
 import com.projectcitybuild.pcbridge.paper.core.libs.logger.log
 import com.projectcitybuild.pcbridge.paper.features.chatbadge.repositories.ChatBadgeRepository
@@ -21,6 +22,11 @@ class ChatBadgeInvalidateListener(
         log.info { "Chat config updated. Rebuilding chat badges" }
 
         chatBadgeRepository.invalidateAll()
+    }
+
+    @EventHandler
+    fun onPlayerStateCreated(event: PlayerStateCreatedEvent) {
+        chatBadgeRepository.invalidate(event.playerUUID)
     }
 
     @EventHandler

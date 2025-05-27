@@ -4,19 +4,23 @@ import com.projectcitybuild.pcbridge.paper.architecture.connection.events.Connec
 import com.projectcitybuild.pcbridge.paper.core.libs.datetime.services.LocalizedTime
 import com.projectcitybuild.pcbridge.paper.core.libs.logger.log
 import com.projectcitybuild.pcbridge.paper.architecture.state.data.PlayerState
+import com.projectcitybuild.pcbridge.paper.architecture.state.events.PlayerStateCreatedEvent
 import com.projectcitybuild.pcbridge.paper.core.libs.store.Store
 import com.projectcitybuild.pcbridge.paper.architecture.state.events.PlayerStateUpdatedEvent
 import com.projectcitybuild.pcbridge.paper.architecture.state.events.PlayerStateDestroyedEvent
+import com.projectcitybuild.pcbridge.paper.core.libs.errors.ErrorReporter
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotEventBroadcaster
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
+import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
 
 class PlayerStateListener(
     private val store: Store,
     private val time: LocalizedTime,
     private val eventBroadcaster: SpigotEventBroadcaster,
+    private val errorReporter: ErrorReporter,
 ) : Listener {
     /**
      * Creates a PlayerState for the connecting user
@@ -32,15 +36,29 @@ class PlayerStateListener(
         store.mutate { state ->
             state.copy(players = state.players.apply { put(event.playerUUID, playerState) })
         }
+    }
+
+    /**
+     * Emits that PlayerState exists for the joining player
+     */
+    @EventHandler(ignoreCancelled = true)
+    suspend fun onPlayerJoin(event: PlayerJoinEvent) {
+        // TODO: warn the user if their data was unable to be fetched
+
+        val playerState = store.state.players[event.player.uniqueId]
+        if (playerState == null) {
+            log.error { "Player state was missing on join event" }
+            errorReporter.report(Exception("Player state was missing on join event"))
+            return
+        }
+        // Some state update listeners require an actual Player to exist, and this is
+        // only present during and after the PlayerJoinEvent
         eventBroadcaster.broadcast(
-            PlayerStateUpdatedEvent(
-                prevState = null,
+            PlayerStateCreatedEvent(
                 state = playerState,
-                playerUUID = event.playerUUID,
+                playerUUID = event.player.uniqueId,
             ),
         )
-
-        // TODO: warn the user if their data was unable to be fetched
     }
 
     /**
@@ -54,6 +72,11 @@ class PlayerStateListener(
         log.info { "Destroying player state for $uuid" }
         val prevState = store.state.players[uuid]
 
+        val exists = store.state.players.containsKey(event.player.uniqueId)
+        if (!exists) {
+            log.debug { "Player state did not exist - no clean up needed" }
+            return
+        }
         store.mutate { state ->
             state.copy(players = state.players.apply { remove(uuid) })
         }
