@@ -1,5 +1,6 @@
 package com.projectcitybuild.pcbridge.paper.features.groups.placeholders
 
+import com.projectcitybuild.pcbridge.paper.architecture.state.events.PlayerStateCreatedEvent
 import com.projectcitybuild.pcbridge.paper.architecture.state.events.PlayerStateUpdatedEvent
 import com.projectcitybuild.pcbridge.paper.architecture.tablist.TabRenderer
 import com.projectcitybuild.pcbridge.paper.architecture.tablist.UpdatableTabPlaceholder
@@ -20,6 +21,15 @@ class TabGroupsPlaceholder(
     override suspend fun value(player: Player): Component {
         return chatGroupRepository.getGroupsComponent(player.uniqueId).value?.appendSpace()
             ?: Component.empty()
+    }
+
+    @EventHandler
+    suspend fun onPlayerStateCreated(event: PlayerStateCreatedEvent) {
+        log.debug { "PlayerStateCreatedEvent: updating tab groups for player" }
+
+        server.getPlayer(event.playerUUID)?.let { player ->
+            tabRenderer.updatePlayerName(player)
+        }
     }
 
     @EventHandler

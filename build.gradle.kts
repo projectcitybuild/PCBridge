@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val sharedGroup = "com.projectcitybuild.pcbridge"
-val sharedVersion = "6.7.0"
+val sharedVersion = "6.8.0"
 
 group = sharedGroup
 version = sharedVersion

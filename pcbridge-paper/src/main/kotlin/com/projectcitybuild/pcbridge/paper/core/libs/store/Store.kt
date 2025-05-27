@@ -49,7 +49,7 @@ class Store(
     }
 
     suspend fun mutate(mutation: (ServerState) -> ServerState) =
-        withContext(Dispatchers.Default) {
+        withContext(Dispatchers.IO) {
             log.debug { "[previous state]\n$state" }
 
             mutex.withLock {

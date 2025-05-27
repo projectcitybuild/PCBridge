@@ -7,7 +7,6 @@ import com.projectcitybuild.pcbridge.paper.core.libs.datetime.services.Localized
 import com.projectcitybuild.pcbridge.paper.core.libs.logger.log
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotEventBroadcaster
 import com.projectcitybuild.pcbridge.paper.features.sync.repositories.PlayerRepository
-import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.Server
 import java.util.UUID
 

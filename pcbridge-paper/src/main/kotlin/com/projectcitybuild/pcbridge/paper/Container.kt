@@ -336,6 +336,7 @@ private fun Module.architecture() {
             store = get(),
             time = get(),
             eventBroadcaster = get(),
+            errorReporter = get(),
         )
     }
 

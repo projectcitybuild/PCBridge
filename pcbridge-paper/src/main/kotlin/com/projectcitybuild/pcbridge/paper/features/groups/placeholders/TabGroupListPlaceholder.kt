@@ -1,5 +1,6 @@
 package com.projectcitybuild.pcbridge.paper.features.groups.placeholders
 
+import com.projectcitybuild.pcbridge.paper.architecture.state.events.PlayerStateCreatedEvent
 import com.projectcitybuild.pcbridge.paper.core.libs.store.Store
 import com.projectcitybuild.pcbridge.paper.architecture.state.events.PlayerStateUpdatedEvent
 import com.projectcitybuild.pcbridge.paper.architecture.tablist.TabRenderer
@@ -29,6 +30,15 @@ class TabGroupListPlaceholder(
             else if (roleNames.isEmpty()) "Guest"
             else roleNames.joinToString(separator = ", ")
         )
+    }
+
+    @EventHandler
+    suspend fun onPlayerStateCreated(event: PlayerStateCreatedEvent) {
+        log.debug { "PlayerStateCreatedEvent: updating tab group list for player" }
+
+        server.getPlayer(event.playerUUID)?.let { player ->
+            tabRenderer.updateHeaderAndFooter(player)
+        }
     }
 
     @EventHandler
