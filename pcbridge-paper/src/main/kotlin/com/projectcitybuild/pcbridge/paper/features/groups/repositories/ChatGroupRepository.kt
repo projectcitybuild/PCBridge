@@ -3,6 +3,8 @@ package com.projectcitybuild.pcbridge.paper.features.groups.repositories
 import com.projectcitybuild.pcbridge.paper.core.libs.store.Store
 import com.projectcitybuild.pcbridge.paper.features.groups.ChatGroupFormatter
 import io.github.reactivecircus.cache4k.Cache
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import net.kyori.adventure.text.Component
 import java.util.UUID
 
@@ -18,7 +20,9 @@ class ChatGroupRepository(
             val groups = store.state.players[playerUUID]?.groups
                 ?: emptyList()
 
-            CachedComponent(chatGroupFormatter.format(groups.toSet()))
+            withContext(Dispatchers.IO) {
+                CachedComponent(chatGroupFormatter.format(groups.toSet()))
+            }
         }
     }
 
