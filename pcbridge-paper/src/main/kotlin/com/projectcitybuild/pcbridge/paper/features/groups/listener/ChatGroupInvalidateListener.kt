@@ -11,9 +11,8 @@ class ChatGroupInvalidateListener(
     private val chatGroupRepository: ChatGroupRepository,
 ) : Listener {
     @EventHandler
-    fun onPlayerStateCreated(event: PlayerStateCreatedEvent) {
-        chatGroupRepository.invalidate(event.playerUUID)
-    }
+    fun onPlayerStateCreated(event: PlayerStateCreatedEvent)
+        = chatGroupRepository.invalidate(event.playerUUID)
 
     @EventHandler
     fun onPlayerStateUpdated(event: PlayerStateUpdatedEvent) {

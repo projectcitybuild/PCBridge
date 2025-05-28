@@ -29,6 +29,4 @@ class ChatGroupRepository(
     fun invalidate(playerUUID: UUID) {
         groupCache.invalidate(playerUUID)
     }
-
-    fun invalidateAll() = groupCache.invalidateAll()
 }

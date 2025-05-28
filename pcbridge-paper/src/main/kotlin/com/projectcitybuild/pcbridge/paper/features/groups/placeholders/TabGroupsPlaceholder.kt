@@ -10,6 +10,7 @@ import net.kyori.adventure.text.Component
 import org.bukkit.Server
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
+import java.util.UUID
 
 class TabGroupsPlaceholder(
     private val chatGroupRepository: ChatGroupRepository,
@@ -26,10 +27,7 @@ class TabGroupsPlaceholder(
     @EventHandler
     suspend fun onPlayerStateCreated(event: PlayerStateCreatedEvent) {
         log.debug { "PlayerStateCreatedEvent: updating tab groups for player" }
-
-        server.getPlayer(event.playerUUID)?.let { player ->
-            tabRenderer.updatePlayerName(player)
-        }
+        update(event.playerUUID)
     }
 
     @EventHandler
@@ -37,8 +35,11 @@ class TabGroupsPlaceholder(
         if (event.prevState?.groups == event.state.groups) return
 
         log.debug { "PlayerStateUpdatedEvent: updating tab groups for player" }
+        update(event.playerUUID)
+    }
 
-        server.getPlayer(event.playerUUID)?.let { player ->
+    private suspend fun update(playerUUID: UUID) {
+        server.getPlayer(playerUUID)?.let { player ->
             tabRenderer.updatePlayerName(player)
         }
     }

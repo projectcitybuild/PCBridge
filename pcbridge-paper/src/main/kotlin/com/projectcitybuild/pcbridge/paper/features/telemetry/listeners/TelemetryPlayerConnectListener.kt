@@ -10,10 +10,10 @@ import org.bukkit.event.player.PlayerQuitEvent
 class TelemetryPlayerConnectListener(
     private val telemetryRepository: TelemetryRepository,
 ) : Listener {
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     suspend fun onPlayerJoin(event: PlayerJoinEvent) = seen(event.player)
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     suspend fun onPlayerQuit(event: PlayerQuitEvent) = seen(event.player)
 
     private suspend fun seen(player: Player) {

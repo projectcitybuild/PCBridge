@@ -25,9 +25,8 @@ class ChatBadgeInvalidateListener(
     }
 
     @EventHandler
-    fun onPlayerStateCreated(event: PlayerStateCreatedEvent) {
-        chatBadgeRepository.invalidate(event.playerUUID)
-    }
+    fun onPlayerStateCreated(event: PlayerStateCreatedEvent)
+        = chatBadgeRepository.invalidate(event.playerUUID)
 
     @EventHandler
     fun onPlayerStateUpdated(event: PlayerStateUpdatedEvent) {

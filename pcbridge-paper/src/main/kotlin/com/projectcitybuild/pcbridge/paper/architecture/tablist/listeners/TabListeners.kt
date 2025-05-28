@@ -12,7 +12,7 @@ class TabListeners(
     private val server: Server,
     private val tabRenderer: TabRenderer,
 ): Listener {
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     suspend fun onPlayerJoin(event: PlayerJoinEvent) {
         log.debug { "PlayerJoinEvent: setting tab for joining player" }
 

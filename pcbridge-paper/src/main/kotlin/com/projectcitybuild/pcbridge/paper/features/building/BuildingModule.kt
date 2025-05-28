@@ -3,9 +3,7 @@ package com.projectcitybuild.pcbridge.paper.features.building
 import com.projectcitybuild.pcbridge.paper.features.building.commands.InvisFrameCommand
 import com.projectcitybuild.pcbridge.paper.features.building.commands.ItemNameCommand
 import com.projectcitybuild.pcbridge.paper.features.building.commands.NightVisionCommand
-import com.projectcitybuild.pcbridge.paper.features.building.listeners.FrameItemInsertListener
-import com.projectcitybuild.pcbridge.paper.features.building.listeners.FrameItemRemoveListener
-import com.projectcitybuild.pcbridge.paper.features.building.listeners.FramePlaceListener
+import com.projectcitybuild.pcbridge.paper.features.building.listeners.InvisFrameListener
 import org.bukkit.plugin.java.JavaPlugin
 import org.koin.dsl.module
 
@@ -31,19 +29,7 @@ val buildingModule = module {
     }
 
     factory {
-        FramePlaceListener(
-            spigotNamespace = get(),
-        )
-    }
-
-    factory {
-        FrameItemInsertListener(
-            spigotNamespace = get(),
-        )
-    }
-
-    factory {
-        FrameItemRemoveListener(
+        InvisFrameListener(
             spigotNamespace = get(),
         )
     }

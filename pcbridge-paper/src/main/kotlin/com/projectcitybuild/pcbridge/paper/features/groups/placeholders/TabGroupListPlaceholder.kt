@@ -11,6 +11,7 @@ import net.kyori.adventure.text.Component
 import org.bukkit.Server
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
+import java.util.UUID
 
 class TabGroupListPlaceholder(
     private val rolesFilter: RolesFilter,
@@ -35,10 +36,7 @@ class TabGroupListPlaceholder(
     @EventHandler
     suspend fun onPlayerStateCreated(event: PlayerStateCreatedEvent) {
         log.debug { "PlayerStateCreatedEvent: updating tab group list for player" }
-
-        server.getPlayer(event.playerUUID)?.let { player ->
-            tabRenderer.updateHeaderAndFooter(player)
-        }
+        update(event.playerUUID)
     }
 
     @EventHandler
@@ -46,8 +44,11 @@ class TabGroupListPlaceholder(
         if (event.prevState?.groups == event.state.groups) return
 
         log.debug { "PlayerStateUpdatedEvent: updating tab group list for player" }
+        update(event.playerUUID)
+    }
 
-        server.getPlayer(event.playerUUID)?.let { player ->
+    private suspend fun update(playerUUID: UUID) {
+        server.getPlayer(playerUUID)?.let { player ->
             tabRenderer.updateHeaderAndFooter(player)
         }
     }
