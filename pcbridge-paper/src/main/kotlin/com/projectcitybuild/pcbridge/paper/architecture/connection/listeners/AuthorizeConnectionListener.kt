@@ -19,7 +19,10 @@ class AuthorizeConnectionListener(
     private val eventBroadcaster: SpigotEventBroadcaster,
     private val errorReporter: ErrorReporter,
 ) : Listener {
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(
+        priority = EventPriority.HIGHEST,
+        ignoreCancelled = true,
+    )
     fun handle(event: AsyncPlayerPreLoginEvent) {
         /**
          * In order to call `event.disallow()`, this function must block until player data

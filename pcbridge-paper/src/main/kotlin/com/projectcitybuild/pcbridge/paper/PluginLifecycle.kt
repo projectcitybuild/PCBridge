@@ -31,9 +31,7 @@ import com.projectcitybuild.pcbridge.paper.features.bans.middleware.BanConnectio
 import com.projectcitybuild.pcbridge.paper.features.building.commands.InvisFrameCommand
 import com.projectcitybuild.pcbridge.paper.features.building.commands.ItemNameCommand
 import com.projectcitybuild.pcbridge.paper.features.building.commands.NightVisionCommand
-import com.projectcitybuild.pcbridge.paper.features.building.listeners.FrameItemInsertListener
-import com.projectcitybuild.pcbridge.paper.features.building.listeners.FrameItemRemoveListener
-import com.projectcitybuild.pcbridge.paper.features.building.listeners.FramePlaceListener
+import com.projectcitybuild.pcbridge.paper.features.building.listeners.InvisFrameListener
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.BuildCommand
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.BuildsCommand
 import com.projectcitybuild.pcbridge.paper.features.chatbadge.decorators.ChatBadgeDecorator
@@ -166,9 +164,7 @@ class PluginLifecycle : KoinComponent {
         get<CoroutineExceptionListener>(),
         get<EmojiConfigListener>(),
         get<FirstTimeJoinListener>(),
-        get<FramePlaceListener>(),
-        get<FrameItemInsertListener>(),
-        get<FrameItemRemoveListener>(),
+        get<InvisFrameListener>(),
         get<ItemTextListener>(),
         get<MaintenanceReminderListener>(),
         get<PlayerRespawnListener>(),

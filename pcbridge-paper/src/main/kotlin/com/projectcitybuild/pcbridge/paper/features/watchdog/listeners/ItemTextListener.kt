@@ -26,7 +26,7 @@ class ItemTextListener(
     private val discordSend: DiscordSend,
     private val time: LocalizedTime,
 ) : Listener {
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     fun onSignChange(event: SignChangeEvent) {
         val serializer = PlainTextComponentSerializer.plainText()
         val lines = event.lines().mapNotNull { serializer.serialize(it) }
@@ -49,7 +49,7 @@ class ItemTextListener(
         discordSend.send(embed)
     }
 
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     suspend fun onBookChange(event: PlayerEditBookEvent) {
         val prevMeta = event.previousBookMeta
         val nextMeta = event.newBookMeta
@@ -101,7 +101,7 @@ class ItemTextListener(
     }
 
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     fun onInventoryClick(event: InventoryClickEvent) {
         // Check for a rename when a player and anvil is involved
         val sender = event.whoClicked
@@ -118,7 +118,7 @@ class ItemTextListener(
         )
     }
 
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     fun onItemRenamed(event: ItemRenamedEvent) {
         val displayName = PlainTextComponentSerializer.plainText().serialize(event.displayName)
 

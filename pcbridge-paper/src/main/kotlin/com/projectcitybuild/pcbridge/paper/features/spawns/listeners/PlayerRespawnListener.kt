@@ -8,7 +8,7 @@ import org.bukkit.event.player.PlayerRespawnEvent
 class PlayerRespawnListener(
     private val spawnRepository: SpawnRepository,
 ): Listener {
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     suspend fun onPlayerRespawn(event: PlayerRespawnEvent) {
         if (event.isBedSpawn || event.isAnchorSpawn) return
 

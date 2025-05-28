@@ -16,7 +16,7 @@ class PlayerWorldPlaceholder(
     override suspend fun value(player: Player): Component
         = Component.text(player.location.world.name)
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     suspend fun onPlayerChangedWorld(event: PlayerChangedWorldEvent) {
         log.debug { "PlayerChangedWorldEvent: updating tab for player" }
 

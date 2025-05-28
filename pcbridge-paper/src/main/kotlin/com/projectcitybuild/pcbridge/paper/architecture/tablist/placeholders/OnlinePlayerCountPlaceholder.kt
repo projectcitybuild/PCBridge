@@ -19,7 +19,7 @@ class OnlinePlayerCountPlaceholder(
     override suspend fun value(player: Player): Component
         = Component.text(server.onlinePlayers.size)
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     suspend fun onPlayerJoin(event: PlayerJoinEvent) {
         log.debug { "PlayerJoinEvent: updating all player tabs" }
 
@@ -28,7 +28,7 @@ class OnlinePlayerCountPlaceholder(
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     suspend fun onPlayerQuit(event: PlayerQuitEvent) {
         log.debug { "PlayerQuitEvent: updating all player tabs" }
 
