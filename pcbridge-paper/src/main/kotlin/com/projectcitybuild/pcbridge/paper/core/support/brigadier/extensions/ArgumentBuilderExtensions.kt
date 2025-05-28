@@ -1,6 +1,8 @@
 package com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions
 
+import com.github.shynixn.mccoroutine.bukkit.CoroutineTimings
 import com.github.shynixn.mccoroutine.bukkit.launch
+import com.github.shynixn.mccoroutine.bukkit.minecraftDispatcher
 import com.mojang.brigadier.Command
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import com.mojang.brigadier.builder.RequiredArgumentBuilder
@@ -9,6 +11,7 @@ import com.mojang.brigadier.suggestion.SuggestionsBuilder
 import com.projectcitybuild.pcbridge.paper.PermissionNode
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierCommand
 import io.papermc.paper.command.brigadier.CommandSourceStack
+import kotlinx.coroutines.Dispatchers
 import org.bukkit.plugin.Plugin
 
 /**
@@ -19,7 +22,9 @@ fun <S, T> RequiredArgumentBuilder<S, T>.suggestsSuspending(
     block: suspend (CommandContext<S>, SuggestionsBuilder) -> Unit,
 ): RequiredArgumentBuilder<S, T> {
     return suggests { context, suggestions ->
-        plugin.launch { block(context, suggestions) }
+        plugin.launch(Dispatchers.IO + object : CoroutineTimings() {}) {
+            block(context, suggestions)
+        }
         suggestions.buildFuture()
     }
 }
@@ -32,7 +37,9 @@ fun <S, T> RequiredArgumentBuilder<S, T>.executesSuspending(
     block: suspend (CommandContext<S>) -> Unit,
 ): RequiredArgumentBuilder<S, T> {
     return executes { context ->
-        plugin.launch { block(context) }
+        plugin.launch(plugin.minecraftDispatcher + object : CoroutineTimings() {}) {
+            block(context)
+        }
         Command.SINGLE_SUCCESS
     }
 }
@@ -45,7 +52,9 @@ fun <S> LiteralArgumentBuilder<S>.executesSuspending(
     block: suspend (CommandContext<S>) -> Unit,
 ): LiteralArgumentBuilder<S> {
     return executes { context ->
-        plugin.launch { block(context) }
+        plugin.launch(plugin.minecraftDispatcher + object : CoroutineTimings() {}) {
+            block(context)
+        }
         Command.SINGLE_SUCCESS
     }
 }
