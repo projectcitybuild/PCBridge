@@ -54,4 +54,7 @@ enum class PermissionNode(val node: String) {
 
     // Can warn a player
     WARNINGS_MANAGE("pcbridge.warnings.manage"),
+
+    // Can use workstations anywhere
+    WORKSTATIONS_USE("pcbridge.workstations"),
 }

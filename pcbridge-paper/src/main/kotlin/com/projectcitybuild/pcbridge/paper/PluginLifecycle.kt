@@ -74,6 +74,14 @@ import com.projectcitybuild.pcbridge.paper.features.warps.commands.WarpCommand
 import com.projectcitybuild.pcbridge.paper.features.warps.commands.WarpsCommand
 import com.projectcitybuild.pcbridge.paper.features.warps.listeners.WarpWebhookListener
 import com.projectcitybuild.pcbridge.paper.features.watchdog.listeners.ItemTextListener
+import com.projectcitybuild.pcbridge.paper.features.workstations.commands.AnvilCommand
+import com.projectcitybuild.pcbridge.paper.features.workstations.commands.CartographyTableCommand
+import com.projectcitybuild.pcbridge.paper.features.workstations.commands.EnchantingCommand
+import com.projectcitybuild.pcbridge.paper.features.workstations.commands.WorkbenchCommand
+import com.projectcitybuild.pcbridge.paper.features.workstations.commands.GrindstoneCommand
+import com.projectcitybuild.pcbridge.paper.features.workstations.commands.LoomCommand
+import com.projectcitybuild.pcbridge.paper.features.workstations.commands.SmithingTableCommand
+import com.projectcitybuild.pcbridge.paper.features.workstations.commands.StoneCutterCommand
 import com.projectcitybuild.pcbridge.paper.integrations.dynmap.DynmapIntegration
 import com.projectcitybuild.pcbridge.paper.integrations.essentials.EssentialsIntegration
 import com.projectcitybuild.pcbridge.paper.integrations.luckperms.LuckPermsIntegration
@@ -126,28 +134,36 @@ class PluginLifecycle : KoinComponent {
     )
 
     private fun registerCommands() = plugin.registerCommands(
+        get<AnvilCommand>(),
         get<BanCommand>(),
         get<BuildCommand>(),
         get<BuildsCommand>(),
+        get<CartographyTableCommand>(),
         get<CodeCommand>(),
         get<ConfigCommand>(),
+        get<EnchantingCommand>(),
+        get<GrindstoneCommand>(),
         get<HomeCommand>(),
         get<HomesCommand>(),
         get<HubCommand>(),
         get<InvisFrameCommand>(),
         get<ItemNameCommand>(),
+        get<LoomCommand>(),
         get<MaintenanceCommand>(),
         get<NightVisionCommand>(),
         get<RegisterCommand>(),
         get<RtpCommand>(),
         get<SetSpawnCommand>(),
+        get<SmithingTableCommand>(),
         get<SpawnCommand>(),
         get<StaffChatCommand>(),
+        get<StoneCutterCommand>(),
         get<SyncCommand>(),
         get<SyncDebugCommand>(),
         get<WarpCommand>(),
         get<WarpsCommand>(),
         get<WarnCommand>(),
+        get<WorkbenchCommand>(),
     )
 
     private fun registerListeners() = listenerRegistry.register(

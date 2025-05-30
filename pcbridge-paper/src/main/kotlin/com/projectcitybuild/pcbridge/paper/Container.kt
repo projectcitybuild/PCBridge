@@ -66,6 +66,7 @@ import com.projectcitybuild.pcbridge.paper.features.telemetry.telemetryModule
 import com.projectcitybuild.pcbridge.paper.features.warnings.warningsModule
 import com.projectcitybuild.pcbridge.paper.features.warps.warpsModule
 import com.projectcitybuild.pcbridge.paper.features.watchdog.watchDogModule
+import com.projectcitybuild.pcbridge.paper.features.workstations.workstationsModule
 import com.projectcitybuild.pcbridge.paper.integrations.dynmap.DynmapIntegration
 import com.projectcitybuild.pcbridge.paper.integrations.essentials.EssentialsIntegration
 import com.projectcitybuild.pcbridge.paper.integrations.luckperms.LuckPermsIntegration
@@ -117,6 +118,7 @@ private val featureModules = listOf(
     warningsModule,
     warpsModule,
     watchDogModule,
+    workstationsModule
 )
 
 private fun Module.spigot(plugin: JavaPlugin) {
