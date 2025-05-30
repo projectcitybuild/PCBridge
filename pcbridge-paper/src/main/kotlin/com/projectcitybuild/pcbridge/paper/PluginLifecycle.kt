@@ -62,6 +62,7 @@ import com.projectcitybuild.pcbridge.paper.features.player.commands.FeedCommand
 import com.projectcitybuild.pcbridge.paper.features.player.commands.HealCommand
 import com.projectcitybuild.pcbridge.paper.features.player.commands.IceCommand
 import com.projectcitybuild.pcbridge.paper.features.player.commands.KillCommand
+import com.projectcitybuild.pcbridge.paper.features.player.commands.PurgeCommand
 import com.projectcitybuild.pcbridge.paper.features.randomteleport.commands.RtpCommand
 import com.projectcitybuild.pcbridge.paper.features.register.commands.CodeCommand
 import com.projectcitybuild.pcbridge.paper.features.register.commands.RegisterCommand
@@ -163,6 +164,7 @@ class PluginLifecycle : KoinComponent {
         get<LoomCommand>(),
         get<MaintenanceCommand>(),
         get<NightVisionCommand>(),
+        get<PurgeCommand>(),
         get<RegisterCommand>(),
         get<RtpCommand>(),
         get<SetSpawnCommand>(),

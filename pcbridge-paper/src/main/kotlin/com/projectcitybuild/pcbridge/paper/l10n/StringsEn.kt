@@ -55,6 +55,8 @@ class StringsEn {
     val fedPlayer = { name: String -> "<gray><i>Hunger and exhaustion reset for <white>$name</white></i></gray>" }
     val youWereKilledBy = { killer: String -> "<gray>You were killed by $killer</gray>" }
     val killedPlayer = { name: String -> "<gray><i>Killed <white>$name</white></i></gray>" }
-    val youHaveBeenHealed = "<gray>You have been healed"
+    val youHaveBeenHealed = "<gray>You have been healed</gray>"
     val healedPlayer = { name: String -> "<gray><i>Healed <white>$name</white></i></gray>" }
+    val yourPotionEffectsHaveBeenPurged = "<gray>Your potion effects have been purged</gray>"
+    val purgedPlayer = { name: String -> "<gray><i>Purged all potion effects on <white>$name</white></i></gray>" }
 }
