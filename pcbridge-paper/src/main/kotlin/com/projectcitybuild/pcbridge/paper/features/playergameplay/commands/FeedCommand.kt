@@ -1,4 +1,4 @@
-package com.projectcitybuild.pcbridge.paper.features.player.commands
+package com.projectcitybuild.pcbridge.paper.features.playergameplay.commands
 
 import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.tree.LiteralCommandNode

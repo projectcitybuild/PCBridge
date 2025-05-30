@@ -56,13 +56,15 @@ import com.projectcitybuild.pcbridge.paper.features.maintenance.commands.Mainten
 import com.projectcitybuild.pcbridge.paper.features.maintenance.decorators.MaintenanceMotdDecorator
 import com.projectcitybuild.pcbridge.paper.features.maintenance.listener.MaintenanceReminderListener
 import com.projectcitybuild.pcbridge.paper.features.maintenance.middleware.MaintenanceConnectionMiddleware
-import com.projectcitybuild.pcbridge.paper.features.player.commands.BurnCommand
-import com.projectcitybuild.pcbridge.paper.features.player.commands.ExtinguishCommand
-import com.projectcitybuild.pcbridge.paper.features.player.commands.FeedCommand
-import com.projectcitybuild.pcbridge.paper.features.player.commands.HealCommand
-import com.projectcitybuild.pcbridge.paper.features.player.commands.IceCommand
-import com.projectcitybuild.pcbridge.paper.features.player.commands.KillCommand
-import com.projectcitybuild.pcbridge.paper.features.player.commands.PurgeCommand
+import com.projectcitybuild.pcbridge.paper.features.playergameplay.commands.BurnCommand
+import com.projectcitybuild.pcbridge.paper.features.playergameplay.commands.ExtinguishCommand
+import com.projectcitybuild.pcbridge.paper.features.playergameplay.commands.FeedCommand
+import com.projectcitybuild.pcbridge.paper.features.playergameplay.commands.GameModeCommand
+import com.projectcitybuild.pcbridge.paper.features.playergameplay.commands.HealCommand
+import com.projectcitybuild.pcbridge.paper.features.playergameplay.commands.IceCommand
+import com.projectcitybuild.pcbridge.paper.features.playergameplay.commands.KillCommand
+import com.projectcitybuild.pcbridge.paper.features.playergameplay.commands.PurgeCommand
+import com.projectcitybuild.pcbridge.paper.features.playergameplay.commands.SuicideCommand
 import com.projectcitybuild.pcbridge.paper.features.randomteleport.commands.RtpCommand
 import com.projectcitybuild.pcbridge.paper.features.register.commands.CodeCommand
 import com.projectcitybuild.pcbridge.paper.features.register.commands.RegisterCommand
@@ -152,6 +154,7 @@ class PluginLifecycle : KoinComponent {
         get<EnchantingCommand>(),
         get<ExtinguishCommand>(),
         get<FeedCommand>(),
+        get<GameModeCommand>(),
         get<GrindstoneCommand>(),
         get<HealCommand>(),
         get<HomeCommand>(),
@@ -172,6 +175,7 @@ class PluginLifecycle : KoinComponent {
         get<SpawnCommand>(),
         get<StaffChatCommand>(),
         get<StoneCutterCommand>(),
+        get<SuicideCommand>(),
         get<SyncCommand>(),
         get<SyncDebugCommand>(),
         get<WarpCommand>(),

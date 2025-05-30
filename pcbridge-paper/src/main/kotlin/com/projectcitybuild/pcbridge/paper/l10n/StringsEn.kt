@@ -23,6 +23,7 @@ class StringsEn {
     val errorHubWorldNotFound = "<red>Could not find hub world</red>"
     val errorSecondsMustBeGreaterThanZero = "<red>Seconds must be greater than 0</red>"
     val errorPlayerNotOnFire = { name: String -> "<red>$name is not on fire</red>" }
+    val errorYouHaveNoActivePotionEffects = "<red>You have no active potion effects</red>>"
     val homeCreated = { name: String -> "<green>$name created</green>" }
     val homeDeleted = { name: String -> "<green>$name deleted</green>" }
     val homeMoved = { name: String -> "<green>$name moved to your location</green>" }
@@ -59,4 +60,6 @@ class StringsEn {
     val healedPlayer = { name: String -> "<gray><i>Healed <white>$name</white></i></gray>" }
     val yourPotionEffectsHaveBeenPurged = "<gray>Your potion effects have been purged</gray>"
     val purgedPlayer = { name: String -> "<gray><i>Purged all potion effects on <white>$name</white></i></gray>" }
+    val yourGameModeChangedTo = { mode: String -> "<gray>Your game mode was set to $mode</gray>" }
+    val playerGameModeChanged = { name: String, mode: String -> "<gray><i>Set game mode of <white>$name</white> to <white>$mode</white></i></gray>" }
 }
