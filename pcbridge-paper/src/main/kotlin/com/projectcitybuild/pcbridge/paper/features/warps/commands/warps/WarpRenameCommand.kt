@@ -67,7 +67,7 @@ class WarpRenameCommand(
                                 newName = input,
                             )
                         }
-                        player.sendRichMessage(l10n.homeRenamed(input))
+                        player.sendRichMessage(l10n.warpRenamed(input))
                     }
                     return Prompt.END_OF_CONVERSATION
                 }

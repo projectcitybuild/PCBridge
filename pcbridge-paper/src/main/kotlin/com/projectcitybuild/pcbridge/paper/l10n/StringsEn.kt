@@ -21,6 +21,8 @@ class StringsEn {
     val errorNoCodeSpecified = "<red>You did not specify a code</red><newline><gray>Example Usage: <bold>/code 123456</bold></gray>"
     val errorCodeInvalidOrExpired = "<red>Code is invalid or expired</red>"
     val errorHubWorldNotFound = "<red>Could not find hub world</red>"
+    val errorSecondsMustBeGreaterThanZero = "<red>Seconds must be greater than 0</red>"
+    val errorPlayerNotOnFire = { name: String -> "<red>$name is not on fire</red>" }
     val homeCreated = { name: String -> "<green>$name created</green>" }
     val homeDeleted = { name: String -> "<green>$name deleted</green>" }
     val homeMoved = { name: String -> "<green>$name moved to your location</green>" }
@@ -43,4 +45,16 @@ class StringsEn {
     val teleportedToCoordinate = { x: Int, y: Int, z: Int -> "<gray><i>⚡ Teleported to <b>x=$x, y=$y, z=$z</b></gray></i>" }
     val teleportedToSpawn = "<gray><i>⚡ Teleported to spawn</i></gray>"
     val teleportedToHub = "<gray><i>⚡ Teleported to hub</i></gray>"
+    val youHaveBeenBurned = { seconds: Double -> "<gray>You have been set on fire for $seconds seconds</gray>" }
+    val burnedPlayer = { name: String, seconds: Double, ticks: Int -> "<gray><i>Set <white>$name</white> on fire for <white>${seconds}</white>s ($ticks ticks)</i></gray>" }
+    val youHaveBeenIced = { seconds: Double -> "<gray>You have been iced for $seconds seconds</gray>" }
+    val icedPlayer = { name: String, seconds: Double, ticks: Int -> "<gray><i>Iced <white>$name</white> for <white>${seconds}</white>s ($ticks ticks)</i></gray>" }
+    val youHaveBeenExtinguished = "<gray>You have been extinguished</gray>"
+    val extinguishedPlayer = { name: String -> "<gray><i>Extinguished <white>$name</white></i></gray>" }
+    val yourHungerHasBeenReset = "<gray>Your hunger and exhaustion has been reset</gray>"
+    val fedPlayer = { name: String -> "<gray><i>Hunger and exhaustion reset for <white>$name</white></i></gray>" }
+    val youWereKilledBy = { killer: String -> "<gray>You were killed by $killer</gray>" }
+    val killedPlayer = { name: String -> "<gray><i>Killed <white>$name</white></i></gray>" }
+    val youHaveBeenHealed = "<gray>You have been healed"
+    val healedPlayer = { name: String -> "<gray><i>Healed <white>$name</white></i></gray>" }
 }

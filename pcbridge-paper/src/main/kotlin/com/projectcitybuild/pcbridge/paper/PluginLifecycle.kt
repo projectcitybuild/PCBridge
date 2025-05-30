@@ -56,6 +56,12 @@ import com.projectcitybuild.pcbridge.paper.features.maintenance.commands.Mainten
 import com.projectcitybuild.pcbridge.paper.features.maintenance.decorators.MaintenanceMotdDecorator
 import com.projectcitybuild.pcbridge.paper.features.maintenance.listener.MaintenanceReminderListener
 import com.projectcitybuild.pcbridge.paper.features.maintenance.middleware.MaintenanceConnectionMiddleware
+import com.projectcitybuild.pcbridge.paper.features.player.commands.BurnCommand
+import com.projectcitybuild.pcbridge.paper.features.player.commands.ExtinguishCommand
+import com.projectcitybuild.pcbridge.paper.features.player.commands.FeedCommand
+import com.projectcitybuild.pcbridge.paper.features.player.commands.HealCommand
+import com.projectcitybuild.pcbridge.paper.features.player.commands.IceCommand
+import com.projectcitybuild.pcbridge.paper.features.player.commands.KillCommand
 import com.projectcitybuild.pcbridge.paper.features.randomteleport.commands.RtpCommand
 import com.projectcitybuild.pcbridge.paper.features.register.commands.CodeCommand
 import com.projectcitybuild.pcbridge.paper.features.register.commands.RegisterCommand
@@ -138,16 +144,22 @@ class PluginLifecycle : KoinComponent {
         get<BanCommand>(),
         get<BuildCommand>(),
         get<BuildsCommand>(),
+        get<BurnCommand>(),
         get<CartographyTableCommand>(),
         get<CodeCommand>(),
         get<ConfigCommand>(),
         get<EnchantingCommand>(),
+        get<ExtinguishCommand>(),
+        get<FeedCommand>(),
         get<GrindstoneCommand>(),
+        get<HealCommand>(),
         get<HomeCommand>(),
         get<HomesCommand>(),
         get<HubCommand>(),
+        get<IceCommand>(),
         get<InvisFrameCommand>(),
         get<ItemNameCommand>(),
+        get<KillCommand>(),
         get<LoomCommand>(),
         get<MaintenanceCommand>(),
         get<NightVisionCommand>(),
