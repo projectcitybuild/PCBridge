@@ -26,6 +26,7 @@ import com.projectcitybuild.pcbridge.paper.core.support.spigot.extensions.regist
 import com.projectcitybuild.pcbridge.paper.features.announcements.listeners.AnnouncementConfigListener
 import com.projectcitybuild.pcbridge.paper.features.announcements.listeners.AnnouncementEnableListener
 import com.projectcitybuild.pcbridge.paper.features.bans.commands.BanCommand
+import com.projectcitybuild.pcbridge.paper.features.bans.commands.KickCommand
 import com.projectcitybuild.pcbridge.paper.features.bans.listeners.BanWebhookListener
 import com.projectcitybuild.pcbridge.paper.features.bans.middleware.BanConnectionMiddleware
 import com.projectcitybuild.pcbridge.paper.features.building.commands.InvisFrameCommand
@@ -163,6 +164,7 @@ class PluginLifecycle : KoinComponent {
         get<IceCommand>(),
         get<InvisFrameCommand>(),
         get<ItemNameCommand>(),
+        get<KickCommand>(),
         get<KillCommand>(),
         get<LoomCommand>(),
         get<MaintenanceCommand>(),

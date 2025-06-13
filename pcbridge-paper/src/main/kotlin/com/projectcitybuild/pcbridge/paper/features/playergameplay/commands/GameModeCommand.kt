@@ -4,7 +4,9 @@ import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.tree.LiteralCommandNode
 import com.projectcitybuild.pcbridge.paper.PermissionNode
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierCommand
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.arguments.SingleOnlinePlayerArgument
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.getOptionalArgument
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceSuspending
@@ -13,6 +15,7 @@ import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
 import io.papermc.paper.command.brigadier.argument.ArgumentTypes
 import org.bukkit.GameMode
+import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
 
 class GameModeCommand(
@@ -25,12 +28,20 @@ class GameModeCommand(
                 Commands.argument("mode", ArgumentTypes.gameMode())
                     .executesSuspending(plugin, ::execute)
             )
+            .then(
+                Commands.argument("player", SingleOnlinePlayerArgument(plugin.server))
+                    .then(
+                        Commands.argument("mode", ArgumentTypes.gameMode())
+                            .executesSuspending(plugin, ::execute)
+                    )
+            )
             .build()
 
     private suspend fun execute(context: CommandContext<CommandSourceStack>) = context.traceSuspending {
         val sender = context.source.sender
         val gameMode = context.getArgument("mode", GameMode::class.java)
-        val player = context.source.requirePlayer()
+        val player = context.getOptionalArgument("player", Player::class.java)
+            ?: context.source.requirePlayer()
 
         player.gameMode = gameMode
         player.sendRichMessage(l10n.yourGameModeChangedTo(gameMode.name))

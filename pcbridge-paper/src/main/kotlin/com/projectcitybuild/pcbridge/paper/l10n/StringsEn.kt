@@ -62,4 +62,7 @@ class StringsEn {
     val purgedPlayer = { name: String -> "<gray><i>Purged all potion effects on <white>$name</white></i></gray>" }
     val yourGameModeChangedTo = { mode: String -> "<gray>Your game mode was set to $mode</gray>" }
     val playerGameModeChanged = { name: String, mode: String -> "<gray><i>Set game mode of <white>$name</white> to <white>$mode</white></i></gray>" }
+    val kickedFromServer = "Kicked from server."
+    val playerWasKickedForReason = { name: String, reason: String -> "<i><gray>$name was kicked: $reason</gray></i>" }
+    val playerWasKicked = { name: String -> "<i><gray>$name was kicked</gray></i>" }
 }
