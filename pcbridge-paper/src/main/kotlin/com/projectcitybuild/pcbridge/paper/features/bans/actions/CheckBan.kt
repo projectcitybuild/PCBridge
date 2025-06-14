@@ -1,8 +1,8 @@
 package com.projectcitybuild.pcbridge.paper.features.bans.actions
 
-import com.projectcitybuild.pcbridge.http.pcb.models.PlayerData
 import com.projectcitybuild.pcbridge.http.pcb.models.IPBan
 import com.projectcitybuild.pcbridge.http.pcb.models.PlayerBan
+import com.projectcitybuild.pcbridge.http.pcb.models.PlayerData
 
 class CheckBan {
     sealed class Ban {

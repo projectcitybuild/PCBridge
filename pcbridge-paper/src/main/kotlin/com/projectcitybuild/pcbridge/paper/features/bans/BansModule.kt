@@ -2,6 +2,7 @@ package com.projectcitybuild.pcbridge.paper.features.bans
 
 import com.projectcitybuild.pcbridge.paper.features.bans.actions.CheckBan
 import com.projectcitybuild.pcbridge.paper.features.bans.commands.BanCommand
+import com.projectcitybuild.pcbridge.paper.features.bans.commands.KickCommand
 import com.projectcitybuild.pcbridge.paper.features.bans.listeners.BanWebhookListener
 import com.projectcitybuild.pcbridge.paper.features.bans.middleware.BanConnectionMiddleware
 import org.bukkit.plugin.java.JavaPlugin
@@ -25,6 +26,13 @@ val bansModule = module {
             plugin = get<JavaPlugin>(),
             server = get(),
             manageUrlGenerator = get(),
+        )
+    }
+
+    factory {
+        KickCommand(
+            plugin = get<JavaPlugin>(),
+            server = get(),
         )
     }
 }

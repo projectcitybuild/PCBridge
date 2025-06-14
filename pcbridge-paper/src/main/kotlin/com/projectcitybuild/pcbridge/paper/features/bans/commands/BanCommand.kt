@@ -1,15 +1,14 @@
 package com.projectcitybuild.pcbridge.paper.features.bans.commands
 
-import com.mojang.brigadier.context.CommandContext
-import com.mojang.brigadier.tree.LiteralCommandNode
 import com.projectcitybuild.pcbridge.paper.PermissionNode
 import com.projectcitybuild.pcbridge.paper.core.libs.pcbmanage.ManageUrlGenerator
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierCommand
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.CommandContext
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.CommandNode
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.arguments.OnlinePlayerNameArgument
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceSuspending
-import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
 import org.bukkit.Server
 import org.bukkit.plugin.Plugin
@@ -19,7 +18,7 @@ class BanCommand(
     private val server: Server,
     private val manageUrlGenerator: ManageUrlGenerator,
 ): BrigadierCommand {
-    override fun buildLiteral(): LiteralCommandNode<CommandSourceStack> {
+    override fun buildLiteral(): CommandNode {
         return Commands.literal("ban")
             .requiresPermission(PermissionNode.BANS_MANAGE)
             .then(
@@ -29,7 +28,7 @@ class BanCommand(
             .build()
     }
 
-    private suspend fun execute(context: CommandContext<CommandSourceStack>) = context.traceSuspending {
+    private suspend fun execute(context: CommandContext) = context.traceSuspending {
         val playerName = context.getArgument("player", String::class.java)
 
         val url = manageUrlGenerator.byPlayerUuid(

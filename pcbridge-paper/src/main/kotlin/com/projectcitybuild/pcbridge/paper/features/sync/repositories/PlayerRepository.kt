@@ -6,7 +6,6 @@ import com.projectcitybuild.pcbridge.paper.architecture.PlayerDataProvider
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.utilities.sanitized
 import java.net.InetAddress
 import java.util.UUID
-import kotlin.jvm.Throws
 
 class PlayerRepository(
     private val httpService: PlayerHttpService,
