@@ -3,11 +3,11 @@ package com.projectcitybuild.pcbridge.paper.features.workstations
 import com.projectcitybuild.pcbridge.paper.features.workstations.commands.AnvilCommand
 import com.projectcitybuild.pcbridge.paper.features.workstations.commands.CartographyTableCommand
 import com.projectcitybuild.pcbridge.paper.features.workstations.commands.EnchantingCommand
-import com.projectcitybuild.pcbridge.paper.features.workstations.commands.WorkbenchCommand
 import com.projectcitybuild.pcbridge.paper.features.workstations.commands.GrindstoneCommand
 import com.projectcitybuild.pcbridge.paper.features.workstations.commands.LoomCommand
 import com.projectcitybuild.pcbridge.paper.features.workstations.commands.SmithingTableCommand
 import com.projectcitybuild.pcbridge.paper.features.workstations.commands.StoneCutterCommand
+import com.projectcitybuild.pcbridge.paper.features.workstations.commands.WorkbenchCommand
 import org.bukkit.plugin.java.JavaPlugin
 import org.koin.dsl.module
 

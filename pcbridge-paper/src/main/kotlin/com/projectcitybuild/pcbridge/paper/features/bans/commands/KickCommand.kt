@@ -1,20 +1,16 @@
 package com.projectcitybuild.pcbridge.paper.features.bans.commands
 
-import co.aikar.timings.TimingsManager.url
 import com.mojang.brigadier.arguments.StringArgumentType
-import com.mojang.brigadier.context.CommandContext
-import com.mojang.brigadier.tree.LiteralCommandNode
 import com.projectcitybuild.pcbridge.paper.PermissionNode
-import com.projectcitybuild.pcbridge.paper.core.libs.pcbmanage.ManageUrlGenerator
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierCommand
-import com.projectcitybuild.pcbridge.paper.core.support.brigadier.arguments.OnlinePlayerNameArgument
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.CommandContext
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.CommandNode
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.arguments.SingleOnlinePlayerArgument
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.getOptionalArgument
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceSuspending
 import com.projectcitybuild.pcbridge.paper.l10n.l10n
-import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
 import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.Server
@@ -28,7 +24,7 @@ class KickCommand(
 ): BrigadierCommand {
     private val miniMessage = MiniMessage.miniMessage()
 
-    override fun buildLiteral(): LiteralCommandNode<CommandSourceStack> {
+    override fun buildLiteral(): CommandNode {
         return Commands.literal("kick")
             .requiresPermission(PermissionNode.BANS_MANAGE)
             .then(
@@ -42,7 +38,7 @@ class KickCommand(
             .build()
     }
 
-    private suspend fun execute(context: CommandContext<CommandSourceStack>) = context.traceSuspending {
+    private suspend fun execute(context: CommandContext) = context.traceSuspending {
         val player = context.getArgument("player", Player::class.java)
         val reason = context.getOptionalArgument("reason", String::class.java)
 
