@@ -1,6 +1,6 @@
 plugins {
     id("com.github.johnrengelman.shadow") version "8.1.1"
-    id("xyz.jpenilla.run-paper") version "2.3.1"
+    id("xyz.jpenilla.run-paper") version "3.0.2"
 }
 
 repositories {
@@ -62,13 +62,11 @@ tasks {
     }
     runServer {
         minecraftVersion("1.21.3")
-
         systemProperty("com.mojang.eula.agree", "true")
-
         downloadPlugins {
-            url("https://download.luckperms.net/1570/bukkit/loader/LuckPerms-Bukkit-5.4.153.jar")
-            url("https://cdn.modrinth.com/data/fRQREgAc/versions/AdtrWcU2/Dynmap-3.7-beta-7-spigot.jar")
-            github("EssentialsX", "Essentials", "2.20.1", "EssentialsX-2.20.1.jar")
+            modrinth("dynmap", "3.7-beta-7")
+            modrinth("LuckPerms", "v5.5.17-bukkit")
+            modrinth("essentialsx", "2.21.2")
         }
     }
 }
