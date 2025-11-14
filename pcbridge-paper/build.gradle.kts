@@ -31,7 +31,7 @@ dependencies {
     // Integrations
     compileOnly("net.luckperms:api:5.4")
     compileOnly("net.essentialsx:EssentialsX:2.20.1")
-    compileOnly("us.dynmap:DynmapCoreAPI:3.7-beta-6")
+    implementation("us.dynmap:DynmapCoreAPI:3.7-beta-6")
 
     // Libraries
     implementation("com.github.shynixn.mccoroutine:mccoroutine-bukkit-api:2.15.0")
