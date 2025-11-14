@@ -43,13 +43,13 @@ fun LocalConfigKeyValues.Companion.default() =
     LocalConfigKeyValues(
         api =
             LocalConfigKeyValues.Api(
-                token = "FILL_THIS_IN",
-                baseUrl = "https://projectcitybuild.com/api/",
-                isLoggingEnabled = false,
+                token = "pcbridge_local",
+                baseUrl = "http://localhost",
+                isLoggingEnabled = true,
             ),
         webServer =
             LocalConfigKeyValues.WebServer(
-                token = "FILL_THIS_IN",
+                token = "pcbridge_local",
                 port = 8080,
             ),
         errorReporting =
