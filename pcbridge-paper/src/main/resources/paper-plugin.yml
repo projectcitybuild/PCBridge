@@ -1,7 +1,7 @@
 name: PCBridge
 website: https://github.com/projectcitybuild/PCBridge
 version: 6.8.0
-api-version: 1.21.1
+api-version: 1.21.6
 main: com.projectcitybuild.pcbridge.paper.Plugin
 bootstrapper: com.projectcitybuild.pcbridge.paper.PaperBootstrap
 loader: com.projectcitybuild.pcbridge.paper.PaperLoader
@@ -14,7 +14,7 @@ dependencies:
       join-classpath: true
     dynmap:
       load: BEFORE
-      required: true
+      required: false
       join-classpath: true
     Essentials:
       load: BEFORE

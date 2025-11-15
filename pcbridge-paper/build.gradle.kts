@@ -64,9 +64,9 @@ tasks {
         minecraftVersion("1.21.3")
         systemProperty("com.mojang.eula.agree", "true")
         downloadPlugins {
-            modrinth("dynmap", "3.7-beta-8")
             modrinth("LuckPerms", "v5.5.17-bukkit")
             modrinth("essentialsx", "2.21.2")
+            modrinth("dynmap", "3.7-beta-8")
         }
     }
 }
