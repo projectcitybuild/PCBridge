@@ -33,6 +33,7 @@ import com.projectcitybuild.pcbridge.paper.core.libs.errors.ErrorReporter
 import com.projectcitybuild.pcbridge.paper.core.libs.storage.JsonStorage
 import com.projectcitybuild.pcbridge.paper.core.libs.localconfig.LocalConfig
 import com.projectcitybuild.pcbridge.paper.core.libs.localconfig.LocalConfigKeyValues
+import com.projectcitybuild.pcbridge.paper.core.libs.localconfig.default
 import com.projectcitybuild.pcbridge.paper.core.libs.pcbmanage.ManageUrlGenerator
 import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.RemoteConfig
 import com.projectcitybuild.pcbridge.paper.core.libs.store.Store
@@ -156,13 +157,18 @@ private fun Module.spigot(plugin: JavaPlugin) {
 
 private fun Module.core() {
     single {
+        val storage = JsonStorage(
+            typeToken = object : TypeToken<LocalConfigKeyValues>() {},
+        )
+        val file = get<JavaPlugin>()
+            .dataFolder
+            .resolve("config.json")
+        if (!file.exists()) {
+            storage.writeSync(file, LocalConfigKeyValues.default())
+        }
         LocalConfig(
-            file = get<JavaPlugin>()
-                .dataFolder
-                .resolve("config.json"),
-            storage = JsonStorage(
-                typeToken = object : TypeToken<LocalConfigKeyValues>() {},
-            ),
+            file = file,
+            storage = storage,
         )
     }
 
