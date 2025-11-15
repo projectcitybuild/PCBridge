@@ -1,7 +1,6 @@
 package com.projectcitybuild.pcbridge.paper.integrations.dynmap
 
 import com.github.shynixn.mccoroutine.bukkit.registerSuspendingEvents
-import com.projectcitybuild.pcbridge.paper.core.libs.errors.ErrorReporter
 import com.projectcitybuild.pcbridge.paper.core.libs.logger.log
 import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.RemoteConfig
 import com.projectcitybuild.pcbridge.paper.features.config.events.RemoteConfigUpdatedEvent
@@ -13,51 +12,43 @@ import com.projectcitybuild.pcbridge.paper.features.warps.repositories.WarpRepos
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.plugin.java.JavaPlugin
-import org.dynmap.DynmapCommonAPI
-import org.dynmap.DynmapCommonAPIListener
-import org.dynmap.markers.MarkerAPI
-import org.dynmap.markers.MarkerSet
 
 class DynmapIntegration(
     private val plugin: JavaPlugin,
     private val spawnRepository: SpawnRepository,
     private val warpRepository: WarpRepository,
     private val remoteConfig: RemoteConfig,
-    private val errorReporter: ErrorReporter,
-) : Listener, DynmapCommonAPIListener() {
-    private var dynmap: DynmapCommonAPI? = null
+) : Listener {
+    private var adapter: DynmapAdapter? = null
 
     suspend fun enable() {
-        log.info { "Registering Dynmap listener..." }
-        register(this)
+        // Check if DynmapCoreAPI class is present, as this is only available
+        // if the dynmap plugin is loaded
+        try {
+            Class.forName("org.dynmap.DynmapCommonAPI")
+        } catch (_: ClassNotFoundException) {
+            log.warn { "DynmapCommonAPI not found, most likely due to dynmap not being loaded. Disabling dynmap integration..." }
+            return
+        }
+
+        log.info { "Registering Dynmap integration..." }
+        adapter = DynmapAdapter()
         plugin.server.pluginManager.registerSuspendingEvents(this, plugin)
+
+        log.info { "Dynmap integration loaded" }
 
         updateWarpMarkers()
         updateSpawnMarkers()
     }
 
     fun disable() {
+        if (adapter == null) return
+
         WarpCreateEvent.getHandlerList().unregister(this)
         WarpDeleteEvent.getHandlerList().unregister(this)
-        dynmap = null
+        adapter = null
 
         log.info { "Dynmap integration disabled" }
-    }
-
-    override fun apiEnabled(p0: DynmapCommonAPI?) {
-        log.debug { "apiEnabled called by dynmap" }
-
-        if (p0 == null) {
-            log.error { "Dynmap integration was passed a null API instance. Disabling integration..." }
-            return
-        }
-        dynmap = p0
-        log.info { "Dynmap integration enabled" }
-    }
-
-    override fun apiDisabled(api: DynmapCommonAPI?) {
-        log.debug { "apiDisabled called by dynmap" }
-        disable()
     }
 
     @EventHandler
@@ -82,92 +73,59 @@ class DynmapIntegration(
         }
     }
 
-    private suspend fun updateWarpMarkers() = rebuildMarketSet(
-        setId = "pcbridge_warps",
-        setLabel = "Warps",
-    ) { markerAPI, markerSet ->
-        val config = remoteConfig.latest.config
-        val iconName = config.integrations.dynmapWarpIconName
-        val icon = markerAPI.getMarkerIcon(iconName)
-            ?: markerAPI.getMarkerIcon("building").also {
-                log.warn { "$iconName is not a valid dynmap icon name. Falling back to default icon" }
-            }
-
-        warpRepository.all().forEach { warp ->
-            markerSet.createMarker(
-                "warp_${warp.id}",  // Marker ID
-                warp.name,          // Marker label
-                false,              // Process label as HTML
-                warp.world,         // World to display marker in
-                warp.x,             // x
-                warp.y,             // y
-                warp.z,             // z
-                icon,               // Related MarkerIcon object
-                false,              // Marker is persistent
-            )
-        }
-    }
-
-    private suspend fun updateSpawnMarkers() = rebuildMarketSet(
-        setId = "pcbridge_spawns",
-        setLabel = "Spawns",
-    ) { markerAPI, markerSet ->
-        val config = remoteConfig.latest.config
-        val iconName = config.integrations.dynmapSpawnIconName
-        val icon = markerAPI.getMarkerIcon(iconName)
-            ?: markerAPI.getMarkerIcon("world").also {
-                log.warn { "$iconName is not a valid dynmap icon name. Falling back to default icon" }
-            }
-
-        spawnRepository.allLoaded().forEach { location ->
-            markerSet.createMarker(
-                "spawn_${location.world.uid}",  // Marker ID
-                "Spawn",          // Marker label
-                false,            // Process label as HTML
-                location.world.name,  // World to display marker in
-                location.x,       // x
-                location.y,       // y
-                location.z,       // z
-                icon,             // Related MarkerIcon object
-                false,            // Marker is persistent
-            )
-        }
-    }
-
-    private suspend fun rebuildMarketSet(
-        setId: String,
-        setLabel: String,
-        block: suspend (MarkerAPI, MarkerSet) -> Unit,
-    ) {
-        val dynmap = dynmap
-        if (dynmap == null) {
-            log.warn { "Dynmap integration disabled but attempted to draw \"$setLabel\" markers" }
+    private suspend fun updateWarpMarkers() {
+        val adapter = adapter
+        if (adapter == null) {
+            log.error { "Dynmap integration disabled but attempted to draw warp markers" }
             return
         }
+        val config = remoteConfig.latest.config
 
         try {
-            log.debug { "Redrawing \"$setLabel\" markers..." }
-
-            val markerAPI = dynmap.markerAPI
-            val markerSet = markerAPI.getMarkerSet(setId)
-                ?: markerAPI.createMarkerSet(
-                    setId,              // Marker set ID
-                    setLabel,           // Marker set label (appears in dynmap web UI)
-                    null,               // Set of permitted marker icons
-                    false,              // Is marker set persistent
+            warpRepository.all().forEach { warp ->
+                adapter.createMarker(
+                    id = "warp_${warp.id}",
+                    label = warp.name,
+                    world = warp.world,
+                    x = warp.x,
+                    y = warp.y,
+                    z = warp.z,
+                    iconName = config.integrations.dynmapWarpIconName,
+                    fallbackIconName = "building",
+                    setId = "pcbridge_warps",
+                    setLabel = "Warps"
                 )
-
-            markerSet.apply {
-                layerPriority = 1
-                hideByDefault = false
-
-                markers.forEach { it.deleteMarker() }
             }
-            block(markerAPI, markerSet)
         } catch (e: Exception) {
-            log.error { "Failed to rebuild market set $setId ($setLabel)" }
-            e.printStackTrace()
-            errorReporter.report(e)
+            log.error(e) { "Failed to draw warp markers" }
+        }
+    }
+
+    private suspend fun updateSpawnMarkers() {
+        val adapter = adapter
+        if (adapter == null) {
+            log.error { "Dynmap integration disabled but attempted to draw spawn markers" }
+            return
+        }
+        val config = remoteConfig.latest.config
+
+        try {
+            spawnRepository.allLoaded().forEach { location ->
+                adapter.createMarker(
+                    id = "spawn_${location.world.uid}",
+                    label = "Spawn",
+                    world = location.world.name,
+                    x = location.x,
+                    y = location.y,
+                    z = location.z,
+                    iconName = config.integrations.dynmapSpawnIconName,
+                    fallbackIconName = "world",
+                    setId = "pcbridge_spawns",
+                    setLabel = "Spawns",
+                )
+            }
+        } catch (e: Exception) {
+            log.error(e) { "Failed to draw spawn markers" }
         }
     }
 }
