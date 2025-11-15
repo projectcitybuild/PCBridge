@@ -1,11 +1,10 @@
 package com.projectcitybuild.pcbridge.paper.features.builds.commands.builds
 
 import com.mojang.brigadier.arguments.StringArgumentType
-import com.mojang.brigadier.context.CommandContext
-import com.mojang.brigadier.tree.LiteralCommandNode
 import com.projectcitybuild.pcbridge.paper.PermissionNode
-import com.projectcitybuild.pcbridge.paper.features.builds.repositories.BuildRepository
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierCommand
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.CommandContext
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.CommandNode
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
@@ -13,7 +12,7 @@ import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.sug
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.extensions.broadcastRich
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.BuildNameSuggester
-import io.papermc.paper.command.brigadier.CommandSourceStack
+import com.projectcitybuild.pcbridge.paper.features.builds.repositories.BuildRepository
 import io.papermc.paper.command.brigadier.Commands
 import org.bukkit.plugin.Plugin
 
@@ -22,7 +21,7 @@ class BuildVoteCommand(
     private val buildNameSuggester: BuildNameSuggester,
     private val buildRepository: BuildRepository,
 ): BrigadierCommand {
-    override fun buildLiteral(): LiteralCommandNode<CommandSourceStack> {
+    override fun buildLiteral(): CommandNode {
         return Commands.literal("vote")
             .requiresPermission(PermissionNode.BUILDS_VOTE)
             .then(
@@ -33,7 +32,7 @@ class BuildVoteCommand(
             .build()
     }
 
-    private suspend fun execute(context: CommandContext<CommandSourceStack>) = context.traceSuspending {
+    private suspend fun execute(context: CommandContext) = context.traceSuspending {
         val player = context.source.requirePlayer()
         val name = context.getArgument("name", String::class.java)
 

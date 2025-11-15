@@ -1,19 +1,18 @@
 package com.projectcitybuild.pcbridge.paper.features.warps.commands.warps
 
 import com.mojang.brigadier.arguments.IntegerArgumentType
-import com.mojang.brigadier.context.CommandContext
-import com.mojang.brigadier.tree.LiteralCommandNode
-import com.projectcitybuild.pcbridge.paper.features.warps.repositories.WarpRepository
 import com.projectcitybuild.pcbridge.paper.PermissionNode
 import com.projectcitybuild.pcbridge.paper.core.libs.pagination.PageComponentBuilder
 import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.RemoteConfig
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierCommand
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.CommandContext
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.CommandNode
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.getOptionalArgument
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceSuspending
-import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.getOptionalArgument
+import com.projectcitybuild.pcbridge.paper.features.warps.repositories.WarpRepository
 import com.projectcitybuild.pcbridge.paper.l10n.l10n
-import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
 import org.bukkit.plugin.Plugin
 
@@ -22,7 +21,7 @@ class WarpListCommand(
     private val warpRepository: WarpRepository,
     private val remoteConfig: RemoteConfig,
 ) : BrigadierCommand {
-    override fun buildLiteral(): LiteralCommandNode<CommandSourceStack> {
+    override fun buildLiteral(): CommandNode {
         return Commands.literal("list")
             .requiresPermission(PermissionNode.WARP_TELEPORT)
             .then(
@@ -33,7 +32,7 @@ class WarpListCommand(
             .build()
     }
 
-    private suspend fun execute(context: CommandContext<CommandSourceStack>) = context.traceSuspending {
+    private suspend fun execute(context: CommandContext) = context.traceSuspending {
         val pageNumber = context.getOptionalArgument("page", Int::class.java) ?: 1
         val sender = context.source.sender
 

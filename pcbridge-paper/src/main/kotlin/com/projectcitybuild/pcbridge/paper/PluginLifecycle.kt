@@ -26,6 +26,7 @@ import com.projectcitybuild.pcbridge.paper.core.support.spigot.extensions.regist
 import com.projectcitybuild.pcbridge.paper.features.announcements.listeners.AnnouncementConfigListener
 import com.projectcitybuild.pcbridge.paper.features.announcements.listeners.AnnouncementEnableListener
 import com.projectcitybuild.pcbridge.paper.features.bans.commands.BanCommand
+import com.projectcitybuild.pcbridge.paper.features.bans.commands.KickCommand
 import com.projectcitybuild.pcbridge.paper.features.bans.listeners.BanWebhookListener
 import com.projectcitybuild.pcbridge.paper.features.bans.middleware.BanConnectionMiddleware
 import com.projectcitybuild.pcbridge.paper.features.building.commands.InvisFrameCommand
@@ -56,6 +57,15 @@ import com.projectcitybuild.pcbridge.paper.features.maintenance.commands.Mainten
 import com.projectcitybuild.pcbridge.paper.features.maintenance.decorators.MaintenanceMotdDecorator
 import com.projectcitybuild.pcbridge.paper.features.maintenance.listener.MaintenanceReminderListener
 import com.projectcitybuild.pcbridge.paper.features.maintenance.middleware.MaintenanceConnectionMiddleware
+import com.projectcitybuild.pcbridge.paper.features.playergameplay.commands.BurnCommand
+import com.projectcitybuild.pcbridge.paper.features.playergameplay.commands.ExtinguishCommand
+import com.projectcitybuild.pcbridge.paper.features.playergameplay.commands.FeedCommand
+import com.projectcitybuild.pcbridge.paper.features.playergameplay.commands.GameModeCommand
+import com.projectcitybuild.pcbridge.paper.features.playergameplay.commands.HealCommand
+import com.projectcitybuild.pcbridge.paper.features.playergameplay.commands.IceCommand
+import com.projectcitybuild.pcbridge.paper.features.playergameplay.commands.KillCommand
+import com.projectcitybuild.pcbridge.paper.features.playergameplay.commands.PurgeCommand
+import com.projectcitybuild.pcbridge.paper.features.playergameplay.commands.SuicideCommand
 import com.projectcitybuild.pcbridge.paper.features.randomteleport.commands.RtpCommand
 import com.projectcitybuild.pcbridge.paper.features.register.commands.CodeCommand
 import com.projectcitybuild.pcbridge.paper.features.register.commands.RegisterCommand
@@ -138,19 +148,28 @@ class PluginLifecycle : KoinComponent {
         get<BanCommand>(),
         get<BuildCommand>(),
         get<BuildsCommand>(),
+        get<BurnCommand>(),
         get<CartographyTableCommand>(),
         get<CodeCommand>(),
         get<ConfigCommand>(),
         get<EnchantingCommand>(),
+        get<ExtinguishCommand>(),
+        get<FeedCommand>(),
+        get<GameModeCommand>(),
         get<GrindstoneCommand>(),
+        get<HealCommand>(),
         get<HomeCommand>(),
         get<HomesCommand>(),
         get<HubCommand>(),
+        get<IceCommand>(),
         get<InvisFrameCommand>(),
         get<ItemNameCommand>(),
+        get<KickCommand>(),
+        get<KillCommand>(),
         get<LoomCommand>(),
         get<MaintenanceCommand>(),
         get<NightVisionCommand>(),
+        get<PurgeCommand>(),
         get<RegisterCommand>(),
         get<RtpCommand>(),
         get<SetSpawnCommand>(),
@@ -158,6 +177,7 @@ class PluginLifecycle : KoinComponent {
         get<SpawnCommand>(),
         get<StaffChatCommand>(),
         get<StoneCutterCommand>(),
+        get<SuicideCommand>(),
         get<SyncCommand>(),
         get<SyncDebugCommand>(),
         get<WarpCommand>(),

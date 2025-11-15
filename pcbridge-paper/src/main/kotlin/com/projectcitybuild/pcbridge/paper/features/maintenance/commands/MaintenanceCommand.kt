@@ -1,11 +1,11 @@
 package com.projectcitybuild.pcbridge.paper.features.maintenance.commands
 
-import com.mojang.brigadier.context.CommandContext
-import com.mojang.brigadier.tree.LiteralCommandNode
 import com.projectcitybuild.pcbridge.paper.PermissionNode
-import com.projectcitybuild.pcbridge.paper.core.libs.store.Store
 import com.projectcitybuild.pcbridge.paper.core.extensions.onOff
+import com.projectcitybuild.pcbridge.paper.core.libs.store.Store
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierCommand
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.CommandContext
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.CommandNode
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.arguments.OnOffArgument
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
@@ -13,7 +13,6 @@ import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceSuspendin
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotEventBroadcaster
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.extensions.broadcastRich
 import com.projectcitybuild.pcbridge.paper.features.maintenance.events.MaintenanceToggledEvent
-import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
 import org.bukkit.Server
 import org.bukkit.plugin.Plugin
@@ -24,7 +23,7 @@ class MaintenanceCommand(
     private val store: Store,
     private val eventBroadcaster: SpigotEventBroadcaster,
 ): BrigadierCommand {
-    override fun buildLiteral(): LiteralCommandNode<CommandSourceStack> {
+    override fun buildLiteral(): CommandNode {
         return Commands.literal("maintenance")
             .requiresPermission(PermissionNode.MAINTENANCE_MANAGE)
             .then(
@@ -35,7 +34,7 @@ class MaintenanceCommand(
             .build()
     }
 
-    private suspend fun toggle(context: CommandContext<CommandSourceStack>) = context.traceSuspending {
+    private suspend fun toggle(context: CommandContext) = context.traceSuspending {
         val sender = context.source.sender
 
         val desiredState = context.getArgument("enabled", Boolean::class.java)
@@ -59,7 +58,7 @@ class MaintenanceCommand(
         )
     }
 
-    private suspend fun status(context: CommandContext<CommandSourceStack>) = context.traceSuspending {
+    private suspend fun status(context: CommandContext) = context.traceSuspending {
         val sender = context.source.sender
 
         val state = store.state.maintenance

@@ -40,6 +40,9 @@ enum class PermissionNode(val node: String) {
     // Can use the syncdebug command
     PLAYER_SYNC_DEBUG("pcbridge.sync.debug"),
 
+    // Can use commands that affect the player's gameplay
+    PLAYER_GAMEPLAY("pcbridge.player.gameplay"),
+
     // Can force reload the remote config
     REMOTE_CONFIG_RELOAD("pcbridge.config.reload"),
 
