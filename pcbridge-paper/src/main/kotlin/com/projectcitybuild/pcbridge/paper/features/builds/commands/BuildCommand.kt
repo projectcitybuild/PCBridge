@@ -12,7 +12,9 @@ import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.exe
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.suggestsSuspending
-import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceSuspending
+import com.projectcitybuild.pcbridge.paper.architecture.commands.catchSuspending
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandContext
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandNode
 import com.projectcitybuild.pcbridge.paper.l10n.l10n
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
@@ -32,7 +34,7 @@ class BuildCommand(
     private val server: Server,
     private val playerTeleporter: PlayerTeleporter,
 ): BrigadierCommand {
-    override fun buildLiteral(): LiteralCommandNode<CommandSourceStack> {
+    override fun buildLiteral(): PaperCommandNode {
         return Commands.literal("build")
             .requiresPermission(PermissionNode.BUILDS_TELEPORT)
             .then(
@@ -43,7 +45,7 @@ class BuildCommand(
             .build()
     }
 
-    private suspend fun execute(context: CommandContext<CommandSourceStack>) = context.traceSuspending {
+    private suspend fun execute(context: PaperCommandContext) = context.catchSuspending {
         val player = context.source.requirePlayer()
         val name = context.getArgument("name", String::class.java)
 

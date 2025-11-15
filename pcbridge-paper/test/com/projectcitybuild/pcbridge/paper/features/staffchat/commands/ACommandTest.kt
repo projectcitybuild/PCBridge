@@ -8,6 +8,7 @@ import com.projectcitybuild.pcbridge.paper.PermissionNode
 import com.projectcitybuild.pcbridge.paper.architecture.chat.decorators.ChatDecoratorChain
 import com.projectcitybuild.pcbridge.paper.architecture.chat.decorators.ChatMessage
 import com.projectcitybuild.pcbridge.paper.architecture.chat.decorators.ChatMessageDecorator
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandContext
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.extensions.hasPermission
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import kotlinx.coroutines.test.runTest
@@ -65,7 +66,7 @@ class ACommandTest {
             val sender = mock(Player::class.java)
             whenever(sender.name).thenReturn("user123")
 
-            val context: CommandContext<CommandSourceStack> = mock()
+            val context: PaperCommandContext = mock()
             val source = mock(CommandSourceStack::class.java)
             whenever(context.source).thenReturn(source)
             whenever(source.sender).thenReturn(sender)
@@ -105,7 +106,7 @@ class ACommandTest {
 
             whenever(staffPlayer.name).thenReturn("user123")
 
-            val context: CommandContext<CommandSourceStack> = mock()
+            val context: PaperCommandContext = mock()
             val source = mock(CommandSourceStack::class.java)
             whenever(context.source).thenReturn(source)
             whenever(source.sender).thenReturn(staffPlayer)

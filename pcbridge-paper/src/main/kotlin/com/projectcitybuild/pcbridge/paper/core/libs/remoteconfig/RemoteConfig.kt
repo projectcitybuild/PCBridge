@@ -1,11 +1,11 @@
 package com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig
 
-import com.projectcitybuild.pcbridge.paper.core.libs.logger.log
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
 import com.projectcitybuild.pcbridge.paper.features.config.events.RemoteConfigUpdatedEvent
 import com.projectcitybuild.pcbridge.http.pcb.models.RemoteConfigKeyValues
 import com.projectcitybuild.pcbridge.http.pcb.models.RemoteConfigVersion
 import com.projectcitybuild.pcbridge.http.pcb.services.ConfigHttpService
-import com.projectcitybuild.pcbridge.paper.core.libs.errors.ErrorReporter
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.errors.ErrorReporter
 import com.projectcitybuild.pcbridge.paper.core.libs.storage.Storage
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotEventBroadcaster
 import java.io.File

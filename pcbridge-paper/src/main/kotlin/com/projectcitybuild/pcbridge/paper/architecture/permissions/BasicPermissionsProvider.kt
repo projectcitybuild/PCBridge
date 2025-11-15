@@ -1,6 +1,6 @@
 package com.projectcitybuild.pcbridge.paper.architecture.permissions
 
-import com.projectcitybuild.pcbridge.paper.core.libs.logger.log
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
 import java.util.UUID
 
 class BasicPermissionsProvider: PermissionsProvider {

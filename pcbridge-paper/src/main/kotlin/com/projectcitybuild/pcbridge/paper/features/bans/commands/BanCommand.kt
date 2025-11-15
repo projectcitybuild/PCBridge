@@ -8,7 +8,9 @@ import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierComma
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.arguments.OnlinePlayerNameArgument
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
-import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceSuspending
+import com.projectcitybuild.pcbridge.paper.architecture.commands.catchSuspending
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandContext
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandNode
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
 import org.bukkit.Server
@@ -19,7 +21,7 @@ class BanCommand(
     private val server: Server,
     private val manageUrlGenerator: ManageUrlGenerator,
 ): BrigadierCommand {
-    override fun buildLiteral(): LiteralCommandNode<CommandSourceStack> {
+    override fun buildLiteral(): PaperCommandNode {
         return Commands.literal("ban")
             .requiresPermission(PermissionNode.BANS_MANAGE)
             .then(
@@ -29,7 +31,7 @@ class BanCommand(
             .build()
     }
 
-    private suspend fun execute(context: CommandContext<CommandSourceStack>) = context.traceSuspending {
+    private suspend fun execute(context: PaperCommandContext) = context.catchSuspending {
         val playerName = context.getArgument("player", String::class.java)
 
         val url = manageUrlGenerator.byPlayerUuid(

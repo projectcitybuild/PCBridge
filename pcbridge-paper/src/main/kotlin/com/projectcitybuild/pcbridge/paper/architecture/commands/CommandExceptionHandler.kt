@@ -1,4 +1,4 @@
-package com.projectcitybuild.pcbridge.paper.core.support.brigadier
+package com.projectcitybuild.pcbridge.paper.architecture.commands
 
 import com.mojang.brigadier.context.CommandContext
 import com.projectcitybuild.pcbridge.http.shared.parsing.ResponseParserError
@@ -6,7 +6,7 @@ import com.projectcitybuild.pcbridge.paper.core.libs.cooldowns.CooldownException
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import org.bukkit.command.CommandSender
 
-suspend fun <S: CommandSourceStack> CommandContext<S>.traceSuspending(
+suspend fun <S: CommandSourceStack> CommandContext<S>.catchSuspending(
     block: suspend (CommandContext<S>) -> Unit,
 ) {
     runCatching { block(this) }.onFailure { e ->
@@ -14,7 +14,7 @@ suspend fun <S: CommandSourceStack> CommandContext<S>.traceSuspending(
     }
 }
 
-fun <S: CommandSourceStack> CommandContext<S>.trace(
+fun <S: CommandSourceStack> CommandContext<S>.catch(
     block: (CommandContext<S>) -> Unit,
 ) {
     runCatching { block(this) }.onFailure { e ->

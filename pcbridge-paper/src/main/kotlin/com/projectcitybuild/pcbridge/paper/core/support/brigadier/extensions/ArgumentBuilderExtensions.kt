@@ -61,23 +61,18 @@ fun <S> LiteralArgumentBuilder<S>.executesSuspending(
 
 fun LiteralArgumentBuilder<CommandSourceStack>.then(
     command: BrigadierCommand,
-): LiteralArgumentBuilder<CommandSourceStack> {
-    return then(command.buildLiteral())
-}
+): LiteralArgumentBuilder<CommandSourceStack>
+    = then(command.buildLiteral())
 
 fun LiteralArgumentBuilder<CommandSourceStack>.requiresPermission(
     permission: PermissionNode,
-): LiteralArgumentBuilder<CommandSourceStack> {
-    return requires { context ->
-        context.sender.hasPermission(permission.node)
-    }
+): LiteralArgumentBuilder<CommandSourceStack> = requires { context ->
+    context.sender.hasPermission(permission.node)
 }
 
 fun <S: CommandSourceStack, T> RequiredArgumentBuilder<S, T>.requiresPermission(
     permission: PermissionNode,
-): RequiredArgumentBuilder<S, T> {
-    return requires { context ->
-        context.sender.hasPermission(permission.node)
-    }
+): RequiredArgumentBuilder<S, T> = requires { context ->
+    context.sender.hasPermission(permission.node)
 }
 

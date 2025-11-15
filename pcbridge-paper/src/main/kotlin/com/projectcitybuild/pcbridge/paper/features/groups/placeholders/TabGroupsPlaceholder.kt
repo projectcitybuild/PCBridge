@@ -4,7 +4,7 @@ import com.projectcitybuild.pcbridge.paper.architecture.state.events.PlayerState
 import com.projectcitybuild.pcbridge.paper.architecture.state.events.PlayerStateUpdatedEvent
 import com.projectcitybuild.pcbridge.paper.architecture.tablist.TabRenderer
 import com.projectcitybuild.pcbridge.paper.architecture.tablist.UpdatableTabPlaceholder
-import com.projectcitybuild.pcbridge.paper.core.libs.logger.log
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
 import com.projectcitybuild.pcbridge.paper.features.groups.repositories.ChatGroupRepository
 import net.kyori.adventure.text.Component
 import org.bukkit.Server

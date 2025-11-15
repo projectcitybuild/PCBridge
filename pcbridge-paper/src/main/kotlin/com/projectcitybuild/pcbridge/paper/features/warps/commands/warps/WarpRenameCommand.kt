@@ -9,8 +9,10 @@ import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.exe
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.suggestsSuspending
-import com.projectcitybuild.pcbridge.paper.core.support.brigadier.trace
-import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceSuspending
+import com.projectcitybuild.pcbridge.paper.architecture.commands.catch
+import com.projectcitybuild.pcbridge.paper.architecture.commands.catchSuspending
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandContext
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandNode
 import com.projectcitybuild.pcbridge.paper.features.warps.commands.WarpNameSuggester
 import com.projectcitybuild.pcbridge.paper.features.warps.repositories.WarpRepository
 import com.projectcitybuild.pcbridge.paper.l10n.l10n
@@ -28,7 +30,7 @@ class WarpRenameCommand(
     private val warpNameSuggester: WarpNameSuggester,
     private val warpRepository: WarpRepository,
 ) : BrigadierCommand {
-    override fun buildLiteral(): LiteralCommandNode<CommandSourceStack> {
+    override fun buildLiteral(): PaperCommandNode {
         return Commands.literal("rename")
             .requiresPermission(PermissionNode.WARP_MANAGE)
             .then(
@@ -39,7 +41,7 @@ class WarpRenameCommand(
             .build()
     }
 
-    private suspend fun execute(context: CommandContext<CommandSourceStack>) = context.traceSuspending {
+    private suspend fun execute(context: PaperCommandContext) = context.catchSuspending {
         val player = context.source.requirePlayer()
         val name = context.getArgument("name", String::class.java)
 
@@ -60,7 +62,7 @@ class WarpRenameCommand(
                     if (input == null) {
                         return null
                     }
-                    context.trace {
+                    context.catch {
                         runBlocking {
                             warpRepository.rename(
                                 id = warp.id,
@@ -69,7 +71,7 @@ class WarpRenameCommand(
                         }
                         player.sendRichMessage(l10n.homeRenamed(input))
                     }
-                    return Prompt.END_OF_CONVERSATION
+                    return END_OF_CONVERSATION
                 }
             })
             .addConversationAbandonedListener { player.sendRichMessage("<gray>Renaming ended</gray>") }

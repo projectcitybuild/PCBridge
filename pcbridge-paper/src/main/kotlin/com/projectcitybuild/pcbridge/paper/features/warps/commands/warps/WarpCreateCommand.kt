@@ -10,7 +10,9 @@ import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierComma
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
-import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceSuspending
+import com.projectcitybuild.pcbridge.paper.architecture.commands.catchSuspending
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandContext
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandNode
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotEventBroadcaster
 import com.projectcitybuild.pcbridge.paper.l10n.l10n
 import io.papermc.paper.command.brigadier.CommandSourceStack
@@ -22,7 +24,7 @@ class WarpCreateCommand(
     private val warpRepository: WarpRepository,
     private val eventBroadcaster: SpigotEventBroadcaster,
 ) : BrigadierCommand {
-    override fun buildLiteral(): LiteralCommandNode<CommandSourceStack> {
+    override fun buildLiteral(): PaperCommandNode {
         return Commands.literal("create")
             .requiresPermission(PermissionNode.WARP_MANAGE)
             .then(
@@ -32,7 +34,7 @@ class WarpCreateCommand(
             .build()
     }
 
-    private suspend fun execute(context: CommandContext<CommandSourceStack>) = context.traceSuspending {
+    private suspend fun execute(context: PaperCommandContext) = context.catchSuspending {
         val player = context.source.requirePlayer()
         val warpName = context.getArgument("name", String::class.java)
 

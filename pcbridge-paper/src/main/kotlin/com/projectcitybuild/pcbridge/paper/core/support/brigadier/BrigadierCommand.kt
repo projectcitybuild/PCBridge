@@ -11,5 +11,5 @@ interface BrigadierCommand {
     val description: String?
         get() = null
 
-    fun buildLiteral(): LiteralCommandNode<CommandSourceStack>
+    fun buildLiteral(): PaperCommandNode
 }

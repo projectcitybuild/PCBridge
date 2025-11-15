@@ -7,8 +7,10 @@ import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierComma
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.suggestsSuspending
-import com.projectcitybuild.pcbridge.paper.core.support.brigadier.trace
-import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceSuspending
+import com.projectcitybuild.pcbridge.paper.architecture.commands.catch
+import com.projectcitybuild.pcbridge.paper.architecture.commands.catchSuspending
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandContext
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandNode
 import com.projectcitybuild.pcbridge.paper.features.homes.commands.HomeNameSuggester
 import com.projectcitybuild.pcbridge.paper.features.homes.repositories.HomeRepository
 import com.projectcitybuild.pcbridge.paper.l10n.l10n
@@ -26,7 +28,7 @@ class HomeRenameCommand(
     private val homeNameSuggester: HomeNameSuggester,
     private val homeRepository: HomeRepository,
 ): BrigadierCommand {
-    override fun buildLiteral(): LiteralCommandNode<CommandSourceStack> {
+    override fun buildLiteral(): PaperCommandNode {
         return Commands.literal("rename")
             .then(
                 Commands.argument("name", StringArgumentType.greedyString())
@@ -36,7 +38,7 @@ class HomeRenameCommand(
             .build()
     }
 
-    private suspend fun execute(context: CommandContext<CommandSourceStack>) = context.traceSuspending {
+    private suspend fun execute(context: PaperCommandContext) = context.catchSuspending {
         val player = context.source.requirePlayer()
         val name = context.getArgument("name", String::class.java)
 
@@ -57,7 +59,7 @@ class HomeRenameCommand(
                     if (input == null) {
                         return null
                     }
-                    context.trace {
+                    context.catch {
                         runBlocking {
                             homeRepository.rename(
                                 id = home.id,
@@ -67,7 +69,7 @@ class HomeRenameCommand(
                         }
                         player.sendRichMessage(l10n.homeRenamed(input))
                     }
-                    return Prompt.END_OF_CONVERSATION
+                    return END_OF_CONVERSATION
                 }
             })
             .addConversationAbandonedListener { player.sendRichMessage("<gray>Renaming ended</gray>") }

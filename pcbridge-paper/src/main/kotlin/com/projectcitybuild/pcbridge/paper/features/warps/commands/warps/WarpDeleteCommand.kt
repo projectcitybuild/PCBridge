@@ -8,7 +8,9 @@ import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierComma
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.suggestsSuspending
-import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceSuspending
+import com.projectcitybuild.pcbridge.paper.architecture.commands.catchSuspending
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandContext
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandNode
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotEventBroadcaster
 import com.projectcitybuild.pcbridge.paper.features.warps.commands.WarpNameSuggester
 import com.projectcitybuild.pcbridge.paper.features.warps.events.WarpDeleteEvent
@@ -24,7 +26,7 @@ class WarpDeleteCommand(
     private val warpRepository: WarpRepository,
     private val eventBroadcaster: SpigotEventBroadcaster,
 ) : BrigadierCommand {
-    override fun buildLiteral(): LiteralCommandNode<CommandSourceStack> {
+    override fun buildLiteral(): PaperCommandNode {
         return Commands.literal("delete")
             .requiresPermission(PermissionNode.WARP_MANAGE)
             .then(
@@ -35,7 +37,7 @@ class WarpDeleteCommand(
             .build()
     }
 
-    private suspend fun execute(context: CommandContext<CommandSourceStack>) = context.traceSuspending {
+    private suspend fun execute(context: PaperCommandContext) = context.catchSuspending {
         val warpName = context.getArgument("name", String::class.java)
 
         warpRepository.delete(name = warpName)

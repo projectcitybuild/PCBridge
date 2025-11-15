@@ -1,7 +1,7 @@
 package com.projectcitybuild.pcbridge.paper.features.bans.listeners
 
 import com.projectcitybuild.pcbridge.paper.architecture.webhooks.events.WebhookReceivedEvent
-import com.projectcitybuild.pcbridge.paper.core.libs.logger.log
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.utilities.SpigotSanitizer
 import com.projectcitybuild.pcbridge.paper.features.bans.utilities.toMiniMessage
 import com.projectcitybuild.pcbridge.webserver.data.IPBanRequestedWebhook

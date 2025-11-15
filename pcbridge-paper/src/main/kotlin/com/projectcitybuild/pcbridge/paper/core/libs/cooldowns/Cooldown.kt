@@ -1,6 +1,6 @@
 package com.projectcitybuild.pcbridge.paper.core.libs.cooldowns
 
-import com.projectcitybuild.pcbridge.paper.core.libs.logger.log
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotTimer
 import org.bukkit.entity.Player
 import kotlin.time.Duration

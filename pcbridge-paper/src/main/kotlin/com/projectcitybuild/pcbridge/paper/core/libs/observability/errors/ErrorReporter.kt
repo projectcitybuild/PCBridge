@@ -1,7 +1,7 @@
-package com.projectcitybuild.pcbridge.paper.core.libs.errors
+package com.projectcitybuild.pcbridge.paper.core.libs.observability.errors
 
-import com.projectcitybuild.pcbridge.paper.core.libs.errors.destinations.NopReportDestination
-import com.projectcitybuild.pcbridge.paper.core.libs.errors.destinations.SentryReportDestination
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.errors.destinations.NopReportDestination
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.errors.destinations.SentryReportDestination
 import com.projectcitybuild.pcbridge.paper.core.libs.localconfig.LocalConfig
 
 class ErrorReporter(
@@ -9,7 +9,7 @@ class ErrorReporter(
 ) {
     private var destination: ReportDestination = NopReportDestination()
 
-    suspend fun start() {
+    fun start() {
         val config = localConfig.get()
         if (config.errorReporting.isSentryEnabled) {
             destination = SentryReportDestination(
@@ -24,7 +24,7 @@ class ErrorReporter(
     fun report(throwable: Throwable) = destination.report(throwable)
 }
 
-suspend fun <R> ErrorReporter.trace(block: suspend () -> R): Result<R> {
+suspend fun <R> ErrorReporter.catching(block: suspend () -> R): Result<R> {
     return runCatching { block() }.onFailure {
         report(it)
         throw it

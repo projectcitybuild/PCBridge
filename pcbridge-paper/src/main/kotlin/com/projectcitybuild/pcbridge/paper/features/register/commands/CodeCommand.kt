@@ -9,7 +9,9 @@ import com.projectcitybuild.pcbridge.http.shared.parsing.ResponseParserError
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierCommand
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requirePlayer
-import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceSuspending
+import com.projectcitybuild.pcbridge.paper.architecture.commands.catchSuspending
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandContext
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandNode
 import com.projectcitybuild.pcbridge.paper.l10n.l10n
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
@@ -21,7 +23,7 @@ class CodeCommand(
 ) : BrigadierCommand {
     override val description: String = "Finishes account registration by verifying a code"
 
-    override fun buildLiteral(): LiteralCommandNode<CommandSourceStack> {
+    override fun buildLiteral(): PaperCommandNode {
         return Commands.literal("code")
             .then(
                 Commands.argument("code", StringArgumentType.string())
@@ -34,7 +36,7 @@ class CodeCommand(
             .build()
     }
 
-    private suspend fun execute(context: CommandContext<CommandSourceStack>) = context.traceSuspending {
+    private suspend fun execute(context: PaperCommandContext) = context.catchSuspending {
         val player = context.source.requirePlayer()
         val code = context.getArgument("code", String::class.java)
 

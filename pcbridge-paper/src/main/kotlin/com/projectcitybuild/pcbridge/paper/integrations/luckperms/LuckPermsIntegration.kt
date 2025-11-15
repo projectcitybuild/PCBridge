@@ -1,6 +1,6 @@
 package com.projectcitybuild.pcbridge.paper.integrations.luckperms
 
-import com.projectcitybuild.pcbridge.paper.core.libs.logger.log
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
 import com.projectcitybuild.pcbridge.paper.architecture.permissions.Permissions
 import net.luckperms.api.LuckPerms
 import net.luckperms.api.LuckPermsProvider

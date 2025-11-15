@@ -2,9 +2,9 @@ package com.projectcitybuild.pcbridge.paper.core.libs.discord
 
 import com.projectcitybuild.pcbridge.http.discord.services.DiscordHttpService
 import com.projectcitybuild.pcbridge.http.discord.models.DiscordEmbed
-import com.projectcitybuild.pcbridge.paper.core.libs.errors.ErrorReporter
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.errors.ErrorReporter
 import com.projectcitybuild.pcbridge.paper.core.libs.localconfig.LocalConfig
-import com.projectcitybuild.pcbridge.paper.core.libs.logger.log
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
 import com.projectcitybuild.pcbridge.paper.core.utils.PeriodicRunner
 
 class DiscordSend(

@@ -1,6 +1,6 @@
 package com.projectcitybuild.pcbridge.paper.features.joinmessages.listeners
 
-import com.projectcitybuild.pcbridge.paper.core.libs.logger.log
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
 import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.RemoteConfig
 import com.projectcitybuild.pcbridge.paper.core.libs.store.Store
 import net.kyori.adventure.text.Component

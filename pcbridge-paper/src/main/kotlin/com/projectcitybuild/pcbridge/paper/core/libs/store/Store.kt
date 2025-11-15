@@ -2,7 +2,7 @@ package com.projectcitybuild.pcbridge.paper.core.libs.store
 
 import com.projectcitybuild.pcbridge.paper.architecture.state.data.PersistedServerState
 import com.projectcitybuild.pcbridge.paper.architecture.state.data.ServerState
-import com.projectcitybuild.pcbridge.paper.core.libs.logger.log
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
 import com.projectcitybuild.pcbridge.paper.core.libs.storage.Storage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex

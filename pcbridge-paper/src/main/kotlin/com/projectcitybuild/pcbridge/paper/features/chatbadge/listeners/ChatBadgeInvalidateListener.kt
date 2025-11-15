@@ -2,7 +2,7 @@ package com.projectcitybuild.pcbridge.paper.features.chatbadge.listeners
 
 import com.projectcitybuild.pcbridge.paper.architecture.state.events.PlayerStateCreatedEvent
 import com.projectcitybuild.pcbridge.paper.architecture.state.events.PlayerStateUpdatedEvent
-import com.projectcitybuild.pcbridge.paper.core.libs.logger.log
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
 import com.projectcitybuild.pcbridge.paper.features.chatbadge.repositories.ChatBadgeRepository
 import com.projectcitybuild.pcbridge.paper.features.config.events.RemoteConfigUpdatedEvent
 import org.bukkit.event.EventHandler

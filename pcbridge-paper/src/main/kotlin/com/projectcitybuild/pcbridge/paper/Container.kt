@@ -29,7 +29,7 @@ import com.projectcitybuild.pcbridge.paper.core.libs.cooldowns.Cooldown
 import com.projectcitybuild.pcbridge.paper.core.libs.datetime.services.DateTimeFormatter
 import com.projectcitybuild.pcbridge.paper.core.libs.datetime.services.LocalizedTime
 import com.projectcitybuild.pcbridge.paper.core.libs.discord.DiscordSend
-import com.projectcitybuild.pcbridge.paper.core.libs.errors.ErrorReporter
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.errors.ErrorReporter
 import com.projectcitybuild.pcbridge.paper.core.libs.storage.JsonStorage
 import com.projectcitybuild.pcbridge.paper.core.libs.localconfig.LocalConfig
 import com.projectcitybuild.pcbridge.paper.core.libs.localconfig.LocalConfigKeyValues

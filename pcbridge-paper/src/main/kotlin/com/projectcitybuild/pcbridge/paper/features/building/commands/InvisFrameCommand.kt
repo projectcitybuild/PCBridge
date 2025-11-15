@@ -7,7 +7,9 @@ import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierComma
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
-import com.projectcitybuild.pcbridge.paper.core.support.brigadier.trace
+import com.projectcitybuild.pcbridge.paper.architecture.commands.catch
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandContext
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandNode
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotNamespace
 import com.projectcitybuild.pcbridge.paper.features.building.data.InvisFrameKey
 import com.projectcitybuild.pcbridge.paper.l10n.l10n
@@ -28,7 +30,7 @@ class InvisFrameCommand(
 ) : BrigadierCommand {
     override val description: String = "Gives you an itemframe that turns invisible when holding an item"
 
-    override fun buildLiteral(): LiteralCommandNode<CommandSourceStack> {
+    override fun buildLiteral(): PaperCommandNode {
         return Commands.literal("invisframe")
             .requiresPermission(PermissionNode.BUILDING_INVIS_FRAME)
             .then(
@@ -39,14 +41,14 @@ class InvisFrameCommand(
             .build()
     }
 
-    private fun giveNormal(context: CommandContext<CommandSourceStack>) = context.trace {
+    private fun giveNormal(context: PaperCommandContext) = context.catch {
         give(
             player = context.source.requirePlayer(),
             glowing = false,
         )
     }
 
-    private fun giveGlowing(context: CommandContext<CommandSourceStack>) = context.trace {
+    private fun giveGlowing(context: PaperCommandContext) = context.catch {
         give(
             player = context.source.requirePlayer(),
             glowing = true,

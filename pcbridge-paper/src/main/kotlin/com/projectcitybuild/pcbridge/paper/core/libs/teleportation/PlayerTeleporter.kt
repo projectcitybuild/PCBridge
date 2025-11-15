@@ -1,6 +1,6 @@
 package com.projectcitybuild.pcbridge.paper.core.libs.teleportation
 
-import com.projectcitybuild.pcbridge.paper.core.libs.logger.log
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
 import com.projectcitybuild.pcbridge.paper.core.libs.teleportation.exceptions.SafeDestinationNotFoundException
 import com.projectcitybuild.pcbridge.paper.core.libs.teleportation.exceptions.TeleportFailedException
 import com.projectcitybuild.pcbridge.paper.core.libs.teleportation.storage.TeleportHistoryStorage

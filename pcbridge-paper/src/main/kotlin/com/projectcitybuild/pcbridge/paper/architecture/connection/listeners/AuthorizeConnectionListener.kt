@@ -4,8 +4,8 @@ import com.projectcitybuild.pcbridge.paper.architecture.PlayerDataProvider
 import com.projectcitybuild.pcbridge.paper.architecture.connection.events.ConnectionPermittedEvent
 import com.projectcitybuild.pcbridge.paper.architecture.connection.middleware.ConnectionMiddlewareChain
 import com.projectcitybuild.pcbridge.paper.architecture.connection.middleware.ConnectionResult
-import com.projectcitybuild.pcbridge.paper.core.libs.errors.ErrorReporter
-import com.projectcitybuild.pcbridge.paper.core.libs.logger.log
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.errors.ErrorReporter
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotEventBroadcaster
 import kotlinx.coroutines.runBlocking
 import org.bukkit.event.EventHandler

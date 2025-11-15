@@ -1,6 +1,6 @@
 package com.projectcitybuild.pcbridge.paper.features.chatemojis.listeners
 
-import com.projectcitybuild.pcbridge.paper.core.libs.logger.log
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
 import com.projectcitybuild.pcbridge.paper.features.chatemojis.repositories.EmojiRepository
 import com.projectcitybuild.pcbridge.paper.features.config.events.RemoteConfigUpdatedEvent
 import org.bukkit.event.EventHandler

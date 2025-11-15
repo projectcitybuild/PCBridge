@@ -36,7 +36,7 @@ dependencies {
     // Libraries
     implementation("com.github.shynixn.mccoroutine:mccoroutine-bukkit-api:2.15.0")
     implementation("com.github.shynixn.mccoroutine:mccoroutine-bukkit-core:2.15.0")
-    implementation("io.sentry:sentry:5.7.4")
+    implementation("io.sentry:sentry:8.26.0")
     implementation("io.insert-koin:koin-core:3.5.6")
     implementation("io.github.reactivecircus.cache4k:cache4k:0.13.0")
     implementation("io.github.oshai:kotlin-logging-jvm:5.1.0")

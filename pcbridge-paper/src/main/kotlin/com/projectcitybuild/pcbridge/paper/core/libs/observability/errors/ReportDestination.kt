@@ -1,4 +1,4 @@
-package com.projectcitybuild.pcbridge.paper.core.libs.errors
+package com.projectcitybuild.pcbridge.paper.core.libs.observability.errors
 
 interface ReportDestination {
     fun start()

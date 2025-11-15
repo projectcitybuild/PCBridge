@@ -1,7 +1,7 @@
-package com.projectcitybuild.pcbridge.paper.core.libs.errors.destinations
+package com.projectcitybuild.pcbridge.paper.core.libs.observability.errors.destinations
 
-import com.projectcitybuild.pcbridge.paper.core.libs.errors.ReportDestination
-import com.projectcitybuild.pcbridge.paper.core.libs.logger.log
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.errors.ReportDestination
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
 import io.sentry.Sentry
 
 class SentryReportDestination(

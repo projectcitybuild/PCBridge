@@ -1,7 +1,7 @@
 package com.projectcitybuild.pcbridge.paper.features.groups
 
 import com.projectcitybuild.pcbridge.http.pcb.models.Group
-import com.projectcitybuild.pcbridge.paper.core.libs.logger.log
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
 
 class RolesFilter {
     /**

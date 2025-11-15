@@ -1,7 +1,7 @@
 package com.projectcitybuild.pcbridge.paper.core.support.spigot
 
-import com.projectcitybuild.pcbridge.paper.core.libs.errors.ErrorReporter
-import com.projectcitybuild.pcbridge.paper.core.libs.logger.log
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.errors.ErrorReporter
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
 import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.PluginManager
 
