@@ -14,9 +14,9 @@ dependencies:
       join-classpath: true
     dynmap:
       load: BEFORE
-      required: false
+      required: true
       join-classpath: true
-    EssentialsX:
+    Essentials:
       load: BEFORE
       required: false
       join-classpath: true

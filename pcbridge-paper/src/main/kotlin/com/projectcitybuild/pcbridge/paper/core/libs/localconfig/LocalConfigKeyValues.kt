@@ -44,7 +44,7 @@ fun LocalConfigKeyValues.Companion.default() =
         api =
             LocalConfigKeyValues.Api(
                 token = "pcbridge_local",
-                baseUrl = "http://localhost",
+                baseUrl = "http://localhost/api/",
                 isLoggingEnabled = true,
             ),
         webServer =

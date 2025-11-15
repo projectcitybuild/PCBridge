@@ -31,7 +31,7 @@ dependencies {
     // Integrations
     compileOnly("net.luckperms:api:5.4")
     compileOnly("net.essentialsx:EssentialsX:2.20.1")
-    implementation("us.dynmap:DynmapCoreAPI:3.7-beta-6")
+    compileOnly("us.dynmap:DynmapCoreAPI:3.7-beta-6")
 
     // Libraries
     implementation("com.github.shynixn.mccoroutine:mccoroutine-bukkit-api:2.15.0")
@@ -64,7 +64,7 @@ tasks {
         minecraftVersion("1.21.3")
         systemProperty("com.mojang.eula.agree", "true")
         downloadPlugins {
-            modrinth("dynmap", "3.7-beta-7")
+            modrinth("dynmap", "3.7-beta-8")
             modrinth("LuckPerms", "v5.5.17-bukkit")
             modrinth("essentialsx", "2.21.2")
         }
