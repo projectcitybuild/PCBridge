@@ -1,17 +1,14 @@
 package com.projectcitybuild.pcbridge.paper.features.bans.commands
 
-import com.mojang.brigadier.context.CommandContext
-import com.mojang.brigadier.tree.LiteralCommandNode
 import com.projectcitybuild.pcbridge.paper.PermissionNode
 import com.projectcitybuild.pcbridge.paper.core.libs.pcbmanage.ManageUrlGenerator
-import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierCommand
+import com.projectcitybuild.pcbridge.paper.architecture.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.arguments.OnlinePlayerNameArgument
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
-import com.projectcitybuild.pcbridge.paper.architecture.commands.catchSuspending
+import com.projectcitybuild.pcbridge.paper.architecture.commands.scopedSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandContext
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandNode
-import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
 import org.bukkit.Server
 import org.bukkit.plugin.Plugin
@@ -31,7 +28,7 @@ class BanCommand(
             .build()
     }
 
-    private suspend fun execute(context: PaperCommandContext) = context.catchSuspending {
+    private suspend fun execute(context: PaperCommandContext) = context.scopedSuspending {
         val playerName = context.getArgument("player", String::class.java)
 
         val url = manageUrlGenerator.byPlayerUuid(

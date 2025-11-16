@@ -70,7 +70,7 @@ class RemoteConfig(
         = runCatching {
             storage.write(file, config)
         }.onFailure { e ->
-            log.error { "Failed to persist remote config" }
+            log.error(e) { "Failed to persist remote config" }
             e.printStackTrace()
             errorReporter.report(e)
         }

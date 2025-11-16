@@ -1,7 +1,6 @@
-package com.projectcitybuild.pcbridge.paper.core.support.brigadier
+package com.projectcitybuild.pcbridge.paper.architecture.commands
 
-import com.mojang.brigadier.tree.LiteralCommandNode
-import io.papermc.paper.command.brigadier.CommandSourceStack
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandNode
 
 /**
  * Represents either a command or subcommand that can be

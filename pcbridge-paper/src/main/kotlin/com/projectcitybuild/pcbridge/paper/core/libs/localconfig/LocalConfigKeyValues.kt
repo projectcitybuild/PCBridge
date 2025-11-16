@@ -58,6 +58,6 @@ fun LocalConfigKeyValues.Companion.default() =
                 sentryDsn = "https://<key>@sentry.io/<project>",
             ),
         discord = LocalConfigKeyValues.Discord(
-            contentAlertWebhook = "FILL_THIS_IN"
+            contentAlertWebhook = ""
         )
     )

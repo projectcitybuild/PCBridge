@@ -1,22 +1,19 @@
 package com.projectcitybuild.pcbridge.paper.features.builds.commands.builds
 
 import com.mojang.brigadier.arguments.StringArgumentType
-import com.mojang.brigadier.context.CommandContext
-import com.mojang.brigadier.tree.LiteralCommandNode
 import com.projectcitybuild.pcbridge.paper.PermissionNode
 import com.projectcitybuild.pcbridge.paper.features.builds.repositories.BuildRepository
-import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierCommand
+import com.projectcitybuild.pcbridge.paper.architecture.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.suggestsSuspending
-import com.projectcitybuild.pcbridge.paper.architecture.commands.catchSuspending
+import com.projectcitybuild.pcbridge.paper.architecture.commands.scopedSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandContext
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandNode
 import com.projectcitybuild.pcbridge.paper.core.support.component.join
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.BuildNameSuggester
 import com.projectcitybuild.pcbridge.paper.features.builds.data.EditableBuildField
-import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.ClickEvent
@@ -41,7 +38,7 @@ class BuildEditCommand(
             .build()
     }
 
-    private suspend fun execute(context: PaperCommandContext) = context.catchSuspending {
+    private suspend fun execute(context: PaperCommandContext) = context.scopedSuspending {
         val player = context.source.requirePlayer()
         val name = context.getArgument("name", String::class.java)
 

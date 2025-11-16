@@ -21,7 +21,7 @@ class RolesFilter {
 
             val roleType = runCatching { RoleType.valueOf(rawRoleType.uppercase()) }.getOrNull()
             if (roleType == null) {
-                log.error { "$rawRoleType is not a recoginzed role type" }
+                log.error { "$rawRoleType is not a recognized role type" }
                 continue
             }
             val existing = mapping[roleType]

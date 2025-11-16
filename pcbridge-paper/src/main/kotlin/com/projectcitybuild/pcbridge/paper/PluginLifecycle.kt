@@ -22,7 +22,7 @@ import com.projectcitybuild.pcbridge.paper.core.libs.observability.errors.catchi
 import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.RemoteConfig
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotListenerRegistry
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotTimer
-import com.projectcitybuild.pcbridge.paper.core.support.spigot.extensions.registerCommands
+import com.projectcitybuild.pcbridge.paper.architecture.commands.registerCommands
 import com.projectcitybuild.pcbridge.paper.features.announcements.listeners.AnnouncementConfigListener
 import com.projectcitybuild.pcbridge.paper.features.announcements.listeners.AnnouncementEnableListener
 import com.projectcitybuild.pcbridge.paper.features.bans.commands.BanCommand

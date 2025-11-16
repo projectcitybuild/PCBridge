@@ -1,9 +1,9 @@
 package com.projectcitybuild.pcbridge.paper.features.homes.commands.homes
 
-import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierCommand
+import com.projectcitybuild.pcbridge.paper.architecture.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requirePlayer
-import com.projectcitybuild.pcbridge.paper.architecture.commands.catchSuspending
+import com.projectcitybuild.pcbridge.paper.architecture.commands.scopedSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandContext
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandNode
 import com.projectcitybuild.pcbridge.paper.features.homes.repositories.HomeRepository
@@ -20,7 +20,7 @@ class HomeLimitCommand(
             .build()
     }
 
-    private suspend fun execute(context: PaperCommandContext) = context.catchSuspending {
+    private suspend fun execute(context: PaperCommandContext) = context.scopedSuspending {
         val player = context.source.requirePlayer()
 
         val limit = homeRepository.limit(player)

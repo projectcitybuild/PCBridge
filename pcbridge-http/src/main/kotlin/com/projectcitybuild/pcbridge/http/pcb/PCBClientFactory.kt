@@ -36,14 +36,13 @@ internal class PCBClientFactory(
 
                     chain.proceed(request)
                 }
-
         if (withLogging) {
-            val loggingInterceptor = HttpLoggingInterceptor()
-            loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
-
+            val loggingInterceptor = HttpLoggingInterceptor().apply {
+                level = HttpLoggingInterceptor.Level.BODY
+                redactHeader("Authorization")
+            }
             clientFactory = clientFactory.addInterceptor(loggingInterceptor)
         }
-
         return clientFactory.build()
     }
 }

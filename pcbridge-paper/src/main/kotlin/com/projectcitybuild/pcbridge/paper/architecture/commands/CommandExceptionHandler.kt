@@ -1,24 +1,55 @@
 package com.projectcitybuild.pcbridge.paper.architecture.commands
 
 import com.mojang.brigadier.context.CommandContext
+import com.projectcitybuild.pcbridge.http.pcb.models.Player
 import com.projectcitybuild.pcbridge.http.shared.parsing.ResponseParserError
 import com.projectcitybuild.pcbridge.paper.core.libs.cooldowns.CooldownException
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.errors.ErrorReporter
+import com.projectcitybuild.pcbridge.paper.core.support.spigot.utilities.sanitized
 import io.papermc.paper.command.brigadier.CommandSourceStack
+import io.sentry.ScopeType
+import io.sentry.Sentry
+import io.sentry.protocol.User
 import org.bukkit.command.CommandSender
 
-suspend fun <S: CommandSourceStack> CommandContext<S>.catchSuspending(
+suspend fun <S: CommandSourceStack> CommandContext<S>.scopedSuspending(
     block: suspend (CommandContext<S>) -> Unit,
 ) {
+    Sentry.configureScope(ScopeType.ISOLATION) { scope ->
+        scope.setTag("command", command.toString())
+
+        val sender = source.sender
+        scope.user = if (sender is org.bukkit.entity.Player) {
+            User().apply {
+                id = sender.uniqueId.toString()
+                username = sender.name
+                ipAddress = sender.address?.address?.sanitized()
+            }
+        } else null
+    }
     runCatching { block(this) }.onFailure { e ->
         CommandExceptionHandler.catch(source.sender, e)
     }
 }
 
-fun <S: CommandSourceStack> CommandContext<S>.catch(
+fun <S: CommandSourceStack> CommandContext<S>.scoped(
     block: (CommandContext<S>) -> Unit,
 ) {
-    runCatching { block(this) }.onFailure { e ->
-        CommandExceptionHandler.catch(source.sender, e)
+    Sentry.configureScope(ScopeType.ISOLATION) { scope ->
+        scope.setTag("command", command.toString())
+
+        val sender = source.sender
+        scope.user = if (sender is org.bukkit.entity.Player) {
+            User().apply {
+                id = sender.uniqueId.toString()
+                username = sender.name
+                ipAddress = sender.address?.address?.sanitized()
+            }
+        } else null
+
+        runCatching { block(this) }.onFailure { e ->
+            CommandExceptionHandler.catch(source.sender, e)
+        }
     }
 }
 

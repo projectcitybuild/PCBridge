@@ -7,7 +7,7 @@ import com.projectcitybuild.pcbridge.paper.features.warps.commands.warps.WarpDel
 import com.projectcitybuild.pcbridge.paper.features.warps.commands.warps.WarpListCommand
 import com.projectcitybuild.pcbridge.paper.features.warps.commands.warps.WarpMoveCommand
 import com.projectcitybuild.pcbridge.paper.features.warps.commands.warps.WarpRenameCommand
-import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierCommand
+import com.projectcitybuild.pcbridge.paper.architecture.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandNode
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.then

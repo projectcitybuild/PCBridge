@@ -1,19 +1,16 @@
 package com.projectcitybuild.pcbridge.paper.features.randomteleport.commands
 
-import com.mojang.brigadier.context.CommandContext
-import com.mojang.brigadier.tree.LiteralCommandNode
 import com.projectcitybuild.pcbridge.paper.PermissionNode
 import com.projectcitybuild.pcbridge.paper.core.libs.cooldowns.Cooldown
-import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierCommand
+import com.projectcitybuild.pcbridge.paper.architecture.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
-import com.projectcitybuild.pcbridge.paper.architecture.commands.catchSuspending
+import com.projectcitybuild.pcbridge.paper.architecture.commands.scopedSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandContext
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandNode
 import com.projectcitybuild.pcbridge.paper.features.randomteleport.actions.FindRandomLocation
 import com.projectcitybuild.pcbridge.paper.l10n.l10n
-import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
 import org.bukkit.plugin.Plugin
 import kotlin.time.Duration.Companion.seconds
@@ -30,7 +27,7 @@ class RtpCommand(
             .build()
     }
 
-    suspend fun execute(context: PaperCommandContext) = context.catchSuspending {
+    suspend fun execute(context: PaperCommandContext) = context.scopedSuspending {
         val player = context.source.requirePlayer()
 
         cooldown.throttle(5.seconds, player, "rtp")
@@ -40,7 +37,7 @@ class RtpCommand(
         val location = findRandomLocation.teleport(player, attempts = 5)
         if (location == null) {
             player.sendRichMessage(l10n.errorCouldNotFindSafeLocation)
-            return@catchSuspending
+            return@scopedSuspending
         }
         player.sendRichMessage(
             l10n.teleportedToCoordinate(location.x.toInt(), location.y.toInt(), location.z.toInt())

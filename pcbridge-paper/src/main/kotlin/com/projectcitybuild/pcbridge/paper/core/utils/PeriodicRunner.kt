@@ -54,7 +54,7 @@ class PeriodicRunner(
                 log.debug { "Executing task with jobId: $jobId" }
                 action?.invoke()
             } catch (e: Exception) {
-                log.error { "Failed to process runner action: ${e.message}" }
+                log.error(e) { "Failed to process runner action" }
                 e.printStackTrace()
             }
             kotlinx.coroutines.delay(processInterval)

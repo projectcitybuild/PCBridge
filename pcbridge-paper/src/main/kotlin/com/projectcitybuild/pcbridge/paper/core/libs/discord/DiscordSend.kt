@@ -58,7 +58,7 @@ class DiscordSend(
             val webhookUrl = config.contentAlertWebhook
             discordHttpService.executeWebhook(webhookUrl, embeds)
         } catch (e: Exception) {
-            log.error { "Failed to send Discord message: ${e.message}" }
+            log.error(e) { "Failed to send Discord message" }
             e.printStackTrace()
             errorReporter.report(e)
         }
