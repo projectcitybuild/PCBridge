@@ -7,7 +7,8 @@ import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.Build
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildListCommand
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildMoveCommand
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildVoteCommand
-import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierCommand
+import com.projectcitybuild.pcbridge.paper.architecture.commands.BrigadierCommand
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandNode
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.then
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildEditCommand
@@ -26,7 +27,7 @@ class BuildsCommand(
     private val buildUnvoteCommand: BuildUnvoteCommand,
     private val buildVoteCommand: BuildVoteCommand,
 ): BrigadierCommand {
-    override fun buildLiteral(): LiteralCommandNode<CommandSourceStack> {
+    override fun buildLiteral(): PaperCommandNode {
         return Commands.literal("builds")
             .then(command = buildCreateCommand)
             .then(command = buildDeleteCommand)

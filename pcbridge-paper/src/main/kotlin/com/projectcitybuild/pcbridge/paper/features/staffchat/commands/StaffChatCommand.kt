@@ -1,18 +1,17 @@
 package com.projectcitybuild.pcbridge.paper.features.staffchat.commands
 
 import com.mojang.brigadier.arguments.StringArgumentType
-import com.mojang.brigadier.context.CommandContext
-import com.mojang.brigadier.tree.LiteralCommandNode
 import com.projectcitybuild.pcbridge.paper.PermissionNode
 import com.projectcitybuild.pcbridge.paper.architecture.chat.decorators.ChatDecoratorChain
 import com.projectcitybuild.pcbridge.paper.architecture.chat.decorators.ChatMessage
 import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.RemoteConfig
-import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierCommand
+import com.projectcitybuild.pcbridge.paper.architecture.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
-import com.projectcitybuild.pcbridge.paper.core.support.brigadier.traceSuspending
-import io.papermc.paper.command.brigadier.CommandSourceStack
+import com.projectcitybuild.pcbridge.paper.architecture.commands.scopedSuspending
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandContext
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandNode
 import io.papermc.paper.command.brigadier.Commands
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.MiniMessage
@@ -26,7 +25,7 @@ class StaffChatCommand(
     private val remoteConfig: RemoteConfig,
     private val decorators: ChatDecoratorChain,
 ) : BrigadierCommand {
-    override fun buildLiteral(): LiteralCommandNode<CommandSourceStack> {
+    override fun buildLiteral(): PaperCommandNode {
         return Commands.literal("a")
             .requiresPermission(PermissionNode.STAFF_CHANNEL)
             .then(
@@ -36,7 +35,7 @@ class StaffChatCommand(
             .build()
     }
 
-    suspend fun execute(context: CommandContext<CommandSourceStack>) = context.traceSuspending {
+    suspend fun execute(context: PaperCommandContext) = context.scopedSuspending {
         val player = context.source.requirePlayer()
         val rawMessage = context.getArgument("message", String::class.java)
 

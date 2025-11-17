@@ -1,7 +1,7 @@
 package com.projectcitybuild.pcbridge.paper.integrations.luckperms
 
-import com.projectcitybuild.pcbridge.paper.core.libs.logger.log
 import com.projectcitybuild.pcbridge.paper.architecture.permissions.Permissions
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.logSync
 import net.luckperms.api.LuckPerms
 import net.luckperms.api.LuckPermsProvider
 import org.bukkit.event.Listener
@@ -16,7 +16,7 @@ class LuckPermsIntegration(
         try {
             instance = LuckPermsProvider.get()
         } catch (e: Exception) {
-            log.error { "Failed to hook into LuckPerms plugin: ${e.message}" }
+            logSync.error(e) { "Failed to hook into LuckPerms plugin" }
             return
         }
         permissions.setProvider(
@@ -24,7 +24,7 @@ class LuckPermsIntegration(
         )
         luckPerms = instance
 
-        log.info { "LuckPerms integration enabled" }
+        logSync.info { "LuckPerms integration enabled" }
     }
 
     fun disable() {

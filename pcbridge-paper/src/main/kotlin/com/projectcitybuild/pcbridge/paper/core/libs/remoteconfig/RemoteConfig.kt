@@ -1,11 +1,11 @@
 package com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig
 
-import com.projectcitybuild.pcbridge.paper.core.libs.logger.log
 import com.projectcitybuild.pcbridge.paper.features.config.events.RemoteConfigUpdatedEvent
 import com.projectcitybuild.pcbridge.http.pcb.models.RemoteConfigKeyValues
 import com.projectcitybuild.pcbridge.http.pcb.models.RemoteConfigVersion
 import com.projectcitybuild.pcbridge.http.pcb.services.ConfigHttpService
-import com.projectcitybuild.pcbridge.paper.core.libs.errors.ErrorReporter
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.errors.ErrorTracker
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
 import com.projectcitybuild.pcbridge.paper.core.libs.storage.Storage
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotEventBroadcaster
 import java.io.File
@@ -15,7 +15,7 @@ class RemoteConfig(
     private val eventBroadcaster: SpigotEventBroadcaster,
     private val file: File,
     private val storage: Storage<RemoteConfigVersion>,
-    private val errorReporter: ErrorReporter,
+    private val errorTracker: ErrorTracker,
 ) {
     private var cached: RemoteConfigVersion? = null
 
@@ -54,7 +54,7 @@ class RemoteConfig(
             .onFailure { e ->
                 log.warn { "Failed to fetch remote config. Falling back to last known config..." }
                 e.printStackTrace()
-                errorReporter.report(e)
+                errorTracker.report(e)
             }
             .onSuccess { persistToCache(it) }
             .getOrNull()
@@ -70,8 +70,8 @@ class RemoteConfig(
         = runCatching {
             storage.write(file, config)
         }.onFailure { e ->
-            log.error { "Failed to persist remote config" }
+            log.error(e) { "Failed to persist remote config" }
             e.printStackTrace()
-            errorReporter.report(e)
+            errorTracker.report(e)
         }
 }

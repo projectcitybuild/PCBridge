@@ -1,4 +1,4 @@
-package com.projectcitybuild.pcbridge.paper.core.support.spigot.extensions
+package com.projectcitybuild.pcbridge.paper.architecture.permissions
 
 import com.projectcitybuild.pcbridge.paper.PermissionNode
 import org.bukkit.entity.Player

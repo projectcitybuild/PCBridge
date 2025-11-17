@@ -1,7 +1,8 @@
 package com.projectcitybuild.pcbridge.paper.integrations.dynmap
 
 import com.github.shynixn.mccoroutine.bukkit.registerSuspendingEvents
-import com.projectcitybuild.pcbridge.paper.core.libs.logger.log
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.logSync
 import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.RemoteConfig
 import com.projectcitybuild.pcbridge.paper.features.config.events.RemoteConfigUpdatedEvent
 import com.projectcitybuild.pcbridge.paper.features.spawns.events.SpawnUpdatedEvent
@@ -48,7 +49,7 @@ class DynmapIntegration(
         WarpDeleteEvent.getHandlerList().unregister(this)
         adapter = null
 
-        log.info { "Dynmap integration disabled" }
+        logSync.info { "Dynmap integration disabled" }
     }
 
     @EventHandler

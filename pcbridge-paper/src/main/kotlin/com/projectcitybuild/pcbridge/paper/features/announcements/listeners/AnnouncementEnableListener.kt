@@ -1,6 +1,6 @@
 package com.projectcitybuild.pcbridge.paper.features.announcements.listeners
 
-import com.projectcitybuild.pcbridge.paper.core.libs.logger.log
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.logSync
 import com.projectcitybuild.pcbridge.paper.features.announcements.actions.StartAnnouncementTimer
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
@@ -20,7 +20,7 @@ class AnnouncementEnableListener(
             return
         }
         announcementTimer.start()
-        log.debug { "Announcement timer started" }
+        logSync.debug { "Announcement timer started" }
     }
 
     @EventHandler
@@ -30,6 +30,6 @@ class AnnouncementEnableListener(
             return
         }
         announcementTimer.stop()
-        log.debug { "Announcement timer stopped" }
+        logSync.debug { "Announcement timer stopped" }
     }
 }

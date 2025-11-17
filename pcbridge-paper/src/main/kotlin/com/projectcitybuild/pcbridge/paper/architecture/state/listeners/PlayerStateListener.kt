@@ -2,12 +2,12 @@ package com.projectcitybuild.pcbridge.paper.architecture.state.listeners
 
 import com.projectcitybuild.pcbridge.paper.architecture.connection.events.ConnectionPermittedEvent
 import com.projectcitybuild.pcbridge.paper.core.libs.datetime.services.LocalizedTime
-import com.projectcitybuild.pcbridge.paper.core.libs.logger.log
 import com.projectcitybuild.pcbridge.paper.architecture.state.data.PlayerState
 import com.projectcitybuild.pcbridge.paper.architecture.state.events.PlayerStateCreatedEvent
 import com.projectcitybuild.pcbridge.paper.core.libs.store.Store
 import com.projectcitybuild.pcbridge.paper.architecture.state.events.PlayerStateDestroyedEvent
-import com.projectcitybuild.pcbridge.paper.core.libs.errors.ErrorReporter
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.errors.ErrorTracker
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotEventBroadcaster
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
@@ -19,7 +19,7 @@ class PlayerStateListener(
     private val store: Store,
     private val time: LocalizedTime,
     private val eventBroadcaster: SpigotEventBroadcaster,
-    private val errorReporter: ErrorReporter,
+    private val errorTracker: ErrorTracker,
 ) : Listener {
     /**
      * Creates a PlayerState for the connecting user
@@ -47,7 +47,7 @@ class PlayerStateListener(
         val playerState = store.state.players[event.player.uniqueId]
         if (playerState == null) {
             log.error { "Player state was missing on join event" }
-            errorReporter.report(Exception("Player state was missing on join event"))
+            errorTracker.report(Exception("Player state was missing on join event"))
             return
         }
         // Some state update listeners require an actual Player to exist, and this is

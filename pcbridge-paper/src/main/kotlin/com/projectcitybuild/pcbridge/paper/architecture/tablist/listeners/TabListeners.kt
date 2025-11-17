@@ -1,7 +1,7 @@
 package com.projectcitybuild.pcbridge.paper.architecture.tablist.listeners
 
 import com.projectcitybuild.pcbridge.paper.architecture.tablist.TabRenderer
-import com.projectcitybuild.pcbridge.paper.core.libs.logger.log
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
 import com.projectcitybuild.pcbridge.paper.features.config.events.RemoteConfigUpdatedEvent
 import org.bukkit.Server
 import org.bukkit.event.EventHandler

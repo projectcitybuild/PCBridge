@@ -2,7 +2,7 @@ package com.projectcitybuild.pcbridge.paper.features.chatbadge.listeners
 
 import com.projectcitybuild.pcbridge.paper.architecture.state.events.PlayerStateCreatedEvent
 import com.projectcitybuild.pcbridge.paper.architecture.state.events.PlayerStateUpdatedEvent
-import com.projectcitybuild.pcbridge.paper.core.libs.logger.log
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.logSync
 import com.projectcitybuild.pcbridge.paper.features.chatbadge.repositories.ChatBadgeRepository
 import com.projectcitybuild.pcbridge.paper.features.config.events.RemoteConfigUpdatedEvent
 import org.bukkit.event.EventHandler
@@ -19,7 +19,7 @@ class ChatBadgeInvalidateListener(
 
         if (prev?.chat?.badgeIcon == next.chat.badgeIcon) return
 
-        log.info { "Chat config updated. Rebuilding chat badges" }
+        logSync.info { "Chat config updated. Rebuilding chat badges" }
 
         chatBadgeRepository.invalidateAll()
     }
@@ -32,7 +32,7 @@ class ChatBadgeInvalidateListener(
     fun onPlayerStateUpdated(event: PlayerStateUpdatedEvent) {
         if (event.prevState?.badges == event.state.badges) return
 
-        log.info { "Invalidating chat badge cache for ${event.playerUUID}" }
+        logSync.info { "Invalidating chat badge cache for ${event.playerUUID}" }
         chatBadgeRepository.invalidate(event.playerUUID)
     }
 }

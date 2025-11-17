@@ -2,15 +2,16 @@ package com.projectcitybuild.pcbridge.paper.core.libs.discord
 
 import com.projectcitybuild.pcbridge.http.discord.services.DiscordHttpService
 import com.projectcitybuild.pcbridge.http.discord.models.DiscordEmbed
-import com.projectcitybuild.pcbridge.paper.core.libs.errors.ErrorReporter
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.errors.ErrorTracker
 import com.projectcitybuild.pcbridge.paper.core.libs.localconfig.LocalConfig
-import com.projectcitybuild.pcbridge.paper.core.libs.logger.log
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.logSync
 import com.projectcitybuild.pcbridge.paper.core.utils.PeriodicRunner
 
 class DiscordSend(
     private val localConfig: LocalConfig,
     private val discordHttpService: DiscordHttpService,
-    private val errorReporter: ErrorReporter,
+    private val errorTracker: ErrorTracker,
     private val periodicRunner: PeriodicRunner,
 ) {
     private val queue = mutableListOf<DiscordEmbed>()
@@ -18,17 +19,17 @@ class DiscordSend(
 
     init {
         if (localConfig.get().discord.contentAlertWebhook.isEmpty()) {
-            log.warn { "No webhook configured for content alerts. No messages will be sent to Discord" }
+            logSync.warn { "No webhook configured for content alerts. No messages will be sent to Discord" }
             enabled = false
         }
     }
 
     fun send(embed: DiscordEmbed) {
         if (!enabled) {
-            log.debug { "Skipping Discord embed queue" }
+            logSync.debug { "Skipping Discord embed queue" }
             return
         }
-        log.trace { "Queuing Discord embed: $embed" }
+        logSync.trace { "Queuing Discord embed: $embed" }
         queue.add(embed)
 
         if (!periodicRunner.running) {
@@ -58,9 +59,9 @@ class DiscordSend(
             val webhookUrl = config.contentAlertWebhook
             discordHttpService.executeWebhook(webhookUrl, embeds)
         } catch (e: Exception) {
-            log.error { "Failed to send Discord message: ${e.message}" }
+            log.error(e) { "Failed to send Discord message" }
             e.printStackTrace()
-            errorReporter.report(e)
+            errorTracker.report(e)
         }
     }
 }

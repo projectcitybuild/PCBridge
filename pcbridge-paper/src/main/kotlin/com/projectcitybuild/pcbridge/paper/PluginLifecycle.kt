@@ -17,12 +17,12 @@ import com.projectcitybuild.pcbridge.paper.architecture.tablist.placeholders.Pla
 import com.projectcitybuild.pcbridge.paper.architecture.tablist.placeholders.PlayerNamePlaceholder
 import com.projectcitybuild.pcbridge.paper.architecture.tablist.placeholders.PlayerPingPlaceholder
 import com.projectcitybuild.pcbridge.paper.architecture.tablist.placeholders.PlayerWorldPlaceholder
-import com.projectcitybuild.pcbridge.paper.core.libs.errors.ErrorReporter
-import com.projectcitybuild.pcbridge.paper.core.libs.errors.trace
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.errors.ErrorTracker
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.errors.catching
 import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.RemoteConfig
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotListenerRegistry
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotTimer
-import com.projectcitybuild.pcbridge.paper.core.support.spigot.extensions.registerCommands
+import com.projectcitybuild.pcbridge.paper.architecture.commands.registerCommands
 import com.projectcitybuild.pcbridge.paper.features.announcements.listeners.AnnouncementConfigListener
 import com.projectcitybuild.pcbridge.paper.features.announcements.listeners.AnnouncementEnableListener
 import com.projectcitybuild.pcbridge.paper.features.bans.commands.BanCommand
@@ -93,13 +93,13 @@ import org.koin.core.component.inject
 
 class PluginLifecycle : KoinComponent {
     private val plugin: JavaPlugin = get()
-    private val errorReporter: ErrorReporter by inject()
+    private val errorTracker: ErrorTracker by inject()
     private val listenerRegistry: SpigotListenerRegistry by inject()
     private val httpServer: HttpServer by inject()
     private val remoteConfig: RemoteConfig by inject()
     private val store: Store by inject()
 
-    suspend fun boot() = errorReporter.trace {
+    suspend fun boot() = errorTracker.catching {
         httpServer.start()
         remoteConfig.fetch()
         store.hydrate()
@@ -115,7 +115,7 @@ class PluginLifecycle : KoinComponent {
         get<LuckPermsIntegration>().enable()
     }
 
-    suspend fun shutdown() = errorReporter.trace {
+    suspend fun shutdown() = errorTracker.catching {
         httpServer.stop()
         store.persist()
 

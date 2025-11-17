@@ -7,7 +7,8 @@ import com.projectcitybuild.pcbridge.paper.features.warps.commands.warps.WarpDel
 import com.projectcitybuild.pcbridge.paper.features.warps.commands.warps.WarpListCommand
 import com.projectcitybuild.pcbridge.paper.features.warps.commands.warps.WarpMoveCommand
 import com.projectcitybuild.pcbridge.paper.features.warps.commands.warps.WarpRenameCommand
-import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierCommand
+import com.projectcitybuild.pcbridge.paper.architecture.commands.BrigadierCommand
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandNode
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.then
 import io.papermc.paper.command.brigadier.CommandSourceStack
@@ -20,7 +21,7 @@ class WarpsCommand(
     private val moveCommand: WarpMoveCommand,
     private val renameCommand: WarpRenameCommand,
 ) : BrigadierCommand {
-    override fun buildLiteral(): LiteralCommandNode<CommandSourceStack> {
+    override fun buildLiteral(): PaperCommandNode {
         return Commands.literal("warps")
             .requiresPermission(PermissionNode.WARP_TELEPORT)
             .then(command = createCommand)

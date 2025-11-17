@@ -9,8 +9,10 @@ import com.mojang.brigadier.builder.RequiredArgumentBuilder
 import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.suggestion.SuggestionsBuilder
 import com.projectcitybuild.pcbridge.paper.PermissionNode
-import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierCommand
+import com.projectcitybuild.pcbridge.paper.architecture.commands.BrigadierCommand
 import io.papermc.paper.command.brigadier.CommandSourceStack
+import io.sentry.Sentry
+import io.sentry.kotlin.SentryContext
 import kotlinx.coroutines.Dispatchers
 import org.bukkit.plugin.Plugin
 
@@ -37,7 +39,7 @@ fun <S, T> RequiredArgumentBuilder<S, T>.executesSuspending(
     block: suspend (CommandContext<S>) -> Unit,
 ): RequiredArgumentBuilder<S, T> {
     return executes { context ->
-        plugin.launch(plugin.minecraftDispatcher + object : CoroutineTimings() {}) {
+        plugin.launch(plugin.minecraftDispatcher + SentryContext() + object : CoroutineTimings() {}) {
             block(context)
         }
         Command.SINGLE_SUCCESS
@@ -52,7 +54,7 @@ fun <S> LiteralArgumentBuilder<S>.executesSuspending(
     block: suspend (CommandContext<S>) -> Unit,
 ): LiteralArgumentBuilder<S> {
     return executes { context ->
-        plugin.launch(plugin.minecraftDispatcher + object : CoroutineTimings() {}) {
+        plugin.launch(plugin.minecraftDispatcher + SentryContext() + object : CoroutineTimings() {}) {
             block(context)
         }
         Command.SINGLE_SUCCESS
@@ -61,23 +63,18 @@ fun <S> LiteralArgumentBuilder<S>.executesSuspending(
 
 fun LiteralArgumentBuilder<CommandSourceStack>.then(
     command: BrigadierCommand,
-): LiteralArgumentBuilder<CommandSourceStack> {
-    return then(command.buildLiteral())
-}
+): LiteralArgumentBuilder<CommandSourceStack>
+    = then(command.buildLiteral())
 
 fun LiteralArgumentBuilder<CommandSourceStack>.requiresPermission(
     permission: PermissionNode,
-): LiteralArgumentBuilder<CommandSourceStack> {
-    return requires { context ->
-        context.sender.hasPermission(permission.node)
-    }
+): LiteralArgumentBuilder<CommandSourceStack> = requires { context ->
+    context.sender.hasPermission(permission.node)
 }
 
 fun <S: CommandSourceStack, T> RequiredArgumentBuilder<S, T>.requiresPermission(
     permission: PermissionNode,
-): RequiredArgumentBuilder<S, T> {
-    return requires { context ->
-        context.sender.hasPermission(permission.node)
-    }
+): RequiredArgumentBuilder<S, T> = requires { context ->
+    context.sender.hasPermission(permission.node)
 }
 

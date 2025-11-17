@@ -4,8 +4,8 @@ import com.projectcitybuild.pcbridge.paper.architecture.PlayerDataProvider
 import com.projectcitybuild.pcbridge.paper.architecture.connection.events.ConnectionPermittedEvent
 import com.projectcitybuild.pcbridge.paper.architecture.connection.middleware.ConnectionMiddlewareChain
 import com.projectcitybuild.pcbridge.paper.architecture.connection.middleware.ConnectionResult
-import com.projectcitybuild.pcbridge.paper.core.libs.errors.ErrorReporter
-import com.projectcitybuild.pcbridge.paper.core.libs.logger.log
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.errors.ErrorTracker
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotEventBroadcaster
 import kotlinx.coroutines.runBlocking
 import org.bukkit.event.EventHandler
@@ -17,7 +17,7 @@ class AuthorizeConnectionListener(
     private val middlewareChain: ConnectionMiddlewareChain,
     private val playerDataProvider: PlayerDataProvider,
     private val eventBroadcaster: SpigotEventBroadcaster,
-    private val errorReporter: ErrorReporter,
+    private val errorTracker: ErrorTracker,
 ) : Listener {
     @EventHandler(
         priority = EventPriority.HIGHEST,
@@ -65,7 +65,7 @@ class AuthorizeConnectionListener(
                 }
             }.onFailure {
                 log.error(it) { "An error occurred while authorizing a connection" }
-                errorReporter.report(it)
+                errorTracker.report(it)
 
                 // If something goes wrong, permit the connection without player data
                 // so that their permissions are all stripped

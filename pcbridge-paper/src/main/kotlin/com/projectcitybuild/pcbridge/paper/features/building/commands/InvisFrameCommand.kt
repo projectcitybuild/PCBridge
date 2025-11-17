@@ -1,17 +1,16 @@
 package com.projectcitybuild.pcbridge.paper.features.building.commands
 
-import com.mojang.brigadier.context.CommandContext
-import com.mojang.brigadier.tree.LiteralCommandNode
 import com.projectcitybuild.pcbridge.paper.PermissionNode
-import com.projectcitybuild.pcbridge.paper.core.support.brigadier.BrigadierCommand
+import com.projectcitybuild.pcbridge.paper.architecture.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
-import com.projectcitybuild.pcbridge.paper.core.support.brigadier.trace
+import com.projectcitybuild.pcbridge.paper.architecture.commands.scoped
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandContext
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandNode
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotNamespace
 import com.projectcitybuild.pcbridge.paper.features.building.data.InvisFrameKey
 import com.projectcitybuild.pcbridge.paper.l10n.l10n
-import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
@@ -28,7 +27,7 @@ class InvisFrameCommand(
 ) : BrigadierCommand {
     override val description: String = "Gives you an itemframe that turns invisible when holding an item"
 
-    override fun buildLiteral(): LiteralCommandNode<CommandSourceStack> {
+    override fun buildLiteral(): PaperCommandNode {
         return Commands.literal("invisframe")
             .requiresPermission(PermissionNode.BUILDING_INVIS_FRAME)
             .then(
@@ -39,14 +38,14 @@ class InvisFrameCommand(
             .build()
     }
 
-    private fun giveNormal(context: CommandContext<CommandSourceStack>) = context.trace {
+    private fun giveNormal(context: PaperCommandContext) = context.scoped {
         give(
             player = context.source.requirePlayer(),
             glowing = false,
         )
     }
 
-    private fun giveGlowing(context: CommandContext<CommandSourceStack>) = context.trace {
+    private fun giveGlowing(context: PaperCommandContext) = context.scoped {
         give(
             player = context.source.requirePlayer(),
             glowing = true,

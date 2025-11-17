@@ -1,7 +1,7 @@
 package com.projectcitybuild.pcbridge.paper.features.groups
 
 import com.projectcitybuild.pcbridge.http.pcb.models.Group
-import com.projectcitybuild.pcbridge.paper.core.libs.logger.log
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.logSync
 
 class RolesFilter {
     /**
@@ -21,7 +21,7 @@ class RolesFilter {
 
             val roleType = runCatching { RoleType.valueOf(rawRoleType.uppercase()) }.getOrNull()
             if (roleType == null) {
-                log.error { "$rawRoleType is not a recoginzed role type" }
+                logSync.error { "$rawRoleType is not a recognized role type" }
                 continue
             }
             val existing = mapping[roleType]
