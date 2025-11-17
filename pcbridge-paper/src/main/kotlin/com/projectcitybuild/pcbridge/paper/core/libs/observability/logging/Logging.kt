@@ -4,12 +4,12 @@ import io.klogging.Level
 import io.klogging.config.loggingConfiguration
 import io.klogging.logger
 import io.klogging.noCoLogger
-import io.klogging.rendering.RENDER_SIMPLE
+import io.klogging.rendering.RENDER_ANSI
 import io.klogging.sending.STDERR
 import io.klogging.sending.STDOUT
 
 val log = Logging.instance.coLog
-val noCoLog = Logging.instance.noCoLog
+val logSync = Logging.instance.noCoLog
 
 class Logging private constructor(namespace: String) {
     val coLog = logger(namespace)
@@ -19,8 +19,8 @@ class Logging private constructor(namespace: String) {
         lateinit var instance: Logging
 
         fun configure(namespace: String) = loggingConfiguration {
-            sink("stdout", RENDER_SIMPLE, STDOUT)
-            sink("stderr", RENDER_SIMPLE, STDERR)
+            sink("stdout", RENDER_ANSI, STDOUT)
+            sink("stderr", RENDER_ANSI, STDERR)
 
             logging {
                 fromLoggerBase(namespace)

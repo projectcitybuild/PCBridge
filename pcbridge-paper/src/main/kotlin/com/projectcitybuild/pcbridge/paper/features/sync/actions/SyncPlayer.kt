@@ -4,7 +4,7 @@ import com.projectcitybuild.pcbridge.paper.core.libs.store.Store
 import com.projectcitybuild.pcbridge.paper.architecture.state.data.PlayerState
 import com.projectcitybuild.pcbridge.paper.architecture.state.events.PlayerStateUpdatedEvent
 import com.projectcitybuild.pcbridge.paper.core.libs.datetime.services.LocalizedTime
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.deprecatedLog
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotEventBroadcaster
 import com.projectcitybuild.pcbridge.paper.features.sync.repositories.PlayerRepository
 import org.bukkit.Server
@@ -20,11 +20,11 @@ class SyncPlayer(
     suspend fun execute(playerUUID: UUID) {
         val matchingPlayer = server.onlinePlayers.firstOrNull { it.uniqueId == playerUUID }
         if (matchingPlayer == null) {
-            deprecatedLog.info { "Skipping sync, player ($playerUUID) not found" }
+            log.info { "Skipping sync, player ($playerUUID) not found" }
             return
         }
 
-        deprecatedLog.info { "Creating player state for $playerUUID" }
+        log.info { "Creating player state for $playerUUID" }
 
         val playerData = playerRepository.get(
             uuid = matchingPlayer.uniqueId,

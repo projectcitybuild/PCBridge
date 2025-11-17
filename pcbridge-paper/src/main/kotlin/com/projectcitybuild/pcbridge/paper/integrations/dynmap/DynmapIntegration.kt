@@ -1,7 +1,8 @@
 package com.projectcitybuild.pcbridge.paper.integrations.dynmap
 
 import com.github.shynixn.mccoroutine.bukkit.registerSuspendingEvents
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.deprecatedLog
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.logSync
 import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.RemoteConfig
 import com.projectcitybuild.pcbridge.paper.features.config.events.RemoteConfigUpdatedEvent
 import com.projectcitybuild.pcbridge.paper.features.spawns.events.SpawnUpdatedEvent
@@ -27,15 +28,15 @@ class DynmapIntegration(
         try {
             Class.forName("org.dynmap.DynmapCommonAPI")
         } catch (_: ClassNotFoundException) {
-            deprecatedLog.warn { "DynmapCommonAPI not found, most likely due to dynmap not being loaded. Disabling dynmap integration..." }
+            log.warn { "DynmapCommonAPI not found, most likely due to dynmap not being loaded. Disabling dynmap integration..." }
             return
         }
 
-        deprecatedLog.info { "Registering Dynmap integration..." }
+        log.info { "Registering Dynmap integration..." }
         adapter = DynmapAdapter()
         plugin.server.pluginManager.registerSuspendingEvents(this, plugin)
 
-        deprecatedLog.info { "Dynmap integration loaded" }
+        log.info { "Dynmap integration loaded" }
 
         updateWarpMarkers()
         updateSpawnMarkers()
@@ -48,7 +49,7 @@ class DynmapIntegration(
         WarpDeleteEvent.getHandlerList().unregister(this)
         adapter = null
 
-        deprecatedLog.info { "Dynmap integration disabled" }
+        logSync.info { "Dynmap integration disabled" }
     }
 
     @EventHandler
@@ -76,7 +77,7 @@ class DynmapIntegration(
     private suspend fun updateWarpMarkers() {
         val adapter = adapter
         if (adapter == null) {
-            deprecatedLog.error { "Dynmap integration disabled but attempted to draw warp markers" }
+            log.error { "Dynmap integration disabled but attempted to draw warp markers" }
             return
         }
         val config = remoteConfig.latest.config
@@ -97,14 +98,14 @@ class DynmapIntegration(
                 )
             }
         } catch (e: Exception) {
-            deprecatedLog.error(e) { "Failed to draw warp markers" }
+            log.error(e) { "Failed to draw warp markers" }
         }
     }
 
     private suspend fun updateSpawnMarkers() {
         val adapter = adapter
         if (adapter == null) {
-            deprecatedLog.error { "Dynmap integration disabled but attempted to draw spawn markers" }
+            log.error { "Dynmap integration disabled but attempted to draw spawn markers" }
             return
         }
         val config = remoteConfig.latest.config
@@ -125,7 +126,7 @@ class DynmapIntegration(
                 )
             }
         } catch (e: Exception) {
-            deprecatedLog.error(e) { "Failed to draw spawn markers" }
+            log.error(e) { "Failed to draw spawn markers" }
         }
     }
 }

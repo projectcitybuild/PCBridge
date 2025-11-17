@@ -4,7 +4,7 @@ import com.projectcitybuild.pcbridge.paper.core.libs.observability.errors.destin
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.errors.destinations.SentryReportDestination
 import com.projectcitybuild.pcbridge.paper.core.libs.localconfig.LocalConfig
 
-class ErrorReporter(
+class ErrorTracker(
     private val localConfig: LocalConfig,
 ) {
     private var destination: ReportDestination = NopReportDestination()
@@ -25,7 +25,7 @@ class ErrorReporter(
     fun report(throwable: Throwable) = destination.report(throwable)
 }
 
-suspend fun <R> ErrorReporter.catching(block: suspend () -> R): Result<R> {
+suspend fun <R> ErrorTracker.catching(block: suspend () -> R): Result<R> {
     return runCatching { block() }.onFailure {
         report(it)
         throw it

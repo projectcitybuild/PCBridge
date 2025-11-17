@@ -5,8 +5,9 @@ import com.github.shynixn.mccoroutine.bukkit.registerSuspendingEvents
 import com.projectcitybuild.pcbridge.paper.core.libs.store.Store
 import com.projectcitybuild.pcbridge.paper.architecture.state.events.PlayerStateUpdatedEvent
 import com.projectcitybuild.pcbridge.paper.architecture.tablist.TabRenderer
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.errors.ErrorReporter
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.deprecatedLog
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.errors.ErrorTracker
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.logSync
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotEventBroadcaster
 import com.projectcitybuild.pcbridge.paper.core.libs.teleportation.events.PlayerPreTeleportEvent
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotIntegration
@@ -25,11 +26,11 @@ class EssentialsIntegration(
     private val store: Store,
     private val eventBroadcaster: SpigotEventBroadcaster,
     private val tabRenderer: TabRenderer,
-    errorReporter: ErrorReporter,
+    errorTracker: ErrorTracker,
 ) : Listener, SpigotIntegration(
         pluginName = "Essentials",
         pluginManager = plugin.server.pluginManager,
-        errorReporter = errorReporter,
+        errorTracker = errorTracker,
     ) {
     private var essentials: Essentials? = null
 
@@ -39,7 +40,7 @@ class EssentialsIntegration(
         }
         essentials = loadedPlugin
         plugin.server.pluginManager.registerSuspendingEvents(this, plugin)
-        deprecatedLog.info { "Essentials integration enabled" }
+        log.info { "Essentials integration enabled" }
     }
 
     override suspend fun onDisable() {
@@ -56,23 +57,23 @@ class EssentialsIntegration(
     @EventHandler
     fun onPlayerPreTeleport(event: PlayerPreTeleportEvent) = runCatching {
         if (essentials == null) {
-            deprecatedLog.warn { "Essentials integration disabled but it's still listening to events" }
+            logSync.warn { "Essentials integration disabled but it's still listening to events" }
             return@runCatching
         }
         essentials!!
             .getUser(event.player)
             .setLastLocation()
 
-        deprecatedLog.debug { "Registered last location for ${event.player.name} with Essentials" }
+        logSync.debug { "Registered last location for ${event.player.name} with Essentials" }
     }
 
     @EventHandler
     fun onPlayerAFKStatusChange(event: AfkStatusChangeEvent) = runCatching {
         if (essentials == null) {
-            deprecatedLog.warn { "Essentials integration disabled but it's still listening to events" }
+            logSync.warn { "Essentials integration disabled but it's still listening to events" }
             return@runCatching
         }
-        deprecatedLog.info { "Player AFK status changed (${event.value}, ${event.cause})" }
+        logSync.info { "Player AFK status changed (${event.value}, ${event.cause})" }
 
         val playerUuid = event.affected.uuid
         // TODO: clean up this mess...
@@ -101,7 +102,7 @@ class EssentialsIntegration(
     @EventHandler
     suspend fun onPlayerNicknameChange(event: NickChangeEvent) {
         val playerUuid = event.affected.uuid
-        deprecatedLog.info { "Player nickname changed (${event.value}, $playerUuid)" }
+        log.info { "Player nickname changed (${event.value}, $playerUuid)" }
 
         server.getPlayer(playerUuid)?.let { player ->
             tabRenderer.updatePlayerName(player)

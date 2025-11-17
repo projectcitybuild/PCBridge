@@ -1,10 +1,8 @@
 package com.projectcitybuild.pcbridge.paper.architecture.commands
 
 import com.mojang.brigadier.context.CommandContext
-import com.projectcitybuild.pcbridge.http.pcb.models.Player
 import com.projectcitybuild.pcbridge.http.shared.parsing.ResponseParserError
 import com.projectcitybuild.pcbridge.paper.core.libs.cooldowns.CooldownException
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.errors.ErrorReporter
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.utilities.sanitized
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.sentry.ScopeType

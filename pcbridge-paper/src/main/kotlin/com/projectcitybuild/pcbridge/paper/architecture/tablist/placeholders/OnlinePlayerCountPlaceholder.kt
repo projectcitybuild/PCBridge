@@ -2,7 +2,7 @@ package com.projectcitybuild.pcbridge.paper.architecture.tablist.placeholders
 
 import com.projectcitybuild.pcbridge.paper.architecture.tablist.TabRenderer
 import com.projectcitybuild.pcbridge.paper.architecture.tablist.UpdatableTabPlaceholder
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.deprecatedLog
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
 import net.kyori.adventure.text.Component
 import org.bukkit.Server
 import org.bukkit.entity.Player
@@ -21,7 +21,7 @@ class OnlinePlayerCountPlaceholder(
 
     @EventHandler(ignoreCancelled = true)
     suspend fun onPlayerJoin(event: PlayerJoinEvent) {
-        deprecatedLog.debug { "PlayerJoinEvent: updating all player tabs" }
+        log.debug { "PlayerJoinEvent: updating all player tabs" }
 
         server.onlinePlayers.forEach { player ->
             tabRenderer.updateHeaderAndFooter(player)
@@ -30,7 +30,7 @@ class OnlinePlayerCountPlaceholder(
 
     @EventHandler(ignoreCancelled = true)
     suspend fun onPlayerQuit(event: PlayerQuitEvent) {
-        deprecatedLog.debug { "PlayerQuitEvent: updating all player tabs" }
+        log.debug { "PlayerQuitEvent: updating all player tabs" }
 
         server.onlinePlayers.forEach { player ->
             tabRenderer.updateHeaderAndFooter(player)

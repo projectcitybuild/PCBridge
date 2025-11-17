@@ -1,6 +1,7 @@
 package com.projectcitybuild.pcbridge.paper.core.utils
 
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.deprecatedLog
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.logSync
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -25,7 +26,7 @@ class PeriodicRunner(
         this.action = action
         this.jobId = uuid
 
-        deprecatedLog.debug { "Starting job queue (id: $uuid)" }
+        logSync.debug { "Starting job queue (id: $uuid)" }
 
         job?.cancel()
         job = scope.launch {
@@ -34,14 +35,14 @@ class PeriodicRunner(
     }
 
     fun stop() {
-        deprecatedLog.debug { "Stopping job queue (id: $jobId)" }
+        logSync.debug { "Stopping job queue (id: $jobId)" }
 
         job?.cancel()
         job?.let {
             if (!it.isActive) {
-                deprecatedLog.info { "Job ($jobId) has been successfully cancelled." }
+                logSync.info { "Job ($jobId) has been successfully cancelled." }
             } else {
-                deprecatedLog.warn { "Job ($jobId) cancellation failed or job was already inactive." }
+                logSync.warn { "Job ($jobId) cancellation failed or job was already inactive." }
             }
         }
         job = null
@@ -51,14 +52,14 @@ class PeriodicRunner(
     private suspend fun process(jobId: UUID) {
         while (job?.isActive == true && this.jobId == jobId) {
             try {
-                deprecatedLog.debug { "Executing task with jobId: $jobId" }
+                log.debug { "Executing task with jobId: $jobId" }
                 action?.invoke()
             } catch (e: Exception) {
-                deprecatedLog.error(e) { "Failed to process runner action" }
+                log.error(e) { "Failed to process runner action" }
                 e.printStackTrace()
             }
             kotlinx.coroutines.delay(processInterval)
         }
-        deprecatedLog.debug { "Job $jobId has been cancelled or completed." }
+        log.debug { "Job $jobId has been cancelled or completed." }
     }
 }

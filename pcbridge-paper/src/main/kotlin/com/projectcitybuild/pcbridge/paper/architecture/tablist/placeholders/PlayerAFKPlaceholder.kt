@@ -4,7 +4,7 @@ import com.projectcitybuild.pcbridge.paper.core.libs.store.Store
 import com.projectcitybuild.pcbridge.paper.architecture.state.events.PlayerStateUpdatedEvent
 import com.projectcitybuild.pcbridge.paper.architecture.tablist.TabRenderer
 import com.projectcitybuild.pcbridge.paper.architecture.tablist.UpdatableTabPlaceholder
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.deprecatedLog
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.Server
@@ -31,7 +31,7 @@ class PlayerAFKPlaceholder(
     suspend fun onPlayerStateUpdated(event: PlayerStateUpdatedEvent) {
         if (event.prevState?.afk == event.state.afk) return
 
-        deprecatedLog.debug { "PlayerStateUpdatedEvent: updating tab AFK placeholder for player" }
+        log.debug { "PlayerStateUpdatedEvent: updating tab AFK placeholder for player" }
 
         server.getPlayer(event.playerUUID)?.let { player ->
             tabRenderer.updatePlayerName(player)

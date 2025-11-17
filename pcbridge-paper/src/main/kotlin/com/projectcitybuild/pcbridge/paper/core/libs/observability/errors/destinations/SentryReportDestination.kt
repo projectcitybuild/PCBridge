@@ -1,7 +1,7 @@
 package com.projectcitybuild.pcbridge.paper.core.libs.observability.errors.destinations
 
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.errors.ReportDestination
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.deprecatedLog
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.logSync
 import io.sentry.Sentry
 
 class SentryReportDestination(
@@ -13,12 +13,12 @@ class SentryReportDestination(
             options.dsn = dsn
             options.environment = environment
         }
-        deprecatedLog.info { "Sentry error reporting enabled" }
+        logSync.info { "Sentry error reporting enabled" }
     }
 
     override fun close() {
         Sentry.close()
-        deprecatedLog.info { "Sentry error reporting disabled" }
+        logSync.info { "Sentry error reporting disabled" }
     }
 
     override fun report(throwable: Throwable) {

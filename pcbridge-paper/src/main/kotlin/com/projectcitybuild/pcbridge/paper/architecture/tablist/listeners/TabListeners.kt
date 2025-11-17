@@ -1,7 +1,7 @@
 package com.projectcitybuild.pcbridge.paper.architecture.tablist.listeners
 
 import com.projectcitybuild.pcbridge.paper.architecture.tablist.TabRenderer
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.deprecatedLog
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
 import com.projectcitybuild.pcbridge.paper.features.config.events.RemoteConfigUpdatedEvent
 import org.bukkit.Server
 import org.bukkit.event.EventHandler
@@ -14,7 +14,7 @@ class TabListeners(
 ): Listener {
     @EventHandler(ignoreCancelled = true)
     suspend fun onPlayerJoin(event: PlayerJoinEvent) {
-        deprecatedLog.debug { "PlayerJoinEvent: setting tab for joining player" }
+        log.debug { "PlayerJoinEvent: setting tab for joining player" }
 
         // Render the tab for the player as soon as they join so that
         // they don't have the default vanilla one
@@ -28,7 +28,7 @@ class TabListeners(
         val next = event.next.config
 
         if (prev?.tab != next.tab) {
-            deprecatedLog.debug { "RemoteConfigUpdatedEvent: updating all tabs" }
+            log.debug { "RemoteConfigUpdatedEvent: updating all tabs" }
 
             server.onlinePlayers.forEach { player ->
                 tabRenderer.updatePlayerName(player)

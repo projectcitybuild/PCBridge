@@ -1,11 +1,11 @@
 package com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig
 
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.deprecatedLog
 import com.projectcitybuild.pcbridge.paper.features.config.events.RemoteConfigUpdatedEvent
 import com.projectcitybuild.pcbridge.http.pcb.models.RemoteConfigKeyValues
 import com.projectcitybuild.pcbridge.http.pcb.models.RemoteConfigVersion
 import com.projectcitybuild.pcbridge.http.pcb.services.ConfigHttpService
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.errors.ErrorReporter
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.errors.ErrorTracker
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
 import com.projectcitybuild.pcbridge.paper.core.libs.storage.Storage
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotEventBroadcaster
 import java.io.File
@@ -15,7 +15,7 @@ class RemoteConfig(
     private val eventBroadcaster: SpigotEventBroadcaster,
     private val file: File,
     private val storage: Storage<RemoteConfigVersion>,
-    private val errorReporter: ErrorReporter,
+    private val errorTracker: ErrorTracker,
 ) {
     private var cached: RemoteConfigVersion? = null
 
@@ -23,7 +23,7 @@ class RemoteConfig(
         get() = cached!!
 
     suspend fun fetch(): RemoteConfigVersion {
-        deprecatedLog.info { "Fetching remote config..." }
+        log.info { "Fetching remote config..." }
 
         val next = fetchFromHttp()
             ?: fetchFromCache()
@@ -38,7 +38,7 @@ class RemoteConfig(
         cached = next
 
         if (prev != next) {
-            deprecatedLog.debug { "Remote config update detected. Broadcasting change..." }
+            log.debug { "Remote config update detected. Broadcasting change..." }
 
             eventBroadcaster.broadcast(
                 RemoteConfigUpdatedEvent(prev, next)
@@ -52,9 +52,9 @@ class RemoteConfig(
     private suspend fun fetchFromHttp(): RemoteConfigVersion?
         = runCatching { configHttpService.get() }
             .onFailure { e ->
-                deprecatedLog.warn { "Failed to fetch remote config. Falling back to last known config..." }
+                log.warn { "Failed to fetch remote config. Falling back to last known config..." }
                 e.printStackTrace()
-                errorReporter.report(e)
+                errorTracker.report(e)
             }
             .onSuccess { persistToCache(it) }
             .getOrNull()
@@ -62,7 +62,7 @@ class RemoteConfig(
     private suspend fun fetchFromCache(): RemoteConfigVersion?
         = storage.read(file).also {
             if (it == null) {
-                deprecatedLog.warn { "No cached remote config. Falling back to default config..." }
+                log.warn { "No cached remote config. Falling back to default config..." }
             }
         }
 
@@ -70,8 +70,8 @@ class RemoteConfig(
         = runCatching {
             storage.write(file, config)
         }.onFailure { e ->
-            deprecatedLog.error(e) { "Failed to persist remote config" }
+            log.error(e) { "Failed to persist remote config" }
             e.printStackTrace()
-            errorReporter.report(e)
+            errorTracker.report(e)
         }
 }

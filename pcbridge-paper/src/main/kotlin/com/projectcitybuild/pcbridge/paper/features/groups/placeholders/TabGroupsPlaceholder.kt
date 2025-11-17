@@ -4,7 +4,7 @@ import com.projectcitybuild.pcbridge.paper.architecture.state.events.PlayerState
 import com.projectcitybuild.pcbridge.paper.architecture.state.events.PlayerStateUpdatedEvent
 import com.projectcitybuild.pcbridge.paper.architecture.tablist.TabRenderer
 import com.projectcitybuild.pcbridge.paper.architecture.tablist.UpdatableTabPlaceholder
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.deprecatedLog
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
 import com.projectcitybuild.pcbridge.paper.features.groups.repositories.ChatGroupRepository
 import net.kyori.adventure.text.Component
 import org.bukkit.Server
@@ -26,7 +26,7 @@ class TabGroupsPlaceholder(
 
     @EventHandler
     suspend fun onPlayerStateCreated(event: PlayerStateCreatedEvent) {
-        deprecatedLog.debug { "PlayerStateCreatedEvent: updating tab groups for player" }
+        log.debug { "PlayerStateCreatedEvent: updating tab groups for player" }
         update(event.playerUUID)
     }
 
@@ -34,7 +34,7 @@ class TabGroupsPlaceholder(
     suspend fun onPlayerStateUpdated(event: PlayerStateUpdatedEvent) {
         if (event.prevState?.groups == event.state.groups) return
 
-        deprecatedLog.debug { "PlayerStateUpdatedEvent: updating tab groups for player" }
+        log.debug { "PlayerStateUpdatedEvent: updating tab groups for player" }
         update(event.playerUUID)
     }
 

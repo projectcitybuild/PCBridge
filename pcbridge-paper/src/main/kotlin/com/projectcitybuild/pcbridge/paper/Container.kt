@@ -29,7 +29,7 @@ import com.projectcitybuild.pcbridge.paper.core.libs.cooldowns.Cooldown
 import com.projectcitybuild.pcbridge.paper.core.libs.datetime.services.DateTimeFormatter
 import com.projectcitybuild.pcbridge.paper.core.libs.datetime.services.LocalizedTime
 import com.projectcitybuild.pcbridge.paper.core.libs.discord.DiscordSend
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.errors.ErrorReporter
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.errors.ErrorTracker
 import com.projectcitybuild.pcbridge.paper.core.libs.storage.JsonStorage
 import com.projectcitybuild.pcbridge.paper.core.libs.localconfig.LocalConfig
 import com.projectcitybuild.pcbridge.paper.core.libs.localconfig.LocalConfigKeyValues
@@ -173,7 +173,7 @@ private fun Module.core() {
     }
 
     single {
-        ErrorReporter(
+        ErrorTracker(
             localConfig = get(),
         )
     } onClose {
@@ -225,7 +225,7 @@ private fun Module.core() {
             storage = JsonStorage(
                 typeToken = object : TypeToken<RemoteConfigVersion>() {},
             ),
-            errorReporter = get(),
+            errorTracker = get(),
         )
     }
 
@@ -233,7 +233,7 @@ private fun Module.core() {
         DiscordSend(
             localConfig = get(),
             discordHttpService = get<DiscordHttp>().discord,
-            errorReporter = get(),
+            errorTracker = get(),
             periodicRunner = PeriodicRunner(processInterval = 10.seconds)
         )
     }
@@ -323,7 +323,7 @@ private fun Module.integrations() {
         EssentialsIntegration(
             plugin = get(),
             server = get(),
-            errorReporter = get(),
+            errorTracker = get(),
             store = get(),
             eventBroadcaster = get(),
             tabRenderer = get(),
@@ -343,13 +343,13 @@ private fun Module.architecture() {
             store = get(),
             time = get(),
             eventBroadcaster = get(),
-            errorReporter = get(),
+            errorTracker = get(),
         )
     }
 
     factory {
         CoroutineExceptionListener(
-            errorReporter = get(),
+            errorTracker = get(),
         )
     }
 
@@ -361,7 +361,7 @@ private fun Module.architecture() {
         AuthorizeConnectionListener(
             middlewareChain = get(),
             playerDataProvider = get(),
-            errorReporter = get(),
+            errorTracker = get(),
             eventBroadcaster = get(),
         )
     }
