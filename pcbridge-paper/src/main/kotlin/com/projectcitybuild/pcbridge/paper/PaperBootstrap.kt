@@ -8,7 +8,7 @@ import org.bukkit.plugin.java.JavaPlugin
 
 class PaperBootstrap : PluginBootstrap {
     override fun bootstrap(context: BootstrapContext) {
-        Logging.configure()
+        Logging.configure(namespace = "com.projectcitybuild.pcbridge")
     }
 
     override fun createPlugin(context: PluginProviderContext): JavaPlugin {
