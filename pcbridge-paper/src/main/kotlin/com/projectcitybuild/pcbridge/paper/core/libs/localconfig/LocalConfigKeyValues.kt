@@ -9,6 +9,7 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class LocalConfigKeyValues(
+    val environment: Environment,
     val api: Api,
     val webServer: WebServer,
     val errorReporting: ErrorReporting,
@@ -41,22 +42,20 @@ data class LocalConfigKeyValues(
 
 fun LocalConfigKeyValues.Companion.default() =
     LocalConfigKeyValues(
-        api =
-            LocalConfigKeyValues.Api(
-                token = "pcbridge_local",
-                baseUrl = "http://localhost/api/",
-                isLoggingEnabled = true,
-            ),
-        webServer =
-            LocalConfigKeyValues.WebServer(
-                token = "pcbridge_local",
-                port = 8080,
-            ),
-        errorReporting =
-            LocalConfigKeyValues.ErrorReporting(
-                isSentryEnabled = false,
-                sentryDsn = "https://<key>@sentry.io/<project>",
-            ),
+        environment = Environment.dev,
+        api = LocalConfigKeyValues.Api(
+            token = "pcbridge_local",
+            baseUrl = "http://localhost/api/",
+            isLoggingEnabled = true,
+        ),
+        webServer = LocalConfigKeyValues.WebServer(
+            token = "pcbridge_local",
+            port = 8080,
+        ),
+        errorReporting = LocalConfigKeyValues.ErrorReporting(
+            isSentryEnabled = false,
+            sentryDsn = "https://<key>@sentry.io/<project>",
+        ),
         discord = LocalConfigKeyValues.Discord(
             contentAlertWebhook = ""
         )

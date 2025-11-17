@@ -1,6 +1,6 @@
 package com.projectcitybuild.pcbridge.paper.features.chatemojis.listeners
 
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.deprecatedLog
 import com.projectcitybuild.pcbridge.paper.features.chatemojis.repositories.EmojiRepository
 import com.projectcitybuild.pcbridge.paper.features.config.events.RemoteConfigUpdatedEvent
 import org.bukkit.event.EventHandler
@@ -15,7 +15,7 @@ class EmojiConfigListener(
         val next = event.next.config
 
         if (prev?.emojis != next.emojis) {
-            log.debug { "RemoteConfigUpdatedEvent: updating emoji mapping" }
+            deprecatedLog.debug { "RemoteConfigUpdatedEvent: updating emoji mapping" }
             emojiRepository.set(next.emojis)
         }
     }

@@ -1,6 +1,6 @@
 package com.projectcitybuild.pcbridge.paper.integrations.dynmap
 
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.deprecatedLog
 
 class DynmapAdapter {
     private var delegate = DynmapDelegate()
@@ -33,12 +33,12 @@ class DynmapAdapter {
                 hideByDefault = false
                 markers.forEach { it.deleteMarker() }
             }.also {
-                log.info { "Created new dynmap marker set: $setId" }
+                deprecatedLog.info { "Created new dynmap marker set: $setId" }
             }
 
         val icon = markerAPI.getMarkerIcon(iconName)
             ?: markerAPI.getMarkerIcon(fallbackIconName).also {
-                log.warn { "$iconName is not a valid dynmap icon name. Falling back to default '$fallbackIconName' icon" }
+                deprecatedLog.warn { "$iconName is not a valid dynmap icon name. Falling back to default '$fallbackIconName' icon" }
             }
         markerSet.createMarker(
             id,         // Marker ID
@@ -51,6 +51,6 @@ class DynmapAdapter {
             icon,       // Related MarkerIcon object
             false,      // Marker is persistent
         )
-        log.info { "Created new dynmap marker: $id" }
+        deprecatedLog.info { "Created new dynmap marker: $id" }
     }
 }

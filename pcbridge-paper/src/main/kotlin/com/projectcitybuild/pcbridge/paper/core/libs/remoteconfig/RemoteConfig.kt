@@ -1,6 +1,6 @@
 package com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig
 
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.deprecatedLog
 import com.projectcitybuild.pcbridge.paper.features.config.events.RemoteConfigUpdatedEvent
 import com.projectcitybuild.pcbridge.http.pcb.models.RemoteConfigKeyValues
 import com.projectcitybuild.pcbridge.http.pcb.models.RemoteConfigVersion
@@ -23,7 +23,7 @@ class RemoteConfig(
         get() = cached!!
 
     suspend fun fetch(): RemoteConfigVersion {
-        log.info { "Fetching remote config..." }
+        deprecatedLog.info { "Fetching remote config..." }
 
         val next = fetchFromHttp()
             ?: fetchFromCache()
@@ -38,7 +38,7 @@ class RemoteConfig(
         cached = next
 
         if (prev != next) {
-            log.debug { "Remote config update detected. Broadcasting change..." }
+            deprecatedLog.debug { "Remote config update detected. Broadcasting change..." }
 
             eventBroadcaster.broadcast(
                 RemoteConfigUpdatedEvent(prev, next)
@@ -52,7 +52,7 @@ class RemoteConfig(
     private suspend fun fetchFromHttp(): RemoteConfigVersion?
         = runCatching { configHttpService.get() }
             .onFailure { e ->
-                log.warn { "Failed to fetch remote config. Falling back to last known config..." }
+                deprecatedLog.warn { "Failed to fetch remote config. Falling back to last known config..." }
                 e.printStackTrace()
                 errorReporter.report(e)
             }
@@ -62,7 +62,7 @@ class RemoteConfig(
     private suspend fun fetchFromCache(): RemoteConfigVersion?
         = storage.read(file).also {
             if (it == null) {
-                log.warn { "No cached remote config. Falling back to default config..." }
+                deprecatedLog.warn { "No cached remote config. Falling back to default config..." }
             }
         }
 
@@ -70,7 +70,7 @@ class RemoteConfig(
         = runCatching {
             storage.write(file, config)
         }.onFailure { e ->
-            log.error(e) { "Failed to persist remote config" }
+            deprecatedLog.error(e) { "Failed to persist remote config" }
             e.printStackTrace()
             errorReporter.report(e)
         }

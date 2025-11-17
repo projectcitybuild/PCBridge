@@ -1,6 +1,6 @@
 package com.projectcitybuild.pcbridge.paper.features.announcements.listeners
 
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.deprecatedLog
 import com.projectcitybuild.pcbridge.paper.features.config.events.RemoteConfigUpdatedEvent
 import com.projectcitybuild.pcbridge.paper.features.announcements.actions.StartAnnouncementTimer
 import org.bukkit.event.EventHandler
@@ -19,7 +19,7 @@ class AnnouncementConfigListener(
             return
         }
 
-        log.info { "Announcement config updated. Restarting announcements" }
+        deprecatedLog.info { "Announcement config updated. Restarting announcements" }
 
         // Restart the timer so that the new remote config values are picked up
         announcementTimer.stop()

@@ -6,7 +6,7 @@ import com.projectcitybuild.pcbridge.paper.core.libs.store.Store
 import com.projectcitybuild.pcbridge.paper.architecture.state.events.PlayerStateUpdatedEvent
 import com.projectcitybuild.pcbridge.paper.architecture.tablist.TabRenderer
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.errors.ErrorReporter
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.deprecatedLog
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotEventBroadcaster
 import com.projectcitybuild.pcbridge.paper.core.libs.teleportation.events.PlayerPreTeleportEvent
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotIntegration
@@ -39,7 +39,7 @@ class EssentialsIntegration(
         }
         essentials = loadedPlugin
         plugin.server.pluginManager.registerSuspendingEvents(this, plugin)
-        log.info { "Essentials integration enabled" }
+        deprecatedLog.info { "Essentials integration enabled" }
     }
 
     override suspend fun onDisable() {
@@ -56,23 +56,23 @@ class EssentialsIntegration(
     @EventHandler
     fun onPlayerPreTeleport(event: PlayerPreTeleportEvent) = runCatching {
         if (essentials == null) {
-            log.warn { "Essentials integration disabled but it's still listening to events" }
+            deprecatedLog.warn { "Essentials integration disabled but it's still listening to events" }
             return@runCatching
         }
         essentials!!
             .getUser(event.player)
             .setLastLocation()
 
-        log.debug { "Registered last location for ${event.player.name} with Essentials" }
+        deprecatedLog.debug { "Registered last location for ${event.player.name} with Essentials" }
     }
 
     @EventHandler
     fun onPlayerAFKStatusChange(event: AfkStatusChangeEvent) = runCatching {
         if (essentials == null) {
-            log.warn { "Essentials integration disabled but it's still listening to events" }
+            deprecatedLog.warn { "Essentials integration disabled but it's still listening to events" }
             return@runCatching
         }
-        log.info { "Player AFK status changed (${event.value}, ${event.cause})" }
+        deprecatedLog.info { "Player AFK status changed (${event.value}, ${event.cause})" }
 
         val playerUuid = event.affected.uuid
         // TODO: clean up this mess...
@@ -101,7 +101,7 @@ class EssentialsIntegration(
     @EventHandler
     suspend fun onPlayerNicknameChange(event: NickChangeEvent) {
         val playerUuid = event.affected.uuid
-        log.info { "Player nickname changed (${event.value}, $playerUuid)" }
+        deprecatedLog.info { "Player nickname changed (${event.value}, $playerUuid)" }
 
         server.getPlayer(playerUuid)?.let { player ->
             tabRenderer.updatePlayerName(player)

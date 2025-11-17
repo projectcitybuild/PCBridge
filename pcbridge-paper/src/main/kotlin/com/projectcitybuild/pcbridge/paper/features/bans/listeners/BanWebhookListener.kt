@@ -1,7 +1,7 @@
 package com.projectcitybuild.pcbridge.paper.features.bans.listeners
 
 import com.projectcitybuild.pcbridge.paper.architecture.webhooks.events.WebhookReceivedEvent
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.deprecatedLog
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.utilities.SpigotSanitizer
 import com.projectcitybuild.pcbridge.paper.features.bans.utilities.toMiniMessage
 import com.projectcitybuild.pcbridge.webserver.data.IPBanRequestedWebhook
@@ -28,11 +28,11 @@ class BanWebhookListener(
             SpigotSanitizer.ipAddress(it.address?.address.toString()) == SpigotSanitizer.ipAddress(ban.ipAddress)
         }
         if (matchingPlayer == null) {
-            log.info { "Skipping ban fulfillment, ip address (${ban.ipAddress}) not found" }
+            deprecatedLog.info { "Skipping ban fulfillment, ip address (${ban.ipAddress}) not found" }
             return
         }
 
-        log.info { "Player found matching ip address (${ban.ipAddress}), banning ${matchingPlayer.name}" }
+        deprecatedLog.info { "Player found matching ip address (${ban.ipAddress}), banning ${matchingPlayer.name}" }
 
         matchingPlayer.kick(
             ban.toMiniMessage(),
@@ -50,18 +50,18 @@ class BanWebhookListener(
         val ban = event.webhook.ban
         val bannedPlayer = ban.bannedPlayer
         if (bannedPlayer == null) {
-            log.info { "Skipping ban fulfillment, ban had no player data" }
+            deprecatedLog.info { "Skipping ban fulfillment, ban had no player data" }
             return
         }
         val matchingPlayer = server.onlinePlayers.firstOrNull {
             it.uniqueId.toString().replace("-", "") == bannedPlayer.uuid
         }
         if (matchingPlayer == null) {
-            log.info { "Skipping ban fulfillment, player (${bannedPlayer.uuid}) not found" }
+            deprecatedLog.info { "Skipping ban fulfillment, player (${bannedPlayer.uuid}) not found" }
             return
         }
 
-        log.info { "Player found, banning ${matchingPlayer.uniqueId}" }
+        deprecatedLog.info { "Player found, banning ${matchingPlayer.uniqueId}" }
 
         matchingPlayer.kick(
             ban.toMiniMessage(),

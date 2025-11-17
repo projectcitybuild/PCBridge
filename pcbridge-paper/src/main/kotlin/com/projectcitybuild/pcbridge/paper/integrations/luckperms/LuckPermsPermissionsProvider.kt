@@ -1,6 +1,6 @@
 package com.projectcitybuild.pcbridge.paper.integrations.luckperms
 
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.deprecatedLog
 import com.projectcitybuild.pcbridge.paper.architecture.permissions.PermissionsProvider
 import net.luckperms.api.LuckPerms
 import net.luckperms.api.model.user.User
@@ -42,7 +42,7 @@ class LuckPermsPermissionsProvider(
         roleNames.forEach { groupName ->
             val groupNode = InheritanceNode.builder(groupName).build()
             user.data().add(groupNode)
-            log.debug { "Assigning to $groupName group" }
+            deprecatedLog.debug { "Assigning to $groupName group" }
         }
 
         luckPerms.userManager.saveUser(user)
@@ -51,7 +51,7 @@ class LuckPermsPermissionsProvider(
     private fun getUser(playerUUID: UUID): User {
         val user = luckPerms.userManager.getUser(playerUUID)
         if (user == null) {
-            log.error { "Could not load user ($playerUUID) from permissions manager" }
+            deprecatedLog.error { "Could not load user ($playerUUID) from permissions manager" }
             throw PermissionUserNotFoundException()
         }
         return user

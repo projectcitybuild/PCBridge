@@ -2,7 +2,7 @@ package com.projectcitybuild.pcbridge.paper.architecture.tablist.placeholders
 
 import com.projectcitybuild.pcbridge.paper.architecture.tablist.TabRenderer
 import com.projectcitybuild.pcbridge.paper.architecture.tablist.UpdatableTabPlaceholder
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.deprecatedLog
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotTimer
 import com.projectcitybuild.pcbridge.paper.core.utils.Cancellable
 import kotlinx.coroutines.runBlocking
@@ -45,7 +45,7 @@ class PlayerPingPlaceholder(
             delay = updateFrequency,
             repeatingInterval = updateFrequency,
         ) {
-            log.trace { "Updating all tab player pings" }
+            deprecatedLog.trace { "Updating all tab player pings" }
 
             // TODO: remove runBlocking when SpigotTimer becomes coroutines
             runBlocking {

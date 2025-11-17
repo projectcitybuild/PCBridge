@@ -1,7 +1,7 @@
 package com.projectcitybuild.pcbridge.paper.core.support.spigot
 
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.errors.ErrorReporter
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.deprecatedLog
 import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.PluginManager
 
@@ -18,12 +18,12 @@ abstract class SpigotIntegration(
         runCatching {
             val integratedPlugin = pluginManager.getPlugin(pluginName)
             if (integratedPlugin == null) {
-                log.warn { "Cannot find $pluginName plugin. Disabling integration" }
+                deprecatedLog.warn { "Cannot find $pluginName plugin. Disabling integration" }
                 return@runCatching
             }
             onEnable(integratedPlugin)
         }.onFailure {
-            log.error { "Failed to enable $pluginName integration: ${it.localizedMessage}" }
+            deprecatedLog.error { "Failed to enable $pluginName integration: ${it.localizedMessage}" }
             errorReporter.report(it)
         }
 

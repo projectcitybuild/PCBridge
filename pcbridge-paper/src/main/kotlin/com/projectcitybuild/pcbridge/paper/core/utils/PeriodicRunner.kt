@@ -1,6 +1,6 @@
 package com.projectcitybuild.pcbridge.paper.core.utils
 
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.deprecatedLog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -25,7 +25,7 @@ class PeriodicRunner(
         this.action = action
         this.jobId = uuid
 
-        log.debug { "Starting job queue (id: $uuid)" }
+        deprecatedLog.debug { "Starting job queue (id: $uuid)" }
 
         job?.cancel()
         job = scope.launch {
@@ -34,14 +34,14 @@ class PeriodicRunner(
     }
 
     fun stop() {
-        log.debug { "Stopping job queue (id: $jobId)" }
+        deprecatedLog.debug { "Stopping job queue (id: $jobId)" }
 
         job?.cancel()
         job?.let {
             if (!it.isActive) {
-                log.info { "Job ($jobId) has been successfully cancelled." }
+                deprecatedLog.info { "Job ($jobId) has been successfully cancelled." }
             } else {
-                log.warn { "Job ($jobId) cancellation failed or job was already inactive." }
+                deprecatedLog.warn { "Job ($jobId) cancellation failed or job was already inactive." }
             }
         }
         job = null
@@ -51,14 +51,14 @@ class PeriodicRunner(
     private suspend fun process(jobId: UUID) {
         while (job?.isActive == true && this.jobId == jobId) {
             try {
-                log.debug { "Executing task with jobId: $jobId" }
+                deprecatedLog.debug { "Executing task with jobId: $jobId" }
                 action?.invoke()
             } catch (e: Exception) {
-                log.error(e) { "Failed to process runner action" }
+                deprecatedLog.error(e) { "Failed to process runner action" }
                 e.printStackTrace()
             }
             kotlinx.coroutines.delay(processInterval)
         }
-        log.debug { "Job $jobId has been cancelled or completed." }
+        deprecatedLog.debug { "Job $jobId has been cancelled or completed." }
     }
 }

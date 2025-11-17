@@ -5,7 +5,7 @@ import com.projectcitybuild.pcbridge.paper.architecture.connection.events.Connec
 import com.projectcitybuild.pcbridge.paper.architecture.connection.middleware.ConnectionMiddlewareChain
 import com.projectcitybuild.pcbridge.paper.architecture.connection.middleware.ConnectionResult
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.errors.ErrorReporter
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.deprecatedLog
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotEventBroadcaster
 import kotlinx.coroutines.runBlocking
 import org.bukkit.event.EventHandler
@@ -64,7 +64,7 @@ class AuthorizeConnectionListener(
                     )
                 }
             }.onFailure {
-                log.error(it) { "An error occurred while authorizing a connection" }
+                deprecatedLog.error(it) { "An error occurred while authorizing a connection" }
                 errorReporter.report(it)
 
                 // If something goes wrong, permit the connection without player data

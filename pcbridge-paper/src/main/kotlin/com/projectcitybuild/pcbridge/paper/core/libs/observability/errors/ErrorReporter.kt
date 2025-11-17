@@ -14,6 +14,7 @@ class ErrorReporter(
         if (config.errorReporting.isSentryEnabled) {
             destination = SentryReportDestination(
                 dsn = config.errorReporting.sentryDsn,
+                environment = config.environment.name,
             )
         }
         destination.start()

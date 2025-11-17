@@ -1,6 +1,6 @@
 package com.projectcitybuild.pcbridge.paper.integrations.luckperms
 
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.deprecatedLog
 import com.projectcitybuild.pcbridge.paper.architecture.permissions.Permissions
 import net.luckperms.api.LuckPerms
 import net.luckperms.api.LuckPermsProvider
@@ -16,7 +16,7 @@ class LuckPermsIntegration(
         try {
             instance = LuckPermsProvider.get()
         } catch (e: Exception) {
-            log.error(e) { "Failed to hook into LuckPerms plugin" }
+            deprecatedLog.error(e) { "Failed to hook into LuckPerms plugin" }
             return
         }
         permissions.setProvider(
@@ -24,7 +24,7 @@ class LuckPermsIntegration(
         )
         luckPerms = instance
 
-        log.info { "LuckPerms integration enabled" }
+        deprecatedLog.info { "LuckPerms integration enabled" }
     }
 
     fun disable() {

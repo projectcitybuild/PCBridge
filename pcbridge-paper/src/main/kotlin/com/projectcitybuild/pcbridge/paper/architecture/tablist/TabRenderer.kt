@@ -1,6 +1,6 @@
 package com.projectcitybuild.pcbridge.paper.architecture.tablist
 
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.deprecatedLog
 import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.RemoteConfig
 import com.projectcitybuild.pcbridge.paper.core.support.component.deserialize
 import net.kyori.adventure.text.Component
@@ -20,7 +20,7 @@ class TabRenderer(
      * Updates the tab name of the given player
      */
     suspend fun updatePlayerName(player: Player) {
-        log.debug { "Updating tab player name for ${player.uniqueId}" }
+        deprecatedLog.debug { "Updating tab player name for ${player.uniqueId}" }
 
         val config = remoteConfig.latest.config.tab
 
@@ -62,7 +62,7 @@ class TabRenderer(
      * Re-renders the tab header and footer for the given player
      */
     suspend fun updateHeaderAndFooter(player: Player) {
-        log.debug { "Updating tab header and footer for ${player.uniqueId}" }
+        deprecatedLog.debug { "Updating tab header and footer for ${player.uniqueId}" }
 
         val config = remoteConfig.latest.config.tab
 

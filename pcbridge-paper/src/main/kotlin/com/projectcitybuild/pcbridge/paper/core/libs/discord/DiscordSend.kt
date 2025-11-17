@@ -4,7 +4,7 @@ import com.projectcitybuild.pcbridge.http.discord.services.DiscordHttpService
 import com.projectcitybuild.pcbridge.http.discord.models.DiscordEmbed
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.errors.ErrorReporter
 import com.projectcitybuild.pcbridge.paper.core.libs.localconfig.LocalConfig
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.deprecatedLog
 import com.projectcitybuild.pcbridge.paper.core.utils.PeriodicRunner
 
 class DiscordSend(
@@ -18,17 +18,17 @@ class DiscordSend(
 
     init {
         if (localConfig.get().discord.contentAlertWebhook.isEmpty()) {
-            log.warn { "No webhook configured for content alerts. No messages will be sent to Discord" }
+            deprecatedLog.warn { "No webhook configured for content alerts. No messages will be sent to Discord" }
             enabled = false
         }
     }
 
     fun send(embed: DiscordEmbed) {
         if (!enabled) {
-            log.debug { "Skipping Discord embed queue" }
+            deprecatedLog.debug { "Skipping Discord embed queue" }
             return
         }
-        log.trace { "Queuing Discord embed: $embed" }
+        deprecatedLog.trace { "Queuing Discord embed: $embed" }
         queue.add(embed)
 
         if (!periodicRunner.running) {
@@ -43,7 +43,7 @@ class DiscordSend(
         queue.removeAll(batch)
 
         if (batch.isNotEmpty()) {
-            log.trace { "Sending Discord embed batch of size ${batch.size}" }
+            deprecatedLog.trace { "Sending Discord embed batch of size ${batch.size}" }
             sendMessage(batch)
         }
 
@@ -58,7 +58,7 @@ class DiscordSend(
             val webhookUrl = config.contentAlertWebhook
             discordHttpService.executeWebhook(webhookUrl, embeds)
         } catch (e: Exception) {
-            log.error(e) { "Failed to send Discord message" }
+            deprecatedLog.error(e) { "Failed to send Discord message" }
             e.printStackTrace()
             errorReporter.report(e)
         }

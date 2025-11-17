@@ -2,7 +2,7 @@ package com.projectcitybuild.pcbridge.paper.architecture.state.listeners
 
 import com.projectcitybuild.pcbridge.paper.architecture.connection.events.ConnectionPermittedEvent
 import com.projectcitybuild.pcbridge.paper.core.libs.datetime.services.LocalizedTime
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.deprecatedLog
 import com.projectcitybuild.pcbridge.paper.architecture.state.data.PlayerState
 import com.projectcitybuild.pcbridge.paper.architecture.state.events.PlayerStateCreatedEvent
 import com.projectcitybuild.pcbridge.paper.core.libs.store.Store
@@ -26,7 +26,7 @@ class PlayerStateListener(
      */
     @EventHandler
     suspend fun onConnectionPermitted(event: ConnectionPermittedEvent) {
-        log.info { "Creating player state for ${event.playerUUID}" }
+        deprecatedLog.info { "Creating player state for ${event.playerUUID}" }
 
         val playerState = event.playerData?.let {
             PlayerState.fromPlayerData(it, connectedAt = time.now())
@@ -46,7 +46,7 @@ class PlayerStateListener(
 
         val playerState = store.state.players[event.player.uniqueId]
         if (playerState == null) {
-            log.error { "Player state was missing on join event" }
+            deprecatedLog.error { "Player state was missing on join event" }
             errorReporter.report(Exception("Player state was missing on join event"))
             return
         }
@@ -68,12 +68,12 @@ class PlayerStateListener(
     @EventHandler(priority = EventPriority.HIGHEST)
     suspend fun onPlayerQuit(event: PlayerQuitEvent) {
         val uuid = event.player.uniqueId
-        log.info { "Destroying player state for $uuid" }
+        deprecatedLog.info { "Destroying player state for $uuid" }
         val prevState = store.state.players[uuid]
 
         val exists = store.state.players.containsKey(event.player.uniqueId)
         if (!exists) {
-            log.debug { "Player state did not exist - no clean up needed" }
+            deprecatedLog.debug { "Player state did not exist - no clean up needed" }
             return
         }
         store.mutate { state ->

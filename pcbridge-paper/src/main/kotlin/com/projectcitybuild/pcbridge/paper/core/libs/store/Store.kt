@@ -2,7 +2,7 @@ package com.projectcitybuild.pcbridge.paper.core.libs.store
 
 import com.projectcitybuild.pcbridge.paper.architecture.state.data.PersistedServerState
 import com.projectcitybuild.pcbridge.paper.architecture.state.data.ServerState
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.deprecatedLog
 import com.projectcitybuild.pcbridge.paper.core.libs.storage.Storage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
@@ -26,13 +26,13 @@ class Store(
      * Restores the state from storage
      */
     suspend fun hydrate() {
-        log.info { "Hydrating Store state from storage" }
+        deprecatedLog.info { "Hydrating Store state from storage" }
 
         val deserialized = storage.read(file)
         if (deserialized != null) {
             mutate { deserialized.toServerState() }
         } else {
-            log.info { "No persisted data found" }
+            deprecatedLog.info { "No persisted data found" }
         }
     }
 
@@ -40,7 +40,7 @@ class Store(
      * Saves the state to storage
      */
     fun persist() {
-        log.info { "Persisting Store state to storage" }
+        deprecatedLog.info { "Persisting Store state to storage" }
 
         storage.writeSync(
             file = file,
@@ -50,11 +50,11 @@ class Store(
 
     suspend fun mutate(mutation: (ServerState) -> ServerState) =
         withContext(Dispatchers.IO) {
-            log.debug { "[previous state]\n$state" }
+            deprecatedLog.debug { "[previous state]\n$state" }
 
             mutex.withLock {
                 _state = mutation(_state)
-                log.debug { "[new state]\n$state" }
+                deprecatedLog.debug { "[new state]\n$state" }
             }
         }
 }

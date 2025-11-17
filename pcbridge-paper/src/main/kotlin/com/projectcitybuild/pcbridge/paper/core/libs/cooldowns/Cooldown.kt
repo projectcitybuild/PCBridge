@@ -1,6 +1,6 @@
 package com.projectcitybuild.pcbridge.paper.core.libs.cooldowns
 
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.deprecatedLog
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotTimer
 import org.bukkit.entity.Player
 import kotlin.time.Duration
@@ -29,11 +29,11 @@ class Cooldown(
             delay = duration,
             work = {
                 cooldowns.remove(identifier)
-                log.debug { "Cooldown expired ($identifier)" }
+                deprecatedLog.debug { "Cooldown expired ($identifier)" }
             }
         )
 
-        log.debug { "Registered cooldown ($identifier). Expires in ${duration.inWholeMilliseconds} ms" }
+        deprecatedLog.debug { "Registered cooldown ($identifier). Expires in ${duration.inWholeMilliseconds} ms" }
     }
 
     fun throttle(

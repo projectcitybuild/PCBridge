@@ -1,6 +1,6 @@
 package com.projectcitybuild.pcbridge.paper.architecture.tablist
 
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.deprecatedLog
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotListenerRegistry
 import net.kyori.adventure.text.Component
 import org.bukkit.entity.Player
@@ -26,7 +26,7 @@ class TabPlaceholders(
     val section get() = sectionPlaceholders.toSet()
 
     fun sections(vararg placeholders: TabPlaceholder) = placeholders.forEach { placeholder ->
-        log.info { "Registering tab section placeholder: ${placeholder::class.simpleName}" }
+        deprecatedLog.info { "Registering tab section placeholder: ${placeholder::class.simpleName}" }
 
         sectionPlaceholders.add(placeholder)
 
@@ -36,7 +36,7 @@ class TabPlaceholders(
     }
 
     fun players(vararg placeholders: TabPlaceholder) = placeholders.forEach { placeholder ->
-        log.info { "Registering tab player placeholder: ${placeholder::class.simpleName}" }
+        deprecatedLog.info { "Registering tab player placeholder: ${placeholder::class.simpleName}" }
 
         playerPlaceholders.add(placeholder)
 

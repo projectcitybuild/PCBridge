@@ -1,6 +1,6 @@
 package com.projectcitybuild.pcbridge.paper.features.joinmessages.listeners
 
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.deprecatedLog
 import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.RemoteConfig
 import com.projectcitybuild.pcbridge.paper.core.libs.store.Store
 import net.kyori.adventure.text.Component
@@ -19,22 +19,22 @@ class FirstTimeJoinListener(
 ) : Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     fun onPlayerJoin(event: PlayerJoinEvent) {
-        log.debug { "Checking if first time join" }
+        deprecatedLog.debug { "Checking if first time join" }
 
         val playerState = store.state.players[event.player.uniqueId]
         if (playerState == null) {
-            log.warn { "Failed to find state for player: ${event.player.uniqueId}" }
+            deprecatedLog.warn { "Failed to find state for player: ${event.player.uniqueId}" }
             return
         }
         if (playerState.player?.lastSeenAt != null) {
-            log.info { "Player last seen ${playerState.player.lastSeenAt}. Not sending first-time join message" }
+            deprecatedLog.info { "Player last seen ${playerState.player.lastSeenAt}. Not sending first-time join message" }
             return
         }
 
-        log.info { "Sending first-time welcome message for ${event.player.name}" }
+        deprecatedLog.info { "Sending first-time welcome message for ${event.player.name}" }
 
         if (server.onlinePlayers.isEmpty()) {
-            log.info { "Skipping. No players online..." }
+            deprecatedLog.info { "Skipping. No players online..." }
             return
         }
 
