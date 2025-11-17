@@ -63,5 +63,8 @@ subprojects {
 
         // https://github.com/mockito/mockito/issues/3037
         jvmArgs("-XX:+EnableDynamicAgentLoading")
+
+        // https://docs.junit.org/current/user-guide/#extensions-registration-automatic
+        jvmArgs("-Djunit.jupiter.extensions.autodetection.enabled=true")
     }
 }
