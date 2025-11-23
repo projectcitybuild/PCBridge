@@ -7,6 +7,7 @@ import com.projectcitybuild.pcbridge.http.pcb.services.HomeHttpService
 import com.projectcitybuild.pcbridge.http.pcb.services.RegisterHttpService
 import com.projectcitybuild.pcbridge.http.pcb.services.PlayerHttpService
 import com.projectcitybuild.pcbridge.http.pcb.services.TelemetryHttpService
+import com.projectcitybuild.pcbridge.http.pcb.services.UuidBanHttpService
 import com.projectcitybuild.pcbridge.http.pcb.services.WarpHttpService
 
 class PCBHttp(
@@ -45,4 +46,7 @@ class PCBHttp(
 
     val warps
         get() = WarpHttpService(client, responseParser)
+
+    val uuidBans
+        get() = UuidBanHttpService(client, responseParser)
 }
