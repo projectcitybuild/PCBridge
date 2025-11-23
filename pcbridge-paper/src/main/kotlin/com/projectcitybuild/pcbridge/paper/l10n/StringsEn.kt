@@ -1,5 +1,6 @@
 package com.projectcitybuild.pcbridge.paper.l10n
 
+import com.projectcitybuild.pcbridge.http.pcb.models.PlayerBan
 import org.bukkit.Location
 
 val l10n = StringsEn()
@@ -29,7 +30,6 @@ class StringsEn {
     val warpCreated = { name: String -> "<green>$name created</green>" }
     val warpDeleted = { name: String -> "<green>$name deleted</green>" }
     val warpMoved = { name: String -> "<green>$name moved to your location</green>" }
-    val warpRenamed = { newName: String -> "<green>Warp renamed to <aqua>$newName</aqua></green>" }
     val noWarpsFound = "<gray>No warps found</gray>"
     val nightVisionToggledOn = "<gray><i>NightVision toggled on</i></gray>"
     val nightVisionToggledOff = "<gray><i>NightVision toggled off</i></gray>"

@@ -4,6 +4,8 @@ import com.github.shynixn.mccoroutine.bukkit.CoroutineTimings
 import com.github.shynixn.mccoroutine.bukkit.launch
 import com.github.shynixn.mccoroutine.bukkit.minecraftDispatcher
 import com.projectcitybuild.pcbridge.http.pcb.services.UuidBanHttpService
+import com.projectcitybuild.pcbridge.http.playerdb.PlayerDbHttp
+import com.projectcitybuild.pcbridge.http.playerdb.services.PlayerDbMinecraftService
 import com.projectcitybuild.pcbridge.paper.PermissionNode
 import com.projectcitybuild.pcbridge.paper.core.libs.pcbmanage.ManageUrlGenerator
 import com.projectcitybuild.pcbridge.paper.architecture.commands.BrigadierCommand
@@ -11,6 +13,7 @@ import com.projectcitybuild.pcbridge.paper.core.support.brigadier.arguments.Onli
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
 import com.projectcitybuild.pcbridge.paper.architecture.commands.scopedSuspending
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.logSync
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandContext
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandNode
@@ -19,6 +22,7 @@ import com.projectcitybuild.pcbridge.paper.core.support.component.sendMessageRic
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.extensions.broadcastRich
 import com.projectcitybuild.pcbridge.paper.features.bans.dialogs.CreateBanDialog
 import com.projectcitybuild.pcbridge.paper.features.bans.repositories.UuidBanRepository
+import com.projectcitybuild.pcbridge.paper.features.bans.utilities.toMiniMessage
 import com.projectcitybuild.pcbridge.paper.l10n.l10n
 import io.papermc.paper.command.brigadier.Commands
 import io.papermc.paper.dialog.Dialog
@@ -46,6 +50,7 @@ class BanCommand(
     private val server: Server,
     private val manageUrlGenerator: ManageUrlGenerator,
     private val uuidBanRepository: UuidBanRepository,
+    private val playerDbMinecraftService: PlayerDbMinecraftService,
 ): BrigadierCommand {
     override fun buildLiteral(): PaperCommandNode {
         return Commands.literal("ban")
@@ -102,8 +107,19 @@ class BanCommand(
         plugin.launch(plugin.minecraftDispatcher + SentryContext() + object : CoroutineTimings() {}) {
             val banner = audience as? Player
 
-            // TODO: fetch uuid
-            val uuid = UUID.randomUUID()
+            val playerLookup = playerDbMinecraftService.player(playerName).data
+            if (playerLookup == null) {
+                banner?.sendMessageRich("<red>Error: Player $playerName not found</red>")
+                return@launch
+            }
+            val rawUuid = playerLookup.player.id
+            val uuid = try {
+                UUID.fromString(rawUuid)
+            } catch (e: Exception) {
+                banner?.sendMessageRich("<red>Error: Could not determine player UUID</red>")
+                log.error(e) { "Could not parse UUID: $rawUuid, player=[$playerName]" }
+                return@launch
+            }
 
             val ban = uuidBanRepository.create(
                 bannedUUID = uuid,
@@ -117,7 +133,7 @@ class BanCommand(
 
             val player = server.onlinePlayers.firstOrNull { it.uniqueId == uuid }
             player?.kick(
-                Component.text("TODO"), // TODO
+                ban.toMiniMessage(),
                 PlayerKickEvent.Cause.BANNED,
             )
 

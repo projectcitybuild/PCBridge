@@ -1,6 +1,7 @@
 package com.projectcitybuild.pcbridge.paper.features.bans
 
 import com.projectcitybuild.pcbridge.http.pcb.PCBHttp
+import com.projectcitybuild.pcbridge.http.playerdb.PlayerDbHttp
 import com.projectcitybuild.pcbridge.paper.features.bans.actions.CheckBan
 import com.projectcitybuild.pcbridge.paper.features.bans.commands.BanCommand
 import com.projectcitybuild.pcbridge.paper.features.bans.listeners.BanWebhookListener
@@ -28,6 +29,7 @@ val bansModule = module {
             server = get(),
             manageUrlGenerator = get(),
             uuidBanRepository = get(),
+            playerDbMinecraftService = get<PlayerDbHttp>().minecraft,
         )
     }
 
