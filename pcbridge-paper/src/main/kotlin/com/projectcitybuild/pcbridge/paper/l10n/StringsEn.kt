@@ -43,4 +43,6 @@ class StringsEn {
     val teleportedToCoordinate = { x: Int, y: Int, z: Int -> "<gray><i>⚡ Teleported to <b>x=$x, y=$y, z=$z</b></gray></i>" }
     val teleportedToSpawn = "<gray><i>⚡ Teleported to spawn</i></gray>"
     val teleportedToHub = "<gray><i>⚡ Teleported to hub</i></gray>"
+    val playerHasBeenBanned = { name: String -> "$name has been banned" }
+    val clickToEditBan = { url: String -> "<gray>Click <click:OPEN_URL:'$url'><hover:show_text:'$url'><aqua><underlined>here</underlined></aqua></hover></click> to edit the ban or add additional information</gray>" }
 }

@@ -1,5 +1,6 @@
 package com.projectcitybuild.pcbridge.paper.features.bans.repositories
 
+import com.projectcitybuild.pcbridge.http.pcb.models.PlayerBan
 import com.projectcitybuild.pcbridge.http.pcb.services.UuidBanHttpService
 import java.util.UUID
 
@@ -13,8 +14,8 @@ class UuidBanRepository(
         bannerAlias: String? = null,
         reason: String,
         additionalInfo: String?,
-    ) {
-        uuidBanHttpService.create(
+    ): PlayerBan {
+        return uuidBanHttpService.create(
             bannedUUID = bannedUUID,
             bannedAlias = bannedAlias,
             bannerUUID = bannerUUID,

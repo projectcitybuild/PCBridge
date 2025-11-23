@@ -14,8 +14,11 @@ import com.projectcitybuild.pcbridge.paper.architecture.commands.scopedSuspendin
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.logSync
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandContext
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandNode
+import com.projectcitybuild.pcbridge.paper.core.support.component.sendMessageRich
+import com.projectcitybuild.pcbridge.paper.core.support.spigot.extensions.broadcastRich
 import com.projectcitybuild.pcbridge.paper.features.bans.dialogs.CreateBanDialog
 import com.projectcitybuild.pcbridge.paper.features.bans.repositories.UuidBanRepository
+import com.projectcitybuild.pcbridge.paper.l10n.l10n
 import io.papermc.paper.command.brigadier.Commands
 import io.papermc.paper.dialog.Dialog
 import io.papermc.paper.dialog.DialogResponseView
@@ -60,19 +63,6 @@ class BanCommand(
 
         val dialog = CreateBanDialog.build(playerName, onSubmit = ::submitDialog)
         context.source.sender.showDialog(dialog)
-
-//        val url = manageUrlGenerator.byPlayerUuid(
-//            playerName = playerName,
-//            path = "manage/player-bans/create"
-//        )
-//
-//        val sender = context.source.sender
-//        sender.sendRichMessage(
-//            "<gray>Click the link below to create a ban for this player</gray>",
-//        )
-//        sender.sendRichMessage(
-//            "<click:OPEN_URL:$url><aqua><underlined>$url</underlined></aqua></click>",
-//        )
     }
 
     private fun submitDialog(view: DialogResponseView, audience: Audience) {
@@ -104,11 +94,14 @@ class BanCommand(
             return
         }
         // TODO: make reusable class to inject launcher
+        // TODO: sentry scope
         plugin.launch(plugin.minecraftDispatcher + SentryContext() + object : CoroutineTimings() {}) {
             val banner = audience as? Player
-            val uuid = UUID.randomUUID() // TODO
 
-            uuidBanRepository.create(
+            // TODO: fetch uuid
+            val uuid = UUID.randomUUID()
+
+            val ban = uuidBanRepository.create(
                 bannedUUID = uuid,
                 bannedAlias = playerName,
                 bannerUUID = banner?.uniqueId,
@@ -116,13 +109,19 @@ class BanCommand(
                 reason = reason,
                 additionalInfo = additionalInfo,
             )
-            server.broadcast(Component.text("$playerName has been banned"))
+            server.broadcastRich(l10n.playerHasBeenBanned(playerName))
 
             val player = server.onlinePlayers.firstOrNull { it.uniqueId == uuid }
             player?.kick(
-                Component.text("TODO"),
+                Component.text("TODO"), // TODO
                 PlayerKickEvent.Cause.BANNED,
             )
+
+            val url = manageUrlGenerator.byPlayerUuid(
+                playerName = playerName,
+                path = "manage/player-bans/${ban.id}/edit"
+            )
+            audience.sendMessageRich(l10n.clickToEditBan(url))
         }
     }
 }
