@@ -1,56 +1,22 @@
 package com.projectcitybuild.pcbridge.paper.features.bans.commands
 
-import com.github.shynixn.mccoroutine.bukkit.CoroutineTimings
-import com.github.shynixn.mccoroutine.bukkit.launch
-import com.github.shynixn.mccoroutine.bukkit.minecraftDispatcher
-import com.projectcitybuild.pcbridge.http.pcb.services.UuidBanHttpService
-import com.projectcitybuild.pcbridge.http.playerdb.PlayerDbHttp
-import com.projectcitybuild.pcbridge.http.playerdb.services.PlayerDbMinecraftService
 import com.projectcitybuild.pcbridge.paper.PermissionNode
-import com.projectcitybuild.pcbridge.paper.core.libs.pcbmanage.ManageUrlGenerator
 import com.projectcitybuild.pcbridge.paper.architecture.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.arguments.OnlinePlayerNameArgument
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
 import com.projectcitybuild.pcbridge.paper.architecture.commands.scopedSuspending
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.logSync
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandContext
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandNode
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.getOptionalArgument
-import com.projectcitybuild.pcbridge.paper.core.support.component.sendMessageRich
-import com.projectcitybuild.pcbridge.paper.core.support.spigot.extensions.broadcastRich
 import com.projectcitybuild.pcbridge.paper.features.bans.dialogs.CreateBanDialog
-import com.projectcitybuild.pcbridge.paper.features.bans.repositories.UuidBanRepository
-import com.projectcitybuild.pcbridge.paper.features.bans.utilities.toMiniMessage
-import com.projectcitybuild.pcbridge.paper.l10n.l10n
 import io.papermc.paper.command.brigadier.Commands
-import io.papermc.paper.dialog.Dialog
-import io.papermc.paper.dialog.DialogResponseView
-import io.papermc.paper.registry.data.dialog.ActionButton
-import io.papermc.paper.registry.data.dialog.DialogBase
-import io.papermc.paper.registry.data.dialog.action.DialogAction
-import io.papermc.paper.registry.data.dialog.body.DialogBody
-import io.papermc.paper.registry.data.dialog.input.DialogInput
-import io.papermc.paper.registry.data.dialog.input.TextDialogInput.MultilineOptions
-import io.papermc.paper.registry.data.dialog.type.DialogType
-import io.sentry.kotlin.SentryContext
-import net.kyori.adventure.audience.Audience
-import net.kyori.adventure.key.Key
-import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.Server
-import org.bukkit.entity.Player
-import org.bukkit.event.player.PlayerKickEvent
 import org.bukkit.plugin.Plugin
-import java.util.UUID
 
 class BanCommand(
     private val plugin: Plugin,
     private val server: Server,
-    private val manageUrlGenerator: ManageUrlGenerator,
-    private val uuidBanRepository: UuidBanRepository,
-    private val playerDbMinecraftService: PlayerDbMinecraftService,
 ): BrigadierCommand {
     override fun buildLiteral(): PaperCommandNode {
         return Commands.literal("ban")
@@ -64,84 +30,13 @@ class BanCommand(
     }
 
     private suspend fun execute(context: PaperCommandContext) = context.scopedSuspending {
-        val rawPlayerName = context.getOptionalArgument("player", String::class.java)
-        var playerName: String? = null
-        if (rawPlayerName != null) {
-            val onlinePlayer = server.onlinePlayers.firstOrNull { it.name == rawPlayerName }
-            playerName = onlinePlayer?.name ?: rawPlayerName
-        }
-        val dialog = CreateBanDialog.build(playerName, onSubmit = ::submitDialog)
+        val inputPlayerName = context.getOptionalArgument("player", String::class.java)
+
+        val playerName = inputPlayerName
+            ?.let { name -> server.onlinePlayers.firstOrNull { it.name == name }?.name }
+            ?: inputPlayerName
+
+        val dialog = CreateBanDialog.build(playerName)
         context.source.sender.showDialog(dialog)
-    }
-
-    private fun submitDialog(view: DialogResponseView, audience: Audience) {
-        val playerName = view.getText(CreateBanDialog.playerNameKey)
-        val reason = view.getText(CreateBanDialog.reasonKey)
-        val additionalInfo = view.getText(CreateBanDialog.additionalInfoKey)
-        logSync.info("Dialog response: playerName=[$playerName], reason=[$reason], additionalInfo=[$additionalInfo]")
-
-        if (playerName.isNullOrEmpty()) {
-            val dialog = CreateBanDialog.build(
-                playerName,
-                reason,
-                additionalInfo,
-                error = "Error: Player name cannot be empty",
-                onSubmit = ::submitDialog
-            )
-            audience.showDialog(dialog)
-            return
-        }
-        if (reason.isNullOrEmpty()) {
-            val dialog = CreateBanDialog.build(
-                playerName,
-                reason,
-                additionalInfo,
-                error = "Error: Reason cannot be empty",
-                onSubmit = ::submitDialog
-            )
-            audience.showDialog(dialog)
-            return
-        }
-        // TODO: make reusable class to inject launcher
-        // TODO: sentry scope
-        plugin.launch(plugin.minecraftDispatcher + SentryContext() + object : CoroutineTimings() {}) {
-            val banner = audience as? Player
-
-            val playerLookup = playerDbMinecraftService.player(playerName).data
-            if (playerLookup == null) {
-                banner?.sendMessageRich("<red>Error: Player $playerName not found</red>")
-                return@launch
-            }
-            val rawUuid = playerLookup.player.id
-            val uuid = try {
-                UUID.fromString(rawUuid)
-            } catch (e: Exception) {
-                banner?.sendMessageRich("<red>Error: Could not determine player UUID</red>")
-                log.error(e) { "Could not parse UUID: $rawUuid, player=[$playerName]" }
-                return@launch
-            }
-
-            val ban = uuidBanRepository.create(
-                bannedUUID = uuid,
-                bannedAlias = playerName,
-                bannerUUID = banner?.uniqueId,
-                bannerAlias = banner?.name,
-                reason = reason,
-                additionalInfo = additionalInfo,
-            )
-            server.broadcastRich(l10n.playerHasBeenBanned(playerName))
-
-            val player = server.onlinePlayers.firstOrNull { it.uniqueId == uuid }
-            player?.kick(
-                ban.toMiniMessage(),
-                PlayerKickEvent.Cause.BANNED,
-            )
-
-            val url = manageUrlGenerator.byPlayerUuid(
-                playerName = playerName,
-                path = "manage/player-bans/${ban.id}/edit"
-            )
-            audience.sendMessageRich(l10n.clickToEditBan(url))
-        }
     }
 }

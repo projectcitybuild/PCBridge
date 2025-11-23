@@ -1,7 +1,6 @@
 package com.projectcitybuild.pcbridge.paper.features.bans.dialogs
 
 import io.papermc.paper.dialog.Dialog
-import io.papermc.paper.dialog.DialogResponseView
 import io.papermc.paper.registry.data.dialog.ActionButton
 import io.papermc.paper.registry.data.dialog.DialogBase
 import io.papermc.paper.registry.data.dialog.action.DialogAction
@@ -9,9 +8,8 @@ import io.papermc.paper.registry.data.dialog.body.DialogBody
 import io.papermc.paper.registry.data.dialog.input.DialogInput
 import io.papermc.paper.registry.data.dialog.input.TextDialogInput.MultilineOptions
 import io.papermc.paper.registry.data.dialog.type.DialogType
-import net.kyori.adventure.audience.Audience
+import net.kyori.adventure.key.Key
 import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.event.ClickCallback
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextDecoration
 
@@ -20,13 +18,13 @@ class CreateBanDialog {
         val playerNameKey = "player_name"
         val reasonKey = "reason"
         val additionalInfoKey = "additional_info"
+        val submitBanButtonKey = Key.key("pcbridge:dialogs/create_ban/submit")
 
         fun build(
             playerName: String?,
             reason: String? = null,
             additionalInfo: String? = null,
             error: String? = null,
-            onSubmit: (DialogResponseView, Audience) -> Unit,
         ) = Dialog.create { builder ->
             builder.empty()
                 .base(
@@ -42,7 +40,7 @@ class CreateBanDialog {
                 )
                 .type(
                     DialogType.confirmation(
-                        createButton(onSubmit),
+                        createButton,
                         cancelButton
                     )
                 )
@@ -76,24 +74,18 @@ class CreateBanDialog {
             .multiline(MultilineOptions.create(null, 80))
             .build()
 
-        private fun createButton(
-            onClick: (DialogResponseView, Audience) -> Unit,
-        ) = ActionButton.builder(
-            Component.text("Ban Player").color(NamedTextColor.RED)
-        )
-            .action(
-                DialogAction.customClick(
-                onClick,
-                ClickCallback.Options.builder()
-                    .uses(1)
-                    .lifetime(ClickCallback.DEFAULT_LIFETIME)
-                    .build(),
-                )
+        private val createButton get() = ActionButton.create(
+            Component.text("Ban Player").color(NamedTextColor.RED),
+            Component.text("Click to ban the player"),
+            100,
+            DialogAction.customClick(submitBanButtonKey, null),
             )
-            .build()
 
-        private val cancelButton get() = ActionButton.builder(Component.text("Cancel"))
-            .action(null)
-            .build()
+        private val cancelButton get() = ActionButton.create(
+            Component.text("Cancel"),
+            Component.text("Click to discard your input"),
+            100,
+            null,
+        )
     }
 }

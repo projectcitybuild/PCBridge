@@ -4,6 +4,7 @@ import com.projectcitybuild.pcbridge.http.pcb.PCBHttp
 import com.projectcitybuild.pcbridge.http.playerdb.PlayerDbHttp
 import com.projectcitybuild.pcbridge.paper.features.bans.actions.CheckBan
 import com.projectcitybuild.pcbridge.paper.features.bans.commands.BanCommand
+import com.projectcitybuild.pcbridge.paper.features.bans.listeners.BanDialogListener
 import com.projectcitybuild.pcbridge.paper.features.bans.listeners.BanWebhookListener
 import com.projectcitybuild.pcbridge.paper.features.bans.middleware.BanConnectionMiddleware
 import com.projectcitybuild.pcbridge.paper.features.bans.repositories.UuidBanRepository
@@ -24,12 +25,19 @@ val bansModule = module {
     }
 
     factory {
+        BanDialogListener(
+            server = get(),
+            playerDbMinecraftService = get<PlayerDbHttp>().minecraft,
+            manageUrlGenerator = get(),
+            uuidBanRepository = get(),
+            errorTracker = get(),
+        )
+    }
+
+    factory {
         BanCommand(
             plugin = get<JavaPlugin>(),
             server = get(),
-            manageUrlGenerator = get(),
-            uuidBanRepository = get(),
-            playerDbMinecraftService = get<PlayerDbHttp>().minecraft,
         )
     }
 

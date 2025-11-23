@@ -26,6 +26,7 @@ import com.projectcitybuild.pcbridge.paper.architecture.commands.registerCommand
 import com.projectcitybuild.pcbridge.paper.features.announcements.listeners.AnnouncementConfigListener
 import com.projectcitybuild.pcbridge.paper.features.announcements.listeners.AnnouncementEnableListener
 import com.projectcitybuild.pcbridge.paper.features.bans.commands.BanCommand
+import com.projectcitybuild.pcbridge.paper.features.bans.listeners.BanDialogListener
 import com.projectcitybuild.pcbridge.paper.features.bans.listeners.BanWebhookListener
 import com.projectcitybuild.pcbridge.paper.features.bans.middleware.BanConnectionMiddleware
 import com.projectcitybuild.pcbridge.paper.features.building.commands.InvisFrameCommand
@@ -174,6 +175,7 @@ class PluginLifecycle : KoinComponent {
         get<AsyncChatListener>(),
         get<AuthorizeConnectionListener>(),
         get<BanWebhookListener>(),
+        get<BanDialogListener>(),
         get<ChatBadgeInvalidateListener>(),
         get<ChatGroupInvalidateListener>(),
         get<ConfigWebhookListener>(),
