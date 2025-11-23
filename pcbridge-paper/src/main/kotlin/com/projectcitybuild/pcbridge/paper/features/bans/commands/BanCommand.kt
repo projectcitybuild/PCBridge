@@ -14,6 +14,7 @@ import com.projectcitybuild.pcbridge.paper.architecture.commands.scopedSuspendin
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.logSync
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandContext
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandNode
+import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.getOptionalArgument
 import com.projectcitybuild.pcbridge.paper.core.support.component.sendMessageRich
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.extensions.broadcastRich
 import com.projectcitybuild.pcbridge.paper.features.bans.dialogs.CreateBanDialog
@@ -53,14 +54,17 @@ class BanCommand(
                 Commands.argument("player", OnlinePlayerNameArgument(server))
                     .executesSuspending(plugin, ::execute)
             )
+            .executesSuspending(plugin, ::execute)
             .build()
     }
 
     private suspend fun execute(context: PaperCommandContext) = context.scopedSuspending {
-        val rawPlayerName = context.getArgument("player", String::class.java)
-        val onlinePlayer = server.onlinePlayers.firstOrNull { it.name == rawPlayerName }
-        val playerName = onlinePlayer?.name ?: rawPlayerName
-
+        val rawPlayerName = context.getOptionalArgument("player", String::class.java)
+        var playerName: String? = null
+        if (rawPlayerName != null) {
+            val onlinePlayer = server.onlinePlayers.firstOrNull { it.name == rawPlayerName }
+            playerName = onlinePlayer?.name ?: rawPlayerName
+        }
         val dialog = CreateBanDialog.build(playerName, onSubmit = ::submitDialog)
         context.source.sender.showDialog(dialog)
     }
