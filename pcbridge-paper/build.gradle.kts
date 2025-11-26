@@ -62,7 +62,7 @@ tasks {
         archiveVersion.set(project.version.toString())
     }
     runServer {
-        minecraftVersion("1.21.8")
+        minecraftVersion("1.21.10")
         systemProperty("com.mojang.eula.agree", "true")
         downloadPlugins {
             modrinth("LuckPerms", "v5.5.17-bukkit")
