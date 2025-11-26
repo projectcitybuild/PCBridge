@@ -1,6 +1,8 @@
 package com.projectcitybuild.pcbridge.paper.features.bans.domain.utilities
 
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 class ValidIPTest {
@@ -12,7 +14,7 @@ class ValidIPTest {
             "127.0.0.1",
             "255.255.255.255",
         ).forEach { string ->
-            Assertions.assertTrue(
+            assertTrue(
                 isValidIP(string),
             )
         }
@@ -29,7 +31,7 @@ class ValidIPTest {
             "a",
             "a.b.c.d",
         ).forEach { string ->
-            Assertions.assertFalse(
+            assertFalse(
                 isValidIP(string),
             )
         }
