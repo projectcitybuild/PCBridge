@@ -7,9 +7,9 @@ import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.RemoteConfig
 import com.projectcitybuild.pcbridge.paper.features.config.events.RemoteConfigUpdatedEvent
 import com.projectcitybuild.pcbridge.paper.features.spawns.events.SpawnUpdatedEvent
 import com.projectcitybuild.pcbridge.paper.features.spawns.repositories.SpawnRepository
-import com.projectcitybuild.pcbridge.paper.features.warps.events.WarpCreateEvent
-import com.projectcitybuild.pcbridge.paper.features.warps.events.WarpDeleteEvent
-import com.projectcitybuild.pcbridge.paper.features.warps.repositories.WarpRepository
+import com.projectcitybuild.pcbridge.paper.features.warps.domain.events.WarpCreateEvent
+import com.projectcitybuild.pcbridge.paper.features.warps.domain.events.WarpDeleteEvent
+import com.projectcitybuild.pcbridge.paper.features.warps.domain.repositories.WarpRepository
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.plugin.java.JavaPlugin

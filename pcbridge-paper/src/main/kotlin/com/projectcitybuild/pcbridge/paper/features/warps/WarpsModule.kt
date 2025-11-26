@@ -1,16 +1,17 @@
 package com.projectcitybuild.pcbridge.paper.features.warps
 
 import com.projectcitybuild.pcbridge.http.pcb.PCBHttp
-import com.projectcitybuild.pcbridge.paper.features.warps.commands.WarpCommand
-import com.projectcitybuild.pcbridge.paper.features.warps.commands.WarpNameSuggester
-import com.projectcitybuild.pcbridge.paper.features.warps.commands.WarpsCommand
-import com.projectcitybuild.pcbridge.paper.features.warps.commands.warps.WarpCreateCommand
-import com.projectcitybuild.pcbridge.paper.features.warps.commands.warps.WarpDeleteCommand
-import com.projectcitybuild.pcbridge.paper.features.warps.commands.warps.WarpListCommand
-import com.projectcitybuild.pcbridge.paper.features.warps.commands.warps.WarpMoveCommand
-import com.projectcitybuild.pcbridge.paper.features.warps.commands.warps.WarpRenameCommand
-import com.projectcitybuild.pcbridge.paper.features.warps.listeners.WarpWebhookListener
-import com.projectcitybuild.pcbridge.paper.features.warps.repositories.WarpRepository
+import com.projectcitybuild.pcbridge.paper.features.warps.hooks.commands.WarpCommand
+import com.projectcitybuild.pcbridge.paper.features.warps.hooks.commands.WarpNameSuggester
+import com.projectcitybuild.pcbridge.paper.features.warps.hooks.commands.WarpsCommand
+import com.projectcitybuild.pcbridge.paper.features.warps.hooks.commands.warps.WarpCreateCommand
+import com.projectcitybuild.pcbridge.paper.features.warps.hooks.commands.warps.WarpDeleteCommand
+import com.projectcitybuild.pcbridge.paper.features.warps.hooks.commands.warps.WarpListCommand
+import com.projectcitybuild.pcbridge.paper.features.warps.hooks.commands.warps.WarpMoveCommand
+import com.projectcitybuild.pcbridge.paper.features.warps.hooks.commands.warps.WarpRenameCommand
+import com.projectcitybuild.pcbridge.paper.features.warps.hooks.listeners.WarpWebhookListener
+import com.projectcitybuild.pcbridge.paper.features.warps.domain.repositories.WarpRepository
+import com.projectcitybuild.pcbridge.paper.features.warps.hooks.listeners.WarpRenameDialogListener
 import org.bukkit.plugin.java.JavaPlugin
 import org.koin.dsl.module
 
@@ -71,6 +72,13 @@ val warpsModule = module {
     factory {
         WarpWebhookListener(
             warpRepository = get(),
+        )
+    }
+
+    factory {
+        WarpRenameDialogListener(
+            warpRepository = get(),
+            errorTracker = get(),
         )
     }
 }
