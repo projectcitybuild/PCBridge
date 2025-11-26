@@ -1,16 +1,12 @@
 package com.projectcitybuild.pcbridge.paper.features.bans.hooks.listeners
 
-import com.projectcitybuild.pcbridge.http.playerdb.services.PlayerDbMinecraftService
-import com.projectcitybuild.pcbridge.http.shared.parsing.ResponseParserError
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.errors.ErrorTracker
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.logSync
-import com.projectcitybuild.pcbridge.paper.core.libs.pcbmanage.ManageUrlGenerator
 import com.projectcitybuild.pcbridge.paper.core.support.component.sendMessageRich
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.extensions.broadcastRich
 import com.projectcitybuild.pcbridge.paper.features.bans.domain.actions.CreateUuidBan
 import com.projectcitybuild.pcbridge.paper.features.bans.hooks.dialogs.CreateBanDialog
-import com.projectcitybuild.pcbridge.paper.features.bans.domain.repositories.UuidBanRepository
 import com.projectcitybuild.pcbridge.paper.features.bans.domain.utilities.toMiniMessage
 import com.projectcitybuild.pcbridge.paper.l10n.l10n
 import io.papermc.paper.connection.PlayerGameConnection
@@ -19,7 +15,6 @@ import org.bukkit.Server
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerKickEvent
-import java.util.UUID
 
 class BanDialogListener(
     private val server: Server,
@@ -45,22 +40,14 @@ class BanDialogListener(
         val connection = event.commonConnection as? PlayerGameConnection
         val bannerPlayer = connection?.player
 
-        if (playerName.isNullOrEmpty()) {
+        if (playerName.isNullOrEmpty() || reason.isNullOrEmpty()) {
             val dialog = CreateBanDialog.build(
                 playerName,
                 reason,
                 additionalInfo,
-                error = "Error: Player name cannot be empty",
-            )
-            bannerPlayer?.showDialog(dialog)
-            return@runCatching
-        }
-        if (reason.isNullOrEmpty()) {
-            val dialog = CreateBanDialog.build(
-                playerName,
-                reason,
-                additionalInfo,
-                error = "Error: Reason cannot be empty",
+                error = if (playerName.isNullOrEmpty()) "Error: Player name cannot be empty"
+                    else if (reason.isNullOrEmpty()) "Error: Reason cannot be empty"
+                    else "",
             )
             bannerPlayer?.showDialog(dialog)
             return@runCatching

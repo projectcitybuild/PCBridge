@@ -231,7 +231,7 @@ private fun Module.core() {
     factory {
         PlayerLookup(
             server = get(),
-            playerDbMinecraftService = get(),
+            playerDbMinecraftService = get<PlayerDbHttp>().minecraft,
         )
     }
 
