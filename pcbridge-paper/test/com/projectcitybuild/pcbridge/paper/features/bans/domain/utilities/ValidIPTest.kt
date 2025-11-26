@@ -1,6 +1,6 @@
-package com.projectcitybuild.pcbridge.paper.features.bans
+package com.projectcitybuild.pcbridge.paper.features.bans.domain.utilities
 
-import com.projectcitybuild.pcbridge.paper.features.bans.domain.utilities.isValidIP
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test

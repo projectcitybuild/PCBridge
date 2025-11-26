@@ -9,6 +9,8 @@ import com.projectcitybuild.pcbridge.paper.architecture.commands.scopedSuspendin
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandContext
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandNode
 import io.papermc.paper.command.brigadier.Commands
+import org.bukkit.inventory.Inventory
+import org.bukkit.inventory.MenuType
 import org.bukkit.plugin.Plugin
 
 class AnvilCommand(
@@ -22,9 +24,6 @@ class AnvilCommand(
 
     private suspend fun execute(context: PaperCommandContext) = context.scopedSuspending {
         val player = context.source.requirePlayer()
-
-        val attachLocation = null // No anvil to attach to
-        val force = true // Don't check for an anvil at the attach location
-        player.openAnvil(attachLocation, force)
+        MenuType.ANVIL.create(player).open()
     }
 }
