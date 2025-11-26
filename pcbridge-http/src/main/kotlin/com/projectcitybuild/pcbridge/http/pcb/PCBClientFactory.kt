@@ -2,6 +2,7 @@ package com.projectcitybuild.pcbridge.http.pcb
 
 
 import com.google.gson.GsonBuilder
+import com.projectcitybuild.pcbridge.http.shared.logging.HttpLogger
 import com.projectcitybuild.pcbridge.http.shared.serialization.gson.LocalDateTimeTypeAdapter
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -12,7 +13,7 @@ import java.time.LocalDateTime
 internal class PCBClientFactory(
     private val authToken: String,
     private val baseUrl: String,
-    private val withLogging: Boolean,
+    private val httpLogger: HttpLogger?,
 ) {
     private val gson = GsonBuilder()
         .registerTypeAdapter(LocalDateTime::class.java, LocalDateTimeTypeAdapter())
@@ -36,8 +37,8 @@ internal class PCBClientFactory(
 
                     chain.proceed(request)
                 }
-        if (withLogging) {
-            val loggingInterceptor = HttpLoggingInterceptor().apply {
+        if (httpLogger != null) {
+            val loggingInterceptor = HttpLoggingInterceptor(httpLogger).apply {
                 level = HttpLoggingInterceptor.Level.BODY
                 redactHeader("Authorization")
             }

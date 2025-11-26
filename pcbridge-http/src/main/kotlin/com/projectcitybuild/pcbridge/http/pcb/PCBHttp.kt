@@ -9,17 +9,18 @@ import com.projectcitybuild.pcbridge.http.pcb.services.PlayerHttpService
 import com.projectcitybuild.pcbridge.http.pcb.services.TelemetryHttpService
 import com.projectcitybuild.pcbridge.http.pcb.services.UuidBanHttpService
 import com.projectcitybuild.pcbridge.http.pcb.services.WarpHttpService
+import com.projectcitybuild.pcbridge.http.shared.logging.HttpLogger
 
 class PCBHttp(
     private val authToken: String,
     private val baseURL: String,
-    private val withLogging: Boolean,
+    private val httpLogger: HttpLogger?,
 ) {
     private val client by lazy {
         PCBClientFactory(
             authToken = authToken,
             baseUrl = baseURL,
-            withLogging = withLogging,
+            httpLogger = httpLogger,
         ).build()
     }
 

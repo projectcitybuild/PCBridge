@@ -6,6 +6,7 @@ import com.projectcitybuild.pcbridge.http.discord.DiscordHttp
 import com.projectcitybuild.pcbridge.http.pcb.PCBHttp
 import com.projectcitybuild.pcbridge.http.pcb.models.RemoteConfigVersion
 import com.projectcitybuild.pcbridge.http.playerdb.PlayerDbHttp
+import com.projectcitybuild.pcbridge.http.shared.logging.HttpLogger
 import com.projectcitybuild.pcbridge.paper.architecture.chat.decorators.ChatDecoratorChain
 import com.projectcitybuild.pcbridge.paper.architecture.chat.listeners.AsyncChatListener
 import com.projectcitybuild.pcbridge.paper.architecture.connection.listeners.AuthorizeConnectionListener
@@ -35,6 +36,7 @@ import com.projectcitybuild.pcbridge.paper.core.libs.storage.JsonStorage
 import com.projectcitybuild.pcbridge.paper.core.libs.localconfig.LocalConfig
 import com.projectcitybuild.pcbridge.paper.core.libs.localconfig.LocalConfigKeyValues
 import com.projectcitybuild.pcbridge.paper.core.libs.localconfig.default
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.logSync
 import com.projectcitybuild.pcbridge.paper.core.libs.pcbmanage.ManageUrlGenerator
 import com.projectcitybuild.pcbridge.paper.core.libs.playerlookup.PlayerLookup
 import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.RemoteConfig
@@ -276,7 +278,7 @@ private fun Module.http() {
         PCBHttp(
             authToken = localConfig.api.token,
             baseURL = localConfig.api.baseUrl,
-            withLogging = localConfig.api.isLoggingEnabled,
+            httpLogger = if (localConfig.api.isLoggingEnabled) get() else null,
         )
     }
 
@@ -284,7 +286,7 @@ private fun Module.http() {
         val localConfig = get<LocalConfig>().get()
 
         DiscordHttp(
-            withLogging = localConfig.api.isLoggingEnabled,
+            httpLogger = if (localConfig.api.isLoggingEnabled) get() else null,
         )
     }
 
@@ -292,11 +294,13 @@ private fun Module.http() {
         val localConfig = get<LocalConfig>().get()
 
         PlayerDbHttp(
-            withLogging = localConfig.api.isLoggingEnabled,
+            httpLogger = if (localConfig.api.isLoggingEnabled) get() else null,
             userAgent = if (localConfig.environment.isProduction) "pcbmc.co"
                 else ""
         )
     }
+
+    factory { HttpLogger(logSync::trace) }
 }
 
 private fun Module.integrations() {

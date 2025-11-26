@@ -1,13 +1,14 @@
 package com.projectcitybuild.pcbridge.http.discord
 
 import com.projectcitybuild.pcbridge.http.discord.services.DiscordHttpService
+import com.projectcitybuild.pcbridge.http.shared.logging.HttpLogger
 
 class DiscordHttp(
-    private val withLogging: Boolean,
+    private val httpLogger: HttpLogger?,
 ) {
     private val client by lazy {
         DiscordClientFactory(
-            withLogging = withLogging,
+            httpLogger = httpLogger,
         ).build()
     }
 

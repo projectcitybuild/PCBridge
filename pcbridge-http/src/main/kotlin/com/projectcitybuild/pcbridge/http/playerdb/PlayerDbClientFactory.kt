@@ -1,6 +1,7 @@
 package com.projectcitybuild.pcbridge.http.playerdb
 
 import com.google.gson.GsonBuilder
+import com.projectcitybuild.pcbridge.http.shared.logging.HttpLogger
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -8,7 +9,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 internal class PlayerDbClientFactory(
     private val baseUrl: String,
-    private val withLogging: Boolean,
+    private val httpLogger: HttpLogger?,
     private val userAgent: String,
 ) {
     private val gson = GsonBuilder().create()
@@ -31,8 +32,8 @@ internal class PlayerDbClientFactory(
 
                     chain.proceed(request)
                 }
-        if (withLogging) {
-            val loggingInterceptor = HttpLoggingInterceptor().apply {
+        if (httpLogger != null) {
+            val loggingInterceptor = HttpLoggingInterceptor(httpLogger).apply {
                 level = HttpLoggingInterceptor.Level.BODY
             }
             clientFactory = clientFactory.addInterceptor(loggingInterceptor)
