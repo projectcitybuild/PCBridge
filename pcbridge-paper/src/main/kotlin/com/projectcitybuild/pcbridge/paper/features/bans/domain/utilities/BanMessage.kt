@@ -1,4 +1,4 @@
-package com.projectcitybuild.pcbridge.paper.features.bans.utilities
+package com.projectcitybuild.pcbridge.paper.features.bans.domain.utilities
 
 import com.projectcitybuild.pcbridge.http.pcb.models.IPBan
 import com.projectcitybuild.pcbridge.http.pcb.models.PlayerBan

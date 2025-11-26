@@ -42,7 +42,7 @@ data class LocalConfigKeyValues(
 
 fun LocalConfigKeyValues.Companion.default() =
     LocalConfigKeyValues(
-        environment = Environment.dev,
+        environment = Environment.DEV,
         api = LocalConfigKeyValues.Api(
             token = "pcbridge_local",
             baseUrl = "http://localhost/api/",

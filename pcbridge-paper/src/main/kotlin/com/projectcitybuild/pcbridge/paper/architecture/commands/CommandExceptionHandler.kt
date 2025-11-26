@@ -56,9 +56,10 @@ class CommandExceptionHandler private constructor() {
         fun catch(sender: CommandSender, e: Throwable) = when (e) {
             is IllegalStateException -> sender.sendError("Error: ${e.message}")
             is ResponseParserError -> when (e) {
-                is ResponseParserError.Validation -> sender.sendError("Error: ${e.message}")
-                is ResponseParserError.NotFound -> sender.sendError("Error: Not found")
+                is ResponseParserError.Validation -> sender.sendError("Error: ${e.message ?: "Validation failed"}")
+                is ResponseParserError.NotFound -> sender.sendError("Error: {${e.message ?: "Not Found"}")
                 is ResponseParserError.Forbidden -> sender.sendError("Error: Not permitted to perform this action")
+                is ResponseParserError.Conflict -> sender.sendError("Error: ${e.message ?: "Conflict"}")
             }
             is CooldownException -> sender.sendError("Error: Please wait ${e.remainingTime.inWholeMilliseconds} seconds before trying again")
             else -> {

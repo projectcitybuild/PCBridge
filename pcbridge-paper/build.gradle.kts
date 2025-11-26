@@ -26,11 +26,11 @@ dependencies {
     implementation(project(":pcbridge-web-server"))
 
     // Paper
-    compileOnly("io.papermc.paper:paper-api:1.21.3-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.21.10-R0.1-SNAPSHOT")
 
     // Integrations
     compileOnly("net.luckperms:api:5.4")
-    compileOnly("net.essentialsx:EssentialsX:2.20.1")
+    compileOnly("net.essentialsx:EssentialsX:2.21.2")
     compileOnly("us.dynmap:DynmapCoreAPI:3.7-beta-6")
 
     // Libraries
@@ -44,7 +44,7 @@ dependencies {
     implementation("io.github.petertrr:kotlin-multiplatform-diff:0.7.0")
 
     // Testing
-    testImplementation("io.papermc.paper:paper-api:1.21.3-R0.1-SNAPSHOT")
+    testImplementation("io.papermc.paper:paper-api:1.21.10-R0.1-SNAPSHOT")
 }
 
 tasks {
@@ -62,12 +62,14 @@ tasks {
         archiveVersion.set(project.version.toString())
     }
     runServer {
-        minecraftVersion("1.21.3")
+        minecraftVersion("1.21.10")
         systemProperty("com.mojang.eula.agree", "true")
         downloadPlugins {
             modrinth("LuckPerms", "v5.5.17-bukkit")
             modrinth("essentialsx", "2.21.2")
-            modrinth("dynmap", "3.7-beta-8")
+
+            // TODO: re-enable once it supports Paper 1.21.8
+            // modrinth("dynmap", "3.7-beta-8")
         }
     }
 }

@@ -3,6 +3,8 @@ package com.projectcitybuild.pcbridge.paper.features.bans.actions
 import com.projectcitybuild.pcbridge.http.pcb.models.PlayerData
 import com.projectcitybuild.pcbridge.http.pcb.models.IPBan
 import com.projectcitybuild.pcbridge.http.pcb.models.PlayerBan
+import com.projectcitybuild.pcbridge.paper.Stubs
+import com.projectcitybuild.pcbridge.paper.features.bans.domain.actions.CheckBan
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
@@ -16,21 +18,6 @@ import kotlin.random.Random
 class CheckBanTest {
     private lateinit var useCase: CheckBan
 
-    private fun playerBan() = PlayerBan(
-        id = Random.nextInt(),
-        bannedPlayerAlias = "alias",
-        createdAt = LocalDateTime.now(),
-        updatedAt = LocalDateTime.now(),
-    )
-
-    private fun ipBan() = IPBan(
-        id = Random.nextInt(),
-        ipAddress = "192.168.0.1",
-        bannerPlayerId = Random.nextInt(),
-        createdAt = LocalDateTime.now(),
-        updatedAt = LocalDateTime.now(),
-    )
-
     @BeforeEach
     fun setUp() {
         useCase = CheckBan()
@@ -39,7 +26,7 @@ class CheckBanTest {
     @Test
     fun `should deny if player is banned`() =
         runTest {
-            val ban = playerBan()
+            val ban = Stubs.playerBan()
             val result = useCase.get(
                 PlayerData(playerBan = ban),
             )
@@ -49,7 +36,7 @@ class CheckBanTest {
     @Test
     fun `should not deny if player ban is inactive`() =
         runTest {
-            val ban = playerBan().copy(
+            val ban = Stubs.playerBan().copy(
                 unbannedAt = LocalDate
                     .now()
                     .atStartOfDay(ZoneId.systemDefault())
@@ -64,7 +51,7 @@ class CheckBanTest {
     @Test
     fun `should deny if IP is banned`() =
         runTest {
-            val ban = ipBan()
+            val ban = Stubs.ipBan()
             val result = useCase.get(
                 PlayerData(ipBan = ban),
             )
@@ -74,7 +61,7 @@ class CheckBanTest {
     @Test
     fun `should not deny if IP ban is inactive`() =
         runTest {
-            val ban = ipBan().copy(
+            val ban = Stubs.ipBan().copy(
                 unbannedAt = LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toLocalDateTime(),
             )
             val result = useCase.get(

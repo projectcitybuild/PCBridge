@@ -5,6 +5,7 @@ import com.google.gson.reflect.TypeToken
 import com.projectcitybuild.pcbridge.http.discord.DiscordHttp
 import com.projectcitybuild.pcbridge.http.pcb.PCBHttp
 import com.projectcitybuild.pcbridge.http.pcb.models.RemoteConfigVersion
+import com.projectcitybuild.pcbridge.http.playerdb.PlayerDbHttp
 import com.projectcitybuild.pcbridge.paper.architecture.chat.decorators.ChatDecoratorChain
 import com.projectcitybuild.pcbridge.paper.architecture.chat.listeners.AsyncChatListener
 import com.projectcitybuild.pcbridge.paper.architecture.connection.listeners.AuthorizeConnectionListener
@@ -35,6 +36,7 @@ import com.projectcitybuild.pcbridge.paper.core.libs.localconfig.LocalConfig
 import com.projectcitybuild.pcbridge.paper.core.libs.localconfig.LocalConfigKeyValues
 import com.projectcitybuild.pcbridge.paper.core.libs.localconfig.default
 import com.projectcitybuild.pcbridge.paper.core.libs.pcbmanage.ManageUrlGenerator
+import com.projectcitybuild.pcbridge.paper.core.libs.playerlookup.PlayerLookup
 import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.RemoteConfig
 import com.projectcitybuild.pcbridge.paper.core.libs.store.Store
 import com.projectcitybuild.pcbridge.paper.core.libs.teleportation.PlayerTeleporter
@@ -125,27 +127,13 @@ private val featureModules = listOf(
 private fun Module.spigot(plugin: JavaPlugin) {
     single { plugin }
 
-    factory {
-        get<JavaPlugin>().server
-    }
+    factory { get<JavaPlugin>().server }
 
-    single {
-        SpigotNamespace(
-            plugin = get(),
-        )
-    }
+    single { SpigotNamespace(plugin = get()) }
 
-    single {
-        SpigotListenerRegistry(
-            plugin = get(),
-        )
-    }
+    single { SpigotListenerRegistry(plugin = get()) }
 
-    factory {
-        SpigotTimer(
-            plugin = get(),
-        )
-    }
+    factory { SpigotTimer(plugin = get()) }
 
     factory {
         SpigotEventBroadcaster(
@@ -173,9 +161,7 @@ private fun Module.core() {
     }
 
     single {
-        ErrorTracker(
-            localConfig = get(),
-        )
+        ErrorTracker(localConfig = get())
     } onClose {
         it?.close()
     }
@@ -239,14 +225,14 @@ private fun Module.core() {
     }
 
     factory {
-        ManageUrlGenerator(
-            server = get(),
-            localConfig = get(),
-        )
+        ManageUrlGenerator(localConfig = get())
     }
 
-    single {
-        Permissions()
+    factory {
+        PlayerLookup(
+            server = get(),
+            playerDbMinecraftService = get<PlayerDbHttp>().minecraft,
+        )
     }
 
     factory {
@@ -262,15 +248,9 @@ private fun Module.core() {
         )
     }
 
-    factory {
-        SafeYLocationFinder()
-    }
+    factory { SafeYLocationFinder() }
 
-    single {
-        Cooldown(
-            timer = get(),
-        )
-    }
+    single { Cooldown(timer = get()) }
 }
 
 private fun Module.webServer() {
@@ -305,6 +285,16 @@ private fun Module.http() {
 
         DiscordHttp(
             withLogging = localConfig.api.isLoggingEnabled,
+        )
+    }
+
+    single {
+        val localConfig = get<LocalConfig>().get()
+
+        PlayerDbHttp(
+            withLogging = localConfig.api.isLoggingEnabled,
+            userAgent = if (localConfig.environment.isProduction) "pcbmc.co"
+                else ""
         )
     }
 }
@@ -353,9 +343,7 @@ private fun Module.architecture() {
         )
     }
 
-    single {
-        ConnectionMiddlewareChain()
-    }
+    single { ConnectionMiddlewareChain() }
 
     factory {
         AuthorizeConnectionListener(
@@ -366,19 +354,11 @@ private fun Module.architecture() {
         )
     }
 
-    single {
-        ChatDecoratorChain()
-    }
+    single { ChatDecoratorChain() }
 
-    factory {
-        AsyncChatListener(
-            decorators = get(),
-        )
-    }
+    factory { AsyncChatListener(decorators = get()) }
 
-    single {
-        ServerListingDecoratorChain()
-    }
+    single { ServerListingDecoratorChain() }
 
     factory {
         ServerListPingListener(
@@ -387,9 +367,7 @@ private fun Module.architecture() {
         )
     }
 
-    single {
-        Permissions()
-    }
+    single { Permissions() }
 
     single {
         TabRenderer(

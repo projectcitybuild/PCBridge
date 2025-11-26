@@ -1,4 +1,4 @@
-package com.projectcitybuild.pcbridge.paper.features.bans.utilities
+package com.projectcitybuild.pcbridge.paper.features.bans.domain.utilities
 
 import java.util.regex.Pattern
 

@@ -5,6 +5,7 @@ import com.projectcitybuild.pcbridge.http.pcb.models.NamedResource
 import com.projectcitybuild.pcbridge.http.pcb.models.Home
 import com.projectcitybuild.pcbridge.http.pcb.models.HomeLimit
 import com.projectcitybuild.pcbridge.http.pcb.models.PaginatedList
+import com.projectcitybuild.pcbridge.http.pcb.models.PlayerBan
 import com.projectcitybuild.pcbridge.http.pcb.models.PlayerData
 import com.projectcitybuild.pcbridge.http.pcb.models.RemoteConfigVersion
 import com.projectcitybuild.pcbridge.http.pcb.models.Warp
@@ -244,4 +245,21 @@ internal interface PCBRequest {
     suspend fun getHomeLimit(
         @Path(value = "player_uuid") playerUUID: String,
     ): HomeLimit
+
+    @GET("v2/minecraft/player/{player_uuid}/bans")
+    suspend fun getPlayerBans(
+        @Path(value = "player_uuid") playerUUID: String,
+        @Query(value = "only_active") onlyActiveBans: Boolean? = null,
+    ): List<PlayerBan>
+
+    @POST("v2/bans/uuid")
+    @FormUrlEncoded
+    suspend fun createUuidBan(
+        @Field(value = "banned_uuid") bannedUUID: String,
+        @Field(value = "banned_alias") bannedAlias: String,
+        @Field(value = "banner_uuid") bannerUUID: String?,
+        @Field(value = "banner_alias") bannerAlias: String?,
+        @Field(value = "reason") reason: String,
+        @Field(value = "additional_info") additionalInfo: String?,
+    ): PlayerBan
 }
