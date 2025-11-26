@@ -10,43 +10,26 @@ import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.req
 import com.projectcitybuild.pcbridge.paper.architecture.commands.scopedSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandContext
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandNode
+import com.projectcitybuild.pcbridge.paper.features.register.dialogs.VerifyRegistrationCodeDialog
 import com.projectcitybuild.pcbridge.paper.l10n.l10n
 import io.papermc.paper.command.brigadier.Commands
 import org.bukkit.plugin.Plugin
 
 class CodeCommand(
     private val plugin: Plugin,
-    private val registerHttpService: RegisterHttpService,
 ) : BrigadierCommand {
     override val description: String = "Finishes account registration by verifying a code"
 
     override fun buildLiteral(): PaperCommandNode {
         return Commands.literal("code")
-            .then(
-                Commands.argument("code", StringArgumentType.string())
-                    .executesSuspending(plugin, ::execute)
-            )
-            .executes { context ->
-                context.source.sender.sendRichMessage(l10n.errorNoCodeSpecified)
-                return@executes Command.SINGLE_SUCCESS
-            }
+            .executesSuspending(plugin, ::execute)
             .build()
     }
 
     private suspend fun execute(context: PaperCommandContext) = context.scopedSuspending {
         val player = context.source.requirePlayer()
-        val code = context.getArgument("code", String::class.java)
 
-        try {
-            registerHttpService.verifyCode(
-                code = code,
-                playerUUID = player.uniqueId,
-            )
-            player.sendRichMessage(
-                "<green>Registration complete! Your account will be synced momentarily...</green>",
-            )
-        } catch (e: ResponseParserError.NotFound) {
-            player.sendRichMessage(l10n.errorCodeInvalidOrExpired)
-        }
+        val dialog = VerifyRegistrationCodeDialog.build(email = null)
+        player.showDialog(dialog)
     }
 }

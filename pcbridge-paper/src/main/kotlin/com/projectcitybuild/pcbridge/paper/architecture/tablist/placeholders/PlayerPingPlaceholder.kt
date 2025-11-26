@@ -45,7 +45,7 @@ class PlayerPingPlaceholder(
             delay = updateFrequency,
             repeatingInterval = updateFrequency,
         ) {
-            logSync.trace { "Updating all tab player pings" }
+//            logSync.trace { "Updating all tab player pings" }
 
             // TODO: remove runBlocking when SpigotTimer becomes coroutines
             runBlocking {

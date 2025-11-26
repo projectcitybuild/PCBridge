@@ -9,6 +9,7 @@ import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.req
 import com.projectcitybuild.pcbridge.paper.architecture.commands.scopedSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandContext
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandNode
+import com.projectcitybuild.pcbridge.paper.features.register.dialogs.VerifyRegistrationCodeDialog
 import com.projectcitybuild.pcbridge.paper.l10n.l10n
 import io.papermc.paper.command.brigadier.Commands
 import org.bukkit.plugin.Plugin
@@ -41,6 +42,9 @@ class RegisterCommand(
             playerAlias = player.name,
             playerUUID = player.uniqueId,
         )
-        player.sendRichMessage(l10n.codeHasBeenEmailed(email))
+        val dialog = VerifyRegistrationCodeDialog.build(
+            email = email,
+        )
+        player.showDialog(dialog)
     }
 }

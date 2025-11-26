@@ -19,7 +19,7 @@ class StringsEn {
     val errorNoItemToRename = "<red>No item in hand to rename</red>"
     val errorCouldNotFindSafeLocation = "<red>Failed to find a safe location</red>"
     val errorNoRegisterEmailSpecified = "<red>Please specify an email address to receive your registration code</red><newline><gray>Example Usage: <bold>/register your@email.com</bold></gray>"
-    val errorNoCodeSpecified = "<red>You did not specify a code</red><newline><gray>Example Usage: <bold>/code 123456</bold></gray>"
+    val errorNoCodeSpecified = "<red>You did not specify a code</red>"
     val errorCodeInvalidOrExpired = "<red>Code is invalid or expired</red>"
     val errorHubWorldNotFound = "<red>Could not find hub world</red>"
     val homeCreated = { name: String -> "<green>$name created</green>" }
@@ -36,7 +36,8 @@ class StringsEn {
     val receivedInvisFrame = "<gray><i>You received an invisible item frame</i></gray>"
     val receivedInvisFrameGlowing = "<gray><i>You received an invisible glowing frame</i></gray>"
     val renamedItem = { name: String -> "<gray>Renamed item in hand to $name</gray>" }
-    val codeHasBeenEmailed = { email:String -> "<gray>A code has been emailed to $email.<newline>Please type it in with <aqua><bold><hover:show_text:'/code'><click:suggest_command:/code >/code [code]</click></hover></bold></aqua></gray>" }
+    val codeHasBeenEmailedTo = { email: String -> "A code has been emailed to <aqua>$email</aqua>.<newline>Please type the code below to finish registration." }
+    val codeHasBeenEmailed = "Please type in the code emailed to you to finish registration."
     val spawnSet = { location: Location -> "<green>Set the world spawn point to <gray>${location.x} ${location.y} ${location.z} ${location.pitch} ${location.yaw}</gray></green>" }
     val searchingForSafeLocation = "<gray><i>Searching for a safe location...</i></gray>"
     val teleportedToName = { name: String -> "<gray><i>⚡ Teleported to <b>$name</b></i></gray>" }
@@ -45,4 +46,5 @@ class StringsEn {
     val teleportedToHub = "<gray><i>⚡ Teleported to hub</i></gray>"
     val playerHasBeenBanned = { name: String -> "$name has been banned" }
     val clickToEditBan = { url: String -> "<gray>Click <click:OPEN_URL:'$url'><hover:show_text:'$url'><aqua><underlined>here</underlined></aqua></hover></click> to edit the ban or add additional information</gray>" }
+    val registrationComplete = "<green>Registration complete! Your account will be synced momentarily...</green>"
 }

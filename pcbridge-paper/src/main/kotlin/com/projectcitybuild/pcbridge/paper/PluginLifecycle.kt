@@ -60,6 +60,7 @@ import com.projectcitybuild.pcbridge.paper.features.maintenance.middleware.Maint
 import com.projectcitybuild.pcbridge.paper.features.randomteleport.commands.RtpCommand
 import com.projectcitybuild.pcbridge.paper.features.register.commands.CodeCommand
 import com.projectcitybuild.pcbridge.paper.features.register.commands.RegisterCommand
+import com.projectcitybuild.pcbridge.paper.features.register.listeners.VerifyCodeDialogListener
 import com.projectcitybuild.pcbridge.paper.features.serverlinks.listeners.ServerLinkListener
 import com.projectcitybuild.pcbridge.paper.features.spawns.commands.HubCommand
 import com.projectcitybuild.pcbridge.paper.features.spawns.commands.SetSpawnCommand
@@ -194,6 +195,7 @@ class PluginLifecycle : KoinComponent {
         get<RoleStateChangeListener>(),
         get<TabListeners>(),
         get<TelemetryPlayerConnectListener>(),
+        get<VerifyCodeDialogListener>(),
         get<WarpWebhookListener>(),
     )
 
