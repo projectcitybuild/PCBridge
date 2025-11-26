@@ -19,7 +19,7 @@ class VerifyCodeDialogListener(
     @EventHandler
     // TODO: reusable sentry and error handling
     suspend fun onPlayerCustomClickEvent(event: PlayerCustomClickEvent) = runCatching {
-        if (! event.identifier.equals(VerifyRegistrationCodeDialog.submitBanButtonKey)) return@runCatching
+        if (! event.identifier.equals(VerifyRegistrationCodeDialog.verifyButtonKey)) return@runCatching
 
         val view = event.dialogResponseView
         if (view == null) {

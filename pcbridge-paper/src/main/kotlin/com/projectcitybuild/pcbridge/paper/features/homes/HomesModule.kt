@@ -1,16 +1,17 @@
 package com.projectcitybuild.pcbridge.paper.features.homes
 
 import com.projectcitybuild.pcbridge.http.pcb.PCBHttp
-import com.projectcitybuild.pcbridge.paper.features.homes.commands.HomeCommand
-import com.projectcitybuild.pcbridge.paper.features.homes.commands.HomeNameSuggester
-import com.projectcitybuild.pcbridge.paper.features.homes.commands.HomesCommand
-import com.projectcitybuild.pcbridge.paper.features.homes.commands.homes.HomeCreateCommand
-import com.projectcitybuild.pcbridge.paper.features.homes.commands.homes.HomeDeleteCommand
-import com.projectcitybuild.pcbridge.paper.features.homes.commands.homes.HomeLimitCommand
-import com.projectcitybuild.pcbridge.paper.features.homes.commands.homes.HomeListCommand
-import com.projectcitybuild.pcbridge.paper.features.homes.commands.homes.HomeMoveCommand
-import com.projectcitybuild.pcbridge.paper.features.homes.commands.homes.HomeRenameCommand
-import com.projectcitybuild.pcbridge.paper.features.homes.repositories.HomeRepository
+import com.projectcitybuild.pcbridge.paper.features.homes.hooks.commands.HomeCommand
+import com.projectcitybuild.pcbridge.paper.features.homes.hooks.commands.HomeNameSuggester
+import com.projectcitybuild.pcbridge.paper.features.homes.hooks.commands.HomesCommand
+import com.projectcitybuild.pcbridge.paper.features.homes.hooks.commands.homes.HomeCreateCommand
+import com.projectcitybuild.pcbridge.paper.features.homes.hooks.commands.homes.HomeDeleteCommand
+import com.projectcitybuild.pcbridge.paper.features.homes.hooks.commands.homes.HomeLimitCommand
+import com.projectcitybuild.pcbridge.paper.features.homes.hooks.commands.homes.HomeListCommand
+import com.projectcitybuild.pcbridge.paper.features.homes.hooks.commands.homes.HomeMoveCommand
+import com.projectcitybuild.pcbridge.paper.features.homes.hooks.commands.homes.HomeRenameCommand
+import com.projectcitybuild.pcbridge.paper.features.homes.domain.repositories.HomeRepository
+import com.projectcitybuild.pcbridge.paper.features.homes.hooks.listeners.HomeRenameDialogListener
 import org.bukkit.plugin.java.JavaPlugin
 import org.koin.dsl.module
 
@@ -67,6 +68,13 @@ val homesModule = module {
                 homeNameSuggester = get(),
                 homeRepository = get(),
             ),
+        )
+    }
+
+    factory {
+        HomeRenameDialogListener(
+            homeRepository = get(),
+            errorTracker = get(),
         )
     }
 }

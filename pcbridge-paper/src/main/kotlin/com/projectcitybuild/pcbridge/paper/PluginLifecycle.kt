@@ -47,8 +47,9 @@ import com.projectcitybuild.pcbridge.paper.features.groups.listener.ChatGroupInv
 import com.projectcitybuild.pcbridge.paper.features.groups.listener.RoleStateChangeListener
 import com.projectcitybuild.pcbridge.paper.features.groups.placeholders.TabGroupListPlaceholder
 import com.projectcitybuild.pcbridge.paper.features.groups.placeholders.TabGroupsPlaceholder
-import com.projectcitybuild.pcbridge.paper.features.homes.commands.HomeCommand
-import com.projectcitybuild.pcbridge.paper.features.homes.commands.HomesCommand
+import com.projectcitybuild.pcbridge.paper.features.homes.hooks.commands.HomeCommand
+import com.projectcitybuild.pcbridge.paper.features.homes.hooks.commands.HomesCommand
+import com.projectcitybuild.pcbridge.paper.features.homes.hooks.listeners.HomeRenameDialogListener
 import com.projectcitybuild.pcbridge.paper.features.joinmessages.listeners.AnnounceJoinListener
 import com.projectcitybuild.pcbridge.paper.features.joinmessages.listeners.AnnounceQuitListener
 import com.projectcitybuild.pcbridge.paper.features.joinmessages.listeners.FirstTimeJoinListener
@@ -72,9 +73,10 @@ import com.projectcitybuild.pcbridge.paper.features.sync.commands.SyncDebugComma
 import com.projectcitybuild.pcbridge.paper.features.sync.listener.PlayerSyncRequestListener
 import com.projectcitybuild.pcbridge.paper.features.telemetry.listeners.TelemetryPlayerConnectListener
 import com.projectcitybuild.pcbridge.paper.features.warnings.commands.WarnCommand
-import com.projectcitybuild.pcbridge.paper.features.warps.commands.WarpCommand
-import com.projectcitybuild.pcbridge.paper.features.warps.commands.WarpsCommand
-import com.projectcitybuild.pcbridge.paper.features.warps.listeners.WarpWebhookListener
+import com.projectcitybuild.pcbridge.paper.features.warps.hooks.commands.WarpCommand
+import com.projectcitybuild.pcbridge.paper.features.warps.hooks.commands.WarpsCommand
+import com.projectcitybuild.pcbridge.paper.features.warps.hooks.listeners.WarpRenameDialogListener
+import com.projectcitybuild.pcbridge.paper.features.warps.hooks.listeners.WarpWebhookListener
 import com.projectcitybuild.pcbridge.paper.features.watchdog.listeners.ItemTextListener
 import com.projectcitybuild.pcbridge.paper.features.workstations.commands.AnvilCommand
 import com.projectcitybuild.pcbridge.paper.features.workstations.commands.CartographyTableCommand
@@ -183,6 +185,7 @@ class PluginLifecycle : KoinComponent {
         get<CoroutineExceptionListener>(),
         get<EmojiConfigListener>(),
         get<FirstTimeJoinListener>(),
+        get<HomeRenameDialogListener>(),
         get<InvisFrameListener>(),
         get<ItemTextListener>(),
         get<MaintenanceReminderListener>(),
@@ -196,6 +199,7 @@ class PluginLifecycle : KoinComponent {
         get<TabListeners>(),
         get<TelemetryPlayerConnectListener>(),
         get<VerifyCodeDialogListener>(),
+        get<WarpRenameDialogListener>(),
         get<WarpWebhookListener>(),
     )
 
