@@ -9,6 +9,7 @@ import com.projectcitybuild.pcbridge.paper.architecture.commands.scopedSuspendin
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandContext
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandNode
 import io.papermc.paper.command.brigadier.Commands
+import org.bukkit.inventory.MenuType
 import org.bukkit.plugin.Plugin
 
 class LoomCommand(
@@ -22,9 +23,6 @@ class LoomCommand(
 
     private suspend fun execute(context: PaperCommandContext) = context.scopedSuspending {
         val player = context.source.requirePlayer()
-
-        val attachLocation = null // No loom to attach to
-        val force = true // Don't check for a loom at the attach location
-        player.openLoom(attachLocation, force)
+        MenuType.LOOM.create(player).open()
     }
 }

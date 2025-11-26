@@ -1,4 +1,4 @@
-package com.projectcitybuild.pcbridge.paper.features.bans.actions
+package com.projectcitybuild.pcbridge.paper.features.bans.domain.actions
 
 import com.projectcitybuild.pcbridge.http.pcb.models.PlayerBan
 import com.projectcitybuild.pcbridge.http.shared.parsing.ResponseParserError

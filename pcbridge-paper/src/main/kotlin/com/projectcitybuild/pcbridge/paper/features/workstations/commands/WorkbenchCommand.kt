@@ -9,6 +9,7 @@ import com.projectcitybuild.pcbridge.paper.architecture.commands.scopedSuspendin
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandContext
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandNode
 import io.papermc.paper.command.brigadier.Commands
+import org.bukkit.inventory.MenuType
 import org.bukkit.plugin.Plugin
 
 class WorkbenchCommand(
@@ -22,9 +23,6 @@ class WorkbenchCommand(
 
     private suspend fun execute(context: PaperCommandContext) = context.scopedSuspending {
         val player = context.source.requirePlayer()
-
-        val attachLocation = null // No crafting table to attach to
-        val force = true // Don't check for a crafting table at the attach location
-        player.openWorkbench(attachLocation, force)
+        MenuType.CRAFTING.create(player).open()
     }
 }
