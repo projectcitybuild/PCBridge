@@ -36,6 +36,7 @@ import com.projectcitybuild.pcbridge.paper.core.libs.localconfig.LocalConfig
 import com.projectcitybuild.pcbridge.paper.core.libs.localconfig.LocalConfigKeyValues
 import com.projectcitybuild.pcbridge.paper.core.libs.localconfig.default
 import com.projectcitybuild.pcbridge.paper.core.libs.pcbmanage.ManageUrlGenerator
+import com.projectcitybuild.pcbridge.paper.core.libs.playerlookup.PlayerLookup
 import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.RemoteConfig
 import com.projectcitybuild.pcbridge.paper.core.libs.store.Store
 import com.projectcitybuild.pcbridge.paper.core.libs.teleportation.PlayerTeleporter
@@ -224,9 +225,13 @@ private fun Module.core() {
     }
 
     factory {
-        ManageUrlGenerator(
+        ManageUrlGenerator(localConfig = get())
+    }
+
+    factory {
+        PlayerLookup(
             server = get(),
-            localConfig = get(),
+            playerDbMinecraftService = get(),
         )
     }
 

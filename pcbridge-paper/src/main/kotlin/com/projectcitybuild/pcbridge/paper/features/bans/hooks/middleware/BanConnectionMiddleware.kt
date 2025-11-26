@@ -1,10 +1,10 @@
-package com.projectcitybuild.pcbridge.paper.features.bans.middleware
+package com.projectcitybuild.pcbridge.paper.features.bans.hooks.middleware
 
 import com.projectcitybuild.pcbridge.http.pcb.models.PlayerData
 import com.projectcitybuild.pcbridge.paper.architecture.connection.middleware.ConnectionMiddleware
 import com.projectcitybuild.pcbridge.paper.architecture.connection.middleware.ConnectionResult
-import com.projectcitybuild.pcbridge.paper.features.bans.actions.CheckBan
-import com.projectcitybuild.pcbridge.paper.features.bans.utilities.toMiniMessage
+import com.projectcitybuild.pcbridge.paper.features.bans.domain.actions.CheckBan
+import com.projectcitybuild.pcbridge.paper.features.bans.domain.utilities.toMiniMessage
 import java.net.InetAddress
 import java.util.UUID
 

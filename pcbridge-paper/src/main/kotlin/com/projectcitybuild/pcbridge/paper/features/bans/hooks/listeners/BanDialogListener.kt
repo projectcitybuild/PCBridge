@@ -1,4 +1,4 @@
-package com.projectcitybuild.pcbridge.paper.features.bans.listeners
+package com.projectcitybuild.pcbridge.paper.features.bans.hooks.listeners
 
 import com.projectcitybuild.pcbridge.http.playerdb.services.PlayerDbMinecraftService
 import com.projectcitybuild.pcbridge.http.shared.parsing.ResponseParserError
@@ -8,9 +8,10 @@ import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.logSy
 import com.projectcitybuild.pcbridge.paper.core.libs.pcbmanage.ManageUrlGenerator
 import com.projectcitybuild.pcbridge.paper.core.support.component.sendMessageRich
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.extensions.broadcastRich
-import com.projectcitybuild.pcbridge.paper.features.bans.dialogs.CreateBanDialog
-import com.projectcitybuild.pcbridge.paper.features.bans.repositories.UuidBanRepository
-import com.projectcitybuild.pcbridge.paper.features.bans.utilities.toMiniMessage
+import com.projectcitybuild.pcbridge.paper.features.bans.domain.actions.CreateUuidBan
+import com.projectcitybuild.pcbridge.paper.features.bans.hooks.dialogs.CreateBanDialog
+import com.projectcitybuild.pcbridge.paper.features.bans.domain.repositories.UuidBanRepository
+import com.projectcitybuild.pcbridge.paper.features.bans.domain.utilities.toMiniMessage
 import com.projectcitybuild.pcbridge.paper.l10n.l10n
 import io.papermc.paper.connection.PlayerGameConnection
 import io.papermc.paper.event.player.PlayerCustomClickEvent
@@ -22,9 +23,7 @@ import java.util.UUID
 
 class BanDialogListener(
     private val server: Server,
-    private val playerDbMinecraftService: PlayerDbMinecraftService,
-    private val uuidBanRepository: UuidBanRepository,
-    private val manageUrlGenerator: ManageUrlGenerator,
+    private val createUuidBan: CreateUuidBan,
     private val errorTracker: ErrorTracker,
 ) : Listener {
     @EventHandler
@@ -67,50 +66,33 @@ class BanDialogListener(
             return@runCatching
         }
 
-        val playerLookup = playerDbMinecraftService.player(playerName).data
-        if (playerLookup == null) {
-            bannerPlayer?.sendMessageRich("<red>Error: Player $playerName not found</red>")
-            return@runCatching
-        }
-        val rawUuid = playerLookup.player.id
-        val uuid = try {
-            UUID.fromString(rawUuid)
-        } catch (e: Exception) {
-            bannerPlayer?.sendMessageRich("<red>Error: Could not determine player UUID</red>")
-            log.error(e) { "Could not parse UUID: $rawUuid, player=[$playerName]" }
-            return@runCatching
-        }
-
-        val ban = try {
-            uuidBanRepository.create(
-                bannedUUID = uuid,
+        val result = try {
+            createUuidBan.create(
                 bannedAlias = playerName,
-                bannerUUID = bannerPlayer?.uniqueId,
+                bannerUuid = bannerPlayer?.uniqueId,
                 bannerAlias = bannerPlayer?.name,
                 reason = reason,
                 additionalInfo = additionalInfo,
             )
-        } catch (e: ResponseParserError.Conflict) {
-            bannerPlayer?.sendMessageRich("<red>Error: ${e.message}</red>")
+        } catch (_: CreateUuidBan.PlayerNotFound) {
+            bannerPlayer?.sendMessageRich("<red>Error: Player not found</red>")
             return@runCatching
-        } catch (e: ResponseParserError.Validation) {
+        } catch (_: CreateUuidBan.PlayerAlreadyBanned) {
+            bannerPlayer?.sendMessageRich("<red>Error: $playerName is already banned</red>")
+            return@runCatching
+        } catch (e: CreateUuidBan.InvalidBanInput) {
             bannerPlayer?.sendMessageRich("<red>Error: ${e.message}</red>")
             return@runCatching
         }
 
         server.broadcastRich(l10n.playerHasBeenBanned(playerName))
 
-        val bannedPlayer = server.onlinePlayers.firstOrNull { it.uniqueId == uuid }
+        val bannedPlayer = server.onlinePlayers.firstOrNull { it.uniqueId == result.bannedUuid }
         bannedPlayer?.kick(
-            ban.toMiniMessage(),
+            result.ban.toMiniMessage(),
             PlayerKickEvent.Cause.BANNED,
         )
-
-        val url = manageUrlGenerator.byPlayerUuid(
-            playerName = playerName,
-            path = "manage/player-bans/${ban.id}/edit"
-        )
-        bannerPlayer?.sendMessageRich(l10n.clickToEditBan(url))
+        bannerPlayer?.sendMessageRich(l10n.clickToEditBan(result.editUrl))
     }.onFailure {
         log.error(it) { "Failed to handle ban dialog response" }
         errorTracker.report(it)

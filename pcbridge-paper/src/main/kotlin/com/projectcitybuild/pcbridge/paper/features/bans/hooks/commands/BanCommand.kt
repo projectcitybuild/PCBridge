@@ -1,4 +1,4 @@
-package com.projectcitybuild.pcbridge.paper.features.bans.commands
+package com.projectcitybuild.pcbridge.paper.features.bans.hooks.commands
 
 import com.projectcitybuild.pcbridge.paper.PermissionNode
 import com.projectcitybuild.pcbridge.paper.architecture.commands.BrigadierCommand
@@ -8,8 +8,7 @@ import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.req
 import com.projectcitybuild.pcbridge.paper.architecture.commands.scopedSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandContext
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandNode
-import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.getOptionalArgument
-import com.projectcitybuild.pcbridge.paper.features.bans.dialogs.CreateBanDialog
+import com.projectcitybuild.pcbridge.paper.features.bans.hooks.dialogs.CreateBanDialog
 import io.papermc.paper.command.brigadier.Commands
 import org.bukkit.Server
 import org.bukkit.plugin.Plugin
@@ -25,12 +24,11 @@ class BanCommand(
                 Commands.argument("player", OnlinePlayerNameArgument(server))
                     .executesSuspending(plugin, ::execute)
             )
-            .executesSuspending(plugin, ::execute)
             .build()
     }
 
     private suspend fun execute(context: PaperCommandContext) = context.scopedSuspending {
-        val inputPlayerName = context.getOptionalArgument("player", String::class.java)
+        val inputPlayerName = context.getArgument("player", String::class.java)
 
         val playerName = inputPlayerName
             ?.let { name -> server.onlinePlayers.firstOrNull { it.name == name }?.name }

@@ -25,10 +25,10 @@ import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotTimer
 import com.projectcitybuild.pcbridge.paper.architecture.commands.registerCommands
 import com.projectcitybuild.pcbridge.paper.features.announcements.listeners.AnnouncementConfigListener
 import com.projectcitybuild.pcbridge.paper.features.announcements.listeners.AnnouncementEnableListener
-import com.projectcitybuild.pcbridge.paper.features.bans.commands.BanCommand
-import com.projectcitybuild.pcbridge.paper.features.bans.listeners.BanDialogListener
-import com.projectcitybuild.pcbridge.paper.features.bans.listeners.BanWebhookListener
-import com.projectcitybuild.pcbridge.paper.features.bans.middleware.BanConnectionMiddleware
+import com.projectcitybuild.pcbridge.paper.features.bans.hooks.commands.BanCommand
+import com.projectcitybuild.pcbridge.paper.features.bans.hooks.listeners.BanDialogListener
+import com.projectcitybuild.pcbridge.paper.features.bans.hooks.listeners.BanWebhookListener
+import com.projectcitybuild.pcbridge.paper.features.bans.hooks.middleware.BanConnectionMiddleware
 import com.projectcitybuild.pcbridge.paper.features.building.commands.InvisFrameCommand
 import com.projectcitybuild.pcbridge.paper.features.building.commands.ItemNameCommand
 import com.projectcitybuild.pcbridge.paper.features.building.commands.NightVisionCommand

@@ -246,6 +246,12 @@ internal interface PCBRequest {
         @Path(value = "player_uuid") playerUUID: String,
     ): HomeLimit
 
+    @GET("v2/minecraft/player/{player_uuid}/bans")
+    suspend fun getPlayerBans(
+        @Path(value = "player_uuid") playerUUID: String,
+        @Query(value = "only_active") onlyActiveBans: Boolean? = null,
+    ): List<PlayerBan>
+
     @POST("v2/bans/uuid")
     @FormUrlEncoded
     suspend fun createUuidBan(

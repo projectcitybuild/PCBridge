@@ -31,10 +31,9 @@ class WarnCommand(
     private suspend fun execute(context: PaperCommandContext) = context.scopedSuspending {
         val playerName = context.getArgument("player", String::class.java)
 
-        val url = manageUrlGenerator.byPlayerUuid(
-            playerName = playerName,
-            path = "manage/warnings/create"
-        )
+        val player = server.onlinePlayers.firstOrNull { it.name.equals(playerName, ignoreCase = true) }
+        val lookup = player?.uniqueId?.toString() ?: playerName
+        val url = manageUrlGenerator.path("manage/warnings/create?uuid=$lookup")
 
         val sender = context.source.sender
         sender.sendRichMessage(

@@ -1,9 +1,9 @@
-package com.projectcitybuild.pcbridge.paper.features.bans.listeners
+package com.projectcitybuild.pcbridge.paper.features.bans.hooks.listeners
 
 import com.projectcitybuild.pcbridge.paper.architecture.webhooks.events.WebhookReceivedEvent
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.logSync
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.utilities.SpigotSanitizer
-import com.projectcitybuild.pcbridge.paper.features.bans.utilities.toMiniMessage
+import com.projectcitybuild.pcbridge.paper.features.bans.domain.utilities.toMiniMessage
 import com.projectcitybuild.pcbridge.webserver.data.IPBanRequestedWebhook
 import com.projectcitybuild.pcbridge.webserver.data.UUIDBanRequestedWebhook
 import net.kyori.adventure.text.minimessage.MiniMessage

@@ -3,6 +3,7 @@ package com.projectcitybuild.pcbridge.paper.features.bans.actions
 import com.projectcitybuild.pcbridge.http.pcb.models.PlayerData
 import com.projectcitybuild.pcbridge.http.pcb.models.IPBan
 import com.projectcitybuild.pcbridge.http.pcb.models.PlayerBan
+import com.projectcitybuild.pcbridge.paper.features.bans.domain.actions.CheckBan
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull

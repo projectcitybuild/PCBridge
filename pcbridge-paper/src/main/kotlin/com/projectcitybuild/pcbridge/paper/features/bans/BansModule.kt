@@ -2,12 +2,13 @@ package com.projectcitybuild.pcbridge.paper.features.bans
 
 import com.projectcitybuild.pcbridge.http.pcb.PCBHttp
 import com.projectcitybuild.pcbridge.http.playerdb.PlayerDbHttp
-import com.projectcitybuild.pcbridge.paper.features.bans.actions.CheckBan
-import com.projectcitybuild.pcbridge.paper.features.bans.commands.BanCommand
-import com.projectcitybuild.pcbridge.paper.features.bans.listeners.BanDialogListener
-import com.projectcitybuild.pcbridge.paper.features.bans.listeners.BanWebhookListener
-import com.projectcitybuild.pcbridge.paper.features.bans.middleware.BanConnectionMiddleware
-import com.projectcitybuild.pcbridge.paper.features.bans.repositories.UuidBanRepository
+import com.projectcitybuild.pcbridge.paper.features.bans.domain.actions.CheckBan
+import com.projectcitybuild.pcbridge.paper.features.bans.domain.actions.CreateUuidBan
+import com.projectcitybuild.pcbridge.paper.features.bans.hooks.commands.BanCommand
+import com.projectcitybuild.pcbridge.paper.features.bans.hooks.listeners.BanDialogListener
+import com.projectcitybuild.pcbridge.paper.features.bans.hooks.listeners.BanWebhookListener
+import com.projectcitybuild.pcbridge.paper.features.bans.hooks.middleware.BanConnectionMiddleware
+import com.projectcitybuild.pcbridge.paper.features.bans.domain.repositories.UuidBanRepository
 import org.bukkit.plugin.java.JavaPlugin
 import org.koin.dsl.module
 
@@ -27,9 +28,7 @@ val bansModule = module {
     factory {
         BanDialogListener(
             server = get(),
-            playerDbMinecraftService = get<PlayerDbHttp>().minecraft,
-            manageUrlGenerator = get(),
-            uuidBanRepository = get(),
+            createUuidBan = get(),
             errorTracker = get(),
         )
     }
@@ -44,6 +43,14 @@ val bansModule = module {
     single {
         UuidBanRepository(
             uuidBanHttpService = get<PCBHttp>().uuidBans,
+        )
+    }
+
+    factory {
+        CreateUuidBan(
+            playerLookup = get(),
+            manageUrlGenerator = get(),
+            uuidBanRepository = get(),
         )
     }
 }

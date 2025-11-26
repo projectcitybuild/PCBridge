@@ -30,4 +30,16 @@ class UuidBanHttpService(
             )
         }
     }
+
+    suspend fun get(
+        bannedUUID: UUID,
+        onlyActiveBans: Boolean = false,
+    ) = withContext(Dispatchers.IO) {
+        responseParser.parse {
+            retrofit.pcb().getPlayerBans(
+                playerUUID = bannedUUID.toString(),
+                onlyActiveBans = onlyActiveBans,
+            )
+        }
+    }
 }
