@@ -11,10 +11,10 @@ class WarpNameSuggester(
         context: PaperCommandContext,
         suggestions: SuggestionsBuilder,
     ) {
-        val input = suggestions.remaining.lowercase()
+        val input = suggestions.remaining
 
         warpRepository.names()
-            .filter { it.name.startsWith(input) }
+            .filter { it.name.startsWith(input, ignoreCase = true) }
             .map { it.name }
             .forEach(suggestions::suggest)
     }

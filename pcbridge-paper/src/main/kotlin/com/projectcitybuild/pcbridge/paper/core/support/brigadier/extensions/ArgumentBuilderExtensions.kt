@@ -24,7 +24,8 @@ fun <S, T> RequiredArgumentBuilder<S, T>.suggestsSuspending(
     block: suspend (CommandContext<S>, SuggestionsBuilder) -> Unit,
 ): RequiredArgumentBuilder<S, T> {
     return suggests { context, suggestions ->
-        plugin.launch(Dispatchers.IO + object : CoroutineTimings() {}) {
+        // Note: the SuggestionsBuilder object must be handled on the main dispatcher
+        plugin.launch(plugin.minecraftDispatcher + SentryContext() + object : CoroutineTimings() {}) {
             block(context, suggestions)
         }
         suggestions.buildFuture()
