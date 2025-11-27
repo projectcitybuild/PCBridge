@@ -12,6 +12,7 @@ class SentryReportDestination(
         Sentry.init { options ->
             options.dsn = dsn
             options.environment = environment
+            options.logs.isEnabled = true
         }
         logSync.info { "Sentry error reporting enabled" }
     }
