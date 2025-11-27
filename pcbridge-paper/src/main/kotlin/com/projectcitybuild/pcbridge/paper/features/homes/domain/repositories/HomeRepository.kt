@@ -44,7 +44,7 @@ class HomeRepository(
         name: String,
     ): Home? = withContext(Dispatchers.IO) {
         val nameList = names(playerUUID)
-        val match = nameList.firstOrNull { it.name == name }
+        val match = nameList.firstOrNull { it.name.equals(name, ignoreCase = true) }
         checkNotNull(match) { "Home ($name) not found" }
 
         homeHttpService.get(playerUUID, match.id)

@@ -31,7 +31,7 @@ class WarpRepository(
 
     suspend fun get(name: String): Warp? {
         val nameList = names()
-        val match = nameList.firstOrNull { it.name == name }
+        val match = nameList.firstOrNull { it.name.equals(name, ignoreCase = true) }
         checkNotNull(match) { "Warp ($name) not found" }
 
         return warpHttpService.get(match.id)
