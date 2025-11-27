@@ -15,10 +15,10 @@ class HomeNameSuggester(
         val player = context.source.executor as? Player
             ?: return
 
-        val input = suggestions.remaining.lowercase()
+        val input = suggestions.remaining
 
         homeRepository.names(playerUUID = player.uniqueId)
-            .filter { it.name.startsWith(input) }
+            .filter { it.name.startsWith(input, ignoreCase = true) }
             .map { it.name }
             .forEach(suggestions::suggest)
     }
