@@ -11,12 +11,10 @@ class ErrorTracker(
 
     fun start() {
         val config = localConfig.get()
-        if (config.errorReporting.isSentryEnabled) {
-            destination = SentryReportDestination(
-                dsn = config.errorReporting.sentryDsn,
-                environment = config.environment.name,
-            )
-        }
+        destination = SentryReportDestination(
+            dsn = config.errorReporting.sentryDsn,
+            environment = config.environment.name,
+        )
         destination.start()
     }
 
