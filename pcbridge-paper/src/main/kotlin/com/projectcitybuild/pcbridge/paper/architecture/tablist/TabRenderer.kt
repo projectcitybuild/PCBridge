@@ -20,7 +20,7 @@ class TabRenderer(
      * Updates the tab name of the given player
      */
     suspend fun updatePlayerName(player: Player) {
-//        log.debug { "Updating tab player name for ${player.uniqueId}" }
+        log.trace { "Updating tab player name for ${player.uniqueId}" }
 
         val config = remoteConfig.latest.config.tab
 

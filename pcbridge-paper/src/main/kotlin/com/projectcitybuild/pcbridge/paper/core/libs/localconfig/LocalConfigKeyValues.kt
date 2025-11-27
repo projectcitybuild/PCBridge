@@ -30,7 +30,6 @@ data class LocalConfigKeyValues(
 
     @Serializable
     data class ErrorReporting(
-        val isSentryEnabled: Boolean,
         val sentryDsn: String,
     )
 
@@ -53,8 +52,7 @@ fun LocalConfigKeyValues.Companion.default() =
             port = 8080,
         ),
         errorReporting = LocalConfigKeyValues.ErrorReporting(
-            isSentryEnabled = false,
-            sentryDsn = "https://<key>@sentry.io/<project>",
+            sentryDsn = "",
         ),
         discord = LocalConfigKeyValues.Discord(
             contentAlertWebhook = ""

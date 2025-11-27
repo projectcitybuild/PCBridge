@@ -9,14 +9,21 @@ class SentryReportDestination(
     private val environment: String,
 ): ReportDestination {
     override fun start() {
+        if (dsn.isEmpty()) {
+            logSync.warn { "Sentry DSN not specified. Error reporting will not be available" }
+            return
+        }
         Sentry.init { options ->
             options.dsn = dsn
             options.environment = environment
+            options.logs.isEnabled = true
         }
         logSync.info { "Sentry error reporting enabled" }
     }
 
     override fun close() {
+        if (dsn.isEmpty()) return
+
         Sentry.close()
         logSync.info { "Sentry error reporting disabled" }
     }

@@ -103,7 +103,7 @@ class PluginLifecycle : KoinComponent {
     private val remoteConfig: RemoteConfig by inject()
     private val store: Store by inject()
 
-    suspend fun boot() = errorTracker.catching {
+    suspend fun boot() = errorTracker.apply { start() }.catching {
         httpServer.start()
         remoteConfig.fetch()
         store.hydrate()
