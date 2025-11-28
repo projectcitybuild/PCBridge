@@ -25,7 +25,7 @@ class PlayerTeleporter(
         destination: Location,
         cause: TeleportCause = TeleportCause.PLUGIN,
         options: TeleportOptions = TeleportOptions(),
-    ) = teleportationTracer.trace("move") {
+    ) = teleportationTracer.trace("PlayerTeleporter.move") {
         val currentLocation = player.location.clone()
         val teleportLocation = adjustedDestination(destination, options)
 

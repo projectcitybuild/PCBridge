@@ -1,6 +1,5 @@
 package com.projectcitybuild.pcbridge.paper.core.libs.teleportation
 
-import com.projectcitybuild.pcbridge.paper.core.libs.teleportation.teleportationTracer
 import org.bukkit.Material
 import org.bukkit.World
 
@@ -9,7 +8,7 @@ class SafeYLocationFinder {
         world: World,
         x: Int,
         z: Int,
-    ): Int? = teleportationTracer.traceSync("findY") {
+    ): Int? = teleportationTracer.traceSync("SafeYLocationFinder.findY") {
         val highestBlock = world.getHighestBlockAt(x, z)
         val aboveBlock = world.getBlockAt(x, highestBlock.y + 1, z)
 

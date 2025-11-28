@@ -1,5 +1,5 @@
 package com.projectcitybuild.pcbridge.paper.features.building.data
 
-import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotNamespacedKey
+import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotNamespace
 
-object InvisFrameKey: SpigotNamespacedKey(identifier = "invisible")
+object InvisFrameKey: SpigotNamespace.Key("invisible")
