@@ -2,6 +2,7 @@ package com.projectcitybuild.pcbridge.paper.architecture.commands
 
 import com.projectcitybuild.pcbridge.http.shared.parsing.ResponseParserError
 import com.projectcitybuild.pcbridge.paper.core.libs.cooldowns.CooldownException
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.logSync
 import org.bukkit.command.CommandSender
 
 class CommandExceptionHandler private constructor() {
@@ -17,7 +18,7 @@ class CommandExceptionHandler private constructor() {
             is CooldownException -> sender.sendError("Error: Please wait ${e.remainingTime.inWholeMilliseconds} seconds before trying again")
             else -> {
                 sender.sendError("An unexpected error occurred")
-                throw e // Bubble it up to the error reporter
+                logSync.error(e) { "Failed to execute command" }
             }
         }
     }

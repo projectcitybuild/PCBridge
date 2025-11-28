@@ -26,7 +26,7 @@ class PlayerLookup(
         return try {
             UUID.fromString(rawUuid)
         } catch (e: Exception) {
-            log.error(e, "Could not parse UUID ({uuid}) for {player}", rawUuid, trimmedAlias)
+            log.error(e, "Could not parse UUID ({uuid}) of fetched player ({player})", rawUuid, trimmedAlias)
             throw IllegalStateException("Invalid Minecraft UUID ($rawUuid)")
         }
     }
