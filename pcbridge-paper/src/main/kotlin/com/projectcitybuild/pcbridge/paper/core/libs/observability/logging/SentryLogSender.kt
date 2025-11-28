@@ -2,6 +2,7 @@ package com.projectcitybuild.pcbridge.paper.core.libs.observability.logging
 
 import io.klogging.Level
 import io.klogging.events.LogEvent
+import io.klogging.rendering.itemsAndStackTrace
 import io.klogging.sending.EventSender
 import io.sentry.Sentry
 import io.sentry.SentryLogLevel
@@ -12,7 +13,11 @@ class SentryLogSender: EventSender {
 
         batch.forEach { event ->
             val level = event.level.toSentryLevel() ?: return
-            logger.log(level, event.message)
+
+            val metadata = if (event.level >= Level.ERROR) event.itemsAndStackTrace
+                else event.items
+
+            logger.log(level, event.message, metadata)
         }
     }
 }

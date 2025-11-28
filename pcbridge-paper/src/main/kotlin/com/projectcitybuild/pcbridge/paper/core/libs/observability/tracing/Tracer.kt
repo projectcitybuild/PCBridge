@@ -1,7 +1,6 @@
 package com.projectcitybuild.pcbridge.paper.core.libs.observability.tracing
 
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.logSync
-import io.opentelemetry.api.trace.SpanBuilder
+import io.opentelemetry.api.common.Attributes
 import io.opentelemetry.api.trace.SpanKind
 import io.opentelemetry.context.Context
 import io.opentelemetry.extension.kotlin.asContextElement
@@ -13,14 +12,14 @@ class Tracer(
 ) {
     suspend fun <T> trace(
         operation: String,
-        attributes: Map<String, *>? = null,
+        attributes: Attributes? = null,
         block: suspend () -> T,
     ) {
         val tracer = otel.sdk.getTracer(name)
 
         val span = tracer.spanBuilder(operation)
             .setSpanKind(SpanKind.INTERNAL)
-            .setAttributes(attributes)
+            .apply { if (attributes != null) setAllAttributes(attributes) }
             .startSpan()
 
         val otelContext = Context.current().with(span)
@@ -36,18 +35,26 @@ class Tracer(
             span.end()
         }
     }
-}
 
-private fun SpanBuilder.setAttributes(attributes: Map<String, *>?): SpanBuilder {
-    attributes?.forEach { attribute ->
-        val key = attribute.key
-        when (val value = attribute.value) {
-            is String -> setAttribute(key, value)
-            is Boolean -> setAttribute(key, value)
-            is Long -> setAttribute(key, value)
-            is Double -> setAttribute(key, value)
-            else -> logSync.e("Unsupported attribute value type for $key")
+    fun <T> traceSync(
+        operation: String,
+        attributes: Attributes? = null,
+        block: () -> T,
+    ) {
+        val tracer = otel.sdk.getTracer(name)
+
+        val span = tracer.spanBuilder(operation)
+            .setSpanKind(SpanKind.INTERNAL)
+            .apply { if (attributes != null) setAllAttributes(attributes) }
+            .startSpan()
+
+        try {
+            block()
+        } catch (e: Exception) {
+            span.recordException(e)
+            throw e
+        } finally {
+            span.end()
         }
     }
-    return this
 }

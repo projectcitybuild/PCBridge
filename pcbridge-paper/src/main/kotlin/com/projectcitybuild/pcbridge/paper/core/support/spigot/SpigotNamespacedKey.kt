@@ -1,5 +1,5 @@
 package com.projectcitybuild.pcbridge.paper.core.support.spigot
 
-interface SpigotNamespacedKey {
+abstract class SpigotNamespacedKey(
     val identifier: String
-}
+)

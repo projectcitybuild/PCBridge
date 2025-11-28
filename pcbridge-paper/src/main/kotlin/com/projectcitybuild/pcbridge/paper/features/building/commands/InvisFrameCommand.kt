@@ -39,21 +39,21 @@ class InvisFrameCommand(
             .build()
     }
 
-    private fun giveNormal(context: PaperCommandContext) = context.scoped(buildingTracer) {
-        give(
-            player = context.source.requirePlayer(),
-            glowing = false,
-        )
-    }
+    private fun giveNormal(context: PaperCommandContext) = give(
+        context = context,
+        glowing = false,
+    )
 
-    private fun giveGlowing(context: PaperCommandContext) = context.scoped(buildingTracer) {
-        give(
-            player = context.source.requirePlayer(),
-            glowing = true,
-        )
-    }
+    private fun giveGlowing(context: PaperCommandContext) = give(
+        context = context,
+        glowing = true,
+    )
 
-    private fun give(player: Player, glowing: Boolean) {
+    private fun give(
+        context: PaperCommandContext,
+        glowing: Boolean,
+    ) = context.scoped(buildingTracer) {
+        val player = context.source.requirePlayer()
         val itemStack = if (glowing) {
             ItemStack(Material.GLOW_ITEM_FRAME)
         } else {
@@ -83,7 +83,7 @@ class InvisFrameCommand(
                             .decorate(TextDecoration.ITALIC),
                     )
                     persistentDataContainer.set(
-                        spigotNamespace.get(InvisFrameKey()),
+                        spigotNamespace.get(InvisFrameKey),
                         PersistentDataType.BYTE,
                         1,
                     )
