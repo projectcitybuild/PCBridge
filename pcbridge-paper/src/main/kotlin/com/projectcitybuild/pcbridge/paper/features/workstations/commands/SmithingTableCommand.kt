@@ -2,9 +2,9 @@ package com.projectcitybuild.pcbridge.paper.features.workstations.commands
 
 import com.projectcitybuild.pcbridge.paper.PermissionNode
 import com.projectcitybuild.pcbridge.paper.architecture.commands.BrigadierCommand
+import com.projectcitybuild.pcbridge.paper.architecture.commands.requiresPermission
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requirePlayer
-import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
 import com.projectcitybuild.pcbridge.paper.architecture.commands.scoped
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandContext
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandNode
@@ -16,7 +16,7 @@ import org.bukkit.plugin.Plugin
 class SmithingTableCommand(
     private val plugin: Plugin,
 ) : BrigadierCommand {
-    override fun buildLiteral(): PaperCommandNode
+    override fun literal(): PaperCommandNode
         = Commands.literal("smithingtable")
             .requiresPermission(PermissionNode.WORKSTATIONS_USE)
             .executesSuspending(plugin, ::execute)

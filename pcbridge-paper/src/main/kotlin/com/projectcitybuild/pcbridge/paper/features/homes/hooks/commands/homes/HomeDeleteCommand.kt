@@ -20,7 +20,7 @@ class HomeDeleteCommand(
     private val homeNameSuggester: HomeNameSuggester,
     private val homeRepository: HomeRepository,
 ): BrigadierCommand {
-    override fun buildLiteral(): PaperCommandNode {
+    override fun literal(): PaperCommandNode {
         return Commands.literal("delete")
             .then(
                 Commands.argument("name", StringArgumentType.greedyString())

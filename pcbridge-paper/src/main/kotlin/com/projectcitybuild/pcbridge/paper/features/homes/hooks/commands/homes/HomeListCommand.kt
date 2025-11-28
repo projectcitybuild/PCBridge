@@ -21,7 +21,7 @@ class HomeListCommand(
     private val homeRepository: HomeRepository,
     private val remoteConfig: RemoteConfig,
 ): BrigadierCommand {
-    override fun buildLiteral(): PaperCommandNode {
+    override fun literal(): PaperCommandNode {
         return Commands.literal("list")
             .executesSuspending(plugin, ::execute)
             .then(

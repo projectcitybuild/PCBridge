@@ -17,7 +17,7 @@ class HomeCreateCommand(
     private val plugin: Plugin,
     private val homeRepository: HomeRepository,
 ): BrigadierCommand {
-    override fun buildLiteral(): PaperCommandNode {
+    override fun literal(): PaperCommandNode {
         return Commands.literal("create")
             .then(
                 Commands.argument("name", StringArgumentType.greedyString())

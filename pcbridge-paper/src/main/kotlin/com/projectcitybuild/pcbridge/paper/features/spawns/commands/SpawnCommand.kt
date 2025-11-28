@@ -19,7 +19,7 @@ class SpawnCommand(
     private val spawnRepository: SpawnRepository,
     private val playerTeleporter: PlayerTeleporter,
 ) : BrigadierCommand {
-    override fun buildLiteral(): PaperCommandNode {
+    override fun literal(): PaperCommandNode {
         return Commands.literal("spawn")
             .executesSuspending(plugin, ::execute)
             .build()

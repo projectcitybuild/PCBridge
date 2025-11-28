@@ -8,9 +8,6 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import com.mojang.brigadier.builder.RequiredArgumentBuilder
 import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.suggestion.SuggestionsBuilder
-import com.projectcitybuild.pcbridge.paper.PermissionNode
-import com.projectcitybuild.pcbridge.paper.architecture.commands.BrigadierCommand
-import io.papermc.paper.command.brigadier.CommandSourceStack
 import org.bukkit.plugin.Plugin
 
 /**
@@ -58,21 +55,3 @@ fun <S> LiteralArgumentBuilder<S>.executesSuspending(
         Command.SINGLE_SUCCESS
     }
 }
-
-fun LiteralArgumentBuilder<CommandSourceStack>.then(
-    command: BrigadierCommand,
-): LiteralArgumentBuilder<CommandSourceStack>
-    = then(command.buildLiteral())
-
-fun LiteralArgumentBuilder<CommandSourceStack>.requiresPermission(
-    permission: PermissionNode,
-): LiteralArgumentBuilder<CommandSourceStack> = requires { context ->
-    context.sender.hasPermission(permission.node)
-}
-
-fun <S: CommandSourceStack, T> RequiredArgumentBuilder<S, T>.requiresPermission(
-    permission: PermissionNode,
-): RequiredArgumentBuilder<S, T> = requires { context ->
-    context.sender.hasPermission(permission.node)
-}
-

@@ -23,7 +23,7 @@ class HubCommand(
     private val remoteConfig: RemoteConfig,
     private val playerTeleporter: PlayerTeleporter,
 ) : BrigadierCommand {
-    override fun buildLiteral(): PaperCommandNode {
+    override fun literal(): PaperCommandNode {
         return Commands.literal("hub")
             .executesSuspending(plugin, ::execute)
             .build()
