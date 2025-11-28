@@ -4,9 +4,9 @@ import com.mojang.brigadier.arguments.StringArgumentType
 import com.projectcitybuild.pcbridge.paper.PermissionNode
 import com.projectcitybuild.pcbridge.paper.features.builds.repositories.BuildRepository
 import com.projectcitybuild.pcbridge.paper.architecture.commands.BrigadierCommand
+import com.projectcitybuild.pcbridge.paper.architecture.commands.requiresPermission
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requirePlayer
-import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.suggestsSuspending
 import com.projectcitybuild.pcbridge.paper.architecture.commands.scoped
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandContext
@@ -21,7 +21,7 @@ class BuildMoveCommand(
     private val buildNameSuggester: BuildNameSuggester,
     private val buildRepository: BuildRepository,
 ): BrigadierCommand {
-    override fun buildLiteral(): PaperCommandNode {
+    override fun literal(): PaperCommandNode {
         return Commands.literal("move")
             .requiresPermission(PermissionNode.BUILDS_MANAGE)
             .then(

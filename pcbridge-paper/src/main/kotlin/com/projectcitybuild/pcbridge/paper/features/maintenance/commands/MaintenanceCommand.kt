@@ -3,9 +3,9 @@ package com.projectcitybuild.pcbridge.paper.features.maintenance.commands
 import com.projectcitybuild.pcbridge.paper.PermissionNode
 import com.projectcitybuild.pcbridge.paper.core.libs.store.Store
 import com.projectcitybuild.pcbridge.paper.architecture.commands.BrigadierCommand
+import com.projectcitybuild.pcbridge.paper.architecture.commands.requiresPermission
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.arguments.OnOffArgument
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
-import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
 import com.projectcitybuild.pcbridge.paper.architecture.commands.scoped
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandContext
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandNode
@@ -23,7 +23,7 @@ class MaintenanceCommand(
     private val store: Store,
     private val eventBroadcaster: SpigotEventBroadcaster,
 ): BrigadierCommand {
-    override fun buildLiteral(): PaperCommandNode {
+    override fun literal(): PaperCommandNode {
         return Commands.literal("maintenance")
             .requiresPermission(PermissionNode.MAINTENANCE_MANAGE)
             .then(

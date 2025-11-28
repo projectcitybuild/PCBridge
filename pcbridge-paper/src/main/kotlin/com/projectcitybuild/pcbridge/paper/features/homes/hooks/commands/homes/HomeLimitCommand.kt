@@ -15,7 +15,7 @@ class HomeLimitCommand(
     private val plugin: Plugin,
     private val homeRepository: HomeRepository,
 ): BrigadierCommand {
-    override fun buildLiteral(): PaperCommandNode {
+    override fun literal(): PaperCommandNode {
         return Commands.literal("limit")
             .executesSuspending(plugin, ::execute)
             .build()

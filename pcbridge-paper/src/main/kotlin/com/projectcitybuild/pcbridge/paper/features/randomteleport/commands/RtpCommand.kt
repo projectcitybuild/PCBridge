@@ -3,9 +3,9 @@ package com.projectcitybuild.pcbridge.paper.features.randomteleport.commands
 import com.projectcitybuild.pcbridge.paper.PermissionNode
 import com.projectcitybuild.pcbridge.paper.core.libs.cooldowns.Cooldown
 import com.projectcitybuild.pcbridge.paper.architecture.commands.BrigadierCommand
+import com.projectcitybuild.pcbridge.paper.architecture.commands.requiresPermission
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requirePlayer
-import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
 import com.projectcitybuild.pcbridge.paper.architecture.commands.scoped
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandContext
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandNode
@@ -21,7 +21,7 @@ class RtpCommand(
     private val cooldown: Cooldown,
     private val findRandomLocation: FindRandomLocation,
 ) : BrigadierCommand {
-    override fun buildLiteral(): PaperCommandNode {
+    override fun literal(): PaperCommandNode {
         return Commands.literal("rtp")
             .requiresPermission(PermissionNode.TELEPORT_RANDOM)
             .executesSuspending(plugin, ::execute)

@@ -5,9 +5,9 @@ import com.projectcitybuild.pcbridge.paper.features.warps.domain.events.WarpCrea
 import com.projectcitybuild.pcbridge.paper.features.warps.domain.repositories.WarpRepository
 import com.projectcitybuild.pcbridge.paper.PermissionNode
 import com.projectcitybuild.pcbridge.paper.architecture.commands.BrigadierCommand
+import com.projectcitybuild.pcbridge.paper.architecture.commands.requiresPermission
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requirePlayer
-import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
 import com.projectcitybuild.pcbridge.paper.architecture.commands.scoped
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandContext
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandNode
@@ -22,7 +22,7 @@ class WarpCreateCommand(
     private val warpRepository: WarpRepository,
     private val eventBroadcaster: SpigotEventBroadcaster,
 ) : BrigadierCommand {
-    override fun buildLiteral(): PaperCommandNode {
+    override fun literal(): PaperCommandNode {
         return Commands.literal("create")
             .requiresPermission(PermissionNode.WARP_MANAGE)
             .then(

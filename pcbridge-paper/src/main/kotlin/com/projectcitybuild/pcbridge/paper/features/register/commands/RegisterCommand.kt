@@ -21,7 +21,7 @@ class RegisterCommand(
 ) : BrigadierCommand {
     override val description: String = "Creates a new Project City Build account"
 
-    override fun buildLiteral(): PaperCommandNode {
+    override fun literal(): PaperCommandNode {
         return Commands.literal("register")
             .then(
                 Commands.argument("email", StringArgumentType.greedyString())

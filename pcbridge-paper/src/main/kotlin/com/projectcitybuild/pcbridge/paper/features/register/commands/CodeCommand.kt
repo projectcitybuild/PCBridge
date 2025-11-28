@@ -16,7 +16,7 @@ class CodeCommand(
 ) : BrigadierCommand {
     override val description: String = "Finishes account registration by verifying a code"
 
-    override fun buildLiteral(): PaperCommandNode {
+    override fun literal(): PaperCommandNode {
         return Commands.literal("code")
             .executesSuspending(plugin, ::execute)
             .build()

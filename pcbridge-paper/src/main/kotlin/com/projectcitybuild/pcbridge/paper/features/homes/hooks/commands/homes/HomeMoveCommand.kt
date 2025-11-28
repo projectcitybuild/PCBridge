@@ -20,7 +20,7 @@ class HomeMoveCommand(
     private val homeNameSuggester: HomeNameSuggester,
     private val homeRepository: HomeRepository,
 ): BrigadierCommand {
-    override fun buildLiteral(): PaperCommandNode {
+    override fun literal(): PaperCommandNode {
         return Commands.literal("move")
             .then(
                 Commands.argument("name", StringArgumentType.greedyString())
