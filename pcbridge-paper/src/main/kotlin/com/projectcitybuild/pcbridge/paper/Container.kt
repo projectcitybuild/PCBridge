@@ -79,6 +79,7 @@ import com.projectcitybuild.pcbridge.paper.integrations.essentials.EssentialsInt
 import com.projectcitybuild.pcbridge.paper.integrations.luckperms.LuckPermsIntegration
 import com.projectcitybuild.pcbridge.webserver.HttpServer
 import com.projectcitybuild.pcbridge.webserver.data.HttpServerConfig
+import com.sun.tools.javac.main.Option
 import org.bukkit.plugin.java.JavaPlugin
 import org.koin.core.module.Module
 import org.koin.dsl.module
@@ -298,6 +299,7 @@ private fun Module.http() {
             authToken = localConfig.api.token,
             baseURL = localConfig.api.baseUrl,
             httpLogger = if (localConfig.api.isLoggingEnabled) get() else null,
+            openTelemetry = get<OpenTelemetryProvider>().sdk
         )
     }
 
@@ -306,6 +308,7 @@ private fun Module.http() {
 
         DiscordHttp(
             httpLogger = if (localConfig.api.isLoggingEnabled) get() else null,
+            openTelemetry = get<OpenTelemetryProvider>().sdk,
         )
     }
 
@@ -314,6 +317,7 @@ private fun Module.http() {
 
         PlayerDbHttp(
             httpLogger = if (localConfig.api.isLoggingEnabled) get() else null,
+            openTelemetry = get<OpenTelemetryProvider>().sdk,
             userAgent = if (localConfig.environment.isProduction) "pcbmc.co"
                 else ""
         )

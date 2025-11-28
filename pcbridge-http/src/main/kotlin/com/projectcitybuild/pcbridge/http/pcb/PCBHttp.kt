@@ -10,17 +10,20 @@ import com.projectcitybuild.pcbridge.http.pcb.services.TelemetryHttpService
 import com.projectcitybuild.pcbridge.http.pcb.services.UuidBanHttpService
 import com.projectcitybuild.pcbridge.http.pcb.services.WarpHttpService
 import com.projectcitybuild.pcbridge.http.shared.logging.HttpLogger
+import io.opentelemetry.api.OpenTelemetry
 
 class PCBHttp(
     private val authToken: String,
     private val baseURL: String,
     private val httpLogger: HttpLogger?,
+    private val openTelemetry: OpenTelemetry,
 ) {
     private val client by lazy {
         PCBClientFactory(
             authToken = authToken,
             baseUrl = baseURL,
             httpLogger = httpLogger,
+            openTelemetry = openTelemetry,
         ).build()
     }
 
