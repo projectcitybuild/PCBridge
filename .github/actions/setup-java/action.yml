@@ -10,10 +10,4 @@ runs:
       with:
         java-version: '21'
         distribution: 'temurin'
-
-    - name: Cache Gradle packages
-      uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684
-      with:
-        path: ~/.gradle/caches
-        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
-        restore-keys: ${{ runner.os }}-gradle
+        cache: gradle
