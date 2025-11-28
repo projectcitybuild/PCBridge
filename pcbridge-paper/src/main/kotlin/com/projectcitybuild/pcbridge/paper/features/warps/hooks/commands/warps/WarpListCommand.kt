@@ -9,9 +9,11 @@ import com.projectcitybuild.pcbridge.paper.architecture.commands.BrigadierComman
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
 import com.projectcitybuild.pcbridge.paper.architecture.commands.scopedSuspending
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.tracing.Tracer
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandContext
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandNode
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.getOptionalArgument
+import com.projectcitybuild.pcbridge.paper.features.warps.warpsTracer
 import com.projectcitybuild.pcbridge.paper.l10n.l10n
 import io.papermc.paper.command.brigadier.Commands
 import org.bukkit.plugin.Plugin
@@ -32,7 +34,7 @@ class WarpListCommand(
             .build()
     }
 
-    private suspend fun execute(context: PaperCommandContext) = context.scopedSuspending {
+    private suspend fun execute(context: PaperCommandContext) = context.scopedSuspending(warpsTracer) {
         val pageNumber = context.getOptionalArgument("page", Int::class.java) ?: 1
         val sender = context.source.sender
 

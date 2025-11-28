@@ -32,7 +32,7 @@ class HttpServer(
     private var server: EmbeddedServer<NettyApplicationEngine, NettyApplicationEngine.Configuration>? = null
 
     private val log
-        get() = LoggerFactory.getLogger("PCBridge.WebServer")
+        get() = LoggerFactory.getLogger("com.projectcitybuild.pcbridge.webserver")
 
     fun start() {
         if (config.authToken.isEmpty()) {

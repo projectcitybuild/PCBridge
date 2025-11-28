@@ -8,6 +8,7 @@ import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.req
 import com.projectcitybuild.pcbridge.paper.architecture.commands.scopedSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandContext
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandNode
+import com.projectcitybuild.pcbridge.paper.features.bans.banTracer
 import com.projectcitybuild.pcbridge.paper.features.bans.hooks.dialogs.CreateBanDialog
 import io.papermc.paper.command.brigadier.Commands
 import org.bukkit.Server
@@ -27,7 +28,7 @@ class BanCommand(
             .build()
     }
 
-    private suspend fun execute(context: PaperCommandContext) = context.scopedSuspending {
+    private suspend fun execute(context: PaperCommandContext) = context.scopedSuspending(banTracer) {
         val inputPlayerName = context.getArgument("player", String::class.java)
 
         val playerName = inputPlayerName

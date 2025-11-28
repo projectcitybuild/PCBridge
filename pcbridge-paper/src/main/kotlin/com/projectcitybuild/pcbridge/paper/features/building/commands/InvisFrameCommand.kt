@@ -9,6 +9,7 @@ import com.projectcitybuild.pcbridge.paper.architecture.commands.scoped
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandContext
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandNode
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotNamespace
+import com.projectcitybuild.pcbridge.paper.features.building.buildingTracer
 import com.projectcitybuild.pcbridge.paper.features.building.data.InvisFrameKey
 import com.projectcitybuild.pcbridge.paper.l10n.l10n
 import io.papermc.paper.command.brigadier.Commands
@@ -38,14 +39,14 @@ class InvisFrameCommand(
             .build()
     }
 
-    private fun giveNormal(context: PaperCommandContext) = context.scoped {
+    private fun giveNormal(context: PaperCommandContext) = context.scoped(buildingTracer) {
         give(
             player = context.source.requirePlayer(),
             glowing = false,
         )
     }
 
-    private fun giveGlowing(context: PaperCommandContext) = context.scoped {
+    private fun giveGlowing(context: PaperCommandContext) = context.scoped(buildingTracer) {
         give(
             player = context.source.requirePlayer(),
             glowing = true,

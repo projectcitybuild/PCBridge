@@ -28,7 +28,8 @@ class VerifyCodeDialogListener(
         }
 
         val code = view.getText(VerifyRegistrationCodeDialog.codeKey)?.trim()
-        logSync.info("Dialog response: code=[$code]")
+
+        logSync.info("Dialog response received", mapOf("code" to code))
 
         val connection = event.commonConnection as? PlayerGameConnection
         val player = connection?.player ?: return@runCatching

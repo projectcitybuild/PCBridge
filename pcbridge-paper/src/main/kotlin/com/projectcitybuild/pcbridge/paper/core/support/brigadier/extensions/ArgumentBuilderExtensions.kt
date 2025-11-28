@@ -11,9 +11,6 @@ import com.mojang.brigadier.suggestion.SuggestionsBuilder
 import com.projectcitybuild.pcbridge.paper.PermissionNode
 import com.projectcitybuild.pcbridge.paper.architecture.commands.BrigadierCommand
 import io.papermc.paper.command.brigadier.CommandSourceStack
-import io.sentry.Sentry
-import io.sentry.kotlin.SentryContext
-import kotlinx.coroutines.Dispatchers
 import org.bukkit.plugin.Plugin
 
 /**
@@ -25,7 +22,7 @@ fun <S, T> RequiredArgumentBuilder<S, T>.suggestsSuspending(
 ): RequiredArgumentBuilder<S, T> {
     return suggests { context, suggestions ->
         // Note: the SuggestionsBuilder object must be handled on the main dispatcher
-        plugin.launch(plugin.minecraftDispatcher + SentryContext() + object : CoroutineTimings() {}) {
+        plugin.launch(plugin.minecraftDispatcher + object : CoroutineTimings() {}) {
             block(context, suggestions)
         }
         suggestions.buildFuture()
@@ -40,7 +37,7 @@ fun <S, T> RequiredArgumentBuilder<S, T>.executesSuspending(
     block: suspend (CommandContext<S>) -> Unit,
 ): RequiredArgumentBuilder<S, T> {
     return executes { context ->
-        plugin.launch(plugin.minecraftDispatcher + SentryContext() + object : CoroutineTimings() {}) {
+        plugin.launch(plugin.minecraftDispatcher + object : CoroutineTimings() {}) {
             block(context)
         }
         Command.SINGLE_SUCCESS
@@ -55,7 +52,7 @@ fun <S> LiteralArgumentBuilder<S>.executesSuspending(
     block: suspend (CommandContext<S>) -> Unit,
 ): LiteralArgumentBuilder<S> {
     return executes { context ->
-        plugin.launch(plugin.minecraftDispatcher + SentryContext() + object : CoroutineTimings() {}) {
+        plugin.launch(plugin.minecraftDispatcher + object : CoroutineTimings() {}) {
             block(context)
         }
         Command.SINGLE_SUCCESS

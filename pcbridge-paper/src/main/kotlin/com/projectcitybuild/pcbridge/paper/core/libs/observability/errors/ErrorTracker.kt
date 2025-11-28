@@ -1,26 +1,9 @@
 package com.projectcitybuild.pcbridge.paper.core.libs.observability.errors
 
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.errors.destinations.NopReportDestination
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.errors.destinations.SentryReportDestination
-import com.projectcitybuild.pcbridge.paper.core.libs.localconfig.LocalConfig
-
 class ErrorTracker(
-    private val localConfig: LocalConfig,
+    private val sentry: SentryProvider,
 ) {
-    private var destination: ReportDestination = NopReportDestination()
-
-    fun start() {
-        val config = localConfig.get()
-        destination = SentryReportDestination(
-            dsn = config.errorReporting.sentryDsn,
-            environment = config.environment.name,
-        )
-        destination.start()
-    }
-
-    fun close() = destination.close()
-
-    fun report(throwable: Throwable) = destination.report(throwable)
+    fun report(throwable: Throwable) = sentry.report(throwable)
 }
 
 suspend fun <R> ErrorTracker.catching(block: suspend () -> R): Result<R> {

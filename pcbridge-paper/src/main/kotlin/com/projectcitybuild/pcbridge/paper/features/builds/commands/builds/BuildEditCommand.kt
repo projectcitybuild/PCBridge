@@ -9,9 +9,11 @@ import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.req
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.suggestsSuspending
 import com.projectcitybuild.pcbridge.paper.architecture.commands.scopedSuspending
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.tracing.Tracer
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandContext
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandNode
 import com.projectcitybuild.pcbridge.paper.core.support.component.join
+import com.projectcitybuild.pcbridge.paper.features.builds.buildsTracer
 import com.projectcitybuild.pcbridge.paper.features.builds.commands.BuildNameSuggester
 import com.projectcitybuild.pcbridge.paper.features.builds.data.EditableBuildField
 import io.papermc.paper.command.brigadier.Commands
@@ -38,7 +40,7 @@ class BuildEditCommand(
             .build()
     }
 
-    private suspend fun execute(context: PaperCommandContext) = context.scopedSuspending {
+    private suspend fun execute(context: PaperCommandContext) = context.scopedSuspending(buildsTracer) {
         val player = context.source.requirePlayer()
         val name = context.getArgument("name", String::class.java)
 

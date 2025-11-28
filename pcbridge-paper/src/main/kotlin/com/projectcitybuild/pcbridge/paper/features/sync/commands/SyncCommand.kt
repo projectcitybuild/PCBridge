@@ -7,9 +7,11 @@ import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.exe
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
 import com.projectcitybuild.pcbridge.paper.architecture.commands.scopedSuspending
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.tracing.Tracer
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandContext
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandNode
 import com.projectcitybuild.pcbridge.paper.features.sync.actions.SyncPlayer
+import com.projectcitybuild.pcbridge.paper.features.sync.syncTracer
 import io.papermc.paper.command.brigadier.Commands
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
@@ -29,14 +31,14 @@ class SyncCommand(
             .build()
     }
 
-    private suspend fun syncSelf(context: PaperCommandContext) = context.scopedSuspending {
+    private suspend fun syncSelf(context: PaperCommandContext) = context.scopedSuspending(syncTracer) {
         val player = context.source.requirePlayer()
 
         player.sendRichMessage("<gray>Fetching player data...</gray>")
         syncPlayer.execute(playerUUID = player.uniqueId)
     }
 
-    private suspend fun syncOther(context: PaperCommandContext) = context.scopedSuspending {
+    private suspend fun syncOther(context: PaperCommandContext) = context.scopedSuspending(syncTracer) {
         val sender = context.source.sender
         val player = context.getArgument("player", Player::class.java)
 

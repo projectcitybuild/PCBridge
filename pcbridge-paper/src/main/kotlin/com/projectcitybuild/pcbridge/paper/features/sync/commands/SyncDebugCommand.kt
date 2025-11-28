@@ -8,8 +8,10 @@ import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.exe
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
 import com.projectcitybuild.pcbridge.paper.architecture.commands.scopedSuspending
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.tracing.Tracer
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandContext
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandNode
+import com.projectcitybuild.pcbridge.paper.features.sync.syncTracer
 import io.papermc.paper.command.brigadier.Commands
 import org.bukkit.plugin.Plugin
 
@@ -27,7 +29,7 @@ class SyncDebugCommand(
             .build()
     }
 
-    private suspend fun execute(context: PaperCommandContext) = context.scopedSuspending {
+    private suspend fun execute(context: PaperCommandContext) = context.scopedSuspending(syncTracer) {
         val player = context.source.requirePlayer()
 
         val groupsArg = context.getArgument("groups", String::class.java)

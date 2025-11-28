@@ -7,8 +7,10 @@ import com.projectcitybuild.pcbridge.paper.core.support.brigadier.arguments.Onli
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
 import com.projectcitybuild.pcbridge.paper.architecture.commands.scopedSuspending
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.tracing.Tracer
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandContext
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandNode
+import com.projectcitybuild.pcbridge.paper.features.warnings.warningsTracer
 import io.papermc.paper.command.brigadier.Commands
 import org.bukkit.Server
 import org.bukkit.plugin.Plugin
@@ -28,7 +30,7 @@ class WarnCommand(
             .build()
     }
 
-    private suspend fun execute(context: PaperCommandContext) = context.scopedSuspending {
+    private suspend fun execute(context: PaperCommandContext) = context.scopedSuspending(warningsTracer) {
         val playerName = context.getArgument("player", String::class.java)
 
         val player = server.onlinePlayers.firstOrNull { it.name.equals(playerName, ignoreCase = true) }

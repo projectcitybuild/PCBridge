@@ -5,19 +5,18 @@ import io.klogging.config.loggingConfiguration
 import io.klogging.logger
 import io.klogging.noCoLogger
 import io.klogging.rendering.RENDER_ANSI
-import io.klogging.rendering.RENDER_SIMPLE
 import io.klogging.sending.STDERR
 import io.klogging.sending.STDOUT
 
-val log = Logging.instance.coLog
-val logSync = Logging.instance.noCoLog
+val log = Logger.instance.coLog
+val logSync = Logger.instance.noCoLog
 
-class Logging private constructor(namespace: String) {
+class Logger private constructor(namespace: String) {
     val coLog = logger(namespace)
     val noCoLog = noCoLogger(namespace)
 
     companion object {
-        lateinit var instance: Logging
+        lateinit var instance: Logger
 
         fun configure(namespace: String) = loggingConfiguration {
             sink("stdout", RENDER_ANSI, STDOUT)
@@ -45,7 +44,7 @@ class Logging private constructor(namespace: String) {
             // of klogging itself (eg. "Configuration initialized")
             kloggingMinLogLevel(Level.INFO)
         }.also {
-            instance = Logging(namespace)
+            instance = Logger(namespace)
             instance.noCoLog.info { "Logger configured" }
         }
     }

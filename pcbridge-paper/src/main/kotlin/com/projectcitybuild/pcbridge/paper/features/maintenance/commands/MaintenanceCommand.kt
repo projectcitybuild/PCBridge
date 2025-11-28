@@ -7,11 +7,13 @@ import com.projectcitybuild.pcbridge.paper.core.support.brigadier.arguments.OnOf
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
 import com.projectcitybuild.pcbridge.paper.architecture.commands.scopedSuspending
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.tracing.Tracer
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandContext
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandNode
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotEventBroadcaster
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.extensions.broadcastRich
 import com.projectcitybuild.pcbridge.paper.features.maintenance.events.MaintenanceToggledEvent
+import com.projectcitybuild.pcbridge.paper.features.maintenance.maintenanceTracer
 import io.papermc.paper.command.brigadier.Commands
 import org.bukkit.Server
 import org.bukkit.plugin.Plugin
@@ -33,7 +35,7 @@ class MaintenanceCommand(
             .build()
     }
 
-    private suspend fun toggle(context: PaperCommandContext) = context.scopedSuspending {
+    private suspend fun toggle(context: PaperCommandContext) = context.scopedSuspending(maintenanceTracer) {
         val sender = context.source.sender
 
         val desiredState = context.getArgument("enabled", Boolean::class.java)
@@ -57,7 +59,7 @@ class MaintenanceCommand(
         )
     }
 
-    private suspend fun status(context: PaperCommandContext) = context.scopedSuspending {
+    private suspend fun status(context: PaperCommandContext) = context.scopedSuspending(maintenanceTracer) {
         val sender = context.source.sender
 
         val state = store.state.maintenance

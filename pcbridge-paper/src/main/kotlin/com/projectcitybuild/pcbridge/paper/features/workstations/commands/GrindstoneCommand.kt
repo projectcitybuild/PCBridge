@@ -6,8 +6,10 @@ import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.exe
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
 import com.projectcitybuild.pcbridge.paper.architecture.commands.scopedSuspending
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.tracing.Tracer
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandContext
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandNode
+import com.projectcitybuild.pcbridge.paper.features.workstations.workstationsTracer
 import io.papermc.paper.command.brigadier.Commands
 import org.bukkit.inventory.MenuType
 import org.bukkit.plugin.Plugin
@@ -21,7 +23,7 @@ class GrindstoneCommand(
             .executesSuspending(plugin, ::execute)
             .build()
 
-    private suspend fun execute(context: PaperCommandContext) = context.scopedSuspending {
+    private suspend fun execute(context: PaperCommandContext) = context.scopedSuspending(workstationsTracer) {
         val player = context.source.requirePlayer()
         MenuType.GRINDSTONE.create(player).open()
     }

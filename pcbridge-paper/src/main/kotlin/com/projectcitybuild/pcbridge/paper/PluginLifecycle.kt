@@ -23,6 +23,8 @@ import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.RemoteConfig
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotListenerRegistry
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotTimer
 import com.projectcitybuild.pcbridge.paper.architecture.commands.registerCommands
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.tracing.OpenTelemetryProvider
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.tracing.TracerFactory
 import com.projectcitybuild.pcbridge.paper.features.announcements.listeners.AnnouncementConfigListener
 import com.projectcitybuild.pcbridge.paper.features.announcements.listeners.AnnouncementEnableListener
 import com.projectcitybuild.pcbridge.paper.features.bans.hooks.commands.BanCommand
@@ -102,8 +104,11 @@ class PluginLifecycle : KoinComponent {
     private val httpServer: HttpServer by inject()
     private val remoteConfig: RemoteConfig by inject()
     private val store: Store by inject()
+    private val otel: OpenTelemetryProvider by inject()
 
-    suspend fun boot() = errorTracker.apply { start() }.catching {
+    suspend fun boot() = errorTracker.catching {
+        TracerFactory.configure(otel)
+
         httpServer.start()
         remoteConfig.fetch()
         store.hydrate()
