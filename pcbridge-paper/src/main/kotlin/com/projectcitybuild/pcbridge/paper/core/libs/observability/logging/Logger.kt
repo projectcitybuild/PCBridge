@@ -21,7 +21,8 @@ class Logger private constructor(namespace: String) {
         fun configure(namespace: String) = loggingConfiguration {
             sink("stdout", RENDER_ANSI, STDOUT)
             sink("stderr", RENDER_ANSI, STDERR)
-            sink("sentry", SentryLogSender())
+            sink("sentry-logs", SentryLogSender())
+            sink("sentry-issues", SentryIssueSender())
 
             logging {
                 fromLoggerBase(namespace)
@@ -32,7 +33,10 @@ class Logger private constructor(namespace: String) {
                     toSink("stderr")
                 }
                 fromMinLevel(Level.DEBUG) {
-                    toSink("sentry")
+                    toSink("sentry-logs")
+                }
+                fromMinLevel(Level.ERROR) {
+                    toSink("sentry-issues")
                 }
             }
             // Minimum level at which log events are sent direct to sinks
