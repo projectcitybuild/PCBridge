@@ -6,8 +6,7 @@ import com.projectcitybuild.pcbridge.paper.architecture.commands.BrigadierComman
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
-import com.projectcitybuild.pcbridge.paper.architecture.commands.scopedSuspending
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.tracing.Tracer
+import com.projectcitybuild.pcbridge.paper.architecture.commands.scoped
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandContext
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandNode
 import com.projectcitybuild.pcbridge.paper.features.randomteleport.actions.FindRandomLocation
@@ -29,7 +28,9 @@ class RtpCommand(
             .build()
     }
 
-    suspend fun execute(context: PaperCommandContext) = context.scopedSuspending(randomTeleportTracer) {
+    suspend fun execute(
+        context: PaperCommandContext,
+    ) = context.scoped(randomTeleportTracer) {
         val player = context.source.requirePlayer()
 
         cooldown.throttle(5.seconds, player, "rtp")
@@ -39,7 +40,7 @@ class RtpCommand(
         val location = findRandomLocation.teleport(player, attempts = 5)
         if (location == null) {
             player.sendRichMessage(l10n.errorCouldNotFindSafeLocation)
-            return@scopedSuspending
+            return@scoped
         }
         player.sendRichMessage(
             l10n.teleportedToCoordinate(location.x.toInt(), location.y.toInt(), location.z.toInt())

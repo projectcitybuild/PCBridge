@@ -6,8 +6,7 @@ import com.projectcitybuild.pcbridge.http.pcb.services.RegisterHttpService
 import com.projectcitybuild.pcbridge.paper.architecture.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requirePlayer
-import com.projectcitybuild.pcbridge.paper.architecture.commands.scopedSuspending
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.tracing.Tracer
+import com.projectcitybuild.pcbridge.paper.architecture.commands.scoped
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandContext
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandNode
 import com.projectcitybuild.pcbridge.paper.features.register.dialogs.VerifyRegistrationCodeDialog
@@ -35,7 +34,9 @@ class RegisterCommand(
             .build()
     }
 
-    private suspend fun execute(context: PaperCommandContext) = context.scopedSuspending(registerTracer) {
+    private suspend fun execute(
+        context: PaperCommandContext,
+    ) = context.scoped(registerTracer) {
         val player = context.source.requirePlayer()
         val email = context.getArgument("email", String::class.java)
 

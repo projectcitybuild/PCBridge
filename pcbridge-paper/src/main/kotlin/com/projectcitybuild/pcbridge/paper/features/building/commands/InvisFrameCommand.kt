@@ -5,7 +5,7 @@ import com.projectcitybuild.pcbridge.paper.architecture.commands.BrigadierComman
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
-import com.projectcitybuild.pcbridge.paper.architecture.commands.scoped
+import com.projectcitybuild.pcbridge.paper.architecture.commands.scopedSync
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandContext
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandNode
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotNamespace
@@ -17,7 +17,6 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.Material
-import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataType
 import org.bukkit.plugin.Plugin
@@ -52,7 +51,7 @@ class InvisFrameCommand(
     private fun give(
         context: PaperCommandContext,
         glowing: Boolean,
-    ) = context.scoped(buildingTracer) {
+    ) = context.scopedSync(buildingTracer) {
         val player = context.source.requirePlayer()
         val itemStack = if (glowing) {
             ItemStack(Material.GLOW_ITEM_FRAME)

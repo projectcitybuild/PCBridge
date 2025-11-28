@@ -6,8 +6,7 @@ import com.projectcitybuild.pcbridge.paper.architecture.commands.BrigadierComman
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.arguments.OnlinePlayerNameArgument
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
-import com.projectcitybuild.pcbridge.paper.architecture.commands.scopedSuspending
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.tracing.Tracer
+import com.projectcitybuild.pcbridge.paper.architecture.commands.scoped
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandContext
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandNode
 import com.projectcitybuild.pcbridge.paper.features.warnings.warningsTracer
@@ -30,7 +29,7 @@ class WarnCommand(
             .build()
     }
 
-    private suspend fun execute(context: PaperCommandContext) = context.scopedSuspending(warningsTracer) {
+    private suspend fun execute(context: PaperCommandContext) = context.scoped(warningsTracer) {
         val playerName = context.getArgument("player", String::class.java)
 
         val player = server.onlinePlayers.firstOrNull { it.name.equals(playerName, ignoreCase = true) }

@@ -10,8 +10,7 @@ import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.exe
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.getOptionalArgument
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requirePlayer
-import com.projectcitybuild.pcbridge.paper.architecture.commands.scopedSuspending
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.tracing.Tracer
+import com.projectcitybuild.pcbridge.paper.architecture.commands.scoped
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandContext
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandNode
 import com.projectcitybuild.pcbridge.paper.features.builds.buildsTracer
@@ -40,7 +39,7 @@ class BuildSetCommand(
             .build()
     }
 
-    private suspend fun execute(context: PaperCommandContext) = context.scopedSuspending(buildsTracer) {
+    private suspend fun execute(context: PaperCommandContext) = context.scoped(buildsTracer) {
         val player = context.source.requirePlayer()
         val field = context.getArgument("field", EditableBuildField::class.java)
         val id = context.getArgument("id", Int::class.java)

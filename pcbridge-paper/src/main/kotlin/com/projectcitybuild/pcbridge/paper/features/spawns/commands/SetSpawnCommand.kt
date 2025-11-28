@@ -5,8 +5,7 @@ import com.projectcitybuild.pcbridge.paper.architecture.commands.BrigadierComman
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
-import com.projectcitybuild.pcbridge.paper.architecture.commands.scopedSuspending
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.tracing.Tracer
+import com.projectcitybuild.pcbridge.paper.architecture.commands.scoped
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandContext
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandNode
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotEventBroadcaster
@@ -29,7 +28,7 @@ class SetSpawnCommand(
             .build()
     }
 
-    suspend fun execute(context: PaperCommandContext) = context.scopedSuspending(spawnsTracer) {
+    suspend fun execute(context: PaperCommandContext) = context.scoped(spawnsTracer) {
         val player = context.source.requirePlayer()
         val location = player.location
 

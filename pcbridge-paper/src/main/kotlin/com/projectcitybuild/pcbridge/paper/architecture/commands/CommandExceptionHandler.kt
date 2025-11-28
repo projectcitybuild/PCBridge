@@ -4,17 +4,13 @@ import com.mojang.brigadier.context.CommandContext
 import com.projectcitybuild.pcbridge.http.shared.parsing.ResponseParserError
 import com.projectcitybuild.pcbridge.paper.core.libs.cooldowns.CooldownException
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.tracing.Tracer
-import com.projectcitybuild.pcbridge.paper.core.support.spigot.utilities.sanitized
 import io.opentelemetry.api.common.Attributes
 import io.opentelemetry.api.common.AttributesBuilder
 import io.papermc.paper.command.brigadier.CommandSourceStack
-import io.sentry.ScopeType
-import io.sentry.Sentry
-import io.sentry.protocol.User
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
-suspend fun <S: CommandSourceStack> CommandContext<S>.scopedSuspending(
+suspend fun <S: CommandSourceStack> CommandContext<S>.scoped(
     tracer: Tracer,
     block: suspend (CommandContext<S>) -> Unit,
 ) {
@@ -30,7 +26,7 @@ suspend fun <S: CommandSourceStack> CommandContext<S>.scopedSuspending(
     }
 }
 
-fun <S: CommandSourceStack> CommandContext<S>.scoped(
+fun <S: CommandSourceStack> CommandContext<S>.scopedSync(
     tracer: Tracer,
     block: (CommandContext<S>) -> Unit,
 ) {

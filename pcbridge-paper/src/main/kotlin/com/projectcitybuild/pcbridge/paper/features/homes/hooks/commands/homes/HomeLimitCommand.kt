@@ -3,8 +3,7 @@ package com.projectcitybuild.pcbridge.paper.features.homes.hooks.commands.homes
 import com.projectcitybuild.pcbridge.paper.architecture.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requirePlayer
-import com.projectcitybuild.pcbridge.paper.architecture.commands.scopedSuspending
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.tracing.Tracer
+import com.projectcitybuild.pcbridge.paper.architecture.commands.scoped
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandContext
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandNode
 import com.projectcitybuild.pcbridge.paper.features.homes.domain.repositories.HomeRepository
@@ -22,7 +21,7 @@ class HomeLimitCommand(
             .build()
     }
 
-    private suspend fun execute(context: PaperCommandContext) = context.scopedSuspending(homesTracer) {
+    private suspend fun execute(context: PaperCommandContext) = context.scoped(homesTracer) {
         val player = context.source.requirePlayer()
 
         val limit = homeRepository.limit(player)

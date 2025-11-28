@@ -7,8 +7,7 @@ import com.projectcitybuild.pcbridge.paper.architecture.commands.BrigadierComman
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.getOptionalArgument
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requirePlayer
-import com.projectcitybuild.pcbridge.paper.architecture.commands.scopedSuspending
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.tracing.Tracer
+import com.projectcitybuild.pcbridge.paper.architecture.commands.scoped
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandContext
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandNode
 import com.projectcitybuild.pcbridge.paper.features.homes.domain.repositories.HomeRepository
@@ -32,7 +31,7 @@ class HomeListCommand(
             .build()
     }
 
-    private suspend fun execute(context: PaperCommandContext) = context.scopedSuspending(homesTracer) {
+    private suspend fun execute(context: PaperCommandContext) = context.scoped(homesTracer) {
         val player = context.source.requirePlayer()
         val pageNumber = context.getOptionalArgument("page", Int::class.java) ?: 1
 
@@ -47,7 +46,7 @@ class HomeListCommand(
                 if (pageNumber == 1) l10n.noHomesFound
                 else l10n.errorPageNotFound
             )
-            return@scopedSuspending
+            return@scoped
         }
         val message = PageComponentBuilder().build(
             title = "Your Homes",
