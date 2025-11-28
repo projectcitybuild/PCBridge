@@ -366,6 +366,7 @@ private fun Module.architecture() {
 
     factory {
         CoroutineExceptionListener(
+            plugin = get<JavaPlugin>(),
             errorTracker = get(),
         )
     }

@@ -10,7 +10,9 @@ class SentryIssueSender: EventSender {
     override fun invoke(batch: List<LogEvent>) {
         batch.forEach { event ->
             val level = event.level.toSentryLevel() ?: return
-            Sentry.captureMessage(event.message, level)
+            Sentry.captureMessage(event.message, level) { scope ->
+                scope.contexts.put("stackTrace", event.stackTrace)
+            }
         }
     }
 }
