@@ -28,7 +28,11 @@ class HomeRenameDialogListener(
 
         val homeId = view.getText(HomeRenameDialog.idKey)
         val newName = view.getText(HomeRenameDialog.newNameKey)?.trim()
-        logSync.info("Dialog response: newName=[$newName], homeId=[$homeId]")
+
+        logSync.info("Dialog response received", mapOf(
+            "new_name" to newName,
+            "home_id" to homeId,
+        ))
 
         val connection = event.commonConnection as? PlayerGameConnection
         val player = connection?.player ?: return@runCatching

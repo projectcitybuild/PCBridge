@@ -7,10 +7,11 @@ import com.projectcitybuild.pcbridge.paper.architecture.commands.BrigadierComman
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
-import com.projectcitybuild.pcbridge.paper.architecture.commands.scopedSuspending
+import com.projectcitybuild.pcbridge.paper.architecture.commands.scoped
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandContext
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandNode
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.extensions.broadcastRich
+import com.projectcitybuild.pcbridge.paper.features.builds.buildsTracer
 import io.papermc.paper.command.brigadier.Commands
 import org.bukkit.plugin.Plugin
 
@@ -28,7 +29,7 @@ class BuildCreateCommand(
             .build()
     }
 
-    private suspend fun execute(context: PaperCommandContext) = context.scopedSuspending {
+    private suspend fun execute(context: PaperCommandContext) = context.scoped(buildsTracer) {
         val player = context.source.requirePlayer()
         val name = context.getArgument("name", String::class.java)
 

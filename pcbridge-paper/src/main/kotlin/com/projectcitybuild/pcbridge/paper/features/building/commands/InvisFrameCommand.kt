@@ -5,10 +5,11 @@ import com.projectcitybuild.pcbridge.paper.architecture.commands.BrigadierComman
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
-import com.projectcitybuild.pcbridge.paper.architecture.commands.scoped
+import com.projectcitybuild.pcbridge.paper.architecture.commands.scopedSync
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandContext
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandNode
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotNamespace
+import com.projectcitybuild.pcbridge.paper.features.building.buildingTracer
 import com.projectcitybuild.pcbridge.paper.features.building.data.InvisFrameKey
 import com.projectcitybuild.pcbridge.paper.l10n.l10n
 import io.papermc.paper.command.brigadier.Commands
@@ -16,7 +17,6 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.Material
-import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataType
 import org.bukkit.plugin.Plugin
@@ -38,21 +38,21 @@ class InvisFrameCommand(
             .build()
     }
 
-    private fun giveNormal(context: PaperCommandContext) = context.scoped {
-        give(
-            player = context.source.requirePlayer(),
-            glowing = false,
-        )
-    }
+    private fun giveNormal(context: PaperCommandContext) = give(
+        context = context,
+        glowing = false,
+    )
 
-    private fun giveGlowing(context: PaperCommandContext) = context.scoped {
-        give(
-            player = context.source.requirePlayer(),
-            glowing = true,
-        )
-    }
+    private fun giveGlowing(context: PaperCommandContext) = give(
+        context = context,
+        glowing = true,
+    )
 
-    private fun give(player: Player, glowing: Boolean) {
+    private fun give(
+        context: PaperCommandContext,
+        glowing: Boolean,
+    ) = context.scopedSync(buildingTracer) {
+        val player = context.source.requirePlayer()
         val itemStack = if (glowing) {
             ItemStack(Material.GLOW_ITEM_FRAME)
         } else {
@@ -82,7 +82,7 @@ class InvisFrameCommand(
                             .decorate(TextDecoration.ITALIC),
                     )
                     persistentDataContainer.set(
-                        spigotNamespace.get(InvisFrameKey()),
+                        spigotNamespace.get(InvisFrameKey),
                         PersistentDataType.BYTE,
                         1,
                     )

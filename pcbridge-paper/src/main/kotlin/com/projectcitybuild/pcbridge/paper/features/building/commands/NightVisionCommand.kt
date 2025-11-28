@@ -6,9 +6,10 @@ import com.projectcitybuild.pcbridge.paper.core.support.brigadier.arguments.OnOf
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
-import com.projectcitybuild.pcbridge.paper.architecture.commands.scopedSuspending
+import com.projectcitybuild.pcbridge.paper.architecture.commands.scoped
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandContext
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandNode
+import com.projectcitybuild.pcbridge.paper.features.building.buildingTracer
 import com.projectcitybuild.pcbridge.paper.l10n.l10n
 import io.papermc.paper.command.brigadier.Commands
 import org.bukkit.plugin.Plugin
@@ -31,7 +32,9 @@ class NightVisionCommand(
             .build()
     }
 
-    private suspend fun execute(context: PaperCommandContext) = context.scopedSuspending {
+    private suspend fun execute(
+        context: PaperCommandContext,
+    ) = context.scoped(buildingTracer) {
         val player = context.source.requirePlayer()
 
         val duration = Integer.MAX_VALUE
@@ -43,12 +46,8 @@ class NightVisionCommand(
             context.getArgument("enabled", Boolean::class.java)
         }.getOrNull()
 
-        val toggleOn =
-            if (desiredState == null) {
-                !player.hasPotionEffect(potionEffectType)
-            } else {
-                desiredState == true
-            }
+        val toggleOn = desiredState
+            ?: !player.hasPotionEffect(potionEffectType)
 
         player.removePotionEffect(potionEffectType)
 

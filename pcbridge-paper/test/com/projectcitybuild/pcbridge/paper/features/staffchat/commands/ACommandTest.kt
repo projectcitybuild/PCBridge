@@ -68,6 +68,7 @@ class ACommandTest {
             val context: PaperCommandContext = mock()
             val source = mock(CommandSourceStack::class.java)
             whenever(context.source).thenReturn(source)
+            whenever(context.input).thenReturn("a")
             whenever(source.sender).thenReturn(sender)
             whenever(context.getArgument("message", String::class.java)).thenReturn("foo bar")
 
@@ -108,6 +109,7 @@ class ACommandTest {
             val context: PaperCommandContext = mock()
             val source = mock(CommandSourceStack::class.java)
             whenever(context.source).thenReturn(source)
+            whenever(context.input).thenReturn("a")
             whenever(source.sender).thenReturn(staffPlayer)
             whenever(context.getArgument("message", String::class.java)).thenReturn("foo bar")
 

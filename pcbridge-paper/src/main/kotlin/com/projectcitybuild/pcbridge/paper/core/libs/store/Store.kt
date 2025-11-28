@@ -51,11 +51,13 @@ class Store(
 
     suspend fun mutate(mutation: (ServerState) -> ServerState) =
         withContext(Dispatchers.IO) {
-            log.debug { "[previous state]\n$state" }
+            val prev = state
 
-            mutex.withLock {
-                _state = mutation(_state)
-                log.debug { "[new state]\n$state" }
-            }
+            mutex.withLock { _state = mutation(_state) }
+
+            log.debug("State mutated", mapOf(
+                "prev" to prev,
+                "next" to state,
+            ))
         }
 }

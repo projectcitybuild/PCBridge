@@ -10,11 +10,18 @@ class SpigotListenerRegistry(
     private val plugin: JavaPlugin,
 ) {
     fun register(vararg listeners: Listener) {
-        logSync.info { "Registering listeners" }
+        logSync.debug { "Registering listeners" }
+
+        val registered = mutableListOf<String>()
         listeners.forEach {
-            logSync.debug { "Registering ${it::class.simpleName}" }
+            val name = it::class.simpleName ?: it::class.java.simpleName
+            logSync.trace { "Registering $name..." }
             plugin.server.pluginManager.registerSuspendingEvents(it, plugin)
+            registered.add(name)
         }
+        logSync.info("Listeners registered", mapOf(
+            "listeners" to registered,
+        ))
     }
 
     fun unregisterAll() {

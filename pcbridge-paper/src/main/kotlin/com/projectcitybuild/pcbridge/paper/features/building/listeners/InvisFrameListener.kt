@@ -15,7 +15,7 @@ import org.bukkit.persistence.PersistentDataType
 class InvisFrameListener(
     val spigotNamespace: SpigotNamespace,
 ) : Listener {
-    private val namespacedKey = spigotNamespace.get(InvisFrameKey())
+    private val namespacedKey = spigotNamespace.get(InvisFrameKey)
 
     @EventHandler(ignoreCancelled = true)
     fun onPlayerInteractEntityEvent(event: PlayerInteractEntityEvent) {

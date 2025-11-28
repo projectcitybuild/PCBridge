@@ -1,14 +1,15 @@
-package com.projectcitybuild.pcbridge.paper.core.libs.observability.errors.destinations
+package com.projectcitybuild.pcbridge.paper.core.libs.observability.errors
 
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.errors.ReportDestination
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.logSync
 import io.sentry.Sentry
+import io.sentry.SentryOpenTelemetryMode
 
-class SentryReportDestination(
+class SentryProvider(
     private val dsn: String,
     private val environment: String,
-): ReportDestination {
-    override fun start() {
+    private val traceSampleRate: Double?,
+) {
+    fun init() {
         if (dsn.isEmpty()) {
             logSync.warn { "Sentry DSN not specified. Error reporting will not be available" }
             return
@@ -17,18 +18,24 @@ class SentryReportDestination(
             options.dsn = dsn
             options.environment = environment
             options.logs.isEnabled = true
+            options.tracesSampleRate = traceSampleRate
+            options.openTelemetryMode = SentryOpenTelemetryMode.AGENTLESS
         }
         logSync.info { "Sentry error reporting enabled" }
     }
 
-    override fun close() {
+    fun close() {
         if (dsn.isEmpty()) return
 
         Sentry.close()
         logSync.info { "Sentry error reporting disabled" }
     }
 
-    override fun report(throwable: Throwable) {
+    fun report(throwable: Throwable) {
+        if (! Sentry.isEnabled()) {
+            logSync.warn { "Sentry not enabled. Error will be discarded" }
+            return
+        }
         Sentry.captureException(throwable)
     }
 }

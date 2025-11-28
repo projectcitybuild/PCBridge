@@ -12,7 +12,7 @@ data class LocalConfigKeyValues(
     val environment: Environment,
     val api: Api,
     val webServer: WebServer,
-    val errorReporting: ErrorReporting,
+    val observability: Observability,
     val discord: Discord,
 ) {
     @Serializable
@@ -29,8 +29,9 @@ data class LocalConfigKeyValues(
     )
 
     @Serializable
-    data class ErrorReporting(
+    data class Observability(
         val sentryDsn: String,
+        val traceSampleRate: Double?,
     )
 
     @Serializable
@@ -51,8 +52,9 @@ fun LocalConfigKeyValues.Companion.default() =
             token = "pcbridge_local",
             port = 8080,
         ),
-        errorReporting = LocalConfigKeyValues.ErrorReporting(
+        observability = LocalConfigKeyValues.Observability(
             sentryDsn = "",
+            traceSampleRate = 1.0,
         ),
         discord = LocalConfigKeyValues.Discord(
             contentAlertWebhook = ""

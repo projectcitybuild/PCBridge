@@ -1,6 +1,8 @@
 package com.projectcitybuild.pcbridge.paper
 
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.Logging
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.Logger
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.tracing.OpenTelemetryProvider
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.tracing.TracerFactory
 import org.junit.jupiter.api.extension.BeforeAllCallback
 import org.junit.jupiter.api.extension.ExtensionContext
 
@@ -8,7 +10,8 @@ class TestRun : BeforeAllCallback, ExtensionContext.Store.CloseableResource {
     override fun beforeAll(context: ExtensionContext) {
         if (!started) {
             started = true
-            Logging.configure("test_logger")
+            Logger.configure("test_logger")
+            TracerFactory.configure(OpenTelemetryProvider())
         }
     }
 

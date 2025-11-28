@@ -8,9 +8,10 @@ import com.projectcitybuild.pcbridge.paper.architecture.commands.BrigadierComman
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.getOptionalArgument
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
-import com.projectcitybuild.pcbridge.paper.architecture.commands.scopedSuspending
+import com.projectcitybuild.pcbridge.paper.architecture.commands.scoped
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandContext
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandNode
+import com.projectcitybuild.pcbridge.paper.features.builds.buildsTracer
 import com.projectcitybuild.pcbridge.paper.l10n.l10n
 import io.papermc.paper.command.brigadier.Commands
 import org.bukkit.plugin.Plugin
@@ -31,7 +32,7 @@ class BuildListCommand(
             .build()
     }
 
-    private suspend fun execute(context: PaperCommandContext) = context.scopedSuspending {
+    private suspend fun execute(context: PaperCommandContext) = context.scoped(buildsTracer) {
         val pageNumber = context.getOptionalArgument("page", Int::class.java) ?: 1
         val builds = buildRepository.all(pageNumber)
         val totalPages = ceil(builds.total.toDouble() / builds.perPage.toDouble()).toInt()
@@ -42,7 +43,7 @@ class BuildListCommand(
                 if (pageNumber == 1) "<gray>No builds found</gray>"
                 else l10n.errorPageNotFound
             )
-            return@scopedSuspending
+            return@scoped
         }
         val message = PageComponentBuilder().build(
             title = "Build List",

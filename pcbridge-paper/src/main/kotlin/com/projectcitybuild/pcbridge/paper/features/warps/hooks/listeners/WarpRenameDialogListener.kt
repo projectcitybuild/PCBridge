@@ -28,7 +28,11 @@ class WarpRenameDialogListener(
 
         val warpId = view.getText(WarpRenameDialog.idKey)
         val newName = view.getText(WarpRenameDialog.newNameKey)?.trim()
-        logSync.info("Dialog response: newName=[$newName], warpId=[$warpId]")
+
+        logSync.info("Dialog response received", mapOf(
+            "new_name" to newName,
+            "warp_id" to warpId,
+        ))
 
         val connection = event.commonConnection as? PlayerGameConnection
         val player = connection?.player ?: return@runCatching

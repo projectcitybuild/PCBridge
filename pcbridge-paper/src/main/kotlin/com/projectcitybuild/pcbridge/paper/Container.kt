@@ -36,7 +36,9 @@ import com.projectcitybuild.pcbridge.paper.core.libs.storage.JsonStorage
 import com.projectcitybuild.pcbridge.paper.core.libs.localconfig.LocalConfig
 import com.projectcitybuild.pcbridge.paper.core.libs.localconfig.LocalConfigKeyValues
 import com.projectcitybuild.pcbridge.paper.core.libs.localconfig.default
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.errors.SentryProvider
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.logSync
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.tracing.OpenTelemetryProvider
 import com.projectcitybuild.pcbridge.paper.core.libs.pcbmanage.ManageUrlGenerator
 import com.projectcitybuild.pcbridge.paper.core.libs.playerlookup.PlayerLookup
 import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.RemoteConfig
@@ -163,9 +165,26 @@ private fun Module.core() {
     }
 
     single {
-        ErrorTracker(localConfig = get())
+        OpenTelemetryProvider()
+    }
+
+    single {
+        val localConfig = get<LocalConfig>()
+        val config = localConfig.get()
+
+        SentryProvider(
+            dsn = config.observability.sentryDsn,
+            environment = config.environment.name.lowercase(),
+            traceSampleRate = config.observability.traceSampleRate,
+        ).also {
+            it.init()
+        }
     } onClose {
         it?.close()
+    }
+
+    single {
+        ErrorTracker(sentry = get())
     }
 
     factory {

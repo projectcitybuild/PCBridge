@@ -35,7 +35,12 @@ class BanDialogListener(
         val playerName = view.getText(CreateBanDialog.playerNameKey)?.trim()
         val reason = view.getText(CreateBanDialog.reasonKey)?.trim()
         val additionalInfo = view.getText(CreateBanDialog.additionalInfoKey)?.trim()
-        logSync.info("Dialog response: playerName=[$playerName], reason=[$reason], additionalInfo=[$additionalInfo]")
+
+        logSync.info("Dialog response received", mapOf(
+            "player_name" to playerName,
+            "reason" to reason,
+            "additional_info" to additionalInfo,
+        ))
 
         val connection = event.commonConnection as? PlayerGameConnection
         val bannerPlayer = connection?.player

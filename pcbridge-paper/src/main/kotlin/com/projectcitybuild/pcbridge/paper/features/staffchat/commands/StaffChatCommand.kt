@@ -9,9 +9,10 @@ import com.projectcitybuild.pcbridge.paper.architecture.commands.BrigadierComman
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requiresPermission
-import com.projectcitybuild.pcbridge.paper.architecture.commands.scopedSuspending
+import com.projectcitybuild.pcbridge.paper.architecture.commands.scoped
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandContext
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandNode
+import com.projectcitybuild.pcbridge.paper.features.staffchat.staffChatTracer
 import io.papermc.paper.command.brigadier.Commands
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.MiniMessage
@@ -35,7 +36,7 @@ class StaffChatCommand(
             .build()
     }
 
-    suspend fun execute(context: PaperCommandContext) = context.scopedSuspending {
+    suspend fun execute(context: PaperCommandContext) = context.scoped(staffChatTracer) {
         val player = context.source.requirePlayer()
         val rawMessage = context.getArgument("message", String::class.java)
 
