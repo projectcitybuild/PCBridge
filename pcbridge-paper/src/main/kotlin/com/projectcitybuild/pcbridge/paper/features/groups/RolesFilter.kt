@@ -17,7 +17,7 @@ class RolesFilter {
             val rawRoleType = group.groupType
             val displayPriority = group.displayPriority
 
-            if (rawRoleType == null || displayPriority == null) continue;
+            if (rawRoleType == null || displayPriority == null) continue
 
             val roleType = runCatching { RoleType.valueOf(rawRoleType.uppercase()) }.getOrNull()
             if (roleType == null) {

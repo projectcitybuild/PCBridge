@@ -14,7 +14,7 @@ class Tracer(
         operation: String,
         attributes: Attributes? = null,
         block: suspend () -> T,
-    ) {
+    ): T {
         val tracer = otel.sdk.getTracer(name)
 
         val span = tracer.spanBuilder(operation)
@@ -25,7 +25,7 @@ class Tracer(
         val otelContext = Context.current().with(span)
 
         try {
-            withContext(otelContext.asContextElement()) {
+            return withContext(otelContext.asContextElement()) {
                 block()
             }
         } catch (e: Exception) {
@@ -40,7 +40,7 @@ class Tracer(
         operation: String,
         attributes: Attributes? = null,
         block: () -> T,
-    ) {
+    ): T {
         val tracer = otel.sdk.getTracer(name)
 
         val span = tracer.spanBuilder(operation)
@@ -49,7 +49,7 @@ class Tracer(
             .startSpan()
 
         try {
-            block()
+            return block()
         } catch (e: Exception) {
             span.recordException(e)
             throw e

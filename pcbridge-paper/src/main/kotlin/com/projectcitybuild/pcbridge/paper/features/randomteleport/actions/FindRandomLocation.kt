@@ -3,6 +3,7 @@ package com.projectcitybuild.pcbridge.paper.features.randomteleport.actions
 import com.projectcitybuild.pcbridge.paper.core.libs.teleportation.PlayerTeleporter
 import com.projectcitybuild.pcbridge.paper.core.libs.teleportation.exceptions.SafeDestinationNotFoundException
 import com.projectcitybuild.pcbridge.paper.core.libs.teleportation.exceptions.TeleportFailedException
+import com.projectcitybuild.pcbridge.paper.features.randomteleport.randomTeleportTracer
 import org.bukkit.Location
 import org.bukkit.World
 import org.bukkit.entity.Player
@@ -11,7 +12,10 @@ import org.bukkit.event.player.PlayerTeleportEvent
 class FindRandomLocation(
     private val playerTeleporter: PlayerTeleporter,
 ) {
-    suspend fun teleport(player: Player, attempts: Int = 5): Location? {
+    suspend fun teleport(
+        player: Player,
+        attempts: Int = 5,
+    ): Location? = randomTeleportTracer.trace("FindRandomLocation.teleport") {
         val world = player.location.world
 
         for (i in 1..attempts) {
@@ -32,14 +36,14 @@ class FindRandomLocation(
                         snapToBlockCenter = true,
                     ),
                 )
-                return location
+                return@trace location
             } catch (e: SafeDestinationNotFoundException) {
                 continue
             } catch (e: TeleportFailedException) {
                 continue
             }
         }
-        return null
+        return@trace null
     }
 
     private fun randomCoordinate2(world: World): Coordinate2 {

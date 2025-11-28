@@ -4,6 +4,7 @@ import com.projectcitybuild.pcbridge.http.pcb.models.PlayerBan
 import com.projectcitybuild.pcbridge.http.shared.parsing.ResponseParserError
 import com.projectcitybuild.pcbridge.paper.core.libs.pcbmanage.ManageUrlGenerator
 import com.projectcitybuild.pcbridge.paper.core.libs.playerlookup.PlayerLookup
+import com.projectcitybuild.pcbridge.paper.features.bans.banTracer
 import com.projectcitybuild.pcbridge.paper.features.bans.domain.repositories.UuidBanRepository
 import java.util.UUID
 
@@ -28,7 +29,7 @@ class CreateUuidBan(
         bannerAlias: String?,
         reason: String,
         additionalInfo: String?,
-    ): Creation {
+    ): Creation = banTracer.trace("CreateUuidBan.create") {
         val uuid = playerLookup.findUuid(alias = bannedAlias)
             ?: throw PlayerNotFound()
 
@@ -49,7 +50,7 @@ class CreateUuidBan(
 
         val editUrl = manageUrlGenerator.path("manage/player-bans/${ban.id}/edit")
 
-        return Creation(
+        return@trace Creation(
             ban = ban,
             bannedUuid = uuid,
             editUrl = editUrl,

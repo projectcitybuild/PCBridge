@@ -29,7 +29,6 @@ val bansModule = module {
         BanDialogListener(
             server = get(),
             createUuidBan = get(),
-            errorTracker = get(),
         )
     }
 

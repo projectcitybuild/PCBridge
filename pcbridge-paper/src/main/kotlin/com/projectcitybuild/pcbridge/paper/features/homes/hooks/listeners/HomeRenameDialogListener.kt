@@ -1,9 +1,10 @@
 package com.projectcitybuild.pcbridge.paper.features.homes.hooks.listeners
 
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.errors.ErrorTracker
+import com.projectcitybuild.pcbridge.paper.architecture.listeners.scoped
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.logSync
 import com.projectcitybuild.pcbridge.paper.features.homes.domain.repositories.HomeRepository
+import com.projectcitybuild.pcbridge.paper.features.homes.homesTracer
 import com.projectcitybuild.pcbridge.paper.features.homes.hooks.dialogs.HomeRenameDialog
 import com.projectcitybuild.pcbridge.paper.l10n.l10n
 import io.papermc.paper.connection.PlayerGameConnection
@@ -13,17 +14,17 @@ import org.bukkit.event.Listener
 
 class HomeRenameDialogListener(
     private val homeRepository: HomeRepository,
-    private val errorTracker: ErrorTracker,
 ) : Listener {
     @EventHandler
-    // TODO: reusable sentry and error handling
-    suspend fun onPlayerCustomClickEvent(event: PlayerCustomClickEvent) = runCatching {
-        if (! event.identifier.equals(HomeRenameDialog.saveButtonKey)) return@runCatching
+    suspend fun onPlayerCustomClickEvent(
+        event: PlayerCustomClickEvent,
+    ) = event.scoped(homesTracer, this::class.java) {
+        if (! event.identifier.equals(HomeRenameDialog.saveButtonKey)) return@scoped
 
         val view = event.dialogResponseView
         if (view == null) {
             log.error { "DialogResponseView was null for ${event.identifier}" }
-            return@runCatching
+            return@scoped
         }
 
         val homeId = view.getText(HomeRenameDialog.idKey)
@@ -35,11 +36,11 @@ class HomeRenameDialogListener(
         ))
 
         val connection = event.commonConnection as? PlayerGameConnection
-        val player = connection?.player ?: return@runCatching
+        val player = connection?.player ?: return@scoped
 
         if (newName.isNullOrEmpty()) {
             player.sendRichMessage("<red>Error: New name cannot be empty</red>")
-            return@runCatching
+            return@scoped
         }
         if (homeId.isNullOrEmpty()) {
             player.sendRichMessage("<red>Error: Home not found</red>")
@@ -56,8 +57,5 @@ class HomeRenameDialogListener(
             player.sendRichMessage("<red>Error: ${e.message}</red>")
             throw e
         }
-    }.onFailure {
-        log.error(it) { "Failed to handle ban dialog response" }
-        errorTracker.report(it)
     }
 }

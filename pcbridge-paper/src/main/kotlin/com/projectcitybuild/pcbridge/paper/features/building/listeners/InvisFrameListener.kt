@@ -1,6 +1,8 @@
 package com.projectcitybuild.pcbridge.paper.features.building.listeners
 
+import com.projectcitybuild.pcbridge.paper.architecture.listeners.scopedSync
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotNamespace
+import com.projectcitybuild.pcbridge.paper.features.building.buildingTracer
 import com.projectcitybuild.pcbridge.paper.features.building.data.InvisFrameKey
 import org.bukkit.entity.Entity
 import org.bukkit.entity.GlowItemFrame
@@ -18,7 +20,9 @@ class InvisFrameListener(
     private val namespacedKey = spigotNamespace.get(InvisFrameKey)
 
     @EventHandler(ignoreCancelled = true)
-    fun onPlayerInteractEntityEvent(event: PlayerInteractEntityEvent) {
+    fun onPlayerInteractEntityEvent(
+        event: PlayerInteractEntityEvent,
+    ) = event.scopedSync(buildingTracer, this::class.java) {
         val entity = event.rightClicked
 
         if (isInvisFrame(entity)) {
@@ -29,7 +33,9 @@ class InvisFrameListener(
     }
 
     @EventHandler(ignoreCancelled = true)
-    fun onEntityDamageByEntity(event: EntityDamageByEntityEvent) {
+    fun onEntityDamageByEntity(
+        event: EntityDamageByEntityEvent,
+    ) = event.scopedSync(buildingTracer, this::class.java) {
         val entity = event.entity
 
         if (isInvisFrame(entity)) {
@@ -40,7 +46,9 @@ class InvisFrameListener(
     }
 
     @EventHandler(ignoreCancelled = true)
-    fun onHangingPlaceEvent(event: HangingPlaceEvent) {
+    fun onHangingPlaceEvent(
+        event: HangingPlaceEvent
+    ) = event.scopedSync(buildingTracer, this::class.java) {
         val entity = event.entity
 
         if (isInvisFrame(entity)) {

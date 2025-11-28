@@ -4,8 +4,10 @@ import com.google.gson.FieldNamingPolicy
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.logSync
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.tracing.TracerFactory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer.gson
 import java.io.File
 import java.io.PrintWriter
 import java.lang.Exception
@@ -45,7 +47,7 @@ class JsonStorage<T>(
     }
 
     override fun writeSync(file: File, data: T) {
-        return try {
+        try {
             file.parentFile.mkdirs()
             file.createNewFile()
 

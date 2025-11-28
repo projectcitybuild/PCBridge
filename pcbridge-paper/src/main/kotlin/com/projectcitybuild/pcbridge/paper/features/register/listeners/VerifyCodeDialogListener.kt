@@ -2,10 +2,11 @@ package com.projectcitybuild.pcbridge.paper.features.register.listeners
 
 import com.projectcitybuild.pcbridge.http.pcb.services.RegisterHttpService
 import com.projectcitybuild.pcbridge.http.shared.parsing.ResponseParserError
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.errors.ErrorTracker
+import com.projectcitybuild.pcbridge.paper.architecture.listeners.scoped
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.logSync
 import com.projectcitybuild.pcbridge.paper.features.register.dialogs.VerifyRegistrationCodeDialog
+import com.projectcitybuild.pcbridge.paper.features.register.registerTracer
 import com.projectcitybuild.pcbridge.paper.l10n.l10n
 import io.papermc.paper.connection.PlayerGameConnection
 import io.papermc.paper.event.player.PlayerCustomClickEvent
@@ -14,17 +15,17 @@ import org.bukkit.event.Listener
 
 class VerifyCodeDialogListener(
     private val registerHttpService: RegisterHttpService,
-    private val errorTracker: ErrorTracker,
 ) : Listener {
     @EventHandler
-    // TODO: reusable sentry and error handling
-    suspend fun onPlayerCustomClickEvent(event: PlayerCustomClickEvent) = runCatching {
-        if (! event.identifier.equals(VerifyRegistrationCodeDialog.verifyButtonKey)) return@runCatching
+    suspend fun onPlayerCustomClickEvent(
+        event: PlayerCustomClickEvent,
+    ) = event.scoped(registerTracer, this::class.java) {
+        if (! event.identifier.equals(VerifyRegistrationCodeDialog.verifyButtonKey)) return@scoped
 
         val view = event.dialogResponseView
         if (view == null) {
             log.error { "DialogResponseView was null for ${event.identifier}" }
-            return@runCatching
+            return@scoped
         }
 
         val code = view.getText(VerifyRegistrationCodeDialog.codeKey)?.trim()
@@ -32,7 +33,7 @@ class VerifyCodeDialogListener(
         logSync.info("Dialog response received", mapOf("code" to code))
 
         val connection = event.commonConnection as? PlayerGameConnection
-        val player = connection?.player ?: return@runCatching
+        val player = connection?.player ?: return@scoped
 
         if (code.isNullOrEmpty()) {
             val dialog = VerifyRegistrationCodeDialog.build(
@@ -40,7 +41,7 @@ class VerifyCodeDialogListener(
                 error = l10n.errorNoCodeSpecified,
             )
             player.showDialog(dialog)
-            return@runCatching
+            return@scoped
         }
 
         try {
@@ -55,10 +56,7 @@ class VerifyCodeDialogListener(
                 error = l10n.errorCodeInvalidOrExpired,
             )
             player.showDialog(dialog)
-            return@runCatching
+            return@scoped
         }
-    }.onFailure {
-        log.error(it) { "Failed to handle ban dialog response" }
-        errorTracker.report(it)
     }
 }

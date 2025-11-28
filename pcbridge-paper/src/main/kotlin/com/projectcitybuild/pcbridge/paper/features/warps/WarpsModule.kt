@@ -78,7 +78,6 @@ val warpsModule = module {
     factory {
         WarpRenameDialogListener(
             warpRepository = get(),
-            errorTracker = get(),
         )
     }
 }

@@ -2,6 +2,7 @@ package com.projectcitybuild.pcbridge.paper.features.spawns.repositories
 
 import com.projectcitybuild.pcbridge.paper.core.libs.storage.Storage
 import com.projectcitybuild.pcbridge.paper.features.spawns.data.SerializableSpawn
+import com.projectcitybuild.pcbridge.paper.features.spawns.spawnsTracer
 import kotlinx.coroutines.coroutineScope
 import org.bukkit.Location
 import org.bukkit.Server
@@ -15,22 +16,26 @@ class SpawnRepository(
 ) {
     private val cache: MutableMap<UUID, Location> = mutableMapOf()
 
-    suspend fun get(world: World): Location {
+    suspend fun get(
+        world: World,
+    ): Location = spawnsTracer.trace("SpawnRepository.get") {
         val cached = cache[world.uid]
         if (cached != null) {
-            return cached
+            return@trace cached
         }
         val serialized = storage.read(world.spawnMetaFile())
         if (serialized != null) {
             val location = serialized.toLocation(world)
             cache[world.uid] = location
-            return location
+            return@trace location
         }
         // Fallback to world spawn without yaw and pitch
-        return world.spawnLocation
+        return@trace world.spawnLocation
     }
 
-    suspend fun set(location: Location) {
+    suspend fun set(
+        location: Location,
+    ) = spawnsTracer.trace("SpawnRepository.set") {
         val world = location.world
 
         world.setSpawnLocation(location)
@@ -45,9 +50,9 @@ class SpawnRepository(
         cache[world.uid] = location
     }
 
-    suspend fun allLoaded(): List<Location> {
+    suspend fun allLoaded(): List<Location> = spawnsTracer.trace("SpawnRepository.all") {
         // TODO: is this concurrent?
-        return coroutineScope {
+        return@trace coroutineScope {
             server.worlds.map { get(it) }
         }
     }
