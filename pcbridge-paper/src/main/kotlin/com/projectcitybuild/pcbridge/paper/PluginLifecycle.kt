@@ -23,7 +23,6 @@ import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.RemoteConfig
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotListenerRegistry
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotTimer
 import com.projectcitybuild.pcbridge.paper.architecture.commands.registerCommands
-import com.projectcitybuild.pcbridge.paper.architecture.connection.listeners.ConfigurePlayerListener
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.tracing.OpenTelemetryProvider
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.tracing.TracerFactory
 import com.projectcitybuild.pcbridge.paper.features.announcements.listeners.AnnouncementConfigListener
@@ -212,7 +211,6 @@ class PluginLifecycle : KoinComponent {
         get<VerifyCodeDialogListener>(),
         get<WarpRenameDialogListener>(),
         get<WarpWebhookListener>(),
-        ConfigurePlayerListener(),
     )
 
     private fun registerDecorators() {
