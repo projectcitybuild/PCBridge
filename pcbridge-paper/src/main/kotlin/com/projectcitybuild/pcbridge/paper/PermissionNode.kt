@@ -28,6 +28,9 @@ enum class PermissionNode(val node: String) {
     // Can toggle maintenance mode on or off
     MAINTENANCE_MANAGE("pcbridge.maintenance.manage"),
 
+    // Can use moderation commands
+    MODERATE("pcbridge.moderate"),
+
     // Can set the spawn location of a world
     SPAWN_MANAGE("pcbridge.spawn.manage"),
 
