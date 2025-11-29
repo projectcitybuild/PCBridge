@@ -49,4 +49,7 @@ class StringsEn {
     val playerHasBeenBanned = { name: String -> "$name has been banned" }
     val clickToEditBan = { url: String -> "<gray>Click <click:OPEN_URL:'$url'><hover:show_text:'$url'><aqua><underlined>here</underlined></aqua></hover></click> to edit the ban or add additional information</gray>" }
     val registrationComplete = "<green>Registration complete! Your account will be synced momentarily...</green>"
+    val kickedFromServer = "Kicked from server."
+    val playerWasKickedForReason = { name: String, reason: String -> "<i><gray>$name was kicked: $reason</gray></i>" }
+    val playerWasKicked = { name: String -> "<i><gray>$name was kicked</gray></i>" }
 }
