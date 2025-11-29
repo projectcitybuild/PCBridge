@@ -10,7 +10,7 @@ import kotlinx.serialization.Serializable
 import java.time.LocalDateTime
 
 @Serializable
-data class PlayerState(
+data class PlayerSession(
     @Serializable(with = LocalDateTimeSerializer::class)
     val connectedAt: LocalDateTime?,
     val account: Account? = null,
@@ -20,7 +20,7 @@ data class PlayerState(
     val afk: Boolean = false,
 ) {
     companion object {
-        fun fromPlayerData(data: PlayerData, connectedAt: LocalDateTime) = PlayerState(
+        fun fromPlayerData(data: PlayerData, connectedAt: LocalDateTime) = PlayerSession(
             connectedAt = connectedAt,
             account = data.account,
             player = data.player,

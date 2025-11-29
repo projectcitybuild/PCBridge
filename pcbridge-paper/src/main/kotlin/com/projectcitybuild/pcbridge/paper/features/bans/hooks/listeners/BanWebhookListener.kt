@@ -3,6 +3,7 @@ package com.projectcitybuild.pcbridge.paper.features.bans.hooks.listeners
 import com.projectcitybuild.pcbridge.paper.architecture.listeners.scopedSync
 import com.projectcitybuild.pcbridge.paper.architecture.webhooks.events.WebhookReceivedEvent
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.logSync
+import com.projectcitybuild.pcbridge.paper.core.support.spigot.extensions.onlinePlayer
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.utilities.SpigotSanitizer
 import com.projectcitybuild.pcbridge.paper.features.bans.bansTracer
 import com.projectcitybuild.pcbridge.paper.features.bans.domain.utilities.toMiniMessage
@@ -13,6 +14,7 @@ import org.bukkit.Server
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerKickEvent
+import java.util.UUID
 
 /**
  * Receives an incoming ban from PCB and bans the offending
@@ -59,9 +61,8 @@ class BanWebhookListener(
             logSync.info { "Skipping ban fulfillment, ban had no player data" }
             return@scopedSync
         }
-        val matchingPlayer = server.onlinePlayers.firstOrNull {
-            it.uniqueId.toString().replace("-", "") == bannedPlayer.uuid.replace("-", "")
-        }
+        val bannedUuid = UUID.fromString(bannedPlayer.uuid)
+        val matchingPlayer = server.onlinePlayer(uuid = bannedUuid)
         if (matchingPlayer == null) {
             logSync.info { "Skipping ban fulfillment, player (${bannedPlayer.uuid}) not found" }
             return@scopedSync

@@ -2,22 +2,23 @@ package com.projectcitybuild.pcbridge.paper.integrations.essentials
 
 import com.earth2me.essentials.Essentials
 import com.github.shynixn.mccoroutine.bukkit.registerSuspendingEvents
+import com.projectcitybuild.pcbridge.paper.architecture.listeners.scoped
+import com.projectcitybuild.pcbridge.paper.architecture.listeners.scopedSync
 import com.projectcitybuild.pcbridge.paper.core.libs.store.Store
 import com.projectcitybuild.pcbridge.paper.architecture.state.events.PlayerStateUpdatedEvent
 import com.projectcitybuild.pcbridge.paper.architecture.tablist.TabRenderer
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.errors.ErrorTracker
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.logSync
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.tracing.TracerFactory
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotEventBroadcaster
 import com.projectcitybuild.pcbridge.paper.core.libs.teleportation.events.PlayerPreTeleportEvent
-import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotIntegration
 import kotlinx.coroutines.runBlocking
 import net.ess3.api.events.AfkStatusChangeEvent
 import net.ess3.api.events.NickChangeEvent
 import org.bukkit.Server
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
-import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
 
 class EssentialsIntegration(
@@ -26,24 +27,29 @@ class EssentialsIntegration(
     private val store: Store,
     private val eventBroadcaster: SpigotEventBroadcaster,
     private val tabRenderer: TabRenderer,
-    errorTracker: ErrorTracker,
-) : Listener, SpigotIntegration(
-        pluginName = "Essentials",
-        pluginManager = plugin.server.pluginManager,
-        errorTracker = errorTracker,
-    ) {
+    private val errorTracker: ErrorTracker,
+) : Listener {
     private var essentials: Essentials? = null
+    private val tracer = TracerFactory.make("integrations.essentials")
 
-    override suspend fun onEnable(loadedPlugin: Plugin) {
-        check(loadedPlugin is Essentials) {
+    suspend fun enable() = runCatching {
+        val integratedPlugin = server.pluginManager.getPlugin("Essentials")
+        if (integratedPlugin == null) {
+            log.warn { "Cannot find Essentials. Disabling integration" }
+            return@runCatching
+        }
+        check(integratedPlugin is Essentials) {
             "Found Essentials plugin but cannot cast to Essentials class"
         }
-        essentials = loadedPlugin
+        essentials = integratedPlugin
         plugin.server.pluginManager.registerSuspendingEvents(this, plugin)
         log.info { "Essentials integration enabled" }
+    }.onFailure {
+        log.error(it) { "Failed to enable Essentials integration" }
+        errorTracker.report(it)
     }
 
-    override suspend fun onDisable() {
+    fun disable() {
         if (essentials != null) {
             PlayerPreTeleportEvent.getHandlerList().unregister(this)
             essentials = null
@@ -55,10 +61,12 @@ class EssentialsIntegration(
      * in Essentials
      */
     @EventHandler
-    fun onPlayerPreTeleport(event: PlayerPreTeleportEvent) = runCatching {
+    fun onPlayerPreTeleport(
+        event: PlayerPreTeleportEvent,
+    ) = event.scopedSync(tracer, this::class.java) {
         if (essentials == null) {
             logSync.warn { "Essentials integration disabled but it's still listening to events" }
-            return@runCatching
+            return@scopedSync
         }
         essentials!!
             .getUser(event.player)
@@ -68,10 +76,12 @@ class EssentialsIntegration(
     }
 
     @EventHandler
-    fun onPlayerAFKStatusChange(event: AfkStatusChangeEvent) = runCatching {
+    fun onPlayerAFKStatusChange(
+        event: AfkStatusChangeEvent,
+    ) = event.scopedSync(tracer, this::class.java) {
         if (essentials == null) {
             logSync.warn { "Essentials integration disabled but it's still listening to events" }
-            return@runCatching
+            return@scopedSync
         }
         logSync.info { "Player AFK status changed (${event.value}, ${event.cause})" }
 
@@ -100,7 +110,9 @@ class EssentialsIntegration(
     }
 
     @EventHandler
-    suspend fun onPlayerNicknameChange(event: NickChangeEvent) {
+    suspend fun onPlayerNicknameChange(
+        event: NickChangeEvent,
+    ) = event.scoped(tracer, this::class.java) {
         val playerUuid = event.affected.uuid
         log.info { "Player nickname changed (${event.value}, $playerUuid)" }
 

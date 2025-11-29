@@ -5,6 +5,7 @@ import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.logSync
 import com.projectcitybuild.pcbridge.paper.core.support.component.sendMessageRich
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.extensions.broadcastRich
+import com.projectcitybuild.pcbridge.paper.core.support.spigot.extensions.onlinePlayer
 import com.projectcitybuild.pcbridge.paper.features.bans.bansTracer
 import com.projectcitybuild.pcbridge.paper.features.bans.domain.actions.CreateUuidBan
 import com.projectcitybuild.pcbridge.paper.features.bans.hooks.dialogs.CreateBanDialog
@@ -80,7 +81,7 @@ class BanDialogListener(
 
         server.broadcastRich(l10n.playerHasBeenBanned(playerName))
 
-        val bannedPlayer = server.onlinePlayers.firstOrNull { it.uniqueId == result.bannedUuid }
+        val bannedPlayer = server.onlinePlayer(uuid = result.bannedUuid)
         bannedPlayer?.kick(
             result.ban.toMiniMessage(),
             PlayerKickEvent.Cause.BANNED,

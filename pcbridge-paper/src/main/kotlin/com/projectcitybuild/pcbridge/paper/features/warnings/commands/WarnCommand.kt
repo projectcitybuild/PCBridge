@@ -9,6 +9,7 @@ import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.exe
 import com.projectcitybuild.pcbridge.paper.architecture.commands.scoped
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandContext
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandNode
+import com.projectcitybuild.pcbridge.paper.core.support.spigot.extensions.onlinePlayer
 import com.projectcitybuild.pcbridge.paper.features.warnings.warningsTracer
 import io.papermc.paper.command.brigadier.Commands
 import org.bukkit.Server
@@ -32,7 +33,7 @@ class WarnCommand(
     private suspend fun execute(context: PaperCommandContext) = context.scoped(warningsTracer) {
         val playerName = context.getArgument("player", String::class.java)
 
-        val player = server.onlinePlayers.firstOrNull { it.name.equals(playerName, ignoreCase = true) }
+        val player = server.onlinePlayer(name = playerName)
         val lookup = player?.uniqueId?.toString() ?: playerName
         val url = manageUrlGenerator.path("manage/warnings/create?uuid=$lookup")
 
