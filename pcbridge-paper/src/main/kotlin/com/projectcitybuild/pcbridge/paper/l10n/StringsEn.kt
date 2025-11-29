@@ -22,6 +22,7 @@ class StringsEn {
     val errorNoCodeSpecified = "<red>You did not specify a code</red>"
     val errorCodeInvalidOrExpired = "<red>Code is invalid or expired</red>"
     val errorHubWorldNotFound = "<red>Could not find hub world</red>"
+    val errorHubNotSet = "<red>Hub world not set</red>"
     val homeCreated = { name: String -> "<green>$name created</green>" }
     val homeDeleted = { name: String -> "<green>$name deleted</green>" }
     val homeMoved = { name: String -> "<green>$name moved to your location</green>" }
@@ -39,10 +40,10 @@ class StringsEn {
     val renamedItem = { name: String -> "<gray>Renamed item in hand to $name</gray>" }
     val codeHasBeenEmailedTo = { email: String -> "A code has been emailed to <aqua>$email</aqua>.<newline>Please type the code below to finish registration." }
     val codeHasBeenEmailed = "Please type in the code emailed to you to finish registration."
-    val spawnSet = { location: Location -> "<green>World spawn set to <gray>${location.x} ${location.y} ${location.z} ${location.pitch} ${location.yaw}</gray></green>" }
+    val spawnSet = { location: Location -> "<green>World spawn set to <gray>{${location.x}, ${location.y}, ${location.z}} pitch=${location.pitch} yaw=${location.yaw}</gray></green>" }
     val searchingForSafeLocation = "<gray><i>Searching for a safe location...</i></gray>"
     val teleportedToName = { name: String -> "<gray><i>⚡ Teleported to <b>$name</b></i></gray>" }
-    val teleportedToCoordinate = { x: Int, y: Int, z: Int -> "<gray><i>⚡ Teleported to <b>x=$x, y=$y, z=$z</b></gray></i>" }
+    val teleportedToCoordinate = { x: Int, y: Int, z: Int -> "<gray><i>⚡ Teleported to <b>{$x, $y, $z}</b></i></gray>" }
     val teleportedToSpawn = "<gray><i>⚡ Teleported to spawn</i></gray>"
     val teleportedToHub = "<gray><i>⚡ Teleported to hub</i></gray>"
     val playerHasBeenBanned = { name: String -> "$name has been banned" }

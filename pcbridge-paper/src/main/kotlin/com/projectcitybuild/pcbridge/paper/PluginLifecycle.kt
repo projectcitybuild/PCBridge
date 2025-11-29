@@ -106,35 +106,40 @@ class PluginLifecycle : KoinComponent {
     private val store: Store by inject()
     private val otel: OpenTelemetryProvider by inject()
 
+    private val tracer by lazy { TracerFactory.make("lifecycle") }
+
     suspend fun boot() = errorTracker.catching {
         TracerFactory.configure(otel)
+        tracer.trace("boot") {
+            httpServer.start()
+            remoteConfig.fetch()
+            store.hydrate()
 
-        httpServer.start()
-        remoteConfig.fetch()
-        store.hydrate()
+            registerMiddleware()
+            registerDecorators()
+            registerTabPlaceholders()
+            registerCommands()
+            registerListeners()
 
-        registerMiddleware()
-        registerDecorators()
-        registerTabPlaceholders()
-        registerCommands()
-        registerListeners()
-
-        get<DynmapIntegration>().enable()
-        get<EssentialsIntegration>().enable()
-        get<LuckPermsIntegration>().enable()
+            get<DynmapIntegration>().enable()
+            get<EssentialsIntegration>().enable()
+            get<LuckPermsIntegration>().enable()
+        }
     }
 
     suspend fun shutdown() = errorTracker.catching {
-        httpServer.stop()
-        store.persist()
+        tracer.trace("shutdown") {
+            httpServer.stop()
+            store.persist()
 
-        get<SpigotTimer>().cancelAll()
+            get<SpigotTimer>().cancelAll()
 
-        get<DynmapIntegration>().disable()
-        get<EssentialsIntegration>().disable()
-        get<LuckPermsIntegration>().disable()
+            get<DynmapIntegration>().disable()
+            get<EssentialsIntegration>().disable()
+            get<LuckPermsIntegration>().disable()
 
-        listenerRegistry.unregisterAll()
+            listenerRegistry.unregisterAll()
+        }
     }
 
     private fun registerMiddleware() = get<ConnectionMiddlewareChain>().register(

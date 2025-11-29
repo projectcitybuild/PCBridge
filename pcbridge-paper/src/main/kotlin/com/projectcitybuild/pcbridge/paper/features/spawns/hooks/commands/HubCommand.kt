@@ -6,6 +6,7 @@ import com.projectcitybuild.pcbridge.paper.architecture.commands.BrigadierComman
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.paper.architecture.commands.scoped
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandContext
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandNode
 import com.projectcitybuild.pcbridge.paper.features.spawns.spawnsTracer
@@ -33,7 +34,11 @@ class HubCommand(
         val player = context.source.requirePlayer()
 
         val hub = remoteConfig.latest.config.hub
-            ?: throw Exception("Hub world not set")
+        if (hub == null) {
+            log.error { "Hub not set" }
+            player.sendRichMessage(l10n.errorHubNotSet)
+            return@scoped
+        }
 
         val worldId = UUID.fromString(hub.worldId)
         val world = server.getWorld(worldId)
