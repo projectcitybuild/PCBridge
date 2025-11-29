@@ -1,8 +1,9 @@
 package com.projectcitybuild.pcbridge.paper.features.chatbadge
 
-import com.projectcitybuild.pcbridge.paper.features.chatbadge.decorators.ChatBadgeDecorator
-import com.projectcitybuild.pcbridge.paper.features.chatbadge.listeners.ChatBadgeInvalidateListener
-import com.projectcitybuild.pcbridge.paper.features.chatbadge.repositories.ChatBadgeRepository
+import com.projectcitybuild.pcbridge.paper.features.chatbadge.hooks.decorators.ChatBadgeDecorator
+import com.projectcitybuild.pcbridge.paper.features.chatbadge.domain.ChatBadgeFormatter
+import com.projectcitybuild.pcbridge.paper.features.chatbadge.hooks.listeners.ChatBadgeInvalidateListener
+import com.projectcitybuild.pcbridge.paper.features.chatbadge.domain.repositories.ChatBadgeRepository
 import io.github.reactivecircus.cache4k.Cache
 import org.koin.core.qualifier.named
 import org.koin.dsl.module

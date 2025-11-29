@@ -4,9 +4,9 @@ import com.github.shynixn.mccoroutine.bukkit.registerSuspendingEvents
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.logSync
 import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.RemoteConfig
-import com.projectcitybuild.pcbridge.paper.features.config.events.RemoteConfigUpdatedEvent
-import com.projectcitybuild.pcbridge.paper.features.spawns.events.SpawnUpdatedEvent
-import com.projectcitybuild.pcbridge.paper.features.spawns.repositories.SpawnRepository
+import com.projectcitybuild.pcbridge.paper.features.config.domain.data.RemoteConfigUpdatedEvent
+import com.projectcitybuild.pcbridge.paper.features.spawns.domain.data.SpawnUpdatedEvent
+import com.projectcitybuild.pcbridge.paper.features.spawns.domain.repositories.SpawnRepository
 import com.projectcitybuild.pcbridge.paper.features.warps.domain.events.WarpCreateEvent
 import com.projectcitybuild.pcbridge.paper.features.warps.domain.events.WarpDeleteEvent
 import com.projectcitybuild.pcbridge.paper.features.warps.domain.repositories.WarpRepository

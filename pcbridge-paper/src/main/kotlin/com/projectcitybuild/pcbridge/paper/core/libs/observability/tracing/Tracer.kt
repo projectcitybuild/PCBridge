@@ -12,13 +12,14 @@ class Tracer(
 ) {
     suspend fun <T> trace(
         operation: String,
+        spanKind: SpanKind = SpanKind.INTERNAL,
         attributes: Attributes? = null,
         block: suspend () -> T,
     ): T {
         val tracer = otel.sdk.getTracer(name)
 
         val span = tracer.spanBuilder(operation)
-            .setSpanKind(SpanKind.INTERNAL)
+            .setSpanKind(spanKind)
             .apply { if (attributes != null) setAllAttributes(attributes) }
             .startSpan()
 
@@ -38,13 +39,14 @@ class Tracer(
 
     fun <T> traceSync(
         operation: String,
+        spanKind: SpanKind = SpanKind.INTERNAL,
         attributes: Attributes? = null,
         block: () -> T,
     ): T {
         val tracer = otel.sdk.getTracer(name)
 
         val span = tracer.spanBuilder(operation)
-            .setSpanKind(SpanKind.INTERNAL)
+            .setSpanKind(spanKind)
             .apply { if (attributes != null) setAllAttributes(attributes) }
             .startSpan()
 

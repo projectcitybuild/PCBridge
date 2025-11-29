@@ -1,18 +1,18 @@
 package com.projectcitybuild.pcbridge.paper.features.builds
 
 import com.projectcitybuild.pcbridge.http.pcb.PCBHttp
-import com.projectcitybuild.pcbridge.paper.features.builds.commands.BuildCommand
-import com.projectcitybuild.pcbridge.paper.features.builds.commands.BuildNameSuggester
-import com.projectcitybuild.pcbridge.paper.features.builds.commands.BuildsCommand
-import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildCreateCommand
-import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildDeleteCommand
-import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildEditCommand
-import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildListCommand
-import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildMoveCommand
-import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildSetCommand
-import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildUnvoteCommand
-import com.projectcitybuild.pcbridge.paper.features.builds.commands.builds.BuildVoteCommand
-import com.projectcitybuild.pcbridge.paper.features.builds.repositories.BuildRepository
+import com.projectcitybuild.pcbridge.paper.features.builds.hooks.commands.BuildCommand
+import com.projectcitybuild.pcbridge.paper.features.builds.hooks.commands.BuildNameSuggester
+import com.projectcitybuild.pcbridge.paper.features.builds.hooks.commands.BuildsCommand
+import com.projectcitybuild.pcbridge.paper.features.builds.hooks.commands.builds.BuildCreateCommand
+import com.projectcitybuild.pcbridge.paper.features.builds.hooks.commands.builds.BuildDeleteCommand
+import com.projectcitybuild.pcbridge.paper.features.builds.hooks.commands.builds.BuildEditCommand
+import com.projectcitybuild.pcbridge.paper.features.builds.hooks.commands.builds.BuildListCommand
+import com.projectcitybuild.pcbridge.paper.features.builds.hooks.commands.builds.BuildMoveCommand
+import com.projectcitybuild.pcbridge.paper.features.builds.hooks.commands.builds.BuildSetCommand
+import com.projectcitybuild.pcbridge.paper.features.builds.hooks.commands.builds.BuildUnvoteCommand
+import com.projectcitybuild.pcbridge.paper.features.builds.hooks.commands.builds.BuildVoteCommand
+import com.projectcitybuild.pcbridge.paper.features.builds.domain.repositories.BuildRepository
 import org.bukkit.plugin.java.JavaPlugin
 import org.koin.dsl.module
 

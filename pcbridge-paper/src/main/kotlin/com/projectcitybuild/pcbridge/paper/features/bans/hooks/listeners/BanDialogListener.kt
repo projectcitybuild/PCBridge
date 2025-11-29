@@ -5,7 +5,7 @@ import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.logSync
 import com.projectcitybuild.pcbridge.paper.core.support.component.sendMessageRich
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.extensions.broadcastRich
-import com.projectcitybuild.pcbridge.paper.features.bans.banTracer
+import com.projectcitybuild.pcbridge.paper.features.bans.bansTracer
 import com.projectcitybuild.pcbridge.paper.features.bans.domain.actions.CreateUuidBan
 import com.projectcitybuild.pcbridge.paper.features.bans.hooks.dialogs.CreateBanDialog
 import com.projectcitybuild.pcbridge.paper.features.bans.domain.utilities.toMiniMessage
@@ -24,7 +24,7 @@ class BanDialogListener(
     @EventHandler
     suspend fun onPlayerCustomClickEvent(
         event: PlayerCustomClickEvent,
-    ) = event.scoped(banTracer, this::class.java) {
+    ) = event.scoped(bansTracer, this::class.java) {
         if (! event.identifier.equals(CreateBanDialog.submitBanButtonKey)) return@scoped
 
         val view = event.dialogResponseView

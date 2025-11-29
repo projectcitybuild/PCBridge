@@ -2,11 +2,11 @@ package com.projectcitybuild.pcbridge.paper.features.sync
 
 import com.projectcitybuild.pcbridge.http.pcb.PCBHttp
 import com.projectcitybuild.pcbridge.paper.architecture.PlayerDataProvider
-import com.projectcitybuild.pcbridge.paper.features.sync.actions.SyncPlayer
-import com.projectcitybuild.pcbridge.paper.features.sync.commands.SyncCommand
-import com.projectcitybuild.pcbridge.paper.features.sync.commands.SyncDebugCommand
-import com.projectcitybuild.pcbridge.paper.features.sync.listener.PlayerSyncRequestListener
-import com.projectcitybuild.pcbridge.paper.features.sync.repositories.PlayerRepository
+import com.projectcitybuild.pcbridge.paper.features.sync.domain.actions.SyncPlayer
+import com.projectcitybuild.pcbridge.paper.features.sync.hooks.commands.SyncCommand
+import com.projectcitybuild.pcbridge.paper.features.sync.hooks.commands.SyncDebugCommand
+import com.projectcitybuild.pcbridge.paper.features.sync.hooks.listener.PlayerSyncRequestListener
+import com.projectcitybuild.pcbridge.paper.features.sync.domain.repositories.PlayerRepository
 import org.bukkit.plugin.java.JavaPlugin
 import org.koin.dsl.bind
 import org.koin.dsl.module

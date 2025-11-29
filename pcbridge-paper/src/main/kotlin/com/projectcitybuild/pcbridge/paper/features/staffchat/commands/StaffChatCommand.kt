@@ -36,7 +36,9 @@ class StaffChatCommand(
             .build()
     }
 
-    suspend fun execute(context: PaperCommandContext) = context.scoped(staffChatTracer) {
+    suspend fun execute(
+        context: PaperCommandContext,
+    ) = context.scoped(staffChatTracer) {
         val player = context.source.requirePlayer()
         val rawMessage = context.getArgument("message", String::class.java)
 

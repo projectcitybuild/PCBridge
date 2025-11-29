@@ -56,8 +56,7 @@ import com.projectcitybuild.pcbridge.paper.features.bans.bansModule
 import com.projectcitybuild.pcbridge.paper.features.building.buildingModule
 import com.projectcitybuild.pcbridge.paper.features.builds.buildsModule
 import com.projectcitybuild.pcbridge.paper.features.chatbadge.chatBadgeModule
-import com.projectcitybuild.pcbridge.paper.features.chatemojis.chatEmojisModule
-import com.projectcitybuild.pcbridge.paper.features.chaturls.chatUrlsModule
+import com.projectcitybuild.pcbridge.paper.features.chatformatting.chatFormattingModule
 import com.projectcitybuild.pcbridge.paper.features.config.configModule
 import com.projectcitybuild.pcbridge.paper.features.groups.groupsModule
 import com.projectcitybuild.pcbridge.paper.features.homes.homesModule
@@ -79,7 +78,6 @@ import com.projectcitybuild.pcbridge.paper.integrations.essentials.EssentialsInt
 import com.projectcitybuild.pcbridge.paper.integrations.luckperms.LuckPermsIntegration
 import com.projectcitybuild.pcbridge.webserver.HttpServer
 import com.projectcitybuild.pcbridge.webserver.data.HttpServerConfig
-import com.sun.tools.javac.main.Option
 import org.bukkit.plugin.java.JavaPlugin
 import org.koin.core.module.Module
 import org.koin.dsl.module
@@ -109,8 +107,7 @@ private val featureModules = listOf(
     buildingModule,
     buildsModule,
     chatBadgeModule,
-    chatEmojisModule,
-    chatUrlsModule,
+    chatFormattingModule,
     configModule,
     groupsModule,
     homesModule,

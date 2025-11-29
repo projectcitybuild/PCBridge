@@ -1,6 +1,6 @@
 package com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig
 
-import com.projectcitybuild.pcbridge.paper.features.config.events.RemoteConfigUpdatedEvent
+import com.projectcitybuild.pcbridge.paper.features.config.domain.data.RemoteConfigUpdatedEvent
 import com.projectcitybuild.pcbridge.http.pcb.models.RemoteConfigKeyValues
 import com.projectcitybuild.pcbridge.http.pcb.models.RemoteConfigVersion
 import com.projectcitybuild.pcbridge.http.pcb.services.ConfigHttpService
