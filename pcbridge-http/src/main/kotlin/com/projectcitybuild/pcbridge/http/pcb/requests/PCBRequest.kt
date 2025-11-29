@@ -76,7 +76,7 @@ internal interface PCBRequest {
     @GET("v2/minecraft/warp")
     suspend fun getWarps(
         @Query(value = "page") page: Int,
-        @Query(value = "size") size: Int,
+        @Query(value = "page_size") size: Int,
     ): PaginatedList<Warp>
 
     @GET("v2/minecraft/warp/all")
@@ -126,7 +126,7 @@ internal interface PCBRequest {
     @GET("v2/minecraft/build")
     suspend fun getBuilds(
         @Query(value = "page") page: Int,
-        @Query(value = "size") size: Int,
+        @Query(value = "page_size") size: Int,
     ): PaginatedList<Build>
 
     @GET("v2/minecraft/build/{id}")
@@ -194,7 +194,7 @@ internal interface PCBRequest {
     suspend fun getHomes(
         @Path(value = "player_uuid") playerUUID: String,
         @Query(value = "page") page: Int,
-        @Query(value = "size") size: Int,
+        @Query(value = "page_size") size: Int,
     ): PaginatedList<Home>
 
     @POST("v2/minecraft/player/{player_uuid}/home")
