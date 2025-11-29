@@ -8,6 +8,7 @@ import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.exe
 import com.projectcitybuild.pcbridge.paper.architecture.commands.scoped
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandContext
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandNode
+import com.projectcitybuild.pcbridge.paper.core.support.spigot.extensions.onlinePlayer
 import com.projectcitybuild.pcbridge.paper.features.bans.bansTracer
 import com.projectcitybuild.pcbridge.paper.features.bans.hooks.dialogs.CreateBanDialog
 import io.papermc.paper.command.brigadier.Commands
@@ -34,7 +35,7 @@ class BanCommand(
         val inputPlayerName = context.getArgument("player", String::class.java)
 
         val playerName = inputPlayerName
-            ?.let { name -> server.onlinePlayers.firstOrNull { it.name == name }?.name }
+            ?.let { name -> server.onlinePlayer(name = name)?.name }
             ?: inputPlayerName
 
         val dialog = CreateBanDialog.build(playerName)

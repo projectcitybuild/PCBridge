@@ -2,6 +2,7 @@ package com.projectcitybuild.pcbridge.paper.core.libs.playerlookup
 
 import com.projectcitybuild.pcbridge.http.playerdb.services.PlayerDbMinecraftService
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
+import com.projectcitybuild.pcbridge.paper.core.support.spigot.extensions.onlinePlayer
 import org.bukkit.Server
 import java.util.UUID
 
@@ -12,9 +13,7 @@ class PlayerLookup(
     suspend fun findUuid(alias: String): UUID? {
         val trimmedAlias = alias.trim()
 
-        val onlinePlayer = server.onlinePlayers.firstOrNull {
-            it.name.equals(trimmedAlias, ignoreCase = true)
-        }
+        val onlinePlayer = server.onlinePlayer(name = trimmedAlias)
         if (onlinePlayer != null) {
             return onlinePlayer.uniqueId
         }

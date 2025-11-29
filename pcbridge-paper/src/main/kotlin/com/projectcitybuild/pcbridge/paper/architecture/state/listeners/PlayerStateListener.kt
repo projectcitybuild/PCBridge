@@ -3,7 +3,7 @@ package com.projectcitybuild.pcbridge.paper.architecture.state.listeners
 import com.projectcitybuild.pcbridge.paper.architecture.connection.events.ConnectionPermittedEvent
 import com.projectcitybuild.pcbridge.paper.architecture.listeners.scoped
 import com.projectcitybuild.pcbridge.paper.core.libs.datetime.services.LocalizedTime
-import com.projectcitybuild.pcbridge.paper.architecture.state.data.PlayerState
+import com.projectcitybuild.pcbridge.paper.architecture.state.data.PlayerSession
 import com.projectcitybuild.pcbridge.paper.architecture.state.events.PlayerStateCreatedEvent
 import com.projectcitybuild.pcbridge.paper.core.libs.store.Store
 import com.projectcitybuild.pcbridge.paper.architecture.state.events.PlayerStateDestroyedEvent
@@ -32,12 +32,12 @@ class PlayerStateListener(
     ) = event.scoped(stateTracer, this::class.java) {
         log.info { "Creating player state for ${event.playerUUID}" }
 
-        val playerState = event.playerData?.let {
-            PlayerState.fromPlayerData(it, connectedAt = time.now())
-        } ?: PlayerState(connectedAt = time.now())
+        val playerSession = event.playerData?.let {
+            PlayerSession.fromPlayerData(it, connectedAt = time.now())
+        } ?: PlayerSession(connectedAt = time.now())
 
         store.mutate { state ->
-            state.copy(players = state.players.apply { put(event.playerUUID, playerState) })
+            state.copy(players = state.players.apply { put(event.playerUUID, playerSession) })
         }
     }
 

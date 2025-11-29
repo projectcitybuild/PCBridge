@@ -1,8 +1,10 @@
 package com.projectcitybuild.pcbridge.paper.integrations.dynmap
 
 import com.github.shynixn.mccoroutine.bukkit.registerSuspendingEvents
+import com.projectcitybuild.pcbridge.paper.architecture.listeners.scoped
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.logSync
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.tracing.TracerFactory
 import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.RemoteConfig
 import com.projectcitybuild.pcbridge.paper.features.config.domain.data.RemoteConfigUpdatedEvent
 import com.projectcitybuild.pcbridge.paper.features.spawns.domain.data.SpawnUpdatedEvent
@@ -21,6 +23,7 @@ class DynmapIntegration(
     private val remoteConfig: RemoteConfig,
 ) : Listener {
     private var adapter: DynmapAdapter? = null
+    private val tracer = TracerFactory.make("integration.dynmap")
 
     suspend fun enable() {
         // Check if DynmapCoreAPI class is present, as this is only available
@@ -53,16 +56,24 @@ class DynmapIntegration(
     }
 
     @EventHandler
-    suspend fun onWarpCreate(event: WarpCreateEvent) = updateWarpMarkers()
+    suspend fun onWarpCreate(
+        event: WarpCreateEvent,
+    ) = event.scoped(tracer, this::class.java) { updateWarpMarkers() }
 
     @EventHandler
-    suspend fun onWarpDelete(event: WarpDeleteEvent) = updateWarpMarkers()
+    suspend fun onWarpDelete(
+        event: WarpDeleteEvent,
+    ) = event.scoped(tracer, this::class.java) { updateWarpMarkers() }
 
     @EventHandler
-    suspend fun onSpawnUpdate(event: SpawnUpdatedEvent) = updateSpawnMarkers()
+    suspend fun onSpawnUpdate(
+        event: SpawnUpdatedEvent,
+    ) = event.scoped(tracer, this::class.java) { updateSpawnMarkers() }
 
     @EventHandler
-    suspend fun onRemoteConfigUpdated(event: RemoteConfigUpdatedEvent) {
+    suspend fun onRemoteConfigUpdated(
+        event: RemoteConfigUpdatedEvent,
+    ) = event.scoped(tracer, this::class.java) {
         val prev = event.prev?.config
         val next = event.next.config
 
@@ -74,11 +85,11 @@ class DynmapIntegration(
         }
     }
 
-    private suspend fun updateWarpMarkers() {
+    private suspend fun updateWarpMarkers() = tracer.trace("updateWarpMarkers") {
         val adapter = adapter
         if (adapter == null) {
             log.error { "Dynmap integration disabled but attempted to draw warp markers" }
-            return
+            return@trace
         }
         val config = remoteConfig.latest.config
 
@@ -102,11 +113,11 @@ class DynmapIntegration(
         }
     }
 
-    private suspend fun updateSpawnMarkers() {
+    private suspend fun updateSpawnMarkers() = tracer.trace("updateSpawnMarkers") {
         val adapter = adapter
         if (adapter == null) {
             log.error { "Dynmap integration disabled but attempted to draw spawn markers" }
-            return
+            return@trace
         }
         val config = remoteConfig.latest.config
 

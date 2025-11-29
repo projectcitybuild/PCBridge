@@ -28,18 +28,13 @@ class AuthorizeConnectionListener(
     fun handle(event: AsyncPlayerPreLoginEvent) {
         val clazz = this::class.java
         /**
-         * In order to call `event.disallow()`, this function must block until player data
-         * has been fetched and processed. Blocking is not a problem because this event
-         * handler function is called asynchronously by Paper.
+         * To call `event.disallow()` the handler must block until player data
+         * is fetched, because it mutates a flag on the Event instance that Paper
+         * reads after all handlers run.
          *
-         * The `event.disallow()` function works by mutating a boolean on the Event class instance.
-         * The final value is read from the instance after all event handlers have had their turn.
-         * However, event handlers are not suspending as they are Java functions. MCCoroutine gets
-         * around this by immediately returning the event but allowing suspending functions to
-         * continue execution in the background.
-         *
-         * Therefore, in order to call a mutating function, the event handler must be blocking so that
-         * it awaits the result of the handler.
+         * MCCoroutine returns the event immediately and continues suspending
+         * functions in the background, so mutating the event in a coroutine
+         * would occur too late (i.e. after it's already read).
          *
          * See https://github.com/Shynixn/MCCoroutine/issues/43
          */
