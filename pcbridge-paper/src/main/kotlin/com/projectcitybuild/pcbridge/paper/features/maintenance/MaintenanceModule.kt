@@ -1,9 +1,9 @@
 package com.projectcitybuild.pcbridge.paper.features.maintenance
 
-import com.projectcitybuild.pcbridge.paper.features.maintenance.commands.MaintenanceCommand
-import com.projectcitybuild.pcbridge.paper.features.maintenance.decorators.MaintenanceMotdDecorator
-import com.projectcitybuild.pcbridge.paper.features.maintenance.listener.MaintenanceReminderListener
-import com.projectcitybuild.pcbridge.paper.features.maintenance.middleware.MaintenanceConnectionMiddleware
+import com.projectcitybuild.pcbridge.paper.features.maintenance.hooks.commands.MaintenanceCommand
+import com.projectcitybuild.pcbridge.paper.features.maintenance.hooks.decorators.MaintenanceMotdDecorator
+import com.projectcitybuild.pcbridge.paper.features.maintenance.hooks.listener.MaintenanceReminderListener
+import com.projectcitybuild.pcbridge.paper.features.maintenance.hooks.middleware.MaintenanceConnectionMiddleware
 import org.bukkit.plugin.java.JavaPlugin
 import org.koin.dsl.module
 

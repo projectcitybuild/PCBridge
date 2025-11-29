@@ -1,10 +1,11 @@
 package com.projectcitybuild.pcbridge.paper.features.bans.hooks.listeners
 
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.errors.ErrorTracker
+import com.projectcitybuild.pcbridge.paper.architecture.listeners.scoped
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.logSync
 import com.projectcitybuild.pcbridge.paper.core.support.component.sendMessageRich
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.extensions.broadcastRich
+import com.projectcitybuild.pcbridge.paper.features.bans.bansTracer
 import com.projectcitybuild.pcbridge.paper.features.bans.domain.actions.CreateUuidBan
 import com.projectcitybuild.pcbridge.paper.features.bans.hooks.dialogs.CreateBanDialog
 import com.projectcitybuild.pcbridge.paper.features.bans.domain.utilities.toMiniMessage
@@ -19,17 +20,17 @@ import org.bukkit.event.player.PlayerKickEvent
 class BanDialogListener(
     private val server: Server,
     private val createUuidBan: CreateUuidBan,
-    private val errorTracker: ErrorTracker,
 ) : Listener {
     @EventHandler
-    // TODO: reusable sentry and error handling
-    suspend fun onPlayerCustomClickEvent(event: PlayerCustomClickEvent) = runCatching {
-        if (! event.identifier.equals(CreateBanDialog.submitBanButtonKey)) return@runCatching
+    suspend fun onPlayerCustomClickEvent(
+        event: PlayerCustomClickEvent,
+    ) = event.scoped(bansTracer, this::class.java) {
+        if (! event.identifier.equals(CreateBanDialog.submitBanButtonKey)) return@scoped
 
         val view = event.dialogResponseView
         if (view == null) {
             log.error { "DialogResponseView was null for ${event.identifier}" }
-            return@runCatching
+            return@scoped
         }
 
         val playerName = view.getText(CreateBanDialog.playerNameKey)?.trim()
@@ -55,7 +56,7 @@ class BanDialogListener(
                     else "",
             )
             bannerPlayer?.showDialog(dialog)
-            return@runCatching
+            return@scoped
         }
 
         val result = try {
@@ -68,13 +69,13 @@ class BanDialogListener(
             )
         } catch (_: CreateUuidBan.PlayerNotFound) {
             bannerPlayer?.sendMessageRich("<red>Error: Player not found</red>")
-            return@runCatching
+            return@scoped
         } catch (_: CreateUuidBan.PlayerAlreadyBanned) {
             bannerPlayer?.sendMessageRich("<red>Error: $playerName is already banned</red>")
-            return@runCatching
+            return@scoped
         } catch (e: CreateUuidBan.InvalidBanInput) {
             bannerPlayer?.sendMessageRich("<red>Error: ${e.message}</red>")
-            return@runCatching
+            return@scoped
         }
 
         server.broadcastRich(l10n.playerHasBeenBanned(playerName))
@@ -85,8 +86,5 @@ class BanDialogListener(
             PlayerKickEvent.Cause.BANNED,
         )
         bannerPlayer?.sendMessageRich(l10n.clickToEditBan(result.editUrl))
-    }.onFailure {
-        log.error(it) { "Failed to handle ban dialog response" }
-        errorTracker.report(it)
     }
 }

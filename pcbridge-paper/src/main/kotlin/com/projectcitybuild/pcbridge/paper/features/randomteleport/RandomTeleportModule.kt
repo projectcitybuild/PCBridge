@@ -1,7 +1,7 @@
 package com.projectcitybuild.pcbridge.paper.features.randomteleport
 
-import com.projectcitybuild.pcbridge.paper.features.randomteleport.actions.FindRandomLocation
-import com.projectcitybuild.pcbridge.paper.features.randomteleport.commands.RtpCommand
+import com.projectcitybuild.pcbridge.paper.features.randomteleport.domain.actions.FindRandomLocation
+import com.projectcitybuild.pcbridge.paper.features.randomteleport.hooks.commands.RtpCommand
 import org.bukkit.plugin.java.JavaPlugin
 import org.koin.dsl.module
 

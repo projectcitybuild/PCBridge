@@ -74,7 +74,6 @@ val homesModule = module {
     factory {
         HomeRenameDialogListener(
             homeRepository = get(),
-            errorTracker = get(),
         )
     }
 }

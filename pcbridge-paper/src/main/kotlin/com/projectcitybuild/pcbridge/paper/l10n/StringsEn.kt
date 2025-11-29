@@ -39,7 +39,7 @@ class StringsEn {
     val renamedItem = { name: String -> "<gray>Renamed item in hand to $name</gray>" }
     val codeHasBeenEmailedTo = { email: String -> "A code has been emailed to <aqua>$email</aqua>.<newline>Please type the code below to finish registration." }
     val codeHasBeenEmailed = "Please type in the code emailed to you to finish registration."
-    val spawnSet = { location: Location -> "<green>Set the world spawn point to <gray>${location.x} ${location.y} ${location.z} ${location.pitch} ${location.yaw}</gray></green>" }
+    val spawnSet = { location: Location -> "<green>World spawn set to <gray>${location.x} ${location.y} ${location.z} ${location.pitch} ${location.yaw}</gray></green>" }
     val searchingForSafeLocation = "<gray><i>Searching for a safe location...</i></gray>"
     val teleportedToName = { name: String -> "<gray><i>⚡ Teleported to <b>$name</b></i></gray>" }
     val teleportedToCoordinate = { x: Int, y: Int, z: Int -> "<gray><i>⚡ Teleported to <b>x=$x, y=$y, z=$z</b></gray></i>" }

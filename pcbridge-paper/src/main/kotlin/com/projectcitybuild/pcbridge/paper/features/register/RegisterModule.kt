@@ -22,7 +22,6 @@ val registerModule = module {
     factory {
         VerifyCodeDialogListener(
             registerHttpService = get<PCBHttp>().register,
-            errorTracker = get(),
         )
     }
 }

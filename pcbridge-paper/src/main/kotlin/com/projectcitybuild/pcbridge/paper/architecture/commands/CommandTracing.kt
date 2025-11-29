@@ -4,6 +4,7 @@ import com.mojang.brigadier.context.CommandContext
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.tracing.Tracer
 import io.opentelemetry.api.common.Attributes
 import io.opentelemetry.api.common.AttributesBuilder
+import io.opentelemetry.api.trace.SpanKind
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
@@ -17,7 +18,11 @@ suspend fun <S: CommandSourceStack> CommandContext<S>.scoped(
         .putSender(source.sender)
         .put("input", input)
 
-    tracer.trace("command.$commandLiteral", attributes.build()) {
+    tracer.trace(
+        operation = "command.$commandLiteral",
+        spanKind = SpanKind.SERVER,
+        attributes = attributes.build(),
+    ) {
         runCatching { block(this) }.onFailure { e ->
             CommandExceptionHandler.catch(source.sender, e)
         }
@@ -33,7 +38,11 @@ fun <S: CommandSourceStack> CommandContext<S>.scopedSync(
         .putSender(source.sender)
         .put("input", input)
 
-    tracer.traceSync("command.$commandLiteral", attributes.build()) {
+    tracer.traceSync(
+        operation = "command.$commandLiteral",
+        spanKind = SpanKind.SERVER,
+        attributes = attributes.build(),
+    ) {
         runCatching { block(this) }.onFailure { e ->
             CommandExceptionHandler.catch(source.sender, e)
         }

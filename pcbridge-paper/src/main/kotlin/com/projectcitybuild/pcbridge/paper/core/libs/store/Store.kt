@@ -4,6 +4,7 @@ import com.projectcitybuild.pcbridge.paper.architecture.state.data.PersistedServ
 import com.projectcitybuild.pcbridge.paper.architecture.state.data.ServerState
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.logSync
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.tracing.TracerFactory
 import com.projectcitybuild.pcbridge.paper.core.libs.storage.Storage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
@@ -18,6 +19,8 @@ class Store(
     private val file: File,
     private val storage: Storage<PersistedServerState>,
 ) {
+    private val tracer = TracerFactory.make("store")
+
     val state: ServerState
         get() = _state
 
@@ -26,7 +29,7 @@ class Store(
     /**
      * Restores the state from storage
      */
-    suspend fun hydrate() {
+    suspend fun hydrate() = tracer.trace("hydrate") {
         log.info { "Hydrating Store state from storage" }
 
         val deserialized = storage.read(file)
@@ -40,7 +43,7 @@ class Store(
     /**
      * Saves the state to storage
      */
-    fun persist() {
+    fun persist() = tracer.traceSync("persist") {
         logSync.info { "Persisting Store state to storage" }
 
         storage.writeSync(
@@ -49,15 +52,20 @@ class Store(
         )
     }
 
-    suspend fun mutate(mutation: (ServerState) -> ServerState) =
-        withContext(Dispatchers.IO) {
+    suspend fun mutate(
+        mutation: (ServerState) -> ServerState,
+    ) = withContext(Dispatchers.IO) {
+        tracer.trace("mutate") {
             val prev = state
 
             mutex.withLock { _state = mutation(_state) }
 
-            log.debug("State mutated", mapOf(
-                "prev" to prev,
-                "next" to state,
-            ))
+            log.debug(
+                "State mutated", mapOf(
+                    "prev" to prev,
+                    "next" to state,
+                )
+            )
         }
+    }
 }

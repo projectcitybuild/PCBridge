@@ -2,12 +2,12 @@ package com.projectcitybuild.pcbridge.paper.features.spawns
 
 import com.google.gson.reflect.TypeToken
 import com.projectcitybuild.pcbridge.paper.core.libs.storage.JsonStorage
-import com.projectcitybuild.pcbridge.paper.features.spawns.commands.HubCommand
-import com.projectcitybuild.pcbridge.paper.features.spawns.commands.SetSpawnCommand
-import com.projectcitybuild.pcbridge.paper.features.spawns.commands.SpawnCommand
-import com.projectcitybuild.pcbridge.paper.features.spawns.data.SerializableSpawn
-import com.projectcitybuild.pcbridge.paper.features.spawns.listeners.PlayerRespawnListener
-import com.projectcitybuild.pcbridge.paper.features.spawns.repositories.SpawnRepository
+import com.projectcitybuild.pcbridge.paper.features.spawns.hooks.commands.HubCommand
+import com.projectcitybuild.pcbridge.paper.features.spawns.hooks.commands.SetSpawnCommand
+import com.projectcitybuild.pcbridge.paper.features.spawns.hooks.commands.SpawnCommand
+import com.projectcitybuild.pcbridge.paper.features.spawns.domain.data.SerializableSpawn
+import com.projectcitybuild.pcbridge.paper.features.spawns.hooks.listeners.PlayerRespawnListener
+import com.projectcitybuild.pcbridge.paper.features.spawns.domain.repositories.SpawnRepository
 import org.bukkit.plugin.java.JavaPlugin
 import org.koin.dsl.module
 

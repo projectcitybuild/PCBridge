@@ -1,11 +1,13 @@
 package com.projectcitybuild.pcbridge.paper.features.groups
 
-import com.projectcitybuild.pcbridge.paper.features.groups.decorators.ChatGroupDecorator
-import com.projectcitybuild.pcbridge.paper.features.groups.listener.ChatGroupInvalidateListener
-import com.projectcitybuild.pcbridge.paper.features.groups.listener.RoleStateChangeListener
-import com.projectcitybuild.pcbridge.paper.features.groups.placeholders.TabGroupListPlaceholder
-import com.projectcitybuild.pcbridge.paper.features.groups.placeholders.TabGroupsPlaceholder
-import com.projectcitybuild.pcbridge.paper.features.groups.repositories.ChatGroupRepository
+import com.projectcitybuild.pcbridge.paper.features.groups.hooks.decorators.ChatGroupDecorator
+import com.projectcitybuild.pcbridge.paper.features.groups.domain.ChatGroupFormatter
+import com.projectcitybuild.pcbridge.paper.features.groups.domain.RolesFilter
+import com.projectcitybuild.pcbridge.paper.features.groups.hooks.listener.ChatGroupInvalidateListener
+import com.projectcitybuild.pcbridge.paper.features.groups.hooks.listener.RoleStateChangeListener
+import com.projectcitybuild.pcbridge.paper.features.groups.hooks.placeholders.TabGroupListPlaceholder
+import com.projectcitybuild.pcbridge.paper.features.groups.hooks.placeholders.TabGroupsPlaceholder
+import com.projectcitybuild.pcbridge.paper.features.groups.domain.repositories.ChatGroupRepository
 import io.github.reactivecircus.cache4k.Cache
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
