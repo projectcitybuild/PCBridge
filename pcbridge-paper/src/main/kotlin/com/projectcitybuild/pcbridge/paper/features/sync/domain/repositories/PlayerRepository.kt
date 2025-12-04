@@ -12,7 +12,7 @@ class PlayerRepository(
     private val httpService: PlayerHttpService,
 ): PlayerDataProvider {
     @Throws(Exception::class)
-    override suspend fun get(uuid: UUID, ip: InetAddress?, ): PlayerData
+    override suspend fun get(uuid: UUID, ip: InetAddress?): PlayerData
         = httpService.get(
             playerUUID = uuid,
             ip = ip?.sanitized(),

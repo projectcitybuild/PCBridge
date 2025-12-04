@@ -35,7 +35,7 @@ val groupsModule = module {
     factory {
         TabGroupListPlaceholder(
             rolesFilter = get(),
-            store = get(),
+            session = get(),
             server = get(),
             tabRenderer = get(),
         )
@@ -52,7 +52,7 @@ val groupsModule = module {
     factory {
         ChatGroupRepository(
             chatGroupFormatter = get(),
-            store = get(),
+            session = get(),
             groupCache = get(named("group_cache")),
         )
     }

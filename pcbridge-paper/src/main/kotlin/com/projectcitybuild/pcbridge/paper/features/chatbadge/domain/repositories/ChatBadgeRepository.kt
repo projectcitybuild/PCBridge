@@ -1,6 +1,7 @@
 package com.projectcitybuild.pcbridge.paper.features.chatbadge.domain.repositories
 
 import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.RemoteConfig
+import com.projectcitybuild.pcbridge.paper.core.libs.store.SessionStore
 import com.projectcitybuild.pcbridge.paper.core.libs.store.Store
 import com.projectcitybuild.pcbridge.paper.features.chatbadge.domain.ChatBadgeFormatter
 import io.github.reactivecircus.cache4k.Cache
@@ -9,7 +10,7 @@ import java.util.UUID
 
 class ChatBadgeRepository(
     private val remoteConfig: RemoteConfig,
-    private val store: Store,
+    private val session: SessionStore,
     private val badgeCache: Cache<UUID, CachedComponent>,
     private val badgeFormatter: ChatBadgeFormatter,
 ) {
@@ -17,7 +18,8 @@ class ChatBadgeRepository(
 
     suspend fun getComponent(playerUUID: UUID): CachedComponent {
         return badgeCache.get(playerUUID) {
-            val badges = store.state.players[playerUUID]?.badges
+            val playerSession = session.state.players[playerUUID]
+            val badges = playerSession?.syncedValue?.badges
                 ?: emptyList()
 
             val config = remoteConfig.latest.config

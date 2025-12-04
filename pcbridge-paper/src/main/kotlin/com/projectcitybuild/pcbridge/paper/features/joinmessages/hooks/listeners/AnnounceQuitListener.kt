@@ -3,6 +3,7 @@ package com.projectcitybuild.pcbridge.paper.features.joinmessages.hooks.listener
 import com.projectcitybuild.pcbridge.paper.architecture.listeners.scopedSync
 import com.projectcitybuild.pcbridge.paper.core.libs.datetime.services.LocalizedTime
 import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.RemoteConfig
+import com.projectcitybuild.pcbridge.paper.core.libs.store.SessionStore
 import com.projectcitybuild.pcbridge.paper.core.libs.store.Store
 import com.projectcitybuild.pcbridge.paper.features.joinmessages.joinMessagesTracer
 import net.kyori.adventure.text.Component
@@ -17,14 +18,14 @@ import java.time.LocalDateTime
 
 class AnnounceQuitListener(
     private val remoteConfig: RemoteConfig,
-    private val store: Store,
+    private val session: SessionStore,
     private val time: LocalizedTime,
 ) : Listener {
     @EventHandler(priority = EventPriority.NORMAL)
     fun onPlayerQuit(
         event: PlayerQuitEvent,
     ) = event.scopedSync(joinMessagesTracer, this::class.java) {
-        val playerState = store.state.players[event.player.uniqueId]
+        val playerState = session.state.players[event.player.uniqueId]
         val joinTime = playerState?.connectedAt ?: time.now()
         val timeOnline = sessionTime(start = joinTime)
 

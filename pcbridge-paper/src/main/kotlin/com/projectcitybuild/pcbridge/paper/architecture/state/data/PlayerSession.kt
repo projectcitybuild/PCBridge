@@ -5,27 +5,40 @@ import com.projectcitybuild.pcbridge.http.pcb.models.Badge
 import com.projectcitybuild.pcbridge.http.pcb.models.Group
 import com.projectcitybuild.pcbridge.http.pcb.models.Player
 import com.projectcitybuild.pcbridge.http.pcb.models.PlayerData
-import com.projectcitybuild.pcbridge.http.shared.serialization.serializable.LocalDateTimeSerializer
-import kotlinx.serialization.Serializable
 import java.time.LocalDateTime
 
-@Serializable
 data class PlayerSession(
-    @Serializable(with = LocalDateTimeSerializer::class)
+    val synced: PlayerSyncedState,
     val connectedAt: LocalDateTime?,
-    val account: Account? = null,
-    val player: Player? = null,
-    val groups: List<Group> = emptyList(),
-    val badges: List<Badge> = emptyList(),
     val afk: Boolean = false,
 ) {
+    val syncedValue: PlayerSyncedState.Valid?
+        get() = synced as? PlayerSyncedState.Valid
+
     companion object {
-        fun fromPlayerData(data: PlayerData, connectedAt: LocalDateTime) = PlayerSession(
+        fun fromPlayerData(
+            data: PlayerData?,
+            connectedAt: LocalDateTime,
+        ) = PlayerSession(
             connectedAt = connectedAt,
-            account = data.account,
-            player = data.player,
-            groups = data.groups,
-            badges = data.badges,
+            synced = if (data == null) PlayerSyncedState.Unavailable
+                else PlayerSyncedState.Valid(
+                    account = data.account,
+                    player = data.player,
+                    groups = data.groups,
+                    badges = data.badges,
+                ),
         )
     }
+}
+
+sealed class PlayerSyncedState {
+    object Unavailable: PlayerSyncedState()
+
+    data class Valid(
+        val account: Account? = null,
+        val player: Player? = null,
+        val groups: List<Group> = emptyList(),
+        val badges: List<Badge> = emptyList(),
+    ): PlayerSyncedState()
 }

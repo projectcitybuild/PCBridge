@@ -1,48 +1,58 @@
 package com.projectcitybuild.pcbridge.paper.architecture.state.listeners
 
+import com.projectcitybuild.pcbridge.paper.architecture.connection.connectionTracer
 import com.projectcitybuild.pcbridge.paper.architecture.connection.events.ConnectionPermittedEvent
 import com.projectcitybuild.pcbridge.paper.architecture.listeners.scoped
 import com.projectcitybuild.pcbridge.paper.core.libs.datetime.services.LocalizedTime
 import com.projectcitybuild.pcbridge.paper.architecture.state.data.PlayerSession
 import com.projectcitybuild.pcbridge.paper.architecture.state.events.PlayerStateCreatedEvent
-import com.projectcitybuild.pcbridge.paper.core.libs.store.Store
 import com.projectcitybuild.pcbridge.paper.architecture.state.events.PlayerStateDestroyedEvent
 import com.projectcitybuild.pcbridge.paper.architecture.state.stateTracer
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.errors.ErrorTracker
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
+import com.projectcitybuild.pcbridge.paper.core.libs.store.SessionStore
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotEventBroadcaster
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
+import kotlin.jvm.java
 
 class PlayerStateListener(
-    private val store: Store,
+    private val session: SessionStore,
     private val time: LocalizedTime,
     private val eventBroadcaster: SpigotEventBroadcaster,
-    private val errorTracker: ErrorTracker,
 ) : Listener {
-    /**
-     * Creates a PlayerState for the connecting user
-     */
-    @EventHandler
+    @EventHandler(
+        priority = EventPriority.MONITOR,
+        ignoreCancelled = true,
+    )
     suspend fun onConnectionPermitted(
         event: ConnectionPermittedEvent,
-    ) = event.scoped(stateTracer, this::class.java) {
+    ) = event.scoped(connectionTracer, this::class.java) {
         log.info { "Creating player state for ${event.playerUUID}" }
 
-        val playerSession = event.playerData?.let {
-            PlayerSession.fromPlayerData(it, connectedAt = time.now())
-        } ?: PlayerSession(connectedAt = time.now())
-
-        store.mutate { state ->
-            state.copy(players = state.players.apply { put(event.playerUUID, playerSession) })
+        if (event.playerData == null) {
+            log.warn { "Player ${event.playerUUID} entered the server but player data unavailable" }
         }
+        val playerSession = PlayerSession.fromPlayerData(
+            event.playerData,
+            connectedAt = time.now(),
+        )
+        session.mutate { state ->
+            val updatedPlayers = state.players + mapOf(event.playerUUID to playerSession)
+            state.copy(players = updatedPlayers)
+        }
+        eventBroadcaster.broadcast(
+            PlayerStateCreatedEvent(
+                state = session.state.players[event.playerUUID]!!,
+                playerUUID = event.playerUUID,
+            ),
+        )
     }
 
     /**
-     * Emits that PlayerState exists for the joining player
+     * Warns the player if we failed to fetch their data
      */
     @EventHandler(ignoreCancelled = true)
     suspend fun onPlayerJoin(
@@ -50,20 +60,13 @@ class PlayerStateListener(
     ) = event.scoped(stateTracer, this::class.java) {
         // TODO: warn the user if their data was unable to be fetched
 
-        val playerState = store.state.players[event.player.uniqueId]
+        val playerState = session.state.players[event.player.uniqueId]
         if (playerState == null) {
-            log.error { "Player state was missing on join event" }
-            errorTracker.report(Exception("Player state was missing on join event"))
-            return@scoped
+            log.warn { "Player state was missing on join event" }
+            event.player.sendRichMessage(
+                "Warning: Unable to retrieve player data. Your permissions, rank and other data may be missing. Please type /sync or try reconnect in a moment"
+            )
         }
-        // Some state update listeners require an actual Player to exist, and this is
-        // only present during and after the PlayerJoinEvent
-        eventBroadcaster.broadcast(
-            PlayerStateCreatedEvent(
-                state = playerState,
-                playerUUID = event.player.uniqueId,
-            ),
-        )
     }
 
     /**
@@ -77,15 +80,15 @@ class PlayerStateListener(
     ) = event.scoped(stateTracer, this::class.java) {
         val uuid = event.player.uniqueId
         log.info { "Destroying player state for $uuid" }
-        val prevState = store.state.players[uuid]
+        val prevState = session.state.players[uuid]
 
-        val exists = store.state.players.containsKey(event.player.uniqueId)
+        val exists = session.state.players.containsKey(event.player.uniqueId)
         if (!exists) {
             log.debug { "Player state did not exist - no clean up needed" }
             return@scoped
         }
-        store.mutate { state ->
-            state.copy(players = state.players.apply { remove(uuid) })
+        session.mutate { state ->
+            state.copy(players = state.players.filter { it.key != uuid })
         }
         eventBroadcaster.broadcast(
             PlayerStateDestroyedEvent(

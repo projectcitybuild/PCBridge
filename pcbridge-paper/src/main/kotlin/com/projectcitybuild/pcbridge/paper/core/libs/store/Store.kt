@@ -14,7 +14,6 @@ import java.io.File
 
 private val mutex = Mutex()
 
-// TODO: splice the store so that each feature can maintain its own state slice
 class Store(
     private val file: File,
     private val storage: Storage<PersistedServerState>,

@@ -10,7 +10,7 @@ class CheckBan {
         data class IP(val value: IPBan) : Ban()
     }
 
-    fun get(playerData: PlayerData): Ban? {
+    fun check(playerData: PlayerData): Ban? {
         val playerBan = playerData.playerBan
         if (playerBan != null && playerBan.isActive) {
             return Ban.UUID(playerBan)

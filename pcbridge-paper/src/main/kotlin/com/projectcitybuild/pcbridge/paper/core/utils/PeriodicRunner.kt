@@ -6,6 +6,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.UUID
 import kotlin.time.Duration
@@ -58,7 +59,7 @@ class PeriodicRunner(
                 log.error(e) { "Failed to process runner action" }
                 e.printStackTrace()
             }
-            kotlinx.coroutines.delay(processInterval)
+            delay(processInterval)
         }
         log.debug { "Job $jobId has been cancelled or completed." }
     }

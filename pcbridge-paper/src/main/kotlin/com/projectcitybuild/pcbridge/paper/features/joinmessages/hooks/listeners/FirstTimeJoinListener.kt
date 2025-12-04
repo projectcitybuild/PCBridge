@@ -1,9 +1,10 @@
 package com.projectcitybuild.pcbridge.paper.features.joinmessages.hooks.listeners
 
 import com.projectcitybuild.pcbridge.paper.architecture.listeners.scopedSync
+import com.projectcitybuild.pcbridge.paper.architecture.state.data.PlayerSyncedState
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.logSync
 import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.RemoteConfig
-import com.projectcitybuild.pcbridge.paper.core.libs.store.Store
+import com.projectcitybuild.pcbridge.paper.core.libs.store.SessionStore
 import com.projectcitybuild.pcbridge.paper.features.joinmessages.joinMessagesTracer
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.MiniMessage
@@ -16,7 +17,7 @@ import org.bukkit.event.player.PlayerJoinEvent
 
 class FirstTimeJoinListener(
     private val server: Server,
-    private val store: Store,
+    private val session: SessionStore,
     private val remoteConfig: RemoteConfig,
 ) : Listener {
     @EventHandler(priority = EventPriority.MONITOR)
@@ -25,13 +26,18 @@ class FirstTimeJoinListener(
     ) = event.scopedSync(joinMessagesTracer, this::class.java) {
         logSync.debug { "Checking if first time join" }
 
-        val playerState = store.state.players[event.player.uniqueId]
-        if (playerState == null) {
+        val playerSession = session.state.players[event.player.uniqueId]
+        if (playerSession == null) {
             logSync.warn { "Failed to find state for player: ${event.player.uniqueId}" }
             return@scopedSync
         }
-        if (playerState.player?.lastSeenAt != null) {
-            logSync.info { "Player last seen ${playerState.player.lastSeenAt}. Not sending first-time join message" }
+        val synced = playerSession.syncedValue
+        if (synced == null) {
+            logSync.warn { "No player data available to check if first-time join" }
+            return@scopedSync
+        }
+        if (synced.player?.lastSeenAt != null) {
+            logSync.debug { "Player last seen ${synced.player.lastSeenAt}. Not sending first-time join message" }
             return@scopedSync
         }
 

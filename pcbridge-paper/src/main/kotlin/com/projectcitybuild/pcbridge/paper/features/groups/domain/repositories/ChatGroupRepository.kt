@@ -1,5 +1,6 @@
 package com.projectcitybuild.pcbridge.paper.features.groups.domain.repositories
 
+import com.projectcitybuild.pcbridge.paper.core.libs.store.SessionStore
 import com.projectcitybuild.pcbridge.paper.core.libs.store.Store
 import com.projectcitybuild.pcbridge.paper.features.groups.domain.ChatGroupFormatter
 import io.github.reactivecircus.cache4k.Cache
@@ -9,7 +10,7 @@ import net.kyori.adventure.text.Component
 import java.util.UUID
 
 class ChatGroupRepository(
-    private val store: Store,
+    private val session: SessionStore,
     private val chatGroupFormatter: ChatGroupFormatter,
     private val groupCache: Cache<UUID, CachedComponent>,
 ) {
@@ -17,7 +18,8 @@ class ChatGroupRepository(
 
     suspend fun getGroupsComponent(playerUUID: UUID): CachedComponent {
         return groupCache.get(playerUUID) {
-            val groups = store.state.players[playerUUID]?.groups
+            val playerSession = session.state.players[playerUUID]
+            val groups = playerSession?.syncedValue?.groups
                 ?: emptyList()
 
             withContext(Dispatchers.IO) {

@@ -16,7 +16,7 @@ val joinMessagesModule = module {
     factory {
         AnnounceQuitListener(
             remoteConfig = get(),
-            store = get(),
+            session = get(),
             time = get(),
         )
     }
@@ -25,7 +25,7 @@ val joinMessagesModule = module {
         FirstTimeJoinListener(
             remoteConfig = get(),
             server = get(),
-            store = get(),
+            session = get(),
         )
     }
 

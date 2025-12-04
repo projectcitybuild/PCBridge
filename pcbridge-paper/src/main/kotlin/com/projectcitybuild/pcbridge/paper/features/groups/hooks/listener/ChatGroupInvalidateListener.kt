@@ -23,8 +23,9 @@ class ChatGroupInvalidateListener(
     fun onPlayerStateUpdated(
         event: PlayerStateUpdatedEvent,
     ) = event.scopedSync(groupsTracer, this::class.java) {
-        if (event.prevState?.groups == event.state.groups) return@scopedSync
-
+        if (event.prevState?.syncedValue?.groups == event.state.syncedValue?.groups) {
+            return@scopedSync
+        }
         logSync.info { "Invalidating chat group cache for ${event.playerUUID}" }
         chatGroupRepository.invalidate(event.playerUUID)
     }

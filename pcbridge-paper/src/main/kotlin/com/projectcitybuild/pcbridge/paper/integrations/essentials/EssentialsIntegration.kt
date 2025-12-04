@@ -11,8 +11,10 @@ import com.projectcitybuild.pcbridge.paper.core.libs.observability.errors.ErrorT
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.logSync
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.tracing.TracerFactory
+import com.projectcitybuild.pcbridge.paper.core.libs.store.SessionStore
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotEventBroadcaster
 import com.projectcitybuild.pcbridge.paper.core.libs.teleportation.events.PlayerPreTeleportEvent
+import io.papermc.paper.command.brigadier.argument.ArgumentTypes.players
 import kotlinx.coroutines.runBlocking
 import net.ess3.api.events.AfkStatusChangeEvent
 import net.ess3.api.events.NickChangeEvent
@@ -24,7 +26,7 @@ import org.bukkit.plugin.java.JavaPlugin
 class EssentialsIntegration(
     private val plugin: JavaPlugin,
     private val server: Server,
-    private val store: Store,
+    private val session: SessionStore,
     private val eventBroadcaster: SpigotEventBroadcaster,
     private val tabRenderer: TabRenderer,
     private val errorTracker: ErrorTracker,
@@ -86,22 +88,17 @@ class EssentialsIntegration(
         logSync.info { "Player AFK status changed (${event.value}, ${event.cause})" }
 
         val playerUuid = event.affected.uuid
-        // TODO: clean up this mess...
         runBlocking {
-            val players = store.state.players.toMutableMap()
-            val prevPlayer = players[playerUuid]
-            val nextPlayer = prevPlayer?.copy(afk = event.value)
-            if (nextPlayer != null) {
-                players[playerUuid] = nextPlayer
-            }
-            store.mutate {
-                it.copy(players = players)
-            }
-            if (nextPlayer != null) {
+            val playerSession = session.state.players[playerUuid]
+            val updated = playerSession?.copy(afk = event.value)
+            if (updated != null) {
+                session.mutate { state ->
+                    state.copy(players = state.players + mapOf(playerUuid to updated))
+                }
                 eventBroadcaster.broadcast(
                     PlayerStateUpdatedEvent(
-                        prevState = prevPlayer,
-                        state = nextPlayer,
+                        prevState = playerSession,
+                        state = updated,
                         playerUUID = playerUuid,
                     ),
                 )

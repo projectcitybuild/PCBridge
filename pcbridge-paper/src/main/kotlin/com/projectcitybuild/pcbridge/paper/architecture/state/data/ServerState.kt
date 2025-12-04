@@ -7,15 +7,11 @@ import java.util.UUID
 /**
  * Represents in-memory, global state for the plugin.
  *
- * This state is persisted to storage on plugin shutdown,
+ * This state is persisted to storage on plugin shutdown
  * and restored upon boot.
  */
 @Serializable(with = UUIDSerializer::class)
 data class ServerState(
-    /**
-     * Individual state for each online player
-     */
-    val players: MutableMap<UUID, PlayerSession> = mutableMapOf(),
 
     /**
      * Index of the last announcement broadcast to players on the server.

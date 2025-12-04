@@ -39,8 +39,9 @@ class ChatBadgeInvalidateListener(
     fun onPlayerStateUpdated(
         event: PlayerStateUpdatedEvent,
     ) = event.scopedSync(chatBadgeTracer, this::class.java) {
-        if (event.prevState?.badges == event.state.badges) return@scopedSync
-
+        if (event.prevState?.syncedValue?.badges == event.state.syncedValue?.badges) {
+            return@scopedSync
+        }
         logSync.info { "Invalidating chat badge cache for ${event.playerUUID}" }
         chatBadgeRepository.invalidate(event.playerUUID)
     }
