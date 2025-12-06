@@ -13,6 +13,7 @@ plugins {
 
     id("org.jlleitschuh.gradle.ktlint") version "12.1.1"
     id("co.uzzu.dotenv.gradle") version "4.0.0"
+    jacoco
 }
 
 repositories {
@@ -26,6 +27,7 @@ subprojects {
     apply(plugin = "org.jetbrains.kotlin.jvm")
     apply(plugin = "org.jlleitschuh.gradle.ktlint")
     apply(plugin = "org.jetbrains.kotlin.plugin.serialization")
+    apply(plugin = "jacoco")
 
     dependencies {
         // Kotlin
@@ -67,5 +69,19 @@ subprojects {
 
         // https://docs.junit.org/current/user-guide/#extensions-registration-automatic
         jvmArgs("-Djunit.jupiter.extensions.autodetection.enabled=true")
+
+        // Run report after tests
+        finalizedBy("jacocoTestReport")
+    }
+
+    tasks.withType<JacocoReport> {
+        reports {
+            xml.required.set(true)
+            html.required.set(true)
+        }
+    }
+
+    tasks.check {
+        dependsOn(tasks.jacocoTestReport)
     }
 }
