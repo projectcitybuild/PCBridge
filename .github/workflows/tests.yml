@@ -7,16 +7,10 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-jobs:
-#  linter:
-#    runs-on: ubuntu-latest
-#    steps:
-#    - uses: actions/checkout@v4
-#    - uses: ./.github/actions/setup-java
-#
-#    - name: Check code formatting
-#      run: gradle ktlintCheck --scan
+permissions:
+  id-token: write
 
+jobs:
   unit-tests:
     runs-on: ubuntu-latest
     steps:
@@ -27,3 +21,15 @@ jobs:
 
       - name: Run tests
         run: gradle test --info
+
+      - name: Upload test results to Sentry Prevent
+        if: ${{ !cancelled() }}
+        uses: getsentry/prevent-action@c28387e2c2d931e083440db1be8c297d6cf6572f
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@96b38e9e60ee60a8c3911f4612407bba2f9195fb
+        with:
+          use_oidc: true
+          files: "**/build/reports/jacoco/test/jacocoTestReport.xml"
+          report_type: test_results
+          fail_ci_if_error: true
