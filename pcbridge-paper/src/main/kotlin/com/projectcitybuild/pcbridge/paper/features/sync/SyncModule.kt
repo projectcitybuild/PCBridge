@@ -14,7 +14,7 @@ import org.koin.dsl.module
 val syncModule = module {
     factory {
         SyncPlayer(
-            store = get(),
+            session = get(),
             time = get(),
             server = get(),
             eventBroadcaster = get(),

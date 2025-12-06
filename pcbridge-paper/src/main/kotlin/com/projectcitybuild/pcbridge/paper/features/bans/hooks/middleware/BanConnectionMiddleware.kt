@@ -14,9 +14,9 @@ class BanConnectionMiddleware(
     override suspend fun handle(
         uuid: UUID,
         ip: InetAddress,
-        playerData: PlayerData
+        playerData: PlayerData,
     ): ConnectionResult {
-        val ban = checkBan.get(playerData)
+        val ban = checkBan.check(playerData)
             ?: return ConnectionResult.Allowed
 
         return ConnectionResult.Denied(reason = ban.toMessage())

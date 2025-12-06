@@ -17,16 +17,20 @@ class RoleStateChangeListener(
     fun onPlayerStateCreated(
         event: PlayerStateCreatedEvent,
     ) = event.scopedSync(groupsTracer, this::class.java) {
-        update(event.playerUUID, groups = event.state.groups)
+        val synced = event.state.syncedValue
+        if (synced != null) {
+            update(event.playerUUID, groups = synced.groups)
+        }
     }
 
     @EventHandler
     fun onPlayerStateUpdated(
         event: PlayerStateUpdatedEvent,
     ) = event.scopedSync(groupsTracer, this::class.java) {
-        if (event.prevState?.groups == event.state.groups) return@scopedSync
-
-        update(event.playerUUID, groups = event.state.groups)
+        if (event.prevState?.syncedValue?.groups == event.state.syncedValue?.groups) {
+            return@scopedSync
+        }
+        update(event.playerUUID, groups = event.state.syncedValue!!.groups)
     }
 
     private fun update(playerUUID: UUID, groups: List<Group>) {

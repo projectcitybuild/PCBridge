@@ -5,6 +5,7 @@ import com.projectcitybuild.pcbridge.paper.architecture.state.data.PlayerSession
 import com.projectcitybuild.pcbridge.paper.architecture.state.events.PlayerStateUpdatedEvent
 import com.projectcitybuild.pcbridge.paper.core.libs.datetime.services.LocalizedTime
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
+import com.projectcitybuild.pcbridge.paper.core.libs.store.SessionStore
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotEventBroadcaster
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.extensions.onlinePlayer
 import com.projectcitybuild.pcbridge.paper.features.sync.domain.repositories.PlayerRepository
@@ -12,7 +13,7 @@ import org.bukkit.Server
 import java.util.UUID
 
 class SyncPlayer(
-    private val store: Store,
+    private val session: SessionStore,
     private val time: LocalizedTime,
     private val playerRepository: PlayerRepository,
     private val server: Server,
@@ -35,9 +36,9 @@ class SyncPlayer(
             playerData,
             connectedAt = time.now(),
         )
-        val prevState = store.state.players[playerUUID]
-        store.mutate { state ->
-            state.copy(players = state.players.apply { put(playerUUID, playerSession) })
+        val prevState = session.state.players[playerUUID]
+        session.mutate { state ->
+            state.copy(players = state.players + mapOf(playerUUID to playerSession))
         }
         eventBroadcaster.broadcast(
             PlayerStateUpdatedEvent(

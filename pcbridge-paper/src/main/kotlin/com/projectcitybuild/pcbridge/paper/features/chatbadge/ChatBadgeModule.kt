@@ -18,7 +18,7 @@ val chatBadgeModule = module {
 
     factory {
         ChatBadgeRepository(
-            store = get(),
+            session = get(),
             remoteConfig = get(),
             badgeFormatter = get(),
             badgeCache = get(named("badge_cache")),

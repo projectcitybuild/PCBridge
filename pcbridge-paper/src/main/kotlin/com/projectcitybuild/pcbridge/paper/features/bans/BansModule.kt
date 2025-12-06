@@ -10,6 +10,7 @@ import com.projectcitybuild.pcbridge.paper.features.bans.hooks.listeners.BanWebh
 import com.projectcitybuild.pcbridge.paper.features.bans.hooks.middleware.BanConnectionMiddleware
 import com.projectcitybuild.pcbridge.paper.features.bans.domain.repositories.UuidBanRepository
 import org.bukkit.plugin.java.JavaPlugin
+import org.koin.dsl.bind
 import org.koin.dsl.module
 
 val bansModule = module {

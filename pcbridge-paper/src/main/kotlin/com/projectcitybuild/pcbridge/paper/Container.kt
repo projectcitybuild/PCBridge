@@ -42,6 +42,7 @@ import com.projectcitybuild.pcbridge.paper.core.libs.observability.tracing.OpenT
 import com.projectcitybuild.pcbridge.paper.core.libs.pcbmanage.ManageUrlGenerator
 import com.projectcitybuild.pcbridge.paper.core.libs.playerlookup.PlayerLookup
 import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.RemoteConfig
+import com.projectcitybuild.pcbridge.paper.core.libs.store.SessionStore
 import com.projectcitybuild.pcbridge.paper.core.libs.store.Store
 import com.projectcitybuild.pcbridge.paper.core.libs.teleportation.PlayerTeleporter
 import com.projectcitybuild.pcbridge.paper.core.libs.teleportation.SafeYLocationFinder
@@ -222,6 +223,8 @@ private fun Module.core() {
         )
     }
 
+    single { SessionStore() }
+
     single {
         RemoteConfig(
             configHttpService = get<PCBHttp>().config,
@@ -340,7 +343,7 @@ private fun Module.integrations() {
             plugin = get(),
             server = get(),
             errorTracker = get(),
-            store = get(),
+            session = get(),
             eventBroadcaster = get(),
             tabRenderer = get(),
         )
@@ -356,10 +359,9 @@ private fun Module.integrations() {
 private fun Module.architecture() {
     factory {
         PlayerStateListener(
-            store = get(),
+            session = get(),
             time = get(),
             eventBroadcaster = get(),
-            errorTracker = get(),
         )
     }
 
@@ -376,8 +378,8 @@ private fun Module.architecture() {
         AuthorizeConnectionListener(
             middlewareChain = get(),
             playerDataProvider = get(),
-            errorTracker = get(),
             eventBroadcaster = get(),
+            errorTracker = get(),
         )
     }
 
@@ -433,7 +435,7 @@ private fun Module.architecture() {
         PlayerAFKPlaceholder(
             server = get(),
             tabRenderer = get(),
-            store = get(),
+            session = get(),
         )
     }
 
