@@ -66,6 +66,7 @@ class VerifyRegistrationCodeDialog {
             Component.text("Code")
                 .append { Component.text("*").color(NamedTextColor.RED) }
             )
+            .maxLength(6)
             .build()
 
         private val verifyButton get() = ActionButton.create(
