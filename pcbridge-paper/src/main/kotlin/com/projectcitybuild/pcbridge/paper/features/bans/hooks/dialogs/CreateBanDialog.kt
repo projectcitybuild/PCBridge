@@ -72,6 +72,7 @@ class CreateBanDialog {
         private fun additionalInfoInput(initial: String?) = DialogInput.text(additionalInfoKey, Component.text("Additional Info/Context"))
             .initial(initial ?: "")
             .multiline(MultilineOptions.create(null, 80))
+            .maxLength(1000)
             .build()
 
         private val createButton get() = ActionButton.create(
