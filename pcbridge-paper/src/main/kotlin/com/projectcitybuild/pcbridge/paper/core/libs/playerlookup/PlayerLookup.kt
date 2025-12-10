@@ -2,6 +2,7 @@ package com.projectcitybuild.pcbridge.paper.core.libs.playerlookup
 
 import com.projectcitybuild.pcbridge.http.playerdb.services.PlayerDbMinecraftService
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
+import com.projectcitybuild.pcbridge.paper.core.support.java.uuidFromUnsanitizedString
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.extensions.onlinePlayer
 import org.bukkit.Server
 import java.util.UUID
@@ -23,7 +24,7 @@ class PlayerLookup(
 
         val rawUuid = playerLookup.player.id
         return try {
-            UUID.fromString(rawUuid)
+            uuidFromUnsanitizedString(rawUuid)
         } catch (e: Exception) {
             log.error(e, "Could not parse UUID ({uuid}) of fetched player ({player})", rawUuid, trimmedAlias)
             throw IllegalStateException("Invalid Minecraft UUID ($rawUuid)")

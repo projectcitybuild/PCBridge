@@ -3,6 +3,7 @@ package com.projectcitybuild.pcbridge.paper.features.bans.hooks.listeners
 import com.projectcitybuild.pcbridge.paper.architecture.listeners.scopedSync
 import com.projectcitybuild.pcbridge.paper.architecture.webhooks.events.WebhookReceivedEvent
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.logSync
+import com.projectcitybuild.pcbridge.paper.core.support.java.uuidFromUnsanitizedString
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.extensions.onlinePlayer
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.utilities.SpigotSanitizer
 import com.projectcitybuild.pcbridge.paper.features.bans.bansTracer
@@ -61,7 +62,7 @@ class BanWebhookListener(
             logSync.info { "Skipping ban fulfillment, ban had no player data" }
             return@scopedSync
         }
-        val bannedUuid = UUID.fromString(bannedPlayer.uuid)
+        val bannedUuid = uuidFromUnsanitizedString(bannedPlayer.uuid)
         val matchingPlayer = server.onlinePlayer(uuid = bannedUuid)
         if (matchingPlayer == null) {
             logSync.info { "Skipping ban fulfillment, player (${bannedPlayer.uuid}) not found" }
