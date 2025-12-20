@@ -65,26 +65,18 @@ class InvisFrameCommand(
         }
         player.inventory.addItem(
             itemStack.apply {
-                /**
-                 * Since we don't have direct access to NMS editing, we track whether a frame
-                 * should be invisible using a tag. This tag is saved into the world's
-                 * "persistentDataContainer" so that it persists with the actual block data.
-                 *
-                 * - When the player hangs the frame (HangingPlaceEvent), we apply the tag to the placed entity
-                 * - When the player places an item in the tagged frame (PlayerInteractEntityEvent), we hide the frame
-                 * - When the player takes an item from the tagged frame (EntityDamageByEntityEvent), we show the frame
-                 */
-                checkNotNull(itemMeta) { "ItemMeta cannot be null" }
-                itemMeta = itemMeta?.apply {
-                    displayName(
+                editMeta { meta ->
+                    meta.displayName(
                         Component.text(itemName)
                             .color(NamedTextColor.LIGHT_PURPLE)
                             .decorate(TextDecoration.ITALIC),
                     )
-                    persistentDataContainer.set(
+                }
+                editPersistentDataContainer { pdc ->
+                    pdc.set(
                         spigotNamespace.get(InvisFrameKey),
-                        PersistentDataType.BYTE,
-                        1,
+                        PersistentDataType.BOOLEAN,
+                        true,
                     )
                 }
             },
