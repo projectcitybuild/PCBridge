@@ -25,15 +25,23 @@ class HomeLimitCommand(
         val player = context.source.requirePlayer()
 
         val limit = homeRepository.limit(player)
-
         if (limit.max == 0) {
             context.source.sender.sendRichMessage(
                 "<gray>You cannot create a home</gray>",
             )
-        } else {
-            context.source.sender.sendRichMessage(
-                "<gray>You have <aqua>${limit.current}</aqua> of <aqua>${limit.max}</aqua> homes</gray>",
-            )
+            return@scoped
+        }
+
+        context.source.sender.sendRichMessage(
+            "You currently have <aqua>${limit.current}</aqua> of <aqua>${limit.max}</aqua> homes",
+        )
+        if (limit.sources.isNotEmpty()) {
+            val sources = limit.sources
+                .map { "<newline><gray><white>${it.key}</white>: <aqua>+${it.value}</aqua> homes</gray>" }
+                .joinToString()
+
+            context.source.sender.sendRichMessage("<gray>---</gray>")
+            context.source.sender.sendRichMessage("<gray>The following groups grant you homes:</gray> $sources")
         }
     }
 }

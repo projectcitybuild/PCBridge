@@ -10,4 +10,7 @@ data class HomeLimit(
 
     @SerializedName("current")
     val current: Int,
+
+    @SerializedName("sources")
+    val sources: Map<String, Int>
 )
