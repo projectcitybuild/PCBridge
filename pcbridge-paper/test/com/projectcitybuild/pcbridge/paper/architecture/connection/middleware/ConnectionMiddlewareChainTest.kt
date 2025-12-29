@@ -1,5 +1,6 @@
 package com.projectcitybuild.pcbridge.paper.architecture.connection.middleware
 
+import com.projectcitybuild.pcbridge.http.pcb.models.Authorization
 import com.projectcitybuild.pcbridge.http.pcb.models.PlayerData
 import kotlinx.coroutines.test.runTest
 import net.kyori.adventure.text.Component
@@ -17,6 +18,7 @@ class ConnectionMiddlewareChainTest {
     private val uuid: UUID get() = UUID.randomUUID()
     private val address: InetAddress get() = mock(InetAddress::class.java)
     private val playerData: PlayerData get() = PlayerData()
+    private val authorization get() = Authorization(player = playerData)
     private val denyReason = Component.text("foobar")
 
     suspend fun alwaysAllow(): ConnectionMiddleware {
@@ -50,7 +52,7 @@ class ConnectionMiddlewareChainTest {
                 secondDeny,
             )
         )
-        val result = chain.pipe(uuid, address, playerData)
+        val result = chain.pipe(uuid, address, authorization)
 
         assertTrue(result is ConnectionResult.Denied)
 
@@ -69,7 +71,7 @@ class ConnectionMiddlewareChainTest {
                 alwaysAllow(),
             )
         )
-        val result = chain.pipe(uuid, address, playerData)
+        val result = chain.pipe(uuid, address, authorization)
 
         assertTrue(result is ConnectionResult.Allowed)
     }
@@ -79,7 +81,7 @@ class ConnectionMiddlewareChainTest {
         val chain = ConnectionMiddlewareChain(
             middlewares = mutableListOf()
         )
-        val result = chain.pipe(uuid, address, playerData)
+        val result = chain.pipe(uuid, address, authorization)
 
         assertTrue(result is ConnectionResult.Allowed)
     }
