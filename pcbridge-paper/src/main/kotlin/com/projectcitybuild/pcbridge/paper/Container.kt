@@ -10,6 +10,7 @@ import com.projectcitybuild.pcbridge.http.shared.logging.HttpLogger
 import com.projectcitybuild.pcbridge.paper.architecture.chat.decorators.ChatDecoratorChain
 import com.projectcitybuild.pcbridge.paper.architecture.chat.listeners.AsyncChatListener
 import com.projectcitybuild.pcbridge.paper.architecture.connection.listeners.AuthorizeConnectionListener
+import com.projectcitybuild.pcbridge.paper.architecture.connection.listeners.EndConnectionListener
 import com.projectcitybuild.pcbridge.paper.architecture.connection.middleware.ConnectionMiddlewareChain
 import com.projectcitybuild.pcbridge.paper.architecture.exceptions.listeners.CoroutineExceptionListener
 import com.projectcitybuild.pcbridge.paper.architecture.permissions.Permissions
@@ -70,7 +71,6 @@ import com.projectcitybuild.pcbridge.paper.features.serverlinks.serverLinksModul
 import com.projectcitybuild.pcbridge.paper.features.spawns.spawnsModule
 import com.projectcitybuild.pcbridge.paper.features.staffchat.staffChatModule
 import com.projectcitybuild.pcbridge.paper.features.sync.syncModule
-import com.projectcitybuild.pcbridge.paper.features.telemetry.telemetryModule
 import com.projectcitybuild.pcbridge.paper.features.warnings.warningsModule
 import com.projectcitybuild.pcbridge.paper.features.warps.warpsModule
 import com.projectcitybuild.pcbridge.paper.features.watchdog.watchDogModule
@@ -122,7 +122,6 @@ private val featureModules = listOf(
     spawnsModule,
     staffChatModule,
     syncModule,
-    telemetryModule,
     warningsModule,
     warpsModule,
     watchDogModule,
@@ -377,8 +376,17 @@ private fun Module.architecture() {
     factory {
         AuthorizeConnectionListener(
             middlewareChain = get(),
-            playerDataProvider = get(),
+            connectionRepository = get(),
             eventBroadcaster = get(),
+            errorTracker = get(),
+        )
+    }
+
+    factory {
+        EndConnectionListener(
+            connectionRepository = get(),
+            session = get(),
+            time = get(),
             errorTracker = get(),
         )
     }

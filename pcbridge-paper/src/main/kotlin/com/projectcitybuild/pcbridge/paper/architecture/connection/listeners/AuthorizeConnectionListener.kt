@@ -1,6 +1,5 @@
 package com.projectcitybuild.pcbridge.paper.architecture.connection.listeners
 
-import com.projectcitybuild.pcbridge.paper.architecture.PlayerDataProvider
 import com.projectcitybuild.pcbridge.paper.architecture.connection.connectionTracer
 import com.projectcitybuild.pcbridge.paper.architecture.connection.events.ConnectionPermittedEvent
 import com.projectcitybuild.pcbridge.paper.architecture.connection.middleware.ConnectionMiddlewareChain
@@ -9,6 +8,7 @@ import com.projectcitybuild.pcbridge.paper.architecture.listeners.scopedSync
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.errors.ErrorTracker
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotEventBroadcaster
+import com.projectcitybuild.pcbridge.paper.features.sync.domain.repositories.ConnectionRepository
 import kotlinx.coroutines.runBlocking
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
@@ -17,7 +17,7 @@ import org.bukkit.event.player.AsyncPlayerPreLoginEvent
 
 class AuthorizeConnectionListener(
     private val middlewareChain: ConnectionMiddlewareChain,
-    private val playerDataProvider: PlayerDataProvider,
+    private val connectionRepository: ConnectionRepository,
     private val eventBroadcaster: SpigotEventBroadcaster,
     private val errorTracker: ErrorTracker,
 ) : Listener {
@@ -41,14 +41,14 @@ class AuthorizeConnectionListener(
          */
         runBlocking {
             runCatching {
-                val playerData = playerDataProvider.get(
+                val authorization = connectionRepository.auth(
                     uuid = event.uniqueId,
                     ip = event.address,
                 )
                 val result = middlewareChain.pipe(
                     uuid = event.uniqueId,
                     ip = event.address,
-                    playerData = playerData,
+                    authorization = authorization,
                 )
                 when (result) {
                     is ConnectionResult.Denied -> event.disallow(
@@ -57,7 +57,7 @@ class AuthorizeConnectionListener(
                     )
                     is ConnectionResult.Allowed -> eventBroadcaster.broadcast(
                         ConnectionPermittedEvent(
-                            playerData = playerData,
+                            playerData = authorization.player,
                             playerUUID = event.uniqueId,
                         )
                     )

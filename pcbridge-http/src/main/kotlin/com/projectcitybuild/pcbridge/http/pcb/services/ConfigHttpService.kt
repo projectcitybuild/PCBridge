@@ -11,8 +11,7 @@ class ConfigHttpService(
     private val retrofit: Retrofit,
     private val responseParser: ResponseParser,
 ) {
-    suspend fun get(): RemoteConfigVersion =
-        withContext(Dispatchers.IO) {
-            responseParser.parse(retrofit.pcb()::getConfig)
-        }
+    suspend fun get(): RemoteConfigVersion = withContext(Dispatchers.IO) {
+        responseParser.parse(retrofit.pcb()::getConfig)
+    }
 }

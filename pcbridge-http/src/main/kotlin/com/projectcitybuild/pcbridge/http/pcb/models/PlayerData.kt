@@ -14,12 +14,6 @@ data class PlayerData(
     @SerializedName("groups")
     val groups: List<Group> = emptyList(),
 
-    @SerializedName("ban")
-    val playerBan: PlayerBan? = null,
-
-    @SerializedName("ip_ban")
-    val ipBan: IPBan? = null,
-
     @SerializedName("badges")
     val badges: List<Badge> = emptyList(),
 ) {

@@ -5,8 +5,7 @@ import com.projectcitybuild.pcbridge.http.pcb.services.BuildHttpService
 import com.projectcitybuild.pcbridge.http.pcb.services.ConfigHttpService
 import com.projectcitybuild.pcbridge.http.pcb.services.HomeHttpService
 import com.projectcitybuild.pcbridge.http.pcb.services.RegisterHttpService
-import com.projectcitybuild.pcbridge.http.pcb.services.PlayerHttpService
-import com.projectcitybuild.pcbridge.http.pcb.services.TelemetryHttpService
+import com.projectcitybuild.pcbridge.http.pcb.services.ConnectionHttpService
 import com.projectcitybuild.pcbridge.http.pcb.services.UuidBanHttpService
 import com.projectcitybuild.pcbridge.http.pcb.services.WarpHttpService
 import com.projectcitybuild.pcbridge.http.shared.logging.HttpLogger
@@ -39,14 +38,11 @@ class PCBHttp(
     val homes
         get() = HomeHttpService(client, responseParser)
 
-    val player
-        get() = PlayerHttpService(client, responseParser)
+    val connection
+        get() = ConnectionHttpService(client, responseParser)
 
     val register
         get() = RegisterHttpService(client, responseParser)
-
-    val telemetry
-        get() = TelemetryHttpService(client, responseParser)
 
     val warps
         get() = WarpHttpService(client, responseParser)

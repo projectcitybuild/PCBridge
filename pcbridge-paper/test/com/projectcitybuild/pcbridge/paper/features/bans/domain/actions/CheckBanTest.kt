@@ -1,5 +1,7 @@
 package com.projectcitybuild.pcbridge.paper.features.bans.domain.actions
 
+import com.projectcitybuild.pcbridge.http.pcb.models.Authorization
+import com.projectcitybuild.pcbridge.http.pcb.models.Bans
 import com.projectcitybuild.pcbridge.http.pcb.models.PlayerData
 import com.projectcitybuild.pcbridge.paper.Stubs
 import kotlinx.coroutines.test.runTest
@@ -23,7 +25,7 @@ class CheckBanTest {
         runTest {
             val ban = Stubs.playerBan()
             val result = useCase.check(
-                PlayerData(playerBan = ban),
+                Authorization(bans = Bans(uuid = ban)),
             )
             assertEquals(CheckBan.Ban.UUID(ban), result)
         }
@@ -38,7 +40,7 @@ class CheckBanTest {
                     .toLocalDateTime(),
             )
             val result = useCase.check(
-                PlayerData(playerBan = ban),
+                Authorization(bans = Bans(uuid = ban)),
             )
             assertNull(result)
         }
@@ -48,7 +50,7 @@ class CheckBanTest {
         runTest {
             val ban = Stubs.ipBan()
             val result = useCase.check(
-                PlayerData(ipBan = ban),
+                Authorization(bans = Bans(ip = ban)),
             )
             assertEquals(CheckBan.Ban.IP(ban), result)
         }
@@ -60,7 +62,7 @@ class CheckBanTest {
                 unbannedAt = LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toLocalDateTime(),
             )
             val result = useCase.check(
-                PlayerData(ipBan = ban),
+                Authorization(bans = Bans(ip = ban)),
             )
             assertNull(result)
         }
@@ -69,7 +71,7 @@ class CheckBanTest {
     fun `should allow if not banned`() =
         runTest {
             val result = useCase.check(
-                PlayerData(playerBan = null, ipBan = null),
+                Authorization(bans = null),
             )
             assertNull(result)
         }

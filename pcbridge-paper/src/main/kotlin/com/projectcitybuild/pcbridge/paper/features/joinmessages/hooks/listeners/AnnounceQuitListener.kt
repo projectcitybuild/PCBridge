@@ -15,6 +15,7 @@ import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerQuitEvent
 import java.time.Duration
 import java.time.LocalDateTime
+import kotlin.math.round
 
 class AnnounceQuitListener(
     private val remoteConfig: RemoteConfig,
@@ -26,8 +27,8 @@ class AnnounceQuitListener(
         event: PlayerQuitEvent,
     ) = event.scopedSync(joinMessagesTracer, this::class.java) {
         val playerState = session.state.players[event.player.uniqueId]
-        val joinTime = playerState?.connectedAt ?: time.now()
-        val timeOnline = sessionTime(start = joinTime)
+        val sessionSeconds = playerState?.sessionSeconds(time) ?: 0
+        val timeOnline = sessionTime(sessionSeconds)
 
         val leaveMessage = remoteConfig.latest.config.messages.leave
 
@@ -40,20 +41,19 @@ class AnnounceQuitListener(
         )
     }
 
-    private fun sessionTime(start: LocalDateTime): String {
-        val now = time.now()
-        val diff = Duration.between(start, now)
-
-        val secsOnline = diff.toSeconds()
-        val minsOnline = diff.toMinutes()
-        val hoursOnline = diff.toHours()
-
-        return if (secsOnline < 60) {
-            "$secsOnline sec" + if (secsOnline > 1) "s" else ""
-        } else if (minsOnline < 60) {
-            "$minsOnline min" + if (minsOnline > 1) "s" else ""
-        } else {
-            "$hoursOnline hour" + if (hoursOnline > 1) "s" else ""
+    private fun sessionTime(seconds: Long): String {
+        return when {
+            seconds < 60 -> {
+                "$seconds second" + if (seconds != 1L) "s" else ""
+            }
+            seconds < 3600 -> {
+                val minutes = seconds / 60
+                "$minutes minute" + if (minutes != 1L) "s" else ""
+            }
+            else -> {
+                val hours = seconds / 3600
+                "$hours hour" + if (hours != 1L) "s" else ""
+            }
         }
     }
 }

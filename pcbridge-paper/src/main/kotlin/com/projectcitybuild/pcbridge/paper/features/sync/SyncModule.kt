@@ -1,12 +1,11 @@
 package com.projectcitybuild.pcbridge.paper.features.sync
 
 import com.projectcitybuild.pcbridge.http.pcb.PCBHttp
-import com.projectcitybuild.pcbridge.paper.architecture.PlayerDataProvider
 import com.projectcitybuild.pcbridge.paper.features.sync.domain.actions.SyncPlayer
 import com.projectcitybuild.pcbridge.paper.features.sync.hooks.commands.SyncCommand
 import com.projectcitybuild.pcbridge.paper.features.sync.hooks.commands.SyncDebugCommand
 import com.projectcitybuild.pcbridge.paper.features.sync.hooks.listener.PlayerSyncRequestListener
-import com.projectcitybuild.pcbridge.paper.features.sync.domain.repositories.PlayerRepository
+import com.projectcitybuild.pcbridge.paper.features.sync.domain.repositories.ConnectionRepository
 import org.bukkit.plugin.java.JavaPlugin
 import org.koin.dsl.bind
 import org.koin.dsl.module
@@ -18,7 +17,7 @@ val syncModule = module {
             time = get(),
             server = get(),
             eventBroadcaster = get(),
-            playerRepository = get(),
+            connectionRepository = get(),
         )
     }
 
@@ -43,8 +42,8 @@ val syncModule = module {
     }
 
     factory {
-        PlayerRepository(
-            httpService = get<PCBHttp>().player,
+        ConnectionRepository(
+            httpService = get<PCBHttp>().connection,
         )
-    }.bind<PlayerDataProvider>()
+    }
 }
