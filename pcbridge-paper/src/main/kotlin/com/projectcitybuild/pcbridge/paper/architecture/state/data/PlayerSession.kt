@@ -5,15 +5,23 @@ import com.projectcitybuild.pcbridge.http.pcb.models.Badge
 import com.projectcitybuild.pcbridge.http.pcb.models.Group
 import com.projectcitybuild.pcbridge.http.pcb.models.Player
 import com.projectcitybuild.pcbridge.http.pcb.models.PlayerData
+import com.projectcitybuild.pcbridge.paper.core.libs.datetime.services.LocalizedTime
+import java.time.Duration
 import java.time.LocalDateTime
 
 data class PlayerSession(
     val synced: PlayerSyncedState,
-    val connectedAt: LocalDateTime?,
+    val connectedAt: LocalDateTime,
     val afk: Boolean = false,
 ) {
     val syncedValue: PlayerSyncedState.Valid?
         get() = synced as? PlayerSyncedState.Valid
+
+    fun sessionSeconds(time: LocalizedTime): Long {
+        val now = time.now()
+        val diff = Duration.between(connectedAt, now)
+        return diff.toSeconds()
+    }
 
     companion object {
         fun fromPlayerData(

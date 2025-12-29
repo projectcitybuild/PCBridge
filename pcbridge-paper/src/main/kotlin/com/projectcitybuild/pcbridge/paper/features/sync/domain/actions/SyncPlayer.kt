@@ -1,6 +1,5 @@
 package com.projectcitybuild.pcbridge.paper.features.sync.domain.actions
 
-import com.projectcitybuild.pcbridge.paper.core.libs.store.Store
 import com.projectcitybuild.pcbridge.paper.architecture.state.data.PlayerSession
 import com.projectcitybuild.pcbridge.paper.architecture.state.events.PlayerStateUpdatedEvent
 import com.projectcitybuild.pcbridge.paper.core.libs.datetime.services.LocalizedTime
@@ -8,14 +7,14 @@ import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
 import com.projectcitybuild.pcbridge.paper.core.libs.store.SessionStore
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotEventBroadcaster
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.extensions.onlinePlayer
-import com.projectcitybuild.pcbridge.paper.features.sync.domain.repositories.PlayerRepository
+import com.projectcitybuild.pcbridge.paper.features.sync.domain.repositories.ConnectionRepository
 import org.bukkit.Server
 import java.util.UUID
 
 class SyncPlayer(
     private val session: SessionStore,
     private val time: LocalizedTime,
-    private val playerRepository: PlayerRepository,
+    private val connectionRepository: ConnectionRepository,
     private val server: Server,
     private val eventBroadcaster: SpigotEventBroadcaster,
 ) {
@@ -28,12 +27,12 @@ class SyncPlayer(
 
         log.info { "Creating player state for $playerUUID" }
 
-        val playerData = playerRepository.get(
+        val playerData = connectionRepository.auth(
             uuid = matchingPlayer.uniqueId,
             ip = matchingPlayer.address?.address,
         )
         val playerSession = PlayerSession.fromPlayerData(
-            playerData,
+            playerData.player,
             connectedAt = time.now(),
         )
         val prevState = session.state.players[playerUUID]

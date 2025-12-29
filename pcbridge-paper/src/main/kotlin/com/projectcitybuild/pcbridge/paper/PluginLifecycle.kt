@@ -23,6 +23,7 @@ import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.RemoteConfig
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotListenerRegistry
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotTimer
 import com.projectcitybuild.pcbridge.paper.architecture.commands.registerCommands
+import com.projectcitybuild.pcbridge.paper.architecture.connection.listeners.EndConnectionListener
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.tracing.OpenTelemetryProvider
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.tracing.TracerFactory
 import com.projectcitybuild.pcbridge.paper.features.announcements.listeners.AnnouncementConfigListener
@@ -74,7 +75,6 @@ import com.projectcitybuild.pcbridge.paper.features.staffchat.commands.StaffChat
 import com.projectcitybuild.pcbridge.paper.features.sync.hooks.commands.SyncCommand
 import com.projectcitybuild.pcbridge.paper.features.sync.hooks.commands.SyncDebugCommand
 import com.projectcitybuild.pcbridge.paper.features.sync.hooks.listener.PlayerSyncRequestListener
-import com.projectcitybuild.pcbridge.paper.features.telemetry.listeners.TelemetryPlayerConnectListener
 import com.projectcitybuild.pcbridge.paper.features.warnings.commands.WarnCommand
 import com.projectcitybuild.pcbridge.paper.features.warps.hooks.commands.WarpCommand
 import com.projectcitybuild.pcbridge.paper.features.warps.hooks.commands.WarpsCommand
@@ -196,6 +196,7 @@ class PluginLifecycle : KoinComponent {
         get<ConfigWebhookListener>(),
         get<CoroutineExceptionListener>(),
         get<EmojiConfigListener>(),
+        get<EndConnectionListener>(),
         get<FirstTimeJoinListener>(),
         get<HomeRenameDialogListener>(),
         get<InvisFrameListener>(),
@@ -209,7 +210,6 @@ class PluginLifecycle : KoinComponent {
         get<ServerLinkListener>(),
         get<RoleStateChangeListener>(),
         get<TabListeners>(),
-        get<TelemetryPlayerConnectListener>(),
         get<VerifyCodeDialogListener>(),
         get<WarpRenameDialogListener>(),
         get<WarpWebhookListener>(),

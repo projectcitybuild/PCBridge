@@ -85,6 +85,7 @@ class BuildRepository(
     ): Build {
         val build = buildHttpService.create(
             playerUUID = player.uniqueId,
+            playerAlias = player.name,
             name = name,
             world = world,
             x = location.x,

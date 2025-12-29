@@ -1,5 +1,6 @@
 package com.projectcitybuild.pcbridge.paper.features.bans.hooks.middleware
 
+import com.projectcitybuild.pcbridge.http.pcb.models.Authorization
 import com.projectcitybuild.pcbridge.http.pcb.models.PlayerData
 import com.projectcitybuild.pcbridge.paper.architecture.connection.middleware.ConnectionMiddleware
 import com.projectcitybuild.pcbridge.paper.architecture.connection.middleware.ConnectionResult
@@ -14,9 +15,9 @@ class BanConnectionMiddleware(
     override suspend fun handle(
         uuid: UUID,
         ip: InetAddress,
-        playerData: PlayerData,
+        authorization: Authorization,
     ): ConnectionResult {
-        val ban = checkBan.check(playerData)
+        val ban = checkBan.check(authorization)
             ?: return ConnectionResult.Allowed
 
         return ConnectionResult.Denied(reason = ban.toMessage())

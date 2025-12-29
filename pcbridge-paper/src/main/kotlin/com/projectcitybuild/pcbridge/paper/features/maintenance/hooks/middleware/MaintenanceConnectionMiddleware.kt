@@ -1,5 +1,6 @@
 package com.projectcitybuild.pcbridge.paper.features.maintenance.hooks.middleware
 
+import com.projectcitybuild.pcbridge.http.pcb.models.Authorization
 import com.projectcitybuild.pcbridge.http.pcb.models.PlayerData
 import com.projectcitybuild.pcbridge.paper.architecture.connection.middleware.ConnectionMiddleware
 import com.projectcitybuild.pcbridge.paper.architecture.connection.middleware.ConnectionResult
@@ -14,11 +15,12 @@ class MaintenanceConnectionMiddleware(
     override suspend fun handle(
         uuid: UUID,
         ip: InetAddress,
-        playerData: PlayerData
+        authorization: Authorization,
     ): ConnectionResult {
         if (!store.state.maintenance) return ConnectionResult.Allowed
 
-        if (playerData.isStaff) {
+        val playerData = authorization.player
+        if (playerData != null && playerData.isStaff) {
             return ConnectionResult.Allowed
         }
         val message = "<bold>Server Maintenance</bold><newline><newline><gray>Please try again later</gray>"

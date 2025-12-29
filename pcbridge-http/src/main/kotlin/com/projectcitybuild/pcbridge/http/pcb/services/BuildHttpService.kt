@@ -31,6 +31,7 @@ class BuildHttpService(
 
     suspend fun create(
         playerUUID: UUID,
+        playerAlias: String,
         name: String,
         world: String,
         x: Double,
@@ -42,6 +43,7 @@ class BuildHttpService(
         responseParser.parse {
             retrofit.pcb().createBuild(
                 playerUUID = playerUUID.toString(),
+                playerAlias = playerAlias,
                 name = name,
                 world = world,
                 x = x,

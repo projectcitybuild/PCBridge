@@ -1,6 +1,6 @@
 package com.projectcitybuild.pcbridge.paper.architecture.connection.middleware
 
-import com.projectcitybuild.pcbridge.http.pcb.models.PlayerData
+import com.projectcitybuild.pcbridge.http.pcb.models.Authorization
 import java.util.UUID
 
 class ConnectionMiddlewareChain(
@@ -13,10 +13,10 @@ class ConnectionMiddlewareChain(
     suspend fun pipe(
         uuid: UUID,
         ip: java.net.InetAddress,
-        playerData: PlayerData,
+        authorization: Authorization,
     ): ConnectionResult {
         for (middleware in middlewares) {
-            val result = middleware.handle(uuid, ip, playerData)
+            val result = middleware.handle(uuid, ip, authorization)
             if (result is ConnectionResult.Denied) {
                 return result
             }
