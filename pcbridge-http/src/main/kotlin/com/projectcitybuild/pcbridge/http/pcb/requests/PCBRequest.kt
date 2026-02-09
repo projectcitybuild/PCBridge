@@ -42,6 +42,16 @@ internal interface PCBRequest {
     @GET("v3/server/config")
     suspend fun getConfig(): RemoteConfigVersion
 
+    @POST("v3/players/{uuid}/stats")
+    @FormUrlEncoded
+    suspend fun incrementStats(
+        @Path("uuid") uuid: String,
+        @Field("afk_time") afkTime: Long? = null,
+        @Field("blocks_placed") blocksPlaced: Long? = null,
+        @Field("blocks_destroyed") blocksDestroyed: Long? = null,
+        @Field("blocks_travelled") blocksTravelled: Long? = null,
+    )
+
     /**
      * Begins registration of a PCB account linked to the current
      * Minecraft player
