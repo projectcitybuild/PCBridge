@@ -43,6 +43,7 @@ class HubCommand(
         val worldId = UUID.fromString(hub.worldId)
         val world = server.getWorld(worldId)
         if (world == null) {
+            log.error { "Hub world not found for id ${hub.worldId}" }
             player.sendRichMessage(l10n.errorHubWorldNotFound)
             return@scoped
         }
