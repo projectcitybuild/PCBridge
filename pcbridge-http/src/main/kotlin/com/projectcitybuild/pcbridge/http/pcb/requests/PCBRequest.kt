@@ -46,11 +46,11 @@ internal interface PCBRequest {
      * Begins registration of a PCB account linked to the current
      * Minecraft player
      */
-    @POST("v3/players/{uuid}/register")
+    @POST("v3/server/register")
     @FormUrlEncoded
     suspend fun sendRegisterCode(
-        @Path(value = "uuid") uuid: String,
-        @Field(value = "minecraft_alias") playerAlias: String,
+        @Field(value = "uuid") uuid: String,
+        @Field(value = "alias") playerAlias: String,
         @Field(value = "email") email: String,
     )
 
@@ -58,10 +58,10 @@ internal interface PCBRequest {
      * Finishes registration by verifying the code sent to them
      * over email
      */
-    @PUT("v3/players/{uuid}/register")
+    @PUT("v3/server/register")
     @FormUrlEncoded
     suspend fun verifyRegisterCode(
-        @Path(value = "uuid") uuid: String,
+        @Field(value = "uuid") uuid: String,
         @Field(value = "code") code: String,
     )
 
