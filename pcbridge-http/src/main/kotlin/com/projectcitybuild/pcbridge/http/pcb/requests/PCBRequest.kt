@@ -7,7 +7,7 @@ import com.projectcitybuild.pcbridge.http.pcb.models.Home
 import com.projectcitybuild.pcbridge.http.pcb.models.HomeLimit
 import com.projectcitybuild.pcbridge.http.pcb.models.PaginatedList
 import com.projectcitybuild.pcbridge.http.pcb.models.PlayerBan
-import com.projectcitybuild.pcbridge.http.pcb.models.PlayerData
+import com.projectcitybuild.pcbridge.http.pcb.models.PlayersStatsRequest
 import com.projectcitybuild.pcbridge.http.pcb.models.RemoteConfigVersion
 import com.projectcitybuild.pcbridge.http.pcb.models.Warp
 import retrofit2.Retrofit
@@ -42,14 +42,9 @@ internal interface PCBRequest {
     @GET("v3/server/config")
     suspend fun getConfig(): RemoteConfigVersion
 
-    @POST("v3/players/{uuid}/stats")
-    @FormUrlEncoded
+    @POST("v3/server/stats")
     suspend fun incrementStats(
-        @Path("uuid") uuid: String,
-        @Field("afk_time") afkTime: Long? = null,
-        @Field("blocks_placed") blocksPlaced: Long? = null,
-        @Field("blocks_destroyed") blocksDestroyed: Long? = null,
-        @Field("blocks_travelled") blocksTravelled: Long? = null,
+        @Body players: PlayersStatsRequest,
     )
 
     /**
