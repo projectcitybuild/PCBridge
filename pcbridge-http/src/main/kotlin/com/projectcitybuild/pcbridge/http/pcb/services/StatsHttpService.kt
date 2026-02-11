@@ -1,6 +1,5 @@
 package com.projectcitybuild.pcbridge.http.pcb.services
 
-import com.projectcitybuild.pcbridge.http.pcb.models.PlayerStats
 import com.projectcitybuild.pcbridge.http.pcb.models.PlayersStatsRequest
 import com.projectcitybuild.pcbridge.http.shared.parsing.ResponseParser
 import com.projectcitybuild.pcbridge.http.pcb.requests.pcb
