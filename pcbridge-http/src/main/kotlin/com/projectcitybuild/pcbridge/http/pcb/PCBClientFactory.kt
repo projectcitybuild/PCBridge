@@ -1,6 +1,7 @@
 package com.projectcitybuild.pcbridge.http.pcb
 
 
+import com.google.gson.FieldNamingPolicy
 import com.google.gson.GsonBuilder
 import com.projectcitybuild.pcbridge.http.shared.logging.HttpLogger
 import com.projectcitybuild.pcbridge.http.shared.serialization.gson.LocalDateTimeTypeAdapter
@@ -21,6 +22,7 @@ internal class PCBClientFactory(
 ) {
     private val gson = GsonBuilder()
         .registerTypeAdapter(LocalDateTime::class.java, LocalDateTimeTypeAdapter())
+        .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
         .create()
 
     fun build(): Retrofit = Retrofit.Builder()

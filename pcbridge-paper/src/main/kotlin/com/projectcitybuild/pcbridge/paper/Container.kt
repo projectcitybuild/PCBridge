@@ -70,6 +70,7 @@ import com.projectcitybuild.pcbridge.paper.features.register.registerModule
 import com.projectcitybuild.pcbridge.paper.features.serverlinks.serverLinksModule
 import com.projectcitybuild.pcbridge.paper.features.spawns.spawnsModule
 import com.projectcitybuild.pcbridge.paper.features.staffchat.staffChatModule
+import com.projectcitybuild.pcbridge.paper.features.stats.statsModule
 import com.projectcitybuild.pcbridge.paper.features.sync.syncModule
 import com.projectcitybuild.pcbridge.paper.features.warnings.warningsModule
 import com.projectcitybuild.pcbridge.paper.features.warps.warpsModule
@@ -121,6 +122,7 @@ private val featureModules = listOf(
     serverLinksModule,
     spawnsModule,
     staffChatModule,
+    statsModule,
     syncModule,
     warningsModule,
     warpsModule,

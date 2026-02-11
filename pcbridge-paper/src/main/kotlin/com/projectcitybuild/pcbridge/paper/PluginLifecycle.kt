@@ -72,6 +72,8 @@ import com.projectcitybuild.pcbridge.paper.features.spawns.hooks.commands.SetSpa
 import com.projectcitybuild.pcbridge.paper.features.spawns.hooks.commands.SpawnCommand
 import com.projectcitybuild.pcbridge.paper.features.spawns.hooks.listeners.PlayerRespawnListener
 import com.projectcitybuild.pcbridge.paper.features.staffchat.commands.StaffChatCommand
+import com.projectcitybuild.pcbridge.paper.features.stats.domain.StatsCollector
+import com.projectcitybuild.pcbridge.paper.features.stats.hooks.listeners.BlockChangeListener
 import com.projectcitybuild.pcbridge.paper.features.sync.hooks.commands.SyncCommand
 import com.projectcitybuild.pcbridge.paper.features.sync.hooks.commands.SyncDebugCommand
 import com.projectcitybuild.pcbridge.paper.features.sync.hooks.listener.PlayerSyncRequestListener
@@ -106,6 +108,7 @@ class PluginLifecycle : KoinComponent {
     private val remoteConfig: RemoteConfig by inject()
     private val store: Store by inject()
     private val otel: OpenTelemetryProvider by inject()
+    private val statsCollector: StatsCollector by inject()
 
     private val tracer by lazy { TracerFactory.make("lifecycle") }
 
@@ -125,11 +128,14 @@ class PluginLifecycle : KoinComponent {
             get<DynmapIntegration>().enable()
             get<EssentialsIntegration>().enable()
             get<LuckPermsIntegration>().enable()
+
+            statsCollector.start()
         }
     }
 
     suspend fun shutdown() = errorTracker.catching {
         tracer.trace("shutdown") {
+            statsCollector.stop()
             httpServer.stop()
             store.persist()
 
@@ -191,6 +197,7 @@ class PluginLifecycle : KoinComponent {
         get<AuthorizeConnectionListener>(),
         get<BanWebhookListener>(),
         get<BanDialogListener>(),
+        get<BlockChangeListener>(),
         get<ChatBadgeInvalidateListener>(),
         get<ChatGroupInvalidateListener>(),
         get<ConfigWebhookListener>(),

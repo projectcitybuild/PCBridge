@@ -7,7 +7,7 @@ import com.projectcitybuild.pcbridge.http.pcb.models.Home
 import com.projectcitybuild.pcbridge.http.pcb.models.HomeLimit
 import com.projectcitybuild.pcbridge.http.pcb.models.PaginatedList
 import com.projectcitybuild.pcbridge.http.pcb.models.PlayerBan
-import com.projectcitybuild.pcbridge.http.pcb.models.PlayerData
+import com.projectcitybuild.pcbridge.http.pcb.models.PlayersStatsRequest
 import com.projectcitybuild.pcbridge.http.pcb.models.RemoteConfigVersion
 import com.projectcitybuild.pcbridge.http.pcb.models.Warp
 import retrofit2.Retrofit
@@ -41,6 +41,11 @@ internal interface PCBRequest {
 
     @GET("v3/server/config")
     suspend fun getConfig(): RemoteConfigVersion
+
+    @POST("v3/server/stats")
+    suspend fun incrementStats(
+        @Body players: PlayersStatsRequest,
+    )
 
     /**
      * Begins registration of a PCB account linked to the current
