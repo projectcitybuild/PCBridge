@@ -7,6 +7,7 @@ import io.papermc.paper.registry.data.dialog.action.DialogAction
 import io.papermc.paper.registry.data.dialog.body.DialogBody
 import io.papermc.paper.registry.data.dialog.body.PlainMessageDialogBody
 import io.papermc.paper.registry.data.dialog.input.DialogInput
+import io.papermc.paper.registry.data.dialog.input.TextDialogInput.MultilineOptions
 import io.papermc.paper.registry.data.dialog.type.DialogType
 import net.kyori.adventure.key.Key
 import net.kyori.adventure.text.Component
@@ -44,18 +45,16 @@ class ConfirmOpElevateDialog {
                     MiniMessage.miniMessage().deserialize("""
                         #<yellow><b>You are about to receive temporary Operator (OP) privileges.</b></yellow>
                         #
-                        #<gray>• <aqua>Full administrative permissions</aqua> will be granted.</gray>
-                        #<gray>• Your OP status will be <aqua>automatically revoked</aqua> after the set duration.</gray>
-                        #<gray>• You may revoke it early at any time with: <aqua><b>/opend</b></aqua>
+                        #• <aqua>Full administrative permissions</aqua> will be granted.
+                        #• Your OP status will be <aqua>automatically revoked</aqua> after the set duration.
+                        #• You may revoke it early at any time with: <aqua><b>/opend</b></aqua>
                         #
                         #<dark_red><b>⚠ IMPORTANT</b></dark_red>
-                        #<gray><i>
+                        #<i>
                         #OP privileges bypass the normal permission system. They may override protections or cause unintended behavior.
                         #
                         #Please revoke your OP status as soon as your task is complete.
-                        #</i></gray>
-                        #
-                        #<dark_gray>──────────────────────</dark_gray>
+                        #</i>
                     """.trimMargin("#"))
                 )
             )

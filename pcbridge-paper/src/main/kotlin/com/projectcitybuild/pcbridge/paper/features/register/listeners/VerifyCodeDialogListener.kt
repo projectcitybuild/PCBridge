@@ -20,7 +20,7 @@ class VerifyCodeDialogListener(
     suspend fun onPlayerCustomClickEvent(
         event: PlayerCustomClickEvent,
     ) = event.scoped(registerTracer, this::class.java) {
-        if (! event.identifier.equals(VerifyRegistrationCodeDialog.verifyButtonKey)) return@scoped
+        if (event.identifier != VerifyRegistrationCodeDialog.verifyButtonKey) return@scoped
 
         val view = event.dialogResponseView
         if (view == null) {
