@@ -1,22 +1,18 @@
 package com.projectcitybuild.pcbridge.paper.features.opelevate.hooks.listener
 
-import com.projectcitybuild.pcbridge.http.pcb.services.OpElevateHttpService
-import com.projectcitybuild.pcbridge.http.shared.parsing.ResponseParserError
 import com.projectcitybuild.pcbridge.paper.architecture.listeners.scoped
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.logSync
-import com.projectcitybuild.pcbridge.paper.features.opelevate.dialogs.ConfirmOpElevateDialog
+import com.projectcitybuild.pcbridge.paper.features.opelevate.hooks.dialogs.ConfirmOpElevateDialog
 import com.projectcitybuild.pcbridge.paper.features.opelevate.opElevateTracer
-import com.projectcitybuild.pcbridge.paper.features.register.dialogs.VerifyRegistrationCodeDialog
-import com.projectcitybuild.pcbridge.paper.l10n.l10n
+import com.projectcitybuild.pcbridge.paper.features.opelevate.domain.services.OpElevationService
 import io.papermc.paper.connection.PlayerGameConnection
 import io.papermc.paper.event.player.PlayerCustomClickEvent
-import net.kyori.adventure.text.event.ClickEvent.Payload.dialog
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 
 class OpDialogListener(
-    private val opElevateHttpService: OpElevateHttpService,
+    private val opElevationService: OpElevationService,
 ) : Listener {
     @EventHandler
     suspend fun onPlayerCustomClickEvent(
@@ -43,12 +39,7 @@ class OpDialogListener(
         }
 
         try {
-            val elevation = opElevateHttpService.start(
-                playerUUID = player.uniqueId,
-                reason = reason,
-            )
-            player.isOp = true
-            player.sendRichMessage("OP granted (remaining: TODO)")
+            opElevationService.elevate(player.uniqueId, reason)
         } catch (e: Exception) {
             player.sendRichMessage("<red>Error: ${e.message}</red>")
             throw e

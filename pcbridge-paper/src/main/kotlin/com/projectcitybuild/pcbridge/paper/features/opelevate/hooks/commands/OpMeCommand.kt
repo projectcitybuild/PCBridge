@@ -8,7 +8,7 @@ import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandCo
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandNode
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requirePlayer
-import com.projectcitybuild.pcbridge.paper.features.opelevate.dialogs.ConfirmOpElevateDialog
+import com.projectcitybuild.pcbridge.paper.features.opelevate.hooks.dialogs.ConfirmOpElevateDialog
 import com.projectcitybuild.pcbridge.paper.features.opelevate.opElevateTracer
 import io.papermc.paper.command.brigadier.Commands
 import org.bukkit.plugin.Plugin
