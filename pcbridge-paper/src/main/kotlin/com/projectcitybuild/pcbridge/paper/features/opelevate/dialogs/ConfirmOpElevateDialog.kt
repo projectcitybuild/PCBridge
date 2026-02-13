@@ -21,7 +21,7 @@ class ConfirmOpElevateDialog {
         fun build() = Dialog.create { builder ->
             builder.empty()
                 .base(
-                    DialogBase.builder(Component.text("Temporary OP Elevation"))
+                    DialogBase.builder(Component.text("Warning"))
                         .afterAction(DialogBase.DialogAfterAction.CLOSE)
                         .body(body())
                         .inputs(listOf(
@@ -42,14 +42,20 @@ class ConfirmOpElevateDialog {
             list.add(
                 DialogBody.plainMessage(
                     MiniMessage.miniMessage().deserialize("""
-                        #<bold>You are about to be granted temporary Operator (OP) privileges on the server.</bold>
+                        #<yellow><b>You are about to receive temporary Operator (OP) privileges.</b></yellow>
                         #
-                        #* This grants full administrative permissions.
-                        #* Your OP status will be automatically revoked once the set duration expires.
-                        #* You may revoke it early at any time using: <aqua>/opend</aqua>
+                        #<gray>• <aqua>Full administrative permissions</aqua> will be granted.</gray>
+                        #<gray>• Your OP status will be <aqua>automatically revoked</aqua> after the set duration.</gray>
+                        #<gray>• You may revoke it early at any time with: <aqua><b>/opend</b></aqua>
                         #
-                        #⚠ Important: OP privileges bypass the normal permission system and can unintentionally override protections or cause unexpected behavior.
+                        #<dark_red><b>⚠ IMPORTANT</b></dark_red>
+                        #<gray><i>
+                        #OP privileges bypass the normal permission system. They may override protections or cause unintended behavior.
+                        #
                         #Please revoke your OP status as soon as your task is complete.
+                        #</i></gray>
+                        #
+                        #<dark_gray>──────────────────────</dark_gray>
                     """.trimMargin("#"))
                 )
             )
@@ -65,7 +71,7 @@ class ConfirmOpElevateDialog {
             .build()
 
         private val proceedButton get() = ActionButton.create(
-            Component.text("I understand.").color(NamedTextColor.RED),
+            Component.text("I understand."),
             null,
             100,
             DialogAction.customClick(proceedButtonKey, null),
