@@ -62,6 +62,8 @@ import com.projectcitybuild.pcbridge.paper.features.maintenance.hooks.decorators
 import com.projectcitybuild.pcbridge.paper.features.maintenance.hooks.listener.MaintenanceReminderListener
 import com.projectcitybuild.pcbridge.paper.features.maintenance.hooks.middleware.MaintenanceConnectionMiddleware
 import com.projectcitybuild.pcbridge.paper.features.moderate.hooks.commands.KickCommand
+import com.projectcitybuild.pcbridge.paper.features.opelevate.hooks.commands.OpMeCommand
+import com.projectcitybuild.pcbridge.paper.features.opelevate.hooks.listener.OpJoinListener
 import com.projectcitybuild.pcbridge.paper.features.randomteleport.hooks.commands.RtpCommand
 import com.projectcitybuild.pcbridge.paper.features.register.commands.CodeCommand
 import com.projectcitybuild.pcbridge.paper.features.register.commands.RegisterCommand
@@ -173,6 +175,7 @@ class PluginLifecycle : KoinComponent {
         get<LoomCommand>(),
         get<MaintenanceCommand>(),
         get<NightVisionCommand>(),
+        get<OpMeCommand>(),
         get<RegisterCommand>(),
         get<RtpCommand>(),
         get<SetSpawnCommand>(),
@@ -209,6 +212,7 @@ class PluginLifecycle : KoinComponent {
         get<InvisFrameListener>(),
         get<ItemTextListener>(),
         get<MaintenanceReminderListener>(),
+        get<OpJoinListener>(),
         get<PlayerRespawnListener>(),
         get<PlayerStateListener>(),
         get<PlayerSyncRequestListener>(),

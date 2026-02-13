@@ -10,6 +10,7 @@ import org.bukkit.event.Listener
 import org.bukkit.event.server.PluginDisableEvent
 import org.bukkit.event.server.PluginEnableEvent
 import org.bukkit.plugin.java.JavaPlugin
+import kotlin.jvm.java
 
 class AnnouncementEnableListener(
     private val announcementTimer: StartAnnouncementTimer,
@@ -18,9 +19,8 @@ class AnnouncementEnableListener(
     @EventHandler(priority = EventPriority.MONITOR)
     fun onPluginEnable(event: PluginEnableEvent) {
         // PluginEnableEvent is emitted for every plugin, not just ours
-        if (event.plugin != plugin) {
-            return
-        }
+        if (event.plugin != plugin) return
+
         event.scopedSync(announcementsTracer, this::class.java) {
             announcementTimer.start()
             logSync.debug { "Announcement timer started" }
@@ -30,9 +30,8 @@ class AnnouncementEnableListener(
     @EventHandler
     fun onPluginDisable(event: PluginDisableEvent) {
         // PluginDisableEvent is emitted for every plugin, not just ours
-        if (event.plugin != plugin) {
-            return
-        }
+        if (event.plugin != plugin) return
+
         event.scopedSync(announcementsTracer, this::class.java) {
             announcementTimer.stop()
             logSync.debug { "Announcement timer stopped" }

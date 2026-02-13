@@ -13,6 +13,7 @@ import org.bukkit.event.Listener
 import org.bukkit.event.server.PluginDisableEvent
 import org.bukkit.event.server.PluginEnableEvent
 import org.bukkit.plugin.java.JavaPlugin
+import kotlin.jvm.java
 import kotlin.time.Duration.Companion.minutes
 
 class MaintenanceReminderListener(
@@ -26,9 +27,8 @@ class MaintenanceReminderListener(
     @EventHandler
     fun onPluginEnable(event: PluginEnableEvent) {
         // PluginEnableEvent is emitted for every plugin, not just ours
-        if (event.plugin != plugin) {
-            return
-        }
+        if (event.plugin != plugin) return
+
         event.scopedSync(maintenanceTracer, this::class.java) {
             if (store.state.maintenance) {
                 enable()
@@ -39,9 +39,8 @@ class MaintenanceReminderListener(
     @EventHandler
     fun onPluginDisable(event: PluginDisableEvent) {
         // PluginEnableEvent is emitted for every plugin, not just ours
-        if (event.plugin != plugin) {
-            return
-        }
+        if (event.plugin != plugin) return
+
         event.scopedSync(maintenanceTracer, this::class.java) {
             disable()
         }

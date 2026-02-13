@@ -5,6 +5,7 @@ import com.projectcitybuild.pcbridge.http.pcb.models.Build
 import com.projectcitybuild.pcbridge.http.pcb.models.NamedResource
 import com.projectcitybuild.pcbridge.http.pcb.models.Home
 import com.projectcitybuild.pcbridge.http.pcb.models.HomeLimit
+import com.projectcitybuild.pcbridge.http.pcb.models.OpElevation
 import com.projectcitybuild.pcbridge.http.pcb.models.PaginatedList
 import com.projectcitybuild.pcbridge.http.pcb.models.PlayerBan
 import com.projectcitybuild.pcbridge.http.pcb.models.PlayersStatsRequest
@@ -46,6 +47,19 @@ internal interface PCBRequest {
     suspend fun incrementStats(
         @Body players: PlayersStatsRequest,
     )
+
+    @POST("v3/server/op/start")
+    @FormUrlEncoded
+    suspend fun opStart(
+        @Field(value = "uuid") uuid: String,
+        @Field(value = "reason") reason: String,
+    ): OpElevation
+
+    @POST("v3/server/op/end")
+    @FormUrlEncoded
+    suspend fun opEnd(
+        @Field(value = "uuid") uuid: String,
+    ): OpElevation
 
     /**
      * Begins registration of a PCB account linked to the current

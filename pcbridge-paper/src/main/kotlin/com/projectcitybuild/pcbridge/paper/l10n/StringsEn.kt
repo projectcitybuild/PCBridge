@@ -52,4 +52,5 @@ class StringsEn {
     val kickedFromServer = "Kicked from server."
     val playerWasKickedForReason = { name: String, reason: String -> "<i><gray>$name was kicked: $reason</gray></i>" }
     val playerWasKicked = { name: String -> "<i><gray>$name was kicked</gray></i>" }
+    val opElevationRevoked = "<gray><i>OP elevation was revoked</i></gray>"
 }

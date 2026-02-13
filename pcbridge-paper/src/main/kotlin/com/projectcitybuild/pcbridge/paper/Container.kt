@@ -65,6 +65,7 @@ import com.projectcitybuild.pcbridge.paper.features.homes.homesModule
 import com.projectcitybuild.pcbridge.paper.features.joinmessages.joinMessagesModule
 import com.projectcitybuild.pcbridge.paper.features.maintenance.maintenanceModule
 import com.projectcitybuild.pcbridge.paper.features.moderate.moderateModule
+import com.projectcitybuild.pcbridge.paper.features.opelevate.opElevateModule
 import com.projectcitybuild.pcbridge.paper.features.randomteleport.randomTeleportModule
 import com.projectcitybuild.pcbridge.paper.features.register.registerModule
 import com.projectcitybuild.pcbridge.paper.features.serverlinks.serverLinksModule
@@ -117,6 +118,7 @@ private val featureModules = listOf(
     joinMessagesModule,
     maintenanceModule,
     moderateModule,
+    opElevateModule,
     randomTeleportModule,
     registerModule,
     serverLinksModule,

@@ -5,6 +5,7 @@ import com.projectcitybuild.pcbridge.paper.architecture.state.data.PlayerSyncedS
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.logSync
 import com.projectcitybuild.pcbridge.paper.core.libs.store.SessionStore
 import com.projectcitybuild.pcbridge.paper.features.opelevate.opElevateTracer
+import com.projectcitybuild.pcbridge.paper.l10n.l10n
 import org.bukkit.Server
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -19,37 +20,38 @@ class OpJoinListener(
     private val session: SessionStore
 ): Listener {
     @EventHandler
-    fun onPlayerJoin(event: PlayerJoinEvent) {
-        val player = event.player
-        val playerState = session.state.players[player.uniqueId]
+    fun onPlayerJoin(
+        event: PlayerJoinEvent,
+    ) = event.scopedSync(opElevateTracer, this::class.java) {
+        val playerState = session.state.players[event.player.uniqueId]
         if (playerState == null) {
-            logSync.warn { "Could not deop player: player state missing on join event" }
-            return
+            logSync.warn { "Cannot determine op state: player state missing on join event" }
+            event.player.isOp = false
+            return@scopedSync
         }
         val wasOp = event.player.isOp
-        val isOp = if (playerState.synced is PlayerSyncedState.Valid) {
-            val elevation = playerState.synced.opElevation
-            elevation?.endedAt?.isAfter(LocalDateTime.now()) ?: false
-        } else {
-            false
-        }
+        val isOp = playerState.synced.isOp()
+
         event.player.isOp = isOp
 
         if (wasOp && !isOp) {
-            event.player.sendRichMessage("<red><i>Your OP elevation expired</i></red>")
+            event.player.sendRichMessage(l10n.opElevationRevoked)
         }
     }
 
     @EventHandler
-    fun onPluginEnabled(
-        event: PluginEnableEvent,
-    ) {
+    fun onPluginEnabled(event: PluginEnableEvent) {
         // PluginEnableEvent is emitted for every plugin, not just ours
-        if (event.plugin != plugin) {
-            return
-        }
+        if (event.plugin != plugin) return
+
         event.scopedSync(opElevateTracer, this::class.java) {
             server.operators.forEach { it.isOp = false }
         }
     }
+}
+
+private fun PlayerSyncedState.isOp(): Boolean {
+    if (this !is PlayerSyncedState.Valid) return false
+    if (opElevation == null) return false
+    return opElevation.endedAt.isAfter(LocalDateTime.now())
 }
