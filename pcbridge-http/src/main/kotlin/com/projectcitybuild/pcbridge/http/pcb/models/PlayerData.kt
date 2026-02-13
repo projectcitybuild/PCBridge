@@ -16,6 +16,9 @@ data class PlayerData(
 
     @SerializedName("badges")
     val badges: List<Badge> = emptyList(),
+
+    @SerializedName("elevation")
+    val elevation: OpElevation? = null,
 ) {
     val isStaff: Boolean
         get() = groups.firstOrNull { it.groupType?.lowercase() == "staff" } != null

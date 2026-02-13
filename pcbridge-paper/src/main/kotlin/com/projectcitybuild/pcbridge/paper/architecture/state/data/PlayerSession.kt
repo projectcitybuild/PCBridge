@@ -3,6 +3,7 @@ package com.projectcitybuild.pcbridge.paper.architecture.state.data
 import com.projectcitybuild.pcbridge.http.pcb.models.Account
 import com.projectcitybuild.pcbridge.http.pcb.models.Badge
 import com.projectcitybuild.pcbridge.http.pcb.models.Group
+import com.projectcitybuild.pcbridge.http.pcb.models.OpElevation
 import com.projectcitybuild.pcbridge.http.pcb.models.Player
 import com.projectcitybuild.pcbridge.http.pcb.models.PlayerData
 import com.projectcitybuild.pcbridge.paper.core.libs.datetime.services.LocalizedTime
@@ -48,5 +49,6 @@ sealed class PlayerSyncedState {
         val player: Player? = null,
         val groups: List<Group> = emptyList(),
         val badges: List<Badge> = emptyList(),
+        val opElevation: OpElevation? = null,
     ): PlayerSyncedState()
 }

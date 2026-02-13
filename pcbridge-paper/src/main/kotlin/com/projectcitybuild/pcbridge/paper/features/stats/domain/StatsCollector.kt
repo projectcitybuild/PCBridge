@@ -12,12 +12,12 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
+import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
 data class CollectedStats(
     val blocksPlaced: Long = 0,
     val blocksDestroyed: Long = 0,
-    val blocksTravelled: Double = 0.0,
 )
 
 class StatsCollector(
@@ -49,7 +49,7 @@ class StatsCollector(
         job = scope.launch {
             val running = job?.isActive ?: false
             while (running) {
-                delay(15.seconds)
+                delay(2.minutes)
                 sendStats()
             }
         }

@@ -16,26 +16,26 @@ class AnnouncementEnableListener(
     private val plugin: JavaPlugin,
 ) : Listener {
     @EventHandler(priority = EventPriority.MONITOR)
-    fun onPluginEnable(
-        event: PluginEnableEvent,
-    ) = event.scopedSync(announcementsTracer, this::class.java) {
+    fun onPluginEnable(event: PluginEnableEvent) {
+        // PluginEnableEvent is emitted for every plugin, not just ours
         if (event.plugin != plugin) {
-            // PluginEnableEvent is emitted for every plugin, not just ours
-            return@scopedSync
+            return
         }
-        announcementTimer.start()
-        logSync.debug { "Announcement timer started" }
+        event.scopedSync(announcementsTracer, this::class.java) {
+            announcementTimer.start()
+            logSync.debug { "Announcement timer started" }
+        }
     }
 
     @EventHandler
-    fun onPluginDisable(
-        event: PluginDisableEvent,
-    ) = event.scopedSync(announcementsTracer, this::class.java) {
+    fun onPluginDisable(event: PluginDisableEvent) {
+        // PluginDisableEvent is emitted for every plugin, not just ours
         if (event.plugin != plugin) {
-            // PluginDisableEvent is emitted for every plugin, not just ours
-            return@scopedSync
+            return
         }
-        announcementTimer.stop()
-        logSync.debug { "Announcement timer stopped" }
+        event.scopedSync(announcementsTracer, this::class.java) {
+            announcementTimer.stop()
+            logSync.debug { "Announcement timer stopped" }
+        }
     }
 }
