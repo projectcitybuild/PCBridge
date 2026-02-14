@@ -32,12 +32,8 @@ import com.projectcitybuild.pcbridge.paper.core.libs.cooldowns.Cooldown
 import com.projectcitybuild.pcbridge.paper.core.libs.datetime.services.DateTimeFormatter
 import com.projectcitybuild.pcbridge.paper.core.libs.datetime.services.LocalizedTime
 import com.projectcitybuild.pcbridge.paper.core.libs.discord.DiscordSend
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.errors.ErrorTracker
 import com.projectcitybuild.pcbridge.paper.core.libs.storage.JsonStorage
 import com.projectcitybuild.pcbridge.paper.core.libs.localconfig.LocalConfig
-import com.projectcitybuild.pcbridge.paper.core.libs.localconfig.LocalConfigKeyValues
-import com.projectcitybuild.pcbridge.paper.core.libs.localconfig.default
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.errors.SentryProvider
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.logSync
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.tracing.OpenTelemetryProvider
 import com.projectcitybuild.pcbridge.paper.core.libs.pcbmanage.ManageUrlGenerator
@@ -91,13 +87,25 @@ import java.time.ZoneId
 import java.util.Locale
 import kotlin.time.Duration.Companion.seconds
 
-fun pluginModules(plugin: JavaPlugin) = buildList {
-    add(mainModule(plugin))
+fun pluginModules(
+    plugin: JavaPlugin,
+    services: PaperBootstrap.Services,
+) = buildList {
+    add(mainModule(plugin, services))
     addAll(featureModules)
 }
 
-private fun mainModule(plugin: JavaPlugin) = module {
-    spigot(plugin)
+private fun mainModule(
+    plugin: JavaPlugin,
+    services: PaperBootstrap.Services,
+) = module {
+    single { plugin }
+    single { services.config }
+    single { services.otel }
+    single { services.sentry }.onClose { it?.close() }
+    single { services.errorTracker }
+
+    spigot()
     core()
     http()
     webServer()
@@ -132,9 +140,7 @@ private val featureModules = listOf(
     workstationsModule
 )
 
-private fun Module.spigot(plugin: JavaPlugin) {
-    single { plugin }
-
+private fun Module.spigot() {
     factory { get<JavaPlugin>().server }
 
     single { SpigotNamespace(plugin = get()) }
@@ -152,45 +158,6 @@ private fun Module.spigot(plugin: JavaPlugin) {
 }
 
 private fun Module.core() {
-    single {
-        val storage = JsonStorage(
-            typeToken = object : TypeToken<LocalConfigKeyValues>() {},
-        )
-        val file = get<JavaPlugin>()
-            .dataFolder
-            .resolve("config.json")
-        if (!file.exists()) {
-            storage.writeSync(file, LocalConfigKeyValues.default())
-        }
-        LocalConfig(
-            file = file,
-            storage = storage,
-        )
-    }
-
-    single {
-        OpenTelemetryProvider()
-    }
-
-    single {
-        val localConfig = get<LocalConfig>()
-        val config = localConfig.get()
-
-        SentryProvider(
-            dsn = config.observability.sentryDsn,
-            environment = config.environment.name.lowercase(),
-            traceSampleRate = config.observability.traceSampleRate,
-        ).also {
-            it.init()
-        }
-    } onClose {
-        it?.close()
-    }
-
-    single {
-        ErrorTracker(sentry = get())
-    }
-
     factory {
         val config = get<RemoteConfig>().latest.config
         val zoneId = ZoneId.of(config.localization.timeZone)
