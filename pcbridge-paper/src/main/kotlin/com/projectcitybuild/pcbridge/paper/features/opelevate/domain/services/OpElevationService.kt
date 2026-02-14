@@ -92,6 +92,15 @@ private fun Player.grantOp(duration: Duration) {
 private fun Player.revokeOp(reason: OpElevationService.RevokeReason) {
     if (!isOp) return
     isOp = false
-    sendRichMessage(l10n.opElevationRevoked)
+
+    val message = when (reason) {
+        OpElevationService.RevokeReason.MANUAL,
+        OpElevationService.RevokeReason.DESYNC
+            -> l10n.opElevationRevoked
+        OpElevationService.RevokeReason.EXPIRED
+            -> l10n.opElevationExpired
+    }
+    sendRichMessage(message)
+
     logSync.info { "Revoked OP status (reason: $reason) from $name ($uniqueId)" }
 }
