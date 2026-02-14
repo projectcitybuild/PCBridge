@@ -1,54 +1,53 @@
 package com.projectcitybuild.pcbridge.paper.core.support.spigot
 
+import com.github.shynixn.mccoroutine.bukkit.asyncDispatcher
 import com.projectcitybuild.pcbridge.paper.core.utils.Cancellable
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 import org.bukkit.plugin.java.JavaPlugin
-import org.bukkit.scheduler.BukkitTask
 import kotlin.time.Duration
 
-// TODO: replace these with coroutines + delay later
 class SpigotTimer(
     private val plugin: JavaPlugin,
 ) {
-    private val tasks: HashMap<String, BukkitTask> = hashMapOf()
+    private val tasks: HashMap<String, Job> = hashMapOf()
+    private val scope = CoroutineScope(plugin.asyncDispatcher)
 
     fun scheduleOnce(
         identifier: String,
         delay: Duration,
-        work: () -> Unit,
+        work: suspend () -> Unit,
     ): Cancellable {
-        val task =
-            plugin.server.scheduler.runTaskLater(
-                plugin,
-                work,
-                // Times are all in ticks (20 ticks per second)
-                delay.inWholeSeconds * 20,
-            )
-        tasks[identifier] = task
-
-        return Cancellable {
-            cancel(identifier = identifier)
+        val job = scope.launch {
+            if (delay.isPositive()) {
+                delay(delay.inWholeMilliseconds)
+            }
+            work()
         }
+        tasks[identifier] = job
+        return Cancellable { cancel(identifier) }
     }
 
     fun scheduleRepeating(
         identifier: String,
         delay: Duration = Duration.ZERO,
         repeatingInterval: Duration,
-        work: () -> Unit,
+        work: suspend () -> Unit,
     ): Cancellable {
-        val task =
-            plugin.server.scheduler.runTaskTimer(
-                plugin,
-                work,
-                // Times are all in ticks (20 ticks per second)
-                delay.inWholeSeconds * 20,
-                repeatingInterval.inWholeSeconds * 20,
-            )
-        tasks[identifier] = task
-
-        return Cancellable {
-            cancel(identifier = identifier)
+        val job = scope.launch {
+            if (delay.isPositive()) {
+                delay(delay.inWholeMilliseconds)
+            }
+            while (isActive) {
+                work()
+                delay(repeatingInterval.inWholeMilliseconds)
+            }
         }
+        tasks[identifier] = job
+        return Cancellable { cancel(identifier) }
     }
 
     fun cancel(identifier: String) {

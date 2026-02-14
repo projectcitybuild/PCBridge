@@ -62,6 +62,11 @@ import com.projectcitybuild.pcbridge.paper.features.maintenance.hooks.decorators
 import com.projectcitybuild.pcbridge.paper.features.maintenance.hooks.listener.MaintenanceReminderListener
 import com.projectcitybuild.pcbridge.paper.features.maintenance.hooks.middleware.MaintenanceConnectionMiddleware
 import com.projectcitybuild.pcbridge.paper.features.moderate.hooks.commands.KickCommand
+import com.projectcitybuild.pcbridge.paper.features.pim.hooks.commands.PimCommand
+import com.projectcitybuild.pcbridge.paper.features.pim.hooks.listener.OpClearListener
+import com.projectcitybuild.pcbridge.paper.features.pim.hooks.listener.OpDialogListener
+import com.projectcitybuild.pcbridge.paper.features.pim.hooks.listener.OpRestoreListener
+import com.projectcitybuild.pcbridge.paper.features.pim.hooks.listener.VanillaOpInterceptListener
 import com.projectcitybuild.pcbridge.paper.features.randomteleport.hooks.commands.RtpCommand
 import com.projectcitybuild.pcbridge.paper.features.register.commands.CodeCommand
 import com.projectcitybuild.pcbridge.paper.features.register.commands.RegisterCommand
@@ -75,7 +80,6 @@ import com.projectcitybuild.pcbridge.paper.features.staffchat.commands.StaffChat
 import com.projectcitybuild.pcbridge.paper.features.stats.domain.StatsCollector
 import com.projectcitybuild.pcbridge.paper.features.stats.hooks.listeners.BlockChangeListener
 import com.projectcitybuild.pcbridge.paper.features.sync.hooks.commands.SyncCommand
-import com.projectcitybuild.pcbridge.paper.features.sync.hooks.commands.SyncDebugCommand
 import com.projectcitybuild.pcbridge.paper.features.sync.hooks.listener.PlayerSyncRequestListener
 import com.projectcitybuild.pcbridge.paper.features.warnings.commands.WarnCommand
 import com.projectcitybuild.pcbridge.paper.features.warps.hooks.commands.WarpCommand
@@ -173,6 +177,7 @@ class PluginLifecycle : KoinComponent {
         get<LoomCommand>(),
         get<MaintenanceCommand>(),
         get<NightVisionCommand>(),
+        get<PimCommand>(),
         get<RegisterCommand>(),
         get<RtpCommand>(),
         get<SetSpawnCommand>(),
@@ -181,7 +186,6 @@ class PluginLifecycle : KoinComponent {
         get<StaffChatCommand>(),
         get<StoneCutterCommand>(),
         get<SyncCommand>(),
-        get<SyncDebugCommand>(),
         get<WarpCommand>(),
         get<WarpsCommand>(),
         get<WarnCommand>(),
@@ -209,6 +213,9 @@ class PluginLifecycle : KoinComponent {
         get<InvisFrameListener>(),
         get<ItemTextListener>(),
         get<MaintenanceReminderListener>(),
+        get<OpClearListener>(),
+        get<OpDialogListener>(),
+        get<OpRestoreListener>(),
         get<PlayerRespawnListener>(),
         get<PlayerStateListener>(),
         get<PlayerSyncRequestListener>(),
@@ -217,6 +224,7 @@ class PluginLifecycle : KoinComponent {
         get<ServerLinkListener>(),
         get<RoleStateChangeListener>(),
         get<TabListeners>(),
+        get<VanillaOpInterceptListener>(),
         get<VerifyCodeDialogListener>(),
         get<WarpRenameDialogListener>(),
         get<WarpWebhookListener>(),

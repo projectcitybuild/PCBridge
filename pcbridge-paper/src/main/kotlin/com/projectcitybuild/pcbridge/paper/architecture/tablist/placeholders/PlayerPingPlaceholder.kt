@@ -35,10 +35,8 @@ class PlayerPingPlaceholder(
 
     @EventHandler(priority = EventPriority.MONITOR)
     fun onPluginEnable(event: PluginEnableEvent) {
-        if (event.plugin != plugin) {
-            // PluginEnableEvent is emitted for every plugin, not just ours
-            return
-        }
+        if (event.plugin != plugin) return
+
         cancellable?.cancel()
         cancellable = spigotTimer.scheduleRepeating(
             identifier = "tab_player_ping",
@@ -58,10 +56,8 @@ class PlayerPingPlaceholder(
 
     @EventHandler
     fun onPluginDisable(event: PluginDisableEvent) {
-        if (event.plugin != plugin) {
-            // PluginDisableEvent is emitted for every plugin, not just ours
-            return
-        }
+        if (event.plugin != plugin) return
+
         cancellable?.cancel()
         cancellable = null
     }

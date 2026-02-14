@@ -6,6 +6,8 @@ import com.projectcitybuild.pcbridge.http.pcb.models.Group
 import com.projectcitybuild.pcbridge.http.pcb.models.Player
 import com.projectcitybuild.pcbridge.http.pcb.models.PlayerData
 import com.projectcitybuild.pcbridge.paper.core.libs.datetime.services.LocalizedTime
+import com.projectcitybuild.pcbridge.paper.features.pim.domain.data.OpElevation
+import com.projectcitybuild.pcbridge.paper.features.pim.domain.data.toDomain
 import java.time.Duration
 import java.time.LocalDateTime
 
@@ -35,6 +37,7 @@ data class PlayerSession(
                     player = data.player,
                     groups = data.groups,
                     badges = data.badges,
+                    opElevation = data.elevation?.toDomain(),
                 ),
         )
     }
@@ -48,5 +51,6 @@ sealed class PlayerSyncedState {
         val player: Player? = null,
         val groups: List<Group> = emptyList(),
         val badges: List<Badge> = emptyList(),
+        val opElevation: OpElevation? = null,
     ): PlayerSyncedState()
 }

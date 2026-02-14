@@ -11,7 +11,7 @@ class CommandExceptionHandler private constructor() {
             is IllegalStateException -> sender.sendError("Error: ${e.message}")
             is ResponseParserError -> when (e) {
                 is ResponseParserError.Validation -> sender.sendError("Error: ${e.message ?: "Validation failed"}")
-                is ResponseParserError.NotFound -> sender.sendError("Error: {${e.message ?: "Not Found"}")
+                is ResponseParserError.NotFound -> sender.sendError("Error: ${e.message ?: "Not Found"}")
                 is ResponseParserError.Forbidden -> sender.sendError("Error: Not permitted to perform this action")
                 is ResponseParserError.Conflict -> sender.sendError("Error: ${e.message ?: "Conflict"}")
             }

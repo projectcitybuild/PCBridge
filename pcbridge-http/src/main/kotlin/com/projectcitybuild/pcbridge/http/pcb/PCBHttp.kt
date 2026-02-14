@@ -6,6 +6,7 @@ import com.projectcitybuild.pcbridge.http.pcb.services.ConfigHttpService
 import com.projectcitybuild.pcbridge.http.pcb.services.HomeHttpService
 import com.projectcitybuild.pcbridge.http.pcb.services.RegisterHttpService
 import com.projectcitybuild.pcbridge.http.pcb.services.ConnectionHttpService
+import com.projectcitybuild.pcbridge.http.pcb.services.OpElevateHttpService
 import com.projectcitybuild.pcbridge.http.pcb.services.StatsHttpService
 import com.projectcitybuild.pcbridge.http.pcb.services.UuidBanHttpService
 import com.projectcitybuild.pcbridge.http.pcb.services.WarpHttpService
@@ -41,6 +42,9 @@ class PCBHttp(
 
     val connection
         get() = ConnectionHttpService(client, responseParser)
+
+    val opElevate
+        get() = OpElevateHttpService(client, responseParser)
 
     val register
         get() = RegisterHttpService(client, responseParser)

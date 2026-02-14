@@ -22,6 +22,7 @@ val maintenanceModule = module {
 
     factory {
         MaintenanceReminderListener(
+            plugin = get<JavaPlugin>(),
             store = get(),
             server = get(),
             timer = get(),
