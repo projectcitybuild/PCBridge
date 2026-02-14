@@ -32,7 +32,7 @@ enum class PermissionNode(val node: String) {
     MODERATE("pcbridge.moderate"),
 
     // Can temporarily elevate themselves to OP
-    OP_ELEVATE("pcbridge.op.elevate"),
+    PIM_OP_ELEVATE("pcbridge.pim.op"),
 
     // Can set the spawn location of a world
     SPAWN_MANAGE("pcbridge.spawn.manage"),

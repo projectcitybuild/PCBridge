@@ -62,13 +62,14 @@ import com.projectcitybuild.pcbridge.paper.features.maintenance.hooks.decorators
 import com.projectcitybuild.pcbridge.paper.features.maintenance.hooks.listener.MaintenanceReminderListener
 import com.projectcitybuild.pcbridge.paper.features.maintenance.hooks.middleware.MaintenanceConnectionMiddleware
 import com.projectcitybuild.pcbridge.paper.features.moderate.hooks.commands.KickCommand
-import com.projectcitybuild.pcbridge.paper.features.opelevate.hooks.commands.OpEndCommand
-import com.projectcitybuild.pcbridge.paper.features.opelevate.hooks.commands.OpMeCommand
-import com.projectcitybuild.pcbridge.paper.features.opelevate.hooks.commands.OpStatusCommand
-import com.projectcitybuild.pcbridge.paper.features.opelevate.hooks.listener.OpClearListener
-import com.projectcitybuild.pcbridge.paper.features.opelevate.hooks.listener.OpDialogListener
-import com.projectcitybuild.pcbridge.paper.features.opelevate.hooks.listener.OpRestoreListener
-import com.projectcitybuild.pcbridge.paper.features.opelevate.hooks.listener.VanillaOpInterceptListener
+import com.projectcitybuild.pcbridge.paper.features.pim.hooks.commands.PimCommand
+import com.projectcitybuild.pcbridge.paper.features.pim.hooks.commands.op.OpRevokeCommand
+import com.projectcitybuild.pcbridge.paper.features.pim.hooks.commands.op.OpGrantCommand
+import com.projectcitybuild.pcbridge.paper.features.pim.hooks.commands.op.OpStatusCommand
+import com.projectcitybuild.pcbridge.paper.features.pim.hooks.listener.OpClearListener
+import com.projectcitybuild.pcbridge.paper.features.pim.hooks.listener.OpDialogListener
+import com.projectcitybuild.pcbridge.paper.features.pim.hooks.listener.OpRestoreListener
+import com.projectcitybuild.pcbridge.paper.features.pim.hooks.listener.VanillaOpInterceptListener
 import com.projectcitybuild.pcbridge.paper.features.randomteleport.hooks.commands.RtpCommand
 import com.projectcitybuild.pcbridge.paper.features.register.commands.CodeCommand
 import com.projectcitybuild.pcbridge.paper.features.register.commands.RegisterCommand
@@ -180,9 +181,7 @@ class PluginLifecycle : KoinComponent {
         get<LoomCommand>(),
         get<MaintenanceCommand>(),
         get<NightVisionCommand>(),
-        get<OpEndCommand>(),
-        get<OpMeCommand>(),
-        get<OpStatusCommand>(),
+        get<PimCommand>(),
         get<RegisterCommand>(),
         get<RtpCommand>(),
         get<SetSpawnCommand>(),

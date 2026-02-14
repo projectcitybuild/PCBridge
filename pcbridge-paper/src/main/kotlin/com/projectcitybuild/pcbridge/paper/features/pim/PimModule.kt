@@ -1,20 +1,21 @@
-package com.projectcitybuild.pcbridge.paper.features.opelevate
+package com.projectcitybuild.pcbridge.paper.features.pim
 
 import com.projectcitybuild.pcbridge.http.pcb.PCBHttp
-import com.projectcitybuild.pcbridge.paper.features.opelevate.domain.repositories.OpElevationRepository
-import com.projectcitybuild.pcbridge.paper.features.opelevate.domain.services.OpElevationScheduler
-import com.projectcitybuild.pcbridge.paper.features.opelevate.domain.services.OpElevationService
-import com.projectcitybuild.pcbridge.paper.features.opelevate.hooks.commands.OpEndCommand
-import com.projectcitybuild.pcbridge.paper.features.opelevate.hooks.commands.OpMeCommand
-import com.projectcitybuild.pcbridge.paper.features.opelevate.hooks.commands.OpStatusCommand
-import com.projectcitybuild.pcbridge.paper.features.opelevate.hooks.listener.OpClearListener
-import com.projectcitybuild.pcbridge.paper.features.opelevate.hooks.listener.OpDialogListener
-import com.projectcitybuild.pcbridge.paper.features.opelevate.hooks.listener.OpRestoreListener
-import com.projectcitybuild.pcbridge.paper.features.opelevate.hooks.listener.VanillaOpInterceptListener
+import com.projectcitybuild.pcbridge.paper.features.pim.domain.repositories.OpElevationRepository
+import com.projectcitybuild.pcbridge.paper.features.pim.domain.services.OpElevationScheduler
+import com.projectcitybuild.pcbridge.paper.features.pim.domain.services.OpElevationService
+import com.projectcitybuild.pcbridge.paper.features.pim.hooks.commands.PimCommand
+import com.projectcitybuild.pcbridge.paper.features.pim.hooks.commands.op.OpRevokeCommand
+import com.projectcitybuild.pcbridge.paper.features.pim.hooks.commands.op.OpGrantCommand
+import com.projectcitybuild.pcbridge.paper.features.pim.hooks.commands.op.OpStatusCommand
+import com.projectcitybuild.pcbridge.paper.features.pim.hooks.listener.OpClearListener
+import com.projectcitybuild.pcbridge.paper.features.pim.hooks.listener.OpDialogListener
+import com.projectcitybuild.pcbridge.paper.features.pim.hooks.listener.OpRestoreListener
+import com.projectcitybuild.pcbridge.paper.features.pim.hooks.listener.VanillaOpInterceptListener
 import org.bukkit.plugin.java.JavaPlugin
 import org.koin.dsl.module
 
-val opElevateModule = module {
+val pimModule = module {
     factory {
         OpRestoreListener(
             opElevationService = get(),
@@ -39,7 +40,15 @@ val opElevateModule = module {
     }
 
     factory {
-        OpMeCommand(
+        PimCommand(
+            opGrantCommand = get(),
+            opRevokeCommand = get(),
+            opStatusCommand = get(),
+        )
+    }
+
+    factory {
+        OpGrantCommand(
             plugin = get<JavaPlugin>(),
             opElevationService = get(),
             localizedTime = get(),
@@ -55,7 +64,7 @@ val opElevateModule = module {
     }
 
     factory {
-        OpEndCommand(
+        OpRevokeCommand(
             plugin = get<JavaPlugin>(),
             opElevationService = get(),
         )

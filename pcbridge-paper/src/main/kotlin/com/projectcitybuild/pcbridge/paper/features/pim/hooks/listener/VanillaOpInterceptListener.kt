@@ -1,16 +1,17 @@
-package com.projectcitybuild.pcbridge.paper.features.opelevate.hooks.listener
+package com.projectcitybuild.pcbridge.paper.features.pim.hooks.listener
 
 import com.projectcitybuild.pcbridge.paper.architecture.listeners.scopedSync
-import com.projectcitybuild.pcbridge.paper.features.opelevate.opElevateTracer
+import com.projectcitybuild.pcbridge.paper.features.pim.pimTracer
 import org.bukkit.event.EventHandler
+import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerCommandPreprocessEvent
 
 class VanillaOpInterceptListener: Listener {
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     fun onPlayerCommandPreprocess(
         event: PlayerCommandPreprocessEvent,
-    ) = event.scopedSync(opElevateTracer, this::class.java) {
+    ) = event.scopedSync(pimTracer, this::class.java) {
         // Event only triggered by players. No further checks needed - we still
         // want to allow console to /op players in emergencies
         val message = event.message.trimEnd().lowercase()

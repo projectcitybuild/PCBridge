@@ -1,4 +1,4 @@
-package com.projectcitybuild.pcbridge.paper.features.opelevate.hooks.dialogs
+package com.projectcitybuild.pcbridge.paper.features.pim.hooks.dialogs
 
 import io.papermc.paper.dialog.Dialog
 import io.papermc.paper.registry.data.dialog.ActionButton

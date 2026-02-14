@@ -1,9 +1,8 @@
-package com.projectcitybuild.pcbridge.paper.features.opelevate.hooks.listener
+package com.projectcitybuild.pcbridge.paper.features.pim.hooks.listener
 
 import com.projectcitybuild.pcbridge.paper.architecture.listeners.scopedSync
-import com.projectcitybuild.pcbridge.paper.features.opelevate.opElevateTracer
-import com.projectcitybuild.pcbridge.paper.features.opelevate.domain.services.OpElevationService
-import org.bukkit.Server
+import com.projectcitybuild.pcbridge.paper.features.pim.pimTracer
+import com.projectcitybuild.pcbridge.paper.features.pim.domain.services.OpElevationService
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
@@ -15,7 +14,7 @@ class OpRestoreListener(
     @EventHandler
     fun onPlayerJoin(
         event: PlayerJoinEvent,
-    ) = event.scopedSync(opElevateTracer, this::class.java) {
+    ) = event.scopedSync(pimTracer, this::class.java) {
         opElevationService.handleJoin(event.player)
     }
 

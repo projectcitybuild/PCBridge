@@ -1,11 +1,11 @@
-package com.projectcitybuild.pcbridge.paper.features.opelevate.hooks.listener
+package com.projectcitybuild.pcbridge.paper.features.pim.hooks.listener
 
 import com.projectcitybuild.pcbridge.paper.architecture.listeners.scoped
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.logSync
-import com.projectcitybuild.pcbridge.paper.features.opelevate.hooks.dialogs.ConfirmOpElevateDialog
-import com.projectcitybuild.pcbridge.paper.features.opelevate.opElevateTracer
-import com.projectcitybuild.pcbridge.paper.features.opelevate.domain.services.OpElevationService
+import com.projectcitybuild.pcbridge.paper.features.pim.hooks.dialogs.ConfirmOpElevateDialog
+import com.projectcitybuild.pcbridge.paper.features.pim.pimTracer
+import com.projectcitybuild.pcbridge.paper.features.pim.domain.services.OpElevationService
 import io.papermc.paper.connection.PlayerGameConnection
 import io.papermc.paper.event.player.PlayerCustomClickEvent
 import org.bukkit.event.EventHandler
@@ -17,7 +17,7 @@ class OpDialogListener(
     @EventHandler
     suspend fun onPlayerCustomClickEvent(
         event: PlayerCustomClickEvent,
-    ) = event.scoped(opElevateTracer, this::class.java) {
+    ) = event.scoped(pimTracer, this::class.java) {
         if (event.identifier != ConfirmOpElevateDialog.proceedButtonKey) return@scoped
 
         val view = event.dialogResponseView

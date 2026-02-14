@@ -1,9 +1,9 @@
-package com.projectcitybuild.pcbridge.paper.features.opelevate.domain.repositories
+package com.projectcitybuild.pcbridge.paper.features.pim.domain.repositories
 
 import com.projectcitybuild.pcbridge.http.pcb.services.OpElevateHttpService
 import com.projectcitybuild.pcbridge.paper.core.libs.store.SessionStore
-import com.projectcitybuild.pcbridge.paper.features.opelevate.domain.data.OpElevation
-import com.projectcitybuild.pcbridge.paper.features.opelevate.domain.data.toDomain
+import com.projectcitybuild.pcbridge.paper.features.pim.domain.data.OpElevation
+import com.projectcitybuild.pcbridge.paper.features.pim.domain.data.toDomain
 import java.util.UUID
 
 class OpElevationRepository(

@@ -1,7 +1,7 @@
-package com.projectcitybuild.pcbridge.paper.features.opelevate.hooks.listener
+package com.projectcitybuild.pcbridge.paper.features.pim.hooks.listener
 
 import com.projectcitybuild.pcbridge.paper.architecture.listeners.scopedSync
-import com.projectcitybuild.pcbridge.paper.features.opelevate.opElevateTracer
+import com.projectcitybuild.pcbridge.paper.features.pim.pimTracer
 import org.bukkit.Server
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -16,7 +16,7 @@ class OpClearListener(
     fun onPluginEnabled(event: PluginEnableEvent) {
         if (event.plugin != plugin) return
 
-        event.scopedSync(opElevateTracer, this::class.java) {
+        event.scopedSync(pimTracer, this::class.java) {
             server.operators.forEach { it.isOp = false }
         }
     }
