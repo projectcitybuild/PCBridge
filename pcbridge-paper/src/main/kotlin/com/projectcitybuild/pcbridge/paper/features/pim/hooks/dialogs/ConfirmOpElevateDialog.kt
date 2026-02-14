@@ -46,7 +46,7 @@ class ConfirmOpElevateDialog {
                         #
                         #• <aqua>Full administrative permissions</aqua> will be granted.
                         #• Your OP status will be <aqua>automatically revoked</aqua> after the set duration.
-                        #• You may revoke it early at any time with: <aqua><b>/opend</b></aqua>
+                        #• You may revoke it early at any time with: <aqua><b>/pim op revoke</b></aqua>
                         #
                         #<dark_red><b>⚠ IMPORTANT</b></dark_red>
                         #<i>
