@@ -10,6 +10,7 @@ import com.projectcitybuild.pcbridge.paper.features.opelevate.hooks.commands.OpS
 import com.projectcitybuild.pcbridge.paper.features.opelevate.hooks.listener.OpClearListener
 import com.projectcitybuild.pcbridge.paper.features.opelevate.hooks.listener.OpDialogListener
 import com.projectcitybuild.pcbridge.paper.features.opelevate.hooks.listener.OpRestoreListener
+import com.projectcitybuild.pcbridge.paper.features.opelevate.hooks.listener.VanillaOpInterceptListener
 import org.bukkit.plugin.java.JavaPlugin
 import org.koin.dsl.module
 
@@ -31,6 +32,10 @@ val opElevateModule = module {
         OpDialogListener(
             opElevationService = get(),
         )
+    }
+
+    factory {
+        VanillaOpInterceptListener()
     }
 
     factory {

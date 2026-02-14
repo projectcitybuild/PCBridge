@@ -68,6 +68,7 @@ import com.projectcitybuild.pcbridge.paper.features.opelevate.hooks.commands.OpS
 import com.projectcitybuild.pcbridge.paper.features.opelevate.hooks.listener.OpClearListener
 import com.projectcitybuild.pcbridge.paper.features.opelevate.hooks.listener.OpDialogListener
 import com.projectcitybuild.pcbridge.paper.features.opelevate.hooks.listener.OpRestoreListener
+import com.projectcitybuild.pcbridge.paper.features.opelevate.hooks.listener.VanillaOpInterceptListener
 import com.projectcitybuild.pcbridge.paper.features.randomteleport.hooks.commands.RtpCommand
 import com.projectcitybuild.pcbridge.paper.features.register.commands.CodeCommand
 import com.projectcitybuild.pcbridge.paper.features.register.commands.RegisterCommand
@@ -229,6 +230,7 @@ class PluginLifecycle : KoinComponent {
         get<ServerLinkListener>(),
         get<RoleStateChangeListener>(),
         get<TabListeners>(),
+        get<VanillaOpInterceptListener>(),
         get<VerifyCodeDialogListener>(),
         get<WarpRenameDialogListener>(),
         get<WarpWebhookListener>(),
