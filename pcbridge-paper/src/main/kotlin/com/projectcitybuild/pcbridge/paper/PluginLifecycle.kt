@@ -64,6 +64,7 @@ import com.projectcitybuild.pcbridge.paper.features.maintenance.hooks.middleware
 import com.projectcitybuild.pcbridge.paper.features.moderate.hooks.commands.KickCommand
 import com.projectcitybuild.pcbridge.paper.features.opelevate.hooks.commands.OpEndCommand
 import com.projectcitybuild.pcbridge.paper.features.opelevate.hooks.commands.OpMeCommand
+import com.projectcitybuild.pcbridge.paper.features.opelevate.hooks.commands.OpStatusCommand
 import com.projectcitybuild.pcbridge.paper.features.opelevate.hooks.listener.OpDialogListener
 import com.projectcitybuild.pcbridge.paper.features.opelevate.hooks.listener.OpJoinListener
 import com.projectcitybuild.pcbridge.paper.features.randomteleport.hooks.commands.RtpCommand
@@ -179,6 +180,7 @@ class PluginLifecycle : KoinComponent {
         get<NightVisionCommand>(),
         get<OpEndCommand>(),
         get<OpMeCommand>(),
+        get<OpStatusCommand>(),
         get<RegisterCommand>(),
         get<RtpCommand>(),
         get<SetSpawnCommand>(),

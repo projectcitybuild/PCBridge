@@ -17,13 +17,13 @@ import io.papermc.paper.command.brigadier.Commands
 import net.kyori.adventure.text.event.ClickEvent.Payload.dialog
 import org.bukkit.plugin.Plugin
 
-class OpMeCommand(
+class OpStatusCommand(
     private val plugin: Plugin,
     private val opElevationService: OpElevationService,
     private val localizedTime: LocalizedTime,
 ) : BrigadierCommand {
     override fun literal(): PaperCommandNode {
-        return Commands.literal("opme")
+        return Commands.literal("opstatus")
             .requiresPermission(PermissionNode.OP_ELEVATE)
             .executesSuspending(plugin, ::execute)
             .build()
@@ -35,14 +35,11 @@ class OpMeCommand(
         val player = context.source.requirePlayer()
 
         val elevation = opElevationService.elevation(player.uniqueId)
-        val now = localizedTime.nowInstant()
-        val isActive = elevation != null && elevation.isActiveAt(now)
-        if (isActive) {
-            player.sendRichMessage("<red>Error: You are already OP elevated (remaining: ${elevation.remainingAt(now)?.humanReadable()}</red>")
-            return@scoped
+        if (elevation == null) {
+            player.sendRichMessage("<gray>You are not currently OP elevated</gray>")
+        } else {
+            val now = localizedTime.nowInstant()
+            player.sendRichMessage("<gray>You are OP elevated (remaining: ${elevation.remainingAt(now)?.humanReadable()})</gray>")
         }
-
-        val dialog = ConfirmOpElevateDialog.build()
-        player.showDialog(dialog)
     }
 }

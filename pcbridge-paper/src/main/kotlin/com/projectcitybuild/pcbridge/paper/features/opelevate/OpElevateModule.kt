@@ -6,6 +6,7 @@ import com.projectcitybuild.pcbridge.paper.features.opelevate.domain.services.Op
 import com.projectcitybuild.pcbridge.paper.features.opelevate.domain.services.OpElevationService
 import com.projectcitybuild.pcbridge.paper.features.opelevate.hooks.commands.OpEndCommand
 import com.projectcitybuild.pcbridge.paper.features.opelevate.hooks.commands.OpMeCommand
+import com.projectcitybuild.pcbridge.paper.features.opelevate.hooks.commands.OpStatusCommand
 import com.projectcitybuild.pcbridge.paper.features.opelevate.hooks.listener.OpDialogListener
 import com.projectcitybuild.pcbridge.paper.features.opelevate.hooks.listener.OpJoinListener
 import org.bukkit.plugin.java.JavaPlugin
@@ -30,6 +31,15 @@ val opElevateModule = module {
         OpMeCommand(
             plugin = get<JavaPlugin>(),
             opElevationService = get(),
+            localizedTime = get(),
+        )
+    }
+
+    factory {
+        OpStatusCommand(
+            plugin = get<JavaPlugin>(),
+            opElevationService = get(),
+            localizedTime = get(),
         )
     }
 
@@ -42,8 +52,9 @@ val opElevateModule = module {
 
     factory {
         OpElevationService(
+            plugin = get<JavaPlugin>(),
             opElevationRepository = get(),
-            scheduler = get(),
+            opElevationScheduler = get(),
             server = get(),
             localizedTime = get(),
         )

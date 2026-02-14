@@ -1,9 +1,9 @@
 package com.projectcitybuild.pcbridge.http.pcb.models
 
 import com.google.gson.annotations.SerializedName
-import com.projectcitybuild.pcbridge.http.shared.serialization.serializable.LocalDateTimeSerializer
+import com.projectcitybuild.pcbridge.http.shared.serialization.serializable.InstantSerializer
 import kotlinx.serialization.Serializable
-import java.time.LocalDateTime
+import java.time.Instant
 
 @Serializable
 data class HttpOpElevation(
@@ -14,10 +14,10 @@ data class HttpOpElevation(
     val reason: String,
 
     @SerializedName("started_at")
-    @Serializable(with = LocalDateTimeSerializer::class)
-    val startedAt: LocalDateTime,
+    @Serializable(with = InstantSerializer::class)
+    val startedAt: Instant,
 
-    @SerializedName("endedAt")
-    @Serializable(with = LocalDateTimeSerializer::class)
-    val endedAt: LocalDateTime,
+    @SerializedName("ended_at")
+    @Serializable(with = InstantSerializer::class)
+    val endedAt: Instant,
 )
