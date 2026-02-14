@@ -19,7 +19,7 @@ class PimCommand(
 ) : BrigadierCommand {
     override fun literal(): PaperCommandNode {
         return Commands.literal("pim")
-            .requiresPermission(PermissionNode.WARP_TELEPORT)
+            .requiresPermission(PermissionNode.PIM_OP)
             .then(
                 Commands.literal("op")
                     .then(command = opGrantCommand)
