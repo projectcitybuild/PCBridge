@@ -7,17 +7,23 @@ import com.projectcitybuild.pcbridge.paper.features.opelevate.domain.services.Op
 import com.projectcitybuild.pcbridge.paper.features.opelevate.hooks.commands.OpEndCommand
 import com.projectcitybuild.pcbridge.paper.features.opelevate.hooks.commands.OpMeCommand
 import com.projectcitybuild.pcbridge.paper.features.opelevate.hooks.commands.OpStatusCommand
+import com.projectcitybuild.pcbridge.paper.features.opelevate.hooks.listener.OpClearListener
 import com.projectcitybuild.pcbridge.paper.features.opelevate.hooks.listener.OpDialogListener
-import com.projectcitybuild.pcbridge.paper.features.opelevate.hooks.listener.OpJoinListener
+import com.projectcitybuild.pcbridge.paper.features.opelevate.hooks.listener.OpRestoreListener
 import org.bukkit.plugin.java.JavaPlugin
 import org.koin.dsl.module
 
 val opElevateModule = module {
     factory {
-        OpJoinListener(
+        OpRestoreListener(
+            opElevationService = get(),
+        )
+    }
+
+    factory {
+        OpClearListener(
             plugin = get<JavaPlugin>(),
             server = get(),
-            opElevationService = get(),
         )
     }
 

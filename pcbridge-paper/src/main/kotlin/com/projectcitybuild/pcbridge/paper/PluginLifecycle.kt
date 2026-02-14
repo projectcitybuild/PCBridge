@@ -65,8 +65,9 @@ import com.projectcitybuild.pcbridge.paper.features.moderate.hooks.commands.Kick
 import com.projectcitybuild.pcbridge.paper.features.opelevate.hooks.commands.OpEndCommand
 import com.projectcitybuild.pcbridge.paper.features.opelevate.hooks.commands.OpMeCommand
 import com.projectcitybuild.pcbridge.paper.features.opelevate.hooks.commands.OpStatusCommand
+import com.projectcitybuild.pcbridge.paper.features.opelevate.hooks.listener.OpClearListener
 import com.projectcitybuild.pcbridge.paper.features.opelevate.hooks.listener.OpDialogListener
-import com.projectcitybuild.pcbridge.paper.features.opelevate.hooks.listener.OpJoinListener
+import com.projectcitybuild.pcbridge.paper.features.opelevate.hooks.listener.OpRestoreListener
 import com.projectcitybuild.pcbridge.paper.features.randomteleport.hooks.commands.RtpCommand
 import com.projectcitybuild.pcbridge.paper.features.register.commands.CodeCommand
 import com.projectcitybuild.pcbridge.paper.features.register.commands.RegisterCommand
@@ -217,8 +218,9 @@ class PluginLifecycle : KoinComponent {
         get<InvisFrameListener>(),
         get<ItemTextListener>(),
         get<MaintenanceReminderListener>(),
+        get<OpClearListener>(),
         get<OpDialogListener>(),
-        get<OpJoinListener>(),
+        get<OpRestoreListener>(),
         get<PlayerRespawnListener>(),
         get<PlayerStateListener>(),
         get<PlayerSyncRequestListener>(),
