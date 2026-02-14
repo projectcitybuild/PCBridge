@@ -8,6 +8,7 @@ import com.projectcitybuild.pcbridge.paper.features.pim.hooks.commands.PimComman
 import com.projectcitybuild.pcbridge.paper.features.pim.hooks.commands.op.OpRevokeCommand
 import com.projectcitybuild.pcbridge.paper.features.pim.hooks.commands.op.OpGrantCommand
 import com.projectcitybuild.pcbridge.paper.features.pim.hooks.commands.op.OpStatusCommand
+import com.projectcitybuild.pcbridge.paper.features.pim.hooks.commands.roles.RolesDebugCommand
 import com.projectcitybuild.pcbridge.paper.features.pim.hooks.listener.OpClearListener
 import com.projectcitybuild.pcbridge.paper.features.pim.hooks.listener.OpDialogListener
 import com.projectcitybuild.pcbridge.paper.features.pim.hooks.listener.OpRestoreListener
@@ -44,6 +45,7 @@ val pimModule = module {
             opGrantCommand = get(),
             opRevokeCommand = get(),
             opStatusCommand = get(),
+            rolesDebugCommand = get(),
         )
     }
 
@@ -67,6 +69,13 @@ val pimModule = module {
         OpRevokeCommand(
             plugin = get<JavaPlugin>(),
             opElevationService = get(),
+        )
+    }
+
+    factory {
+        RolesDebugCommand(
+            plugin = get<JavaPlugin>(),
+            permissions = get(),
         )
     }
 

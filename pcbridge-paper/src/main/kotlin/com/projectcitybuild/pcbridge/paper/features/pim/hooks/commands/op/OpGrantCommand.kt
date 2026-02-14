@@ -23,7 +23,7 @@ class OpGrantCommand(
 ) : BrigadierCommand {
     override fun literal(): PaperCommandNode {
         return Commands.literal("grant")
-            .requiresPermission(PermissionNode.PIM_OP_ELEVATE)
+            .requiresPermission(PermissionNode.PIM_OP)
             .executesSuspending(plugin, ::execute)
             .build()
     }

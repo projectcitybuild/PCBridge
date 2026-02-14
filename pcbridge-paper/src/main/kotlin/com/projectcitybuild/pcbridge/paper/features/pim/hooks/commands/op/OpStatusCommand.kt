@@ -22,7 +22,7 @@ class OpStatusCommand(
 ) : BrigadierCommand {
     override fun literal(): PaperCommandNode {
         return Commands.literal("status")
-            .requiresPermission(PermissionNode.PIM_OP_ELEVATE)
+            .requiresPermission(PermissionNode.PIM_OP)
             .executesSuspending(plugin, ::execute)
             .build()
     }

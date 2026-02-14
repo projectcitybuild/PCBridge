@@ -63,9 +63,6 @@ import com.projectcitybuild.pcbridge.paper.features.maintenance.hooks.listener.M
 import com.projectcitybuild.pcbridge.paper.features.maintenance.hooks.middleware.MaintenanceConnectionMiddleware
 import com.projectcitybuild.pcbridge.paper.features.moderate.hooks.commands.KickCommand
 import com.projectcitybuild.pcbridge.paper.features.pim.hooks.commands.PimCommand
-import com.projectcitybuild.pcbridge.paper.features.pim.hooks.commands.op.OpRevokeCommand
-import com.projectcitybuild.pcbridge.paper.features.pim.hooks.commands.op.OpGrantCommand
-import com.projectcitybuild.pcbridge.paper.features.pim.hooks.commands.op.OpStatusCommand
 import com.projectcitybuild.pcbridge.paper.features.pim.hooks.listener.OpClearListener
 import com.projectcitybuild.pcbridge.paper.features.pim.hooks.listener.OpDialogListener
 import com.projectcitybuild.pcbridge.paper.features.pim.hooks.listener.OpRestoreListener
@@ -83,7 +80,6 @@ import com.projectcitybuild.pcbridge.paper.features.staffchat.commands.StaffChat
 import com.projectcitybuild.pcbridge.paper.features.stats.domain.StatsCollector
 import com.projectcitybuild.pcbridge.paper.features.stats.hooks.listeners.BlockChangeListener
 import com.projectcitybuild.pcbridge.paper.features.sync.hooks.commands.SyncCommand
-import com.projectcitybuild.pcbridge.paper.features.sync.hooks.commands.SyncDebugCommand
 import com.projectcitybuild.pcbridge.paper.features.sync.hooks.listener.PlayerSyncRequestListener
 import com.projectcitybuild.pcbridge.paper.features.warnings.commands.WarnCommand
 import com.projectcitybuild.pcbridge.paper.features.warps.hooks.commands.WarpCommand
@@ -190,7 +186,6 @@ class PluginLifecycle : KoinComponent {
         get<StaffChatCommand>(),
         get<StoneCutterCommand>(),
         get<SyncCommand>(),
-        get<SyncDebugCommand>(),
         get<WarpCommand>(),
         get<WarpsCommand>(),
         get<WarnCommand>(),
