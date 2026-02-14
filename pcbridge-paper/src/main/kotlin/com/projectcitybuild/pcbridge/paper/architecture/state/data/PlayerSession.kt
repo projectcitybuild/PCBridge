@@ -3,10 +3,12 @@ package com.projectcitybuild.pcbridge.paper.architecture.state.data
 import com.projectcitybuild.pcbridge.http.pcb.models.Account
 import com.projectcitybuild.pcbridge.http.pcb.models.Badge
 import com.projectcitybuild.pcbridge.http.pcb.models.Group
-import com.projectcitybuild.pcbridge.http.pcb.models.OpElevation
+import com.projectcitybuild.pcbridge.http.pcb.models.HttpOpElevation
 import com.projectcitybuild.pcbridge.http.pcb.models.Player
 import com.projectcitybuild.pcbridge.http.pcb.models.PlayerData
 import com.projectcitybuild.pcbridge.paper.core.libs.datetime.services.LocalizedTime
+import com.projectcitybuild.pcbridge.paper.features.opelevate.domain.data.OpElevation
+import com.projectcitybuild.pcbridge.paper.features.opelevate.domain.data.toDomain
 import java.time.Duration
 import java.time.LocalDateTime
 
@@ -36,6 +38,7 @@ data class PlayerSession(
                     player = data.player,
                     groups = data.groups,
                     badges = data.badges,
+                    opElevation = data.elevation?.toDomain(),
                 ),
         )
     }

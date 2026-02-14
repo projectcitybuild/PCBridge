@@ -7,7 +7,6 @@ import io.papermc.paper.registry.data.dialog.action.DialogAction
 import io.papermc.paper.registry.data.dialog.body.DialogBody
 import io.papermc.paper.registry.data.dialog.body.PlainMessageDialogBody
 import io.papermc.paper.registry.data.dialog.input.DialogInput
-import io.papermc.paper.registry.data.dialog.input.TextDialogInput.MultilineOptions
 import io.papermc.paper.registry.data.dialog.type.DialogType
 import net.kyori.adventure.key.Key
 import net.kyori.adventure.text.Component
@@ -16,7 +15,7 @@ import net.kyori.adventure.text.minimessage.MiniMessage
 
 class ConfirmOpElevateDialog {
     companion object {
-        val reasonKey = "reason"
+        const val REASON_KEY = "reason"
         val proceedButtonKey = Key.key("pcbridge:dialogs/confirm_op_elevation/submit")
 
         fun build() = Dialog.create { builder ->
@@ -62,7 +61,7 @@ class ConfirmOpElevateDialog {
         }
 
         private fun reasonInput() = DialogInput.text(
-            reasonKey,
+            REASON_KEY,
             Component.text("Reason for Elevation")
                 .append { Component.text("*").color(NamedTextColor.RED) }
             )

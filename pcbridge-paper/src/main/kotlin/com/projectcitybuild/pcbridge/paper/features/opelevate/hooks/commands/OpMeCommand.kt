@@ -8,13 +8,16 @@ import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandCo
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandNode
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requirePlayer
+import com.projectcitybuild.pcbridge.paper.features.opelevate.domain.services.OpElevationService
 import com.projectcitybuild.pcbridge.paper.features.opelevate.hooks.dialogs.ConfirmOpElevateDialog
 import com.projectcitybuild.pcbridge.paper.features.opelevate.opElevateTracer
 import io.papermc.paper.command.brigadier.Commands
+import net.kyori.adventure.text.event.ClickEvent.Payload.dialog
 import org.bukkit.plugin.Plugin
 
 class OpMeCommand(
     private val plugin: Plugin,
+    private val opElevationService: OpElevationService,
 ) : BrigadierCommand {
     override fun literal(): PaperCommandNode {
         return Commands.literal("opme")
@@ -28,7 +31,11 @@ class OpMeCommand(
     ) = context.scoped(opElevateTracer) {
         val player = context.source.requirePlayer()
 
-        // TODO: check if already elevated
+        if (opElevationService.isElevated(player.uniqueId)) {
+            // TODO
+            player.sendRichMessage("<red>Error: You are already OP elevated (remaining: TODO</red>")
+            return@scoped
+        }
 
         val dialog = ConfirmOpElevateDialog.build()
         player.showDialog(dialog)

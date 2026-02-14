@@ -5,7 +5,7 @@ import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.scheduler.BukkitTask
 import kotlin.time.Duration
 
-// TODO: replace these with coroutines + delay later
+// TODO: replace these with coroutines + delay
 class SpigotTimer(
     private val plugin: JavaPlugin,
 ) {
@@ -16,13 +16,12 @@ class SpigotTimer(
         delay: Duration,
         work: () -> Unit,
     ): Cancellable {
-        val task =
-            plugin.server.scheduler.runTaskLater(
-                plugin,
-                work,
-                // Times are all in ticks (20 ticks per second)
-                delay.inWholeSeconds * 20,
-            )
+        val task = plugin.server.scheduler.runTaskLater(
+            plugin,
+            work,
+            // Times are all in ticks (20 ticks per second)
+            delay.inWholeSeconds * 20,
+        )
         tasks[identifier] = task
 
         return Cancellable {
@@ -36,14 +35,13 @@ class SpigotTimer(
         repeatingInterval: Duration,
         work: () -> Unit,
     ): Cancellable {
-        val task =
-            plugin.server.scheduler.runTaskTimer(
-                plugin,
-                work,
-                // Times are all in ticks (20 ticks per second)
-                delay.inWholeSeconds * 20,
-                repeatingInterval.inWholeSeconds * 20,
-            )
+        val task = plugin.server.scheduler.runTaskTimer(
+            plugin,
+            work,
+            // Times are all in ticks (20 ticks per second)
+            delay.inWholeSeconds * 20,
+            repeatingInterval.inWholeSeconds * 20,
+        )
         tasks[identifier] = task
 
         return Cancellable {

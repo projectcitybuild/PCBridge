@@ -11,6 +11,7 @@ class OpElevationScheduler(
     private val timers: MutableMap<UUID, Cancellable> = mutableMapOf()
 
     fun schedule(playerUUID: UUID, duration: Duration, action: () -> Unit) {
+        cancel(playerUUID)
         timers[playerUUID] = timer.scheduleOnce(
             identifier = playerUUID.toString(),
             delay = duration,
@@ -21,12 +22,12 @@ class OpElevationScheduler(
         )
     }
 
-    fun drop(playerUUID: UUID) {
+    fun cancel(playerUUID: UUID) {
         val job = timers.remove(playerUUID)
         job?.cancel()
     }
 
-    fun hasSchedule(playerUUID: UUID): Boolean {
+    fun has(playerUUID: UUID): Boolean {
         return timers.containsKey(playerUUID)
     }
 }

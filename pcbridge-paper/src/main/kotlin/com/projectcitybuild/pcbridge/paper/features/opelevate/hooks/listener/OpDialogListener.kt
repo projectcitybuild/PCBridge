@@ -26,7 +26,7 @@ class OpDialogListener(
             return@scoped
         }
 
-        val reason = view.getText(ConfirmOpElevateDialog.reasonKey)?.trim()
+        val reason = view.getText(ConfirmOpElevateDialog.REASON_KEY)?.trim()
 
         logSync.info("Dialog response received", mapOf("reason" to reason))
 
@@ -34,7 +34,7 @@ class OpDialogListener(
         val player = connection?.player ?: return@scoped
 
         if (reason.isNullOrEmpty()) {
-            player.sendRichMessage("<red>Error: reason is required</red>")
+            player.sendRichMessage("<red>Error: elevation reason is required</red>")
             return@scoped
         }
 

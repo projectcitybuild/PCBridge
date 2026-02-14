@@ -35,7 +35,6 @@ class PlayerPingPlaceholder(
 
     @EventHandler(priority = EventPriority.MONITOR)
     fun onPluginEnable(event: PluginEnableEvent) {
-        // PluginEnableEvent is emitted for every plugin, not just ours
         if (event.plugin != plugin) return
 
         cancellable?.cancel()
@@ -57,7 +56,6 @@ class PlayerPingPlaceholder(
 
     @EventHandler
     fun onPluginDisable(event: PluginDisableEvent) {
-        // PluginDisableEvent is emitted for every plugin, not just ours
         if (event.plugin != plugin) return
 
         cancellable?.cancel()

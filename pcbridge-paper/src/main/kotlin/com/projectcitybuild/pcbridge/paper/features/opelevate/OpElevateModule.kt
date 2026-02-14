@@ -1,6 +1,9 @@
 package com.projectcitybuild.pcbridge.paper.features.opelevate
 
 import com.projectcitybuild.pcbridge.http.pcb.PCBHttp
+import com.projectcitybuild.pcbridge.paper.features.opelevate.domain.repositories.OpElevationRepository
+import com.projectcitybuild.pcbridge.paper.features.opelevate.domain.services.OpElevationScheduler
+import com.projectcitybuild.pcbridge.paper.features.opelevate.domain.services.OpElevationService
 import com.projectcitybuild.pcbridge.paper.features.opelevate.hooks.commands.OpEndCommand
 import com.projectcitybuild.pcbridge.paper.features.opelevate.hooks.commands.OpMeCommand
 import com.projectcitybuild.pcbridge.paper.features.opelevate.hooks.listener.OpDialogListener
@@ -13,26 +16,49 @@ val opElevateModule = module {
         OpJoinListener(
             plugin = get<JavaPlugin>(),
             server = get(),
-            session = get(),
+            opElevationService = get(),
         )
     }
 
     factory {
         OpDialogListener(
-            opElevateHttpService = get<PCBHttp>().opElevate,
+            opElevationService = get(),
         )
     }
 
     factory {
         OpMeCommand(
             plugin = get<JavaPlugin>(),
+            opElevationService = get(),
         )
     }
 
     factory {
         OpEndCommand(
             plugin = get<JavaPlugin>(),
+            opElevationService = get(),
+        )
+    }
+
+    factory {
+        OpElevationService(
+            opElevationRepository = get(),
+            scheduler = get(),
+            server = get(),
+            localizedTime = get(),
+        )
+    }
+
+    factory {
+        OpElevationRepository(
             opElevateHttpService = get<PCBHttp>().opElevate,
+            session = get(),
+        )
+    }
+
+    single {
+        OpElevationScheduler(
+            timer = get(),
         )
     }
 }

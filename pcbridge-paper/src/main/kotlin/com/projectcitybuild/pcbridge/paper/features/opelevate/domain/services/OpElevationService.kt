@@ -1,94 +1,106 @@
 package com.projectcitybuild.pcbridge.paper.features.opelevate.domain.services
 
-import com.projectcitybuild.pcbridge.http.pcb.models.OpElevation
-import com.projectcitybuild.pcbridge.http.pcb.services.OpElevateHttpService
+import com.projectcitybuild.pcbridge.paper.core.libs.datetime.services.LocalizedTime
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.logSync
+import com.projectcitybuild.pcbridge.paper.features.opelevate.domain.data.OpElevation
+import com.projectcitybuild.pcbridge.paper.features.opelevate.domain.repositories.OpElevationRepository
 import com.projectcitybuild.pcbridge.paper.l10n.l10n
 import org.bukkit.Server
 import org.bukkit.entity.Player
+import java.time.Duration
 import java.util.UUID
-import kotlin.time.Duration.Companion.seconds
+import kotlin.time.toKotlinDuration
 
 class OpElevationService(
-    private val opElevateHttpService: OpElevateHttpService,
+    private val opElevationRepository: OpElevationRepository,
     private val scheduler: OpElevationScheduler,
     private val server: Server,
+    private val localizedTime: LocalizedTime,
 ) {
     suspend fun elevate(playerUUID: UUID, reason: String) {
-        val elevation = opElevateHttpService.start(
-            playerUUID = playerUUID,
-            reason = reason,
-        )
+        val elevation = opElevationRepository.grant(playerUUID, reason)
+
         val player = server.getPlayer(playerUUID) ?: run {
             log.warn { "Attempted to grant OP status but player not found" }
             return
         }
-        restore(player, elevation)
-
-        val remaining = elevation.remainingSeconds()
-        player.sendRichMessage("OP granted (remaining: $remaining)")
-    }
-
-    fun restore(player: Player, elevation: OpElevation) {
-        val remaining = elevation.remainingSeconds()
-        if (remaining <= 0) {
-            logSync.warn { "Attempted to grant OP status with an invalid duration ($remaining seconds)" }
-            return
-        }
-        val playerUUID = player.uniqueId
-        if (elevation.isActive()) {
-            player.isOp = true
-            logSync.info { "Granting OP status to ${player.name} ($playerUUID)" }
-        }
-        scheduler.schedule(
-            playerUUID = playerUUID,
-            duration = remaining.seconds,
-            action = {
-                server.getPlayer(playerUUID)?.let {
-                    deop(it)
-                    logSync.info { "OP status auto revoked for ${it.name} ($playerUUID)" }
-                }
-            }
-        )
+        val now = localizedTime.nowInstant()
+        val transition = elevation.transition(now)
+        applyTransition(player, transition)
     }
 
     suspend fun revoke(playerUUID: UUID) {
-        opElevateHttpService.end(playerUUID)
-        scheduler.drop(playerUUID)
+        opElevationRepository.revoke(playerUUID)
+        scheduler.cancel(playerUUID)
 
         val player = server.getPlayer(playerUUID)
-        if (player == null) {
-            log.warn { "Attempted to revoke OP status but player not found" }
+        player?.revokeOp(reason = RevokeReason.MANUAL)
+    }
+
+    fun handleJoin(player: Player) {
+        val now = localizedTime.nowInstant()
+        val elevation = opElevationRepository.get(player.uniqueId)
+        if (elevation == null) {
+            if (player.isOp) player.revokeOp(reason = RevokeReason.DESYNC)
             return
         }
-        deop(player)
-        logSync.info { "OP status manually revoked for ${player.name} (${player.uniqueId})" }
+        applyTransition(player, elevation.transition(now))
     }
 
-    fun handleJoin(player: Player, elevation: OpElevation?) {
-        val wasOp = player.isOp
-        val isActive = elevation?.isActive() == true
+    fun handleLeave(playerUUID: UUID) {
+        scheduler.cancel(playerUUID)
+    }
 
-        player.isOp = isActive
+    fun isElevated(playerUUID: UUID): Boolean =
+        scheduler.has(playerUUID)
 
-        when {
-            isActive -> restore(player, elevation)
-            wasOp -> player.sendRichMessage(l10n.opElevationRevoked)
+    private fun applyTransition(
+        player: Player,
+        transition: OpElevation.Transition
+    ) {
+        when (transition) {
+            is OpElevation.Transition.Grant ->
+                grant(player, transition.remaining)
+
+            OpElevation.Transition.Expire ->
+                player.revokeOp(reason = RevokeReason.EXPIRED)
         }
     }
 
+    private fun grant(player: Player, remaining: Duration) {
+        if (!remaining.isPositive) return
 
-    fun revokeSilently(playerUUID: UUID) {
-        scheduler.drop(playerUUID)
+        val playerUUID = player.uniqueId
+
+        player.grantOp(duration = remaining)
+
+        scheduler.schedule(
+            playerUUID = playerUUID,
+            duration = remaining.toKotlinDuration(),
+        ) {
+            // TODO: ensure we're on main thread
+            val player = server.getPlayer(playerUUID)
+            player?.revokeOp(reason = RevokeReason.EXPIRED)
+        }
     }
 
-    fun isElevated(playerUuid: UUID): Boolean =
-        scheduler.hasSchedule(playerUuid)
-
-
-    private fun deop(player: Player) {
-        player.isOp = false
-        player.sendRichMessage("<gray>OP status revoked</gray>")
+    enum class RevokeReason {
+        EXPIRED,
+        MANUAL,
+        DESYNC
     }
+}
+
+private fun Player.grantOp(duration: Duration) {
+    isOp = true
+    sendRichMessage("OP granted (remaining: ${duration.seconds} seconds)")
+    logSync.info { "Granted OP status to $name ($uniqueId)" }
+}
+
+private fun Player.revokeOp(reason: OpElevationService.RevokeReason) {
+    if (!isOp) return
+    isOp = false
+    sendRichMessage(l10n.opElevationRevoked)
+    logSync.info { "Revoked OP status (reason: $reason) from $name ($uniqueId)" }
 }

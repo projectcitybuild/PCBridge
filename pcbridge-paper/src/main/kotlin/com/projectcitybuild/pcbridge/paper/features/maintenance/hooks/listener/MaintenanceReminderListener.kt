@@ -26,7 +26,6 @@ class MaintenanceReminderListener(
 
     @EventHandler
     fun onPluginEnable(event: PluginEnableEvent) {
-        // PluginEnableEvent is emitted for every plugin, not just ours
         if (event.plugin != plugin) return
 
         event.scopedSync(maintenanceTracer, this::class.java) {
@@ -38,7 +37,6 @@ class MaintenanceReminderListener(
 
     @EventHandler
     fun onPluginDisable(event: PluginDisableEvent) {
-        // PluginEnableEvent is emitted for every plugin, not just ours
         if (event.plugin != plugin) return
 
         event.scopedSync(maintenanceTracer, this::class.java) {
