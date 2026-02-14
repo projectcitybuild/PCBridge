@@ -4,8 +4,8 @@ import com.projectcitybuild.pcbridge.paper.core.libs.storage.Storage
 import java.io.File
 
 class LocalConfig(
-    file: File,
-    storage: Storage<LocalConfigKeyValues>,
+    val file: File,
+    val storage: Storage<LocalConfigKeyValues>,
 ) {
     // Not so nice, but we need the local config immediately without
     // a suspending function, due to the tricky dependency tree
@@ -13,4 +13,10 @@ class LocalConfig(
         ?: LocalConfigKeyValues.default()
 
     fun get(): LocalConfigKeyValues = cached
+
+    fun bootstrap() {
+        if (!file.exists()) {
+            storage.writeSync(file, LocalConfigKeyValues.default())
+        }
+    }
 }
