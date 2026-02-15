@@ -303,7 +303,7 @@ private fun Module.http() {
         PCBHttp(
             authToken = localConfig.api.token,
             baseURL = localConfig.api.baseUrl,
-            httpLogger = if (localConfig.api.isLoggingEnabled) get() else null,
+            httpLogger = if (localConfig.api.logLevel.enabled) get() else null,
             openTelemetry = get<OpenTelemetryProvider>().sdk
         )
     }
@@ -312,7 +312,7 @@ private fun Module.http() {
         val localConfig = get<LocalConfig>().get()
 
         DiscordHttp(
-            httpLogger = if (localConfig.api.isLoggingEnabled) get() else null,
+            httpLogger = if (localConfig.api.logLevel.enabled) get() else null,
             openTelemetry = get<OpenTelemetryProvider>().sdk,
         )
     }
@@ -321,14 +321,25 @@ private fun Module.http() {
         val localConfig = get<LocalConfig>().get()
 
         PlayerDbHttp(
-            httpLogger = if (localConfig.api.isLoggingEnabled) get() else null,
+            httpLogger = if (localConfig.api.logLevel.enabled) get() else null,
             openTelemetry = get<OpenTelemetryProvider>().sdk,
             userAgent = if (localConfig.environment.isProduction) "pcbmc.co"
                 else ""
         )
     }
 
-    factory { HttpLogger(logSync::trace) }
+    factory {
+        val localConfig = get<LocalConfig>()
+
+        HttpLogger { message ->
+            when (localConfig.get().api.logLevel) {
+                LocalConfigKeyValues.Api.LogLevel.None -> return@HttpLogger
+                LocalConfigKeyValues.Api.LogLevel.Trace -> logSync.trace(message)
+                LocalConfigKeyValues.Api.LogLevel.Debug -> logSync.debug(message)
+                LocalConfigKeyValues.Api.LogLevel.Info -> logSync.info(message)
+            }
+        }
+    }
 }
 
 private fun Module.integrations() {
