@@ -2,6 +2,7 @@
 
 package com.projectcitybuild.pcbridge.paper.core.libs.localconfig
 
+import com.google.gson.annotations.SerializedName
 import kotlinx.serialization.Serializable
 
 /**
@@ -19,8 +20,24 @@ data class LocalConfigKeyValues(
     data class Api(
         val token: String,
         val baseUrl: String,
-        val isLoggingEnabled: Boolean,
-    )
+        val logLevel: LogLevel,
+    ) {
+        @Serializable
+        enum class LogLevel {
+            @SerializedName("none")
+            None,
+            @SerializedName("trace")
+            Trace,
+            @SerializedName("debug")
+            Debug,
+            @SerializedName("info")
+            Info,
+            ;
+
+            val enabled: Boolean
+                get() = this != None
+        }
+    }
 
     @Serializable
     data class WebServer(
@@ -46,7 +63,7 @@ fun LocalConfigKeyValues.Companion.default() =
         api = LocalConfigKeyValues.Api(
             token = "pcbridge_local",
             baseUrl = "http://api.localhost/",
-            isLoggingEnabled = true,
+            logLevel = LocalConfigKeyValues.Api.LogLevel.Trace,
         ),
         webServer = LocalConfigKeyValues.WebServer(
             token = "pcbridge_local",
