@@ -7,21 +7,18 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.block.BlockPlaceEvent
+import kotlin.jvm.java
 
 class BlockChangeListener(
     private val statsCollector: StatsCollector,
 ): Listener {
     @EventHandler(ignoreCancelled = true)
-    suspend fun onBlockPlace(
+    fun onBlockPlace(
         event: BlockPlaceEvent,
-    ) = event.scoped(statsTracer, this::class.java) {
-        statsCollector.blockPlaced(playerUuid = event.player.uniqueId)
-    }
+    ) = statsCollector.blockPlaced(playerUuid = event.player.uniqueId)
 
     @EventHandler(ignoreCancelled = true)
-    suspend fun onBlockBreak(
+    fun onBlockBreak(
         event: BlockBreakEvent,
-    ) = event.scoped(statsTracer, this::class.java) {
-        statsCollector.blockDestroyed(playerUuid = event.player.uniqueId)
-    }
+    ) = statsCollector.blockDestroyed(playerUuid = event.player.uniqueId)
 }
