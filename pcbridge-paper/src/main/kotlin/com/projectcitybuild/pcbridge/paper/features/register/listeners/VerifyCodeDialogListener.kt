@@ -7,6 +7,7 @@ import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.logSync
 import com.projectcitybuild.pcbridge.paper.features.register.dialogs.VerifyRegistrationCodeDialog
 import com.projectcitybuild.pcbridge.paper.features.register.registerTracer
+import com.projectcitybuild.pcbridge.paper.features.sync.domain.actions.SyncPlayer
 import com.projectcitybuild.pcbridge.paper.l10n.l10n
 import io.papermc.paper.connection.PlayerGameConnection
 import io.papermc.paper.event.player.PlayerCustomClickEvent
@@ -15,6 +16,7 @@ import org.bukkit.event.Listener
 
 class VerifyCodeDialogListener(
     private val registerHttpService: RegisterHttpService,
+    private val syncPlayer: SyncPlayer,
 ) : Listener {
     @EventHandler
     suspend fun onPlayerCustomClickEvent(
@@ -50,6 +52,8 @@ class VerifyCodeDialogListener(
                 playerUUID = player.uniqueId,
             )
             player.sendRichMessage(l10n.registrationComplete)
+            syncPlayer.execute(playerUUID = player.uniqueId)
+
         } catch (_: ResponseParserError.NotFound) {
             val dialog = VerifyRegistrationCodeDialog.build(
                 email = null,
