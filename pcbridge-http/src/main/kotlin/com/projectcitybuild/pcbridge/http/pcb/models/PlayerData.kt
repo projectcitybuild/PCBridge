@@ -21,5 +21,5 @@ data class PlayerData(
     val elevation: HttpOpElevation? = null,
 ) {
     val isStaff: Boolean
-        get() = groups.firstOrNull { it.groupType?.lowercase() == "staff" } != null
+        get() = groups.firstOrNull { it.roleType?.lowercase() == "staff" } != null
 }

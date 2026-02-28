@@ -15,7 +15,7 @@ class RolesFilter {
         }
         val mapping = mutableMapOf<RoleType, Group>()
         for (group in groups) {
-            val rawRoleType = group.groupType
+            val rawRoleType = group.roleType
             val displayPriority = group.displayPriority
 
             if (rawRoleType == null || displayPriority == null) continue
