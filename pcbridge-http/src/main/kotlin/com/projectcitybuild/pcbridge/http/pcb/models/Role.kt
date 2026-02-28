@@ -4,8 +4,8 @@ import com.google.gson.annotations.SerializedName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Group(
-    @SerializedName("group_id")
+data class Role(
+    @SerializedName("id")
     val id: Int,
 
     @SerializedName("name")
@@ -20,8 +20,8 @@ data class Group(
     @SerializedName("minecraft_display_name")
     val displayName: String?,
 
-    @SerializedName("group_type")
-    val groupType: String?,
+    @SerializedName("role_type")
+    val roleType: String?,
 
     @SerializedName("display_priority")
     val displayPriority: Int?,

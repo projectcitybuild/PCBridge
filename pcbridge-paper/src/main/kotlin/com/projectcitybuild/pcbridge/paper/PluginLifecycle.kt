@@ -45,11 +45,11 @@ import com.projectcitybuild.pcbridge.paper.features.chatformatting.hooks.listene
 import com.projectcitybuild.pcbridge.paper.features.chatformatting.hooks.decorators.ChatUrlDecorator
 import com.projectcitybuild.pcbridge.paper.features.config.hooks.commands.ConfigCommand
 import com.projectcitybuild.pcbridge.paper.features.config.hooks.listeners.ConfigWebhookListener
-import com.projectcitybuild.pcbridge.paper.features.groups.hooks.decorators.ChatGroupDecorator
-import com.projectcitybuild.pcbridge.paper.features.groups.hooks.listener.ChatGroupInvalidateListener
-import com.projectcitybuild.pcbridge.paper.features.groups.hooks.listener.RoleStateChangeListener
-import com.projectcitybuild.pcbridge.paper.features.groups.hooks.placeholders.TabGroupListPlaceholder
-import com.projectcitybuild.pcbridge.paper.features.groups.hooks.placeholders.TabGroupsPlaceholder
+import com.projectcitybuild.pcbridge.paper.features.roles.hooks.decorators.ChatRoleDecorator
+import com.projectcitybuild.pcbridge.paper.features.roles.hooks.listener.ChatRoleInvalidateListener
+import com.projectcitybuild.pcbridge.paper.features.roles.hooks.listener.RoleStateChangeListener
+import com.projectcitybuild.pcbridge.paper.features.roles.hooks.placeholders.TabRoleListPlaceholder
+import com.projectcitybuild.pcbridge.paper.features.roles.hooks.placeholders.TabRolesPlaceholder
 import com.projectcitybuild.pcbridge.paper.features.homes.hooks.commands.HomeCommand
 import com.projectcitybuild.pcbridge.paper.features.homes.hooks.commands.HomesCommand
 import com.projectcitybuild.pcbridge.paper.features.homes.hooks.listeners.HomeRenameDialogListener
@@ -203,7 +203,7 @@ class PluginLifecycle : KoinComponent {
         get<BanDialogListener>(),
         get<BlockChangeListener>(),
         get<ChatBadgeInvalidateListener>(),
-        get<ChatGroupInvalidateListener>(),
+        get<ChatRoleInvalidateListener>(),
         get<ConfigWebhookListener>(),
         get<CoroutineExceptionListener>(),
         get<EmojiConfigListener>(),
@@ -233,7 +233,7 @@ class PluginLifecycle : KoinComponent {
     private fun registerDecorators() {
         get<ChatDecoratorChain>().apply{
             senders(
-                get<ChatGroupDecorator>(),
+                get<ChatRoleDecorator>(),
                 get<ChatBadgeDecorator>(),
             )
             messages(
@@ -252,13 +252,13 @@ class PluginLifecycle : KoinComponent {
                 get<OnlinePlayerCountPlaceholder>(),
                 get<MaxPlayerCountPlaceholder>(),
                 get<PlayerWorldPlaceholder>(),
-                get<TabGroupListPlaceholder>(),
+                get<TabRoleListPlaceholder>(),
             )
             players(
                 get<PlayerNamePlaceholder>(),
                 get<PlayerAFKPlaceholder>(),
                 get<PlayerPingPlaceholder>(),
-                get<TabGroupsPlaceholder>(),
+                get<TabRolesPlaceholder>(),
             )
         }
     }

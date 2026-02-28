@@ -60,7 +60,7 @@ import com.projectcitybuild.pcbridge.paper.features.builds.buildsModule
 import com.projectcitybuild.pcbridge.paper.features.chatbadge.chatBadgeModule
 import com.projectcitybuild.pcbridge.paper.features.chatformatting.chatFormattingModule
 import com.projectcitybuild.pcbridge.paper.features.config.configModule
-import com.projectcitybuild.pcbridge.paper.features.groups.groupsModule
+import com.projectcitybuild.pcbridge.paper.features.roles.rolesModule
 import com.projectcitybuild.pcbridge.paper.features.homes.homesModule
 import com.projectcitybuild.pcbridge.paper.features.joinmessages.joinMessagesModule
 import com.projectcitybuild.pcbridge.paper.features.maintenance.maintenanceModule
@@ -113,7 +113,7 @@ private val featureModules = listOf(
     chatBadgeModule,
     chatFormattingModule,
     configModule,
-    groupsModule,
+    rolesModule,
     homesModule,
     joinMessagesModule,
     maintenanceModule,

@@ -48,14 +48,14 @@ internal interface PCBRequest {
         @Body players: PlayersStatsRequest,
     )
 
-    @POST("v3/server/op/grant")
+    @POST("v3/server/pim/op/grant")
     @FormUrlEncoded
     suspend fun opGrant(
         @Field(value = "uuid") uuid: String,
         @Field(value = "reason") reason: String,
     ): HttpOpElevation
 
-    @POST("v3/server/op/revoke")
+    @POST("v3/server/pim/op/revoke")
     @FormUrlEncoded
     suspend fun opRevoke(
         @Field(value = "uuid") uuid: String,

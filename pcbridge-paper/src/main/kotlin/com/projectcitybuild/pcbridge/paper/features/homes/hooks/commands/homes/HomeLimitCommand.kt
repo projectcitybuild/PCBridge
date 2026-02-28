@@ -41,7 +41,7 @@ class HomeLimitCommand(
                 .joinToString()
 
             context.source.sender.sendRichMessage("<gray>---</gray>")
-            context.source.sender.sendRichMessage("<gray>The following groups grant you homes:</gray> $sources")
+            context.source.sender.sendRichMessage("<gray>The following roles grant you homes:</gray> $sources")
         }
     }
 }

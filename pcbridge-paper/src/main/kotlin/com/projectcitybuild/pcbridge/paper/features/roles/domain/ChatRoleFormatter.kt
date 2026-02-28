@@ -1,16 +1,16 @@
-package com.projectcitybuild.pcbridge.paper.features.groups.domain
+package com.projectcitybuild.pcbridge.paper.features.roles.domain
 
-import com.projectcitybuild.pcbridge.http.pcb.models.Group
-import com.projectcitybuild.pcbridge.paper.features.groups.domain.data.RoleType
+import com.projectcitybuild.pcbridge.http.pcb.models.Role
+import com.projectcitybuild.pcbridge.paper.features.roles.domain.data.RoleType
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.minimessage.MiniMessage
 
-class ChatGroupFormatter(
+class ChatRoleFormatter(
     private val rolesFilter: RolesFilter,
 ) {
-    fun format(groups: Set<Group>): Component? {
-        val roles = rolesFilter.filter(groups)
+    fun format(roleSet: Set<Role>): Component? {
+        val roles = rolesFilter.filter(roleSet)
         if (roles.isEmpty()) {
             return null
         }
@@ -24,7 +24,7 @@ class ChatGroupFormatter(
     }
 }
 
-private fun Group.component() = MiniMessage.miniMessage()
+private fun Role.component() = MiniMessage.miniMessage()
     .deserialize(displayName ?: name)
     .also {
         if (hoverText.isNullOrEmpty()) {

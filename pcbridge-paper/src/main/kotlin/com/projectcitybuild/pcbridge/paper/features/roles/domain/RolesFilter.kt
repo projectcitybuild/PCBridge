@@ -1,22 +1,22 @@
-package com.projectcitybuild.pcbridge.paper.features.groups.domain
+package com.projectcitybuild.pcbridge.paper.features.roles.domain
 
-import com.projectcitybuild.pcbridge.http.pcb.models.Group
+import com.projectcitybuild.pcbridge.http.pcb.models.Role
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.logSync
-import com.projectcitybuild.pcbridge.paper.features.groups.domain.data.RoleType
+import com.projectcitybuild.pcbridge.paper.features.roles.domain.data.RoleType
 
 class RolesFilter {
     /**
      * Sorts the given collection of roles into a Map, where only
      * the highest display priority of a RoleType is present
      */
-    fun filter(groups: Set<Group>): Map<RoleType, Group> {
-        if (groups.isEmpty()) {
+    fun filter(roles: Set<Role>): Map<RoleType, Role> {
+        if (roles.isEmpty()) {
             return emptyMap()
         }
-        val mapping = mutableMapOf<RoleType, Group>()
-        for (group in groups) {
-            val rawRoleType = group.groupType
-            val displayPriority = group.displayPriority
+        val mapping = mutableMapOf<RoleType, Role>()
+        for (role in roles) {
+            val rawRoleType = role.roleType
+            val displayPriority = role.displayPriority
 
             if (rawRoleType == null || displayPriority == null) continue
 
@@ -27,7 +27,7 @@ class RolesFilter {
             }
             val existing = mapping[roleType]
             if (existing == null || existing.displayPriority!! < displayPriority) {
-                mapping[roleType] = group
+                mapping[roleType] = role
             }
         }
         return mapping
