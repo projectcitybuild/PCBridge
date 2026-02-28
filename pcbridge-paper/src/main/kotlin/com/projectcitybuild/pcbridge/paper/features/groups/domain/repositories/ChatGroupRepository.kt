@@ -1,7 +1,6 @@
 package com.projectcitybuild.pcbridge.paper.features.groups.domain.repositories
 
 import com.projectcitybuild.pcbridge.paper.core.libs.store.SessionStore
-import com.projectcitybuild.pcbridge.paper.core.libs.store.Store
 import com.projectcitybuild.pcbridge.paper.features.groups.domain.ChatGroupFormatter
 import io.github.reactivecircus.cache4k.Cache
 import kotlinx.coroutines.Dispatchers
@@ -19,7 +18,7 @@ class ChatGroupRepository(
     suspend fun getGroupsComponent(playerUUID: UUID): CachedComponent {
         return groupCache.get(playerUUID) {
             val playerSession = session.state.players[playerUUID]
-            val groups = playerSession?.syncedValue?.groups
+            val groups = playerSession?.syncedValue?.roles
                 ?: emptyList()
 
             withContext(Dispatchers.IO) {

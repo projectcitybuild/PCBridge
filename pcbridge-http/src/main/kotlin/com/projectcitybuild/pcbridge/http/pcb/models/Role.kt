@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Group(
+data class Role(
     @SerializedName("id")
     val id: Int,
 

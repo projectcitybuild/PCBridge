@@ -11,8 +11,8 @@ data class PlayerData(
     @SerializedName("player")
     val player: Player? = null,
 
-    @SerializedName("groups")
-    val groups: List<Group> = emptyList(),
+    @SerializedName("roles")
+    val roles: List<Role> = emptyList(),
 
     @SerializedName("badges")
     val badges: List<Badge> = emptyList(),
@@ -21,5 +21,5 @@ data class PlayerData(
     val elevation: HttpOpElevation? = null,
 ) {
     val isStaff: Boolean
-        get() = groups.firstOrNull { it.roleType?.lowercase() == "staff" } != null
+        get() = roles.firstOrNull { it.roleType?.lowercase() == "staff" } != null
 }

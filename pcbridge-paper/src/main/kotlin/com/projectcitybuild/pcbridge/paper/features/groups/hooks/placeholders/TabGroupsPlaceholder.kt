@@ -32,7 +32,7 @@ class TabGroupsPlaceholder(
 
     @EventHandler
     suspend fun onPlayerStateUpdated(event: PlayerStateUpdatedEvent) {
-        if (event.prevState?.syncedValue?.groups == event.state.syncedValue?.groups) {
+        if (event.prevState?.syncedValue?.roles == event.state.syncedValue?.roles) {
             return
         }
         log.debug { "PlayerStateUpdatedEvent: updating tab groups for player" }

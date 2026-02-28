@@ -2,7 +2,7 @@ package com.projectcitybuild.pcbridge.paper.architecture.state.data
 
 import com.projectcitybuild.pcbridge.http.pcb.models.Account
 import com.projectcitybuild.pcbridge.http.pcb.models.Badge
-import com.projectcitybuild.pcbridge.http.pcb.models.Group
+import com.projectcitybuild.pcbridge.http.pcb.models.Role
 import com.projectcitybuild.pcbridge.http.pcb.models.Player
 import com.projectcitybuild.pcbridge.http.pcb.models.PlayerData
 import com.projectcitybuild.pcbridge.paper.core.libs.datetime.services.LocalizedTime
@@ -35,7 +35,7 @@ data class PlayerSession(
                 else PlayerSyncedState.Valid(
                     account = data.account,
                     player = data.player,
-                    groups = data.groups,
+                    roles = data.roles,
                     badges = data.badges,
                     opElevation = data.elevation?.toDomain(),
                 ),
@@ -49,7 +49,7 @@ sealed class PlayerSyncedState {
     data class Valid(
         val account: Account? = null,
         val player: Player? = null,
-        val groups: List<Group> = emptyList(),
+        val roles: List<Role> = emptyList(),
         val badges: List<Badge> = emptyList(),
         val opElevation: OpElevation? = null,
     ): PlayerSyncedState()

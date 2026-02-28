@@ -1,7 +1,6 @@
 package com.projectcitybuild.pcbridge.paper.features.groups.hooks.placeholders
 
 import com.projectcitybuild.pcbridge.paper.architecture.state.events.PlayerStateCreatedEvent
-import com.projectcitybuild.pcbridge.paper.core.libs.store.Store
 import com.projectcitybuild.pcbridge.paper.architecture.state.events.PlayerStateUpdatedEvent
 import com.projectcitybuild.pcbridge.paper.architecture.tablist.TabRenderer
 import com.projectcitybuild.pcbridge.paper.architecture.tablist.UpdatableTabPlaceholder
@@ -25,7 +24,7 @@ class TabGroupListPlaceholder(
     override suspend fun value(player: Player): Component {
         val playerState = session.state.players[player.uniqueId]
         val roles = rolesFilter.filter(
-            playerState?.syncedValue?.groups?.toSet() ?: emptySet()
+            playerState?.syncedValue?.roles?.toSet() ?: emptySet()
         )
         val roleNames = roles.values.mapNotNull { it.minecraftName }
 
@@ -44,7 +43,7 @@ class TabGroupListPlaceholder(
 
     @EventHandler
     suspend fun onPlayerStateUpdated(event: PlayerStateUpdatedEvent) {
-        if (event.prevState?.syncedValue?.groups == event.state.syncedValue?.groups) {
+        if (event.prevState?.syncedValue?.roles == event.state.syncedValue?.roles) {
             return
         }
         log.debug { "PlayerStateUpdatedEvent: updating tab group list for player" }

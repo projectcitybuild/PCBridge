@@ -1,6 +1,6 @@
 package com.projectcitybuild.pcbridge.paper.features.groups.hooks.listener
 
-import com.projectcitybuild.pcbridge.http.pcb.models.Group
+import com.projectcitybuild.pcbridge.http.pcb.models.Role
 import com.projectcitybuild.pcbridge.paper.architecture.listeners.scopedSync
 import com.projectcitybuild.pcbridge.paper.architecture.permissions.Permissions
 import com.projectcitybuild.pcbridge.paper.architecture.state.events.PlayerStateCreatedEvent
@@ -19,7 +19,7 @@ class RoleStateChangeListener(
     ) = event.scopedSync(groupsTracer, this::class.java) {
         val synced = event.state.syncedValue
         if (synced != null) {
-            update(event.playerUUID, groups = synced.groups)
+            update(event.playerUUID, roles = synced.roles)
         }
     }
 
@@ -27,14 +27,14 @@ class RoleStateChangeListener(
     fun onPlayerStateUpdated(
         event: PlayerStateUpdatedEvent,
     ) = event.scopedSync(groupsTracer, this::class.java) {
-        if (event.prevState?.syncedValue?.groups == event.state.syncedValue?.groups) {
+        if (event.prevState?.syncedValue?.roles == event.state.syncedValue?.roles) {
             return@scopedSync
         }
-        update(event.playerUUID, groups = event.state.syncedValue!!.groups)
+        update(event.playerUUID, roles = event.state.syncedValue!!.roles)
     }
 
-    private fun update(playerUUID: UUID, groups: List<Group>) {
-        val groupSet = groups.mapNotNull { it.minecraftName }.toSet()
+    private fun update(playerUUID: UUID, roles: List<Role>) {
+        val groupSet = roles.mapNotNull { it.minecraftName }.toSet()
         permissions.provider.setUserRoles(playerUUID, groupSet)
     }
 }
