@@ -1,8 +1,8 @@
-package com.projectcitybuild.pcbridge.paper.features.groups.domain
+package com.projectcitybuild.pcbridge.paper.features.roles.domain
 
 import com.projectcitybuild.pcbridge.http.pcb.models.Role
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.logSync
-import com.projectcitybuild.pcbridge.paper.features.groups.domain.data.RoleType
+import com.projectcitybuild.pcbridge.paper.features.roles.domain.data.RoleType
 
 class RolesFilter {
     /**
@@ -14,9 +14,9 @@ class RolesFilter {
             return emptyMap()
         }
         val mapping = mutableMapOf<RoleType, Role>()
-        for (group in roles) {
-            val rawRoleType = group.roleType
-            val displayPriority = group.displayPriority
+        for (role in roles) {
+            val rawRoleType = role.roleType
+            val displayPriority = role.displayPriority
 
             if (rawRoleType == null || displayPriority == null) continue
 
@@ -27,7 +27,7 @@ class RolesFilter {
             }
             val existing = mapping[roleType]
             if (existing == null || existing.displayPriority!! < displayPriority) {
-                mapping[roleType] = group
+                mapping[roleType] = role
             }
         }
         return mapping

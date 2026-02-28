@@ -22,7 +22,7 @@ class RolesDebugCommand(
         return Commands.literal("debug")
             .requiresPermission(PermissionNode.PIM_ROLES)
             .then(
-                Commands.argument("groups", StringArgumentType.greedyString())
+                Commands.argument("roles", StringArgumentType.greedyString())
                     .executesSuspending(plugin, ::execute)
             )
             .build()
@@ -31,14 +31,14 @@ class RolesDebugCommand(
     private suspend fun execute(context: PaperCommandContext) = context.scoped(syncTracer) {
         val player = context.source.requirePlayer()
 
-        val groupsArg = context.getArgument("groups", String::class.java)
-        val groups = groupsArg.split(" ").toSet()
-        check(groups.isNotEmpty()) { "No groups specified" }
+        val rolesArg = context.getArgument("roles", String::class.java)
+        val roles = rolesArg.split(" ").toSet()
+        check(roles.isNotEmpty()) { "No roles specified" }
 
-        permissions.provider.setUserRoles(player.uniqueId, groups)
+        permissions.provider.setUserRoles(player.uniqueId, roles)
 
         player.sendRichMessage(
-            "<red>Your groups have been set to ${groups.joinToString(",")}</red>\n" +
+            "<red>Your roles have been set to ${roles.joinToString(",")}</red>\n" +
             "<gray>Use /sync or reconnect to revert this</gray>"
         )
     }
