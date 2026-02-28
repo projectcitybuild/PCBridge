@@ -22,6 +22,7 @@ data class RemoteConfigKeyValues(
     val serverLinks: ServerLinks = ServerLinks(),
     val hub: Hub? = null,
     val emojis: Map<String, String> = mapOf(),
+    @SerializedName("manage_base_url")
     val manageBaseUrl: String = "http://localhost/manage/"
 ) {
     @Serializable

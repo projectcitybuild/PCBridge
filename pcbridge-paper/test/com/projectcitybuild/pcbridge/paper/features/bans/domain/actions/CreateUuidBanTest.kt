@@ -1,11 +1,11 @@
 package com.projectcitybuild.pcbridge.paper.features.bans.domain.actions
 
-import com.projectcitybuild.pcbridge.http.pcb.models.PlayerBan
+import com.projectcitybuild.pcbridge.http.pcb.models.RemoteConfigKeyValues
+import com.projectcitybuild.pcbridge.http.pcb.models.RemoteConfigVersion
 import com.projectcitybuild.pcbridge.http.shared.parsing.ResponseParserError
 import com.projectcitybuild.pcbridge.paper.Stubs
-import com.projectcitybuild.pcbridge.paper.core.libs.pcbmanage.ManageUrlGenerator
 import com.projectcitybuild.pcbridge.paper.core.libs.playerlookup.PlayerLookup
-import com.projectcitybuild.pcbridge.paper.features.bans.domain.actions.CreateUuidBan
+import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.RemoteConfig
 import com.projectcitybuild.pcbridge.paper.features.bans.domain.repositories.UuidBanRepository
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -15,26 +15,25 @@ import org.junit.jupiter.api.assertThrows
 import org.mockito.Mockito.mock
 import org.mockito.kotlin.any
 import org.mockito.kotlin.whenever
-import java.time.LocalDateTime
 import java.util.UUID
-import kotlin.random.Random
+import kotlin.jvm.java
 
 class CreateUuidBanTest {
     private lateinit var createBan: CreateUuidBan
     private lateinit var playerLookup: PlayerLookup
     private lateinit var uuidBanRepository: UuidBanRepository
-    private lateinit var manageUrlGenerator: ManageUrlGenerator
+    private lateinit var remoteConfig: RemoteConfig
 
     @BeforeEach
     fun setUp() {
         playerLookup = mock(PlayerLookup::class.java)
         uuidBanRepository = mock(UuidBanRepository::class.java)
-        manageUrlGenerator = mock(ManageUrlGenerator::class.java)
+        remoteConfig = mock(RemoteConfig::class.java)
 
         createBan = CreateUuidBan(
             playerLookup = playerLookup,
             uuidBanRepository = uuidBanRepository,
-            manageUrlGenerator = manageUrlGenerator,
+            remoteConfig = remoteConfig,
         )
     }
 
@@ -128,8 +127,13 @@ class CreateUuidBanTest {
         ).thenReturn(ban)
 
         whenever(
-            manageUrlGenerator.path("manage/player-bans/${ban.id}/edit")
-        ).thenReturn("https://localhost/manage/player-bans/${ban.id}/edit")
+            remoteConfig.latest
+        ).thenReturn(
+            RemoteConfigVersion(
+                version = 1,
+                config = RemoteConfigKeyValues(manageBaseUrl = "https://localhost/manage/"),
+            ),
+        )
 
         val result = createBan.create(
             bannedAlias = "banned_alias",
