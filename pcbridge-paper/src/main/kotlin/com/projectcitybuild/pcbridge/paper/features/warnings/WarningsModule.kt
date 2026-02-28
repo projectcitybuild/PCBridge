@@ -9,7 +9,7 @@ val warningsModule = module {
         WarnCommand(
             plugin = get<JavaPlugin>(),
             server = get(),
-            manageUrlGenerator = get(),
+            remoteConfig = get(),
         )
     }
 }

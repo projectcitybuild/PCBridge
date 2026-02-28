@@ -49,7 +49,7 @@ val bansModule = module {
     factory {
         CreateUuidBan(
             playerLookup = get(),
-            manageUrlGenerator = get(),
+            remoteConfig = get(),
             uuidBanRepository = get(),
         )
     }

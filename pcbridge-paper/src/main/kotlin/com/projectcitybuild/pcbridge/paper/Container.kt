@@ -40,7 +40,6 @@ import com.projectcitybuild.pcbridge.paper.core.libs.localconfig.default
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.errors.SentryProvider
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.logSync
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.tracing.OpenTelemetryProvider
-import com.projectcitybuild.pcbridge.paper.core.libs.pcbmanage.ManageUrlGenerator
 import com.projectcitybuild.pcbridge.paper.core.libs.playerlookup.PlayerLookup
 import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.RemoteConfig
 import com.projectcitybuild.pcbridge.paper.core.libs.store.SessionStore
@@ -249,10 +248,6 @@ private fun Module.core() {
             errorTracker = get(),
             periodicRunner = PeriodicRunner(processInterval = 10.seconds)
         )
-    }
-
-    factory {
-        ManageUrlGenerator(localConfig = get())
     }
 
     factory {
