@@ -2,8 +2,8 @@ package com.projectcitybuild.pcbridge.paper.features.bans.domain.actions
 
 import com.projectcitybuild.pcbridge.http.pcb.models.PlayerBan
 import com.projectcitybuild.pcbridge.http.shared.parsing.ResponseParserError
-import com.projectcitybuild.pcbridge.paper.core.libs.pcbmanage.ManageUrlGenerator
 import com.projectcitybuild.pcbridge.paper.core.libs.playerlookup.PlayerLookup
+import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.RemoteConfig
 import com.projectcitybuild.pcbridge.paper.features.bans.bansTracer
 import com.projectcitybuild.pcbridge.paper.features.bans.domain.repositories.UuidBanRepository
 import java.util.UUID
@@ -11,7 +11,7 @@ import java.util.UUID
 class CreateUuidBan(
     private val playerLookup: PlayerLookup,
     private val uuidBanRepository: UuidBanRepository,
-    private val manageUrlGenerator: ManageUrlGenerator,
+    private val remoteConfig: RemoteConfig,
 ) {
     data class Creation(
         val ban: PlayerBan,
@@ -48,7 +48,8 @@ class CreateUuidBan(
             throw InvalidBanInput(e.message)
         }
 
-        val editUrl = manageUrlGenerator.path("manage/player-bans/${ban.id}/edit")
+        val manageBaseUrl = remoteConfig.latest.config.manageBaseUrl
+        val editUrl = manageBaseUrl + "player-bans/${ban.id}/edit"
 
         return@trace Creation(
             ban = ban,

@@ -1,13 +1,10 @@
 package com.projectcitybuild.pcbridge.paper.features.stats.hooks.listeners
 
-import com.projectcitybuild.pcbridge.paper.architecture.listeners.scoped
 import com.projectcitybuild.pcbridge.paper.features.stats.domain.StatsCollector
-import com.projectcitybuild.pcbridge.paper.features.stats.statsTracer
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.block.BlockPlaceEvent
-import kotlin.jvm.java
 
 class BlockChangeListener(
     private val statsCollector: StatsCollector,
