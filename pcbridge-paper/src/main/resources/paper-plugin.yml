@@ -4,7 +4,6 @@ version: 6.9.0
 api-version: 1.21.10
 main: com.projectcitybuild.pcbridge.paper.Plugin
 bootstrapper: com.projectcitybuild.pcbridge.paper.PaperBootstrap
-loader: com.projectcitybuild.pcbridge.paper.PaperLoader
 
 dependencies:
   server:

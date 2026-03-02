@@ -106,51 +106,46 @@ import org.koin.core.component.inject
 
 class PluginLifecycle : KoinComponent {
     private val plugin: JavaPlugin = get()
-    private val errorTracker: ErrorTracker by inject()
     private val listenerRegistry: SpigotListenerRegistry by inject()
     private val httpServer: HttpServer by inject()
     private val remoteConfig: RemoteConfig by inject()
     private val store: Store by inject()
-    private val otel: OpenTelemetryProvider by inject()
     private val statsCollector: StatsCollector by inject()
 
-    private val tracer by lazy { TracerFactory.make("lifecycle") }
-
-    suspend fun boot() = errorTracker.catching {
-        TracerFactory.configure(otel)
-        tracer.trace("boot") {
-            httpServer.start()
-            remoteConfig.fetch()
-            store.hydrate()
-
-            registerMiddleware()
-            registerDecorators()
-            registerTabPlaceholders()
-            registerCommands()
-            registerListeners()
-
-            get<DynmapIntegration>().enable()
-            get<EssentialsIntegration>().enable()
-            get<LuckPermsIntegration>().enable()
-
-            statsCollector.start()
-        }
+    private val tracer by lazy {
+        TracerFactory.make("lifecycle")
     }
 
-    suspend fun shutdown() = errorTracker.catching {
-        tracer.trace("shutdown") {
-            statsCollector.stop()
-            httpServer.stop()
-            store.persist()
+    suspend fun boot() = tracer.trace("boot") {
+        httpServer.start()
+        remoteConfig.fetch()
+        store.hydrate()
 
-            get<SpigotTimer>().cancelAll()
+        registerMiddleware()
+        registerDecorators()
+        registerTabPlaceholders()
+        registerCommands()
+        registerListeners()
 
-            get<DynmapIntegration>().disable()
-            get<EssentialsIntegration>().disable()
-            get<LuckPermsIntegration>().disable()
+        get<DynmapIntegration>().enable()
+        get<EssentialsIntegration>().enable()
+        get<LuckPermsIntegration>().enable()
 
-            listenerRegistry.unregisterAll()
-        }
+        statsCollector.start()
+    }
+
+    suspend fun shutdown() = tracer.trace("shutdown") {
+        statsCollector.stop()
+        httpServer.stop()
+        store.persist()
+
+        get<SpigotTimer>().cancelAll()
+
+        get<DynmapIntegration>().disable()
+        get<EssentialsIntegration>().disable()
+        get<LuckPermsIntegration>().disable()
+
+        listenerRegistry.unregisterAll()
     }
 
     private fun registerMiddleware() = get<ConnectionMiddlewareChain>().register(
