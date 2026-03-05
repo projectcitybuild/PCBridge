@@ -61,6 +61,15 @@ internal interface PCBRequest {
         @Field(value = "uuid") uuid: String,
     ): HttpOpElevation
 
+    @POST("v3/server/audit/command/op")
+    @FormUrlEncoded
+    suspend fun auditCommandOp(
+        @Field(value = "command") command: String,
+        @Field(value = "actor") actor: String,
+        @Field(value = "ip") ip: String,
+        @Field(value = "meta") meta: String?,
+    )
+
     /**
      * Begins registration of a PCB account linked to the current
      * Minecraft player
