@@ -22,4 +22,20 @@ class OpElevateHttpService(
             retrofit.pcb().opRevoke(playerUUID.toString())
         }
     }
+
+    suspend fun audit(
+        command: String,
+        actor: String,
+        ip: String,
+        meta: String?,
+    ) = withContext(Dispatchers.IO) {
+        responseParser.parse {
+            retrofit.pcb().auditCommandOp(
+                command = command,
+                actor = actor,
+                ip = ip,
+                meta = meta,
+            )
+        }
+    }
 }

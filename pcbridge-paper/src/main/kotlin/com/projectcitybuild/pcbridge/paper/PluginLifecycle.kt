@@ -63,6 +63,7 @@ import com.projectcitybuild.pcbridge.paper.features.maintenance.hooks.listener.M
 import com.projectcitybuild.pcbridge.paper.features.maintenance.hooks.middleware.MaintenanceConnectionMiddleware
 import com.projectcitybuild.pcbridge.paper.features.moderate.hooks.commands.KickCommand
 import com.projectcitybuild.pcbridge.paper.features.pim.hooks.commands.PimCommand
+import com.projectcitybuild.pcbridge.paper.features.pim.hooks.listener.OpAuditingListener
 import com.projectcitybuild.pcbridge.paper.features.pim.hooks.listener.OpClearListener
 import com.projectcitybuild.pcbridge.paper.features.pim.hooks.listener.OpDialogListener
 import com.projectcitybuild.pcbridge.paper.features.pim.hooks.listener.OpRestoreListener
@@ -213,6 +214,7 @@ class PluginLifecycle : KoinComponent {
         get<InvisFrameListener>(),
         get<ItemTextListener>(),
         get<MaintenanceReminderListener>(),
+        get<OpAuditingListener>(),
         get<OpClearListener>(),
         get<OpDialogListener>(),
         get<OpRestoreListener>(),

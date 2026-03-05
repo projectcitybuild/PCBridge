@@ -8,7 +8,10 @@ import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerCommandPreprocessEvent
 
 class VanillaOpInterceptListener: Listener {
-    @EventHandler(priority = EventPriority.HIGHEST)
+    /**
+     * Intercepts /op /deop usage by players and cancels them
+     */
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     fun onPlayerCommandPreprocess(
         event: PlayerCommandPreprocessEvent,
     ) = event.scopedSync(pimTracer, this::class.java) {

@@ -1,6 +1,7 @@
 package com.projectcitybuild.pcbridge.paper.features.pim
 
 import com.projectcitybuild.pcbridge.http.pcb.PCBHttp
+import com.projectcitybuild.pcbridge.paper.features.pim.domain.repositories.OpAuditRepository
 import com.projectcitybuild.pcbridge.paper.features.pim.domain.repositories.OpElevationRepository
 import com.projectcitybuild.pcbridge.paper.features.pim.domain.services.OpElevationScheduler
 import com.projectcitybuild.pcbridge.paper.features.pim.domain.services.OpElevationService
@@ -9,6 +10,7 @@ import com.projectcitybuild.pcbridge.paper.features.pim.hooks.commands.op.OpRevo
 import com.projectcitybuild.pcbridge.paper.features.pim.hooks.commands.op.OpGrantCommand
 import com.projectcitybuild.pcbridge.paper.features.pim.hooks.commands.op.OpStatusCommand
 import com.projectcitybuild.pcbridge.paper.features.pim.hooks.commands.roles.RolesDebugCommand
+import com.projectcitybuild.pcbridge.paper.features.pim.hooks.listener.OpAuditingListener
 import com.projectcitybuild.pcbridge.paper.features.pim.hooks.listener.OpClearListener
 import com.projectcitybuild.pcbridge.paper.features.pim.hooks.listener.OpDialogListener
 import com.projectcitybuild.pcbridge.paper.features.pim.hooks.listener.OpRestoreListener
@@ -38,6 +40,12 @@ val pimModule = module {
 
     factory {
         VanillaOpInterceptListener()
+    }
+
+    factory {
+        OpAuditingListener(
+            opAuditRepository = get(),
+        )
     }
 
     factory {
@@ -93,6 +101,13 @@ val pimModule = module {
         OpElevationRepository(
             opElevateHttpService = get<PCBHttp>().opElevate,
             session = get(),
+        )
+    }
+
+    factory {
+        OpAuditRepository(
+            server = get(),
+            opElevateHttpService = get<PCBHttp>().opElevate,
         )
     }
 
