@@ -1,17 +1,16 @@
 package com.projectcitybuild.pcbridge.http.playerdb
 
 import com.google.gson.GsonBuilder
-import com.projectcitybuild.pcbridge.http.shared.logging.HttpLogger
+import com.projectcitybuild.pcbridge.http.shared.logging.StructuredLoggingInterceptor
 import io.opentelemetry.api.OpenTelemetry
 import io.opentelemetry.instrumentation.okhttp.v3_0.OkHttpTelemetry
 import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 internal class PlayerDbClientFactory(
     private val baseUrl: String,
-    private val httpLogger: HttpLogger?,
+    private val logger: StructuredLoggingInterceptor?,
     private val openTelemetry: OpenTelemetry,
     private val userAgent: String,
 ) {
@@ -40,11 +39,8 @@ internal class PlayerDbClientFactory(
 
                 chain.proceed(request)
             }
-        if (httpLogger != null) {
-            val loggingInterceptor = HttpLoggingInterceptor(httpLogger).apply {
-                level = HttpLoggingInterceptor.Level.BODY
-            }
-            clientFactory.addInterceptor(loggingInterceptor)
+        if (logger != null) {
+            clientFactory.addInterceptor(logger)
         }
         return clientFactory.build()
     }

@@ -6,7 +6,7 @@ import com.projectcitybuild.pcbridge.http.discord.DiscordHttp
 import com.projectcitybuild.pcbridge.http.pcb.PCBHttp
 import com.projectcitybuild.pcbridge.http.pcb.models.RemoteConfigVersion
 import com.projectcitybuild.pcbridge.http.playerdb.PlayerDbHttp
-import com.projectcitybuild.pcbridge.http.shared.logging.HttpLogger
+import com.projectcitybuild.pcbridge.http.shared.logging.StructuredLoggingInterceptor
 import com.projectcitybuild.pcbridge.paper.architecture.chat.decorators.ChatDecoratorChain
 import com.projectcitybuild.pcbridge.paper.architecture.chat.listeners.AsyncChatListener
 import com.projectcitybuild.pcbridge.paper.architecture.connection.listeners.AuthorizeConnectionListener
@@ -82,6 +82,7 @@ import com.projectcitybuild.pcbridge.paper.integrations.luckperms.LuckPermsInteg
 import com.projectcitybuild.pcbridge.webserver.HttpServer
 import com.projectcitybuild.pcbridge.webserver.data.HttpServerConfig
 import org.bukkit.plugin.java.JavaPlugin
+import org.checkerframework.checker.units.qual.m
 import org.koin.core.module.Module
 import org.koin.dsl.module
 import org.koin.dsl.onClose
@@ -298,7 +299,7 @@ private fun Module.http() {
         PCBHttp(
             authToken = localConfig.api.token,
             baseURL = localConfig.api.baseUrl,
-            httpLogger = if (localConfig.api.logLevel.enabled) get() else null,
+            logger = if (localConfig.api.logLevel.enabled) get() else null,
             openTelemetry = get<OpenTelemetryProvider>().sdk
         )
     }
@@ -307,7 +308,7 @@ private fun Module.http() {
         val localConfig = get<LocalConfig>().get()
 
         DiscordHttp(
-            httpLogger = if (localConfig.api.logLevel.enabled) get() else null,
+            logger = if (localConfig.api.logLevel.enabled) get() else null,
             openTelemetry = get<OpenTelemetryProvider>().sdk,
         )
     }
@@ -316,7 +317,7 @@ private fun Module.http() {
         val localConfig = get<LocalConfig>().get()
 
         PlayerDbHttp(
-            httpLogger = if (localConfig.api.logLevel.enabled) get() else null,
+            logger = if (localConfig.api.logLevel.enabled) get() else null,
             openTelemetry = get<OpenTelemetryProvider>().sdk,
             userAgent = if (localConfig.environment.isProduction) "pcbmc.co"
                 else ""
@@ -326,12 +327,12 @@ private fun Module.http() {
     factory {
         val localConfig = get<LocalConfig>()
 
-        HttpLogger { message ->
+        StructuredLoggingInterceptor { message ->
             when (localConfig.get().api.logLevel) {
-                LocalConfigKeyValues.Api.LogLevel.None -> return@HttpLogger
-                LocalConfigKeyValues.Api.LogLevel.Trace -> logSync.trace(message)
-                LocalConfigKeyValues.Api.LogLevel.Debug -> logSync.debug(message)
-                LocalConfigKeyValues.Api.LogLevel.Info -> logSync.info(message)
+                LocalConfigKeyValues.Api.LogLevel.None -> return@StructuredLoggingInterceptor
+                LocalConfigKeyValues.Api.LogLevel.Trace -> logSync.trace("http", message)
+                LocalConfigKeyValues.Api.LogLevel.Debug -> logSync.debug("http", message)
+                LocalConfigKeyValues.Api.LogLevel.Info -> logSync.info("http", message)
             }
         }
     }
