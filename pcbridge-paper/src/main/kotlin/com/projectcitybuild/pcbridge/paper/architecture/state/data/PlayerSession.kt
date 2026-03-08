@@ -9,15 +9,19 @@ import com.projectcitybuild.pcbridge.paper.core.libs.datetime.services.Localized
 import com.projectcitybuild.pcbridge.paper.features.pim.domain.data.OpElevation
 import com.projectcitybuild.pcbridge.paper.features.pim.domain.data.toDomain
 import java.time.Duration
+import java.time.Instant
 import java.time.LocalDateTime
 
 data class PlayerSession(
     val synced: PlayerSyncedState,
     val connectedAt: LocalDateTime,
-    val afk: Boolean = false,
+    val afkStartedAt: Instant? = null,
 ) {
     val syncedValue: PlayerSyncedState.Valid?
         get() = synced as? PlayerSyncedState.Valid
+
+    val afk: Boolean
+        get() = afkStartedAt != null
 
     fun sessionSeconds(time: LocalizedTime): Long {
         val now = time.now()

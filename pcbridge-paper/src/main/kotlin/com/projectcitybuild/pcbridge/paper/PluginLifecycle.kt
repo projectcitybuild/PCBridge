@@ -79,6 +79,7 @@ import com.projectcitybuild.pcbridge.paper.features.spawns.hooks.commands.SpawnC
 import com.projectcitybuild.pcbridge.paper.features.spawns.hooks.listeners.PlayerRespawnListener
 import com.projectcitybuild.pcbridge.paper.features.staffchat.commands.StaffChatCommand
 import com.projectcitybuild.pcbridge.paper.features.stats.domain.StatsCollector
+import com.projectcitybuild.pcbridge.paper.features.stats.hooks.listeners.AfkChangeListener
 import com.projectcitybuild.pcbridge.paper.features.stats.hooks.listeners.BlockChangeListener
 import com.projectcitybuild.pcbridge.paper.features.sync.hooks.commands.SyncCommand
 import com.projectcitybuild.pcbridge.paper.features.sync.hooks.listener.PlayerSyncRequestListener
@@ -140,7 +141,9 @@ class PluginLifecycle : KoinComponent {
 
     suspend fun shutdown() = errorTracker.catching {
         tracer.trace("shutdown") {
+            statsCollector.flush()
             statsCollector.stop()
+
             httpServer.stop()
             store.persist()
 
@@ -194,6 +197,7 @@ class PluginLifecycle : KoinComponent {
     )
 
     private fun registerListeners() = listenerRegistry.register(
+        get<AfkChangeListener>(),
         get<AnnounceJoinListener>(),
         get<AnnounceQuitListener>(),
         get<AnnouncementConfigListener>(),

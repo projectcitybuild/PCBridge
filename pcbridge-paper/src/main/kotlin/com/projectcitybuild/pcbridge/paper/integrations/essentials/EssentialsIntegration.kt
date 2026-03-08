@@ -7,6 +7,7 @@ import com.projectcitybuild.pcbridge.paper.architecture.listeners.scopedSync
 import com.projectcitybuild.pcbridge.paper.core.libs.store.Store
 import com.projectcitybuild.pcbridge.paper.architecture.state.events.PlayerStateUpdatedEvent
 import com.projectcitybuild.pcbridge.paper.architecture.tablist.TabRenderer
+import com.projectcitybuild.pcbridge.paper.core.libs.datetime.services.LocalizedTime
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.errors.ErrorTracker
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.logSync
@@ -30,6 +31,7 @@ class EssentialsIntegration(
     private val eventBroadcaster: SpigotEventBroadcaster,
     private val tabRenderer: TabRenderer,
     private val errorTracker: ErrorTracker,
+    private val localizedTime: LocalizedTime,
 ) : Listener {
     private var essentials: Essentials? = null
     private val tracer = TracerFactory.make("integrations.essentials")
@@ -90,7 +92,9 @@ class EssentialsIntegration(
         val playerUuid = event.affected.uuid
         runBlocking {
             val playerSession = session.state.players[playerUuid]
-            val updated = playerSession?.copy(afk = event.value)
+            val updated = playerSession?.copy(
+                afkStartedAt = if (event.value) localizedTime.nowInstant() else null,
+            )
             if (updated != null) {
                 session.mutate { state ->
                     state.copy(players = state.players + mapOf(playerUuid to updated))

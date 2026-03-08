@@ -355,6 +355,7 @@ private fun Module.integrations() {
             session = get(),
             eventBroadcaster = get(),
             tabRenderer = get(),
+            localizedTime = get(),
         )
     }
 
