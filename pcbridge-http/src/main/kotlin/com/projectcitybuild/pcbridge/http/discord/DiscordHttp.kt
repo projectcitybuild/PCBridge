@@ -1,16 +1,16 @@
 package com.projectcitybuild.pcbridge.http.discord
 
 import com.projectcitybuild.pcbridge.http.discord.services.DiscordHttpService
-import com.projectcitybuild.pcbridge.http.shared.logging.HttpLogger
+import com.projectcitybuild.pcbridge.http.shared.logging.StructuredLoggingInterceptor
 import io.opentelemetry.api.OpenTelemetry
 
 class DiscordHttp(
-    private val httpLogger: HttpLogger?,
+    private val logger: StructuredLoggingInterceptor?,
     private val openTelemetry: OpenTelemetry,
 ) {
     private val client by lazy {
         DiscordClientFactory(
-            httpLogger = httpLogger,
+            logger = logger,
             openTelemetry = openTelemetry,
         ).build()
     }
