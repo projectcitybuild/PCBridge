@@ -81,9 +81,7 @@ class PlayerStateListener(
         val uuid = event.player.uniqueId
         log.info { "Destroying player state for $uuid" }
         val prevState = session.state.players[uuid]
-
-        val exists = session.state.players.containsKey(event.player.uniqueId)
-        if (!exists) {
+        if (prevState == null) {
             log.debug { "Player state did not exist - no clean up needed" }
             return@scoped
         }

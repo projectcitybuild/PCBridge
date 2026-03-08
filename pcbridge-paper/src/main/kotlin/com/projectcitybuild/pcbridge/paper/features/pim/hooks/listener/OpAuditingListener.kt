@@ -25,7 +25,7 @@ class OpAuditingListener(
     suspend fun onServerCommandEvent(
         event: ServerCommandEvent,
     ) = event.scoped(pimTracer, this::class.java) {
-        val command = event.command.lowercase() // No leading "/"
+        val command = event.command.lowercase().removePrefix("/")
 
         if (!command.startsWith("op ") && !command.startsWith("deop ")) {
             return@scoped

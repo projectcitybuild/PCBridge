@@ -23,7 +23,9 @@ data class RemoteConfigKeyValues(
     val hub: Hub? = null,
     val emojis: Map<String, String> = mapOf(),
     @SerializedName("manage_base_url")
-    val manageBaseUrl: String = "http://localhost/manage/"
+    val manageBaseUrl: String = "http://localhost/manage/",
+    @SerializedName("stat_collection_interval_seconds")
+    val statCollectionIntervalSeconds: Int = 120,
 ) {
     @Serializable
     data class Localization(
