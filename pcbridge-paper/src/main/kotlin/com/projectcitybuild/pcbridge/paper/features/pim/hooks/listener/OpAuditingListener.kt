@@ -22,21 +22,20 @@ class OpAuditingListener(
      * and logs their usage for auditing purposes
      */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    suspend fun onServerCommandEvent(
-        event: ServerCommandEvent,
-    ) = event.scoped(pimTracer, this::class.java) {
+    suspend fun onServerCommandEvent(event: ServerCommandEvent) {
         val command = event.command.lowercase().removePrefix("/")
-
         if (!command.startsWith("op ") && !command.startsWith("deop ")) {
-            return@scoped
+            return
         }
-        val args = command.split(" ")
-        if (args.size < 2) return@scoped
+        event.scoped(pimTracer, this::class.java) {
+            val args = command.split(" ")
+            if (args.size < 2) return@scoped
 
-        opAuditRepository.auditCommand(
-            command = command,
-            actor = event.sender.actor()
-        )
+            opAuditRepository.auditCommand(
+                command = command,
+                actor = event.sender.actor()
+            )
+        }
     }
 }
 
