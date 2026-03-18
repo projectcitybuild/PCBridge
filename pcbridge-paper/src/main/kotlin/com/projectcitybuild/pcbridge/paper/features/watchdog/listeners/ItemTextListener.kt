@@ -33,14 +33,12 @@ class ItemTextListener(
         priority = EventPriority.MONITOR,
         ignoreCancelled = true,
     )
-    fun onSignChange(
-        event: SignChangeEvent,
-    ) = event.scopedSync(watchDogTracer, this::class.java) {
+    fun onSignChange(event: SignChangeEvent) {
         val serializer = PlainTextComponentSerializer.plainText()
         val lines = event.lines().mapNotNull { serializer.serialize(it) }
         val description = lines.joinToString(separator = "\n")
 
-        if (lines.isEmpty() || description.isEmpty()) return@scopedSync
+        if (lines.isEmpty() || description.isEmpty()) return
 
         val embed = DiscordEmbed(
             title = "Sign Edited",
@@ -61,13 +59,11 @@ class ItemTextListener(
         priority = EventPriority.MONITOR,
         ignoreCancelled = true,
     )
-    suspend fun onBookChange(
-        event: PlayerEditBookEvent,
-    ) = event.scoped(watchDogTracer, this::class.java) {
+    suspend fun onBookChange(event: PlayerEditBookEvent) {
         val prevMeta = event.previousBookMeta
         val nextMeta = event.newBookMeta
 
-        if (prevMeta == nextMeta) return@scoped
+        if (prevMeta == nextMeta) return
 
         withContext(Dispatchers.IO) {
             val serializer = PlainTextComponentSerializer.plainText()
@@ -118,18 +114,16 @@ class ItemTextListener(
         priority = EventPriority.HIGHEST,
         ignoreCancelled = true,
     )
-    fun onInventoryClick(
-        event: InventoryClickEvent,
-    ) = event.scopedSync(watchDogTracer, this::class.java) {
+    fun onInventoryClick(event: InventoryClickEvent) {
         // Check for a rename when a player and anvil is involved
         val sender = event.whoClicked
-        if (sender !is Player || event.inventory !is AnvilInventory) return@scopedSync
+        if (sender !is Player || event.inventory !is AnvilInventory) return
 
         // Ensure they're actually grabbing it out of the anvil slot
-        if (event.rawSlot != 2) return@scopedSync
+        if (event.rawSlot != 2) return
 
         val displayName = event.currentItem?.itemMeta?.displayName()
-            ?: return@scopedSync
+            ?: return
 
         onItemRenamed(
             ItemRenamedEvent(displayName, event.currentItem!!, sender)
@@ -140,9 +134,7 @@ class ItemTextListener(
         priority = EventPriority.MONITOR,
         ignoreCancelled = true,
     )
-    fun onItemRenamed(
-        event: ItemRenamedEvent,
-    ) = event.scopedSync(watchDogTracer, this::class.java) {
+    fun onItemRenamed(event: ItemRenamedEvent) {
         val displayName = PlainTextComponentSerializer.plainText().serialize(event.displayName)
 
         val embed = DiscordEmbed(
