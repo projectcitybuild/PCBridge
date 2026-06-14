@@ -8,6 +8,7 @@ import com.projectcitybuild.pcbridge.paper.features.spawns.hooks.commands.SpawnC
 import com.projectcitybuild.pcbridge.paper.features.spawns.domain.data.SerializableSpawn
 import com.projectcitybuild.pcbridge.paper.features.spawns.hooks.listeners.PlayerRespawnListener
 import com.projectcitybuild.pcbridge.paper.features.spawns.domain.repositories.SpawnRepository
+import com.projectcitybuild.pcbridge.paper.features.spawns.hooks.listeners.PlayerFirstJoinSpawnListener
 import org.bukkit.plugin.java.JavaPlugin
 import org.koin.dsl.module
 
@@ -40,6 +41,13 @@ val spawnsModule = module {
     factory {
         PlayerRespawnListener(
             spawnRepository = get(),
+        )
+    }
+
+    factory {
+        PlayerFirstJoinSpawnListener(
+            spawnRepository = get(),
+            playerTeleporter = get(),
         )
     }
 

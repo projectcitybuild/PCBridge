@@ -38,7 +38,7 @@ class SpawnRepository(
     ) = spawnsTracer.trace("SpawnRepository.set") {
         val world = location.world
 
-        world.setSpawnLocation(location)
+        world.spawnLocation = location
 
         // Minecraft API does not save yaw and pitch, so we unfortunately need to
         // handle this ourselves. We'll store the data in a folder nested inside the

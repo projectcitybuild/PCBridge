@@ -76,6 +76,7 @@ import com.projectcitybuild.pcbridge.paper.features.serverlinks.listeners.Server
 import com.projectcitybuild.pcbridge.paper.features.spawns.hooks.commands.HubCommand
 import com.projectcitybuild.pcbridge.paper.features.spawns.hooks.commands.SetSpawnCommand
 import com.projectcitybuild.pcbridge.paper.features.spawns.hooks.commands.SpawnCommand
+import com.projectcitybuild.pcbridge.paper.features.spawns.hooks.listeners.PlayerFirstJoinSpawnListener
 import com.projectcitybuild.pcbridge.paper.features.spawns.hooks.listeners.PlayerRespawnListener
 import com.projectcitybuild.pcbridge.paper.features.staffchat.commands.StaffChatCommand
 import com.projectcitybuild.pcbridge.paper.features.stats.domain.StatsCollector
@@ -222,6 +223,7 @@ class PluginLifecycle : KoinComponent {
         get<OpClearListener>(),
         get<OpDialogListener>(),
         get<OpRestoreListener>(),
+        get<PlayerFirstJoinSpawnListener>(),
         get<PlayerRespawnListener>(),
         get<PlayerStateListener>(),
         get<PlayerSyncRequestListener>(),
