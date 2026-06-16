@@ -16,6 +16,9 @@ data class Player(
     @SerializedName("alias")
     val alias: String? = null,
 
+    @SerializedName("nickname")
+    val nickname: String? = null,
+
     @SerializedName("last_seen_at")
     @Serializable(with = LocalDateTimeSerializer::class)
     val lastSeenAt: LocalDateTime? = null,
