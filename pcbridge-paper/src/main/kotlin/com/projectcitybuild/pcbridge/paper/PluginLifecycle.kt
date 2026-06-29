@@ -53,10 +53,10 @@ import com.projectcitybuild.pcbridge.paper.features.roles.hooks.placeholders.Tab
 import com.projectcitybuild.pcbridge.paper.features.homes.hooks.commands.HomeCommand
 import com.projectcitybuild.pcbridge.paper.features.homes.hooks.commands.HomesCommand
 import com.projectcitybuild.pcbridge.paper.features.homes.hooks.listeners.HomeRenameDialogListener
-import com.projectcitybuild.pcbridge.paper.features.joinmessages.hooks.listeners.AnnounceJoinListener
-import com.projectcitybuild.pcbridge.paper.features.joinmessages.hooks.listeners.AnnounceQuitListener
-import com.projectcitybuild.pcbridge.paper.features.joinmessages.hooks.listeners.FirstTimeJoinListener
-import com.projectcitybuild.pcbridge.paper.features.joinmessages.hooks.listeners.ServerOverviewJoinListener
+import com.projectcitybuild.pcbridge.paper.features.onboarding.hooks.listeners.AnnounceJoinListener
+import com.projectcitybuild.pcbridge.paper.features.onboarding.hooks.listeners.AnnounceQuitListener
+import com.projectcitybuild.pcbridge.paper.features.onboarding.hooks.listeners.FirstTimeJoinListener
+import com.projectcitybuild.pcbridge.paper.features.onboarding.hooks.listeners.ServerOverviewJoinListener
 import com.projectcitybuild.pcbridge.paper.features.maintenance.hooks.commands.MaintenanceCommand
 import com.projectcitybuild.pcbridge.paper.features.maintenance.hooks.decorators.MaintenanceMotdDecorator
 import com.projectcitybuild.pcbridge.paper.features.maintenance.hooks.listener.MaintenanceReminderListener

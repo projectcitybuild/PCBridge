@@ -1,11 +1,10 @@
-package com.projectcitybuild.pcbridge.paper.features.joinmessages.hooks.listeners
+package com.projectcitybuild.pcbridge.paper.features.onboarding.hooks.listeners
 
 import com.projectcitybuild.pcbridge.paper.architecture.listeners.scopedSync
-import com.projectcitybuild.pcbridge.paper.architecture.state.data.PlayerSyncedState
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.logSync
 import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.RemoteConfig
 import com.projectcitybuild.pcbridge.paper.core.libs.store.SessionStore
-import com.projectcitybuild.pcbridge.paper.features.joinmessages.joinMessagesTracer
+import com.projectcitybuild.pcbridge.paper.features.onboarding.onboardingTracer
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.MiniMessage
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
@@ -23,7 +22,7 @@ class FirstTimeJoinListener(
     @EventHandler(priority = EventPriority.MONITOR)
     fun onPlayerJoin(
         event: PlayerJoinEvent,
-    ) = event.scopedSync(joinMessagesTracer, this::class.java) {
+    ) = event.scopedSync(onboardingTracer, this::class.java) {
         logSync.debug { "Checking if first time join" }
 
         val playerSession = session.state.players[event.player.uniqueId]
