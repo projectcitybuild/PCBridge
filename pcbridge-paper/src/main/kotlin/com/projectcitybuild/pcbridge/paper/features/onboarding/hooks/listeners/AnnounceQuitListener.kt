@@ -1,11 +1,10 @@
-package com.projectcitybuild.pcbridge.paper.features.joinmessages.hooks.listeners
+package com.projectcitybuild.pcbridge.paper.features.onboarding.hooks.listeners
 
 import com.projectcitybuild.pcbridge.paper.architecture.listeners.scopedSync
 import com.projectcitybuild.pcbridge.paper.core.libs.datetime.services.LocalizedTime
 import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.RemoteConfig
 import com.projectcitybuild.pcbridge.paper.core.libs.store.SessionStore
-import com.projectcitybuild.pcbridge.paper.core.libs.store.Store
-import com.projectcitybuild.pcbridge.paper.features.joinmessages.joinMessagesTracer
+import com.projectcitybuild.pcbridge.paper.features.onboarding.onboardingTracer
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.MiniMessage
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
@@ -13,9 +12,6 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerQuitEvent
-import java.time.Duration
-import java.time.LocalDateTime
-import kotlin.math.round
 
 class AnnounceQuitListener(
     private val remoteConfig: RemoteConfig,
@@ -25,7 +21,7 @@ class AnnounceQuitListener(
     @EventHandler(priority = EventPriority.NORMAL)
     fun onPlayerQuit(
         event: PlayerQuitEvent,
-    ) = event.scopedSync(joinMessagesTracer, this::class.java) {
+    ) = event.scopedSync(onboardingTracer, this::class.java) {
         val playerState = session.state.players[event.player.uniqueId]
         val sessionSeconds = playerState?.sessionSeconds(time) ?: 0
         val timeOnline = sessionTime(sessionSeconds)

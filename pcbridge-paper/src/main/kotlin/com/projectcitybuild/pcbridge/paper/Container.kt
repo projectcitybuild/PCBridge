@@ -61,7 +61,7 @@ import com.projectcitybuild.pcbridge.paper.features.chatformatting.chatFormattin
 import com.projectcitybuild.pcbridge.paper.features.config.configModule
 import com.projectcitybuild.pcbridge.paper.features.roles.rolesModule
 import com.projectcitybuild.pcbridge.paper.features.homes.homesModule
-import com.projectcitybuild.pcbridge.paper.features.joinmessages.joinMessagesModule
+import com.projectcitybuild.pcbridge.paper.features.onboarding.onboardingModule
 import com.projectcitybuild.pcbridge.paper.features.maintenance.maintenanceModule
 import com.projectcitybuild.pcbridge.paper.features.moderate.moderateModule
 import com.projectcitybuild.pcbridge.paper.features.pim.pimModule
@@ -82,7 +82,6 @@ import com.projectcitybuild.pcbridge.paper.integrations.luckperms.LuckPermsInteg
 import com.projectcitybuild.pcbridge.webserver.HttpServer
 import com.projectcitybuild.pcbridge.webserver.data.HttpServerConfig
 import org.bukkit.plugin.java.JavaPlugin
-import org.checkerframework.checker.units.qual.m
 import org.koin.core.module.Module
 import org.koin.dsl.module
 import org.koin.dsl.onClose
@@ -113,14 +112,14 @@ private val featureModules = listOf(
     chatBadgeModule,
     chatFormattingModule,
     configModule,
-    rolesModule,
     homesModule,
-    joinMessagesModule,
     maintenanceModule,
     moderateModule,
+    onboardingModule,
     pimModule,
     randomTeleportModule,
     registerModule,
+    rolesModule,
     serverLinksModule,
     spawnsModule,
     staffChatModule,
