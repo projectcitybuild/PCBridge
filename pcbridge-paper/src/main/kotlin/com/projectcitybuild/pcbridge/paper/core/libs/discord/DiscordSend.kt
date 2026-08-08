@@ -1,11 +1,11 @@
 package com.projectcitybuild.pcbridge.paper.core.libs.discord
 
+import com.projectcitybuild.pcbridge.core.observability.errors.ErrorTracker
+import com.projectcitybuild.pcbridge.core.observability.logging.log
+import com.projectcitybuild.pcbridge.core.observability.logging.logSync
 import com.projectcitybuild.pcbridge.http.discord.services.DiscordHttpService
 import com.projectcitybuild.pcbridge.http.discord.models.DiscordEmbed
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.errors.ErrorTracker
 import com.projectcitybuild.pcbridge.paper.core.libs.localconfig.LocalConfig
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.logSync
 import com.projectcitybuild.pcbridge.paper.core.utils.PeriodicRunner
 
 class DiscordSend(

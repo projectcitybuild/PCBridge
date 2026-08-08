@@ -1,10 +1,10 @@
 package com.projectcitybuild.pcbridge.paper.features.register.listeners
 
+import com.projectcitybuild.pcbridge.core.observability.logging.log
+import com.projectcitybuild.pcbridge.core.observability.logging.logSync
 import com.projectcitybuild.pcbridge.http.pcb.services.RegisterHttpService
 import com.projectcitybuild.pcbridge.http.shared.parsing.ResponseParserError
 import com.projectcitybuild.pcbridge.paper.architecture.listeners.scoped
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.logSync
 import com.projectcitybuild.pcbridge.paper.features.register.dialogs.VerifyRegistrationCodeDialog
 import com.projectcitybuild.pcbridge.paper.features.register.registerTracer
 import com.projectcitybuild.pcbridge.paper.features.sync.domain.actions.SyncPlayer

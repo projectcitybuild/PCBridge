@@ -1,8 +1,8 @@
 package com.projectcitybuild.pcbridge.paper.features.pim.domain.services
 
 import com.github.shynixn.mccoroutine.bukkit.minecraftDispatcher
-import com.projectcitybuild.pcbridge.paper.core.libs.datetime.services.LocalizedTime
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.logSync
+import com.projectcitybuild.pcbridge.core.datetime.services.LocalizedTime
+import com.projectcitybuild.pcbridge.core.observability.logging.logSync
 import com.projectcitybuild.pcbridge.paper.core.support.java.humanReadable
 import com.projectcitybuild.pcbridge.paper.features.pim.domain.data.OpElevation
 import com.projectcitybuild.pcbridge.paper.features.pim.domain.repositories.OpElevationRepository

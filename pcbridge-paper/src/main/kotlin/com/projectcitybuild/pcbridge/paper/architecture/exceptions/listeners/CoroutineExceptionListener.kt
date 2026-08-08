@@ -1,7 +1,7 @@
 package com.projectcitybuild.pcbridge.paper.architecture.exceptions.listeners
 
 import com.github.shynixn.mccoroutine.bukkit.MCCoroutineExceptionEvent
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.errors.ErrorTracker
+import com.projectcitybuild.pcbridge.core.observability.errors.ErrorTracker
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.plugin.java.JavaPlugin

@@ -1,15 +1,15 @@
 package com.projectcitybuild.pcbridge.http.discord
 
+import com.projectcitybuild.pcbridge.core.observability.tracing.HttpTracer
 import com.projectcitybuild.pcbridge.http.shared.logging.StructuredLoggingInterceptor
-import io.opentelemetry.api.OpenTelemetry
-import io.opentelemetry.instrumentation.okhttp.v3_0.OkHttpTelemetry
+import okhttp3.Call
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 internal class DiscordClientFactory(
     private val logger: StructuredLoggingInterceptor?,
-    private val openTelemetry: OpenTelemetry,
+    private val httpTracer: HttpTracer,
 ) {
     fun build(): Retrofit = Retrofit.Builder()
         .baseUrl("https://discord.com/api/")
@@ -17,10 +17,10 @@ internal class DiscordClientFactory(
         .callFactory(makeTracedClient())
         .build()
 
-    private fun makeTracedClient() = OkHttpTelemetry
-        .builder(openTelemetry)
-        .build()
-        .newCallFactory(makeClient())
+    private fun makeTracedClient(): Call.Factory {
+        val client = makeClient()
+        return httpTracer.instrument(client)
+    }
 
     private fun makeClient(): OkHttpClient {
         return OkHttpClient().newBuilder().run {

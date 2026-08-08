@@ -1,12 +1,12 @@
 package com.projectcitybuild.pcbridge.paper.architecture.connection.listeners
 
+import com.projectcitybuild.pcbridge.core.observability.errors.ErrorTracker
+import com.projectcitybuild.pcbridge.core.observability.logging.log
 import com.projectcitybuild.pcbridge.paper.architecture.connection.connectionTracer
 import com.projectcitybuild.pcbridge.paper.architecture.connection.events.ConnectionPermittedEvent
 import com.projectcitybuild.pcbridge.paper.architecture.connection.middleware.ConnectionMiddlewareChain
 import com.projectcitybuild.pcbridge.paper.architecture.connection.middleware.ConnectionResult
 import com.projectcitybuild.pcbridge.paper.architecture.listeners.scopedSync
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.errors.ErrorTracker
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotEventBroadcaster
 import com.projectcitybuild.pcbridge.paper.features.sync.domain.repositories.ConnectionRepository
 import kotlinx.coroutines.runBlocking

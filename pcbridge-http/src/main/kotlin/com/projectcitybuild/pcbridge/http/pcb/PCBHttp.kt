@@ -1,5 +1,6 @@
 package com.projectcitybuild.pcbridge.http.pcb
 
+import com.projectcitybuild.pcbridge.core.observability.tracing.HttpTracer
 import com.projectcitybuild.pcbridge.http.shared.parsing.ResponseParser
 import com.projectcitybuild.pcbridge.http.pcb.services.BuildHttpService
 import com.projectcitybuild.pcbridge.http.pcb.services.ConfigHttpService
@@ -11,20 +12,19 @@ import com.projectcitybuild.pcbridge.http.pcb.services.StatsHttpService
 import com.projectcitybuild.pcbridge.http.pcb.services.UuidBanHttpService
 import com.projectcitybuild.pcbridge.http.pcb.services.WarpHttpService
 import com.projectcitybuild.pcbridge.http.shared.logging.StructuredLoggingInterceptor
-import io.opentelemetry.api.OpenTelemetry
 
 class PCBHttp(
     private val authToken: String,
     private val baseURL: String,
     private val logger: StructuredLoggingInterceptor?,
-    private val openTelemetry: OpenTelemetry,
+    private val httpTracer: HttpTracer,
 ) {
     private val client by lazy {
         PCBClientFactory(
             authToken = authToken,
             baseUrl = baseURL,
             logger = logger,
-            openTelemetry = openTelemetry,
+            httpTracer = httpTracer,
         ).build()
     }
 

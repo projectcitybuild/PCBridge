@@ -1,10 +1,10 @@
 package com.projectcitybuild.pcbridge.paper.architecture.listeners
 
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.logSync
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.tracing.Tracer
-import io.opentelemetry.api.common.Attributes
-import io.opentelemetry.api.trace.SpanKind
+import com.projectcitybuild.pcbridge.core.observability.logging.log
+import com.projectcitybuild.pcbridge.core.observability.logging.logSync
+import com.projectcitybuild.pcbridge.core.observability.tracing.AttributesBuilder
+import com.projectcitybuild.pcbridge.core.observability.tracing.SpanKind
+import com.projectcitybuild.pcbridge.core.observability.tracing.Tracer
 import org.bukkit.event.Event
 import org.bukkit.event.Listener
 
@@ -13,7 +13,7 @@ suspend fun <T: Listener> Event.scoped(
     listener: Class<T>,
     block: suspend () -> Unit,
 ) {
-    val attributes = Attributes.builder()
+    val attributes = AttributesBuilder()
         .put("event", eventName)
 
     tracer.trace(
@@ -34,7 +34,7 @@ fun <T: Listener> Event.scopedSync(
     listener: Class<T>,
     block: () -> Unit,
 ) {
-    val attributes = Attributes.builder()
+    val attributes = AttributesBuilder()
         .put("event", eventName)
 
     tracer.traceSync(

@@ -1,7 +1,7 @@
 package com.projectcitybuild.pcbridge.paper.features.chatformatting.hooks.listeners
 
+import com.projectcitybuild.pcbridge.core.observability.logging.logSync
 import com.projectcitybuild.pcbridge.paper.architecture.listeners.scopedSync
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.logSync
 import com.projectcitybuild.pcbridge.paper.features.chatformatting.chatFormattingTracer
 import com.projectcitybuild.pcbridge.paper.features.chatformatting.domain.repositories.EmojiRepository
 import com.projectcitybuild.pcbridge.paper.features.config.domain.data.RemoteConfigUpdatedEvent

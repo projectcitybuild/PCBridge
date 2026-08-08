@@ -1,6 +1,6 @@
 package com.projectcitybuild.pcbridge.paper.features.spawns.domain.repositories
 
-import com.projectcitybuild.pcbridge.paper.core.libs.storage.Storage
+import com.projectcitybuild.pcbridge.core.storage.Storage
 import com.projectcitybuild.pcbridge.paper.features.spawns.domain.data.SerializableSpawn
 import com.projectcitybuild.pcbridge.paper.features.spawns.spawnsTracer
 import kotlinx.coroutines.coroutineScope

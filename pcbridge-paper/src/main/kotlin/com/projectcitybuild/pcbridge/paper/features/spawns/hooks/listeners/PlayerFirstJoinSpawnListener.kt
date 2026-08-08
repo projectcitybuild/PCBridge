@@ -1,7 +1,7 @@
 package com.projectcitybuild.pcbridge.paper.features.spawns.hooks.listeners
 
+import com.projectcitybuild.pcbridge.core.observability.logging.log
 import com.projectcitybuild.pcbridge.paper.architecture.listeners.scoped
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
 import com.projectcitybuild.pcbridge.paper.core.libs.teleportation.PlayerTeleporter
 import com.projectcitybuild.pcbridge.paper.features.spawns.domain.repositories.SpawnRepository
 import com.projectcitybuild.pcbridge.paper.features.spawns.spawnsTracer

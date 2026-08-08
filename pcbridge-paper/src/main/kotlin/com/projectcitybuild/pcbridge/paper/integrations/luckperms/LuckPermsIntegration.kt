@@ -1,7 +1,7 @@
 package com.projectcitybuild.pcbridge.paper.integrations.luckperms
 
+import com.projectcitybuild.pcbridge.core.observability.logging.logSync
 import com.projectcitybuild.pcbridge.paper.architecture.permissions.Permissions
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.logSync
 import net.luckperms.api.LuckPerms
 import net.luckperms.api.LuckPermsProvider
 import org.bukkit.event.Listener

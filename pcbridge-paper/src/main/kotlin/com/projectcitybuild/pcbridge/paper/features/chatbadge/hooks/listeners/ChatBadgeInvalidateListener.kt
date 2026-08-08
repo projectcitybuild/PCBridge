@@ -1,9 +1,9 @@
 package com.projectcitybuild.pcbridge.paper.features.chatbadge.hooks.listeners
 
+import com.projectcitybuild.pcbridge.core.observability.logging.logSync
 import com.projectcitybuild.pcbridge.paper.architecture.listeners.scopedSync
 import com.projectcitybuild.pcbridge.paper.architecture.state.events.PlayerStateCreatedEvent
 import com.projectcitybuild.pcbridge.paper.architecture.state.events.PlayerStateUpdatedEvent
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.logSync
 import com.projectcitybuild.pcbridge.paper.features.chatbadge.chatBadgeTracer
 import com.projectcitybuild.pcbridge.paper.features.chatbadge.domain.repositories.ChatBadgeRepository
 import com.projectcitybuild.pcbridge.paper.features.config.domain.data.RemoteConfigUpdatedEvent

@@ -1,8 +1,8 @@
 package com.projectcitybuild.pcbridge.paper.architecture.tablist.placeholders
 
+import com.projectcitybuild.pcbridge.core.observability.logging.log
 import com.projectcitybuild.pcbridge.paper.architecture.tablist.TabRenderer
 import com.projectcitybuild.pcbridge.paper.architecture.tablist.UpdatableTabPlaceholder
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
 import net.kyori.adventure.text.Component
 import org.bukkit.Server
 import org.bukkit.entity.Player

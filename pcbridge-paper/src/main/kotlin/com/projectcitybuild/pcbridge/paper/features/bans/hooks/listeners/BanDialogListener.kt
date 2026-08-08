@@ -1,8 +1,8 @@
 package com.projectcitybuild.pcbridge.paper.features.bans.hooks.listeners
 
+import com.projectcitybuild.pcbridge.core.observability.logging.log
+import com.projectcitybuild.pcbridge.core.observability.logging.logSync
 import com.projectcitybuild.pcbridge.paper.architecture.listeners.scoped
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.logSync
 import com.projectcitybuild.pcbridge.paper.core.support.component.sendMessageRich
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.extensions.broadcastRich
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.extensions.onlinePlayer

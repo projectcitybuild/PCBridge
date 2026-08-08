@@ -24,6 +24,9 @@ repositories {
 dependencies {
     implementation(project(":pcbridge-http"))
     implementation(project(":pcbridge-web-server"))
+    implementation(project(":pcbridge-core:datetime"))
+    implementation(project(":pcbridge-core:storage"))
+    implementation(project(":pcbridge-core:observability"))
 
     // Paper
     compileOnly("io.papermc.paper:paper-api:1.21.10-R0.1-SNAPSHOT")
@@ -37,10 +40,6 @@ dependencies {
     // Libraries
     implementation("com.github.shynixn.mccoroutine:mccoroutine-bukkit-api:2.15.0")
     implementation("com.github.shynixn.mccoroutine:mccoroutine-bukkit-core:2.15.0")
-    implementation("io.sentry:sentry:8.27.1")
-    implementation("io.sentry:sentry-opentelemetry-agentless:8.27.1")
-    implementation("io.opentelemetry:opentelemetry-extension-kotlin:1.43.0")
-    implementation("io.klogging:klogging:0.11.6")
     implementation("io.insert-koin:koin-core:3.5.6")
     implementation("io.github.reactivecircus.cache4k:cache4k:0.13.0")
     implementation("io.github.petertrr:kotlin-multiplatform-diff:0.7.0")

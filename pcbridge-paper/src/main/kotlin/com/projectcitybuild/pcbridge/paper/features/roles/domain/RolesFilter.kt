@@ -1,7 +1,7 @@
 package com.projectcitybuild.pcbridge.paper.features.roles.domain
 
+import com.projectcitybuild.pcbridge.core.observability.logging.logSync
 import com.projectcitybuild.pcbridge.http.pcb.models.Role
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.logSync
 import com.projectcitybuild.pcbridge.paper.features.roles.domain.data.RoleType
 
 class RolesFilter {

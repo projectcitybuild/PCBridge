@@ -2,6 +2,14 @@ package com.projectcitybuild.pcbridge.paper
 
 import com.github.shynixn.mccoroutine.bukkit.minecraftDispatcher
 import com.google.gson.reflect.TypeToken
+import com.projectcitybuild.pcbridge.core.datetime.services.LocalizedTime
+import com.projectcitybuild.pcbridge.core.observability.errors.ErrorTracker
+import com.projectcitybuild.pcbridge.core.observability.errors.SentryProvider
+import com.projectcitybuild.pcbridge.core.observability.logging.logSync
+import com.projectcitybuild.pcbridge.core.observability.tracing.HttpTracer
+import com.projectcitybuild.pcbridge.core.observability.tracing.OpenTelemetryHttpTracer
+import com.projectcitybuild.pcbridge.core.observability.tracing.OpenTelemetryProvider
+import com.projectcitybuild.pcbridge.core.storage.JsonStorage
 import com.projectcitybuild.pcbridge.http.discord.DiscordHttp
 import com.projectcitybuild.pcbridge.http.pcb.PCBHttp
 import com.projectcitybuild.pcbridge.http.pcb.models.RemoteConfigVersion
@@ -29,17 +37,10 @@ import com.projectcitybuild.pcbridge.paper.architecture.tablist.placeholders.Pla
 import com.projectcitybuild.pcbridge.paper.architecture.tablist.placeholders.PlayerWorldPlaceholder
 import com.projectcitybuild.pcbridge.paper.architecture.webhooks.WebServerDelegate
 import com.projectcitybuild.pcbridge.paper.core.libs.cooldowns.Cooldown
-import com.projectcitybuild.pcbridge.paper.core.libs.datetime.services.DateTimeFormatter
-import com.projectcitybuild.pcbridge.paper.core.libs.datetime.services.LocalizedTime
 import com.projectcitybuild.pcbridge.paper.core.libs.discord.DiscordSend
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.errors.ErrorTracker
-import com.projectcitybuild.pcbridge.paper.core.libs.storage.JsonStorage
 import com.projectcitybuild.pcbridge.paper.core.libs.localconfig.LocalConfig
 import com.projectcitybuild.pcbridge.paper.core.libs.localconfig.LocalConfigKeyValues
 import com.projectcitybuild.pcbridge.paper.core.libs.localconfig.default
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.errors.SentryProvider
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.logSync
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.tracing.OpenTelemetryProvider
 import com.projectcitybuild.pcbridge.paper.core.libs.playerlookup.PlayerLookup
 import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.RemoteConfig
 import com.projectcitybuild.pcbridge.paper.core.libs.store.SessionStore
@@ -87,6 +88,7 @@ import org.koin.dsl.module
 import org.koin.dsl.onClose
 import java.time.Clock
 import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 import java.util.Locale
 import kotlin.time.Duration.Companion.seconds
 
@@ -171,6 +173,12 @@ private fun Module.core() {
         OpenTelemetryProvider()
     }
 
+    factory<HttpTracer> {
+        OpenTelemetryHttpTracer(
+            openTelemetry = get(),
+        )
+    }
+
     single {
         val localConfig = get<LocalConfig>()
         val config = localConfig.get()
@@ -202,7 +210,7 @@ private fun Module.core() {
     factory {
         val config = get<RemoteConfig>().latest.config
 
-        DateTimeFormatter(
+        com.projectcitybuild.pcbridge.core.datetime.services.DateTimeFormatter(
             locale =
                 Locale.forLanguageTag(
                     config.localization.locale,
@@ -299,7 +307,7 @@ private fun Module.http() {
             authToken = localConfig.api.token,
             baseURL = localConfig.api.baseUrl,
             logger = if (localConfig.api.logLevel.enabled) get() else null,
-            openTelemetry = get<OpenTelemetryProvider>().sdk
+            httpTracer = get(),
         )
     }
 
@@ -308,7 +316,7 @@ private fun Module.http() {
 
         DiscordHttp(
             logger = if (localConfig.api.logLevel.enabled) get() else null,
-            openTelemetry = get<OpenTelemetryProvider>().sdk,
+            httpTracer = get(),
         )
     }
 
@@ -317,7 +325,7 @@ private fun Module.http() {
 
         PlayerDbHttp(
             logger = if (localConfig.api.logLevel.enabled) get() else null,
-            openTelemetry = get<OpenTelemetryProvider>().sdk,
+            httpTracer = get(),
             userAgent = if (localConfig.environment.isProduction) "pcbmc.co"
                 else ""
         )

@@ -1,6 +1,6 @@
 package com.projectcitybuild.pcbridge.paper.architecture.tablist
 
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.logSync
+import com.projectcitybuild.pcbridge.core.observability.logging.logSync
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotListenerRegistry
 import net.kyori.adventure.text.Component
 import org.bukkit.entity.Player

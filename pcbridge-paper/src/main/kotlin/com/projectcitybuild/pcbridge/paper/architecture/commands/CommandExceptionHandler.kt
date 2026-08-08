@@ -1,8 +1,8 @@
 package com.projectcitybuild.pcbridge.paper.architecture.commands
 
+import com.projectcitybuild.pcbridge.core.observability.logging.logSync
 import com.projectcitybuild.pcbridge.http.shared.parsing.ResponseParserError
 import com.projectcitybuild.pcbridge.paper.core.libs.cooldowns.CooldownException
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.logSync
 import org.bukkit.command.CommandSender
 
 class CommandExceptionHandler private constructor() {

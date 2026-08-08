@@ -1,10 +1,10 @@
 package com.projectcitybuild.pcbridge.paper.features.roles.hooks.placeholders
 
+import com.projectcitybuild.pcbridge.core.observability.logging.log
 import com.projectcitybuild.pcbridge.paper.architecture.state.events.PlayerStateCreatedEvent
 import com.projectcitybuild.pcbridge.paper.architecture.state.events.PlayerStateUpdatedEvent
 import com.projectcitybuild.pcbridge.paper.architecture.tablist.TabRenderer
 import com.projectcitybuild.pcbridge.paper.architecture.tablist.UpdatableTabPlaceholder
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
 import com.projectcitybuild.pcbridge.paper.core.libs.store.SessionStore
 import com.projectcitybuild.pcbridge.paper.features.roles.domain.RolesFilter
 import net.kyori.adventure.text.Component

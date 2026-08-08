@@ -1,10 +1,9 @@
 package com.projectcitybuild.pcbridge.paper.architecture.commands
 
 import com.mojang.brigadier.context.CommandContext
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.tracing.Tracer
-import io.opentelemetry.api.common.Attributes
-import io.opentelemetry.api.common.AttributesBuilder
-import io.opentelemetry.api.trace.SpanKind
+import com.projectcitybuild.pcbridge.core.observability.tracing.AttributesBuilder
+import com.projectcitybuild.pcbridge.core.observability.tracing.SpanKind
+import com.projectcitybuild.pcbridge.core.observability.tracing.Tracer
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
@@ -14,7 +13,7 @@ suspend fun <S: CommandSourceStack> CommandContext<S>.scoped(
     block: suspend (CommandContext<S>) -> Unit,
 ) {
     val commandLiteral = input.split(" ").first()
-    val attributes = Attributes.builder()
+    val attributes = AttributesBuilder()
         .putSender(source.sender)
         .put("input", input)
 
@@ -34,7 +33,7 @@ fun <S: CommandSourceStack> CommandContext<S>.scopedSync(
     block: (CommandContext<S>) -> Unit,
 ) {
     val commandLiteral = input.split(" ").first()
-    val attributes = Attributes.builder()
+    val attributes = AttributesBuilder()
         .putSender(source.sender)
         .put("input", input)
 

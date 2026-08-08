@@ -16,8 +16,10 @@ plugins {
     jacoco
 }
 
-repositories {
-    mavenCentral()
+allprojects {
+    repositories {
+        mavenCentral()
+    }
 }
 
 subprojects {

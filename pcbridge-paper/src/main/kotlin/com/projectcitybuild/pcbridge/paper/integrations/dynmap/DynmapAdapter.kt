@@ -1,6 +1,6 @@
 package com.projectcitybuild.pcbridge.paper.integrations.dynmap
 
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.logSync
+import com.projectcitybuild.pcbridge.core.observability.logging.logSync
 
 class DynmapAdapter {
     private var delegate = DynmapDelegate()

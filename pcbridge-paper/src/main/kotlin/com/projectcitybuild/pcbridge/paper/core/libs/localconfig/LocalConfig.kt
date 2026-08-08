@@ -1,6 +1,6 @@
 package com.projectcitybuild.pcbridge.paper.core.libs.localconfig
 
-import com.projectcitybuild.pcbridge.paper.core.libs.storage.Storage
+import com.projectcitybuild.pcbridge.core.storage.Storage
 import java.io.File
 
 class LocalConfig(

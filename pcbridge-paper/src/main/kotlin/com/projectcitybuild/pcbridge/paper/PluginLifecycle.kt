@@ -1,5 +1,9 @@
 package com.projectcitybuild.pcbridge.paper
 
+import com.projectcitybuild.pcbridge.core.observability.errors.ErrorTracker
+import com.projectcitybuild.pcbridge.core.observability.errors.catching
+import com.projectcitybuild.pcbridge.core.observability.tracing.OpenTelemetryProvider
+import com.projectcitybuild.pcbridge.core.observability.tracing.TracerFactory
 import com.projectcitybuild.pcbridge.paper.architecture.chat.decorators.ChatDecoratorChain
 import com.projectcitybuild.pcbridge.paper.architecture.chat.listeners.AsyncChatListener
 import com.projectcitybuild.pcbridge.paper.architecture.connection.listeners.AuthorizeConnectionListener
@@ -17,15 +21,11 @@ import com.projectcitybuild.pcbridge.paper.architecture.tablist.placeholders.Pla
 import com.projectcitybuild.pcbridge.paper.architecture.tablist.placeholders.PlayerNamePlaceholder
 import com.projectcitybuild.pcbridge.paper.architecture.tablist.placeholders.PlayerPingPlaceholder
 import com.projectcitybuild.pcbridge.paper.architecture.tablist.placeholders.PlayerWorldPlaceholder
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.errors.ErrorTracker
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.errors.catching
 import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.RemoteConfig
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotListenerRegistry
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotTimer
 import com.projectcitybuild.pcbridge.paper.architecture.commands.registerCommands
 import com.projectcitybuild.pcbridge.paper.architecture.connection.listeners.EndConnectionListener
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.tracing.OpenTelemetryProvider
-import com.projectcitybuild.pcbridge.paper.core.libs.observability.tracing.TracerFactory
 import com.projectcitybuild.pcbridge.paper.features.announcements.listeners.AnnouncementConfigListener
 import com.projectcitybuild.pcbridge.paper.features.announcements.listeners.AnnouncementEnableListener
 import com.projectcitybuild.pcbridge.paper.features.bans.hooks.commands.BanCommand
