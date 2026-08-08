@@ -2,7 +2,7 @@ package com.projectcitybuild.pcbridge.paper.features.announcements.listeners
 
 import com.projectcitybuild.pcbridge.core.observability.logging.logSync
 import com.projectcitybuild.pcbridge.paper.architecture.listeners.scopedSync
-import com.projectcitybuild.pcbridge.paper.features.config.domain.data.RemoteConfigUpdatedEvent
+import com.projectcitybuild.pcbridge.paper.assembly.remoteconfig.SpigotRemoteConfigUpdatedEvent
 import com.projectcitybuild.pcbridge.paper.features.announcements.actions.StartAnnouncementTimer
 import com.projectcitybuild.pcbridge.paper.features.announcements.announcementsTracer
 import org.bukkit.event.EventHandler
@@ -14,7 +14,7 @@ class AnnouncementConfigListener(
 ) : Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     fun onRemoteConfigUpdated(
-        event: RemoteConfigUpdatedEvent,
+        event: SpigotRemoteConfigUpdatedEvent,
     ) = event.scopedSync(announcementsTracer, this::class.java) {
         val prev = event.prev?.config
         val next = event.next.config

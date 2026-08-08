@@ -25,8 +25,11 @@ dependencies {
     implementation(project(":pcbridge-http"))
     implementation(project(":pcbridge-web-server"))
     implementation(project(":pcbridge-core:datetime"))
-    implementation(project(":pcbridge-core:storage"))
+    implementation(project(":pcbridge-core:localconfig"))
+    implementation(project(":pcbridge-core:pagination"))
     implementation(project(":pcbridge-core:observability"))
+    implementation(project(":pcbridge-core:remoteconfig"))
+    implementation(project(":pcbridge-core:storage"))
 
     // Paper
     compileOnly("io.papermc.paper:paper-api:1.21.10-R0.1-SNAPSHOT")

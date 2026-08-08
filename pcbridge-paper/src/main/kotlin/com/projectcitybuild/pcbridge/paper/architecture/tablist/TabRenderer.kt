@@ -1,7 +1,7 @@
 package com.projectcitybuild.pcbridge.paper.architecture.tablist
 
 import com.projectcitybuild.pcbridge.core.observability.logging.log
-import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.RemoteConfig
+import com.projectcitybuild.pcbridge.core.remoteconfig.RemoteConfig
 import com.projectcitybuild.pcbridge.paper.core.support.component.deserialize
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.MiniMessage

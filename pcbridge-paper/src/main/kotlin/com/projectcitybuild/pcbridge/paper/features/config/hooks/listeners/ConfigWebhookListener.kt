@@ -1,8 +1,8 @@
 package com.projectcitybuild.pcbridge.paper.features.config.hooks.listeners
 
+import com.projectcitybuild.pcbridge.core.remoteconfig.RemoteConfig
 import com.projectcitybuild.pcbridge.paper.architecture.listeners.scoped
 import com.projectcitybuild.pcbridge.paper.architecture.webhooks.events.WebhookReceivedEvent
-import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.RemoteConfig
 import com.projectcitybuild.pcbridge.paper.features.config.configTracer
 import com.projectcitybuild.pcbridge.webserver.data.SyncRemoteConfigWebhook
 import org.bukkit.event.EventHandler

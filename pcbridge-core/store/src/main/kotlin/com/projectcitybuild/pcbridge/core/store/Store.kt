@@ -1,4 +1,4 @@
-package com.projectcitybuild.pcbridge.paper.core.libs.store
+package com.projectcitybuild.pcbridge.core.store
 
 import com.projectcitybuild.pcbridge.core.observability.logging.log
 import com.projectcitybuild.pcbridge.core.observability.logging.logSync
@@ -14,7 +14,7 @@ import java.io.File
 
 private val mutex = Mutex()
 
-class Store(
+class Store<State>(
     private val file: File,
     private val storage: Storage<PersistedServerState>,
 ) {

@@ -1,10 +1,10 @@
 package com.projectcitybuild.pcbridge.paper.features.staffchat.commands
 
 import com.mojang.brigadier.arguments.StringArgumentType
+import com.projectcitybuild.pcbridge.core.remoteconfig.RemoteConfig
 import com.projectcitybuild.pcbridge.paper.PermissionNode
 import com.projectcitybuild.pcbridge.paper.architecture.chat.decorators.ChatDecoratorChain
 import com.projectcitybuild.pcbridge.paper.architecture.chat.decorators.ChatMessage
-import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.RemoteConfig
 import com.projectcitybuild.pcbridge.paper.architecture.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.paper.architecture.commands.requiresPermission
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending

@@ -1,9 +1,9 @@
 package com.projectcitybuild.pcbridge.paper.architecture.serverlist.listeners
 
 import com.destroystokyo.paper.event.server.PaperServerListPingEvent
+import com.projectcitybuild.pcbridge.core.remoteconfig.RemoteConfig
 import com.projectcitybuild.pcbridge.paper.architecture.serverlist.decorators.ServerListing
 import com.projectcitybuild.pcbridge.paper.architecture.serverlist.decorators.ServerListingDecoratorChain
-import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.RemoteConfig
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.event.EventHandler

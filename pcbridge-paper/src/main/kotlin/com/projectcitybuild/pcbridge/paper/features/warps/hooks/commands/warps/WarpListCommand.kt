@@ -1,14 +1,14 @@
 package com.projectcitybuild.pcbridge.paper.features.warps.hooks.commands.warps
 
 import com.mojang.brigadier.arguments.IntegerArgumentType
+import com.projectcitybuild.pcbridge.core.remoteconfig.RemoteConfig
 import com.projectcitybuild.pcbridge.paper.features.warps.domain.repositories.WarpRepository
 import com.projectcitybuild.pcbridge.paper.PermissionNode
-import com.projectcitybuild.pcbridge.paper.core.libs.pagination.PageComponentBuilder
-import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.RemoteConfig
 import com.projectcitybuild.pcbridge.paper.architecture.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.paper.architecture.commands.requiresPermission
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.paper.architecture.commands.scoped
+import com.projectcitybuild.pcbridge.paper.assembly.pagination.PageComponentBuilder
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandContext
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandNode
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.getOptionalArgument

@@ -1,6 +1,6 @@
 @file:Suppress("ktlint:standard:max-line-length")
 
-package com.projectcitybuild.pcbridge.paper.core.libs.localconfig
+package com.projectcitybuild.pcbridge.core.localconfig
 
 import com.google.gson.annotations.SerializedName
 import kotlinx.serialization.Serializable

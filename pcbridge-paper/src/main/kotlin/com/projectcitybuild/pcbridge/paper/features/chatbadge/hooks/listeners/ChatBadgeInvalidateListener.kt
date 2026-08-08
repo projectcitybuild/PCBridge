@@ -6,7 +6,7 @@ import com.projectcitybuild.pcbridge.paper.architecture.state.events.PlayerState
 import com.projectcitybuild.pcbridge.paper.architecture.state.events.PlayerStateUpdatedEvent
 import com.projectcitybuild.pcbridge.paper.features.chatbadge.chatBadgeTracer
 import com.projectcitybuild.pcbridge.paper.features.chatbadge.domain.repositories.ChatBadgeRepository
-import com.projectcitybuild.pcbridge.paper.features.config.domain.data.RemoteConfigUpdatedEvent
+import com.projectcitybuild.pcbridge.paper.assembly.remoteconfig.SpigotRemoteConfigUpdatedEvent
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
@@ -16,7 +16,7 @@ class ChatBadgeInvalidateListener(
 ) : Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     fun onRemoteConfigUpdated(
-        event: RemoteConfigUpdatedEvent,
+        event: SpigotRemoteConfigUpdatedEvent,
     ) = event.scopedSync(chatBadgeTracer, this::class.java) {
         val prev = event.prev?.config
         val next = event.next.config

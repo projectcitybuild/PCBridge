@@ -1,7 +1,7 @@
 package com.projectcitybuild.pcbridge.paper.features.onboarding.hooks.listeners
 
+import com.projectcitybuild.pcbridge.core.remoteconfig.RemoteConfig
 import com.projectcitybuild.pcbridge.paper.architecture.listeners.scopedSync
-import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.RemoteConfig
 import com.projectcitybuild.pcbridge.paper.features.onboarding.onboardingTracer
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener

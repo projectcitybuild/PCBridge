@@ -1,4 +1,4 @@
-package com.projectcitybuild.pcbridge.paper.core.libs.pagination
+package com.projectcitybuild.pcbridge.paper.assembly.pagination
 
 import com.projectcitybuild.pcbridge.http.pcb.models.PaginatedList
 import com.projectcitybuild.pcbridge.paper.l10n.l10n

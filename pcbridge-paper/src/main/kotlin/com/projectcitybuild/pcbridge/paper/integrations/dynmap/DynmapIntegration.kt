@@ -4,9 +4,9 @@ import com.github.shynixn.mccoroutine.bukkit.registerSuspendingEvents
 import com.projectcitybuild.pcbridge.core.observability.logging.log
 import com.projectcitybuild.pcbridge.core.observability.logging.logSync
 import com.projectcitybuild.pcbridge.core.observability.tracing.TracerFactory
+import com.projectcitybuild.pcbridge.core.remoteconfig.RemoteConfig
 import com.projectcitybuild.pcbridge.paper.architecture.listeners.scoped
-import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.RemoteConfig
-import com.projectcitybuild.pcbridge.paper.features.config.domain.data.RemoteConfigUpdatedEvent
+import com.projectcitybuild.pcbridge.paper.assembly.remoteconfig.SpigotRemoteConfigUpdatedEvent
 import com.projectcitybuild.pcbridge.paper.features.spawns.domain.data.SpawnUpdatedEvent
 import com.projectcitybuild.pcbridge.paper.features.spawns.domain.repositories.SpawnRepository
 import com.projectcitybuild.pcbridge.paper.features.warps.domain.events.WarpCreateEvent
@@ -72,7 +72,7 @@ class DynmapIntegration(
 
     @EventHandler
     suspend fun onRemoteConfigUpdated(
-        event: RemoteConfigUpdatedEvent,
+        event: SpigotRemoteConfigUpdatedEvent,
     ) = event.scoped(tracer, this::class.java) {
         val prev = event.prev?.config
         val next = event.next.config

@@ -1,6 +1,6 @@
 package com.projectcitybuild.pcbridge.paper.features.chatformatting.domain.repositories
 
-import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.RemoteConfig
+import com.projectcitybuild.pcbridge.core.remoteconfig.RemoteConfig
 
 class EmojiRepository(
     remoteConfig: RemoteConfig,

@@ -1,7 +1,7 @@
 package com.projectcitybuild.pcbridge.paper.features.config.hooks.commands
 
+import com.projectcitybuild.pcbridge.core.remoteconfig.RemoteConfig
 import com.projectcitybuild.pcbridge.paper.PermissionNode
-import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.RemoteConfig
 import com.projectcitybuild.pcbridge.paper.architecture.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.paper.architecture.commands.requiresPermission
 import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending

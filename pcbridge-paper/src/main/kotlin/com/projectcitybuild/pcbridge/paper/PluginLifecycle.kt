@@ -4,6 +4,7 @@ import com.projectcitybuild.pcbridge.core.observability.errors.ErrorTracker
 import com.projectcitybuild.pcbridge.core.observability.errors.catching
 import com.projectcitybuild.pcbridge.core.observability.tracing.OpenTelemetryProvider
 import com.projectcitybuild.pcbridge.core.observability.tracing.TracerFactory
+import com.projectcitybuild.pcbridge.core.remoteconfig.RemoteConfig
 import com.projectcitybuild.pcbridge.paper.architecture.chat.decorators.ChatDecoratorChain
 import com.projectcitybuild.pcbridge.paper.architecture.chat.listeners.AsyncChatListener
 import com.projectcitybuild.pcbridge.paper.architecture.connection.listeners.AuthorizeConnectionListener
@@ -21,7 +22,6 @@ import com.projectcitybuild.pcbridge.paper.architecture.tablist.placeholders.Pla
 import com.projectcitybuild.pcbridge.paper.architecture.tablist.placeholders.PlayerNamePlaceholder
 import com.projectcitybuild.pcbridge.paper.architecture.tablist.placeholders.PlayerPingPlaceholder
 import com.projectcitybuild.pcbridge.paper.architecture.tablist.placeholders.PlayerWorldPlaceholder
-import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.RemoteConfig
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotListenerRegistry
 import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotTimer
 import com.projectcitybuild.pcbridge.paper.architecture.commands.registerCommands

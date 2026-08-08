@@ -1,18 +1,16 @@
-package com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig
+package com.projectcitybuild.pcbridge.core.remoteconfig
 
 import com.projectcitybuild.pcbridge.core.observability.errors.ErrorTracker
 import com.projectcitybuild.pcbridge.core.observability.logging.log
 import com.projectcitybuild.pcbridge.core.storage.Storage
-import com.projectcitybuild.pcbridge.paper.features.config.domain.data.RemoteConfigUpdatedEvent
 import com.projectcitybuild.pcbridge.http.pcb.models.RemoteConfigKeyValues
 import com.projectcitybuild.pcbridge.http.pcb.models.RemoteConfigVersion
 import com.projectcitybuild.pcbridge.http.pcb.services.ConfigHttpService
-import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotEventBroadcaster
 import java.io.File
 
 class RemoteConfig(
     private val configHttpService: ConfigHttpService,
-    private val eventBroadcaster: SpigotEventBroadcaster,
+    private val onEventFired: suspend (RemoteConfigUpdatedEvent) -> Unit,
     private val file: File,
     private val storage: Storage<RemoteConfigVersion>,
     private val errorTracker: ErrorTracker,
@@ -40,7 +38,7 @@ class RemoteConfig(
         if (prev != next) {
             log.debug { "Remote config update detected. Broadcasting change..." }
 
-            eventBroadcaster.broadcast(
+            onEventFired(
                 RemoteConfigUpdatedEvent(prev, next)
             )
         }

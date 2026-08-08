@@ -1,8 +1,8 @@
 package com.projectcitybuild.pcbridge.paper.features.onboarding.hooks.listeners
 
 import com.projectcitybuild.pcbridge.core.observability.logging.logSync
+import com.projectcitybuild.pcbridge.core.remoteconfig.RemoteConfig
 import com.projectcitybuild.pcbridge.paper.architecture.listeners.scopedSync
-import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.RemoteConfig
 import com.projectcitybuild.pcbridge.paper.core.libs.store.SessionStore
 import com.projectcitybuild.pcbridge.paper.features.onboarding.onboardingTracer
 import net.kyori.adventure.text.Component

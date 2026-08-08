@@ -1,4 +1,4 @@
-package com.projectcitybuild.pcbridge.paper.core.libs.store
+package com.projectcitybuild.pcbridge.core.store
 
 import com.projectcitybuild.pcbridge.core.observability.logging.log
 import com.projectcitybuild.pcbridge.core.observability.tracing.TracerFactory

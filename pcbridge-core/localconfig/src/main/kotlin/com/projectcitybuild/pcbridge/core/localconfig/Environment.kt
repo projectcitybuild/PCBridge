@@ -1,4 +1,4 @@
-package com.projectcitybuild.pcbridge.paper.core.libs.localconfig
+package com.projectcitybuild.pcbridge.core.localconfig
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

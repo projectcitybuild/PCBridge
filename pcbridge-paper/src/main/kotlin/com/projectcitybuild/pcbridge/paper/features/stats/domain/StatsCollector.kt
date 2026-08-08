@@ -3,8 +3,8 @@ package com.projectcitybuild.pcbridge.paper.features.stats.domain
 import com.projectcitybuild.pcbridge.core.observability.errors.ErrorTracker
 import com.projectcitybuild.pcbridge.core.observability.logging.log
 import com.projectcitybuild.pcbridge.core.observability.logging.logSync
+import com.projectcitybuild.pcbridge.core.remoteconfig.RemoteConfig
 import com.projectcitybuild.pcbridge.http.pcb.models.PlayerStats
-import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.RemoteConfig
 import com.projectcitybuild.pcbridge.paper.features.stats.domain.repositories.StatsRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

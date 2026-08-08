@@ -2,7 +2,7 @@ package com.projectcitybuild.pcbridge.paper.architecture.tablist.listeners
 
 import com.projectcitybuild.pcbridge.core.observability.logging.log
 import com.projectcitybuild.pcbridge.paper.architecture.tablist.TabRenderer
-import com.projectcitybuild.pcbridge.paper.features.config.domain.data.RemoteConfigUpdatedEvent
+import com.projectcitybuild.pcbridge.paper.assembly.remoteconfig.SpigotRemoteConfigUpdatedEvent
 import org.bukkit.Server
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -23,7 +23,7 @@ class TabListeners(
     }
 
     @EventHandler
-    suspend fun onRemoteConfigUpdated(event: RemoteConfigUpdatedEvent) {
+    suspend fun onRemoteConfigUpdated(event: SpigotRemoteConfigUpdatedEvent) {
         val prev = event.prev?.config
         val next = event.next.config
 

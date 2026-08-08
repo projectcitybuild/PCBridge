@@ -1,4 +1,4 @@
-package com.projectcitybuild.pcbridge.paper.core.libs.pagination
+package com.projectcitybuild.pcbridge.core.pagination
 
 import kotlin.math.ceil
 import kotlin.math.min
@@ -6,6 +6,7 @@ import kotlin.math.min
 class SimplePaginator<T> {
     fun paginate(items: List<T>, pageSize: Int, page: Int): Page<T> {
         check(page >= 1) { "Page must be greater than 0" }
+        check(pageSize >= 1) { "Page size must be greater than 0" }
 
         val startIndex = (page - 1) * pageSize
         val lower = min(items.size, startIndex) // inclusive

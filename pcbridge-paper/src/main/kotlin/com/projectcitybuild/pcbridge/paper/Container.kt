@@ -3,12 +3,16 @@ package com.projectcitybuild.pcbridge.paper
 import com.github.shynixn.mccoroutine.bukkit.minecraftDispatcher
 import com.google.gson.reflect.TypeToken
 import com.projectcitybuild.pcbridge.core.datetime.services.LocalizedTime
+import com.projectcitybuild.pcbridge.core.localconfig.LocalConfig
+import com.projectcitybuild.pcbridge.core.localconfig.LocalConfigKeyValues
+import com.projectcitybuild.pcbridge.core.localconfig.default
 import com.projectcitybuild.pcbridge.core.observability.errors.ErrorTracker
 import com.projectcitybuild.pcbridge.core.observability.errors.SentryProvider
 import com.projectcitybuild.pcbridge.core.observability.logging.logSync
 import com.projectcitybuild.pcbridge.core.observability.tracing.HttpTracer
 import com.projectcitybuild.pcbridge.core.observability.tracing.OpenTelemetryHttpTracer
 import com.projectcitybuild.pcbridge.core.observability.tracing.OpenTelemetryProvider
+import com.projectcitybuild.pcbridge.core.remoteconfig.RemoteConfig
 import com.projectcitybuild.pcbridge.core.storage.JsonStorage
 import com.projectcitybuild.pcbridge.http.discord.DiscordHttp
 import com.projectcitybuild.pcbridge.http.pcb.PCBHttp
@@ -36,13 +40,10 @@ import com.projectcitybuild.pcbridge.paper.architecture.tablist.placeholders.Pla
 import com.projectcitybuild.pcbridge.paper.architecture.tablist.placeholders.PlayerPingPlaceholder
 import com.projectcitybuild.pcbridge.paper.architecture.tablist.placeholders.PlayerWorldPlaceholder
 import com.projectcitybuild.pcbridge.paper.architecture.webhooks.WebServerDelegate
+import com.projectcitybuild.pcbridge.paper.assembly.remoteconfig.SpigotRemoteConfigUpdatedEvent
 import com.projectcitybuild.pcbridge.paper.core.libs.cooldowns.Cooldown
 import com.projectcitybuild.pcbridge.paper.core.libs.discord.DiscordSend
-import com.projectcitybuild.pcbridge.paper.core.libs.localconfig.LocalConfig
-import com.projectcitybuild.pcbridge.paper.core.libs.localconfig.LocalConfigKeyValues
-import com.projectcitybuild.pcbridge.paper.core.libs.localconfig.default
 import com.projectcitybuild.pcbridge.paper.core.libs.playerlookup.PlayerLookup
-import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.RemoteConfig
 import com.projectcitybuild.pcbridge.paper.core.libs.store.SessionStore
 import com.projectcitybuild.pcbridge.paper.core.libs.store.Store
 import com.projectcitybuild.pcbridge.paper.core.libs.teleportation.PlayerTeleporter
@@ -88,7 +89,6 @@ import org.koin.dsl.module
 import org.koin.dsl.onClose
 import java.time.Clock
 import java.time.ZoneId
-import java.time.format.DateTimeFormatter
 import java.util.Locale
 import kotlin.time.Duration.Companion.seconds
 
@@ -238,7 +238,11 @@ private fun Module.core() {
     single {
         RemoteConfig(
             configHttpService = get<PCBHttp>().config,
-            eventBroadcaster = get(),
+            onEventFired = { event ->
+                val spigotEvent = SpigotRemoteConfigUpdatedEvent.fromEvent(event)
+                val eventBroadcaster = get<SpigotEventBroadcaster>()
+                eventBroadcaster.broadcast(spigotEvent)
+            },
             file = get<JavaPlugin>()
                 .dataFolder
                 .resolve("cache/remote_config.json"),
