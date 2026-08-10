@@ -10,7 +10,7 @@ import com.projectcitybuild.pcbridge.core.store.data.PlayerSession
 import com.projectcitybuild.pcbridge.paper.architecture.state.events.PlayerStateCreatedEvent
 import com.projectcitybuild.pcbridge.paper.architecture.state.events.PlayerStateDestroyedEvent
 import com.projectcitybuild.pcbridge.paper.architecture.state.stateTracer
-import com.projectcitybuild.pcbridge.papersupport.support.spigot.SpigotEventBroadcaster
+import com.projectcitybuild.pcbridge.paper.support.spigot.SpigotEventBroadcaster
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener

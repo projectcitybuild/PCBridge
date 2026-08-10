@@ -1,7 +1,7 @@
 package com.projectcitybuild.pcbridge.paper.assembly.playerlookup
 
 import com.projectcitybuild.pcbridge.core.playerlookup.OnlinePlayerFinder
-import com.projectcitybuild.pcbridge.papersupport.support.spigot.extensions.onlinePlayer
+import com.projectcitybuild.pcbridge.paper.support.spigot.extensions.onlinePlayer
 import org.bukkit.Server
 import java.util.UUID
 

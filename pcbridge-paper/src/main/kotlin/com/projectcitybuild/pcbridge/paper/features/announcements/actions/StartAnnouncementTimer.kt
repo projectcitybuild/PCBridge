@@ -2,7 +2,7 @@ package com.projectcitybuild.pcbridge.paper.features.announcements.actions
 
 import com.projectcitybuild.pcbridge.core.remoteconfig.RemoteConfig
 import com.projectcitybuild.pcbridge.paper.features.announcements.repositories.AnnouncementRepository
-import com.projectcitybuild.pcbridge.papersupport.support.spigot.SpigotTimer
+import com.projectcitybuild.pcbridge.paper.support.spigot.SpigotTimer
 import kotlinx.coroutines.runBlocking
 import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.Server

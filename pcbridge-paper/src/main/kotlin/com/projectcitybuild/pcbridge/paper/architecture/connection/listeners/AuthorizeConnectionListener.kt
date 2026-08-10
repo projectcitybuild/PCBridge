@@ -7,8 +7,8 @@ import com.projectcitybuild.pcbridge.paper.architecture.connection.events.Connec
 import com.projectcitybuild.pcbridge.paper.architecture.connection.middleware.ConnectionMiddlewareChain
 import com.projectcitybuild.pcbridge.paper.architecture.connection.middleware.ConnectionResult
 import com.projectcitybuild.pcbridge.paper.architecture.listeners.scopedSync
-import com.projectcitybuild.pcbridge.papersupport.support.spigot.SpigotEventBroadcaster
 import com.projectcitybuild.pcbridge.paper.features.sync.domain.repositories.ConnectionRepository
+import com.projectcitybuild.pcbridge.paper.support.spigot.SpigotEventBroadcaster
 import kotlinx.coroutines.runBlocking
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority

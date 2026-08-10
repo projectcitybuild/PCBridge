@@ -4,5 +4,5 @@ plugins {
 
 dependencies {
     implementation(project(":pcbridge-shared"))
-    implementation(project(":pcbridge-core:observability"))
+    implementation(project(":pcbridge-observability"))
 }

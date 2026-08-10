@@ -3,7 +3,7 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":pcbridge-core:observability"))
+    implementation(project(":pcbridge-observability"))
 
     implementation("com.google.code.gson:gson:2.13.1")
 }

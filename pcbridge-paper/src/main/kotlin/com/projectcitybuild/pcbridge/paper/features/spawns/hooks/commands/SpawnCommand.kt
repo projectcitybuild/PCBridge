@@ -1,15 +1,15 @@
 package com.projectcitybuild.pcbridge.paper.features.spawns.hooks.commands
 
-import com.projectcitybuild.pcbridge.papersupport.services.teleportation.PlayerTeleporter
 import com.projectcitybuild.pcbridge.paper.architecture.commands.BrigadierCommand
-import com.projectcitybuild.pcbridge.papersupport.support.brigadier.extensions.executesSuspending
-import com.projectcitybuild.pcbridge.papersupport.support.brigadier.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.paper.architecture.commands.scoped
-import com.projectcitybuild.pcbridge.papersupport.support.brigadier.PaperCommandContext
-import com.projectcitybuild.pcbridge.papersupport.support.brigadier.PaperCommandNode
 import com.projectcitybuild.pcbridge.paper.features.spawns.domain.repositories.SpawnRepository
 import com.projectcitybuild.pcbridge.paper.features.spawns.spawnsTracer
 import com.projectcitybuild.pcbridge.paper.l10n.l10n
+import com.projectcitybuild.pcbridge.paper.support.brigadier.PaperCommandContext
+import com.projectcitybuild.pcbridge.paper.support.brigadier.PaperCommandNode
+import com.projectcitybuild.pcbridge.paper.support.brigadier.extensions.executesSuspending
+import com.projectcitybuild.pcbridge.paper.support.brigadier.extensions.requirePlayer
+import com.projectcitybuild.pcbridge.paper.support.spigot.teleportation.PlayerTeleporter
 import io.papermc.paper.command.brigadier.Commands
 import org.bukkit.event.player.PlayerTeleportEvent
 import org.bukkit.plugin.Plugin

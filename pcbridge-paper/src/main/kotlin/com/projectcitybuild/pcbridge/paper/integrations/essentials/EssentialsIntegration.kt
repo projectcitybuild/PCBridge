@@ -12,8 +12,8 @@ import com.projectcitybuild.pcbridge.paper.architecture.listeners.scoped
 import com.projectcitybuild.pcbridge.paper.architecture.listeners.scopedSync
 import com.projectcitybuild.pcbridge.paper.architecture.state.events.PlayerStateUpdatedEvent
 import com.projectcitybuild.pcbridge.paper.architecture.tablist.TabRenderer
-import com.projectcitybuild.pcbridge.papersupport.support.spigot.SpigotEventBroadcaster
-import com.projectcitybuild.pcbridge.papersupport.services.teleportation.events.PlayerPreTeleportEvent
+import com.projectcitybuild.pcbridge.paper.support.spigot.SpigotEventBroadcaster
+import com.projectcitybuild.pcbridge.paper.support.spigot.teleportation.events.PlayerPreTeleportEvent
 import kotlinx.coroutines.runBlocking
 import net.ess3.api.events.AfkStatusChangeEvent
 import net.ess3.api.events.NickChangeEvent

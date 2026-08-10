@@ -9,10 +9,10 @@ import com.projectcitybuild.pcbridge.paper.features.builds.hooks.commands.builds
 import com.projectcitybuild.pcbridge.paper.architecture.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.paper.architecture.commands.requiresPermission
 import com.projectcitybuild.pcbridge.paper.architecture.commands.then
-import com.projectcitybuild.pcbridge.papersupport.support.brigadier.PaperCommandNode
 import com.projectcitybuild.pcbridge.paper.features.builds.hooks.commands.builds.BuildEditCommand
 import com.projectcitybuild.pcbridge.paper.features.builds.hooks.commands.builds.BuildSetCommand
 import com.projectcitybuild.pcbridge.paper.features.builds.hooks.commands.builds.BuildUnvoteCommand
+import com.projectcitybuild.pcbridge.paper.support.brigadier.PaperCommandNode
 import io.papermc.paper.command.brigadier.Commands
 
 class BuildsCommand(

@@ -1,8 +1,8 @@
 package com.projectcitybuild.pcbridge.paper.features.builds.hooks.commands
 
 import com.mojang.brigadier.suggestion.SuggestionsBuilder
-import com.projectcitybuild.pcbridge.papersupport.support.brigadier.PaperCommandContext
 import com.projectcitybuild.pcbridge.paper.features.builds.domain.repositories.BuildRepository
+import com.projectcitybuild.pcbridge.paper.support.brigadier.PaperCommandContext
 
 class BuildNameSuggester(
     private val buildRepository: BuildRepository,

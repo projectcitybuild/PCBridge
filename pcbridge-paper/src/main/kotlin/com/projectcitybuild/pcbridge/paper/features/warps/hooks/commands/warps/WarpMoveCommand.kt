@@ -4,16 +4,16 @@ import com.mojang.brigadier.arguments.StringArgumentType
 import com.projectcitybuild.pcbridge.paper.PermissionNode
 import com.projectcitybuild.pcbridge.paper.architecture.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.paper.architecture.commands.requiresPermission
-import com.projectcitybuild.pcbridge.papersupport.support.brigadier.extensions.executesSuspending
-import com.projectcitybuild.pcbridge.papersupport.support.brigadier.extensions.requirePlayer
-import com.projectcitybuild.pcbridge.papersupport.support.brigadier.extensions.suggestsSuspending
 import com.projectcitybuild.pcbridge.paper.architecture.commands.scoped
-import com.projectcitybuild.pcbridge.papersupport.support.brigadier.PaperCommandContext
-import com.projectcitybuild.pcbridge.papersupport.support.brigadier.PaperCommandNode
 import com.projectcitybuild.pcbridge.paper.features.warps.hooks.commands.WarpNameSuggester
 import com.projectcitybuild.pcbridge.paper.features.warps.domain.repositories.WarpRepository
 import com.projectcitybuild.pcbridge.paper.features.warps.warpsTracer
 import com.projectcitybuild.pcbridge.paper.l10n.l10n
+import com.projectcitybuild.pcbridge.paper.support.brigadier.PaperCommandContext
+import com.projectcitybuild.pcbridge.paper.support.brigadier.PaperCommandNode
+import com.projectcitybuild.pcbridge.paper.support.brigadier.extensions.executesSuspending
+import com.projectcitybuild.pcbridge.paper.support.brigadier.extensions.requirePlayer
+import com.projectcitybuild.pcbridge.paper.support.brigadier.extensions.suggestsSuspending
 import io.papermc.paper.command.brigadier.Commands
 import org.bukkit.plugin.Plugin
 

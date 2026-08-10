@@ -1,9 +1,9 @@
 package com.projectcitybuild.pcbridge.paper.features.randomteleport.domain.actions
 
-import com.projectcitybuild.pcbridge.papersupport.services.teleportation.PlayerTeleporter
-import com.projectcitybuild.pcbridge.papersupport.services.teleportation.exceptions.SafeDestinationNotFoundException
-import com.projectcitybuild.pcbridge.papersupport.services.teleportation.exceptions.TeleportFailedException
 import com.projectcitybuild.pcbridge.paper.features.randomteleport.randomTeleportTracer
+import com.projectcitybuild.pcbridge.paper.support.spigot.teleportation.PlayerTeleporter
+import com.projectcitybuild.pcbridge.paper.support.spigot.teleportation.exceptions.SafeDestinationNotFoundException
+import com.projectcitybuild.pcbridge.paper.support.spigot.teleportation.exceptions.TeleportFailedException
 import org.bukkit.Location
 import org.bukkit.World
 import org.bukkit.entity.Player

@@ -2,9 +2,9 @@ package com.projectcitybuild.pcbridge.paper.features.spawns.hooks.listeners
 
 import com.projectcitybuild.pcbridge.core.observability.logging.log
 import com.projectcitybuild.pcbridge.paper.architecture.listeners.scoped
-import com.projectcitybuild.pcbridge.papersupport.services.teleportation.PlayerTeleporter
 import com.projectcitybuild.pcbridge.paper.features.spawns.domain.repositories.SpawnRepository
 import com.projectcitybuild.pcbridge.paper.features.spawns.spawnsTracer
+import com.projectcitybuild.pcbridge.paper.support.spigot.teleportation.PlayerTeleporter
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener

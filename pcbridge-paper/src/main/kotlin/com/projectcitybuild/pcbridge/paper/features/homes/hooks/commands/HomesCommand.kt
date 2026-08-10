@@ -4,13 +4,13 @@ import com.projectcitybuild.pcbridge.paper.PermissionNode
 import com.projectcitybuild.pcbridge.paper.architecture.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.paper.architecture.commands.requiresPermission
 import com.projectcitybuild.pcbridge.paper.architecture.commands.then
-import com.projectcitybuild.pcbridge.papersupport.support.brigadier.PaperCommandNode
 import com.projectcitybuild.pcbridge.paper.features.homes.hooks.commands.homes.HomeCreateCommand
 import com.projectcitybuild.pcbridge.paper.features.homes.hooks.commands.homes.HomeDeleteCommand
 import com.projectcitybuild.pcbridge.paper.features.homes.hooks.commands.homes.HomeRenameCommand
 import com.projectcitybuild.pcbridge.paper.features.homes.hooks.commands.homes.HomeLimitCommand
 import com.projectcitybuild.pcbridge.paper.features.homes.hooks.commands.homes.HomeListCommand
 import com.projectcitybuild.pcbridge.paper.features.homes.hooks.commands.homes.HomeMoveCommand
+import com.projectcitybuild.pcbridge.paper.support.brigadier.PaperCommandNode
 import io.papermc.paper.command.brigadier.Commands
 
 class HomesCommand(

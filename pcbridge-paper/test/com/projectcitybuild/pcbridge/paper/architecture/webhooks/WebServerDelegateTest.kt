@@ -1,7 +1,7 @@
 package com.projectcitybuild.pcbridge.paper.architecture.webhooks
 
 import com.projectcitybuild.pcbridge.paper.architecture.webhooks.events.WebhookReceivedEvent
-import com.projectcitybuild.pcbridge.papersupport.support.spigot.SpigotEventBroadcaster
+import com.projectcitybuild.pcbridge.paper.support.spigot.SpigotEventBroadcaster
 import com.projectcitybuild.pcbridge.webserver.data.PlayerSyncRequestedWebhook
 import kotlinx.coroutines.test.runTest
 import org.bukkit.event.Event

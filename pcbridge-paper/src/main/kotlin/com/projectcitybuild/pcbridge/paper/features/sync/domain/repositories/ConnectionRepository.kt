@@ -2,7 +2,7 @@ package com.projectcitybuild.pcbridge.paper.features.sync.domain.repositories
 
 import com.projectcitybuild.pcbridge.http.pcb.models.Authorization
 import com.projectcitybuild.pcbridge.http.pcb.services.ConnectionHttpService
-import com.projectcitybuild.pcbridge.papersupport.support.spigot.utilities.sanitized
+import com.projectcitybuild.pcbridge.paper.support.spigot.utilities.sanitized
 import java.net.InetAddress
 import java.util.UUID
 

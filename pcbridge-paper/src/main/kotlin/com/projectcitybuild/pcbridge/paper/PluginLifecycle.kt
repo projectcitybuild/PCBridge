@@ -22,8 +22,6 @@ import com.projectcitybuild.pcbridge.paper.architecture.tablist.placeholders.Pla
 import com.projectcitybuild.pcbridge.paper.architecture.tablist.placeholders.PlayerNamePlaceholder
 import com.projectcitybuild.pcbridge.paper.architecture.tablist.placeholders.PlayerPingPlaceholder
 import com.projectcitybuild.pcbridge.paper.architecture.tablist.placeholders.PlayerWorldPlaceholder
-import com.projectcitybuild.pcbridge.papersupport.support.spigot.SpigotListenerRegistry
-import com.projectcitybuild.pcbridge.papersupport.support.spigot.SpigotTimer
 import com.projectcitybuild.pcbridge.paper.architecture.commands.registerCommands
 import com.projectcitybuild.pcbridge.paper.architecture.connection.listeners.EndConnectionListener
 import com.projectcitybuild.pcbridge.paper.features.announcements.listeners.AnnouncementConfigListener
@@ -101,6 +99,8 @@ import com.projectcitybuild.pcbridge.paper.features.workstations.commands.StoneC
 import com.projectcitybuild.pcbridge.paper.integrations.dynmap.DynmapIntegration
 import com.projectcitybuild.pcbridge.paper.integrations.essentials.EssentialsIntegration
 import com.projectcitybuild.pcbridge.paper.integrations.luckperms.LuckPermsIntegration
+import com.projectcitybuild.pcbridge.paper.support.spigot.SpigotListenerRegistry
+import com.projectcitybuild.pcbridge.paper.support.spigot.SpigotTimer
 import com.projectcitybuild.pcbridge.webserver.HttpServer
 import org.bukkit.plugin.java.JavaPlugin
 import org.koin.core.component.KoinComponent

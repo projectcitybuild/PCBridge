@@ -1,8 +1,8 @@
 package com.projectcitybuild.pcbridge.paper.features.homes.hooks.commands
 
 import com.mojang.brigadier.suggestion.SuggestionsBuilder
-import com.projectcitybuild.pcbridge.papersupport.support.brigadier.PaperCommandContext
 import com.projectcitybuild.pcbridge.paper.features.homes.domain.repositories.HomeRepository
+import com.projectcitybuild.pcbridge.paper.support.brigadier.PaperCommandContext
 import org.bukkit.entity.Player
 
 class HomeNameSuggester(

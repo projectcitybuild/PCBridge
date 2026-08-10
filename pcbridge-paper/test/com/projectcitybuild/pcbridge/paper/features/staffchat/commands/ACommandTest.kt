@@ -1,14 +1,14 @@
 package com.projectcitybuild.pcbridge.paper.features.staffchat.commands
 
-import com.projectcitybuild.pcbridge.paper.core.libs.remoteconfig.RemoteConfig
+import com.projectcitybuild.pcbridge.core.remoteconfig.RemoteConfig
 import com.projectcitybuild.pcbridge.http.pcb.models.RemoteConfigKeyValues
 import com.projectcitybuild.pcbridge.http.pcb.models.RemoteConfigVersion
 import com.projectcitybuild.pcbridge.paper.PermissionNode
 import com.projectcitybuild.pcbridge.paper.architecture.chat.decorators.ChatDecoratorChain
 import com.projectcitybuild.pcbridge.paper.architecture.chat.decorators.ChatMessage
 import com.projectcitybuild.pcbridge.paper.architecture.chat.decorators.ChatMessageDecorator
-import com.projectcitybuild.pcbridge.papersupport.support.brigadier.PaperCommandContext
 import com.projectcitybuild.pcbridge.paper.architecture.permissions.hasPermission
+import com.projectcitybuild.pcbridge.paper.support.brigadier.PaperCommandContext
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import kotlinx.coroutines.test.runTest
 import net.kyori.adventure.text.Component
@@ -24,6 +24,7 @@ import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
+import kotlin.jvm.java
 
 class ACommandTest {
     private lateinit var plugin: Plugin

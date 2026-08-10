@@ -5,15 +5,15 @@ import com.projectcitybuild.pcbridge.paper.PermissionNode
 import com.projectcitybuild.pcbridge.paper.features.builds.domain.repositories.BuildRepository
 import com.projectcitybuild.pcbridge.paper.architecture.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.paper.architecture.commands.requiresPermission
-import com.projectcitybuild.pcbridge.papersupport.support.brigadier.extensions.executesSuspending
-import com.projectcitybuild.pcbridge.papersupport.support.brigadier.extensions.requirePlayer
-import com.projectcitybuild.pcbridge.papersupport.support.brigadier.extensions.suggestsSuspending
 import com.projectcitybuild.pcbridge.paper.architecture.commands.scoped
-import com.projectcitybuild.pcbridge.papersupport.support.brigadier.PaperCommandContext
-import com.projectcitybuild.pcbridge.papersupport.support.brigadier.PaperCommandNode
-import com.projectcitybuild.pcbridge.papersupport.support.spigot.extensions.broadcastRich
 import com.projectcitybuild.pcbridge.paper.features.builds.buildsTracer
 import com.projectcitybuild.pcbridge.paper.features.builds.hooks.commands.BuildNameSuggester
+import com.projectcitybuild.pcbridge.paper.support.brigadier.PaperCommandContext
+import com.projectcitybuild.pcbridge.paper.support.brigadier.PaperCommandNode
+import com.projectcitybuild.pcbridge.paper.support.brigadier.extensions.executesSuspending
+import com.projectcitybuild.pcbridge.paper.support.brigadier.extensions.requirePlayer
+import com.projectcitybuild.pcbridge.paper.support.brigadier.extensions.suggestsSuspending
+import com.projectcitybuild.pcbridge.paper.support.spigot.extensions.broadcastRich
 import io.papermc.paper.command.brigadier.Commands
 import org.bukkit.plugin.Plugin
 

@@ -48,13 +48,13 @@ import com.projectcitybuild.pcbridge.paper.architecture.tablist.placeholders.Pla
 import com.projectcitybuild.pcbridge.paper.architecture.webhooks.WebServerDelegate
 import com.projectcitybuild.pcbridge.paper.assembly.playerlookup.BukkitOnlinePlayerFinder
 import com.projectcitybuild.pcbridge.paper.assembly.remoteconfig.SpigotRemoteConfigUpdatedEvent
-import com.projectcitybuild.pcbridge.papersupport.services.teleportation.PlayerTeleporter
-import com.projectcitybuild.pcbridge.papersupport.services.teleportation.SafeYLocationFinder
-import com.projectcitybuild.pcbridge.papersupport.services.teleportation.storage.TeleportHistoryStorage
-import com.projectcitybuild.pcbridge.papersupport.support.spigot.SpigotEventBroadcaster
-import com.projectcitybuild.pcbridge.papersupport.support.spigot.SpigotListenerRegistry
-import com.projectcitybuild.pcbridge.papersupport.support.spigot.SpigotNamespace
-import com.projectcitybuild.pcbridge.papersupport.support.spigot.SpigotTimer
+import com.projectcitybuild.pcbridge.paper.support.spigot.teleportation.PlayerTeleporter
+import com.projectcitybuild.pcbridge.paper.support.spigot.teleportation.SafeYLocationFinder
+import com.projectcitybuild.pcbridge.paper.support.spigot.teleportation.storage.TeleportHistoryStorage
+import com.projectcitybuild.pcbridge.paper.support.spigot.SpigotEventBroadcaster
+import com.projectcitybuild.pcbridge.paper.support.spigot.SpigotListenerRegistry
+import com.projectcitybuild.pcbridge.paper.support.spigot.SpigotNamespace
+import com.projectcitybuild.pcbridge.paper.support.spigot.SpigotTimer
 import com.projectcitybuild.pcbridge.paper.features.announcements.announcementsModule
 import com.projectcitybuild.pcbridge.paper.features.bans.bansModule
 import com.projectcitybuild.pcbridge.paper.features.building.buildingModule
@@ -256,7 +256,7 @@ private fun Module.core() {
 
     single {
         DiscordSend(
-            localConfig = get(),
+            contentAlertWebhook = get<LocalConfig>().get().discord.contentAlertWebhook,
             discordHttpService = get<DiscordHttp>().discord,
             errorTracker = get(),
             periodicRunner = PeriodicRunner(processInterval = 10.seconds)

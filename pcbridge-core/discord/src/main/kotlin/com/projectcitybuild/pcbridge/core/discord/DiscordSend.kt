@@ -1,6 +1,5 @@
 package com.projectcitybuild.pcbridge.core.discord
 
-import com.projectcitybuild.pcbridge.core.localconfig.LocalConfig
 import com.projectcitybuild.pcbridge.core.observability.errors.ErrorTracker
 import com.projectcitybuild.pcbridge.core.observability.logging.log
 import com.projectcitybuild.pcbridge.core.observability.logging.logSync
@@ -8,7 +7,7 @@ import com.projectcitybuild.pcbridge.http.discord.models.DiscordEmbed
 import com.projectcitybuild.pcbridge.http.discord.services.DiscordHttpService
 
 class DiscordSend(
-    private val localConfig: LocalConfig,
+    private val contentAlertWebhook: String,
     private val discordHttpService: DiscordHttpService,
     private val errorTracker: ErrorTracker,
     private val periodicRunner: PeriodicRunner,
@@ -17,7 +16,7 @@ class DiscordSend(
     private var enabled = true
 
     init {
-        if (localConfig.get().discord.contentAlertWebhook.isEmpty()) {
+        if (contentAlertWebhook.isEmpty()) {
             logSync.warn { "No webhook configured for content alerts. No messages will be sent to Discord" }
             enabled = false
         }
@@ -54,8 +53,7 @@ class DiscordSend(
 
     private suspend fun sendMessage(embeds: List<DiscordEmbed>) {
         try {
-            val config = localConfig.get().discord
-            val webhookUrl = config.contentAlertWebhook
+            val webhookUrl = contentAlertWebhook
             discordHttpService.executeWebhook(webhookUrl, embeds)
         } catch (e: Exception) {
             log.error(e) { "Failed to send Discord message" }

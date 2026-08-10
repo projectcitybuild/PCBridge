@@ -4,11 +4,11 @@ import com.projectcitybuild.pcbridge.paper.PermissionNode
 import com.projectcitybuild.pcbridge.paper.architecture.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.paper.architecture.commands.requiresPermission
 import com.projectcitybuild.pcbridge.paper.architecture.commands.then
-import com.projectcitybuild.pcbridge.papersupport.support.brigadier.PaperCommandNode
 import com.projectcitybuild.pcbridge.paper.features.pim.hooks.commands.op.OpGrantCommand
 import com.projectcitybuild.pcbridge.paper.features.pim.hooks.commands.op.OpRevokeCommand
 import com.projectcitybuild.pcbridge.paper.features.pim.hooks.commands.op.OpStatusCommand
 import com.projectcitybuild.pcbridge.paper.features.pim.hooks.commands.roles.RolesDebugCommand
+import com.projectcitybuild.pcbridge.paper.support.brigadier.PaperCommandNode
 import io.papermc.paper.command.brigadier.Commands
 
 class PimCommand(

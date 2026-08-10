@@ -1,9 +1,9 @@
 package com.projectcitybuild.pcbridge.paper.features.building.hooks.listeners
 
 import com.projectcitybuild.pcbridge.paper.architecture.listeners.scopedSync
-import com.projectcitybuild.pcbridge.papersupport.support.spigot.SpigotNamespace
 import com.projectcitybuild.pcbridge.paper.features.building.buildingTracer
 import com.projectcitybuild.pcbridge.paper.features.building.domain.data.InvisFrameKey
+import com.projectcitybuild.pcbridge.paper.support.spigot.SpigotNamespace
 import io.papermc.paper.event.player.PlayerItemFrameChangeEvent
 import io.papermc.paper.persistence.PersistentDataViewHolder
 import org.bukkit.block.Container
