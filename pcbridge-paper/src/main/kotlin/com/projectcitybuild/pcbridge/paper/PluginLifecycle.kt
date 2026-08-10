@@ -5,6 +5,7 @@ import com.projectcitybuild.pcbridge.core.observability.errors.catching
 import com.projectcitybuild.pcbridge.core.observability.tracing.OpenTelemetryProvider
 import com.projectcitybuild.pcbridge.core.observability.tracing.TracerFactory
 import com.projectcitybuild.pcbridge.core.remoteconfig.RemoteConfig
+import com.projectcitybuild.pcbridge.core.store.Store
 import com.projectcitybuild.pcbridge.paper.architecture.chat.decorators.ChatDecoratorChain
 import com.projectcitybuild.pcbridge.paper.architecture.chat.listeners.AsyncChatListener
 import com.projectcitybuild.pcbridge.paper.architecture.connection.listeners.AuthorizeConnectionListener
@@ -12,7 +13,6 @@ import com.projectcitybuild.pcbridge.paper.architecture.connection.middleware.Co
 import com.projectcitybuild.pcbridge.paper.architecture.exceptions.listeners.CoroutineExceptionListener
 import com.projectcitybuild.pcbridge.paper.architecture.serverlist.decorators.ServerListingDecoratorChain
 import com.projectcitybuild.pcbridge.paper.architecture.serverlist.listeners.ServerListPingListener
-import com.projectcitybuild.pcbridge.paper.core.libs.store.Store
 import com.projectcitybuild.pcbridge.paper.architecture.state.listeners.PlayerStateListener
 import com.projectcitybuild.pcbridge.paper.architecture.tablist.TabPlaceholders
 import com.projectcitybuild.pcbridge.paper.architecture.tablist.listeners.TabListeners
@@ -22,8 +22,8 @@ import com.projectcitybuild.pcbridge.paper.architecture.tablist.placeholders.Pla
 import com.projectcitybuild.pcbridge.paper.architecture.tablist.placeholders.PlayerNamePlaceholder
 import com.projectcitybuild.pcbridge.paper.architecture.tablist.placeholders.PlayerPingPlaceholder
 import com.projectcitybuild.pcbridge.paper.architecture.tablist.placeholders.PlayerWorldPlaceholder
-import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotListenerRegistry
-import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotTimer
+import com.projectcitybuild.pcbridge.papersupport.support.spigot.SpigotListenerRegistry
+import com.projectcitybuild.pcbridge.papersupport.support.spigot.SpigotTimer
 import com.projectcitybuild.pcbridge.paper.architecture.commands.registerCommands
 import com.projectcitybuild.pcbridge.paper.architecture.connection.listeners.EndConnectionListener
 import com.projectcitybuild.pcbridge.paper.features.announcements.listeners.AnnouncementConfigListener

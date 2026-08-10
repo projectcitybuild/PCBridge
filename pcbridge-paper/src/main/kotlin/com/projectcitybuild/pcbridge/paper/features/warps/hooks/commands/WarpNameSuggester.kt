@@ -1,7 +1,7 @@
 package com.projectcitybuild.pcbridge.paper.features.warps.hooks.commands
 
 import com.mojang.brigadier.suggestion.SuggestionsBuilder
-import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandContext
+import com.projectcitybuild.pcbridge.papersupport.support.brigadier.PaperCommandContext
 import com.projectcitybuild.pcbridge.paper.features.warps.domain.repositories.WarpRepository
 
 class WarpNameSuggester(

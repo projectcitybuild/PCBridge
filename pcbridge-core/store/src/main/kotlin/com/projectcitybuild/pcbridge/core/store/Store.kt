@@ -4,8 +4,8 @@ import com.projectcitybuild.pcbridge.core.observability.logging.log
 import com.projectcitybuild.pcbridge.core.observability.logging.logSync
 import com.projectcitybuild.pcbridge.core.observability.tracing.TracerFactory
 import com.projectcitybuild.pcbridge.core.storage.Storage
-import com.projectcitybuild.pcbridge.paper.architecture.state.data.PersistedServerState
-import com.projectcitybuild.pcbridge.paper.architecture.state.data.ServerState
+import com.projectcitybuild.pcbridge.core.store.data.PersistedServerState
+import com.projectcitybuild.pcbridge.core.store.data.ServerState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -14,7 +14,7 @@ import java.io.File
 
 private val mutex = Mutex()
 
-class Store<State>(
+class Store(
     private val file: File,
     private val storage: Storage<PersistedServerState>,
 ) {

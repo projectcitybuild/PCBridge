@@ -3,11 +3,11 @@ package com.projectcitybuild.pcbridge.paper.features.bans.hooks.listeners
 import com.projectcitybuild.pcbridge.core.observability.logging.logSync
 import com.projectcitybuild.pcbridge.paper.architecture.listeners.scopedSync
 import com.projectcitybuild.pcbridge.paper.architecture.webhooks.events.WebhookReceivedEvent
-import com.projectcitybuild.pcbridge.paper.core.support.java.uuidFromUnsanitizedString
-import com.projectcitybuild.pcbridge.paper.core.support.spigot.extensions.onlinePlayer
-import com.projectcitybuild.pcbridge.paper.core.support.spigot.utilities.SpigotSanitizer
+import com.projectcitybuild.pcbridge.papersupport.support.spigot.extensions.onlinePlayer
+import com.projectcitybuild.pcbridge.papersupport.support.spigot.utilities.SpigotSanitizer
 import com.projectcitybuild.pcbridge.paper.features.bans.bansTracer
 import com.projectcitybuild.pcbridge.paper.features.bans.domain.utilities.toMiniMessage
+import com.projectcitybuild.pcbridge.shared.support.java.uuidFromUnsanitizedString
 import com.projectcitybuild.pcbridge.webserver.data.IPBanRequestedWebhook
 import com.projectcitybuild.pcbridge.webserver.data.UUIDBanRequestedWebhook
 import net.kyori.adventure.text.minimessage.MiniMessage
@@ -15,7 +15,6 @@ import org.bukkit.Server
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerKickEvent
-import java.util.UUID
 
 /**
  * Receives an incoming ban from PCB and bans the offending

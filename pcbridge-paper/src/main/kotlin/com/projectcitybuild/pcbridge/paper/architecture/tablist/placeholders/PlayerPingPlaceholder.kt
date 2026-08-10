@@ -3,8 +3,8 @@ package com.projectcitybuild.pcbridge.paper.architecture.tablist.placeholders
 import com.projectcitybuild.pcbridge.core.observability.logging.logSync
 import com.projectcitybuild.pcbridge.paper.architecture.tablist.TabRenderer
 import com.projectcitybuild.pcbridge.paper.architecture.tablist.UpdatableTabPlaceholder
-import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotTimer
-import com.projectcitybuild.pcbridge.paper.core.utils.Cancellable
+import com.projectcitybuild.pcbridge.papersupport.support.spigot.SpigotTimer
+import com.projectcitybuild.pcbridge.shared.utilities.Cancellable
 import kotlinx.coroutines.runBlocking
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.MiniMessage

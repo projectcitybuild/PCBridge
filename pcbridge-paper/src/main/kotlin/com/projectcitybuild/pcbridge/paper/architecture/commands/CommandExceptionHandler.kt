@@ -1,8 +1,8 @@
 package com.projectcitybuild.pcbridge.paper.architecture.commands
 
+import com.projectcitybuild.pcbridge.core.cooldowns.CooldownNotExpiredException
 import com.projectcitybuild.pcbridge.core.observability.logging.logSync
 import com.projectcitybuild.pcbridge.http.shared.parsing.ResponseParserError
-import com.projectcitybuild.pcbridge.paper.core.libs.cooldowns.CooldownException
 import org.bukkit.command.CommandSender
 
 class CommandExceptionHandler private constructor() {
@@ -15,7 +15,7 @@ class CommandExceptionHandler private constructor() {
                 is ResponseParserError.Forbidden -> sender.sendError("Error: Not permitted to perform this action")
                 is ResponseParserError.Conflict -> sender.sendError("Error: ${e.message ?: "Conflict"}")
             }
-            is CooldownException -> sender.sendError("Error: Please wait ${e.remainingTime.inWholeMilliseconds} seconds before trying again")
+            is CooldownNotExpiredException -> sender.sendError("Error: Please wait ${e.remainingTime.inWholeMilliseconds} seconds before trying again")
             else -> {
                 sender.sendError("An unexpected error occurred")
                 logSync.error(e) { "Failed to execute command" }

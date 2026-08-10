@@ -24,12 +24,18 @@ repositories {
 dependencies {
     implementation(project(":pcbridge-http"))
     implementation(project(":pcbridge-web-server"))
+    implementation(project(":pcbridge-core:cooldowns"))
     implementation(project(":pcbridge-core:datetime"))
+    implementation(project(":pcbridge-core:discord"))
     implementation(project(":pcbridge-core:localconfig"))
     implementation(project(":pcbridge-core:pagination"))
+    implementation(project(":pcbridge-core:playerlookup"))
     implementation(project(":pcbridge-core:observability"))
     implementation(project(":pcbridge-core:remoteconfig"))
     implementation(project(":pcbridge-core:storage"))
+    implementation(project(":pcbridge-core:store"))
+    implementation(project(":pcbridge-paper-support"))
+    implementation(project(":pcbridge-shared"))
 
     // Paper
     compileOnly("io.papermc.paper:paper-api:1.21.10-R0.1-SNAPSHOT")

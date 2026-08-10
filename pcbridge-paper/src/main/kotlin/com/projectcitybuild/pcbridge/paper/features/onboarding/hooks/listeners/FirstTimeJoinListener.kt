@@ -2,8 +2,8 @@ package com.projectcitybuild.pcbridge.paper.features.onboarding.hooks.listeners
 
 import com.projectcitybuild.pcbridge.core.observability.logging.logSync
 import com.projectcitybuild.pcbridge.core.remoteconfig.RemoteConfig
+import com.projectcitybuild.pcbridge.core.store.SessionStore
 import com.projectcitybuild.pcbridge.paper.architecture.listeners.scopedSync
-import com.projectcitybuild.pcbridge.paper.core.libs.store.SessionStore
 import com.projectcitybuild.pcbridge.paper.features.onboarding.onboardingTracer
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.MiniMessage
@@ -35,8 +35,9 @@ class FirstTimeJoinListener(
             logSync.warn { "No player data available to check if first-time join" }
             return@scopedSync
         }
-        if (synced.player?.lastSeenAt != null) {
-            logSync.debug { "Player last seen ${synced.player.lastSeenAt}. Not sending first-time join message" }
+        val lastSeenAt = synced.player?.lastSeenAt
+        if (lastSeenAt != null) {
+            logSync.debug { "Player last seen ${lastSeenAt}. Not sending first-time join message" }
             return@scopedSync
         }
 

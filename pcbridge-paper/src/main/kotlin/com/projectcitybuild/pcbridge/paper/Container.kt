@@ -2,7 +2,10 @@ package com.projectcitybuild.pcbridge.paper
 
 import com.github.shynixn.mccoroutine.bukkit.minecraftDispatcher
 import com.google.gson.reflect.TypeToken
+import com.projectcitybuild.pcbridge.core.cooldowns.Cooldown
 import com.projectcitybuild.pcbridge.core.datetime.services.LocalizedTime
+import com.projectcitybuild.pcbridge.core.discord.DiscordSend
+import com.projectcitybuild.pcbridge.core.discord.PeriodicRunner
 import com.projectcitybuild.pcbridge.core.localconfig.LocalConfig
 import com.projectcitybuild.pcbridge.core.localconfig.LocalConfigKeyValues
 import com.projectcitybuild.pcbridge.core.localconfig.default
@@ -12,8 +15,11 @@ import com.projectcitybuild.pcbridge.core.observability.logging.logSync
 import com.projectcitybuild.pcbridge.core.observability.tracing.HttpTracer
 import com.projectcitybuild.pcbridge.core.observability.tracing.OpenTelemetryHttpTracer
 import com.projectcitybuild.pcbridge.core.observability.tracing.OpenTelemetryProvider
+import com.projectcitybuild.pcbridge.core.playerlookup.PlayerLookup
 import com.projectcitybuild.pcbridge.core.remoteconfig.RemoteConfig
 import com.projectcitybuild.pcbridge.core.storage.JsonStorage
+import com.projectcitybuild.pcbridge.core.store.SessionStore
+import com.projectcitybuild.pcbridge.core.store.Store
 import com.projectcitybuild.pcbridge.http.discord.DiscordHttp
 import com.projectcitybuild.pcbridge.http.pcb.PCBHttp
 import com.projectcitybuild.pcbridge.http.pcb.models.RemoteConfigVersion
@@ -28,7 +34,7 @@ import com.projectcitybuild.pcbridge.paper.architecture.exceptions.listeners.Cor
 import com.projectcitybuild.pcbridge.paper.architecture.permissions.Permissions
 import com.projectcitybuild.pcbridge.paper.architecture.serverlist.decorators.ServerListingDecoratorChain
 import com.projectcitybuild.pcbridge.paper.architecture.serverlist.listeners.ServerListPingListener
-import com.projectcitybuild.pcbridge.paper.architecture.state.data.PersistedServerState
+import com.projectcitybuild.pcbridge.core.store.data.PersistedServerState
 import com.projectcitybuild.pcbridge.paper.architecture.state.listeners.PlayerStateListener
 import com.projectcitybuild.pcbridge.paper.architecture.tablist.TabPlaceholders
 import com.projectcitybuild.pcbridge.paper.architecture.tablist.TabRenderer
@@ -40,20 +46,15 @@ import com.projectcitybuild.pcbridge.paper.architecture.tablist.placeholders.Pla
 import com.projectcitybuild.pcbridge.paper.architecture.tablist.placeholders.PlayerPingPlaceholder
 import com.projectcitybuild.pcbridge.paper.architecture.tablist.placeholders.PlayerWorldPlaceholder
 import com.projectcitybuild.pcbridge.paper.architecture.webhooks.WebServerDelegate
+import com.projectcitybuild.pcbridge.paper.assembly.playerlookup.BukkitOnlinePlayerFinder
 import com.projectcitybuild.pcbridge.paper.assembly.remoteconfig.SpigotRemoteConfigUpdatedEvent
-import com.projectcitybuild.pcbridge.paper.core.libs.cooldowns.Cooldown
-import com.projectcitybuild.pcbridge.paper.core.libs.discord.DiscordSend
-import com.projectcitybuild.pcbridge.paper.core.libs.playerlookup.PlayerLookup
-import com.projectcitybuild.pcbridge.paper.core.libs.store.SessionStore
-import com.projectcitybuild.pcbridge.paper.core.libs.store.Store
-import com.projectcitybuild.pcbridge.paper.core.libs.teleportation.PlayerTeleporter
-import com.projectcitybuild.pcbridge.paper.core.libs.teleportation.SafeYLocationFinder
-import com.projectcitybuild.pcbridge.paper.core.libs.teleportation.storage.TeleportHistoryStorage
-import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotEventBroadcaster
-import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotListenerRegistry
-import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotNamespace
-import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotTimer
-import com.projectcitybuild.pcbridge.paper.core.utils.PeriodicRunner
+import com.projectcitybuild.pcbridge.papersupport.services.teleportation.PlayerTeleporter
+import com.projectcitybuild.pcbridge.papersupport.services.teleportation.SafeYLocationFinder
+import com.projectcitybuild.pcbridge.papersupport.services.teleportation.storage.TeleportHistoryStorage
+import com.projectcitybuild.pcbridge.papersupport.support.spigot.SpigotEventBroadcaster
+import com.projectcitybuild.pcbridge.papersupport.support.spigot.SpigotListenerRegistry
+import com.projectcitybuild.pcbridge.papersupport.support.spigot.SpigotNamespace
+import com.projectcitybuild.pcbridge.papersupport.support.spigot.SpigotTimer
 import com.projectcitybuild.pcbridge.paper.features.announcements.announcementsModule
 import com.projectcitybuild.pcbridge.paper.features.bans.bansModule
 import com.projectcitybuild.pcbridge.paper.features.building.buildingModule
@@ -264,7 +265,9 @@ private fun Module.core() {
 
     factory {
         PlayerLookup(
-            server = get(),
+            onlinePlayerFinder = BukkitOnlinePlayerFinder(
+                server = get(),
+            ),
             playerDbMinecraftService = get<PlayerDbHttp>().minecraft,
         )
     }

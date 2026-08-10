@@ -1,7 +1,7 @@
 package com.projectcitybuild.pcbridge.paper.features.pim.hooks.listener
 
 import com.projectcitybuild.pcbridge.paper.architecture.listeners.scoped
-import com.projectcitybuild.pcbridge.paper.core.support.spigot.SerializableLocation
+import com.projectcitybuild.pcbridge.papersupport.support.spigot.SerializableLocation
 import com.projectcitybuild.pcbridge.paper.features.pim.domain.repositories.OpAuditRepository
 import com.projectcitybuild.pcbridge.paper.features.pim.pimTracer
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer.gson

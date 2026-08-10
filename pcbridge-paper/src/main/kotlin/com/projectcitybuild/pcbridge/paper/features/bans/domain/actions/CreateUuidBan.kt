@@ -1,9 +1,9 @@
 package com.projectcitybuild.pcbridge.paper.features.bans.domain.actions
 
+import com.projectcitybuild.pcbridge.core.playerlookup.PlayerLookup
 import com.projectcitybuild.pcbridge.core.remoteconfig.RemoteConfig
 import com.projectcitybuild.pcbridge.http.pcb.models.PlayerBan
 import com.projectcitybuild.pcbridge.http.shared.parsing.ResponseParserError
-import com.projectcitybuild.pcbridge.paper.core.libs.playerlookup.PlayerLookup
 import com.projectcitybuild.pcbridge.paper.features.bans.bansTracer
 import com.projectcitybuild.pcbridge.paper.features.bans.domain.repositories.UuidBanRepository
 import java.util.UUID

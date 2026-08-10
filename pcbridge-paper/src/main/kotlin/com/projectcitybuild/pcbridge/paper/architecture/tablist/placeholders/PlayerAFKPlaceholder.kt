@@ -1,10 +1,10 @@
 package com.projectcitybuild.pcbridge.paper.architecture.tablist.placeholders
 
 import com.projectcitybuild.pcbridge.core.observability.logging.log
+import com.projectcitybuild.pcbridge.core.store.SessionStore
 import com.projectcitybuild.pcbridge.paper.architecture.state.events.PlayerStateUpdatedEvent
 import com.projectcitybuild.pcbridge.paper.architecture.tablist.TabRenderer
 import com.projectcitybuild.pcbridge.paper.architecture.tablist.UpdatableTabPlaceholder
-import com.projectcitybuild.pcbridge.paper.core.libs.store.SessionStore
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.Server

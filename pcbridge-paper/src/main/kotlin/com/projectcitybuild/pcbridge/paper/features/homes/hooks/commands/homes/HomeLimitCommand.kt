@@ -1,11 +1,11 @@
 package com.projectcitybuild.pcbridge.paper.features.homes.hooks.commands.homes
 
 import com.projectcitybuild.pcbridge.paper.architecture.commands.BrigadierCommand
-import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
-import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requirePlayer
+import com.projectcitybuild.pcbridge.papersupport.support.brigadier.extensions.executesSuspending
+import com.projectcitybuild.pcbridge.papersupport.support.brigadier.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.paper.architecture.commands.scoped
-import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandContext
-import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandNode
+import com.projectcitybuild.pcbridge.papersupport.support.brigadier.PaperCommandContext
+import com.projectcitybuild.pcbridge.papersupport.support.brigadier.PaperCommandNode
 import com.projectcitybuild.pcbridge.paper.features.homes.domain.repositories.HomeRepository
 import com.projectcitybuild.pcbridge.paper.features.homes.homesTracer
 import io.papermc.paper.command.brigadier.Commands

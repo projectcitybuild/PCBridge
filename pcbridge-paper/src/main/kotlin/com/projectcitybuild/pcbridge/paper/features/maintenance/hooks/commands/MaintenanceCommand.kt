@@ -1,16 +1,16 @@
 package com.projectcitybuild.pcbridge.paper.features.maintenance.hooks.commands
 
+import com.projectcitybuild.pcbridge.core.store.Store
 import com.projectcitybuild.pcbridge.paper.PermissionNode
-import com.projectcitybuild.pcbridge.paper.core.libs.store.Store
 import com.projectcitybuild.pcbridge.paper.architecture.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.paper.architecture.commands.requiresPermission
-import com.projectcitybuild.pcbridge.paper.core.support.brigadier.arguments.OnOffArgument
-import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
+import com.projectcitybuild.pcbridge.papersupport.support.brigadier.arguments.OnOffArgument
+import com.projectcitybuild.pcbridge.papersupport.support.brigadier.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.paper.architecture.commands.scoped
-import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandContext
-import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandNode
-import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotEventBroadcaster
-import com.projectcitybuild.pcbridge.paper.core.support.spigot.extensions.broadcastRich
+import com.projectcitybuild.pcbridge.papersupport.support.brigadier.PaperCommandContext
+import com.projectcitybuild.pcbridge.papersupport.support.brigadier.PaperCommandNode
+import com.projectcitybuild.pcbridge.papersupport.support.spigot.SpigotEventBroadcaster
+import com.projectcitybuild.pcbridge.papersupport.support.spigot.extensions.broadcastRich
 import com.projectcitybuild.pcbridge.paper.features.maintenance.domain.data.MaintenanceToggledEvent
 import com.projectcitybuild.pcbridge.paper.features.maintenance.maintenanceTracer
 import io.papermc.paper.command.brigadier.Commands

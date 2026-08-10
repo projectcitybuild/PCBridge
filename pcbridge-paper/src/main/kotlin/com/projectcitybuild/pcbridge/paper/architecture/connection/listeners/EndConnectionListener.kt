@@ -3,9 +3,9 @@ package com.projectcitybuild.pcbridge.paper.architecture.connection.listeners
 import com.projectcitybuild.pcbridge.core.datetime.services.LocalizedTime
 import com.projectcitybuild.pcbridge.core.observability.errors.ErrorTracker
 import com.projectcitybuild.pcbridge.core.observability.logging.log
+import com.projectcitybuild.pcbridge.core.store.SessionStore
 import com.projectcitybuild.pcbridge.paper.architecture.connection.connectionTracer
 import com.projectcitybuild.pcbridge.paper.architecture.listeners.scoped
-import com.projectcitybuild.pcbridge.paper.core.libs.store.SessionStore
 import com.projectcitybuild.pcbridge.paper.features.sync.domain.repositories.ConnectionRepository
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority

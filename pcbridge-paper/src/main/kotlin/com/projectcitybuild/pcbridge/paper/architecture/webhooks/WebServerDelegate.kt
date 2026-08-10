@@ -2,7 +2,7 @@ package com.projectcitybuild.pcbridge.paper.architecture.webhooks
 
 import com.projectcitybuild.pcbridge.core.observability.logging.log
 import com.projectcitybuild.pcbridge.paper.architecture.webhooks.events.WebhookReceivedEvent
-import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotEventBroadcaster
+import com.projectcitybuild.pcbridge.papersupport.support.spigot.SpigotEventBroadcaster
 import com.projectcitybuild.pcbridge.webserver.WebhookDelegate
 import com.projectcitybuild.pcbridge.webserver.data.WebhookEvent
 

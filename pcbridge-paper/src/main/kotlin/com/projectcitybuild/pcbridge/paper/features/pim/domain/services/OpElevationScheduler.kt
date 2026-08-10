@@ -1,7 +1,7 @@
 package com.projectcitybuild.pcbridge.paper.features.pim.domain.services
 
-import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotTimer
-import com.projectcitybuild.pcbridge.paper.core.utils.Cancellable
+import com.projectcitybuild.pcbridge.papersupport.support.spigot.SpigotTimer
+import com.projectcitybuild.pcbridge.shared.utilities.Cancellable
 import java.util.UUID
 import kotlin.time.Duration
 

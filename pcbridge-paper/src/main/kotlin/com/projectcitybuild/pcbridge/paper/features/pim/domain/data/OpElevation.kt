@@ -1,5 +1,6 @@
 package com.projectcitybuild.pcbridge.paper.features.pim.domain.data
 
+import com.projectcitybuild.pcbridge.core.store.data.PlayerSession
 import com.projectcitybuild.pcbridge.http.pcb.models.HttpOpElevation
 import java.time.Duration
 import java.time.Instant
@@ -17,7 +18,21 @@ data class OpElevation(
 
     fun isActiveAt(now: Instant): Boolean =
         remainingAt(now) != null
+
+    fun toPersistence() = PlayerSession.OpElevation(
+        playerId = playerId,
+        reason = reason,
+        startedAt = startedAt,
+        endsAt = endsAt,
+    )
 }
+
+fun PlayerSession.OpElevation.toDomain() = OpElevation(
+    playerId = playerId,
+    reason = reason,
+    startedAt = startedAt,
+    endsAt = endsAt,
+)
 
 fun HttpOpElevation.toDomain() = OpElevation(
     playerId = playerId,

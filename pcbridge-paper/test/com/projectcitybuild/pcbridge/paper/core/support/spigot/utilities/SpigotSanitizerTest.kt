@@ -1,5 +1,6 @@
 package com.projectcitybuild.pcbridge.paper.core.support.spigot.utilities
 
+import com.projectcitybuild.pcbridge.papersupport.support.spigot.utilities.SpigotSanitizer
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 

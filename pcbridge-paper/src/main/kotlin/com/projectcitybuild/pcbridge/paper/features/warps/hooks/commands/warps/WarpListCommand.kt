@@ -6,12 +6,12 @@ import com.projectcitybuild.pcbridge.paper.features.warps.domain.repositories.Wa
 import com.projectcitybuild.pcbridge.paper.PermissionNode
 import com.projectcitybuild.pcbridge.paper.architecture.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.paper.architecture.commands.requiresPermission
-import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
+import com.projectcitybuild.pcbridge.papersupport.support.brigadier.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.paper.architecture.commands.scoped
 import com.projectcitybuild.pcbridge.paper.assembly.pagination.PageComponentBuilder
-import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandContext
-import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandNode
-import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.getOptionalArgument
+import com.projectcitybuild.pcbridge.papersupport.support.brigadier.PaperCommandContext
+import com.projectcitybuild.pcbridge.papersupport.support.brigadier.PaperCommandNode
+import com.projectcitybuild.pcbridge.papersupport.support.brigadier.extensions.getOptionalArgument
 import com.projectcitybuild.pcbridge.paper.features.warps.warpsTracer
 import com.projectcitybuild.pcbridge.paper.l10n.l10n
 import io.papermc.paper.command.brigadier.Commands

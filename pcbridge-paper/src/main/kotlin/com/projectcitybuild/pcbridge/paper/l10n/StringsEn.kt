@@ -12,7 +12,6 @@ class StringsEn {
     val pageNextButtonHover = "Click for next page"
 
     val errorPageNotFound = "<red>Page not found</red>"
-    val errorOnlyPlayersCanUseThisCommand = "<red>Only players can use this command</red>"
     val errorWorldNotFound = { name: String -> "<red>Could not find world $name</red>" }
     val errorWarpNotFound = { name: String -> "<red>Could not find warp $name</red>" }
     val errorHomeNotFound = { name: String -> "<red>Could not find home $name</red>" }

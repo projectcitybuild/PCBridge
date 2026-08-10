@@ -2,11 +2,11 @@ package com.projectcitybuild.pcbridge.paper.features.sync.domain.actions
 
 import com.projectcitybuild.pcbridge.core.datetime.services.LocalizedTime
 import com.projectcitybuild.pcbridge.core.observability.logging.log
-import com.projectcitybuild.pcbridge.paper.architecture.state.data.PlayerSession
+import com.projectcitybuild.pcbridge.core.store.SessionStore
+import com.projectcitybuild.pcbridge.core.store.data.PlayerSession
 import com.projectcitybuild.pcbridge.paper.architecture.state.events.PlayerStateUpdatedEvent
-import com.projectcitybuild.pcbridge.paper.core.libs.store.SessionStore
-import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotEventBroadcaster
-import com.projectcitybuild.pcbridge.paper.core.support.spigot.extensions.onlinePlayer
+import com.projectcitybuild.pcbridge.papersupport.support.spigot.SpigotEventBroadcaster
+import com.projectcitybuild.pcbridge.papersupport.support.spigot.extensions.onlinePlayer
 import com.projectcitybuild.pcbridge.paper.features.sync.domain.repositories.ConnectionRepository
 import org.bukkit.Server
 import java.util.UUID

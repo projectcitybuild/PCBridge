@@ -1,7 +1,7 @@
 package com.projectcitybuild.pcbridge.paper.architecture.commands
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
-import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandNode
+import com.projectcitybuild.pcbridge.papersupport.support.brigadier.PaperCommandNode
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents

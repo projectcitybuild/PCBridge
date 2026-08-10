@@ -3,9 +3,9 @@ package com.projectcitybuild.pcbridge.paper.features.bans.hooks.listeners
 import com.projectcitybuild.pcbridge.core.observability.logging.log
 import com.projectcitybuild.pcbridge.core.observability.logging.logSync
 import com.projectcitybuild.pcbridge.paper.architecture.listeners.scoped
-import com.projectcitybuild.pcbridge.paper.core.support.component.sendMessageRich
-import com.projectcitybuild.pcbridge.paper.core.support.spigot.extensions.broadcastRich
-import com.projectcitybuild.pcbridge.paper.core.support.spigot.extensions.onlinePlayer
+import com.projectcitybuild.pcbridge.papersupport.support.component.sendMessageRich
+import com.projectcitybuild.pcbridge.papersupport.support.spigot.extensions.broadcastRich
+import com.projectcitybuild.pcbridge.papersupport.support.spigot.extensions.onlinePlayer
 import com.projectcitybuild.pcbridge.paper.features.bans.bansTracer
 import com.projectcitybuild.pcbridge.paper.features.bans.domain.actions.CreateUuidBan
 import com.projectcitybuild.pcbridge.paper.features.bans.hooks.dialogs.CreateBanDialog

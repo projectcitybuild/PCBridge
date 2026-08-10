@@ -1,8 +1,8 @@
 package com.projectcitybuild.pcbridge.paper.features.randomteleport.domain.actions
 
-import com.projectcitybuild.pcbridge.paper.core.libs.teleportation.PlayerTeleporter
-import com.projectcitybuild.pcbridge.paper.core.libs.teleportation.exceptions.SafeDestinationNotFoundException
-import com.projectcitybuild.pcbridge.paper.core.libs.teleportation.exceptions.TeleportFailedException
+import com.projectcitybuild.pcbridge.papersupport.services.teleportation.PlayerTeleporter
+import com.projectcitybuild.pcbridge.papersupport.services.teleportation.exceptions.SafeDestinationNotFoundException
+import com.projectcitybuild.pcbridge.papersupport.services.teleportation.exceptions.TeleportFailedException
 import com.projectcitybuild.pcbridge.paper.features.randomteleport.randomTeleportTracer
 import org.bukkit.Location
 import org.bukkit.World

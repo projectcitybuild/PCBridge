@@ -1,6 +1,6 @@
 package com.projectcitybuild.pcbridge.paper.architecture.state.events
 
-import com.projectcitybuild.pcbridge.paper.architecture.state.data.PlayerSession
+import com.projectcitybuild.pcbridge.core.store.data.PlayerSession
 import org.bukkit.event.Event
 import org.bukkit.event.HandlerList
 import java.util.UUID

@@ -3,8 +3,8 @@ package com.projectcitybuild.pcbridge.paper.features.builds.domain.repositories
 import com.projectcitybuild.pcbridge.http.pcb.models.Build
 import com.projectcitybuild.pcbridge.http.pcb.models.PaginatedList
 import com.projectcitybuild.pcbridge.http.pcb.services.BuildHttpService
-import com.projectcitybuild.pcbridge.paper.core.utils.Trie
 import com.projectcitybuild.pcbridge.paper.features.builds.domain.data.EditableBuildField
+import com.projectcitybuild.pcbridge.shared.datastructs.Trie
 import org.bukkit.Location
 import org.bukkit.entity.Player
 

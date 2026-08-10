@@ -1,7 +1,7 @@
 package com.projectcitybuild.pcbridge.paper.features.pim.domain.repositories
 
+import com.projectcitybuild.pcbridge.core.store.SessionStore
 import com.projectcitybuild.pcbridge.http.pcb.services.OpElevateHttpService
-import com.projectcitybuild.pcbridge.paper.core.libs.store.SessionStore
 import com.projectcitybuild.pcbridge.paper.features.pim.domain.data.OpElevation
 import com.projectcitybuild.pcbridge.paper.features.pim.domain.data.toDomain
 import java.util.UUID
@@ -14,6 +14,7 @@ class OpElevationRepository(
         session.state.players[playerUUID]
             ?.syncedValue
             ?.opElevation
+            ?.toDomain()
 
     suspend fun grant(playerUUID: UUID, reason: String): OpElevation {
         val elevation = opElevateHttpService.grant(playerUUID, reason).toDomain()
@@ -39,7 +40,7 @@ class OpElevationRepository(
 
         session.mutate { state ->
             val updated = playerSession.copy(
-                synced = synced.copy(opElevation = elevation)
+                synced = synced.copy(opElevation = elevation?.toPersistence())
             )
             state.copy(players = state.players + (playerUUID to updated))
         }

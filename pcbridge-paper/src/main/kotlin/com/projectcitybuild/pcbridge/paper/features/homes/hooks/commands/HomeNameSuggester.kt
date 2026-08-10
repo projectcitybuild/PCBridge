@@ -1,7 +1,7 @@
 package com.projectcitybuild.pcbridge.paper.features.homes.hooks.commands
 
 import com.mojang.brigadier.suggestion.SuggestionsBuilder
-import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandContext
+import com.projectcitybuild.pcbridge.papersupport.support.brigadier.PaperCommandContext
 import com.projectcitybuild.pcbridge.paper.features.homes.domain.repositories.HomeRepository
 import org.bukkit.entity.Player
 

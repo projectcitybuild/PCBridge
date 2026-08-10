@@ -3,12 +3,12 @@ package com.projectcitybuild.pcbridge.paper.features.spawns.hooks.commands
 import com.projectcitybuild.pcbridge.paper.PermissionNode
 import com.projectcitybuild.pcbridge.paper.architecture.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.paper.architecture.commands.requiresPermission
-import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
-import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requirePlayer
+import com.projectcitybuild.pcbridge.papersupport.support.brigadier.extensions.executesSuspending
+import com.projectcitybuild.pcbridge.papersupport.support.brigadier.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.paper.architecture.commands.scoped
-import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandContext
-import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandNode
-import com.projectcitybuild.pcbridge.paper.core.support.spigot.SpigotEventBroadcaster
+import com.projectcitybuild.pcbridge.papersupport.support.brigadier.PaperCommandContext
+import com.projectcitybuild.pcbridge.papersupport.support.brigadier.PaperCommandNode
+import com.projectcitybuild.pcbridge.papersupport.support.spigot.SpigotEventBroadcaster
 import com.projectcitybuild.pcbridge.paper.features.spawns.domain.data.SpawnUpdatedEvent
 import com.projectcitybuild.pcbridge.paper.features.spawns.domain.repositories.SpawnRepository
 import com.projectcitybuild.pcbridge.paper.features.spawns.spawnsTracer

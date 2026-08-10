@@ -1,9 +1,9 @@
 package com.projectcitybuild.pcbridge.paper.features.maintenance.hooks.middleware
 
+import com.projectcitybuild.pcbridge.core.store.Store
 import com.projectcitybuild.pcbridge.http.pcb.models.Authorization
 import com.projectcitybuild.pcbridge.paper.architecture.connection.middleware.ConnectionMiddleware
 import com.projectcitybuild.pcbridge.paper.architecture.connection.middleware.ConnectionResult
-import com.projectcitybuild.pcbridge.paper.core.libs.store.Store
 import net.kyori.adventure.text.minimessage.MiniMessage
 import java.net.InetAddress
 import java.util.UUID

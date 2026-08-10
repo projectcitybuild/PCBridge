@@ -1,6 +1,6 @@
 package com.projectcitybuild.pcbridge.paper.features.roles.domain.repositories
 
-import com.projectcitybuild.pcbridge.paper.core.libs.store.SessionStore
+import com.projectcitybuild.pcbridge.core.store.SessionStore
 import com.projectcitybuild.pcbridge.paper.features.roles.domain.ChatRoleFormatter
 import io.github.reactivecircus.cache4k.Cache
 import kotlinx.coroutines.Dispatchers

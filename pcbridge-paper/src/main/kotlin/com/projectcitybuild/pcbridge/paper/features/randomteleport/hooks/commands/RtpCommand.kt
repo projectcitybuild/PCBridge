@@ -1,14 +1,14 @@
 package com.projectcitybuild.pcbridge.paper.features.randomteleport.hooks.commands
 
+import com.projectcitybuild.pcbridge.core.cooldowns.Cooldown
 import com.projectcitybuild.pcbridge.paper.PermissionNode
-import com.projectcitybuild.pcbridge.paper.core.libs.cooldowns.Cooldown
 import com.projectcitybuild.pcbridge.paper.architecture.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.paper.architecture.commands.requiresPermission
-import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.executesSuspending
-import com.projectcitybuild.pcbridge.paper.core.support.brigadier.extensions.requirePlayer
+import com.projectcitybuild.pcbridge.papersupport.support.brigadier.extensions.executesSuspending
+import com.projectcitybuild.pcbridge.papersupport.support.brigadier.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.paper.architecture.commands.scoped
-import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandContext
-import com.projectcitybuild.pcbridge.paper.core.support.brigadier.PaperCommandNode
+import com.projectcitybuild.pcbridge.papersupport.support.brigadier.PaperCommandContext
+import com.projectcitybuild.pcbridge.papersupport.support.brigadier.PaperCommandNode
 import com.projectcitybuild.pcbridge.paper.features.randomteleport.domain.actions.FindRandomLocation
 import com.projectcitybuild.pcbridge.paper.features.randomteleport.randomTeleportTracer
 import com.projectcitybuild.pcbridge.paper.l10n.l10n
@@ -33,7 +33,7 @@ class RtpCommand(
     ) = context.scoped(randomTeleportTracer) {
         val player = context.source.requirePlayer()
 
-        cooldown.throttle(5.seconds, player, "rtp")
+        cooldown.throttle(5.seconds, player.uniqueId, "rtp")
 
         player.sendRichMessage(l10n.searchingForSafeLocation)
 
