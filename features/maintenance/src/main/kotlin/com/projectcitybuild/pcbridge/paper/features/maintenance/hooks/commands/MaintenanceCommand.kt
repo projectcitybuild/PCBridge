@@ -1,7 +1,9 @@
 package com.projectcitybuild.pcbridge.paper.features.maintenance.hooks.commands
 
 import com.projectcitybuild.pcbridge.paper.core.libs.permissions.PermissionNode
+import com.projectcitybuild.pcbridge.paper.features.maintenance.domain.data.MaintenanceState
 import com.projectcitybuild.pcbridge.paper.features.maintenance.domain.data.MaintenanceToggledEvent
+import com.projectcitybuild.pcbridge.paper.features.maintenance.domain.data.maintenanceStateKey
 import com.projectcitybuild.pcbridge.paper.features.maintenance.maintenanceTracer
 import com.projectcitybuild.pcbridge.paper.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.paper.platform.paper.commands.requiresPermission
@@ -39,7 +41,7 @@ class MaintenanceCommand(
             val sender = context.source.sender
 
             val desiredState = context.getArgument("enabled", Boolean::class.java)
-            val currentState = store.state.maintenance
+            val currentState = store.state(maintenanceStateKey).enabled
 
             if (currentState == desiredState) {
                 sender.sendRichMessage(
@@ -48,8 +50,8 @@ class MaintenanceCommand(
                 return@scoped
             }
 
-            store.mutate {
-                store.state.copy(maintenance = desiredState)
+            store.mutate(maintenanceStateKey) {
+                MaintenanceState(enabled = desiredState)
             }
             eventBroadcaster.broadcast(
                 MaintenanceToggledEvent(enabled = desiredState),
@@ -63,7 +65,7 @@ class MaintenanceCommand(
         context.scoped(maintenanceTracer) {
             val sender = context.source.sender
 
-            val state = store.state.maintenance
+            val state = store.state(maintenanceStateKey).enabled
             sender.sendRichMessage(
                 "Maintenance mode is currently ${state.onOff().uppercase()}",
             )

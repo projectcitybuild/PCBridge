@@ -1,5 +1,6 @@
 package com.projectcitybuild.pcbridge.paper.features.maintenance.hooks.decorators
 
+import com.projectcitybuild.pcbridge.paper.features.maintenance.domain.data.maintenanceStateKey
 import com.projectcitybuild.pcbridge.paper.runtime.serverlist.decorators.ServerListing
 import com.projectcitybuild.pcbridge.paper.runtime.serverlist.decorators.ServerListingDecorator
 import com.projectcitybuild.pcbridge.paper.runtime.state.store.Store
@@ -9,8 +10,8 @@ class MaintenanceMotdDecorator(
     private val store: Store,
 ) : ServerListingDecorator {
     override suspend fun decorate(prev: ServerListing): ServerListing {
-        val state = store.state
-        if (!state.maintenance) {
+        val state = store.state(maintenanceStateKey)
+        if (!state.enabled) {
             return prev
         }
         return prev.copy(

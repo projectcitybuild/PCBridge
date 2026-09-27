@@ -1,5 +1,7 @@
 package com.projectcitybuild.pcbridge.paper.features.announcements.repositories
 
+import com.projectcitybuild.pcbridge.paper.features.announcements.domain.data.AnnouncementState
+import com.projectcitybuild.pcbridge.paper.features.announcements.domain.data.announcementStateKey
 import com.projectcitybuild.pcbridge.paper.runtime.remoteconfig.RemoteConfig
 import com.projectcitybuild.pcbridge.paper.runtime.state.store.Store
 import kotlinx.coroutines.Dispatchers
@@ -13,10 +15,10 @@ class AnnouncementRepository(
         withContext(Dispatchers.IO) {
             val config = remoteConfig.latest.config
             val announcements = config.announcements.messages
-            val lastBroadcastIndex = store.state.lastBroadcastIndex
+            val lastBroadcastIndex = store.state(announcementStateKey).lastBroadcastIndex
             val nextIndex = (lastBroadcastIndex + 1) % announcements.size
-            store.mutate { state ->
-                state.copy(lastBroadcastIndex = nextIndex)
+            store.mutate(announcementStateKey) {
+                AnnouncementState(lastBroadcastIndex = nextIndex)
             }
             announcements[nextIndex]
         }

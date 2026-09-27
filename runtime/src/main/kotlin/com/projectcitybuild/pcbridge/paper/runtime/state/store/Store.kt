@@ -1,29 +1,35 @@
 package com.projectcitybuild.pcbridge.paper.runtime.state.store
 
+import com.google.gson.Gson
+import com.google.gson.JsonElement
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.logSync
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.tracing.TracerFactory
 import com.projectcitybuild.pcbridge.paper.core.libs.storage.Storage
-import com.projectcitybuild.pcbridge.paper.runtime.state.data.PersistedServerState
-import com.projectcitybuild.pcbridge.paper.runtime.state.data.ServerState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import java.io.File
 
-private val mutex = Mutex()
-
+/**
+ * Persists arbitrary, feature-owned state to storage.
+ *
+ * Each feature keeps its own state completely separate from other features by
+ * reading/mutating it through its own [FeatureStateKey] (see [featureStateKey]).
+ * Internally, every feature's state is kept in its own slot, keyed by name, so
+ * a feature can neither see nor accidentally clobber another feature's state,
+ * and new features can start persisting state without any changes to [Store].
+ */
 class Store(
     private val file: File,
-    private val storage: Storage<PersistedServerState>,
+    private val storage: Storage<Map<String, JsonElement>>,
 ) {
     private val tracer = TracerFactory.make("store")
+    private val mutex = Mutex()
+    private val gson = Gson()
 
-    val state: ServerState
-        get() = _state
-
-    private var _state = ServerState()
+    private var slots: Map<String, JsonElement> = emptyMap()
 
     /**
      * Restores the state from storage
@@ -34,7 +40,7 @@ class Store(
 
             val deserialized = storage.read(file)
             if (deserialized != null) {
-                mutate { deserialized.toServerState() }
+                mutex.withLock { slots = deserialized }
             } else {
                 log.info { "No persisted data found" }
             }
@@ -49,24 +55,46 @@ class Store(
 
             storage.writeSync(
                 file = file,
-                data = PersistedServerState.fromServerState(_state),
+                data = slots,
             )
         }
 
-    suspend fun mutate(mutation: (ServerState) -> ServerState) =
+    /**
+     * Reads a feature's own slice of state, or its declared default if it
+     * hasn't been stored yet.
+     */
+    fun <T : Any> state(key: FeatureStateKey<T>): T {
+        val slot = slots[key.name] ?: return key.default
+        return gson.fromJson(slot, key.type)
+    }
+
+    /**
+     * Mutates a feature's own slice of state in isolation, without affecting
+     * any other feature's state, and returns the new value.
+     */
+    suspend fun <T : Any> mutate(
+        key: FeatureStateKey<T>,
+        mutation: (T) -> T,
+    ): T =
         withContext(Dispatchers.IO) {
             tracer.trace("mutate") {
-                val prev = state
+                mutex.withLock {
+                    val prev = state(key)
+                    val next = mutation(prev)
 
-                mutex.withLock { _state = mutation(_state) }
+                    slots = slots + (key.name to gson.toJsonTree(next))
 
-                log.debug(
-                    "State mutated",
-                    mapOf(
-                        "prev" to prev,
-                        "next" to state,
-                    ),
-                )
+                    log.debug(
+                        "Feature state mutated",
+                        mapOf(
+                            "key" to key.name,
+                            "prev" to prev,
+                            "next" to next,
+                        ),
+                    )
+
+                    next
+                }
             }
         }
 }

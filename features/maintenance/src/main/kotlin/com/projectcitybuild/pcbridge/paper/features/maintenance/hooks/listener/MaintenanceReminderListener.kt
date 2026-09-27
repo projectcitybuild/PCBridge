@@ -2,6 +2,7 @@ package com.projectcitybuild.pcbridge.paper.features.maintenance.hooks.listener
 
 import com.projectcitybuild.pcbridge.paper.core.utils.Cancellable
 import com.projectcitybuild.pcbridge.paper.features.maintenance.domain.data.MaintenanceToggledEvent
+import com.projectcitybuild.pcbridge.paper.features.maintenance.domain.data.maintenanceStateKey
 import com.projectcitybuild.pcbridge.paper.features.maintenance.maintenanceTracer
 import com.projectcitybuild.pcbridge.paper.platform.paper.scheduling.SpigotTimer
 import com.projectcitybuild.pcbridge.paper.runtime.listeners.scopedSync
@@ -29,7 +30,7 @@ class MaintenanceReminderListener(
         if (event.plugin != plugin) return
 
         event.scopedSync(maintenanceTracer, this::class.java) {
-            if (store.state.maintenance) {
+            if (store.state(maintenanceStateKey).enabled) {
                 enable()
             }
         }

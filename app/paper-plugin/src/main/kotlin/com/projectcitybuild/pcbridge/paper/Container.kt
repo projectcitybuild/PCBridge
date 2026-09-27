@@ -1,6 +1,7 @@
 package com.projectcitybuild.pcbridge.paper
 
 import com.github.shynixn.mccoroutine.bukkit.minecraftDispatcher
+import com.google.gson.JsonElement
 import com.google.gson.reflect.TypeToken
 import com.projectcitybuild.pcbridge.http.discord.DiscordHttp
 import com.projectcitybuild.pcbridge.http.pcb.PCBHttp
@@ -54,7 +55,6 @@ import com.projectcitybuild.pcbridge.paper.runtime.cooldowns.Cooldown
 import com.projectcitybuild.pcbridge.paper.runtime.playerlookup.PlayerLookup
 import com.projectcitybuild.pcbridge.paper.runtime.remoteconfig.RemoteConfig
 import com.projectcitybuild.pcbridge.paper.runtime.runtimeModule
-import com.projectcitybuild.pcbridge.paper.runtime.state.data.PersistedServerState
 import com.projectcitybuild.pcbridge.paper.runtime.state.store.SessionStore
 import com.projectcitybuild.pcbridge.paper.runtime.state.store.Store
 import com.projectcitybuild.pcbridge.paper.runtime.teleportation.PlayerTeleporter
@@ -214,7 +214,7 @@ private fun Module.core() {
                     .resolve("cache/server_state.json"),
             storage =
                 JsonStorage(
-                    typeToken = object : TypeToken<PersistedServerState>() {},
+                    typeToken = object : TypeToken<Map<String, JsonElement>>() {},
                 ),
         )
     }
