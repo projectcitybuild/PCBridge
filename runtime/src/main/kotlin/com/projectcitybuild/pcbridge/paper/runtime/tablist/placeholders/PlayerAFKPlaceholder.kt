@@ -1,0 +1,40 @@
+package com.projectcitybuild.pcbridge.paper.runtime.tablist.placeholders
+
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
+import com.projectcitybuild.pcbridge.paper.runtime.state.events.PlayerStateUpdatedEvent
+import com.projectcitybuild.pcbridge.paper.runtime.state.store.SessionStore
+import com.projectcitybuild.pcbridge.paper.runtime.tablist.TabRenderer
+import com.projectcitybuild.pcbridge.paper.runtime.tablist.UpdatableTabPlaceholder
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.minimessage.MiniMessage
+import org.bukkit.Server
+import org.bukkit.entity.Player
+import org.bukkit.event.EventHandler
+
+class PlayerAFKPlaceholder(
+    private val server: Server,
+    private val tabRenderer: TabRenderer,
+    private val session: SessionStore,
+) : UpdatableTabPlaceholder {
+    override val placeholder: String = "afk"
+
+    override suspend fun value(player: Player): Component {
+        val miniMessage = MiniMessage.miniMessage()
+        val state = session.state.players[player.uniqueId]
+        if (state != null && state.afk) {
+            return miniMessage.deserialize(" <gray>AFK</gray>")
+        }
+        return Component.empty()
+    }
+
+    @EventHandler
+    suspend fun onPlayerStateUpdated(event: PlayerStateUpdatedEvent) {
+        if (event.prevState?.afk == event.state.afk) return
+
+        log.debug { "PlayerStateUpdatedEvent: updating tab AFK placeholder for player" }
+
+        server.getPlayer(event.playerUUID)?.let { player ->
+            tabRenderer.updatePlayerName(player)
+        }
+    }
+}

@@ -1,0 +1,26 @@
+package com.projectcitybuild.pcbridge.paper.features.pim.hooks.listener
+
+import com.projectcitybuild.pcbridge.paper.features.pim.pimTracer
+import com.projectcitybuild.pcbridge.paper.runtime.listeners.scopedSync
+import org.bukkit.event.EventHandler
+import org.bukkit.event.EventPriority
+import org.bukkit.event.Listener
+import org.bukkit.event.player.PlayerCommandPreprocessEvent
+
+class VanillaOpInterceptListener : Listener {
+    /**
+     * Intercepts /op /deop usage by players and cancels them
+     */
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    fun onPlayerCommandPreprocess(event: PlayerCommandPreprocessEvent) =
+        event.scopedSync(pimTracer, this::class.java) {
+            // Event only triggered by players. No further checks needed - we still
+            // want to allow console to /op players in emergencies
+            val message = event.message.trimEnd().lowercase()
+            if (message == "/op" || message.startsWith("/op ") ||
+                message == "/deop" || message.startsWith("/deop ")
+            ) {
+                event.isCancelled = true
+            }
+        }
+}
