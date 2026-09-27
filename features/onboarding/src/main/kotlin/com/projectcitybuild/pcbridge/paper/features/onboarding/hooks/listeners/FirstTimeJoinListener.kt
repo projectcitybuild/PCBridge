@@ -1,0 +1,60 @@
+package com.projectcitybuild.pcbridge.paper.features.onboarding.hooks.listeners
+
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.logSync
+import com.projectcitybuild.pcbridge.paper.features.onboarding.onboardingTracer
+import com.projectcitybuild.pcbridge.paper.runtime.listeners.scopedSync
+import com.projectcitybuild.pcbridge.paper.runtime.remoteconfig.RemoteConfig
+import com.projectcitybuild.pcbridge.paper.runtime.state.store.SessionStore
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.minimessage.MiniMessage
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
+import org.bukkit.Server
+import org.bukkit.event.EventHandler
+import org.bukkit.event.EventPriority
+import org.bukkit.event.Listener
+import org.bukkit.event.player.PlayerJoinEvent
+
+class FirstTimeJoinListener(
+    private val server: Server,
+    private val session: SessionStore,
+    private val remoteConfig: RemoteConfig,
+) : Listener {
+    @EventHandler(priority = EventPriority.MONITOR)
+    fun onPlayerJoin(event: PlayerJoinEvent) =
+        event.scopedSync(onboardingTracer, this::class.java) {
+            logSync.debug { "Checking if first time join" }
+
+            val playerSession = session.state.players[event.player.uniqueId]
+            if (playerSession == null) {
+                logSync.warn { "Failed to find state for player: ${event.player.uniqueId}" }
+                return@scopedSync
+            }
+            val synced = playerSession.syncedValue
+            if (synced == null) {
+                logSync.warn { "No player data available to check if first-time join" }
+                return@scopedSync
+            }
+            val player = synced.player
+            if (player?.lastSeenAt != null) {
+                logSync.debug { "Player last seen ${player.lastSeenAt}. Not sending first-time join message" }
+                return@scopedSync
+            }
+
+            logSync.info { "Sending first-time welcome message for ${event.player.name}" }
+
+            if (server.onlinePlayers.isEmpty()) {
+                logSync.info { "Skipping. No players online" }
+                return@scopedSync
+            }
+
+            val config = remoteConfig.latest.config
+            val message =
+                MiniMessage.miniMessage().deserialize(
+                    config.messages.firstTimeJoin,
+                    Placeholder.component("name", Component.text(event.player.name)),
+                )
+            server.onlinePlayers
+                .filter { it.uniqueId != event.player.uniqueId }
+                .forEach { it.sendMessage(message) }
+        }
+}

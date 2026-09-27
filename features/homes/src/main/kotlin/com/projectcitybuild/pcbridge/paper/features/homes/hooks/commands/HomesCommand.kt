@@ -1,0 +1,36 @@
+package com.projectcitybuild.pcbridge.paper.features.homes.hooks.commands
+
+import com.projectcitybuild.pcbridge.paper.core.libs.permissions.PermissionNode
+import com.projectcitybuild.pcbridge.paper.features.homes.hooks.commands.homes.HomeCreateCommand
+import com.projectcitybuild.pcbridge.paper.features.homes.hooks.commands.homes.HomeDeleteCommand
+import com.projectcitybuild.pcbridge.paper.features.homes.hooks.commands.homes.HomeLimitCommand
+import com.projectcitybuild.pcbridge.paper.features.homes.hooks.commands.homes.HomeListCommand
+import com.projectcitybuild.pcbridge.paper.features.homes.hooks.commands.homes.HomeMoveCommand
+import com.projectcitybuild.pcbridge.paper.features.homes.hooks.commands.homes.HomeRenameCommand
+import com.projectcitybuild.pcbridge.paper.platform.paper.commands.BrigadierCommand
+import com.projectcitybuild.pcbridge.paper.platform.paper.commands.requiresPermission
+import com.projectcitybuild.pcbridge.paper.platform.paper.commands.then
+import com.projectcitybuild.pcbridge.paper.platform.paper.support.brigadier.PaperCommandNode
+import io.papermc.paper.command.brigadier.Commands
+
+class HomesCommand(
+    private val homeCreateCommand: HomeCreateCommand,
+    private val homeDeleteCommand: HomeDeleteCommand,
+    private val homeListCommand: HomeListCommand,
+    private val homeMoveCommand: HomeMoveCommand,
+    private val homeLimitCommand: HomeLimitCommand,
+    private val homeRenameCommand: HomeRenameCommand,
+) : BrigadierCommand {
+    override fun literal(): PaperCommandNode {
+        return Commands.literal("homes")
+            .requiresPermission(PermissionNode.HOMES_USE)
+            .then(command = homeCreateCommand)
+            .then(command = homeDeleteCommand)
+            .then(command = homeListCommand)
+            .then(command = homeMoveCommand)
+            .then(command = homeLimitCommand)
+            .then(command = homeRenameCommand)
+            .executes(homeListCommand.literal().command)
+            .build()
+    }
+}
