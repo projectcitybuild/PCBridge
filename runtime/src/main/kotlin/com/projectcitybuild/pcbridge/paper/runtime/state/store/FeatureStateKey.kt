@@ -23,4 +23,8 @@ data class FeatureStateKey<T : Any>(
 inline fun <reified T : Any> featureStateKey(
     name: String,
     default: T,
-): FeatureStateKey<T> = FeatureStateKey(name = name, type = T::class.java, default = default)
+): FeatureStateKey<T> = FeatureStateKey(
+    name = name,
+    type = T::class.java,
+    default = default,
+)
