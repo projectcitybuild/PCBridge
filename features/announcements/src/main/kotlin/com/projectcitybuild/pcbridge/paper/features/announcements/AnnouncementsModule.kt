@@ -11,15 +11,15 @@ import org.koin.dsl.module
 
 val announcementsModule =
     module {
-        singleOf(::AnnouncementRepository)
-        singleOf(::StartAnnouncementTimer)
-        factoryOf(::AnnouncementEnableListener)
-        factoryOf(::AnnouncementConfigListener)
-
         paperFeature("announcements") {
             listeners(
                 get<AnnouncementConfigListener>(),
                 get<AnnouncementEnableListener>(),
             )
         }
+
+        singleOf(::AnnouncementRepository)
+        singleOf(::StartAnnouncementTimer)
+        factoryOf(::AnnouncementEnableListener)
+        factoryOf(::AnnouncementConfigListener)
     }

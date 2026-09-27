@@ -28,18 +28,22 @@ import org.koin.dsl.module
 
 val runtimeModule =
     module {
-        factoryOf(::PlayerStateListener)
-        factoryOf(::CoroutineExceptionListener)
-        singleOf(::ConnectionMiddlewareChain)
-        factoryOf(::AuthorizeConnectionListener)
-        factoryOf(::EndConnectionListener)
-        singleOf(::ChatDecoratorChain)
-        factoryOf(::AsyncChatListener)
-        singleOf(::ServerListingDecoratorChain)
-        factoryOf(::ServerListPingListener)
+        single { ConnectionMiddlewareChain() }
+        single { ChatDecoratorChain() }
+        single { ServerListingDecoratorChain() }
+        single { ServerListingDecoratorChain() }
+        single { TabPlaceholders(listenerRegistry = get()) }
         singleOf(::Permissions)
         singleOf(::TabRenderer)
-        singleOf(::TabPlaceholders)
+        singleOf(::PaperFeatureRegistrar)
+        singleOf(::PaperIntegrationRegistrar)
+
+        factoryOf(::PlayerStateListener)
+        factoryOf(::CoroutineExceptionListener)
+        factoryOf(::AuthorizeConnectionListener)
+        factoryOf(::EndConnectionListener)
+        factoryOf(::AsyncChatListener)
+        factoryOf(::ServerListPingListener)
         factoryOf(::TabListeners)
         factoryOf(::MaxPlayerCountPlaceholder)
         factoryOf(::OnlinePlayerCountPlaceholder)
@@ -47,8 +51,6 @@ val runtimeModule =
         factoryOf(::PlayerNamePlaceholder)
         factoryOf(::PlayerPingPlaceholder)
         factoryOf(::PlayerWorldPlaceholder)
-        singleOf(::PaperFeatureRegistrar)
-        singleOf(::PaperIntegrationRegistrar)
 
         paperFeature("runtime") {
             listeners(

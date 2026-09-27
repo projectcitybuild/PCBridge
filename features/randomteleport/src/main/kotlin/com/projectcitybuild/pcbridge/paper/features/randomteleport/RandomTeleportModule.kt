@@ -8,10 +8,10 @@ import org.koin.dsl.module
 
 val randomTeleportModule =
     module {
-        factoryOf(::RtpCommand)
-        factoryOf(::FindRandomLocation)
-
         paperFeature("random-teleport") {
             commands(get<RtpCommand>())
         }
+
+        factoryOf(::RtpCommand)
+        factoryOf(::FindRandomLocation)
     }

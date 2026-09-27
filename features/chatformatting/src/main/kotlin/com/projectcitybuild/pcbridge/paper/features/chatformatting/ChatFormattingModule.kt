@@ -11,14 +11,14 @@ import org.koin.dsl.module
 
 val chatFormattingModule =
     module {
-        factoryOf(::ChatEmojiDecorator)
-        factoryOf(::ChatUrlDecorator)
-        factoryOf(::EmojiConfigListener)
-        singleOf(::EmojiRepository)
-
         paperFeature("chat-formatting") {
             listeners(get<EmojiConfigListener>())
             chatMessageDecorator(get<ChatEmojiDecorator>(), priority = 100)
             chatMessageDecorator(get<ChatUrlDecorator>(), priority = 200)
         }
+
+        factoryOf(::ChatEmojiDecorator)
+        factoryOf(::ChatUrlDecorator)
+        factoryOf(::EmojiConfigListener)
+        singleOf(::EmojiRepository)
     }

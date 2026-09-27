@@ -7,9 +7,9 @@ import org.koin.dsl.module
 
 val moderateModule =
     module {
-        factoryOf(::KickCommand)
-
         paperFeature("moderate") {
             commands(get<KickCommand>())
         }
+
+        factoryOf(::KickCommand)
     }

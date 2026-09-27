@@ -7,9 +7,9 @@ import org.koin.dsl.module
 
 val warningsModule =
     module {
-        factoryOf(::WarnCommand)
-
         paperFeature("warnings") {
             commands(get<WarnCommand>())
         }
+
+        factoryOf(::WarnCommand)
     }

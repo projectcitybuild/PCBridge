@@ -10,15 +10,15 @@ import org.koin.dsl.module
 
 val maintenanceModule =
     module {
-        factoryOf(::MaintenanceConnectionMiddleware)
-        factoryOf(::MaintenanceMotdDecorator)
-        factoryOf(::MaintenanceReminderListener)
-        factoryOf(::MaintenanceCommand)
-
         paperFeature("maintenance") {
             commands(get<MaintenanceCommand>())
             listeners(get<MaintenanceReminderListener>())
             connectionMiddleware(get<MaintenanceConnectionMiddleware>(), priority = 200)
             serverListingDecorator(get<MaintenanceMotdDecorator>(), priority = 100)
         }
+
+        factoryOf(::MaintenanceConnectionMiddleware)
+        factoryOf(::MaintenanceMotdDecorator)
+        factoryOf(::MaintenanceReminderListener)
+        factoryOf(::MaintenanceCommand)
     }

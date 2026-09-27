@@ -13,6 +13,11 @@ import java.util.UUID
 
 val chatBadgeModule =
     module {
+        paperFeature("chat-badge") {
+            listeners(get<ChatBadgeInvalidateListener>())
+            chatSenderDecorator(get<ChatBadgeDecorator>(), priority = 200)
+        }
+
         factoryOf(::ChatBadgeInvalidateListener)
 
         factory {
@@ -31,9 +36,4 @@ val chatBadgeModule =
         }
 
         factoryOf(::ChatBadgeDecorator)
-
-        paperFeature("chat-badge") {
-            listeners(get<ChatBadgeInvalidateListener>())
-            chatSenderDecorator(get<ChatBadgeDecorator>(), priority = 200)
-        }
     }

@@ -127,6 +127,7 @@ private val integrationModules =
 
 private fun Module.platform(plugin: JavaPlugin) {
     single { plugin }
+    single { plugin as org.bukkit.plugin.Plugin }
 
     factory { get<JavaPlugin>().server }
 
