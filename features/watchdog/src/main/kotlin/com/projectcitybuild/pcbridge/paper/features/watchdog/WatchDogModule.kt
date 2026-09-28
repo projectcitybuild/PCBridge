@@ -7,9 +7,9 @@ import org.koin.dsl.module
 
 val watchDogModule =
     module {
-        factoryOf(::ItemTextListener)
-
         paperFeature("watchdog") {
             listeners(get<ItemTextListener>())
         }
+
+        factoryOf(::ItemTextListener)
     }

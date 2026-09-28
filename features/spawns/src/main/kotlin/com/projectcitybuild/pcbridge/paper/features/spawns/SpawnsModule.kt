@@ -15,6 +15,18 @@ import org.koin.dsl.module
 
 val spawnsModule =
     module {
+        paperFeature("spawns") {
+            commands(
+                get<HubCommand>(),
+                get<SetSpawnCommand>(),
+                get<SpawnCommand>(),
+            )
+            listeners(
+                get<PlayerFirstJoinSpawnListener>(),
+                get<PlayerRespawnListener>(),
+            )
+        }
+
         factoryOf(::SpawnCommand)
         factoryOf(::SetSpawnCommand)
         factoryOf(::HubCommand)
@@ -28,18 +40,6 @@ val spawnsModule =
                         typeToken = object : TypeToken<SerializableSpawn>() {},
                     ),
                 server = get(),
-            )
-        }
-
-        paperFeature("spawns") {
-            commands(
-                get<HubCommand>(),
-                get<SetSpawnCommand>(),
-                get<SpawnCommand>(),
-            )
-            listeners(
-                get<PlayerFirstJoinSpawnListener>(),
-                get<PlayerRespawnListener>(),
             )
         }
     }

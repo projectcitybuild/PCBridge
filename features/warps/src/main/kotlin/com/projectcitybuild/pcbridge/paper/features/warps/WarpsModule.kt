@@ -19,6 +19,17 @@ import org.koin.dsl.module
 
 val warpsModule =
     module {
+        paperFeature("warps") {
+            commands(
+                get<WarpCommand>(),
+                get<WarpsCommand>(),
+            )
+            listeners(
+                get<WarpRenameDialogListener>(),
+                get<WarpWebhookListener>(),
+            )
+        }
+
         single {
             WarpRepository(
                 warpHttpService = get<PCBHttp>().warps,
@@ -66,15 +77,4 @@ val warpsModule =
 
         factoryOf(::WarpWebhookListener)
         factoryOf(::WarpRenameDialogListener)
-
-        paperFeature("warps") {
-            commands(
-                get<WarpCommand>(),
-                get<WarpsCommand>(),
-            )
-            listeners(
-                get<WarpRenameDialogListener>(),
-                get<WarpWebhookListener>(),
-            )
-        }
     }

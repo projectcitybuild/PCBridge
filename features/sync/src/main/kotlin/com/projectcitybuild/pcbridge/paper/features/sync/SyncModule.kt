@@ -11,6 +11,11 @@ import org.koin.dsl.module
 
 val syncModule =
     module {
+        paperFeature("sync") {
+            commands(get<SyncCommand>())
+            listeners(get<PlayerSyncRequestListener>())
+        }
+
         factoryOf(::SyncPlayer)
         factoryOf(::SyncCommand)
         factoryOf(::PlayerSyncRequestListener)
@@ -19,10 +24,5 @@ val syncModule =
             ConnectionRepository(
                 httpService = get<PCBHttp>().connection,
             )
-        }
-
-        paperFeature("sync") {
-            commands(get<SyncCommand>())
-            listeners(get<PlayerSyncRequestListener>())
         }
     }

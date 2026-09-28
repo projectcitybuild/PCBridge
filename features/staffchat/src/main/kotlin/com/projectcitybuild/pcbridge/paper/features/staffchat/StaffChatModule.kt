@@ -7,9 +7,9 @@ import org.koin.dsl.module
 
 val staffChatModule =
     module {
-        factoryOf(::StaffChatCommand)
-
         paperFeature("staff-chat") {
             commands(get<StaffChatCommand>())
         }
+
+        factoryOf(::StaffChatCommand)
     }

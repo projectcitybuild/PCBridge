@@ -14,15 +14,6 @@ import org.koin.dsl.module
 
 val workstationsModule =
     module {
-        factoryOf(::AnvilCommand)
-        factoryOf(::CartographyTableCommand)
-        factoryOf(::EnchantingCommand)
-        factoryOf(::GrindstoneCommand)
-        factoryOf(::LoomCommand)
-        factoryOf(::SmithingTableCommand)
-        factoryOf(::StoneCutterCommand)
-        factoryOf(::WorkbenchCommand)
-
         paperFeature("workstations") {
             commands(
                 get<AnvilCommand>(),
@@ -35,4 +26,13 @@ val workstationsModule =
                 get<WorkbenchCommand>(),
             )
         }
+
+        factoryOf(::AnvilCommand)
+        factoryOf(::CartographyTableCommand)
+        factoryOf(::EnchantingCommand)
+        factoryOf(::GrindstoneCommand)
+        factoryOf(::LoomCommand)
+        factoryOf(::SmithingTableCommand)
+        factoryOf(::StoneCutterCommand)
+        factoryOf(::WorkbenchCommand)
     }

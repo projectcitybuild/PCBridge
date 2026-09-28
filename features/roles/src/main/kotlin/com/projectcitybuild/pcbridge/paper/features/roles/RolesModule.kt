@@ -17,6 +17,16 @@ import java.util.UUID
 
 val rolesModule =
     module {
+        paperFeature("roles") {
+            listeners(
+                get<ChatRoleInvalidateListener>(),
+                get<RoleStateChangeListener>(),
+            )
+            chatSenderDecorator(get<ChatRoleDecorator>(), priority = 100)
+            tabSectionPlaceholder(get<TabRoleListPlaceholder>(), priority = 400)
+            tabPlayerPlaceholder(get<TabRolesPlaceholder>(), priority = 400)
+        }
+
         factoryOf(::ChatRoleInvalidateListener)
         factoryOf(::RoleStateChangeListener)
         factoryOf(::ChatRoleDecorator)
@@ -37,14 +47,4 @@ val rolesModule =
 
         factoryOf(::ChatRoleFormatter)
         factoryOf(::RolesFilter)
-
-        paperFeature("roles") {
-            listeners(
-                get<ChatRoleInvalidateListener>(),
-                get<RoleStateChangeListener>(),
-            )
-            chatSenderDecorator(get<ChatRoleDecorator>(), priority = 100)
-            tabSectionPlaceholder(get<TabRoleListPlaceholder>(), priority = 400)
-            tabPlayerPlaceholder(get<TabRolesPlaceholder>(), priority = 400)
-        }
     }

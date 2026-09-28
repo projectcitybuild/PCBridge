@@ -20,6 +20,13 @@ import org.koin.dsl.module
 
 val buildsModule =
     module {
+        paperFeature("builds") {
+            commands(
+                get<BuildCommand>(),
+                get<BuildsCommand>(),
+            )
+        }
+
         factory {
             BuildsCommand(
                 buildListCommand =
@@ -79,11 +86,4 @@ val buildsModule =
         }
 
         factoryOf(::BuildNameSuggester)
-
-        paperFeature("builds") {
-            commands(
-                get<BuildCommand>(),
-                get<BuildsCommand>(),
-            )
-        }
     }

@@ -7,9 +7,9 @@ import org.koin.dsl.module
 
 val serverLinksModule =
     module {
-        factoryOf(::ServerLinkListener)
-
         paperFeature("server-links") {
             listeners(get<ServerLinkListener>())
         }
+
+        factoryOf(::ServerLinkListener)
     }

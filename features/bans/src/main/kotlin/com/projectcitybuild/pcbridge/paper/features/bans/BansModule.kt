@@ -14,6 +14,15 @@ import org.koin.dsl.module
 
 val bansModule =
     module {
+        paperFeature("bans") {
+            commands(get<BanCommand>())
+            listeners(
+                get<BanWebhookListener>(),
+                get<BanDialogListener>(),
+            )
+            connectionMiddleware(get<BanConnectionMiddleware>(), priority = 100)
+        }
+
         factoryOf(::CheckBan)
         factoryOf(::BanConnectionMiddleware)
         factoryOf(::BanWebhookListener)
@@ -27,13 +36,4 @@ val bansModule =
         }
 
         factoryOf(::CreateUuidBan)
-
-        paperFeature("bans") {
-            commands(get<BanCommand>())
-            listeners(
-                get<BanWebhookListener>(),
-                get<BanDialogListener>(),
-            )
-            connectionMiddleware(get<BanConnectionMiddleware>(), priority = 100)
-        }
     }

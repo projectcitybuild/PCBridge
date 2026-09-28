@@ -22,6 +22,17 @@ import org.koin.dsl.module
 
 val pimModule =
     module {
+        paperFeature("pim") {
+            commands(get<PimCommand>())
+            listeners(
+                get<OpAuditingListener>(),
+                get<OpClearListener>(),
+                get<OpDialogListener>(),
+                get<OpRestoreListener>(),
+                get<VanillaOpInterceptListener>(),
+            )
+        }
+
         factoryOf(::OpRestoreListener)
         factoryOf(::OpClearListener)
         factoryOf(::OpDialogListener)
@@ -49,15 +60,4 @@ val pimModule =
         }
 
         singleOf(::OpElevationScheduler)
-
-        paperFeature("pim") {
-            commands(get<PimCommand>())
-            listeners(
-                get<OpAuditingListener>(),
-                get<OpClearListener>(),
-                get<OpDialogListener>(),
-                get<OpRestoreListener>(),
-                get<VanillaOpInterceptListener>(),
-            )
-        }
     }

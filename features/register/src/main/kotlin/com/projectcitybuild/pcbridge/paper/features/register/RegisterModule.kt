@@ -11,6 +11,14 @@ import org.koin.dsl.module
 
 val registerModule =
     module {
+        paperFeature("register") {
+            commands(
+                get<CodeCommand>(),
+                get<RegisterCommand>(),
+            )
+            listeners(get<VerifyCodeDialogListener>())
+        }
+
         factory {
             RegisterCommand(
                 plugin = get<JavaPlugin>(),
@@ -25,13 +33,5 @@ val registerModule =
                 registerHttpService = get<PCBHttp>().register,
                 syncPlayer = get(),
             )
-        }
-
-        paperFeature("register") {
-            commands(
-                get<CodeCommand>(),
-                get<RegisterCommand>(),
-            )
-            listeners(get<VerifyCodeDialogListener>())
         }
     }

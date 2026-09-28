@@ -12,6 +12,13 @@ import org.koin.dsl.module
 
 val statsModule =
     module {
+        paperFeature("stats") {
+            listeners(
+                get<AfkChangeListener>(),
+                get<BlockChangeListener>(),
+            )
+        }
+
         factoryOf(::BlockChangeListener)
         factoryOf(::AfkChangeListener)
 
@@ -22,11 +29,4 @@ val statsModule =
         }
 
         singleOf(::StatsCollector)
-
-        paperFeature("stats") {
-            listeners(
-                get<AfkChangeListener>(),
-                get<BlockChangeListener>(),
-            )
-        }
     }

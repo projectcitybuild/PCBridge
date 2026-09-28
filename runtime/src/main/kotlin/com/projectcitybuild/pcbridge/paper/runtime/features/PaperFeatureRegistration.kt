@@ -54,9 +54,11 @@ class PaperFeatureRegistrationBuilder internal constructor(
 
     inline fun <reified T : Any> get(): T = resolve(T::class)
 
-    fun commands(vararg commands: BrigadierCommand) = commands.forEach { this.commands.add(it.ordered()) }
+    fun commands(vararg commands: BrigadierCommand)
+        = commands.forEach { this.commands.add(it.ordered()) }
 
-    fun listeners(vararg listeners: Listener) = listeners.forEach { this.listeners.add(it.ordered()) }
+    fun listeners(vararg listeners: Listener)
+        = listeners.forEach { this.listeners.add(it.ordered()) }
 
     fun connectionMiddleware(
         middleware: ConnectionMiddleware,
@@ -142,14 +144,15 @@ class PaperFeatureRegistrar(
         tabPlaceholders.players(*registrations.ordered { tabPlayerPlaceholders }.toTypedArray())
     }
 
-    private fun <T> List<PaperFeatureRegistration>.ordered(select: PaperFeatureRegistration.() -> List<OrderedHook<T>>): List<T> =
-        flatMap { registration ->
-            registration.select().map { hook -> Triple(hook, registration.name, hook.sequence) }
-        }.sortedWith(
-            compareBy<Triple<OrderedHook<T>, String, Int>>(
-                { it.first.priority },
-                { it.second },
-                { it.third },
-            ),
-        ).map { it.first.value }
+    private fun <T> List<PaperFeatureRegistration>.ordered(
+        select: PaperFeatureRegistration.() -> List<OrderedHook<T>>
+    ): List<T> = flatMap { registration ->
+        registration.select().map { hook -> Triple(hook, registration.name, hook.sequence) }
+    }.sortedWith(
+        compareBy<Triple<OrderedHook<T>, String, Int>>(
+            { it.first.priority },
+            { it.second },
+            { it.third },
+        ),
+    ).map { it.first.value }
 }

@@ -1,6 +1,7 @@
 package com.projectcitybuild.pcbridge.paper.features.maintenance.hooks.middleware
 
 import com.projectcitybuild.pcbridge.http.pcb.models.Authorization
+import com.projectcitybuild.pcbridge.paper.features.maintenance.domain.data.maintenanceStateKey
 import com.projectcitybuild.pcbridge.paper.runtime.connection.middleware.ConnectionMiddleware
 import com.projectcitybuild.pcbridge.paper.runtime.connection.middleware.ConnectionResult
 import com.projectcitybuild.pcbridge.paper.runtime.state.store.Store
@@ -16,7 +17,7 @@ class MaintenanceConnectionMiddleware(
         ip: InetAddress,
         authorization: Authorization,
     ): ConnectionResult {
-        if (!store.state.maintenance) return ConnectionResult.Allowed
+        if (!store.state(maintenanceStateKey).enabled) return ConnectionResult.Allowed
 
         val playerData = authorization.player
         if (playerData != null && playerData.isStaff) {

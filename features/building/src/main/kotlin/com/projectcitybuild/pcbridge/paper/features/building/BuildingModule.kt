@@ -10,11 +10,6 @@ import org.koin.dsl.module
 
 val buildingModule =
     module {
-        factoryOf(::NightVisionCommand)
-        factoryOf(::ItemNameCommand)
-        factoryOf(::InvisFrameCommand)
-        factoryOf(::InvisFrameListener)
-
         paperFeature("building") {
             commands(
                 get<InvisFrameCommand>(),
@@ -23,4 +18,9 @@ val buildingModule =
             )
             listeners(get<InvisFrameListener>())
         }
+
+        factoryOf(::NightVisionCommand)
+        factoryOf(::ItemNameCommand)
+        factoryOf(::InvisFrameCommand)
+        factoryOf(::InvisFrameListener)
     }

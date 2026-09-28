@@ -10,11 +10,6 @@ import org.koin.dsl.module
 
 val onboardingModule =
     module {
-        factoryOf(::AnnounceJoinListener)
-        factoryOf(::AnnounceQuitListener)
-        factoryOf(::FirstTimeJoinListener)
-        factoryOf(::ServerOverviewJoinListener)
-
         paperFeature("onboarding") {
             listeners(
                 get<AnnounceJoinListener>(),
@@ -23,4 +18,9 @@ val onboardingModule =
                 get<ServerOverviewJoinListener>(),
             )
         }
+
+        factoryOf(::AnnounceJoinListener)
+        factoryOf(::AnnounceQuitListener)
+        factoryOf(::FirstTimeJoinListener)
+        factoryOf(::ServerOverviewJoinListener)
     }

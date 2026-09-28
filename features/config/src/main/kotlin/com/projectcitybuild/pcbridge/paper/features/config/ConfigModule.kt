@@ -8,11 +8,11 @@ import org.koin.dsl.module
 
 val configModule =
     module {
-        factoryOf(::ConfigCommand)
-        factoryOf(::ConfigWebhookListener)
-
         paperFeature("config") {
             commands(get<ConfigCommand>())
             listeners(get<ConfigWebhookListener>())
         }
+
+        factoryOf(::ConfigCommand)
+        factoryOf(::ConfigWebhookListener)
     }

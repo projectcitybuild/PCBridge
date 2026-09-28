@@ -19,6 +19,14 @@ import org.koin.dsl.module
 
 val homesModule =
     module {
+        paperFeature("homes") {
+            commands(
+                get<HomeCommand>(),
+                get<HomesCommand>(),
+            )
+            listeners(get<HomeRenameDialogListener>())
+        }
+
         single {
             HomeRepository(
                 homeHttpService = get<PCBHttp>().homes,
@@ -68,12 +76,4 @@ val homesModule =
         }
 
         factoryOf(::HomeRenameDialogListener)
-
-        paperFeature("homes") {
-            commands(
-                get<HomeCommand>(),
-                get<HomesCommand>(),
-            )
-            listeners(get<HomeRenameDialogListener>())
-        }
     }
