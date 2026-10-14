@@ -20,7 +20,7 @@ jobs:
         uses: ./.github/actions/setup-java
 
       - name: Run tests
-        run: gradle test --info
+        run: ./gradlew test --info
 
       - name: Upload test results to Codecov
         uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f

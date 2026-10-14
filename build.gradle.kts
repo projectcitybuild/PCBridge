@@ -9,7 +9,7 @@ version = sharedVersion
 
 plugins {
     kotlin("jvm") version "2.2.0"
-    kotlin("plugin.serialization") version "2.0.21"
+    kotlin("plugin.serialization") version "2.2.0"
 
     id("org.jlleitschuh.gradle.ktlint") version "12.1.1"
     id("co.uzzu.dotenv.gradle") version "4.0.0"
