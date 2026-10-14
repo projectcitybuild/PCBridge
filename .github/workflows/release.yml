@@ -23,11 +23,11 @@ jobs:
         id: plugin_version
         working-directory: app/paper-plugin
         run: |
-          version="$(gradle properties -q | grep "version:" | awk '{print $2}')"
+          version="$(./gradlew properties -q | grep "version:" | awk '{print $2}')"
           echo "plugin_version=$version" >> $GITHUB_OUTPUT
 
       - name: Build with Gradle
-        run: gradle app:paper-plugin:shadowJar
+        run: ./gradlew app:paper-plugin:shadowJar
 
       - name: Upload jar file as artifact
         uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08
