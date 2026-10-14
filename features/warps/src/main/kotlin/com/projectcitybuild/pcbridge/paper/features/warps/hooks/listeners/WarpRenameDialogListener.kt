@@ -53,7 +53,7 @@ class WarpRenameDialogListener(
                     id = warpId.toInt(),
                     newName = newName,
                 )
-                player.sendRichMessage(l10n.warpRenamed(newName))
+                player.sendMessage(l10n.warpRenamed(newName))
             } catch (e: Exception) {
                 player.sendRichMessage("<red>Error: ${e.message}</red>")
                 throw e

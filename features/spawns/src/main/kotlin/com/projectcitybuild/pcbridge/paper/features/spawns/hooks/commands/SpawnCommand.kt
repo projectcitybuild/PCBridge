@@ -36,6 +36,6 @@ class SpawnCommand(
                 destination = spawn,
                 cause = PlayerTeleportEvent.TeleportCause.COMMAND,
             )
-            player.sendRichMessage(l10n.teleportedToSpawn)
+            player.sendMessage(l10n.teleportedToSpawn)
         }
 }

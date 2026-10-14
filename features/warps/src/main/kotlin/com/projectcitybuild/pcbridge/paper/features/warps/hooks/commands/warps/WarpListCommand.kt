@@ -44,7 +44,7 @@ class WarpListCommand(
                     size = remoteConfig.latest.config.warps.itemsPerPage,
                 )
             if (warps.data.isEmpty()) {
-                sender.sendRichMessage(
+                sender.sendMessage(
                     if (pageNumber == 1) {
                         l10n.noWarpsFound
                     } else {

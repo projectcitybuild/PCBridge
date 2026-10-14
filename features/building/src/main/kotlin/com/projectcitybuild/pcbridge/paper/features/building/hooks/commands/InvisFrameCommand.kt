@@ -85,7 +85,7 @@ class InvisFrameCommand(
                 }
             },
         )
-        player.sendRichMessage(
+        player.sendMessage(
             if (glowing) {
                 l10n.receivedInvisFrameGlowing
             } else {

@@ -88,13 +88,13 @@ class BanDialogListener(
                     return@scoped
                 }
 
-            server.broadcastRich(l10n.playerHasBeenBanned(playerName))
+            server.broadcast(l10n.playerHasBeenBanned(playerName))
 
             val bannedPlayer = server.onlinePlayer(uuid = result.bannedUuid)
             bannedPlayer?.kick(
                 result.ban.toMiniMessage(),
                 PlayerKickEvent.Cause.BANNED,
             )
-            bannerPlayer?.sendMessageRich(l10n.clickToEditBan(result.editUrl))
+            bannerPlayer?.sendMessage(l10n.clickToEditBan(result.editUrl))
         }
 }

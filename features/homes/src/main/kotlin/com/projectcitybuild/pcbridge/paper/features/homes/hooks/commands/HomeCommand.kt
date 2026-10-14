@@ -56,7 +56,7 @@ class HomeCommand(
                 destination = home.toLocation(world),
                 cause = PlayerTeleportEvent.TeleportCause.COMMAND,
             )
-            context.source.sender.sendRichMessage(
+            context.source.sender.sendMessage(
                 l10n.teleportedToName(home.name),
             )
         }

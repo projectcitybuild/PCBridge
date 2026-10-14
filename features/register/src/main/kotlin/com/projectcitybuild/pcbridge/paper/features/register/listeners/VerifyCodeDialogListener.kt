@@ -51,7 +51,7 @@ class VerifyCodeDialogListener(
                 code = code,
                 playerUUID = player.uniqueId,
             )
-            player.sendRichMessage(l10n.registrationComplete)
+            player.sendMessage(l10n.registrationComplete)
             syncPlayer.execute(playerUUID = player.uniqueId)
 
         } catch (_: ResponseParserError.NotFound) {

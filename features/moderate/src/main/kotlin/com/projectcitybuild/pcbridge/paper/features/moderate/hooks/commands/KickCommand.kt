@@ -14,6 +14,8 @@ import com.projectcitybuild.pcbridge.paper.platform.paper.support.brigadier.exte
 import com.projectcitybuild.pcbridge.paper.platform.paper.support.brigadier.extensions.getOptionalArgument
 import com.projectcitybuild.pcbridge.paper.runtime.commands.scoped
 import io.papermc.paper.command.brigadier.Commands
+import io.papermc.paper.command.brigadier.argument.ArgumentTypes.player
+import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.Server
 import org.bukkit.entity.Player
@@ -44,13 +46,12 @@ class KickCommand(
             val player = context.getArgument("player", Player::class.java)
             val reason = context.getOptionalArgument("reason", String::class.java)
 
-            val message =
-                MiniMessage.miniMessage().deserialize(
-                    reason ?: l10n.kickedFromServer,
-                )
+            val message = reason?.let { Component.text(it) }
+                ?: l10n.kickedFromServer
+
             player.kick(message, PlayerKickEvent.Cause.KICK_COMMAND)
 
-            server.broadcastRich(
+            server.broadcast(
                 if (!reason.isNullOrEmpty()) {
                     l10n.playerWasKickedForReason(player.name, reason)
                 } else {

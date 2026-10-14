@@ -118,12 +118,12 @@ class PageComponentBuilder {
     private fun prevButton(command: String): Component {
         return MiniMessage.miniMessage().deserialize("${l10n.pagePrevButton} ")
             .clickEvent(ClickEvent.runCommand(command))
-            .hoverEvent(HoverEvent.showText(Component.text(l10n.pagePrevButtonHover)))
+            .hoverEvent(HoverEvent.showText(l10n.pagePrevButtonHover))
     }
 
     private fun nextButton(command: String): Component {
         return MiniMessage.miniMessage().deserialize("${l10n.pageNextButton} ")
             .clickEvent(ClickEvent.runCommand(command))
-            .hoverEvent(HoverEvent.showText(Component.text(l10n.pageNextButtonHover)))
+            .hoverEvent(HoverEvent.showText(l10n.pageNextButtonHover))
     }
 }
