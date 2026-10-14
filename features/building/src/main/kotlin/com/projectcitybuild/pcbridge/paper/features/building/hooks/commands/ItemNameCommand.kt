@@ -48,10 +48,8 @@ class ItemNameCommand(
             itemMeta.displayName(name)
             itemStack.setItemMeta(itemMeta)
 
-            player.sendRichMessage(
-                l10n.renamedItem("<name>"),
-                Placeholder.component("name", name),
-            )
+            player.sendMessage(l10n.renamedItem(name))
+
             eventBroadcaster.broadcast(
                 ItemRenamedEvent(
                     displayName = name,

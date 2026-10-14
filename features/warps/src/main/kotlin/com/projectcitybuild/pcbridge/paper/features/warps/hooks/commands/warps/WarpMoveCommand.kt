@@ -42,7 +42,7 @@ class WarpMoveCommand(
                 name = warpName,
                 location = player.location,
             )
-            context.source.sender.sendRichMessage(
+            context.source.sender.sendMessage(
                 l10n.warpMoved(warpName),
             )
         }

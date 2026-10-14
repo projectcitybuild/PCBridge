@@ -20,7 +20,7 @@ class VerifyRegistrationCodeDialog {
         val codeKey = "code"
         val verifyButtonKey = Key.key("pcbridge:dialogs/verify_registration_code/submit")
 
-        fun build(email: String?, error: String? = null) = Dialog.create { builder ->
+        fun build(email: String?, error: Component? = null) = Dialog.create { builder ->
             builder.empty()
                 .base(
                     DialogBase.builder(Component.text("Enter Code"))
@@ -39,24 +39,22 @@ class VerifyRegistrationCodeDialog {
                 )
         }
 
-        private fun body(email: String?, error: String?): List<PlainMessageDialogBody> {
+        private fun body(email: String?, error: Component?): List<PlainMessageDialogBody> {
             val list = mutableListOf<PlainMessageDialogBody>()
             if (error != null) {
                 list.add(errorText(error))
             }
             list.add(
                 DialogBody.plainMessage(
-                    MiniMessage.miniMessage().deserialize(
-                        if (email != null) l10n.codeHasBeenEmailedTo(email)
-                        else l10n.codeHasBeenEmailed
-                    )
+                    if (email != null) l10n.codeHasBeenEmailedTo(email)
+                    else l10n.codeHasBeenEmailed
                 )
             )
             return list.toList()
         }
 
-        private fun errorText(error: String) = DialogBody.plainMessage(
-            MiniMessage.miniMessage().deserialize(error)
+        private fun errorText(error: Component) = DialogBody.plainMessage(
+            error
                 .color(NamedTextColor.RED)
                 .decorate(TextDecoration.BOLD)
         )

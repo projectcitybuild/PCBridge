@@ -39,7 +39,7 @@ class HomeDeleteCommand(
                 player = player,
                 name = name,
             )
-            context.source.sender.sendRichMessage(
+            context.source.sender.sendMessage(
                 l10n.homeDeleted(name),
             )
         }

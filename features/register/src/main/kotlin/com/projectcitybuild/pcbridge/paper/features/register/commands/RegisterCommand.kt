@@ -28,7 +28,7 @@ class RegisterCommand(
                     .executesSuspending(plugin, ::execute)
             )
             .executes { context ->
-                context.source.sender.sendRichMessage(l10n.errorNoRegisterEmailSpecified)
+                context.source.sender.sendMessage(l10n.errorNoRegisterEmailSpecified)
                 return@executes Command.SINGLE_SUCCESS
             }
             .build()

@@ -89,7 +89,7 @@ class OpElevationService(
 
 private fun Player.grantOp(duration: Duration) {
     isOp = true
-    sendRichMessage(l10n.opElevationGranted(duration.humanReadable()))
+    sendMessage(l10n.opElevationGranted(duration.humanReadable()))
     logSync.info { "Granted OP status to $name ($uniqueId)" }
 }
 
@@ -97,15 +97,14 @@ private fun Player.revokeOp(reason: OpElevationService.RevokeReason) {
     if (!isOp) return
     isOp = false
 
-    val message =
-        when (reason) {
-            OpElevationService.RevokeReason.MANUAL,
-            OpElevationService.RevokeReason.DESYNC,
-            -> l10n.opElevationRevoked
-            OpElevationService.RevokeReason.EXPIRED,
-            -> l10n.opElevationExpired
-        }
-    sendRichMessage(message)
+    val message = when (reason) {
+        OpElevationService.RevokeReason.MANUAL,
+        OpElevationService.RevokeReason.DESYNC,
+        -> l10n.opElevationRevoked
+        OpElevationService.RevokeReason.EXPIRED,
+        -> l10n.opElevationExpired
+    }
+    sendMessage(message)
 
     logSync.info { "Revoked OP status (reason: $reason) from $name ($uniqueId)" }
 }

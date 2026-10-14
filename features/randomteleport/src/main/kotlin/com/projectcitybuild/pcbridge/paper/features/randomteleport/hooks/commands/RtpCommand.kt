@@ -35,14 +35,14 @@ class RtpCommand(
 
         cooldown.throttle(5.seconds, player, "rtp")
 
-        player.sendRichMessage(l10n.searchingForSafeLocation)
+        player.sendMessage(l10n.searchingForSafeLocation)
 
         val location = findRandomLocation.teleport(player, attempts = 5)
         if (location == null) {
-            player.sendRichMessage(l10n.errorCouldNotFindSafeLocation)
+            player.sendMessage(l10n.errorCouldNotFindSafeLocation)
             return@scoped
         }
-        player.sendRichMessage(
+        player.sendMessage(
             l10n.teleportedToCoordinate(location.x.toInt(), location.y.toInt(), location.z.toInt())
         )
     }

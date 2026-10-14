@@ -58,7 +58,7 @@ class WarpCommand(
                 destination = warp.toLocation(world),
                 cause = PlayerTeleportEvent.TeleportCause.COMMAND,
             )
-            player.sendRichMessage(l10n.teleportedToName(warp.name))
+            player.sendMessage(l10n.teleportedToName(warp.name))
         }
 }
 

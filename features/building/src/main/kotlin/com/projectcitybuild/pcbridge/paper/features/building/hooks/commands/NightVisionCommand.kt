@@ -54,9 +54,9 @@ class NightVisionCommand(
 
             if (toggleOn) {
                 player.addPotionEffect(potionEffect)
-                player.sendRichMessage(l10n.nightVisionToggledOn)
+                player.sendMessage(l10n.nightVisionToggledOn)
             } else {
-                player.sendRichMessage(l10n.nightVisionToggledOff)
+                player.sendMessage(l10n.nightVisionToggledOff)
             }
         }
 }

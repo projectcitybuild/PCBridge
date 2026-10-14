@@ -54,7 +54,7 @@ class HomeRenameDialogListener(
                     newName = newName,
                     player = player,
                 )
-                player.sendRichMessage(l10n.homeRenamed(newName))
+                player.sendMessage(l10n.homeRenamed(newName))
             } catch (e: Exception) {
                 player.sendRichMessage("<red>Error: ${e.message}</red>")
                 throw e

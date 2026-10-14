@@ -43,7 +43,7 @@ class WarpDeleteCommand(
 
             eventBroadcaster.broadcast(WarpDeleteEvent())
 
-            context.source.sender.sendRichMessage(
+            context.source.sender.sendMessage(
                 l10n.warpDeleted(warpName),
             )
         }

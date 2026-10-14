@@ -31,7 +31,6 @@ val runtimeModule =
         single { ConnectionMiddlewareChain() }
         single { ChatDecoratorChain() }
         single { ServerListingDecoratorChain() }
-        single { ServerListingDecoratorChain() }
         single { TabPlaceholders(listenerRegistry = get()) }
         singleOf(::Permissions)
         singleOf(::TabRenderer)

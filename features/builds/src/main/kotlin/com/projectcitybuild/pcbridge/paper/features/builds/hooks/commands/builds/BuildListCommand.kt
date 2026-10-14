@@ -40,9 +40,9 @@ class BuildListCommand(
             val sender = context.source.sender
 
             if (builds.data.isEmpty()) {
-                sender.sendRichMessage(
+                sender.sendMessage(
                     if (pageNumber == 1) {
-                        "<gray>No builds found</gray>"
+                        l10n.errorNoBuildsFound
                     } else {
                         l10n.errorPageNotFound
                     },

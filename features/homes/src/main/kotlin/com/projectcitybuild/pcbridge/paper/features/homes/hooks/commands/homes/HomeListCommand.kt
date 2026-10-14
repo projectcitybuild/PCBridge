@@ -44,7 +44,7 @@ class HomeListCommand(
                 )
 
             if (homes.data.isEmpty()) {
-                player.sendRichMessage(
+                player.sendMessage(
                     if (pageNumber == 1) {
                         l10n.noHomesFound
                     } else {
