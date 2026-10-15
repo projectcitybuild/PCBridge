@@ -12,6 +12,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.time.Instant
 import java.time.LocalDateTime
+import java.util.concurrent.TimeUnit
 
 internal class PCBClientFactory(
     private val authToken: String,
@@ -39,6 +40,10 @@ internal class PCBClientFactory(
     private fun makeAuthenticatedClient(): OkHttpClient {
         val clientFactory = OkHttpClient()
             .newBuilder()
+            .connectTimeout(3, TimeUnit.SECONDS)
+            .readTimeout(10, TimeUnit.SECONDS)
+            .writeTimeout(10, TimeUnit.SECONDS)
+            .callTimeout(15, TimeUnit.SECONDS)
             .addInterceptor { chain ->
                 val request = chain.request()
                     .newBuilder()

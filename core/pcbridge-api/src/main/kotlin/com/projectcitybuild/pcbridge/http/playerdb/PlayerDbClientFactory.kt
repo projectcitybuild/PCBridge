@@ -7,6 +7,7 @@ import io.opentelemetry.instrumentation.okhttp.v3_0.OkHttpTelemetry
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
 
 internal class PlayerDbClientFactory(
     private val baseUrl: String,
@@ -30,6 +31,10 @@ internal class PlayerDbClientFactory(
     private fun makeClient(): OkHttpClient {
         val clientFactory = OkHttpClient()
             .newBuilder()
+            .connectTimeout(3, TimeUnit.SECONDS)
+            .readTimeout(10, TimeUnit.SECONDS)
+            .writeTimeout(10, TimeUnit.SECONDS)
+            .callTimeout(15, TimeUnit.SECONDS)
             .addInterceptor { chain ->
                 val request = chain.request()
                     .newBuilder()
