@@ -1,13 +1,11 @@
 package com.projectcitybuild.pcbridge.paper.l10n
 
-import jdk.internal.net.http.common.Utils.remaining
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextComponent
 import net.kyori.adventure.text.minimessage.MiniMessage
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import org.bukkit.Location
-import org.checkerframework.checker.units.qual.mm
 
 val l10n = StringsEn()
 
@@ -61,6 +59,8 @@ class StringsEn {
     val errorHubWorldNotFound = mm("<red>Could not find hub world</red>")
 
     val errorHubNotSet = mm("<red>Hub world not set</red>")
+
+    val errorUnableToAuthConnection = Component.text("Unable to authorize your connection. Please try again later.")
 
     fun homeCreated(name: String) = mm(
         "<green><name> created</green>",

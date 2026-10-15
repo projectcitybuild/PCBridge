@@ -2,6 +2,7 @@ package com.projectcitybuild.pcbridge.paper.runtime.connection.listeners
 
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.errors.ErrorTracker
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
+import com.projectcitybuild.pcbridge.paper.l10n.l10n
 import com.projectcitybuild.pcbridge.paper.platform.paper.events.SpigotEventBroadcaster
 import com.projectcitybuild.pcbridge.paper.runtime.connection.ConnectionRepository
 import com.projectcitybuild.pcbridge.paper.runtime.connection.connectionTracer
@@ -10,6 +11,8 @@ import com.projectcitybuild.pcbridge.paper.runtime.connection.middleware.Connect
 import com.projectcitybuild.pcbridge.paper.runtime.connection.middleware.ConnectionResult
 import com.projectcitybuild.pcbridge.paper.runtime.listeners.scopedSync
 import kotlinx.coroutines.runBlocking
+import net.kyori.adventure.text.Component
+import org.bukkit.event.Event
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
@@ -69,11 +72,9 @@ class AuthorizeConnectionListener(
                     log.error(it) { "An error occurred while authorizing a connection" }
                     errorTracker.report(it)
 
-                    eventBroadcaster.broadcast(
-                        ConnectionPermittedEvent(
-                            playerData = null,
-                            playerUUID = event.uniqueId,
-                        ),
+                    event.disallow(
+                        AsyncPlayerPreLoginEvent.Result.KICK_OTHER,
+                        l10n.errorUnableToAuthConnection,
                     )
                 }
             }
