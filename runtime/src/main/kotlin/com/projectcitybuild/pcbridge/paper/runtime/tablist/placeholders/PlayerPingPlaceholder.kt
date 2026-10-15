@@ -1,11 +1,13 @@
 package com.projectcitybuild.pcbridge.paper.runtime.tablist.placeholders
 
+import com.github.shynixn.mccoroutine.bukkit.minecraftDispatcher
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.logSync
 import com.projectcitybuild.pcbridge.paper.core.utils.Cancellable
 import com.projectcitybuild.pcbridge.paper.platform.paper.scheduling.SpigotTimer
 import com.projectcitybuild.pcbridge.paper.runtime.tablist.TabRenderer
 import com.projectcitybuild.pcbridge.paper.runtime.tablist.UpdatableTabPlaceholder
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.Server
@@ -38,21 +40,20 @@ class PlayerPingPlaceholder(
         if (event.plugin != plugin) return
 
         cancellable?.cancel()
-        cancellable =
-            spigotTimer.scheduleRepeating(
-                identifier = "tab_player_ping",
-                delay = updateFrequency,
-                repeatingInterval = updateFrequency,
-            ) {
-                logSync.trace { "Updating all tab player pings" }
+        cancellable = spigotTimer.scheduleRepeating(
+            identifier = "tab_player_ping",
+            delay = updateFrequency,
+            repeatingInterval = updateFrequency,
+        ) {
+            logSync.trace { "Updating all tab player pings" }
 
-                // TODO: remove runBlocking when SpigotTimer becomes coroutines
-                runBlocking {
-                    server.onlinePlayers.forEach { player ->
-                        tabRenderer.updatePlayerName(player)
-                    }
+            withContext(plugin.minecraftDispatcher) {
+                val players = server.onlinePlayers
+                for (player in players) {
+                    tabRenderer.updatePlayerName(player)
                 }
             }
+        }
     }
 
     @EventHandler
