@@ -1,14 +1,17 @@
 package com.projectcitybuild.pcbridge.paper.features.announcements.actions
 
+import com.github.shynixn.mccoroutine.bukkit.minecraftDispatcher
 import com.projectcitybuild.pcbridge.paper.features.announcements.repositories.AnnouncementRepository
 import com.projectcitybuild.pcbridge.paper.platform.paper.scheduling.SpigotTimer
 import com.projectcitybuild.pcbridge.paper.runtime.remoteconfig.RemoteConfig
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.Server
+import org.bukkit.plugin.Plugin
 import kotlin.time.Duration.Companion.minutes
 
 class StartAnnouncementTimer(
+    private val plugin: Plugin,
     private val repository: AnnouncementRepository,
     private val remoteConfig: RemoteConfig,
     private val timer: SpigotTimer,
@@ -29,10 +32,14 @@ class StartAnnouncementTimer(
             delay = interval,
             repeatingInterval = interval,
             work = {
-                val message = runBlocking { repository.getNextAnnouncement() }
-                server.broadcast(
-                    MiniMessage.miniMessage().deserialize(message),
-                )
+                val message = repository.getNextAnnouncement()
+                if (message.isNotEmpty()) {
+                    val deserializedMessage = MiniMessage.miniMessage().deserialize(message)
+
+                    withContext(plugin.minecraftDispatcher) {
+                        server.broadcast(deserializedMessage)
+                    }
+                }
             },
         )
     }

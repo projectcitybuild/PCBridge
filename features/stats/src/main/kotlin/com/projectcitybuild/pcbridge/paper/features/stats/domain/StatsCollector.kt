@@ -11,6 +11,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import java.time.Duration
 import java.util.UUID
@@ -58,13 +60,16 @@ class StatsCollector(
     }
 
     fun start() {
+        if (job?.isActive == true) return
+
         logSync.info { "Stats collector started" }
 
         job = scope.launch {
-            val running = job?.isActive ?: false
-            while (running) {
+            while (isActive) {
                 val interval = remoteConfig.latest.config.statCollectionIntervalSeconds
+
                 delay(interval.seconds)
+                ensureActive()
                 flush()
             }
         }

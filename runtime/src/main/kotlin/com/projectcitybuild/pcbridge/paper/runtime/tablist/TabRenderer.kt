@@ -24,19 +24,17 @@ class TabRenderer(
 
         val config = remoteConfig.latest.config.tab
 
-        val initialPlaceholders =
-            tabPlaceholders
-                .player
-                .map { it.resolve(player) }
-                .toMutableSet()
+        val initialPlaceholders = tabPlaceholders
+            .player
+            .map { it.resolve(player) }
+            .toMutableSet()
 
-        val name =
-            miniMessage.deserialize(
-                config.player,
-                initialPlaceholders.apply {
-                    add(Placeholder.component("spacer", Component.empty()))
-                },
-            )
+        val name = miniMessage.deserialize(
+            config.player,
+            initialPlaceholders.apply {
+                add(Placeholder.component("spacer", Component.empty()))
+            },
+        )
 
         // Determine how many visible characters are present so that
         // we can provide a <spacer> placeholder to fill available space
@@ -48,18 +46,17 @@ class TabRenderer(
         val spacePixelWidth = 6
         val numSpaces = max(0, totalPaddingWidth / spacePixelWidth)
 
-        val finalizedName =
-            miniMessage.deserialize(
-                config.player,
-                initialPlaceholders.apply {
-                    add(
-                        Placeholder.component(
-                            "spacer",
-                            Component.text(figureSpace.toString().repeat(numSpaces)),
-                        ),
-                    )
-                },
-            )
+        val finalizedName = miniMessage.deserialize(
+            config.player,
+            initialPlaceholders.apply {
+                add(
+                    Placeholder.component(
+                        "spacer",
+                        Component.text(figureSpace.toString().repeat(numSpaces)),
+                    ),
+                )
+            },
+        )
         player.playerListName(finalizedName)
     }
 
