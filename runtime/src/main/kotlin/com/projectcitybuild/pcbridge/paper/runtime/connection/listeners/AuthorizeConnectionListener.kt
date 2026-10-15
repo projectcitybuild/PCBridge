@@ -2,6 +2,7 @@ package com.projectcitybuild.pcbridge.paper.runtime.connection.listeners
 
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.errors.ErrorTracker
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
+import com.projectcitybuild.pcbridge.paper.l10n.l10n
 import com.projectcitybuild.pcbridge.paper.platform.paper.events.SpigotEventBroadcaster
 import com.projectcitybuild.pcbridge.paper.runtime.connection.ConnectionRepository
 import com.projectcitybuild.pcbridge.paper.runtime.connection.connectionTracer
@@ -73,7 +74,7 @@ class AuthorizeConnectionListener(
 
                     event.disallow(
                         AsyncPlayerPreLoginEvent.Result.KICK_OTHER,
-                        Component.text("Unable to authorize your connection. Please try again later.")
+                        l10n.errorUnableToAuthConnection,
                     )
                 }
             }
