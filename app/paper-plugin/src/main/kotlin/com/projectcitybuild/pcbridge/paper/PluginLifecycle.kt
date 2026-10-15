@@ -54,7 +54,7 @@ class PluginLifecycle : KoinComponent {
                 httpServer.stop()
                 store.persist()
 
-                get<SpigotTimer>().cancelAll()
+                get<SpigotTimer>().shutdown()
 
                 get<PaperIntegrationRegistrar>().disable(getKoin().getAll<PaperIntegration>())
 
