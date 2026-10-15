@@ -10,6 +10,8 @@ import com.projectcitybuild.pcbridge.paper.runtime.connection.middleware.Connect
 import com.projectcitybuild.pcbridge.paper.runtime.connection.middleware.ConnectionResult
 import com.projectcitybuild.pcbridge.paper.runtime.listeners.scopedSync
 import kotlinx.coroutines.runBlocking
+import net.kyori.adventure.text.Component
+import org.bukkit.event.Event
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
@@ -69,11 +71,9 @@ class AuthorizeConnectionListener(
                     log.error(it) { "An error occurred while authorizing a connection" }
                     errorTracker.report(it)
 
-                    eventBroadcaster.broadcast(
-                        ConnectionPermittedEvent(
-                            playerData = null,
-                            playerUUID = event.uniqueId,
-                        ),
+                    event.disallow(
+                        AsyncPlayerPreLoginEvent.Result.KICK_OTHER,
+                        Component.text("Unable to authorize your connection. Please try again later.")
                     )
                 }
             }
