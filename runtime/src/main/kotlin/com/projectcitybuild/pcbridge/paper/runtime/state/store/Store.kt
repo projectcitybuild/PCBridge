@@ -34,30 +34,28 @@ class Store(
     /**
      * Restores the state from storage
      */
-    suspend fun hydrate() =
-        tracer.trace("hydrate") {
-            log.info { "Hydrating Store state from storage" }
+    suspend fun hydrate() = tracer.trace("hydrate") {
+        log.info { "Hydrating Store state from storage" }
 
-            val deserialized = fileStorage.read(file)
-            if (deserialized != null) {
-                mutex.withLock { slots = deserialized }
-            } else {
-                log.info { "No persisted data found" }
-            }
+        val deserialized = fileStorage.read(file)
+        if (deserialized != null) {
+            mutex.withLock { slots = deserialized }
+        } else {
+            log.info { "No persisted data found" }
         }
+    }
 
     /**
      * Saves the state to storage
      */
-    fun persist() =
-        tracer.traceSync("persist") {
-            logSync.info { "Persisting Store state to storage" }
+    fun persist() = tracer.traceSync("persist") {
+        logSync.info { "Persisting Store state to storage" }
 
-            fileStorage.writeSync(
-                file = file,
-                data = slots,
-            )
-        }
+        fileStorage.writeSync(
+            file = file,
+            data = slots,
+        )
+    }
 
     /**
      * Reads a feature's own slice of state, or its declared default if it
@@ -75,26 +73,25 @@ class Store(
     suspend fun <T : Any> mutate(
         key: FeatureStateKey<T>,
         mutation: (T) -> T,
-    ): T =
-        withContext(Dispatchers.IO) {
-            tracer.trace("mutate") {
-                mutex.withLock {
-                    val prev = state(key)
-                    val next = mutation(prev)
+    ): T = withContext(Dispatchers.IO) {
+        tracer.trace("mutate") {
+            mutex.withLock {
+                val prev = state(key)
+                val next = mutation(prev)
 
-                    slots = slots + (key.name to gson.toJsonTree(next))
+                slots = slots + (key.name to gson.toJsonTree(next))
 
-                    log.debug(
-                        "Feature state mutated",
-                        mapOf(
-                            "key" to key.name,
-                            "prev" to prev,
-                            "next" to next,
-                        ),
-                    )
+                log.debug(
+                    "Feature state mutated",
+                    mapOf(
+                        "key" to key.name,
+                        "prev" to prev,
+                        "next" to next,
+                    ),
+                )
 
-                    next
-                }
+                next
             }
         }
+    }
 }
