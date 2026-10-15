@@ -8,7 +8,7 @@ repositories {
 }
 
 dependencies {
-    implementation(project(":core:storage"))
+    implementation(project(":core:file-storage"))
 
     // Paper (brings in Gson transitively via compileOnly)
     compileOnly("io.papermc.paper:paper-api:1.21.10-R0.1-SNAPSHOT")

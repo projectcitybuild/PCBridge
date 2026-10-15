@@ -2,7 +2,7 @@ package com.projectcitybuild.pcbridge.webserver.routes
 
 import com.projectcitybuild.pcbridge.http.pcb.models.NamedResource
 import com.projectcitybuild.pcbridge.webserver.WebhookDelegate
-import com.projectcitybuild.pcbridge.webserver.data.SyncWarpsWebhook
+import com.projectcitybuild.pcbridge.webserver.data.WebhookEvent
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
@@ -18,7 +18,7 @@ fun Route.syncWarpRoute(delegate: WebhookDelegate) {
             throw e
         }
         call.application.environment.log.info("Received warp names (count: ${warpNames.size})")
-        delegate.handle(SyncWarpsWebhook(warpNames))
+        delegate.handle(WebhookEvent.SyncWarps(warpNames))
         call.respond(HttpStatusCode.OK)
     }
 }

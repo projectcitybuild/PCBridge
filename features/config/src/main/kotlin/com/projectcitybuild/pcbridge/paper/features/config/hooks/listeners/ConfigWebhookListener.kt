@@ -4,7 +4,7 @@ import com.projectcitybuild.pcbridge.paper.features.config.configTracer
 import com.projectcitybuild.pcbridge.paper.runtime.listeners.scoped
 import com.projectcitybuild.pcbridge.paper.runtime.remoteconfig.RemoteConfig
 import com.projectcitybuild.pcbridge.paper.runtime.webhooks.events.WebhookReceivedEvent
-import com.projectcitybuild.pcbridge.webserver.data.SyncRemoteConfigWebhook
+import com.projectcitybuild.pcbridge.webserver.data.WebhookEvent
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 
@@ -15,7 +15,7 @@ class ConfigWebhookListener(
     suspend fun onConfigUpdated(event: WebhookReceivedEvent) =
         event.scoped(configTracer, this::class.java) {
             val webhook = event.webhook
-            if (webhook !is SyncRemoteConfigWebhook) return@scoped
+            if (webhook !is WebhookEvent.SyncRemoteConfig) return@scoped
 
             remoteConfig.set(webhook.config)
         }

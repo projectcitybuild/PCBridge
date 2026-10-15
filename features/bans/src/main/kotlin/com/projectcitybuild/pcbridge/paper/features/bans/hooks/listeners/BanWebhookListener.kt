@@ -8,8 +8,7 @@ import com.projectcitybuild.pcbridge.paper.platform.paper.extensions.onlinePlaye
 import com.projectcitybuild.pcbridge.paper.platform.paper.utilities.SpigotSanitizer
 import com.projectcitybuild.pcbridge.paper.runtime.listeners.scopedSync
 import com.projectcitybuild.pcbridge.paper.runtime.webhooks.events.WebhookReceivedEvent
-import com.projectcitybuild.pcbridge.webserver.data.IPBanRequestedWebhook
-import com.projectcitybuild.pcbridge.webserver.data.UUIDBanRequestedWebhook
+import com.projectcitybuild.pcbridge.webserver.data.WebhookEvent
 import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.Server
 import org.bukkit.event.EventHandler
@@ -27,7 +26,7 @@ class BanWebhookListener(
     fun onIpBanned(event: WebhookReceivedEvent) =
         event.scopedSync(bansTracer, this::class.java) {
             val webhook = event.webhook
-            if (webhook !is IPBanRequestedWebhook) return@scopedSync
+            if (webhook !is WebhookEvent.IPBanRequested) return@scopedSync
 
             val ban = webhook.ban
             val matchingPlayer =
@@ -54,7 +53,7 @@ class BanWebhookListener(
     fun onUuidBanned(event: WebhookReceivedEvent) =
         event.scopedSync(bansTracer, this::class.java) {
             val webhook = event.webhook
-            if (webhook !is UUIDBanRequestedWebhook) return@scopedSync
+            if (webhook !is WebhookEvent.UUIDBanRequested) return@scopedSync
 
             val ban = webhook.ban
             val bannedPlayer = ban.bannedPlayer

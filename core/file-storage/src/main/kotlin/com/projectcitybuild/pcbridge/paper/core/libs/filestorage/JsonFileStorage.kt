@@ -1,4 +1,4 @@
-package com.projectcitybuild.pcbridge.paper.core.libs.storage
+package com.projectcitybuild.pcbridge.paper.core.libs.filestorage
 
 import com.google.gson.FieldNamingPolicy
 import com.google.gson.GsonBuilder
@@ -6,14 +6,13 @@ import com.google.gson.reflect.TypeToken
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.logSync
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer.gson
 import java.io.File
 import java.io.PrintWriter
 import java.lang.Exception
 
-class JsonStorage<T>(
+class JsonFileStorage<T>(
     private val typeToken: TypeToken<T>,
-) : Storage<T> {
+) : FileStorage<T> {
     private val gson =
         GsonBuilder()
             .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)

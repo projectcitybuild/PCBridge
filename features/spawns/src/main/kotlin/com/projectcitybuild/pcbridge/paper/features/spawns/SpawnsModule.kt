@@ -1,7 +1,7 @@
 package com.projectcitybuild.pcbridge.paper.features.spawns
 
 import com.google.gson.reflect.TypeToken
-import com.projectcitybuild.pcbridge.paper.core.libs.storage.JsonStorage
+import com.projectcitybuild.pcbridge.paper.core.libs.filestorage.JsonFileStorage
 import com.projectcitybuild.pcbridge.paper.features.spawns.domain.data.SerializableSpawn
 import com.projectcitybuild.pcbridge.paper.features.spawns.domain.repositories.SpawnRepository
 import com.projectcitybuild.pcbridge.paper.features.spawns.hooks.commands.HubCommand
@@ -35,8 +35,8 @@ val spawnsModule =
 
         single {
             SpawnRepository(
-                storage =
-                    JsonStorage(
+                fileStorage =
+                    JsonFileStorage(
                         typeToken = object : TypeToken<SerializableSpawn>() {},
                     ),
                 server = get(),

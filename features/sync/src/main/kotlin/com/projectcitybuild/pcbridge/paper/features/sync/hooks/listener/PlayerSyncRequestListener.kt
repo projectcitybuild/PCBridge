@@ -4,7 +4,7 @@ import com.projectcitybuild.pcbridge.paper.runtime.listeners.scoped
 import com.projectcitybuild.pcbridge.paper.runtime.webhooks.events.WebhookReceivedEvent
 import com.projectcitybuild.pcbridge.paper.features.sync.domain.actions.SyncPlayer
 import com.projectcitybuild.pcbridge.paper.features.sync.syncTracer
-import com.projectcitybuild.pcbridge.webserver.data.PlayerSyncRequestedWebhook
+import com.projectcitybuild.pcbridge.webserver.data.WebhookEvent
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 
@@ -16,7 +16,7 @@ class PlayerSyncRequestListener(
         event: WebhookReceivedEvent,
     ) = event.scoped(syncTracer, this::class.java) {
         val webhook = event.webhook
-        if (webhook !is PlayerSyncRequestedWebhook) return@scoped
+        if (webhook !is WebhookEvent.PlayerSyncRequested) return@scoped
 
         syncPlayer.execute(
             playerUUID = webhook.playerUUID,

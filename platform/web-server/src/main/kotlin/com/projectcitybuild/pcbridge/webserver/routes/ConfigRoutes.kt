@@ -2,7 +2,7 @@ package com.projectcitybuild.pcbridge.webserver.routes
 
 import com.projectcitybuild.pcbridge.http.pcb.models.RemoteConfigVersion
 import com.projectcitybuild.pcbridge.webserver.WebhookDelegate
-import com.projectcitybuild.pcbridge.webserver.data.SyncRemoteConfigWebhook
+import com.projectcitybuild.pcbridge.webserver.data.WebhookEvent
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
@@ -18,7 +18,7 @@ fun Route.syncConfigRoute(delegate: WebhookDelegate) {
             throw e
         }
         call.application.environment.log.info("Received config version ${config.version}")
-        delegate.handle(SyncRemoteConfigWebhook(config))
+        delegate.handle(WebhookEvent.SyncRemoteConfig(config))
         call.respond(HttpStatusCode.OK)
     }
 }

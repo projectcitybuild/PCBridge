@@ -1,8 +1,8 @@
-package com.projectcitybuild.pcbridge.paper.core.libs.storage
+package com.projectcitybuild.pcbridge.paper.core.libs.filestorage
 
 import java.io.File
 
-interface Storage<T> {
+interface FileStorage<T> {
     suspend fun read(file: File): T?
 
     suspend fun write(

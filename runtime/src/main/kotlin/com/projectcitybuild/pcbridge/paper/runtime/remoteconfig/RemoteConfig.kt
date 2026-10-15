@@ -5,7 +5,7 @@ import com.projectcitybuild.pcbridge.http.pcb.models.RemoteConfigVersion
 import com.projectcitybuild.pcbridge.http.pcb.services.ConfigHttpService
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.errors.ErrorTracker
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
-import com.projectcitybuild.pcbridge.paper.core.libs.storage.Storage
+import com.projectcitybuild.pcbridge.paper.core.libs.filestorage.FileStorage
 import com.projectcitybuild.pcbridge.paper.platform.paper.events.SpigotEventBroadcaster
 import java.io.File
 
@@ -13,7 +13,7 @@ class RemoteConfig(
     private val configHttpService: ConfigHttpService,
     private val eventBroadcaster: SpigotEventBroadcaster,
     private val file: File,
-    private val storage: Storage<RemoteConfigVersion>,
+    private val fileStorage: FileStorage<RemoteConfigVersion>,
     private val errorTracker: ErrorTracker,
 ) {
     private var cached: RemoteConfigVersion? = null
@@ -63,7 +63,7 @@ class RemoteConfig(
             .getOrNull()
 
     private suspend fun fetchFromCache(): RemoteConfigVersion? =
-        storage.read(file).also {
+        fileStorage.read(file).also {
             if (it == null) {
                 log.warn { "No cached remote config. Falling back to default config..." }
             }
@@ -71,7 +71,7 @@ class RemoteConfig(
 
     private suspend fun persistToCache(config: RemoteConfigVersion) =
         runCatching {
-            storage.write(file, config)
+            fileStorage.write(file, config)
         }.onFailure { e ->
             log.error(e) { "Failed to persist remote config" }
             e.printStackTrace()

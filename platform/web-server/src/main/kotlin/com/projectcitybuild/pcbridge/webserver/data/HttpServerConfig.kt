@@ -1,6 +1,7 @@
 package com.projectcitybuild.pcbridge.webserver.data
 
 data class HttpServerConfig(
-    val authToken: String,
+    val host: String,
     val port: Int,
+    val authToken: String,
 )
