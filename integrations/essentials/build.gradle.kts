@@ -11,7 +11,7 @@ repositories {
 }
 
 dependencies {
-    implementation(project(":core:datetime"))
+    implementation(project(":core:date-time"))
     implementation(project(":core:observability"))
     implementation(project(":platform:paper"))
     implementation(project(":runtime"))

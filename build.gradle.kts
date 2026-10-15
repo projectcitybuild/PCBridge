@@ -44,17 +44,6 @@ subprojects {
         testImplementation("org.mockito:mockito-inline:4.2.0")
     }
 
-    sourceSets {
-        test {
-            java {
-                srcDir("test")
-                resources {
-                    srcDir("test/resources")
-                }
-            }
-        }
-    }
-
     tasks.withType<KotlinCompile> {
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_21)

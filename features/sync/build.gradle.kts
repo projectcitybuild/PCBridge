@@ -3,7 +3,7 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":core:datetime"))
+    implementation(project(":core:date-time"))
     implementation(project(":core:permissions"))
     implementation(project(":platform:paper"))
     implementation(project(":platform:web-server"))

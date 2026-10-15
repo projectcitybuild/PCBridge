@@ -7,7 +7,7 @@ include(
     "core:file-storage",
     "core:local-config",
     "core:discord",
-    "core:datetime",
+    "core:date-time",
     "core:pagination",
     "core:support:component",
     "core:support:java",
