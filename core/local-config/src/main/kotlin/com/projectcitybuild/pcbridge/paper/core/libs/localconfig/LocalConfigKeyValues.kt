@@ -44,8 +44,9 @@ data class LocalConfigKeyValues(
 
     @Serializable
     data class WebServer(
-        val token: String,
+        val host: String,
         val port: Int,
+        val token: String,
     )
 
     @Serializable
@@ -71,7 +72,8 @@ fun LocalConfigKeyValues.Companion.default() =
             ),
         webServer =
             LocalConfigKeyValues.WebServer(
-                token = "pcbridge_local",
+                token = "REPLACE_WITH_A_RANDOM_SECRET",
+                host = "127.0.0.1", // Use 0.0.0.0 to publicly expose
                 port = 8080,
             ),
         observability =

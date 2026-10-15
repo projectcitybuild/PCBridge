@@ -1,7 +1,7 @@
 package com.projectcitybuild.pcbridge.webserver.routes
 
 import com.projectcitybuild.pcbridge.webserver.WebhookDelegate
-import com.projectcitybuild.pcbridge.webserver.data.PlayerSyncRequestedWebhook
+import com.projectcitybuild.pcbridge.webserver.data.WebhookEvent
 import com.projectcitybuild.pcbridge.webserver.data.requests.PlayerSyncRequest
 import com.projectcitybuild.pcbridge.webserver.utils.uuidFromAnyString
 import io.ktor.http.HttpStatusCode
@@ -28,7 +28,7 @@ fun Route.playerSyncRoute(webhookDelegate: WebhookDelegate) {
             return@post
         }
         call.application.environment.log.info("Syncing player: $uuid")
-        webhookDelegate.handle(PlayerSyncRequestedWebhook(uuid))
+        webhookDelegate.handle(WebhookEvent.PlayerSyncRequested(uuid))
         call.respond(HttpStatusCode.OK)
     }
 }

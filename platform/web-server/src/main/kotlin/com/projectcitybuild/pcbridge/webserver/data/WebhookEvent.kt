@@ -7,24 +7,24 @@ import com.projectcitybuild.pcbridge.http.pcb.models.RemoteConfigVersion
 import com.projectcitybuild.pcbridge.http.pcb.models.Warp
 import java.util.UUID
 
-sealed class WebhookEvent
+sealed class WebhookEvent {
+    data class PlayerSyncRequested(
+        val playerUUID: UUID,
+    ): WebhookEvent()
 
-data class PlayerSyncRequestedWebhook(
-    val playerUUID: UUID,
-): WebhookEvent()
+    data class UUIDBanRequested(
+        val ban: PlayerBan,
+    ): WebhookEvent()
 
-data class UUIDBanRequestedWebhook(
-    val ban: PlayerBan,
-): WebhookEvent()
+    data class IPBanRequested(
+        val ban: IPBan,
+    ): WebhookEvent()
 
-data class IPBanRequestedWebhook(
-    val ban: IPBan,
-): WebhookEvent()
+    data class SyncWarps(
+        val warpNames: List<NamedResource>,
+    ): WebhookEvent()
 
-data class SyncWarpsWebhook(
-    val warpNames: List<NamedResource>,
-): WebhookEvent()
-
-data class SyncRemoteConfigWebhook(
-    val config: RemoteConfigVersion,
-): WebhookEvent()
+    data class SyncRemoteConfig(
+        val config: RemoteConfigVersion,
+    ): WebhookEvent()
+}

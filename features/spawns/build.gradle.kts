@@ -5,7 +5,7 @@ plugins {
 dependencies {
     implementation(project(":core:l10n"))
     implementation(project(":core:permissions"))
-    implementation(project(":core:storage"))
+    implementation(project(":core:file-storage"))
     implementation(project(":platform:paper"))
     implementation(project(":runtime"))
 }

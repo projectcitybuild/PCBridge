@@ -5,7 +5,7 @@ import com.google.gson.JsonElement
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.log
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.logSync
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.tracing.TracerFactory
-import com.projectcitybuild.pcbridge.paper.core.libs.storage.Storage
+import com.projectcitybuild.pcbridge.paper.core.libs.filestorage.FileStorage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -23,7 +23,7 @@ import java.io.File
  */
 class Store(
     private val file: File,
-    private val storage: Storage<Map<String, JsonElement>>,
+    private val fileStorage: FileStorage<Map<String, JsonElement>>,
 ) {
     private val tracer = TracerFactory.make("store")
     private val mutex = Mutex()
@@ -38,7 +38,7 @@ class Store(
         tracer.trace("hydrate") {
             log.info { "Hydrating Store state from storage" }
 
-            val deserialized = storage.read(file)
+            val deserialized = fileStorage.read(file)
             if (deserialized != null) {
                 mutex.withLock { slots = deserialized }
             } else {
@@ -53,7 +53,7 @@ class Store(
         tracer.traceSync("persist") {
             logSync.info { "Persisting Store state to storage" }
 
-            storage.writeSync(
+            fileStorage.writeSync(
                 file = file,
                 data = slots,
             )

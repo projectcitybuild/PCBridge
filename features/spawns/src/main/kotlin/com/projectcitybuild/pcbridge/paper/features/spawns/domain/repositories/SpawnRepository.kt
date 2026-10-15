@@ -1,6 +1,6 @@
 package com.projectcitybuild.pcbridge.paper.features.spawns.domain.repositories
 
-import com.projectcitybuild.pcbridge.paper.core.libs.storage.Storage
+import com.projectcitybuild.pcbridge.paper.core.libs.filestorage.FileStorage
 import com.projectcitybuild.pcbridge.paper.features.spawns.domain.data.SerializableSpawn
 import com.projectcitybuild.pcbridge.paper.features.spawns.spawnsTracer
 import kotlinx.coroutines.coroutineScope
@@ -12,7 +12,7 @@ import java.util.UUID
 
 class SpawnRepository(
     private val server: Server,
-    private val storage: Storage<SerializableSpawn>,
+    private val fileStorage: FileStorage<SerializableSpawn>,
 ) {
     private val cache: MutableMap<UUID, Location> = mutableMapOf()
 
@@ -22,7 +22,7 @@ class SpawnRepository(
             if (cached != null) {
                 return@trace cached
             }
-            val serialized = storage.read(world.spawnMetaFile())
+            val serialized = fileStorage.read(world.spawnMetaFile())
             if (serialized != null) {
                 val location = serialized.toLocation(world)
                 cache[world.uid] = location
@@ -41,7 +41,7 @@ class SpawnRepository(
             // Minecraft API does not save yaw and pitch, so we unfortunately need to
             // handle this ourselves. We'll store the data in a folder nested inside the
             // world's folder to keep it synced (i.e. make clean up unnecessary)
-            storage.write(
+            fileStorage.write(
                 file = world.spawnMetaFile(),
                 data = SerializableSpawn.fromLocation(location),
             )

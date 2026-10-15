@@ -35,15 +35,21 @@ class HttpServer(
         get() = LoggerFactory.getLogger("com.projectcitybuild.pcbridge.webserver")
 
     fun start() {
-        if (config.authToken.isEmpty()) {
-            log.warn("Internal web server token not set in config. Web server will not be started")
-            return
+        require(config.authToken.isNotBlank()) {
+            "Webhook authentication token must be configured"
+        }
+        require(config.authToken != "REPLACE_WITH_A_RANDOM_SECRET") {
+            "The default webhook token must not be used"
         }
 
-        log.info("Starting web server on port ${config.port}")
+        log.info("Starting web server at ${config.host}:${config.port}")
+
+        if (config.host == "127.0.0.1") {
+            log.info("Web server will only be accessible locally")
+        }
 
         server?.stop(gracePeriodMillis = 0, timeoutMillis = 0)
-        server = embeddedServer(Netty, port = config.port) {
+        server = embeddedServer(Netty, port = config.port, host = config.host) {
             configureLogging()
             configureContentNegotiation()
             configureAuthentication(authToken = config.authToken)

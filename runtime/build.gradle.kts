@@ -12,7 +12,7 @@ dependencies {
     api(project(":core:pcbridge-api"))
     implementation(project(":core:observability"))
     implementation(project(":core:datetime"))
-    implementation(project(":core:storage"))
+    implementation(project(":core:file-storage"))
     implementation(project(":core:utils"))
     implementation(project(":core:permissions"))
     implementation(project(":core:support:java"))

@@ -18,7 +18,8 @@ import com.projectcitybuild.pcbridge.paper.core.libs.observability.errors.ErrorT
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.errors.SentryProvider
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.logging.logSync
 import com.projectcitybuild.pcbridge.paper.core.libs.observability.tracing.OpenTelemetryProvider
-import com.projectcitybuild.pcbridge.paper.core.libs.storage.JsonStorage
+import com.projectcitybuild.pcbridge.paper.core.libs.filestorage.JsonFileStorage
+import com.projectcitybuild.pcbridge.paper.core.libs.localconfig.LocalConfigBacking
 import com.projectcitybuild.pcbridge.paper.core.utils.PeriodicRunner
 import com.projectcitybuild.pcbridge.paper.features.announcements.announcementsModule
 import com.projectcitybuild.pcbridge.paper.features.bans.bansModule
@@ -69,6 +70,7 @@ import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 import org.koin.dsl.onClose
+import java.io.File
 import java.time.Clock
 import java.time.ZoneId
 import java.util.Locale
@@ -145,8 +147,8 @@ private fun Module.platform(plugin: JavaPlugin) {
 
 private fun Module.core() {
     single {
-        val storage =
-            JsonStorage(
+        val fileStorage =
+            JsonFileStorage(
                 typeToken = object : TypeToken<LocalConfigKeyValues>() {},
             )
         val file =
@@ -154,11 +156,14 @@ private fun Module.core() {
                 .dataFolder
                 .resolve("config.json")
         if (!file.exists()) {
-            storage.writeSync(file, LocalConfigKeyValues.default())
+            fileStorage.writeSync(file, LocalConfigKeyValues.default())
         }
         LocalConfig(
             file = file,
-            storage = storage,
+            fileStorage = object : LocalConfigBacking<LocalConfigKeyValues> {
+                override fun readSync(file: File): LocalConfigKeyValues?
+                    = fileStorage.readSync(file)
+            },
         )
     }
 
@@ -213,8 +218,8 @@ private fun Module.core() {
                 get<JavaPlugin>()
                     .dataFolder
                     .resolve("cache/server_state.json"),
-            storage =
-                JsonStorage(
+            fileStorage =
+                JsonFileStorage(
                     typeToken = object : TypeToken<Map<String, JsonElement>>() {},
                 ),
         )
@@ -230,8 +235,8 @@ private fun Module.core() {
                 get<JavaPlugin>()
                     .dataFolder
                     .resolve("cache/remote_config.json"),
-            storage =
-                JsonStorage(
+            fileStorage =
+                JsonFileStorage(
                     typeToken = object : TypeToken<RemoteConfigVersion>() {},
                 ),
             errorTracker = get(),
@@ -268,6 +273,7 @@ private fun Module.webServer() {
             config =
                 HttpServerConfig(
                     authToken = localConfig.webServer.token,
+                    host = localConfig.webServer.host,
                     port = localConfig.webServer.port,
                 ),
             webhookDelegate =
