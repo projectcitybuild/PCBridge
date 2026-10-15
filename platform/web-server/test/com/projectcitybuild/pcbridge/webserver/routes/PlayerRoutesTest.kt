@@ -1,7 +1,7 @@
 package com.projectcitybuild.pcbridge.webserver.routes
 
 import com.projectcitybuild.pcbridge.webserver.WebhookDelegate
-import com.projectcitybuild.pcbridge.webserver.data.PlayerSyncRequestedWebhook
+import com.projectcitybuild.pcbridge.webserver.data.WebhookEvent
 import com.projectcitybuild.pcbridge.webserver.testEnvironment
 import io.ktor.client.request.bearerAuth
 import io.ktor.client.request.post
@@ -49,7 +49,7 @@ class PlayerRoutesTest {
         }
         assertEquals(HttpStatusCode.OK, response.status)
 
-        val expectedEvent = PlayerSyncRequestedWebhook(
+        val expectedEvent = WebhookEvent.PlayerSyncRequested(
             playerUUID = UUID.fromString("069a79f4-44e9-4726-a5be-fca90e38aaf5"),
         )
         verify(webhookDelegate).handle(expectedEvent)

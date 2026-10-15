@@ -2,7 +2,7 @@ package com.projectcitybuild.pcbridge.paper.runtime.webhooks
 
 import com.projectcitybuild.pcbridge.paper.platform.paper.events.SpigotEventBroadcaster
 import com.projectcitybuild.pcbridge.paper.runtime.webhooks.events.WebhookReceivedEvent
-import com.projectcitybuild.pcbridge.webserver.data.PlayerSyncRequestedWebhook
+import com.projectcitybuild.pcbridge.webserver.data.WebhookEvent
 import kotlinx.coroutines.test.runTest
 import org.bukkit.event.Event
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -20,7 +20,7 @@ class WebServerDelegateTest {
             val eventBroadcaster = mock(SpigotEventBroadcaster::class.java)
             val delegate = WebServerDelegate(eventBroadcaster)
 
-            val event = PlayerSyncRequestedWebhook(playerUUID = UUID.randomUUID())
+            val event = WebhookEvent.PlayerSyncRequested(playerUUID = UUID.randomUUID())
             delegate.handle(event)
 
             argumentCaptor<Event>().apply {
