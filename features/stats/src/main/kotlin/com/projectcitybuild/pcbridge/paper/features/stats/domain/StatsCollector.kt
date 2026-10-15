@@ -60,6 +60,8 @@ class StatsCollector(
     }
 
     fun start() {
+        if (job?.isActive == true) return
+
         logSync.info { "Stats collector started" }
 
         job = scope.launch {

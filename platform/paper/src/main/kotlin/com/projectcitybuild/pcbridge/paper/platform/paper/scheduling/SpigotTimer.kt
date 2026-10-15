@@ -2,6 +2,7 @@
 package com.projectcitybuild.pcbridge.paper.platform.paper.scheduling
 
 import com.github.shynixn.mccoroutine.bukkit.asyncDispatcher
+import com.projectcitybuild.pcbridge.paper.core.libs.observability.errors.ErrorTracker
 import com.projectcitybuild.pcbridge.paper.core.utils.Cancellable
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
@@ -19,6 +20,7 @@ import kotlinx.coroutines.currentCoroutineContext
 
 class SpigotTimer(
     plugin: JavaPlugin,
+    private val errorTracker: ErrorTracker,
 ) {
     private val lock = Any()
     private val tasks = mutableMapOf<String, Job>()
@@ -68,7 +70,13 @@ class SpigotTimer(
                 delay(delay.inWholeMilliseconds)
             }
             while (currentCoroutineContext().isActive) {
-                work()
+                try {
+                    work()
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (e: Exception) {
+                    errorTracker.report(e)
+                }
                 delay(repeatingInterval.inWholeMilliseconds)
             }
         }
