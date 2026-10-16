@@ -9,5 +9,5 @@ class LocalizedTime(
 ) {
     fun now(): LocalDateTime = LocalDateTime.now(clock)
 
-    fun nowInstant() = Instant.now(clock)
+    fun nowInstant(): Instant = Instant.now(clock)
 }
