@@ -7,4 +7,6 @@ dependencies {
     implementation(project(":core:local-config"))
     implementation(project(":core:observability"))
     implementation(project(":core:utils"))
+
+    testImplementation(project(":core:test-support"))
 }

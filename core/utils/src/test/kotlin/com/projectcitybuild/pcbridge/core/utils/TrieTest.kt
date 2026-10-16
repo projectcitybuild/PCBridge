@@ -7,11 +7,10 @@ import org.junit.jupiter.api.Test
 class TrieTest {
     @Test
     fun `inserts and finds exact match`() {
-        val trie =
-            Trie().apply {
-                insert("test")
-                insert("foo bar")
-            }
+        val trie = Trie().apply {
+            insert("test")
+            insert("foo bar")
+        }
         assertTrue(trie.containsExact("test"))
         assertFalse(trie.containsExact("tes"))
         assertFalse(trie.containsExact("testing"))
@@ -24,24 +23,22 @@ class TrieTest {
 
     @Test
     fun `can insert word with same prefix as another`() {
-        val trie =
-            Trie().apply {
-                insert("testing")
-                insert("test")
-            }
+        val trie = Trie().apply {
+            insert("testing")
+            insert("test")
+        }
         assertTrue(trie.containsExact("testing"))
         assertTrue(trie.containsExact("test"))
     }
 
     @Test
     fun `inserts and returns prefix matches`() {
-        val trie =
-            Trie().apply {
-                insert("test")
-                insert("testing")
-                insert("tester")
-                insert("foo")
-            }
+        val trie = Trie().apply {
+            insert("test")
+            insert("testing")
+            insert("tester")
+            insert("foo")
+        }
         assertListsEquivalent(
             trie.matchingPrefix("t"),
             listOf(
@@ -88,11 +85,10 @@ class TrieTest {
 
     @Test
     fun `deletes a word without affecting related words`() {
-        val trie =
-            Trie().apply {
-                insert("test")
-                insert("testing")
-            }
+        val trie = Trie().apply {
+            insert("test")
+            insert("testing")
+        }
 
         assertTrue(trie.containsExact("test"))
         assertTrue(trie.containsExact("testing"))
