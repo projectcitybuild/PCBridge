@@ -1,6 +1,7 @@
 plugins {
     id("com.github.johnrengelman.shadow") version "8.1.1"
     id("xyz.jpenilla.run-paper") version "3.0.2"
+    id("pcbridge.paper-conventions")
 }
 
 repositories {
@@ -14,10 +15,6 @@ repositories {
     maven {
         name = "essentialsx-releases"
         url = uri("https://repo.essentialsx.net/releases/")
-    }
-    maven {
-        name = "papermc"
-        url = uri("https://repo.papermc.io/repository/maven-public/")
     }
 }
 
@@ -45,9 +42,6 @@ dependencies {
     // Runtime
     implementation(project(":runtime"))
 
-    // Paper
-    compileOnly("io.papermc.paper:paper-api:1.21.10-R0.1-SNAPSHOT")
-    testImplementation("io.papermc.paper:paper-api:1.21.10-R0.1-SNAPSHOT")
     testImplementation(project(":core:test-support"))
 
     // Integrations

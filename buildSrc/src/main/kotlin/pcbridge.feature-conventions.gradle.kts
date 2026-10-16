@@ -1,7 +1,6 @@
 /**
  * Shared conventions for `features:*` subprojects: common repositories, the
- * baseline runtime libraries every feature needs, and the Paper API as a
- * compile-only dependency.
+ * baseline runtime libraries every feature needs.
  *
  * Applied via `plugins { id("pcbridge.feature-conventions") }` in each
  * feature's build.gradle.kts. Project-specific dependencies (which
@@ -9,12 +8,12 @@
  * given feature needs) are declared explicitly in that feature's own
  * `dependencies {}` block, not here.
  */
+plugins {
+    id("pcbridge.paper-conventions")
+}
+
 repositories {
     mavenCentral()
-    maven {
-        name = "papermc"
-        url = uri("https://repo.papermc.io/repository/maven-public/")
-    }
 }
 
 dependencies {
@@ -24,5 +23,4 @@ dependencies {
     add("implementation", "io.insert-koin:koin-core:3.5.6")
     add("implementation", "io.github.reactivecircus.cache4k:cache4k:0.13.0")
     add("implementation", "io.github.petertrr:kotlin-multiplatform-diff:0.7.0")
-    add("compileOnly", "io.papermc.paper:paper-api:1.21.10-R0.1-SNAPSHOT")
 }
