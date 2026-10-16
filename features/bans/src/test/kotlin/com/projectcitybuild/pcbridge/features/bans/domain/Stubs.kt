@@ -1,4 +1,4 @@
-package com.projectcitybuild.pcbridge.app.paperplugin
+package com.projectcitybuild.pcbridge.features.bans.domain
 
 import com.projectcitybuild.pcbridge.core.pcbridgeapi.pcb.models.IPBan
 import com.projectcitybuild.pcbridge.core.pcbridgeapi.pcb.models.PlayerBan
@@ -9,7 +9,7 @@ class Stubs private constructor() {
     companion object {
         fun playerBan() =
             PlayerBan(
-                id = Random.nextInt(),
+                id = Random.Default.nextInt(),
                 bannedPlayerAlias = "alias",
                 createdAt = LocalDateTime.now(),
                 updatedAt = LocalDateTime.now(),
@@ -17,9 +17,9 @@ class Stubs private constructor() {
 
         fun ipBan() =
             IPBan(
-                id = Random.nextInt(),
+                id = Random.Default.nextInt(),
                 ipAddress = "192.168.0.1",
-                bannerPlayerId = Random.nextInt(),
+                bannerPlayerId = Random.Default.nextInt(),
                 createdAt = LocalDateTime.now(),
                 updatedAt = LocalDateTime.now(),
             )

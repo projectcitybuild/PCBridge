@@ -41,7 +41,7 @@ subprojects {
         testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.2")
         testRuntimeOnly("org.junit.platform:junit-platform-launcher")
         testImplementation("org.mockito.kotlin:mockito-kotlin:5.0.0")
-        testImplementation("org.mockito:mockito-inline:4.2.0")
+        testImplementation("org.mockito:mockito-core:5.24.0")
     }
 
     tasks.withType<KotlinCompile> {

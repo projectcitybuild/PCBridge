@@ -2,7 +2,7 @@ package com.projectcitybuild.pcbridge.features.bans.domain.actions
 
 import com.projectcitybuild.pcbridge.core.pcbridgeapi.pcb.models.Authorization
 import com.projectcitybuild.pcbridge.core.pcbridgeapi.pcb.models.Bans
-import com.projectcitybuild.pcbridge.Stubs
+import com.projectcitybuild.pcbridge.features.bans.domain.Stubs
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull

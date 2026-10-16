@@ -18,6 +18,4 @@ dependencies {
 
     implementation("com.github.shynixn.mccoroutine:mccoroutine-bukkit-api:2.15.0")
     implementation("com.github.shynixn.mccoroutine:mccoroutine-bukkit-core:2.15.0")
-
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.2")
 }
