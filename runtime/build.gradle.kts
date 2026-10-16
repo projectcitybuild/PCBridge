@@ -11,7 +11,7 @@ dependencies {
     implementation(project(":core:http"))
     api(project(":core:pcbridge-api"))
     implementation(project(":core:observability"))
-    implementation(project(":core:datetime"))
+    implementation(project(":core:date-time"))
     implementation(project(":core:file-storage"))
     implementation(project(":core:l10n"))
     implementation(project(":core:utils"))

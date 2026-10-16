@@ -32,7 +32,7 @@ dependencies {
     implementation(project(":core:file-storage"))
     implementation(project(":core:local-config"))
     implementation(project(":core:discord"))
-    implementation(project(":core:datetime"))
+    implementation(project(":core:date-time"))
     implementation(project(":core:pagination"))
     implementation(project(":core:support:component"))
     implementation(project(":core:support:java"))

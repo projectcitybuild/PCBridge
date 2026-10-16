@@ -3,6 +3,6 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":core:datetime"))
+    implementation(project(":core:date-time"))
     implementation(project(":runtime"))
 }

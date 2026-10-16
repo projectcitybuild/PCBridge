@@ -1,0 +1,41 @@
+package com.projectcitybuild.pcbridge.core.pcbridgeapi.pcb.services
+
+import com.projectcitybuild.pcbridge.core.http.parsing.ResponseParser
+import com.projectcitybuild.pcbridge.core.pcbridgeapi.pcb.requests.pcb
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import retrofit2.Retrofit
+import java.util.UUID
+
+class OpElevateHttpService(
+    private val retrofit: Retrofit,
+    private val responseParser: ResponseParser,
+) {
+    suspend fun grant(playerUUID: UUID, reason: String) = withContext(Dispatchers.IO) {
+        responseParser.parse {
+            retrofit.pcb().opGrant(playerUUID.toString(), reason)
+        }
+    }
+
+    suspend fun revoke(playerUUID: UUID) = withContext(Dispatchers.IO) {
+        responseParser.parse {
+            retrofit.pcb().opRevoke(playerUUID.toString())
+        }
+    }
+
+    suspend fun audit(
+        command: String,
+        actor: String,
+        ip: String,
+        meta: String?,
+    ) = withContext(Dispatchers.IO) {
+        responseParser.parse {
+            retrofit.pcb().auditCommandOp(
+                command = command,
+                actor = actor,
+                ip = ip,
+                meta = meta,
+            )
+        }
+    }
+}

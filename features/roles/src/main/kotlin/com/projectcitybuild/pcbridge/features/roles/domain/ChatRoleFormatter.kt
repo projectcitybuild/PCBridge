@@ -1,0 +1,36 @@
+package com.projectcitybuild.pcbridge.features.roles.domain
+
+import com.projectcitybuild.pcbridge.core.pcbridgeapi.pcb.models.Role
+import com.projectcitybuild.pcbridge.features.roles.domain.data.RoleType
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.event.HoverEvent
+import net.kyori.adventure.text.minimessage.MiniMessage
+
+class ChatRoleFormatter(
+    private val rolesFilter: RolesFilter,
+) {
+    fun format(roleSet: Set<Role>): Component? {
+        val roles = rolesFilter.filter(roleSet)
+        if (roles.isEmpty()) {
+            return null
+        }
+        return Component.text().run {
+            roles[RoleType.DONOR]?.let { append(it::component) }
+            roles[RoleType.STAFF]?.let { append(it::component) }
+            roles[RoleType.TRUST]?.let { append(it::component) }
+            roles[RoleType.BUILD]?.let { append(it::component) }
+            build()
+        }
+    }
+}
+
+private fun Role.component() = MiniMessage.miniMessage()
+    .deserialize(displayName ?: name)
+    .also {
+        if (hoverText.isNullOrEmpty()) {
+            return it
+        }
+        return it.hoverEvent(
+            HoverEvent.showText(Component.text(hoverText!!)),
+        )
+    }
