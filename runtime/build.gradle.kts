@@ -1,10 +1,9 @@
+plugins {
+    id("pcbridge.paper-conventions")
+}
+
 repositories {
     mavenCentral()
-
-    maven {
-        name = "papermc"
-        url = uri("https://repo.papermc.io/repository/maven-public/")
-    }
 }
 
 dependencies {
@@ -21,8 +20,6 @@ dependencies {
     implementation(project(":platform:paper"))
     implementation(project(":platform:web-server"))
 
-    compileOnly("io.papermc.paper:paper-api:1.21.10-R0.1-SNAPSHOT")
-    testImplementation("io.papermc.paper:paper-api:1.21.10-R0.1-SNAPSHOT")
     testImplementation(project(":core:test-support"))
 
     implementation("io.opentelemetry:opentelemetry-extension-kotlin:1.43.0")
