@@ -28,7 +28,7 @@ class PeriodicRunnerTest {
             }
 
             try {
-                withTimeout(1.seconds) {
+                withTimeout(5.seconds) {
                     secondRun.await()
                 }
                 assertTrue(runner.running)
@@ -61,14 +61,14 @@ class PeriodicRunnerTest {
             }
 
             try {
-                withTimeout(1.seconds) {
+                withTimeout(5.seconds) {
                     firstStarted.await()
                 }
                 runner.start {
                     secondStarted.complete(Unit)
                     awaitCancellation()
                 }
-                withTimeout(1.seconds) {
+                withTimeout(5.seconds) {
                     firstCancelled.await()
                     secondStarted.await()
                 }

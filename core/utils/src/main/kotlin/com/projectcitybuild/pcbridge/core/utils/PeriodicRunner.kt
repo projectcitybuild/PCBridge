@@ -3,6 +3,7 @@ package com.projectcitybuild.pcbridge.core.utils
 import com.projectcitybuild.pcbridge.core.observability.logging.log
 import com.projectcitybuild.pcbridge.core.observability.logging.logSync
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
@@ -30,10 +31,11 @@ class PeriodicRunner(
         logSync.debug { "Starting job queue (id: $uuid)" }
 
         job?.cancel()
-        job =
-            scope.launch {
-                process(uuid)
-            }
+        val newJob = scope.launch(start = CoroutineStart.LAZY) {
+            process(uuid)
+        }
+        job = newJob
+        newJob.start()
     }
 
     fun stop() {
