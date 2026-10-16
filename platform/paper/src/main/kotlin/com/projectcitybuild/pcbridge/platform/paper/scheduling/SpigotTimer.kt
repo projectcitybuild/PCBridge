@@ -3,6 +3,7 @@ package com.projectcitybuild.pcbridge.platform.paper.scheduling
 import com.github.shynixn.mccoroutine.bukkit.asyncDispatcher
 import com.projectcitybuild.pcbridge.core.utils.Cancellable
 import com.projectcitybuild.pcbridge.core.observability.errors.ErrorTracker
+import com.projectcitybuild.pcbridge.core.observability.logging.log
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
@@ -77,6 +78,7 @@ class SpigotTimer(
                     throw e
                 } catch (e: Exception) {
                     errorTracker.report(e)
+                    log.e("Error occurred in repeating task '$identifier'", e)
                 }
                 delay(repeatingInterval.inWholeMilliseconds)
             }
