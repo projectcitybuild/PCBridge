@@ -7,6 +7,8 @@ import com.projectcitybuild.pcbridge.features.pim.domain.services.OpElevationSer
 import com.projectcitybuild.pcbridge.features.pim.hooks.dialogs.ConfirmOpElevateDialog
 import com.projectcitybuild.pcbridge.features.pim.pimTracer
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
+import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
+import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
 import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandContext
 import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandNode
@@ -21,13 +23,14 @@ class OpGrantCommand(
     private val plugin: Plugin,
     private val opElevationService: OpElevationService,
     private val localizedTime: LocalizedTime,
+    private val commandTaskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
     internal var confirmationDialog: () -> DialogLike = ConfirmOpElevateDialog::build
 
     override fun literal(): PaperCommandNode {
         return Commands.literal("grant")
             .requiresPermission(PermissionNode.PIM_OP)
-            .executesSuspending(plugin, ::execute)
+            .executesSuspending(commandTaskExecutor, ::execute)
             .build()
     }
 

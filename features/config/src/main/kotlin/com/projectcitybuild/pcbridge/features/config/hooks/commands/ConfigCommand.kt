@@ -3,6 +3,8 @@ package com.projectcitybuild.pcbridge.features.config.hooks.commands
 import com.projectcitybuild.pcbridge.core.permissions.PermissionNode
 import com.projectcitybuild.pcbridge.features.config.configTracer
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
+import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
+import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
 import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandContext
 import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandNode
@@ -15,6 +17,7 @@ import org.bukkit.plugin.Plugin
 class ConfigCommand(
     private val plugin: Plugin,
     private val remoteConfig: RemoteConfig,
+    private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
     override fun literal(): PaperCommandNode {
         return Commands.literal("config")
@@ -22,12 +25,12 @@ class ConfigCommand(
             .then(
                 Commands.literal("reload")
                     .requiresPermission(PermissionNode.REMOTE_CONFIG_RELOAD)
-                    .executesSuspending(plugin, ::execute),
+                    .executesSuspending(taskExecutor, ::execute),
             )
             .build()
     }
 
-    internal suspend fun execute(context: PaperCommandContext) =
+    private suspend fun execute(context: PaperCommandContext) =
         context.scoped(configTracer) {
             val sender = context.source.sender
 

@@ -6,6 +6,8 @@ import com.projectcitybuild.pcbridge.features.homes.domain.repositories.HomeRepo
 import com.projectcitybuild.pcbridge.features.homes.homesTracer
 import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
+import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
+import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandContext
 import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandNode
 import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.extensions.executesSuspending
@@ -20,13 +22,14 @@ class HomeListCommand(
     private val plugin: Plugin,
     private val homeRepository: HomeRepository,
     private val remoteConfig: RemoteConfig,
+    private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
     override fun literal(): PaperCommandNode {
         return Commands.literal("list")
-            .executesSuspending(plugin, ::execute)
+            .executesSuspending(taskExecutor, ::execute)
             .then(
                 Commands.argument("page", IntegerArgumentType.integer())
-                    .executesSuspending(plugin, ::execute),
+                    .executesSuspending(taskExecutor, ::execute),
             )
             .build()
     }

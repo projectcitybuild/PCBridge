@@ -1,10 +1,15 @@
 package com.projectcitybuild.pcbridge.features.randomteleport.hooks.commands
 
+import com.mojang.brigadier.CommandDispatcher
 import com.projectcitybuild.pcbridge.core.l10n.l10n
+import com.projectcitybuild.pcbridge.core.permissions.PermissionNode
 import com.projectcitybuild.pcbridge.features.randomteleport.domain.actions.FindRandomLocation
-import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandContext
+import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
+import com.projectcitybuild.pcbridge.platform.paper.commands.CoroutineScopeCommandTaskExecutor
 import com.projectcitybuild.pcbridge.runtime.cooldowns.Cooldown
 import io.papermc.paper.command.brigadier.CommandSourceStack
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.bukkit.Location
 import org.bukkit.entity.Player
@@ -17,18 +22,18 @@ import kotlin.time.Duration.Companion.seconds
 
 class RtpCommandTest {
     private val player = mock(Player::class.java)
-    private val context = mock(PaperCommandContext::class.java)
     private val cooldown = mock(Cooldown::class.java)
     private val locationFinder = mock(FindRandomLocation::class.java)
-    private val command = RtpCommand(mock(Plugin::class.java), cooldown, locationFinder)
 
     @Test
     fun `reports failure after searching when no safe location is found`() =
         runTest {
-            setUpPlayerContext()
+            val source = setUpPlayerSource()
             whenever(locationFinder.teleport(player, attempts = 5)).thenReturn(null)
+            val command = command(this)
 
-            command.execute(context)
+            execute(command, "rtp", source)
+            advanceUntilIdle()
 
             verify(cooldown).throttle(5.seconds, player, "rtp")
             verify(locationFinder).teleport(player, attempts = 5)
@@ -39,20 +44,41 @@ class RtpCommandTest {
     @Test
     fun `reports destination coordinates after successful teleport`() =
         runTest {
-            setUpPlayerContext()
+            val source = setUpPlayerSource()
             whenever(locationFinder.teleport(player, attempts = 5))
                 .thenReturn(Location(null, 12.9, 65.8, -4.2))
+            val command = command(this)
 
-            command.execute(context)
+            execute(command, "rtp", source)
+            advanceUntilIdle()
 
             verify(player).sendMessage(l10n.teleportedToCoordinate(12, 65, -4))
         }
 
-    private fun setUpPlayerContext() {
+    private fun command(scope: CoroutineScope) =
+        RtpCommand(
+            mock(Plugin::class.java),
+            cooldown,
+            locationFinder,
+            CoroutineScopeCommandTaskExecutor(scope),
+        )
+
+    private fun setUpPlayerSource(): CommandSourceStack {
         val source = mock(CommandSourceStack::class.java)
-        whenever(context.source).thenReturn(source)
-        whenever(context.input).thenReturn("/rtp")
         whenever(source.sender).thenReturn(player)
+        whenever(player.hasPermission(PermissionNode.TELEPORT_RANDOM.node))
+            .thenReturn(true)
         whenever(player.name).thenReturn("player")
+        return source
+    }
+
+    private fun execute(
+        command: BrigadierCommand,
+        input: String,
+        source: CommandSourceStack,
+    ) {
+        val dispatcher = CommandDispatcher<CommandSourceStack>()
+        dispatcher.root.addChild(command.literal())
+        dispatcher.execute(input, source)
     }
 }

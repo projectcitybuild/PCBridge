@@ -3,6 +3,8 @@ package com.projectcitybuild.pcbridge.features.homes.hooks.commands.homes
 import com.projectcitybuild.pcbridge.features.homes.domain.repositories.HomeRepository
 import com.projectcitybuild.pcbridge.features.homes.homesTracer
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
+import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
+import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandContext
 import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandNode
 import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.extensions.executesSuspending
@@ -14,10 +16,11 @@ import org.bukkit.plugin.Plugin
 class HomeLimitCommand(
     private val plugin: Plugin,
     private val homeRepository: HomeRepository,
+    private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
     override fun literal(): PaperCommandNode {
         return Commands.literal("limit")
-            .executesSuspending(plugin, ::execute)
+            .executesSuspending(taskExecutor, ::execute)
             .build()
     }
 

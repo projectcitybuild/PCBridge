@@ -4,6 +4,8 @@ import com.projectcitybuild.pcbridge.core.permissions.PermissionNode
 import com.projectcitybuild.pcbridge.features.building.buildingTracer
 import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
+import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
+import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
 import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandContext
 import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandNode
@@ -19,6 +21,7 @@ import org.bukkit.potion.PotionEffectType
 
 class NightVisionCommand(
     private val plugin: Plugin,
+    private val commandTaskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
     internal var hasNightVision: (Player) -> Boolean = {
         it.hasPotionEffect(PotionEffectType.NIGHT_VISION)
@@ -37,13 +40,13 @@ class NightVisionCommand(
             .requiresPermission(PermissionNode.BUILDING_NIGHT_VISION)
             .then(
                 Commands.argument("enabled", OnOffArgument())
-                    .executesSuspending(plugin, ::execute),
+                    .executesSuspending(commandTaskExecutor, ::execute),
             )
-            .executesSuspending(plugin, ::execute)
+            .executesSuspending(commandTaskExecutor, ::execute)
             .build()
     }
 
-    internal suspend fun execute(context: PaperCommandContext) =
+    private suspend fun execute(context: PaperCommandContext) =
         context.scoped(buildingTracer) {
             val player = context.source.requirePlayer()
 

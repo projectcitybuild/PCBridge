@@ -6,6 +6,8 @@ import com.projectcitybuild.pcbridge.runtime.chat.decorators.ChatDecoratorChain
 import com.projectcitybuild.pcbridge.runtime.chat.decorators.ChatMessage
 import com.projectcitybuild.pcbridge.runtime.remoteconfig.RemoteConfig
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
+import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
+import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
 import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.extensions.requirePlayer
@@ -25,13 +27,14 @@ class StaffChatCommand(
     private val server: Server,
     private val remoteConfig: RemoteConfig,
     private val decorators: ChatDecoratorChain,
+    private val commandTaskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
     override fun literal(): PaperCommandNode {
         return Commands.literal("a")
             .requiresPermission(PermissionNode.STAFF_CHANNEL)
             .then(
                 Commands.argument("message", StringArgumentType.greedyString())
-                    .executesSuspending(plugin, ::execute)
+                    .executesSuspending(commandTaskExecutor, ::execute)
             )
             .build()
     }

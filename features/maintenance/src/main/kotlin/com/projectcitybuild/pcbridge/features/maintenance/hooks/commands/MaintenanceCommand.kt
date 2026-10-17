@@ -6,6 +6,8 @@ import com.projectcitybuild.pcbridge.features.maintenance.domain.data.Maintenanc
 import com.projectcitybuild.pcbridge.features.maintenance.domain.data.maintenanceStateKey
 import com.projectcitybuild.pcbridge.features.maintenance.maintenanceTracer
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
+import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
+import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
 import com.projectcitybuild.pcbridge.platform.paper.events.SpigotEventBroadcaster
 import com.projectcitybuild.pcbridge.platform.paper.extensions.broadcastRich
@@ -24,19 +26,20 @@ class MaintenanceCommand(
     private val server: Server,
     private val store: Store,
     private val eventBroadcaster: SpigotEventBroadcaster,
+    private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
     override fun literal(): PaperCommandNode {
         return Commands.literal("maintenance")
             .requiresPermission(PermissionNode.MAINTENANCE_MANAGE)
             .then(
                 Commands.argument("enabled", OnOffArgument())
-                    .executesSuspending(plugin, ::toggle),
+                    .executesSuspending(taskExecutor, ::toggle),
             )
-            .executesSuspending(plugin, ::status)
+            .executesSuspending(taskExecutor, ::status)
             .build()
     }
 
-    internal suspend fun toggle(context: PaperCommandContext) =
+    private suspend fun toggle(context: PaperCommandContext) =
         context.scoped(maintenanceTracer) {
             val sender = context.source.sender
 
@@ -61,7 +64,7 @@ class MaintenanceCommand(
             )
         }
 
-    internal suspend fun status(context: PaperCommandContext) =
+    private suspend fun status(context: PaperCommandContext) =
         context.scoped(maintenanceTracer) {
             val sender = context.source.sender
 

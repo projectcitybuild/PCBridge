@@ -7,6 +7,8 @@ import com.projectcitybuild.pcbridge.features.homes.domain.repositories.HomeRepo
 import com.projectcitybuild.pcbridge.features.homes.homesTracer
 import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
+import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
+import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
 import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandContext
 import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandNode
@@ -28,6 +30,7 @@ class HomeCommand(
     private val homeNameSuggester: HomeNameSuggester,
     private val homeRepository: HomeRepository,
     private val playerTeleporter: PlayerTeleporter,
+    private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
     override fun literal(): PaperCommandNode {
         return Commands.literal("home")
@@ -35,7 +38,7 @@ class HomeCommand(
             .then(
                 Commands.argument("name", StringArgumentType.greedyString())
                     .suggestsSuspending(plugin, homeNameSuggester::suggest)
-                    .executesSuspending(plugin, ::execute),
+                    .executesSuspending(taskExecutor, ::execute),
             )
             .build()
     }

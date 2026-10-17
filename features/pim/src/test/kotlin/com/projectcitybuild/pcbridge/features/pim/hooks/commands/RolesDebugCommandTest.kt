@@ -1,10 +1,13 @@
 package com.projectcitybuild.pcbridge.features.pim.hooks.commands
 
+import com.mojang.brigadier.CommandDispatcher
+import com.projectcitybuild.pcbridge.core.permissions.PermissionNode
 import com.projectcitybuild.pcbridge.features.pim.hooks.commands.roles.RolesDebugCommand
-import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandContext
+import com.projectcitybuild.pcbridge.platform.paper.commands.CoroutineScopeCommandTaskExecutor
 import com.projectcitybuild.pcbridge.runtime.permissions.Permissions
 import com.projectcitybuild.pcbridge.runtime.permissions.PermissionsProvider
 import io.papermc.paper.command.brigadier.CommandSourceStack
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
@@ -19,18 +22,24 @@ class RolesDebugCommandTest {
     fun `sets the supplied roles and reports how to revert them`() =
         runTest {
             val player = mock(Player::class.java)
-            val context = mock(PaperCommandContext::class.java)
             val source = mock(CommandSourceStack::class.java)
             val provider = mock(PermissionsProvider::class.java)
             val permissions = Permissions().apply { setProvider(provider) }
             val playerId = UUID.randomUUID()
-            whenever(context.source).thenReturn(source)
-            whenever(context.input).thenReturn("/pim roles debug builder staff")
             whenever(source.sender).thenReturn(player)
             whenever(player.uniqueId).thenReturn(playerId)
-            whenever(context.getArgument("roles", String::class.java)).thenReturn("builder staff")
+            whenever(player.hasPermission(PermissionNode.PIM_ROLES.node)).thenReturn(true)
+            val command =
+                RolesDebugCommand(
+                    mock(Plugin::class.java),
+                    permissions,
+                    CoroutineScopeCommandTaskExecutor(this),
+                )
+            val dispatcher = CommandDispatcher<CommandSourceStack>()
+            dispatcher.root.addChild(command.literal())
 
-            RolesDebugCommand(mock(Plugin::class.java), permissions).execute(context)
+            dispatcher.execute("debug builder staff", source)
+            runCurrent()
 
             verify(provider).setUserRoles(playerId, setOf("builder", "staff"))
             verify(player).sendRichMessage(
