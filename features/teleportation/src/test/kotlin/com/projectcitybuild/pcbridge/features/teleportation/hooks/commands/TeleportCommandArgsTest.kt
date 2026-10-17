@@ -15,54 +15,51 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 import java.util.concurrent.TimeUnit
 
-class TeleportCommandGrammarTest {
-    private val player =
-        mock<Player>().also {
-            whenever(it.name).thenReturn("Notch")
-        }
-    private val reservedNamePlayer =
-        mock<Player>().also {
-            whenever(it.name).thenReturn("accept")
-        }
-    private val server =
-        mock<Server>().also {
-            whenever(it.onlinePlayers).thenReturn(listOf(player, reservedNamePlayer))
-        }
+class TeleportCommandArgsTest {
+    private val player = mock<Player>().also {
+        whenever(it.name).thenReturn("Notch")
+    }
+    private val reservedNamePlayer = mock<Player>().also {
+        whenever(it.name).thenReturn("accept")
+    }
+    private val server = mock<Server>().also {
+        whenever(it.onlinePlayers).thenReturn(listOf(player, reservedNamePlayer))
+    }
     private val source = mock<CommandSourceStack>()
-    private val sender =
-        mock<CommandSender>().also {
-            whenever(it.hasPermission(any<String>())).thenReturn(true)
-        }
+    private val sender = mock<CommandSender>().also {
+        whenever(it.hasPermission(any<String>())).thenReturn(true)
+    }
     private val plugin = mock<Plugin>()
     private val application = mock<TeleportApplication>()
     private val random = TeleportRandomCommand(plugin, application)
-    private val dispatcher =
-        CommandDispatcher<CommandSourceStack>().apply {
-            whenever(source.sender).thenReturn(sender)
-            root.addChild(
-                TeleportCommand(
-                    plugin = plugin,
-                    server = server,
-                    application = application,
-                    to = TeleportToCommand(plugin, server, application),
-                    here = TeleportHereCommand(plugin, server, application),
-                    send = TeleportSendCommand(plugin, server, application),
-                    all = TeleportAllCommand(plugin, server, application),
-                    position = TeleportPosCommand(plugin, server, application),
-                    random = random,
-                    back = TeleportBackCommand(plugin, server, application),
-                    accept = TeleportAcceptCommand(plugin, server, application),
-                    deny = TeleportDenyCommand(plugin, server, application),
-                    cancel = TeleportCancelCommand(plugin, application),
-                ).literal(),
-            )
-            root.addChild(
-                TeleportLegacyCommands(plugin, server, application)
-                    .commands()
-                    .last()
-                    .literal(),
-            )
-        }
+
+    private val dispatcher = CommandDispatcher<CommandSourceStack>().apply {
+        whenever(source.sender).thenReturn(sender)
+
+        root.addChild(
+            TeleportCommand(
+                plugin = plugin,
+                server = server,
+                application = application,
+                to = TeleportToCommand(plugin, server, application),
+                here = TeleportHereCommand(plugin, server, application),
+                send = TeleportSendCommand(plugin, server, application),
+                all = TeleportAllCommand(plugin, server, application),
+                position = TeleportPosCommand(plugin, application),
+                random = random,
+                back = TeleportBackCommand(plugin, server, application),
+                accept = TeleportAcceptCommand(plugin, server, application),
+                deny = TeleportDenyCommand(plugin, server, application),
+                cancel = TeleportCancelCommand(plugin, application),
+            ).literal(),
+        )
+        root.addChild(
+            TeleportLegacyCommands(plugin, server, application)
+                .commands()
+                .last()
+                .literal(),
+        )
+    }
 
     @Test
     fun `to options parse in either valid order`() {
@@ -72,6 +69,12 @@ class TeleportCommandGrammarTest {
             "tp to Notch --silent",
             "tp to Notch --force --silent",
             "tp to Notch --silent --force",
+            "tp to Notch -f",
+            "tp to Notch -s",
+            "tp to Notch -f -s",
+            "tp to Notch -s -f",
+            "tp to Notch --force -s",
+            "tp to Notch -s --force",
         ).forEach { input ->
             val parse = dispatcher.parse(input, source)
             assertTrue(parse.exceptions.isEmpty(), "Could not parse: $input")
@@ -136,10 +139,31 @@ class TeleportCommandGrammarTest {
     }
 
     @Test
+    fun `position accepts optional yaw and pitch after coordinates`() {
+        listOf(
+            "tp pos 1 64 -2",
+            "tp pos 1 64 -2 90",
+            "tp pos 1 64 -2 90 45",
+        ).forEach { input ->
+            val parse = dispatcher.parse(input, source)
+            assertTrue(parse.exceptions.isEmpty(), "Could not parse: $input")
+            assertFalse(parse.reader.canRead(), "Unparsed input remains: $input")
+        }
+
+        val worldArgument = dispatcher.parse("tp pos 1 64 -2 world", source)
+        assertTrue(
+            worldArgument.exceptions.isNotEmpty() || worldArgument.reader.canRead(),
+            "Unexpectedly accepted a world argument",
+        )
+    }
+
+    @Test
     fun `teleport flags cannot be repeated or unsupported`() {
         listOf(
             "tp to Notch --force --force",
             "tp to Notch --silent --silent",
+            "tp to Notch --force -f",
+            "tp to Notch -s --silent",
             "tp to Notch --unknown",
             "tp send Notch accept --unknown",
             "tp all --force --force",
@@ -206,11 +230,19 @@ class TeleportCommandGrammarTest {
             ).get(1, TimeUnit.SECONDS).list.map { it.text }
         assertTrue(optionSuggestions.containsAll(listOf("--force", "--silent")))
 
+        val shortOptionSuggestions =
+            dispatcher.getCompletionSuggestions(
+                dispatcher.parse("tp to Notch -", source),
+            ).get(1, TimeUnit.SECONDS).list.map { it.text }
+        assertTrue(shortOptionSuggestions.containsAll(listOf("-f", "-s")))
+
         val afterForceSuggestions =
             dispatcher.getCompletionSuggestions(
                 dispatcher.parse("tp to Notch --force ", source),
             ).get(1, TimeUnit.SECONDS).list.map { it.text }
         assertTrue(afterForceSuggestions.contains("--silent"))
         assertFalse(afterForceSuggestions.contains("--force"))
+        assertFalse(afterForceSuggestions.contains("-f"))
+        assertTrue(afterForceSuggestions.contains("-s"))
     }
 }

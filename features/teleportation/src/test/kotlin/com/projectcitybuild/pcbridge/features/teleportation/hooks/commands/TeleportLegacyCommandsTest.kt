@@ -58,7 +58,7 @@ class TeleportLegacyCommandsTest {
                     here = TeleportHereCommand(plugin, server, application),
                     send = TeleportSendCommand(plugin, server, application),
                     all = TeleportAllCommand(plugin, server, application),
-                    position = TeleportPosCommand(plugin, server, application),
+                    position = TeleportPosCommand(plugin, application),
                     random = random,
                     back = TeleportBackCommand(plugin, server, application),
                     accept = TeleportAcceptCommand(plugin, server, application),
@@ -103,7 +103,7 @@ class TeleportLegacyCommandsTest {
         whenever(sender.hasPermission(PermissionNode.TELEPORT_REQUEST.node)).thenReturn(true)
 
         val tpaPlayer = commands.single { it.literal().name == "tpa" }.literal().getChild("player")
-        val tpPlayer = dispatcher.root.getChild("tp")?.getChild("legacyPlayer")
+        val tpPlayer = dispatcher.root.getChild("tp")?.getChild("player")
         val forcePlayer = commands.single { it.literal().name == "tpo" }.literal().getChild("player")
         val randomAlias = commands.single { it.literal().name == "rtp" }.literal()
         val randomSubcommand = dispatcher.root.getChild("tp")?.getChild("random")
@@ -139,7 +139,8 @@ class TeleportLegacyCommandsTest {
             "tpall",
             "tpall Notch",
             "tppos 1 64 -2",
-            "tppos 1 64 -2 world",
+            "tppos 1 64 -2 90",
+            "tppos 1 64 -2 90 45",
             "back",
             "back Notch",
             "rtp",
@@ -155,8 +156,12 @@ class TeleportLegacyCommandsTest {
         listOf(
             "tpall --force",
             "tpall --silent",
+            "tpall -f",
+            "tpall -s",
             "tpall Notch --force",
             "tpall Notch --silent",
+            "tpall Notch -f",
+            "tpall Notch -s",
         ).forEach { input ->
             val parse = dispatcher.parse(input, source)
             assertTrue(
@@ -164,5 +169,14 @@ class TeleportLegacyCommandsTest {
                 "Unexpectedly accepted legacy option: $input",
             )
         }
+    }
+
+    @Test
+    fun `legacy tppos does not accept a world argument`() {
+        val parse = dispatcher.parse("tppos 1 64 -2 world", source)
+        assertTrue(
+            parse.exceptions.isNotEmpty() || parse.reader.canRead(),
+            "Unexpectedly accepted a world argument",
+        )
     }
 }

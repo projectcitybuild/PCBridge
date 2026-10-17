@@ -1,8 +1,7 @@
 package com.projectcitybuild.pcbridge.features.teleportation.hooks.commands
 
 import com.mojang.brigadier.arguments.DoubleArgumentType
-import com.mojang.brigadier.arguments.StringArgumentType
-import com.mojang.brigadier.arguments.StringArgumentType.word
+import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import com.projectcitybuild.pcbridge.core.permissions.PermissionNode
 import com.projectcitybuild.pcbridge.features.teleportation.services.TeleportApplication
 import com.projectcitybuild.pcbridge.features.teleportation.services.TeleportFlags
@@ -10,16 +9,15 @@ import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
 import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandContext
 import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandNode
-import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.arguments.SingleOnlinePlayerArgument
+import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.arguments.withCoordinateArgs
+import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.argumenttypes.SingleOnlinePlayerArgument
 import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.runtime.commands.scoped
 import com.projectcitybuild.pcbridge.runtime.teleportation.teleportationTracer
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
-import io.papermc.paper.command.brigadier.argument.ArgumentTypes
 import org.bukkit.Server
-import org.bukkit.World
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
 
@@ -103,13 +101,9 @@ class TeleportLegacyCommands(
             addAll(
                 positionCommands(listOf("tppos")),
             )
-            addAll(
-                backCommands(listOf("back")),
-            )
-            add(legacyAlias())
+            add(backCommand())
+            add(randomCommand())
         }
-
-    private fun legacyAlias(): BrigadierCommand = randomCommands(listOf("rtp")).single()
 
     private fun playerCommands(
         names: List<String>,
@@ -183,12 +177,11 @@ class TeleportLegacyCommands(
             }
         }
 
-    private fun backCommands(names: List<String>): List<BrigadierCommand> =
-        names.map { name ->
-            command(name) {
-                executesSuspending(plugin) { context ->
-                    context.scoped(teleportationTracer) {
-                        val player = context.source.requirePlayer()
+    private fun backCommand(): BrigadierCommand =
+        command("back") {
+            executesSuspending(plugin) { context ->
+                context.scoped(teleportationTracer) {
+                    val player = context.source.requirePlayer()
                         application.back(player, player)
                     }
                 }
@@ -205,16 +198,13 @@ class TeleportLegacyCommands(
                         },
                 )
             }
-        }
 
-    private fun randomCommands(names: List<String>): List<BrigadierCommand> =
-        names.map { name ->
-            command(name) {
-                requiresPermission(PermissionNode.TELEPORT_RANDOM)
-                executesSuspending(plugin) { context ->
-                    context.scoped(teleportationTracer) {
-                        application.random(context.source.requirePlayer())
-                    }
+    private fun randomCommand(): BrigadierCommand =
+        command("rtp") {
+            requiresPermission(PermissionNode.TELEPORT_RANDOM)
+            executesSuspending(plugin) { context ->
+                context.scoped(teleportationTracer) {
+                    application.random(context.source.requirePlayer())
                 }
             }
         }
@@ -224,20 +214,7 @@ class TeleportLegacyCommands(
             command(name) {
                 requiresPermission(PermissionNode.TELEPORT_POSITION)
                 then(
-                    Commands.argument("x", DoubleArgumentType.doubleArg())
-                        .then(
-                            Commands.argument("y", DoubleArgumentType.doubleArg())
-                                .then(
-                                    Commands.argument("z", DoubleArgumentType.doubleArg())
-                                        .executesSuspending(plugin) { executePosition(it, null) }
-                                        .then(
-                                            Commands.argument("world", ArgumentTypes.world())
-                                                .executesSuspending(plugin) { context ->
-                                                    executePosition(context, context.getArgument("world", World::class.java))
-                                                },
-                                        ),
-                                ),
-                        ),
+                    withCoordinateArgs(plugin, ::executePosition)
                 )
             }
         }
@@ -268,20 +245,22 @@ class TeleportLegacyCommands(
 
     private suspend fun executePosition(
         context: PaperCommandContext,
-        worldArgument: World?,
+        yaw: Float?,
+        pitch: Float?,
     ) = context.scoped(teleportationTracer) {
         application.position(
             player = context.source.requirePlayer(),
             x = DoubleArgumentType.getDouble(context, "x"),
             y = DoubleArgumentType.getDouble(context, "y"),
             z = DoubleArgumentType.getDouble(context, "z"),
-            worldName = worldArgument?.name,
+            yaw = yaw,
+            pitch = pitch,
         )
     }
 
     private fun command(
         name: String,
-        configure: com.mojang.brigadier.builder.LiteralArgumentBuilder<CommandSourceStack>.() -> Unit,
+        configure: LiteralArgumentBuilder<CommandSourceStack>.() -> Unit,
     ): BrigadierCommand =
         object : BrigadierCommand {
             override fun literal(): PaperCommandNode =

@@ -3,7 +3,7 @@ package com.projectcitybuild.pcbridge.features.warnings.commands
 import com.projectcitybuild.pcbridge.core.permissions.PermissionNode
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
-import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.arguments.OnlinePlayerNameArgument
+import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.argumenttypes.OnlinePlayerNameArgument
 import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.runtime.commands.scoped
 import com.projectcitybuild.pcbridge.runtime.remoteconfig.RemoteConfig

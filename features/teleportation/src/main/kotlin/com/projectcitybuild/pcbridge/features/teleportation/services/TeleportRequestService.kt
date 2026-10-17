@@ -10,7 +10,7 @@ import java.util.UUID
  */
 class TeleportRequestService(
     private val clock: Clock = Clock.systemUTC(),
-    private val expiration: Duration = Duration.ofSeconds(60),
+    private val expiration: Duration = Duration.ofSeconds(30),
 ) {
     data class Recipient(
         val id: UUID,

@@ -6,6 +6,7 @@ import net.kyori.adventure.text.minimessage.MiniMessage
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import org.bukkit.Location
+import kotlin.time.Duration
 
 val l10n = StringsEn()
 
@@ -175,12 +176,12 @@ class StringsEn {
     )
 
     fun teleportRequestReceived(name: String) = mm(
-        "<yellow><name> wants to teleport to you. Use /tp accept [player] or /tp deny [player].</yellow>",
+        "<yellow><name> wants to teleport to you. Use <click:run_command:'/tp accept'><hover:show_text:'Click to accept'>/tp accept</hover></click> or <click:run_command:'/tp deny'><hover:show_text:'Click to deny'>/tp deny</hover></click>.</yellow>",
         Placeholder.unparsed("name", name),
     )
 
     fun teleportHereRequestReceived(name: String) = mm(
-        "<yellow><name> wants you to teleport to them. Use /tp accept [player] or /tp deny [player].</yellow>",
+        "<yellow><name> wants you to teleport to them. Use <click:run_command:'/tp accept'><hover:show_text:'Click to accept'>/tp accept</hover></click> or <click:run_command:'/tp deny'><hover:show_text:'Click to deny'>/tp deny</hover></click>.</yellow>",
         Placeholder.unparsed("name", name),
     )
 
@@ -224,8 +225,8 @@ class StringsEn {
         Placeholder.unparsed("name", name),
     )
 
-    fun teleportRequestCreated(name: String) = mm(
-        "<green>Teleport request to <name> created (expires in 60 seconds)</green>",
+    fun teleportRequestCreated(name: String, ttl: Duration) = mm(
+        "<green>Teleport request to <name> created (expires in ${ttl.inWholeSeconds} seconds)</green>",
         Placeholder.unparsed("name", name),
     )
 

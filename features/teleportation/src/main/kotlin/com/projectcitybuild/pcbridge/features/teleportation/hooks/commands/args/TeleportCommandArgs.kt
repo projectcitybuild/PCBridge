@@ -1,4 +1,4 @@
-package com.projectcitybuild.pcbridge.features.teleportation.hooks.commands.helpers
+package com.projectcitybuild.pcbridge.features.teleportation.hooks.commands.args
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import com.mojang.brigadier.builder.RequiredArgumentBuilder
@@ -13,18 +13,21 @@ import org.bukkit.plugin.Plugin
 
 private enum class TeleportFlag(
     val literal: String,
+    val shorthand: String,
     val permission: PermissionNode,
     val apply: (TeleportFlags) -> TeleportFlags,
     val isSet: (TeleportFlags) -> Boolean,
 ) {
     FORCE(
         literal = "--force",
+        shorthand = "-f",
         permission = PermissionNode.TELEPORT_FORCE,
         apply = { it.copy(force = true) },
         isSet = { it.force },
     ),
     SILENT(
         literal = "--silent",
+        shorthand = "-s",
         permission = PermissionNode.TELEPORT_SILENT,
         apply = { it.copy(silent = true) },
         isSet = { it.silent }
@@ -56,12 +59,15 @@ private fun flagBranches(
 ): List<LiteralArgumentBuilder<CommandSourceStack>> =
     TeleportFlag.entries
         .filterNot { it.isSet(flags) }
-        .map { flag ->
+        .flatMap { flag ->
             val updatedFlags = flag.apply(flags)
-            Commands.literal(flag.literal)
-                .requiresPermission(flag.permission)
-                .executesSuspending(plugin) { action(it, updatedFlags) }
-                .also { branch ->
-                    flagBranches(plugin, updatedFlags, action).forEach(branch::then)
-                }
+
+            listOf(flag.literal, flag.shorthand).map { literal ->
+                Commands.literal(literal)
+                    .requiresPermission(flag.permission)
+                    .executesSuspending(plugin) { action(it, updatedFlags) }
+                    .also { branch ->
+                        flagBranches(plugin, updatedFlags, action).forEach(branch::then)
+                    }
+            }
         }

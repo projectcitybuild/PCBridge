@@ -1,29 +1,37 @@
 package com.projectcitybuild.pcbridge.features.teleportation.services
 
+import com.github.shynixn.mccoroutine.bukkit.minecraftDispatcher
 import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.core.observability.logging.logSync
 import com.projectcitybuild.pcbridge.core.permissions.PermissionNode
+import com.projectcitybuild.pcbridge.platform.paper.scheduling.SpigotTimer
 import com.projectcitybuild.pcbridge.runtime.cooldowns.Cooldown
 import com.projectcitybuild.pcbridge.runtime.teleportation.PlayerTeleporter
 import com.projectcitybuild.pcbridge.runtime.teleportation.exceptions.SafeDestinationNotFoundException
 import com.projectcitybuild.pcbridge.runtime.teleportation.exceptions.TeleportFailedException
 import com.projectcitybuild.pcbridge.runtime.teleportation.storage.TeleportHistoryStorage
+import kotlinx.coroutines.withContext
 import net.kyori.adventure.text.Component
 import org.bukkit.Location
 import org.bukkit.Server
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause
-import org.bukkit.plugin.Plugin
+import org.bukkit.plugin.java.JavaPlugin
+import java.time.Duration
+import java.time.Instant
 import java.util.UUID
+import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
+import kotlin.time.toKotlinDuration
 
 class TeleportApplication(
-    private val plugin: Plugin,
+    private val plugin: JavaPlugin,
     private val server: Server,
     private val playerTeleporter: PlayerTeleporter,
     private val historyStorage: TeleportHistoryStorage,
     private val requestService: TeleportRequestService,
+    private val timer: SpigotTimer,
     private val cooldown: Cooldown,
     private val findRandomLocation: FindRandomLocation,
 ) {
@@ -206,7 +214,10 @@ class TeleportApplication(
             ) {
                 operator.sendMessage(
                     when (result) {
-                        is TeleportRequestService.CreateResult.Created -> l10n.teleportRequestCreated(player.name)
+                        is TeleportRequestService.CreateResult.Created -> l10n.teleportRequestCreated(
+                            player.name,
+                            ttl = result.request.ttl(),
+                        )
                         TeleportRequestService.CreateResult.AlreadyPending -> l10n.errorTeleportRequestPending
                         TeleportRequestService.CreateResult.SelfTarget -> l10n.errorTeleportSelf
                     },
@@ -306,7 +317,8 @@ class TeleportApplication(
         x: Double,
         y: Double,
         z: Double,
-        worldName: String?,
+        yaw: Float? = null,
+        pitch: Float? = null,
     ) {
         if (!requirePermission(player, PermissionNode.TELEPORT_POSITION)) return
         if (!player.isOnline) {
@@ -318,18 +330,15 @@ class TeleportApplication(
             return
         }
 
-        val world =
-            if (worldName == null) {
-                player.world
-            } else {
-                server.getWorld(worldName)
-            }
-        if (world == null) {
-            player.sendMessage(l10n.errorWorldNotFound(worldName ?: ""))
-            return
-        }
-
-        val destination = Location(world, x, y, z, player.location.yaw, player.location.pitch)
+        val currentLocation = player.location
+        val destination = Location(
+            player.world,
+            x,
+            y,
+            z,
+            yaw ?: currentLocation.yaw,
+            pitch ?: currentLocation.pitch,
+        )
         if (move(player, destination, recipient = null, silent = true)) {
             player.sendMessage(l10n.teleportedToCoordinate(x, y, z))
         }
@@ -345,21 +354,19 @@ class TeleportApplication(
         cooldown.throttle(5.seconds, player, "rtp")
         player.sendMessage(l10n.searchingForSafeLocation)
 
-        val options =
-            PlayerTeleporter.TeleportOptions(
-                adjustYForSafety = true,
-                snapToBlockCenter = true,
-            )
+        val options = PlayerTeleporter.TeleportOptions(
+            adjustYForSafety = true,
+            snapToBlockCenter = true,
+        )
         for (destination in findRandomLocation.candidates(player, attempts = 5)) {
-            val moved =
-                move(
-                    player = player,
-                    destination = destination,
-                    recipient = null,
-                    silent = true,
-                    options = options,
-                    reportFailure = false,
-                )
+            val moved = move(
+                player = player,
+                destination = destination,
+                recipient = null,
+                silent = true,
+                options = options,
+                reportFailure = false,
+            )
             if (moved) {
                 val location = player.location
                 player.sendMessage(
@@ -460,7 +467,7 @@ class TeleportApplication(
 
         when (result) {
             is TeleportRequestService.CreateResult.Created -> {
-                requester.sendMessage(l10n.teleportRequestCreated(target.name))
+                requester.sendMessage(l10n.teleportRequestCreated(target.name, ttl = result.request.ttl()))
                 notifyRequestTarget(target, result.request, direction)
             }
             TeleportRequestService.CreateResult.AlreadyPending ->
@@ -487,11 +494,13 @@ class TeleportApplication(
     }
 
     private fun scheduleExpiration(request: TeleportRequest) {
-        server.scheduler.runTaskLater(
-            plugin,
-            Runnable {
-                requestService.expire(request.requesterId, request.targetId, request.createdAt)
-                    ?.let { expired ->
+        timer.scheduleOnce(
+            identifier = "teleport-request-${request.requesterId}-${request.targetId}",
+            delay = request.timeUntilExpiry(),
+            work = {
+                val expired = requestService.expire(request.requesterId, request.targetId, request.createdAt)
+                if (expired != null) {
+                    withContext(plugin.minecraftDispatcher) {
                         server.getPlayer(expired.requesterId)?.sendMessage(
                             l10n.teleportRequestSentExpired(expired.targetName),
                         )
@@ -499,8 +508,8 @@ class TeleportApplication(
                             l10n.teleportRequestExpired(expired.requesterName),
                         )
                     }
+                }
             },
-            60L * 20L,
         )
     }
 
@@ -528,4 +537,20 @@ class TeleportApplication(
         sender.sendMessage(l10n.errorTeleportPermission)
         return false
     }
+}
+
+private fun TeleportRequest.ttl() =
+    Duration.between(Instant.now(), expiresAt)
+        .let { remaining ->
+            Duration.ofSeconds(remaining.seconds + if (remaining.nano == 0) 0 else 1)
+        }
+        .toKotlinDuration()
+
+private fun TeleportRequest.timeUntilExpiry(): kotlin.time.Duration {
+    val remaining = Duration.between(Instant.now(), expiresAt).toKotlinDuration()
+    if (remaining.isNegative()) return kotlin.time.Duration.ZERO
+
+    val milliseconds = remaining.inWholeMilliseconds
+    val hasSubMillisecondRemainder = remaining.inWholeNanoseconds % 1_000_000L != 0L
+    return (milliseconds + if (hasSubMillisecondRemainder) 1 else 0).milliseconds
 }

@@ -135,7 +135,13 @@ private fun Module.platform(plugin: JavaPlugin) {
 
     singleOf(::SpigotNamespace)
     singleOf(::SpigotListenerRegistry)
-    factoryOf(::SpigotTimer)
+
+    factory {
+        SpigotTimer(
+            plugin = get(),
+            errorTracker = get(),
+        )
+    }
 
     factory {
         SpigotEventBroadcaster(

@@ -1,4 +1,4 @@
-package com.projectcitybuild.pcbridge.platform.paper.support.brigadier.arguments
+package com.projectcitybuild.pcbridge.platform.paper.support.brigadier.argumenttypes
 
 import com.mojang.brigadier.arguments.ArgumentType
 import com.mojang.brigadier.arguments.StringArgumentType
