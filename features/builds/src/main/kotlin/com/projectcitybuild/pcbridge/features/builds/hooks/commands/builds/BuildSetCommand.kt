@@ -10,7 +10,7 @@ import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
 import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandContext
 import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandNode
-import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.arguments.EnumArgument
+import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.argumenttypes.EnumArgument
 import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.extensions.getOptionalArgument
 import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.extensions.requirePlayer

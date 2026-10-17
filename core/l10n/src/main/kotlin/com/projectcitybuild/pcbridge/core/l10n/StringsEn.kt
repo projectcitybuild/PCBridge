@@ -6,6 +6,7 @@ import net.kyori.adventure.text.minimessage.MiniMessage
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import org.bukkit.Location
+import kotlin.time.Duration
 
 val l10n = StringsEn()
 
@@ -49,6 +50,32 @@ class StringsEn {
     val errorNoItemToRename = mm("<red>No item in hand to rename</red>")
 
     val errorCouldNotFindSafeLocation = mm("<red>Failed to find a safe location</red>")
+
+    val errorTeleportPermission = mm("<red>You do not have permission to use this teleport option</red>")
+
+    val errorTeleportSelf = mm("<red>You cannot teleport to yourself</red>")
+
+    val errorTeleportRequestPending = mm("<red>You already have an outgoing teleport request</red>")
+
+    val errorTeleportRequestMissing = mm("<red>No matching teleport request was found</red>")
+
+    val errorTeleportRequestAmbiguous = mm("<red>You have multiple incoming requests; specify a player</red>")
+
+    val errorTeleportRequestExpired = mm("<red>That teleport request has expired</red>")
+
+    val errorTeleportHistoryMissing = mm("<red>No previous location is available</red>")
+
+    val errorTeleportHistoryWorldUnavailable = mm("<red>The world for your previous location is unavailable</red>")
+
+    val errorTeleportFailed = mm("<red>The teleport failed</red>")
+
+    val errorTeleportTargetOffline = mm("<red>That player is no longer online</red>")
+
+    val errorTeleportWorldUnavailable = mm("<red>That world is unavailable</red>")
+
+    val errorTeleportCoordinatesInvalid = mm("<red>Coordinates must be finite numbers</red>")
+
+    val errorTeleportExplicitTargetRequired = mm("<red>Specify an online destination player</red>")
 
     val errorNoRegisterEmailSpecified = mm("<red>Please specify an email address to receive your registration code</red><newline><gray>Example Usage: <bold>/register your@email.com</bold></gray>")
 
@@ -138,6 +165,109 @@ class StringsEn {
     )
 
     val searchingForSafeLocation = mm("<gray><i>Searching for a safe location...</i></gray>")
+
+    val teleportCommandHelp = mm(
+        "<yellow>/tp [player]|to|here|send|all|pos|back|accept|deny|cancel</yellow>",
+    )
+
+    fun teleportRequestSent(name: String) = mm(
+        "<green>Teleport request sent to <name></green>",
+        Placeholder.unparsed("name", name),
+    )
+
+    fun teleportRequestReceived(name: String) = mm(
+        "<yellow><name> wants to teleport to you. Use <click:run_command:'/tp accept'><hover:show_text:'Click to accept'>/tp accept</hover></click> or <click:run_command:'/tp deny'><hover:show_text:'Click to deny'>/tp deny</hover></click>.</yellow>",
+        Placeholder.unparsed("name", name),
+    )
+
+    fun teleportHereRequestReceived(name: String) = mm(
+        "<yellow><name> wants you to teleport to them. Use <click:run_command:'/tp accept'><hover:show_text:'Click to accept'>/tp accept</hover></click> or <click:run_command:'/tp deny'><hover:show_text:'Click to deny'>/tp deny</hover></click>.</yellow>",
+        Placeholder.unparsed("name", name),
+    )
+
+    fun teleportRequestAccepted(name: String) = mm(
+        "<green>Teleport request from <name> accepted</green>",
+        Placeholder.unparsed("name", name),
+    )
+
+    fun teleportRequestDenied(name: String) = mm(
+        "<red>Teleport request from <name> denied</red>",
+        Placeholder.unparsed("name", name),
+    )
+
+    fun teleportRequestWasDenied(name: String) = mm(
+        "<red><name> denied your teleport request</red>",
+        Placeholder.unparsed("name", name),
+    )
+
+    fun teleportRequestCancelled(name: String) = mm(
+        "<yellow>Teleport request to <name> cancelled</yellow>",
+        Placeholder.unparsed("name", name),
+    )
+
+    fun teleportRequestWasCancelled(name: String) = mm(
+        "<yellow><name> cancelled their teleport request</yellow>",
+        Placeholder.unparsed("name", name),
+    )
+
+    fun teleportRequestExpired(name: String) = mm(
+        "<yellow>Teleport request from <name> expired</yellow>",
+        Placeholder.unparsed("name", name),
+    )
+
+    fun teleportRequestSentExpired(name: String) = mm(
+        "<yellow>Your teleport request to <name> expired</yellow>",
+        Placeholder.unparsed("name", name),
+    )
+
+    fun teleportRequestDisconnected(name: String) = mm(
+        "<yellow>Teleport request involving <name> was removed because a player disconnected</yellow>",
+        Placeholder.unparsed("name", name),
+    )
+
+    fun teleportRequestCreated(name: String, ttl: Duration) = mm(
+        "<green>Teleport request to <name> created (expires in ${ttl.inWholeSeconds} seconds)</green>",
+        Placeholder.unparsed("name", name),
+    )
+
+    fun teleportCompleted(name: String) = mm(
+        "<green>Teleported to <name></green>",
+        Placeholder.unparsed("name", name),
+    )
+
+    fun teleportOperationSucceeded(player: String, target: String) = mm(
+        "<green>Teleported <player> to <target></green>",
+        Placeholder.unparsed("player", player),
+        Placeholder.unparsed("target", target),
+    )
+
+    fun teleportReceived(name: String) = mm(
+        "<gray><name> teleported to you</gray>",
+        Placeholder.unparsed("name", name),
+    )
+
+    fun teleportBackCompleted(name: String) = mm(
+        "<green><name> returned to their previous location</green>",
+        Placeholder.unparsed("name", name),
+    )
+
+    fun teleportBulkSummary(succeeded: Int, failed: Int) = mm(
+        "<green>Teleported <succeeded> player(s)</green><gray>; <failed> failed</gray>",
+        Placeholder.unparsed("succeeded", succeeded.toString()),
+        Placeholder.unparsed("failed", failed.toString()),
+    )
+
+    fun teleportRequestsCreated(count: Int) = mm(
+        "<green>Teleport requests sent to <count> player(s)</green>",
+        Placeholder.unparsed("count", count.toString()),
+    )
+
+    fun teleportedToCoordinate(x: Double, y: Double, z: Double) = mm(
+        "<gray><i>⚡ Teleported to <b>{<x>, <y>, <z>}</b></i></gray>",
+        Placeholder.unparsed("x", x.toString()),
+        Placeholder.unparsed("y", y.toString()),
+        Placeholder.unparsed("z", z.toString()),
+    )
 
     fun teleportedToName(name: String) = mm(
         "<gray><i>⚡ Teleported to <b><name></b></i></gray>",

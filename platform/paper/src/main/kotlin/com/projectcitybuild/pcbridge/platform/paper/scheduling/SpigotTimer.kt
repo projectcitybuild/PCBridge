@@ -18,6 +18,7 @@ import java.util.concurrent.RejectedExecutionException
 import kotlin.time.Duration
 import kotlinx.coroutines.currentCoroutineContext
 import kotlin.coroutines.CoroutineContext
+import kotlin.time.Duration.Companion.milliseconds
 
 class SpigotTimer(
     plugin: JavaPlugin,
@@ -46,7 +47,7 @@ class SpigotTimer(
         }
         return schedule(identifier) {
             if (delay.isPositive()) {
-                delay(delay.inWholeMilliseconds)
+                delay(delay)
             }
             work()
         }
@@ -69,7 +70,7 @@ class SpigotTimer(
         }
         return schedule(identifier) {
             if (delay.isPositive()) {
-                delay(delay.inWholeMilliseconds)
+                delay(delay)
             }
             while (currentCoroutineContext().isActive) {
                 try {
@@ -80,7 +81,7 @@ class SpigotTimer(
                     errorTracker.report(e)
                     log.e("Error occurred in repeating task '$identifier'", e)
                 }
-                delay(repeatingInterval.inWholeMilliseconds)
+                delay(repeatingInterval)
             }
         }
     }
