@@ -2,6 +2,8 @@ package com.projectcitybuild.pcbridge.features.warnings.commands
 
 import com.projectcitybuild.pcbridge.core.permissions.PermissionNode
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
+import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
+import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
 import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.arguments.OnlinePlayerNameArgument
 import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.extensions.executesSuspending
@@ -19,18 +21,19 @@ class WarnCommand(
     private val plugin: Plugin,
     private val server: Server,
     private val remoteConfig: RemoteConfig,
+    private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ): BrigadierCommand {
     override fun literal(): PaperCommandNode {
         return Commands.literal("warn")
             .requiresPermission(PermissionNode.WARNINGS_MANAGE)
             .then(
                 Commands.argument("player", OnlinePlayerNameArgument(server))
-                    .executesSuspending(plugin, ::execute)
+                    .executesSuspending(taskExecutor, ::execute)
             )
             .build()
     }
 
-    internal suspend fun execute(context: PaperCommandContext) = context.scoped(warningsTracer) {
+    private suspend fun execute(context: PaperCommandContext) = context.scoped(warningsTracer) {
         val playerName = context.getArgument("player", String::class.java)
 
         val player = server.onlinePlayer(name = playerName)

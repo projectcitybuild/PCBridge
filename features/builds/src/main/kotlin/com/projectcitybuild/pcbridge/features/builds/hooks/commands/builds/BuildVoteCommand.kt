@@ -6,6 +6,8 @@ import com.projectcitybuild.pcbridge.features.builds.buildsTracer
 import com.projectcitybuild.pcbridge.features.builds.domain.repositories.BuildRepository
 import com.projectcitybuild.pcbridge.features.builds.hooks.commands.BuildNameSuggester
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
+import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
+import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
 import com.projectcitybuild.pcbridge.platform.paper.extensions.broadcastRich
 import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandContext
@@ -21,6 +23,7 @@ class BuildVoteCommand(
     private val plugin: Plugin,
     private val buildNameSuggester: BuildNameSuggester,
     private val buildRepository: BuildRepository,
+    private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
     override fun literal(): PaperCommandNode {
         return Commands.literal("vote")
@@ -28,7 +31,7 @@ class BuildVoteCommand(
             .then(
                 Commands.argument("name", StringArgumentType.greedyString())
                     .suggestsSuspending(plugin, buildNameSuggester::suggest)
-                    .executesSuspending(plugin, ::execute),
+                    .executesSuspending(taskExecutor, ::execute),
             )
             .build()
     }

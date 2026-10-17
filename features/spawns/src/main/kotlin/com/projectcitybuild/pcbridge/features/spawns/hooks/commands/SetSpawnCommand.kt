@@ -6,6 +6,8 @@ import com.projectcitybuild.pcbridge.features.spawns.domain.repositories.SpawnRe
 import com.projectcitybuild.pcbridge.features.spawns.spawnsTracer
 import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
+import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
+import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
 import com.projectcitybuild.pcbridge.platform.paper.events.SpigotEventBroadcaster
 import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandContext
@@ -20,11 +22,12 @@ class SetSpawnCommand(
     private val plugin: Plugin,
     private val spawnRepository: SpawnRepository,
     private val eventBroadcaster: SpigotEventBroadcaster,
+    private val commandTaskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
     override fun literal(): PaperCommandNode {
         return Commands.literal("setspawn")
             .requiresPermission(PermissionNode.SPAWN_MANAGE)
-            .executesSuspending(plugin, ::execute)
+            .executesSuspending(commandTaskExecutor, ::execute)
             .build()
     }
 

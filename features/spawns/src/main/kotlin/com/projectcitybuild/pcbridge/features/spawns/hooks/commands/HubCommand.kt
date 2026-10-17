@@ -4,6 +4,8 @@ import com.projectcitybuild.pcbridge.core.observability.logging.log
 import com.projectcitybuild.pcbridge.features.spawns.spawnsTracer
 import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
+import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
+import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandContext
 import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandNode
 import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.extensions.executesSuspending
@@ -23,10 +25,11 @@ class HubCommand(
     private val server: Server,
     private val remoteConfig: RemoteConfig,
     private val playerTeleporter: PlayerTeleporter,
+    private val commandTaskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
     override fun literal(): PaperCommandNode {
         return Commands.literal("hub")
-            .executesSuspending(plugin, ::execute)
+            .executesSuspending(commandTaskExecutor, ::execute)
             .build()
     }
 

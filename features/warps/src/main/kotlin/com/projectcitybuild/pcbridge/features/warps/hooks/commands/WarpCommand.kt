@@ -7,6 +7,8 @@ import com.projectcitybuild.pcbridge.features.warps.domain.repositories.WarpRepo
 import com.projectcitybuild.pcbridge.features.warps.warpsTracer
 import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
+import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
+import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
 import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandContext
 import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandNode
@@ -28,6 +30,7 @@ class WarpCommand(
     private val warpRepository: WarpRepository,
     private val server: Server,
     private val playerTeleporter: PlayerTeleporter,
+    private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
     override val description: String = "Teleports to a warp"
 
@@ -37,7 +40,7 @@ class WarpCommand(
             .then(
                 Commands.argument("name", StringArgumentType.string())
                     .suggestsSuspending(plugin, warpNameSuggester::suggest)
-                    .executesSuspending(plugin, ::execute),
+                    .executesSuspending(taskExecutor, ::execute),
             )
             .build()
     }

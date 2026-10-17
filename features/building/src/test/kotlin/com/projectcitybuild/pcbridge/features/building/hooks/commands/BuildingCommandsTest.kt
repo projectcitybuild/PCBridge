@@ -1,15 +1,21 @@
 package com.projectcitybuild.pcbridge.features.building.hooks.commands
 
+import com.mojang.brigadier.CommandDispatcher
 import com.projectcitybuild.pcbridge.core.l10n.l10n
+import com.projectcitybuild.pcbridge.core.permissions.PermissionNode
+import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
+import com.projectcitybuild.pcbridge.platform.paper.commands.CoroutineScopeCommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.events.SpigotEventBroadcaster
 import com.projectcitybuild.pcbridge.platform.paper.namespace.SpigotNamespace
-import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandContext
 import io.papermc.paper.command.brigadier.CommandSourceStack
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import net.kyori.adventure.text.Component
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
+import org.bukkit.inventory.PlayerInventory
+import org.bukkit.inventory.meta.ItemMeta
 import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -26,17 +32,13 @@ class BuildingCommandsTest {
     fun `night vision command enables the effect when requested`() =
         runTest {
             val player = mock(Player::class.java)
-            val context = playerContext(player)
-            whenever(context.getArgument("enabled", Boolean::class.java)).thenReturn(true)
-            var removed = false
+            val command = NightVisionCommand(mock(Plugin::class.java), CoroutineScopeCommandTaskExecutor(this))
+            command.removeNightVision = { }
             var enabled = false
-            val command = NightVisionCommand(mock(Plugin::class.java))
-            command.removeNightVision = { removed = true }
             command.enableNightVision = { enabled = true }
 
-            command.execute(context)
+            dispatch(command, "nv on", player, PermissionNode.BUILDING_NIGHT_VISION)
 
-            assertTrue(removed)
             assertTrue(enabled)
             verify(player).sendMessage(l10n.nightVisionToggledOn)
         }
@@ -45,18 +47,14 @@ class BuildingCommandsTest {
     fun `night vision command toggles off when already active`() =
         runTest {
             val player = mock(Player::class.java)
-            val context = playerContext(player)
-            whenever(context.getArgument("enabled", Boolean::class.java)).thenThrow(IllegalArgumentException())
-            var removed = false
-            var enabled = false
-            val command = NightVisionCommand(mock(Plugin::class.java))
+            val command = NightVisionCommand(mock(Plugin::class.java), CoroutineScopeCommandTaskExecutor(this))
             command.hasNightVision = { true }
-            command.removeNightVision = { removed = true }
+            var enabled = false
+            command.removeNightVision = { }
             command.enableNightVision = { enabled = true }
 
-            command.execute(context)
+            dispatch(command, "nv", player, PermissionNode.BUILDING_NIGHT_VISION)
 
-            assertTrue(removed)
             assertFalse(enabled)
             verify(player).sendMessage(l10n.nightVisionToggledOff)
         }
@@ -65,73 +63,98 @@ class BuildingCommandsTest {
     fun `item name command renames held item and broadcasts rename event`() =
         runTest {
             val player = mock(Player::class.java)
-            val context = playerContext(player)
             val item = mock(ItemStack::class.java)
-            val meta = mock(org.bukkit.inventory.meta.ItemMeta::class.java)
-            val inventory = mock(org.bukkit.inventory.PlayerInventory::class.java)
+            val meta = mock(ItemMeta::class.java)
+            val inventory = mock(PlayerInventory::class.java)
             val broadcaster = mock(SpigotEventBroadcaster::class.java)
             whenever(player.inventory).thenReturn(inventory)
             whenever(inventory.itemInMainHand).thenReturn(item)
             whenever(item.type).thenReturn(Material.STICK)
             whenever(item.itemMeta).thenReturn(meta)
-            whenever(context.getArgument("name", String::class.java)).thenReturn("&aCustom name")
 
-            ItemNameCommand(mock(Plugin::class.java), broadcaster).execute(context)
+            val command =
+                ItemNameCommand(
+                    mock(Plugin::class.java),
+                    broadcaster,
+                    CoroutineScopeCommandTaskExecutor(this),
+                )
+            dispatch(command, "itemname &aCustom name", player, PermissionNode.BUILDING_ITEM_RENAME)
 
             verify(meta).displayName(any<Component>())
-            verify(item).setItemMeta(meta)
+            verify(item).itemMeta = meta
             verify(player).sendMessage(any<Component>())
             verify(broadcaster).broadcast(any())
         }
 
     @Test
-    fun `invisible frame command places normal frame in inventory and confirms receipt`() {
-        val player = mock(Player::class.java)
-        val inventory = mock(org.bukkit.inventory.PlayerInventory::class.java)
-        whenever(player.inventory).thenReturn(inventory)
-        val plugin = mock(JavaPlugin::class.java)
-        whenever(plugin.namespace()).thenReturn("pcbridge")
-        val command = InvisFrameCommand(mock(Plugin::class.java), SpigotNamespace(plugin))
-        var createdMaterial: Material? = null
-        command.frameFactory = { material ->
-            createdMaterial = material
-            mock(ItemStack::class.java)
+    fun `invisible frame command places normal frame in inventory and confirms receipt`() =
+        runTest {
+            val player = mock(Player::class.java)
+            val inventory = mock(PlayerInventory::class.java)
+            whenever(player.inventory).thenReturn(inventory)
+            val namespace = namespace()
+            val command =
+                InvisFrameCommand(
+                    mock(Plugin::class.java),
+                    namespace,
+                    CoroutineScopeCommandTaskExecutor(this),
+                )
+            var createdMaterial: Material? = null
+            command.frameFactory = { material ->
+                createdMaterial = material
+                mock(ItemStack::class.java)
+            }
+
+            dispatch(command, "invisframe", player, PermissionNode.BUILDING_INVIS_FRAME)
+
+            assertEquals(Material.ITEM_FRAME, createdMaterial)
+            verify(inventory).addItem(any())
+            verify(player).sendMessage(l10n.receivedInvisFrame)
         }
-
-        command.giveNormal(playerContext(player))
-
-        assertEquals(Material.ITEM_FRAME, createdMaterial)
-        verify(inventory).addItem(any())
-        verify(player).sendMessage(l10n.receivedInvisFrame)
-    }
 
     @Test
-    fun `invisible frame command places glowing frame in inventory and confirms receipt`() {
-        val player = mock(Player::class.java)
-        val inventory = mock(org.bukkit.inventory.PlayerInventory::class.java)
-        whenever(player.inventory).thenReturn(inventory)
-        val plugin = mock(JavaPlugin::class.java)
-        whenever(plugin.namespace()).thenReturn("pcbridge")
-        val command = InvisFrameCommand(mock(Plugin::class.java), SpigotNamespace(plugin))
-        var createdMaterial: Material? = null
-        command.frameFactory = { material ->
-            createdMaterial = material
-            mock(ItemStack::class.java)
+    fun `invisible frame command places glowing frame in inventory and confirms receipt`() =
+        runTest {
+            val player = mock(Player::class.java)
+            val inventory = mock(PlayerInventory::class.java)
+            whenever(player.inventory).thenReturn(inventory)
+            val command =
+                InvisFrameCommand(
+                    mock(Plugin::class.java),
+                    namespace(),
+                    CoroutineScopeCommandTaskExecutor(this),
+                )
+            var createdMaterial: Material? = null
+            command.frameFactory = { material ->
+                createdMaterial = material
+                mock(ItemStack::class.java)
+            }
+
+            dispatch(command, "invisframe glowing", player, PermissionNode.BUILDING_INVIS_FRAME)
+
+            assertEquals(Material.GLOW_ITEM_FRAME, createdMaterial)
+            verify(inventory).addItem(any())
+            verify(player).sendMessage(l10n.receivedInvisFrameGlowing)
         }
 
-        command.giveGlowing(playerContext(player))
-
-        assertEquals(Material.GLOW_ITEM_FRAME, createdMaterial)
-        verify(inventory).addItem(any())
-        verify(player).sendMessage(l10n.receivedInvisFrameGlowing)
+    private suspend fun kotlinx.coroutines.test.TestScope.dispatch(
+        command: BrigadierCommand,
+        input: String,
+        player: Player,
+        permission: PermissionNode,
+    ) {
+        val source = mock(CommandSourceStack::class.java)
+        whenever(source.sender).thenReturn(player)
+        whenever(player.hasPermission(permission.node)).thenReturn(true)
+        val dispatcher = CommandDispatcher<CommandSourceStack>()
+        dispatcher.root.addChild(command.literal())
+        dispatcher.execute(input, source)
+        runCurrent()
     }
 
-    private fun playerContext(player: Player): PaperCommandContext {
-        val context = mock(PaperCommandContext::class.java)
-        val source = mock(CommandSourceStack::class.java)
-        whenever(context.source).thenReturn(source)
-        whenever(context.input).thenReturn("/test")
-        whenever(source.sender).thenReturn(player)
-        return context
+    private fun namespace(): SpigotNamespace {
+        val plugin = mock(JavaPlugin::class.java)
+        whenever(plugin.namespace()).thenReturn("pcbridge")
+        return SpigotNamespace(plugin)
     }
 }

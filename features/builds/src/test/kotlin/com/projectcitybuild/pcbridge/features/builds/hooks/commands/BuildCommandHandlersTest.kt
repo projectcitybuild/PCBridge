@@ -1,6 +1,6 @@
 package com.projectcitybuild.pcbridge.features.builds.hooks.commands
 
-import com.mojang.brigadier.context.CommandContext
+import com.mojang.brigadier.CommandDispatcher
 import com.projectcitybuild.pcbridge.core.pcbridgeapi.pcb.models.Build
 import com.projectcitybuild.pcbridge.core.pcbridgeapi.pcb.models.PaginatedList
 import com.projectcitybuild.pcbridge.features.builds.domain.data.EditableBuildField
@@ -13,9 +13,11 @@ import com.projectcitybuild.pcbridge.features.builds.hooks.commands.builds.Build
 import com.projectcitybuild.pcbridge.features.builds.hooks.commands.builds.BuildSetCommand
 import com.projectcitybuild.pcbridge.features.builds.hooks.commands.builds.BuildUnvoteCommand
 import com.projectcitybuild.pcbridge.features.builds.hooks.commands.builds.BuildVoteCommand
-import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandContext
+import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
+import com.projectcitybuild.pcbridge.platform.paper.commands.CoroutineScopeCommandTaskExecutor
 import com.projectcitybuild.pcbridge.runtime.teleportation.PlayerTeleporter
 import io.papermc.paper.command.brigadier.CommandSourceStack
+import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.title.Title
@@ -42,29 +44,26 @@ class BuildCommandHandlersTest {
     private val repository = mock(BuildRepository::class.java)
     private val player = mock(Player::class.java)
     private val source = mock(CommandSourceStack::class.java)
-    private val context = mock(PaperCommandContext::class.java)
 
     init {
-        whenever(context.input).thenReturn("/builds")
+        whenever(source.sender).thenReturn(player)
+        whenever(player.hasPermission(any<String>())).thenReturn(true)
     }
 
     @Test
     fun `BuildCreateCommand stores the player's current location and broadcasts creation`() =
         runTest {
+            val executor = CoroutineScopeCommandTaskExecutor(this)
             val world = mock(World::class.java)
             val location = Location(world, 1.5, 64.0, -2.0, 20f, 30f)
             val server = mock(Server::class.java)
             whenever(plugin.server).thenReturn(server)
-            whenever(source.sender).thenReturn(player)
             whenever(player.name).thenReturn("builder")
             whenever(player.location).thenReturn(location)
             whenever(world.name).thenReturn("world")
-            whenever(context.source).thenReturn(source)
-            whenever(context.input).thenReturn("/build Sky Base")
-            whenever(context.getArgument("name", String::class.java)).thenReturn("Sky Base")
             whenever(repository.create("Sky Base", "world", location, player)).thenReturn(build(name = "Sky Base"))
 
-            invokeHandler(BuildCreateCommand(plugin, repository), context)
+            runCommand(this, buildsCommand(executor), "builds create Sky Base")
 
             verify(repository).create("Sky Base", "world", location, player)
             verify(player).sendRichMessage("<green>Sky Base created</green>")
@@ -74,12 +73,9 @@ class BuildCommandHandlersTest {
     @Test
     fun `BuildDeleteCommand deletes the named build for the invoking player`() =
         runTest {
-            setContext("Old Base")
+            val executor = CoroutineScopeCommandTaskExecutor(this)
 
-            invokeHandler(
-                BuildDeleteCommand(plugin, mock(), repository),
-                context,
-            )
+            runCommand(this, buildsCommand(executor), "builds delete Old Base")
 
             verify(repository).delete("Old Base", player)
             verify(player).sendRichMessage("<green>Old Base deleted</green>")
@@ -88,10 +84,10 @@ class BuildCommandHandlersTest {
     @Test
     fun `BuildEditCommand rejects a build that cannot be found`() =
         runTest {
-            setContext("Missing")
+            val executor = CoroutineScopeCommandTaskExecutor(this)
             whenever(repository.get("Missing")).thenReturn(null)
 
-            invokeHandler(BuildEditCommand(plugin, mock(), repository), context)
+            runCommand(this, buildsCommand(executor), "builds edit Missing")
 
             verify(repository).get("Missing")
             verify(player, never()).sendMessage(any<Component>())
@@ -100,10 +96,10 @@ class BuildCommandHandlersTest {
     @Test
     fun `BuildEditCommand presents editable fields for a found build`() =
         runTest {
-            setContext("Main Base")
+            val executor = CoroutineScopeCommandTaskExecutor(this)
             whenever(repository.get("Main Base")).thenReturn(build(name = "Main Base"))
 
-            invokeHandler(BuildEditCommand(plugin, mock(), repository), context)
+            runCommand(this, buildsCommand(executor), "builds edit Main Base")
 
             verify(player).sendMessage(any<Component>())
         }
@@ -111,12 +107,10 @@ class BuildCommandHandlersTest {
     @Test
     fun `BuildListCommand fetches the requested page and reports an empty result`() =
         runTest {
-            whenever(context.source).thenReturn(source)
-            whenever(source.sender).thenReturn(player)
-            whenever(context.getArgument("page", Int::class.java)).thenReturn(3)
+            val executor = CoroutineScopeCommandTaskExecutor(this)
             whenever(repository.all(3)).thenReturn(PaginatedList(emptyList(), 3, 10, 0, 0))
 
-            invokeHandler(BuildListCommand(plugin, repository), context)
+            runCommand(this, buildsCommand(executor), "builds list 3")
 
             verify(repository).all(3)
             verify(player).sendMessage(com.projectcitybuild.pcbridge.core.l10n.l10n.errorPageNotFound)
@@ -125,11 +119,14 @@ class BuildCommandHandlersTest {
     @Test
     fun `BuildMoveCommand updates the build to the player's location`() =
         runTest {
-            val location = setupPlayerLocation()
-            whenever(context.getArgument("name", String::class.java)).thenReturn("Main Base")
+            val executor = CoroutineScopeCommandTaskExecutor(this)
+            val world = mock(World::class.java)
+            val location = Location(world, 1.5, 64.0, -2.0, 20f, 30f)
+            whenever(player.location).thenReturn(location)
+            whenever(world.name).thenReturn("world")
             whenever(repository.update("Main Base", "world", location, player)).thenReturn(build(name = "Main Base"))
 
-            invokeHandler(BuildMoveCommand(plugin, mock(), repository), context)
+            runCommand(this, buildsCommand(executor), "builds move Main Base")
 
             verify(repository).update("Main Base", "world", location, player)
             verify(player).sendRichMessage("<green>Main Base moved to your location</green>")
@@ -138,12 +135,9 @@ class BuildCommandHandlersTest {
     @Test
     fun `BuildSetCommand forwards the selected field and value`() =
         runTest {
-            setContext("unused")
-            whenever(context.getArgument("id", Int::class.java)).thenReturn(42)
-            whenever(context.getArgument("field", EditableBuildField::class.java)).thenReturn(EditableBuildField.LORE)
-            whenever(context.getArgument("value", String::class.java)).thenReturn("A detailed legend")
+            val executor = CoroutineScopeCommandTaskExecutor(this)
 
-            invokeHandler(BuildSetCommand(plugin, repository), context)
+            runCommand(this, buildsCommand(executor), "builds set 42 LORE A detailed legend")
 
             verify(repository).set(42, player, EditableBuildField.LORE, "A detailed legend")
             verify(player).sendRichMessage("<green>Build updated</green>")
@@ -152,10 +146,10 @@ class BuildCommandHandlersTest {
     @Test
     fun `BuildUnvoteCommand removes the invoking player's vote`() =
         runTest {
-            setContext("Main Base")
+            val executor = CoroutineScopeCommandTaskExecutor(this)
             whenever(repository.unvote("Main Base", player)).thenReturn(build(name = "Main Base"))
 
-            invokeHandler(BuildUnvoteCommand(plugin, mock(), repository), context)
+            runCommand(this, buildsCommand(executor), "builds unvote Main Base")
 
             verify(repository).unvote("Main Base", player)
             verify(player).sendRichMessage("<gray>You removed your vote for Main Base</gray>")
@@ -164,13 +158,13 @@ class BuildCommandHandlersTest {
     @Test
     fun `BuildVoteCommand votes and announces the build`() =
         runTest {
+            val executor = CoroutineScopeCommandTaskExecutor(this)
             val server = mock(Server::class.java)
             whenever(plugin.server).thenReturn(server)
-            setContext("Main Base")
             whenever(player.name).thenReturn("builder")
             whenever(repository.vote("Main Base", player)).thenReturn(build(name = "Main Base"))
 
-            invokeHandler(BuildVoteCommand(plugin, mock(), repository), context)
+            runCommand(this, buildsCommand(executor), "builds vote Main Base")
 
             verify(repository).vote("Main Base", player)
             verify(player).sendRichMessage("<green>You voted for Main Base</green>")
@@ -180,15 +174,14 @@ class BuildCommandHandlersTest {
     @Test
     fun `BuildCommand teleports the player to the stored build location`() =
         runTest {
+            val executor = CoroutineScopeCommandTaskExecutor(this)
             val world = mock(World::class.java)
             val server = mock(Server::class.java)
             val teleporter = mock(PlayerTeleporter::class.java)
-            whenever(plugin.server).thenReturn(server)
-            setContext("Main Base")
             whenever(repository.get("Main Base")).thenReturn(build(name = "Main Base"))
             whenever(server.getWorld("world")).thenReturn(world)
 
-            invokeHandler(BuildCommand(plugin, mock(), repository, server, teleporter), context)
+            runCommand(this, BuildCommand(plugin, mock(), repository, server, teleporter, executor), "build Main Base")
 
             verify(teleporter).move(
                 eq(player),
@@ -201,39 +194,43 @@ class BuildCommandHandlersTest {
         }
 
     @Test
-    fun `BuildsCommand installs all build subcommands`() {
-        val command =
-            BuildsCommand(
-                BuildCreateCommand(plugin, repository),
-                BuildDeleteCommand(plugin, mock(), repository),
-                BuildEditCommand(plugin, mock(), repository),
-                BuildListCommand(plugin, repository),
-                BuildMoveCommand(plugin, mock(), repository),
-                BuildSetCommand(plugin, repository),
-                BuildUnvoteCommand(plugin, mock(), repository),
-                BuildVoteCommand(plugin, mock(), repository),
-            ).literal()
+    fun `BuildsCommand executes its default list handler through the dispatcher`() =
+        runTest {
+            val executor = CoroutineScopeCommandTaskExecutor(this)
+            whenever(repository.all(1)).thenReturn(PaginatedList(emptyList(), 1, 10, 0, 0))
 
-        assertEquals(
-            setOf("create", "delete", "edit", "list", "move", "set", "unvote", "vote"),
-            command.children.map { it.name }.toSet(),
+            val command = buildsCommand(executor)
+            assertEquals(
+                setOf("create", "delete", "edit", "list", "move", "set", "unvote", "vote"),
+                command.literal().children.map { it.name }.toSet(),
+            )
+            runCommand(this, command, "builds")
+
+            verify(repository).all(1)
+            verify(player).sendMessage(com.projectcitybuild.pcbridge.core.l10n.l10n.errorNoBuildsFound)
+        }
+
+    private fun buildsCommand(executor: CoroutineScopeCommandTaskExecutor) =
+        BuildsCommand(
+            BuildCreateCommand(plugin, repository, executor),
+            BuildDeleteCommand(plugin, mock(), repository, executor),
+            BuildEditCommand(plugin, mock(), repository, executor),
+            BuildListCommand(plugin, repository, executor),
+            BuildMoveCommand(plugin, mock(), repository, executor),
+            BuildSetCommand(plugin, repository, executor),
+            BuildUnvoteCommand(plugin, mock(), repository, executor),
+            BuildVoteCommand(plugin, mock(), repository, executor),
         )
-    }
 
-    private fun setContext(name: String) {
-        whenever(context.source).thenReturn(source)
-        whenever(context.input).thenReturn("/builds $name")
-        whenever(source.sender).thenReturn(player)
-        whenever(context.getArgument("name", String::class.java)).thenReturn(name)
-    }
-
-    private fun setupPlayerLocation(): Location {
-        val world = mock(World::class.java)
-        val location = Location(world, 1.5, 64.0, -2.0, 20f, 30f)
-        whenever(player.location).thenReturn(location)
-        whenever(world.name).thenReturn("world")
-        setContext("unused")
-        return location
+    private fun runCommand(
+        scope: TestScope,
+        command: BrigadierCommand,
+        input: String,
+    ) {
+        val dispatcher = CommandDispatcher<CommandSourceStack>()
+        dispatcher.root.addChild(command.literal())
+        dispatcher.execute(input, source)
+        scope.testScheduler.advanceUntilIdle()
     }
 
     private fun build(name: String) =
@@ -253,27 +250,4 @@ class BuildCommandHandlersTest {
             updatedAt = LocalDateTime.MIN,
             player = BuildOwner(1, UUID.randomUUID().toString(), "builder"),
         )
-}
-
-private suspend fun invokeHandler(
-    command: Any,
-    context: PaperCommandContext,
-) {
-    val handler =
-        command.javaClass.getDeclaredMethod(
-            "execute",
-            CommandContext::class.java,
-            kotlin.coroutines.Continuation::class.java,
-        )
-    handler.isAccessible = true
-    kotlin.coroutines.suspendCoroutine<Unit> { continuation ->
-        try {
-            val result = handler.invoke(command, context, continuation)
-            if (result !== kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED) {
-                continuation.resumeWith(Result.success(Unit))
-            }
-        } catch (exception: java.lang.reflect.InvocationTargetException) {
-            continuation.resumeWith(Result.failure(exception.targetException))
-        }
-    }
 }

@@ -5,6 +5,8 @@ import com.projectcitybuild.pcbridge.features.building.buildingTracer
 import com.projectcitybuild.pcbridge.features.building.domain.data.InvisFrameKey
 import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
+import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
+import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
 import com.projectcitybuild.pcbridge.platform.paper.namespace.SpigotNamespace
 import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandContext
@@ -24,6 +26,7 @@ import org.bukkit.plugin.Plugin
 class InvisFrameCommand(
     private val plugin: Plugin,
     private val spigotNamespace: SpigotNamespace,
+    private val commandTaskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
     internal var frameFactory: (Material) -> ItemStack = ::ItemStack
 
@@ -34,19 +37,19 @@ class InvisFrameCommand(
             .requiresPermission(PermissionNode.BUILDING_INVIS_FRAME)
             .then(
                 Commands.literal("glowing")
-                    .executesSuspending(plugin, ::giveGlowing),
+                    .executesSuspending(commandTaskExecutor, ::giveGlowing),
             )
-            .executesSuspending(plugin, ::giveNormal)
+            .executesSuspending(commandTaskExecutor, ::giveNormal)
             .build()
     }
 
-    internal fun giveNormal(context: PaperCommandContext) =
+    private fun giveNormal(context: PaperCommandContext) =
         give(
             context = context,
             glowing = false,
         )
 
-    internal fun giveGlowing(context: PaperCommandContext) =
+    private fun giveGlowing(context: PaperCommandContext) =
         give(
             context = context,
             glowing = true,

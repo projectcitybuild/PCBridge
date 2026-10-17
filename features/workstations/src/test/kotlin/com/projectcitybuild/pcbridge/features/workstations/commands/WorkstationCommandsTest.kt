@@ -1,8 +1,13 @@
 package com.projectcitybuild.pcbridge.features.workstations.commands
 
+import com.mojang.brigadier.CommandDispatcher
 import com.projectcitybuild.pcbridge.core.permissions.PermissionNode
-import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandContext
+import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
+import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
+import com.projectcitybuild.pcbridge.platform.paper.commands.CoroutineScopeCommandTaskExecutor
 import io.papermc.paper.command.brigadier.CommandSourceStack
+import kotlinx.coroutines.test.TestScope
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
@@ -16,100 +21,86 @@ import org.mockito.kotlin.whenever
 
 class WorkstationCommandsTest {
     private val player = mock(Player::class.java)
-    private val context = mock(PaperCommandContext::class.java)
     private val source = mock(CommandSourceStack::class.java)
 
     @Test
     fun `anvil command opens anvil for the invoking player and checks permission`() =
         runTest {
-            val command = AnvilCommand(mock(Plugin::class.java))
-            assertCommandBehavior("anvil", command.literal(), "anvil") { opener ->
-                command.menuOpener = opener
-                command.execute(context)
+            assertCommandBehavior("anvil", "anvil", CoroutineScopeCommandTaskExecutor(this)) { executor, opener ->
+                AnvilCommand(mock(Plugin::class.java), executor).also { it.menuOpener = opener }
             }
         }
 
     @Test
     fun `cartography command opens cartography table for the invoking player and checks permission`() =
         runTest {
-            val command = CartographyTableCommand(mock(Plugin::class.java))
-            assertCommandBehavior("cartographytable", command.literal(), "cartography") { opener ->
-                command.menuOpener = opener
-                command.execute(context)
+            assertCommandBehavior("cartographytable", "cartography", CoroutineScopeCommandTaskExecutor(this)) { executor, opener ->
+                CartographyTableCommand(mock(Plugin::class.java), executor).also { it.menuOpener = opener }
             }
         }
 
     @Test
     fun `enchanting command opens enchanting table for the invoking player and checks permission`() =
         runTest {
-            val command = EnchantingCommand(mock(Plugin::class.java))
-            assertCommandBehavior("enchanting", command.literal(), "enchanting") { opener ->
-                command.menuOpener = opener
-                command.execute(context)
+            assertCommandBehavior("enchanting", "enchanting", CoroutineScopeCommandTaskExecutor(this)) { executor, opener ->
+                EnchantingCommand(mock(Plugin::class.java), executor).also { it.menuOpener = opener }
             }
         }
 
     @Test
     fun `grindstone command opens grindstone for the invoking player and checks permission`() =
         runTest {
-            val command = GrindstoneCommand(mock(Plugin::class.java))
-            assertCommandBehavior("grindstone", command.literal(), "grindstone") { opener ->
-                command.menuOpener = opener
-                command.execute(context)
+            assertCommandBehavior("grindstone", "grindstone", CoroutineScopeCommandTaskExecutor(this)) { executor, opener ->
+                GrindstoneCommand(mock(Plugin::class.java), executor).also { it.menuOpener = opener }
             }
         }
 
     @Test
     fun `loom command opens loom for the invoking player and checks permission`() =
         runTest {
-            val command = LoomCommand(mock(Plugin::class.java))
-            assertCommandBehavior("loom", command.literal(), "loom") { opener ->
-                command.menuOpener = opener
-                command.execute(context)
+            assertCommandBehavior("loom", "loom", CoroutineScopeCommandTaskExecutor(this)) { executor, opener ->
+                LoomCommand(mock(Plugin::class.java), executor).also { it.menuOpener = opener }
             }
         }
 
     @Test
     fun `smithing command opens smithing table for the invoking player and checks permission`() =
         runTest {
-            val command = SmithingTableCommand(mock(Plugin::class.java))
-            assertCommandBehavior("smithingtable", command.literal(), "smithing") { opener ->
-                command.menuOpener = opener
-                command.execute(context)
+            assertCommandBehavior("smithingtable", "smithing", CoroutineScopeCommandTaskExecutor(this)) { executor, opener ->
+                SmithingTableCommand(mock(Plugin::class.java), executor).also { it.menuOpener = opener }
             }
         }
 
     @Test
     fun `stonecutter command opens stonecutter for the invoking player and checks permission`() =
         runTest {
-            val command = StoneCutterCommand(mock(Plugin::class.java))
-            assertCommandBehavior("stonecutter", command.literal(), "stonecutter") { opener ->
-                command.menuOpener = opener
-                command.execute(context)
+            assertCommandBehavior("stonecutter", "stonecutter", CoroutineScopeCommandTaskExecutor(this)) { executor, opener ->
+                StoneCutterCommand(mock(Plugin::class.java), executor).also { it.menuOpener = opener }
             }
         }
 
     @Test
     fun `workbench command opens crafting table for the invoking player and checks permission`() =
         runTest {
-            val command = WorkbenchCommand(mock(Plugin::class.java))
-            assertCommandBehavior("workbench", command.literal(), "workbench") { opener ->
-                command.menuOpener = opener
-                command.execute(context)
+            assertCommandBehavior("workbench", "workbench", CoroutineScopeCommandTaskExecutor(this)) { executor, opener ->
+                WorkbenchCommand(mock(Plugin::class.java), executor).also { it.menuOpener = opener }
             }
         }
 
-    private suspend fun assertCommandBehavior(
+    private suspend fun TestScope.assertCommandBehavior(
         name: String,
-        node: com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandNode,
         menuType: String,
-        execute: suspend ((String, Player) -> Unit) -> Unit,
+        executor: CommandTaskExecutor,
+        createCommand: (CommandTaskExecutor, (String, Player) -> Unit) -> BrigadierCommand,
     ) {
         val openedMenus = mutableListOf<Pair<String, Player>>()
-        whenever(context.source).thenReturn(source)
-        whenever(context.input).thenReturn("/$name")
         whenever(source.sender).thenReturn(player)
         whenever(player.hasPermission(PermissionNode.WORKSTATIONS_USE.node)).thenReturn(true)
+        val command =
+            createCommand(executor) { actualType, actualPlayer ->
+                openedMenus.add(actualType to actualPlayer)
+            }
+        val node = command.literal()
 
         assertEquals(name, node.name)
         assertTrue(node.requirement.test(source))
@@ -117,7 +108,10 @@ class WorkstationCommandsTest {
         assertFalse(node.requirement.test(source))
         whenever(player.hasPermission(PermissionNode.WORKSTATIONS_USE.node)).thenReturn(true)
 
-        execute { actualType, actualPlayer -> openedMenus.add(actualType to actualPlayer) }
+        val dispatcher = CommandDispatcher<CommandSourceStack>()
+        dispatcher.root.addChild(node)
+        dispatcher.execute(name, source)
+        runCurrent()
 
         assertEquals(listOf(menuType to player), openedMenus)
         assertSame(player, openedMenus.single().second)

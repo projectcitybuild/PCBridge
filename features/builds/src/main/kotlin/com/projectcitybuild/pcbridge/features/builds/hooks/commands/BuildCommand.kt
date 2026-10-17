@@ -7,6 +7,8 @@ import com.projectcitybuild.pcbridge.features.builds.buildsTracer
 import com.projectcitybuild.pcbridge.features.builds.domain.repositories.BuildRepository
 import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
+import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
+import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
 import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandContext
 import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandNode
@@ -31,6 +33,7 @@ class BuildCommand(
     private val buildRepository: BuildRepository,
     private val server: Server,
     private val playerTeleporter: PlayerTeleporter,
+    private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
     override fun literal(): PaperCommandNode {
         return Commands.literal("build")
@@ -38,7 +41,7 @@ class BuildCommand(
             .then(
                 Commands.argument("name", StringArgumentType.greedyString())
                     .suggestsSuspending(plugin, buildNameSuggester::suggest)
-                    .executesSuspending(plugin, ::execute),
+                    .executesSuspending(taskExecutor, ::execute),
             )
             .build()
     }
