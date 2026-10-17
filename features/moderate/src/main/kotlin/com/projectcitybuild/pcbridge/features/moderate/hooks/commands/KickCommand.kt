@@ -38,7 +38,7 @@ class KickCommand(
             .build()
     }
 
-    private suspend fun execute(context: PaperCommandContext) =
+    internal suspend fun execute(context: PaperCommandContext) =
         context.scoped(moderateTracer) {
             val player = context.getArgument("player", Player::class.java)
             val reason = context.getOptionalArgument("reason", String::class.java)

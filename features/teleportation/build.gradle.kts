@@ -10,4 +10,6 @@ dependencies {
     implementation(project(":core:validation"))
     implementation(project(":platform:paper"))
     implementation(project(":runtime"))
+
+    testImplementation(project(":core:test-support"))
 }

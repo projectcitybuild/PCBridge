@@ -35,7 +35,7 @@ class ItemNameCommand(
             .build()
     }
 
-    private suspend fun execute(context: PaperCommandContext) =
+    internal suspend fun execute(context: PaperCommandContext) =
         context.scoped(buildingTracer) {
             val player = context.source.requirePlayer()
 

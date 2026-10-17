@@ -10,20 +10,23 @@ import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperComma
 import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandNode
 import com.projectcitybuild.pcbridge.features.workstations.workstationsTracer
 import io.papermc.paper.command.brigadier.Commands
+import org.bukkit.entity.Player
 import org.bukkit.inventory.MenuType
 import org.bukkit.plugin.Plugin
 
 class EnchantingCommand(
     private val plugin: Plugin,
 ) : BrigadierCommand {
+    internal var menuOpener: (String, Player) -> Unit = { _, player -> MenuType.ENCHANTMENT.create(player).open() }
+
     override fun literal(): PaperCommandNode
         = Commands.literal("enchanting")
             .requiresPermission(PermissionNode.WORKSTATIONS_USE)
             .executesSuspending(plugin, ::execute)
             .build()
 
-    private suspend fun execute(context: PaperCommandContext) = context.scoped(workstationsTracer) {
+    internal suspend fun execute(context: PaperCommandContext) = context.scoped(workstationsTracer) {
         val player = context.source.requirePlayer()
-        MenuType.ENCHANTMENT.create(player).open()
+        menuOpener("enchanting", player)
     }
 }

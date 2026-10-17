@@ -25,6 +25,8 @@ class InvisFrameCommand(
     private val plugin: Plugin,
     private val spigotNamespace: SpigotNamespace,
 ) : BrigadierCommand {
+    internal var frameFactory: (Material) -> ItemStack = ::ItemStack
+
     override val description: String = "Gives you an itemframe that turns invisible when holding an item"
 
     override fun literal(): PaperCommandNode {
@@ -38,13 +40,13 @@ class InvisFrameCommand(
             .build()
     }
 
-    private fun giveNormal(context: PaperCommandContext) =
+    internal fun giveNormal(context: PaperCommandContext) =
         give(
             context = context,
             glowing = false,
         )
 
-    private fun giveGlowing(context: PaperCommandContext) =
+    internal fun giveGlowing(context: PaperCommandContext) =
         give(
             context = context,
             glowing = true,
@@ -57,9 +59,9 @@ class InvisFrameCommand(
         val player = context.source.requirePlayer()
         val itemStack =
             if (glowing) {
-                ItemStack(Material.GLOW_ITEM_FRAME)
+                frameFactory(Material.GLOW_ITEM_FRAME)
             } else {
-                ItemStack(Material.ITEM_FRAME)
+                frameFactory(Material.ITEM_FRAME)
             }
         val itemName =
             if (glowing) {

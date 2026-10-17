@@ -30,7 +30,7 @@ class WarnCommand(
             .build()
     }
 
-    private suspend fun execute(context: PaperCommandContext) = context.scoped(warningsTracer) {
+    internal suspend fun execute(context: PaperCommandContext) = context.scoped(warningsTracer) {
         val playerName = context.getArgument("player", String::class.java)
 
         val player = server.onlinePlayer(name = playerName)

@@ -7,4 +7,6 @@ dependencies {
     implementation(project(":core:utils"))
     implementation(project(":platform:paper"))
     implementation(project(":runtime"))
+
+    testImplementation(project(":core:test-support"))
 }

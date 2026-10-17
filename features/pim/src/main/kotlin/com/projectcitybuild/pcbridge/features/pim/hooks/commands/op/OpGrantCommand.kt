@@ -14,6 +14,7 @@ import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.extensions
 import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.runtime.commands.scoped
 import io.papermc.paper.command.brigadier.Commands
+import net.kyori.adventure.dialog.DialogLike
 import org.bukkit.plugin.Plugin
 
 class OpGrantCommand(
@@ -21,6 +22,8 @@ class OpGrantCommand(
     private val opElevationService: OpElevationService,
     private val localizedTime: LocalizedTime,
 ) : BrigadierCommand {
+    internal var confirmationDialog: () -> DialogLike = ConfirmOpElevateDialog::build
+
     override fun literal(): PaperCommandNode {
         return Commands.literal("grant")
             .requiresPermission(PermissionNode.PIM_OP)
@@ -42,7 +45,7 @@ class OpGrantCommand(
                 return@scoped
             }
 
-            val dialog = ConfirmOpElevateDialog.build()
+            val dialog = confirmationDialog()
             player.showDialog(dialog)
         }
 }

@@ -27,7 +27,7 @@ class ConfigCommand(
             .build()
     }
 
-    private suspend fun execute(context: PaperCommandContext) =
+    internal suspend fun execute(context: PaperCommandContext) =
         context.scoped(configTracer) {
             val sender = context.source.sender
 

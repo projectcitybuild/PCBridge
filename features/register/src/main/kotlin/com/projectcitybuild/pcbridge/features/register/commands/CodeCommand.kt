@@ -9,11 +9,14 @@ import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperComma
 import com.projectcitybuild.pcbridge.features.register.dialogs.VerifyRegistrationCodeDialog
 import com.projectcitybuild.pcbridge.features.register.registerTracer
 import io.papermc.paper.command.brigadier.Commands
+import net.kyori.adventure.dialog.DialogLike
 import org.bukkit.plugin.Plugin
 
 class CodeCommand(
     private val plugin: Plugin,
 ) : BrigadierCommand {
+    internal var dialogFactory: () -> DialogLike = { VerifyRegistrationCodeDialog.build(email = null) }
+
     override val description: String = "Finishes account registration by verifying a code"
 
     override fun literal(): PaperCommandNode {
@@ -22,12 +25,12 @@ class CodeCommand(
             .build()
     }
 
-    private suspend fun execute(
+    internal suspend fun execute(
         context: PaperCommandContext,
     ) = context.scoped(registerTracer) {
         val player = context.source.requirePlayer()
 
-        val dialog = VerifyRegistrationCodeDialog.build(email = null)
+        val dialog = dialogFactory()
         player.showDialog(dialog)
     }
 }
