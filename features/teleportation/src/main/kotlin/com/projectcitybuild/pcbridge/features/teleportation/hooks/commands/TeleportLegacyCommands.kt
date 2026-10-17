@@ -3,8 +3,8 @@ package com.projectcitybuild.pcbridge.features.teleportation.hooks.commands
 import com.mojang.brigadier.arguments.DoubleArgumentType
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import com.projectcitybuild.pcbridge.core.permissions.PermissionNode
-import com.projectcitybuild.pcbridge.features.teleportation.services.TeleportApplication
-import com.projectcitybuild.pcbridge.features.teleportation.services.TeleportFlags
+import com.projectcitybuild.pcbridge.features.teleportation.domain.data.TeleportFlags
+import com.projectcitybuild.pcbridge.features.teleportation.domain.services.TeleportApplication
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
 import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandContext
@@ -86,7 +86,7 @@ class TeleportLegacyCommands(
             addAll(
                 playerCommands(
                     names = listOf("tphere"),
-                    permissions = listOf(PermissionNode.TELEPORT_OTHERS),
+                    permissions = listOf(PermissionNode.TELEPORT_OTHERS, PermissionNode.TELEPORT_FORCE),
                 ) { context, target ->
                     application.here(
                         operator = context.source.requirePlayer(),
@@ -113,7 +113,8 @@ class TeleportLegacyCommands(
         names.map { name ->
             command(name) {
                 then(
-                    Commands.argument("player", SingleOnlinePlayerArgument(server))
+                    Commands
+                        .argument("player", SingleOnlinePlayerArgument(server))
                         .requiresPermission(*permissions.toTypedArray())
                         .executesSuspending(plugin) { context ->
                             context.scoped(teleportationTracer) {
@@ -140,7 +141,8 @@ class TeleportLegacyCommands(
                     }
                 }
                 then(
-                    Commands.argument("requester", SingleOnlinePlayerArgument(server))
+                    Commands
+                        .argument("requester", SingleOnlinePlayerArgument(server))
                         .executesSuspending(plugin) { context ->
                             context.scoped(teleportationTracer) {
                                 val requester = context.getArgument("requester", Player::class.java)
@@ -164,7 +166,8 @@ class TeleportLegacyCommands(
                     }
                 }
                 then(
-                    Commands.argument("player", SingleOnlinePlayerArgument(server))
+                    Commands
+                        .argument("player", SingleOnlinePlayerArgument(server))
                         .executesSuspending(plugin) { context ->
                             context.scoped(teleportationTracer) {
                                 application.cancel(
@@ -182,22 +185,23 @@ class TeleportLegacyCommands(
             executesSuspending(plugin) { context ->
                 context.scoped(teleportationTracer) {
                     val player = context.source.requirePlayer()
-                        application.back(player, player)
-                    }
+                    application.back(player, player)
                 }
-                then(
-                    Commands.argument("player", SingleOnlinePlayerArgument(server))
-                        .requiresPermission(PermissionNode.TELEPORT_BACK_OTHERS)
-                        .executesSuspending(plugin) { context ->
-                            context.scoped(teleportationTracer) {
-                                application.back(
-                                    operator = context.source.sender,
-                                    target = context.getArgument("player", Player::class.java),
-                                )
-                            }
-                        },
-                )
             }
+            then(
+                Commands
+                    .argument("player", SingleOnlinePlayerArgument(server))
+                    .requiresPermission(PermissionNode.TELEPORT_BACK_OTHERS)
+                    .executesSuspending(plugin) { context ->
+                        context.scoped(teleportationTracer) {
+                            application.back(
+                                operator = context.source.sender,
+                                target = context.getArgument("player", Player::class.java),
+                            )
+                        }
+                    },
+            )
+        }
 
     private fun randomCommand(): BrigadierCommand =
         command("rtp") {
@@ -214,7 +218,7 @@ class TeleportLegacyCommands(
             command(name) {
                 requiresPermission(PermissionNode.TELEPORT_POSITION)
                 then(
-                    withCoordinateArgs(plugin, ::executePosition)
+                    withCoordinateArgs(plugin, ::executePosition),
                 )
             }
         }
@@ -222,7 +226,7 @@ class TeleportLegacyCommands(
     private fun allCommands(names: List<String>): List<BrigadierCommand> =
         names.map { name ->
             command(name) {
-                requiresPermission(PermissionNode.TELEPORT_ALL)
+                requiresPermission(PermissionNode.TELEPORT_ALL, PermissionNode.TELEPORT_FORCE)
                 executesSuspending(plugin) { context ->
                     application.all(
                         operator = context.source.sender,
@@ -231,14 +235,15 @@ class TeleportLegacyCommands(
                     )
                 }
                 then(
-                    Commands.argument("target", SingleOnlinePlayerArgument(server))
+                    Commands
+                        .argument("target", SingleOnlinePlayerArgument(server))
                         .executesSuspending(plugin) { context ->
                             application.all(
                                 operator = context.source.sender,
                                 requestedTarget = context.getArgument("target", Player::class.java),
                                 flags = TeleportFlags(force = true),
                             )
-                        }
+                        },
                 )
             }
         }
@@ -264,7 +269,8 @@ class TeleportLegacyCommands(
     ): BrigadierCommand =
         object : BrigadierCommand {
             override fun literal(): PaperCommandNode =
-                Commands.literal(name)
+                Commands
+                    .literal(name)
                     .apply(configure)
                     .build()
         }

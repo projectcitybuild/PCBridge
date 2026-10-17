@@ -1,4 +1,4 @@
-package com.projectcitybuild.pcbridge.features.teleportation.services
+package com.projectcitybuild.pcbridge.features.teleportation.domain.data
 
 data class TeleportFlags(
     // Bypasses teleportation consent checks, allowing the teleportation

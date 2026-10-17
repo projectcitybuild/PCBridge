@@ -1,5 +1,7 @@
-package com.projectcitybuild.pcbridge.features.teleportation.services
+package com.projectcitybuild.pcbridge.features.teleportation.domain.services
 
+import com.projectcitybuild.pcbridge.features.teleportation.domain.data.TeleportRequest
+import com.projectcitybuild.pcbridge.features.teleportation.domain.services.TeleportRequestService
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertInstanceOf
 import org.junit.jupiter.api.Assertions.assertNull

@@ -1,6 +1,8 @@
 package com.projectcitybuild.pcbridge.core.permissions
 
-enum class PermissionNode(val node: String) {
+enum class PermissionNode(
+    val node: String,
+) {
     // Can ban a player
     BANS_MANAGE("pcbridge.bans.manage"),
 

@@ -3,7 +3,7 @@ package com.projectcitybuild.pcbridge.features.teleportation.hooks.commands.args
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import com.mojang.brigadier.builder.RequiredArgumentBuilder
 import com.projectcitybuild.pcbridge.core.permissions.PermissionNode
-import com.projectcitybuild.pcbridge.features.teleportation.services.TeleportFlags
+import com.projectcitybuild.pcbridge.features.teleportation.domain.data.TeleportFlags
 import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
 import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandContext
 import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.extensions.executesSuspending

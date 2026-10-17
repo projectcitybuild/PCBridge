@@ -13,9 +13,9 @@ import com.projectcitybuild.pcbridge.features.teleportation.hooks.commands.Telep
 import com.projectcitybuild.pcbridge.features.teleportation.hooks.commands.TeleportSendCommand
 import com.projectcitybuild.pcbridge.features.teleportation.hooks.commands.TeleportToCommand
 import com.projectcitybuild.pcbridge.features.teleportation.hooks.listeners.TeleportRequestListener
-import com.projectcitybuild.pcbridge.features.teleportation.services.FindRandomLocation
-import com.projectcitybuild.pcbridge.features.teleportation.services.TeleportApplication
-import com.projectcitybuild.pcbridge.features.teleportation.services.TeleportRequestService
+import com.projectcitybuild.pcbridge.features.teleportation.domain.services.FindRandomLocation
+import com.projectcitybuild.pcbridge.features.teleportation.domain.services.TeleportApplication
+import com.projectcitybuild.pcbridge.features.teleportation.domain.services.TeleportRequestService
 import com.projectcitybuild.pcbridge.runtime.features.paperFeature
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf

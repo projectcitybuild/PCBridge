@@ -6,9 +6,9 @@ import com.projectcitybuild.pcbridge.core.permissions.PermissionNode
 import io.papermc.paper.command.brigadier.CommandSourceStack
 
 fun LiteralArgumentBuilder<CommandSourceStack>.requiresPermission(
-    permission: PermissionNode,
+    vararg permissions: PermissionNode,
 ): LiteralArgumentBuilder<CommandSourceStack> = requires { context ->
-    context.sender.hasPermission(permission.node)
+    permissions.all { context.sender.hasPermission(it.node) }
 }
 
 fun <S : CommandSourceStack, T> RequiredArgumentBuilder<S, T>.requiresPermission(

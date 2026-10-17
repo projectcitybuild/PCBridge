@@ -2,7 +2,7 @@ package com.projectcitybuild.pcbridge.features.teleportation.hooks.commands
 
 import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.core.permissions.PermissionNode
-import com.projectcitybuild.pcbridge.features.teleportation.services.TeleportApplication
+import com.projectcitybuild.pcbridge.features.teleportation.domain.services.TeleportApplication
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
 import com.projectcitybuild.pcbridge.platform.paper.commands.then

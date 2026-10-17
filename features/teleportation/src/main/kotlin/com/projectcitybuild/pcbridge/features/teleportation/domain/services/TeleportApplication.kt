@@ -1,9 +1,11 @@
-package com.projectcitybuild.pcbridge.features.teleportation.services
+package com.projectcitybuild.pcbridge.features.teleportation.domain.services
 
 import com.github.shynixn.mccoroutine.bukkit.minecraftDispatcher
 import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.core.observability.logging.logSync
 import com.projectcitybuild.pcbridge.core.permissions.PermissionNode
+import com.projectcitybuild.pcbridge.features.teleportation.domain.data.TeleportFlags
+import com.projectcitybuild.pcbridge.features.teleportation.domain.data.TeleportRequest
 import com.projectcitybuild.pcbridge.platform.paper.scheduling.SpigotTimer
 import com.projectcitybuild.pcbridge.runtime.cooldowns.Cooldown
 import com.projectcitybuild.pcbridge.runtime.teleportation.PlayerTeleporter
@@ -71,14 +73,17 @@ class TeleportApplication(
                 target.sendMessage(l10n.errorTeleportRequestAmbiguous)
                 return
             }
+
             TeleportRequestService.TakeResult.Missing -> {
                 target.sendMessage(l10n.errorTeleportRequestMissing)
                 return
             }
+
             TeleportRequestService.TakeResult.Expired -> {
                 target.sendMessage(l10n.errorTeleportRequestExpired)
                 return
             }
+
             is TeleportRequestService.TakeResult.Taken -> {
                 val request = result.request
                 val requester = server.getPlayer(request.requesterId)
@@ -109,12 +114,18 @@ class TeleportApplication(
         requesterId: UUID?,
     ) {
         when (val result = requestService.takeIncoming(target.uniqueId, requesterId)) {
-            TeleportRequestService.TakeResult.Ambiguous ->
+            TeleportRequestService.TakeResult.Ambiguous -> {
                 target.sendMessage(l10n.errorTeleportRequestAmbiguous)
-            TeleportRequestService.TakeResult.Missing ->
+            }
+
+            TeleportRequestService.TakeResult.Missing -> {
                 target.sendMessage(l10n.errorTeleportRequestMissing)
-            TeleportRequestService.TakeResult.Expired ->
+            }
+
+            TeleportRequestService.TakeResult.Expired -> {
                 target.sendMessage(l10n.errorTeleportRequestExpired)
+            }
+
             is TeleportRequestService.TakeResult.Taken -> {
                 val request = result.request
                 target.sendMessage(l10n.teleportRequestDenied(request.requesterName))
@@ -218,7 +229,9 @@ class TeleportApplication(
                             player.name,
                             ttl = result.request.ttl(),
                         )
+
                         TeleportRequestService.CreateResult.AlreadyPending -> l10n.errorTeleportRequestPending
+
                         TeleportRequestService.CreateResult.SelfTarget -> l10n.errorTeleportSelf
                     },
                 )
@@ -279,12 +292,18 @@ class TeleportApplication(
                         l10n.teleportRequestsCreated(result.requests.size),
                     )
                 }
-                TeleportRequestService.CreateManyResult.NoRecipients ->
+
+                TeleportRequestService.CreateManyResult.NoRecipients -> {
                     notifyOperatorAndRequester(operator, target, l10n.teleportRequestsCreated(0))
-                TeleportRequestService.CreateManyResult.SelfTarget ->
+                }
+
+                TeleportRequestService.CreateManyResult.SelfTarget -> {
                     notifyOperatorAndRequester(operator, target, l10n.errorTeleportSelf)
-                TeleportRequestService.CreateManyResult.AlreadyPending ->
+                }
+
+                TeleportRequestService.CreateManyResult.AlreadyPending -> {
                     notifyOperatorAndRequester(operator, target, l10n.errorTeleportRequestPending)
+                }
             }
             return
         }
@@ -394,10 +413,14 @@ class TeleportApplication(
         }
 
         when (val history = historyStorage.retrieve(target.uniqueId)) {
-            TeleportHistoryStorage.Lookup.Missing ->
+            TeleportHistoryStorage.Lookup.Missing -> {
                 operator.sendMessage(l10n.errorTeleportHistoryMissing)
-            TeleportHistoryStorage.Lookup.Unavailable ->
+            }
+
+            TeleportHistoryStorage.Lookup.Unavailable -> {
                 operator.sendMessage(l10n.errorTeleportHistoryWorldUnavailable)
+            }
+
             is TeleportHistoryStorage.Lookup.Found -> {
                 if (move(target, history.location, recipient = null, silent = true)) {
                     operator.sendMessage(l10n.teleportBackCompleted(target.name))
@@ -447,7 +470,7 @@ class TeleportApplication(
     ): TeleportRequestService.CreateResult {
         val result =
             when (direction) {
-                TeleportRequest.Direction.TO ->
+                TeleportRequest.Direction.TO -> {
                     requestService.create(
                         requesterId = requester.uniqueId,
                         requesterName = requester.name,
@@ -455,7 +478,9 @@ class TeleportApplication(
                         targetName = target.name,
                         silent = silent,
                     )
-                TeleportRequest.Direction.HERE ->
+                }
+
+                TeleportRequest.Direction.HERE -> {
                     requestService.createHere(
                         requesterId = requester.uniqueId,
                         requesterName = requester.name,
@@ -463,6 +488,7 @@ class TeleportApplication(
                         targetName = target.name,
                         silent = silent,
                     )
+                }
             }
 
         when (result) {
@@ -470,10 +496,14 @@ class TeleportApplication(
                 requester.sendMessage(l10n.teleportRequestCreated(target.name, ttl = result.request.ttl()))
                 notifyRequestTarget(target, result.request, direction)
             }
-            TeleportRequestService.CreateResult.AlreadyPending ->
+
+            TeleportRequestService.CreateResult.AlreadyPending -> {
                 requester.sendMessage(l10n.errorTeleportRequestPending)
-            TeleportRequestService.CreateResult.SelfTarget ->
+            }
+
+            TeleportRequestService.CreateResult.SelfTarget -> {
                 requester.sendMessage(l10n.errorTeleportSelf)
+            }
         }
         return result
     }
@@ -540,11 +570,11 @@ class TeleportApplication(
 }
 
 private fun TeleportRequest.ttl() =
-    Duration.between(Instant.now(), expiresAt)
+    Duration
+        .between(Instant.now(), expiresAt)
         .let { remaining ->
             Duration.ofSeconds(remaining.seconds + if (remaining.nano == 0) 0 else 1)
-        }
-        .toKotlinDuration()
+        }.toKotlinDuration()
 
 private fun TeleportRequest.timeUntilExpiry(): kotlin.time.Duration {
     val remaining = Duration.between(Instant.now(), expiresAt).toKotlinDuration()

@@ -1,4 +1,4 @@
-package com.projectcitybuild.pcbridge.features.teleportation.services
+package com.projectcitybuild.pcbridge.features.teleportation.domain.data
 
 import java.time.Instant
 import java.util.UUID

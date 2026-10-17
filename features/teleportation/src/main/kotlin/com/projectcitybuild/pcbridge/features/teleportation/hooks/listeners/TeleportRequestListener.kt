@@ -1,7 +1,7 @@
 package com.projectcitybuild.pcbridge.features.teleportation.hooks.listeners
 
 import com.projectcitybuild.pcbridge.core.l10n.l10n
-import com.projectcitybuild.pcbridge.features.teleportation.services.TeleportRequestService
+import com.projectcitybuild.pcbridge.features.teleportation.domain.services.TeleportRequestService
 import org.bukkit.Server
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener

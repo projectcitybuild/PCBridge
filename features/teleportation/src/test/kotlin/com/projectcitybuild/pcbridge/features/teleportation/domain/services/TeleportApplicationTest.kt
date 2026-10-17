@@ -1,11 +1,17 @@
-package com.projectcitybuild.pcbridge.features.teleportation.services
+package com.projectcitybuild.pcbridge.features.teleportation.domain.services
 
 import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.core.permissions.PermissionNode
+import com.projectcitybuild.pcbridge.features.teleportation.domain.services.FindRandomLocation
+import com.projectcitybuild.pcbridge.features.teleportation.domain.services.TeleportApplication
+import com.projectcitybuild.pcbridge.features.teleportation.domain.data.TeleportFlags
+import com.projectcitybuild.pcbridge.features.teleportation.domain.data.TeleportRequest
+import com.projectcitybuild.pcbridge.features.teleportation.domain.services.TeleportRequestService
 import com.projectcitybuild.pcbridge.platform.paper.scheduling.SpigotTimer
 import com.projectcitybuild.pcbridge.runtime.cooldowns.Cooldown
 import com.projectcitybuild.pcbridge.runtime.teleportation.PlayerTeleporter
 import com.projectcitybuild.pcbridge.runtime.teleportation.storage.TeleportHistoryStorage
+import kotlinx.coroutines.runBlocking
 import net.kyori.adventure.text.Component
 import org.bukkit.Location
 import org.bukkit.Server
@@ -13,6 +19,7 @@ import org.bukkit.World
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause
 import org.bukkit.plugin.java.JavaPlugin
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
@@ -51,7 +58,7 @@ class TeleportApplicationTest {
 
     @Test
     fun `random teleport requires its permission before searching`() =
-        kotlinx.coroutines.runBlocking {
+        runBlocking {
             val player = player("Steve")
 
             application.random(player)
@@ -62,7 +69,7 @@ class TeleportApplicationTest {
 
     @Test
     fun `random teleport uses the shared movement path and reports the destination`() =
-        kotlinx.coroutines.runBlocking {
+        runBlocking {
             val world = mock<World>()
             val player = player("Steve", PermissionNode.TELEPORT_RANDOM)
             val candidate = Location(world, 12.0, 0.0, -8.0)
@@ -90,7 +97,7 @@ class TeleportApplicationTest {
 
     @Test
     fun `random teleport reports failure when no candidates are available`() =
-        kotlinx.coroutines.runBlocking {
+        runBlocking {
             val player = player("Steve", PermissionNode.TELEPORT_RANDOM)
             whenever(findRandomLocation.candidates(player, attempts = 5)).thenReturn(emptyList())
 
@@ -102,7 +109,7 @@ class TeleportApplicationTest {
 
     @Test
     fun `force and silent flags require their dedicated permissions`() =
-        kotlinx.coroutines.runBlocking {
+        runBlocking {
             val requester = player("Steve", PermissionNode.TELEPORT_REQUEST)
             val target = player("Alex")
 
@@ -115,7 +122,7 @@ class TeleportApplicationTest {
 
     @Test
     fun `silent force teleport keeps sender result and suppresses destination notice`() =
-        kotlinx.coroutines.runBlocking {
+        runBlocking {
             val requester =
                 player(
                     "Steve",
@@ -140,7 +147,7 @@ class TeleportApplicationTest {
 
     @Test
     fun `accepting one incoming request triggers only one teleport`() =
-        kotlinx.coroutines.runBlocking {
+        runBlocking {
             val target = player("Alex")
             val requester = player("Steve")
             val requesterId = requester.uniqueId
@@ -162,7 +169,7 @@ class TeleportApplicationTest {
 
     @Test
     fun `to and here commands create consent requests in the correct directions`() =
-        kotlinx.coroutines.runBlocking {
+        runBlocking {
             val requester = player("Steve", PermissionNode.TELEPORT_REQUEST)
             val target = player("Alex")
             val hereRequester = player("Casey", PermissionNode.TELEPORT_OTHERS)
@@ -210,7 +217,7 @@ class TeleportApplicationTest {
 
     @Test
     fun `send requests the selected player to teleport to the destination`() =
-        kotlinx.coroutines.runBlocking {
+        runBlocking {
             val operator = player("Staff", PermissionNode.TELEPORT_OTHERS, PermissionNode.TELEPORT_SILENT)
             val selected = player("Alex")
             val target = player("Casey")
@@ -239,7 +246,7 @@ class TeleportApplicationTest {
 
     @Test
     fun `send force requires force permission and moves only when authorized`() =
-        kotlinx.coroutines.runBlocking {
+        runBlocking {
             val target = player("Casey")
             val targetLocation = Location(mock<World>(), 5.0, 70.0, 5.0)
             whenever(target.location).thenReturn(targetLocation)
@@ -264,7 +271,7 @@ class TeleportApplicationTest {
 
     @Test
     fun `all requests every other online player to teleport to the destination`() =
-        kotlinx.coroutines.runBlocking {
+        runBlocking {
             val operator = player("Staff", PermissionNode.TELEPORT_ALL)
             val target = player("Target")
             val first = player("Alex")
@@ -296,7 +303,7 @@ class TeleportApplicationTest {
 
     @Test
     fun `all force requires force permission and moves every other online player`() =
-        kotlinx.coroutines.runBlocking {
+        runBlocking {
             val target = player("Target")
             val first = player("Alex")
             val second = player("Casey")
@@ -322,7 +329,7 @@ class TeleportApplicationTest {
 
     @Test
     fun `force here requires force permission in addition to staff permission`() =
-        kotlinx.coroutines.runBlocking {
+        runBlocking {
             val operator = player("Steve", PermissionNode.TELEPORT_OTHERS)
             val target = player("Alex")
 
@@ -334,7 +341,7 @@ class TeleportApplicationTest {
 
     @Test
     fun `force here keeps the canonical staff operation and shared movement path`() =
-        kotlinx.coroutines.runBlocking {
+        runBlocking {
             val operator = player("Steve", PermissionNode.TELEPORT_OTHERS, PermissionNode.TELEPORT_FORCE)
             val target = player("Alex")
             val operatorLocation = Location(mock<World>(), 5.0, 70.0, 5.0)
@@ -375,7 +382,7 @@ class TeleportApplicationTest {
 
     @Test
     fun `back reports missing history`() =
-        kotlinx.coroutines.runBlocking {
+        runBlocking {
             val player = player("Steve", PermissionNode.TELEPORT_BACK)
             whenever(historyStorage.retrieve(player.uniqueId)).thenReturn(TeleportHistoryStorage.Lookup.Missing)
 
@@ -387,7 +394,7 @@ class TeleportApplicationTest {
 
     @Test
     fun `position defaults to the current world and preserves coordinate precision`() =
-        kotlinx.coroutines.runBlocking {
+        runBlocking {
             val world = mock<World>()
             val player = player("Steve", PermissionNode.TELEPORT_POSITION)
             whenever(player.world).thenReturn(world)
@@ -407,17 +414,17 @@ class TeleportApplicationTest {
                 eq(TeleportCause.COMMAND),
                 any(),
             )
-            org.junit.jupiter.api.Assertions.assertEquals(world, destination.firstValue.world)
-            org.junit.jupiter.api.Assertions.assertEquals(12.125, destination.firstValue.x)
-            org.junit.jupiter.api.Assertions.assertEquals(64.75, destination.firstValue.y)
-            org.junit.jupiter.api.Assertions.assertEquals(-8.625, destination.firstValue.z)
-            org.junit.jupiter.api.Assertions.assertEquals(30.0f, destination.firstValue.yaw)
-            org.junit.jupiter.api.Assertions.assertEquals(10.0f, destination.firstValue.pitch)
+            assertEquals(world, destination.firstValue.world)
+            Assertions.assertEquals(12.125, destination.firstValue.x)
+            Assertions.assertEquals(64.75, destination.firstValue.y)
+            Assertions.assertEquals(-8.625, destination.firstValue.z)
+            Assertions.assertEquals(30.0f, destination.firstValue.yaw)
+            Assertions.assertEquals(10.0f, destination.firstValue.pitch)
         }
 
     @Test
     fun `position uses supplied yaw and pitch`() =
-        kotlinx.coroutines.runBlocking {
+        runBlocking {
             val world = mock<World>()
             val player = player("Steve", PermissionNode.TELEPORT_POSITION)
             whenever(player.world).thenReturn(world)
@@ -439,8 +446,8 @@ class TeleportApplicationTest {
                 eq(TeleportCause.COMMAND),
                 any(),
             )
-            org.junit.jupiter.api.Assertions.assertEquals(180.0f, destination.firstValue.yaw)
-            org.junit.jupiter.api.Assertions.assertEquals(-45.0f, destination.firstValue.pitch)
+            Assertions.assertEquals(180.0f, destination.firstValue.yaw)
+            Assertions.assertEquals(-45.0f, destination.firstValue.pitch)
         }
 
     private fun player(

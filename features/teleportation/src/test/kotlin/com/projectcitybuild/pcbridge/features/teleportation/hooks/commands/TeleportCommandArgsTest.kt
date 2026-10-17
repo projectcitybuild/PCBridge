@@ -1,7 +1,7 @@
 package com.projectcitybuild.pcbridge.features.teleportation.hooks.commands
 
 import com.mojang.brigadier.CommandDispatcher
-import com.projectcitybuild.pcbridge.features.teleportation.services.TeleportApplication
+import com.projectcitybuild.pcbridge.features.teleportation.domain.services.TeleportApplication
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import org.bukkit.Server
 import org.bukkit.command.CommandSender

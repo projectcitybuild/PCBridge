@@ -1,73 +1,84 @@
 package com.projectcitybuild.pcbridge.features.teleportation.hooks.commands
 
 import com.mojang.brigadier.CommandDispatcher
+import com.mojang.brigadier.exceptions.CommandSyntaxException
 import com.projectcitybuild.pcbridge.core.permissions.PermissionNode
-import com.projectcitybuild.pcbridge.features.teleportation.services.TeleportApplication
+import com.projectcitybuild.pcbridge.features.teleportation.domain.data.TeleportFlags
+import com.projectcitybuild.pcbridge.features.teleportation.domain.services.TeleportApplication
 import io.papermc.paper.command.brigadier.CommandSourceStack
+import kotlinx.coroutines.runBlocking
 import org.bukkit.Server
-import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
+import org.bukkit.plugin.PluginManager
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.times
+import org.mockito.kotlin.verify
+import org.mockito.kotlin.verifyNoInteractions
 import org.mockito.kotlin.whenever
 
 class TeleportLegacyCommandsTest {
-    private val player =
-        mock<Player>().also {
-            whenever(it.name).thenReturn("Notch")
-        }
+    private val player = mock<Player>().also {
+        whenever(it.name).thenReturn("Notch")
+    }
+    private val target = mock<Player>().also {
+        whenever(it.name).thenReturn("Alex")
+    }
 
-    private val server =
-        mock<Server>().also {
-            whenever(it.onlinePlayers).thenReturn(listOf(player))
-        }
+    private val server = mock<Server>().also {
+        whenever(it.onlinePlayers).thenReturn(listOf(player, target))
+        whenever(it.isPrimaryThread).thenReturn(true)
+        whenever(it.pluginManager).thenReturn(mock<PluginManager>())
+    }
 
     private val source = mock<CommandSourceStack>()
 
-    private val sender =
-        mock<CommandSender>().also {
-            whenever(it.hasPermission(any<String>())).thenReturn(true)
-        }
+    private val operator = mock<Player>().also {
+        whenever(it.name).thenReturn("Operator")
+        whenever(it.hasPermission(any<String>())).thenReturn(true)
+    }
 
-    private val plugin = mock<Plugin>()
+    private val plugin = mock<Plugin>().also {
+        whenever(it.server).thenReturn(server)
+        whenever(it.isEnabled).thenReturn(true)
+    }
 
     private val application = mock<TeleportApplication>()
     private val random = TeleportRandomCommand(plugin, application)
 
-    private val commands =
-        TeleportLegacyCommands(
-            plugin = plugin,
-            server = server,
-            application = application,
-        ).commands()
+    private val commands = TeleportLegacyCommands(
+        plugin = plugin,
+        server = server,
+        application = application,
+    ).commands()
 
-    private val dispatcher =
-        CommandDispatcher<CommandSourceStack>().apply {
-            whenever(source.sender).thenReturn(sender)
-            root.addChild(
-                TeleportCommand(
-                    plugin = plugin,
-                    server = server,
-                    application = application,
-                    to = TeleportToCommand(plugin, server, application),
-                    here = TeleportHereCommand(plugin, server, application),
-                    send = TeleportSendCommand(plugin, server, application),
-                    all = TeleportAllCommand(plugin, server, application),
-                    position = TeleportPosCommand(plugin, application),
-                    random = random,
-                    back = TeleportBackCommand(plugin, server, application),
-                    accept = TeleportAcceptCommand(plugin, server, application),
-                    deny = TeleportDenyCommand(plugin, server, application),
-                    cancel = TeleportCancelCommand(plugin, application),
-                ).literal(),
-            )
-            commands.forEach { root.addChild(it.literal()) }
-        }
+    private val dispatcher = CommandDispatcher<CommandSourceStack>().apply {
+        whenever(source.sender).thenReturn(operator)
+        root.addChild(
+            TeleportCommand(
+                plugin = plugin,
+                server = server,
+                application = application,
+                to = TeleportToCommand(plugin, server, application),
+                here = TeleportHereCommand(plugin, server, application),
+                send = TeleportSendCommand(plugin, server, application),
+                all = TeleportAllCommand(plugin, server, application),
+                position = TeleportPosCommand(plugin, application),
+                random = random,
+                back = TeleportBackCommand(plugin, server, application),
+                accept = TeleportAcceptCommand(plugin, server, application),
+                deny = TeleportDenyCommand(plugin, server, application),
+                cancel = TeleportCancelCommand(plugin, application),
+            ).literal(),
+        )
+        commands.forEach { root.addChild(it.literal()) }
+    }
 
     @Test
     fun `all supported Essentials teleport names are independently registered roots`() {
@@ -99,8 +110,8 @@ class TeleportLegacyCommandsTest {
 
     @Test
     fun `legacy roots use the canonical PCBridge permissions`() {
-        whenever(sender.hasPermission(any<String>())).thenReturn(false)
-        whenever(sender.hasPermission(PermissionNode.TELEPORT_REQUEST.node)).thenReturn(true)
+        whenever(operator.hasPermission(any<String>())).thenReturn(false)
+        whenever(operator.hasPermission(PermissionNode.TELEPORT_REQUEST.node)).thenReturn(true)
 
         val tpaPlayer = commands.single { it.literal().name == "tpa" }.literal().getChild("player")
         val tpPlayer = dispatcher.root.getChild("tp")?.getChild("player")
@@ -112,14 +123,79 @@ class TeleportLegacyCommandsTest {
         assertTrue(tpPlayer?.canUse(source) == true)
         assertFalse(forcePlayer.canUse(source))
 
-        whenever(sender.hasPermission(PermissionNode.TELEPORT_FORCE.node)).thenReturn(true)
+        whenever(operator.hasPermission(PermissionNode.TELEPORT_FORCE.node)).thenReturn(true)
         assertTrue(forcePlayer.canUse(source))
 
         assertFalse(randomAlias.canUse(source))
         assertFalse(randomSubcommand?.canUse(source) == true)
-        whenever(sender.hasPermission(PermissionNode.TELEPORT_RANDOM.node)).thenReturn(true)
+        whenever(operator.hasPermission(PermissionNode.TELEPORT_RANDOM.node)).thenReturn(true)
         assertTrue(randomAlias.canUse(source))
         assertTrue(randomSubcommand?.canUse(source) == true)
+    }
+
+    @Test
+    fun `tp shorthand and to execute the normal teleport operation`() {
+        executeCommand("tp Notch")
+        executeCommand("tp to Notch")
+
+        runBlocking {
+            verify(application, times(2)).to(operator, player, TeleportFlags())
+        }
+    }
+
+    @Test
+    fun `here and send execute with default flags`() {
+        executeCommand("tp here Notch")
+        executeCommand("tp send Notch Alex")
+
+        runBlocking {
+            verify(application).here(operator, player, TeleportFlags())
+            verify(application).send(operator, player, target, TeleportFlags())
+        }
+    }
+
+    @Test
+    fun `force and silent options are passed to each teleport operation`() {
+        val flags = TeleportFlags(force = true, silent = true)
+
+        executeCommand("tp to Notch --force --silent")
+        executeCommand("tp here Notch --force --silent")
+        executeCommand("tp send Notch Alex --force --silent")
+
+        runBlocking {
+            verify(application).to(operator, player, flags)
+            verify(application).here(operator, player, flags)
+            verify(application).send(operator, player, target, flags)
+        }
+    }
+
+    @Test
+    fun `legacy here and all aliases execute forced operations`() {
+        val forced = TeleportFlags(force = true)
+
+        executeCommand("tphere Notch")
+        executeCommand("tpohere Notch")
+        executeCommand("tpall")
+        executeCommand("tpall Notch")
+
+        runBlocking {
+            verify(application, times(2)).here(operator, player, forced)
+            verify(application).all(operator, null, forced)
+            verify(application).all(operator, player, forced)
+        }
+    }
+
+    @Test
+    fun `legacy forced operations are denied without force permission`() {
+        whenever(operator.hasPermission(PermissionNode.TELEPORT_FORCE.node)).thenReturn(false)
+
+        listOf("tphere Notch", "tpohere Notch", "tpall", "tpall Notch").forEach { input ->
+            assertThrows(CommandSyntaxException::class.java) {
+                executeCommand(input)
+            }
+        }
+
+        verifyNoInteractions(application)
     }
 
     @Test
@@ -178,5 +254,9 @@ class TeleportLegacyCommandsTest {
             parse.exceptions.isNotEmpty() || parse.reader.canRead(),
             "Unexpectedly accepted a world argument",
         )
+    }
+
+    private fun executeCommand(input: String) {
+        dispatcher.execute(dispatcher.parse(input, source))
     }
 }

@@ -1,4 +1,4 @@
-package com.projectcitybuild.pcbridge.features.teleportation.services
+package com.projectcitybuild.pcbridge.features.teleportation.domain.services
 
 import org.bukkit.Location
 import org.bukkit.World
