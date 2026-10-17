@@ -3,23 +3,23 @@ package com.projectcitybuild.pcbridge.app.paperplugin
 import com.github.shynixn.mccoroutine.bukkit.minecraftDispatcher
 import com.google.gson.JsonElement
 import com.google.gson.reflect.TypeToken
-import com.projectcitybuild.pcbridge.core.pcbridgeapi.discord.DiscordHttp
-import com.projectcitybuild.pcbridge.core.pcbridgeapi.pcb.PCBHttp
-import com.projectcitybuild.pcbridge.core.pcbridgeapi.pcb.models.RemoteConfigVersion
-import com.projectcitybuild.pcbridge.core.pcbridgeapi.playerdb.PlayerDbHttp
-import com.projectcitybuild.pcbridge.core.http.logging.StructuredLoggingInterceptor
 import com.projectcitybuild.pcbridge.core.datetime.services.DateTimeFormatter
 import com.projectcitybuild.pcbridge.core.datetime.services.LocalizedTime
 import com.projectcitybuild.pcbridge.core.discord.DiscordSend
+import com.projectcitybuild.pcbridge.core.filestorage.JsonFileStorage
+import com.projectcitybuild.pcbridge.core.http.logging.StructuredLoggingInterceptor
 import com.projectcitybuild.pcbridge.core.localconfig.LocalConfig
+import com.projectcitybuild.pcbridge.core.localconfig.LocalConfigBacking
 import com.projectcitybuild.pcbridge.core.localconfig.LocalConfigKeyValues
 import com.projectcitybuild.pcbridge.core.localconfig.default
 import com.projectcitybuild.pcbridge.core.observability.errors.ErrorTracker
 import com.projectcitybuild.pcbridge.core.observability.errors.SentryProvider
 import com.projectcitybuild.pcbridge.core.observability.logging.logSync
 import com.projectcitybuild.pcbridge.core.observability.tracing.OpenTelemetryProvider
-import com.projectcitybuild.pcbridge.core.filestorage.JsonFileStorage
-import com.projectcitybuild.pcbridge.core.localconfig.LocalConfigBacking
+import com.projectcitybuild.pcbridge.core.pcbridgeapi.discord.DiscordHttp
+import com.projectcitybuild.pcbridge.core.pcbridgeapi.pcb.PCBHttp
+import com.projectcitybuild.pcbridge.core.pcbridgeapi.pcb.models.RemoteConfigVersion
+import com.projectcitybuild.pcbridge.core.pcbridgeapi.playerdb.PlayerDbHttp
 import com.projectcitybuild.pcbridge.core.utils.PeriodicRunner
 import com.projectcitybuild.pcbridge.features.announcements.announcementsModule
 import com.projectcitybuild.pcbridge.features.bans.bansModule
@@ -33,7 +33,6 @@ import com.projectcitybuild.pcbridge.features.maintenance.maintenanceModule
 import com.projectcitybuild.pcbridge.features.moderate.moderateModule
 import com.projectcitybuild.pcbridge.features.onboarding.onboardingModule
 import com.projectcitybuild.pcbridge.features.pim.pimModule
-import com.projectcitybuild.pcbridge.features.randomteleport.randomTeleportModule
 import com.projectcitybuild.pcbridge.features.register.registerModule
 import com.projectcitybuild.pcbridge.features.roles.rolesModule
 import com.projectcitybuild.pcbridge.features.serverlinks.serverLinksModule
@@ -41,6 +40,7 @@ import com.projectcitybuild.pcbridge.features.spawns.spawnsModule
 import com.projectcitybuild.pcbridge.features.staffchat.staffChatModule
 import com.projectcitybuild.pcbridge.features.stats.statsModule
 import com.projectcitybuild.pcbridge.features.sync.syncModule
+import com.projectcitybuild.pcbridge.features.teleportation.teleportationModule
 import com.projectcitybuild.pcbridge.features.warnings.warningsModule
 import com.projectcitybuild.pcbridge.features.warps.warpsModule
 import com.projectcitybuild.pcbridge.features.watchdog.watchDogModule
@@ -52,6 +52,8 @@ import com.projectcitybuild.pcbridge.platform.paper.events.SpigotEventBroadcaste
 import com.projectcitybuild.pcbridge.platform.paper.listeners.SpigotListenerRegistry
 import com.projectcitybuild.pcbridge.platform.paper.namespace.SpigotNamespace
 import com.projectcitybuild.pcbridge.platform.paper.scheduling.SpigotTimer
+import com.projectcitybuild.pcbridge.platform.webserver.HttpServer
+import com.projectcitybuild.pcbridge.platform.webserver.data.HttpServerConfig
 import com.projectcitybuild.pcbridge.runtime.cooldowns.Cooldown
 import com.projectcitybuild.pcbridge.runtime.playerlookup.PlayerLookup
 import com.projectcitybuild.pcbridge.runtime.remoteconfig.RemoteConfig
@@ -62,8 +64,6 @@ import com.projectcitybuild.pcbridge.runtime.teleportation.PlayerTeleporter
 import com.projectcitybuild.pcbridge.runtime.teleportation.SafeYLocationFinder
 import com.projectcitybuild.pcbridge.runtime.teleportation.storage.TeleportHistoryStorage
 import com.projectcitybuild.pcbridge.runtime.webhooks.WebServerDelegate
-import com.projectcitybuild.pcbridge.platform.webserver.HttpServer
-import com.projectcitybuild.pcbridge.platform.webserver.data.HttpServerConfig
 import org.bukkit.plugin.java.JavaPlugin
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.factoryOf
@@ -106,7 +106,6 @@ private val featureModules =
         moderateModule,
         onboardingModule,
         pimModule,
-        randomTeleportModule,
         registerModule,
         rolesModule,
         serverLinksModule,
@@ -114,6 +113,7 @@ private val featureModules =
         staffChatModule,
         statsModule,
         syncModule,
+        teleportationModule,
         warningsModule,
         warpsModule,
         watchDogModule,
@@ -160,10 +160,10 @@ private fun Module.core() {
         }
         LocalConfig(
             file = file,
-            fileStorage = object : LocalConfigBacking<LocalConfigKeyValues> {
-                override fun readSync(file: File): LocalConfigKeyValues?
-                    = fileStorage.readSync(file)
-            },
+            fileStorage =
+                object : LocalConfigBacking<LocalConfigKeyValues> {
+                    override fun readSync(file: File): LocalConfigKeyValues? = fileStorage.readSync(file)
+                },
         )
     }
 

@@ -39,7 +39,6 @@ class PlayerTeleporter(
 
         teleportHistoryStorage.put(
             prev = currentLocation,
-            next = teleportLocation,
             player = player,
         )
     }
