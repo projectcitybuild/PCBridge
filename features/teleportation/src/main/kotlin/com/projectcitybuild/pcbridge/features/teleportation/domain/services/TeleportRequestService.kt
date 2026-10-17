@@ -59,7 +59,7 @@ class TeleportRequestService(
         val targetId: UUID,
     )
 
-    private val outgoing = mutableMapOf<RequestKey, TeleportRequest>()
+    private val pendingRequests = mutableMapOf<RequestKey, TeleportRequest>()
 
     fun create(
         requesterId: UUID,
@@ -67,15 +67,14 @@ class TeleportRequestService(
         targetId: UUID,
         targetName: String,
         silent: Boolean,
-    ): CreateResult =
-        create(
-            requesterId = requesterId,
-            requesterName = requesterName,
-            targetId = targetId,
-            targetName = targetName,
-            silent = silent,
-            direction = TeleportRequest.Direction.TO,
-        )
+    ): CreateResult = create(
+        requesterId = requesterId,
+        requesterName = requesterName,
+        targetId = targetId,
+        targetName = targetName,
+        silent = silent,
+        direction = TeleportRequest.Direction.TO,
+    )
 
     fun createHere(
         requesterId: UUID,
@@ -83,54 +82,52 @@ class TeleportRequestService(
         targetId: UUID,
         targetName: String,
         silent: Boolean,
-    ): CreateResult =
-        create(
-            requesterId = requesterId,
-            requesterName = requesterName,
-            targetId = targetId,
-            targetName = targetName,
-            silent = silent,
-            direction = TeleportRequest.Direction.HERE,
-        )
+    ): CreateResult = create(
+        requesterId = requesterId,
+        requesterName = requesterName,
+        targetId = targetId,
+        targetName = targetName,
+        silent = silent,
+        direction = TeleportRequest.Direction.HERE,
+    )
 
     fun createHereForMany(
         requesterId: UUID,
         requesterName: String,
         recipients: List<Recipient>,
         silent: Boolean,
-    ): CreateManyResult =
-        synchronized(lock) {
-            val now = clock.instant()
-            removeExpired(now)
+    ): CreateManyResult = synchronized(lock) {
+        val now = clock.instant()
+        removeExpired(now)
 
-            if (recipients.any { it.id == requesterId }) {
-                return@synchronized CreateManyResult.SelfTarget
-            }
-            if (outgoing.values.any { it.requesterId == requesterId }) {
-                return@synchronized CreateManyResult.AlreadyPending
-            }
-            val uniqueRecipients = recipients.distinctBy(Recipient::id)
-            if (uniqueRecipients.isEmpty()) {
-                return@synchronized CreateManyResult.NoRecipients
-            }
-
-            val requests = uniqueRecipients.map { recipient ->
-                TeleportRequest(
-                    requesterId = requesterId,
-                    requesterName = requesterName,
-                    targetId = recipient.id,
-                    targetName = recipient.name,
-                    createdAt = now,
-                    expiresAt = now.plus(expiration),
-                    silent = silent,
-                    direction = TeleportRequest.Direction.HERE,
-                )
-            }
-            requests.forEach { request ->
-                outgoing[RequestKey(request.requesterId, request.targetId)] = request
-            }
-            CreateManyResult.Created(requests)
+        if (recipients.any { it.id == requesterId }) {
+            return@synchronized CreateManyResult.SelfTarget
         }
+        if (pendingRequests.values.any { it.requesterId == requesterId }) {
+            return@synchronized CreateManyResult.AlreadyPending
+        }
+        val uniqueRecipients = recipients.distinctBy(Recipient::id)
+        if (uniqueRecipients.isEmpty()) {
+            return@synchronized CreateManyResult.NoRecipients
+        }
+
+        val requests = uniqueRecipients.map { recipient ->
+            TeleportRequest(
+                requesterId = requesterId,
+                requesterName = requesterName,
+                targetId = recipient.id,
+                targetName = recipient.name,
+                createdAt = now,
+                expiresAt = now.plus(expiration),
+                silent = silent,
+                direction = TeleportRequest.Direction.HERE,
+            )
+        }
+        requests.forEach { request ->
+            pendingRequests[RequestKey(request.requesterId, request.targetId)] = request
+        }
+        CreateManyResult.Created(requests)
+    }
 
     private fun create(
         requesterId: UUID,
@@ -139,102 +136,111 @@ class TeleportRequestService(
         targetName: String,
         silent: Boolean,
         direction: TeleportRequest.Direction,
-    ): CreateResult =
-        synchronized(lock) {
-            val now = clock.instant()
-            removeExpired(now)
+    ): CreateResult = synchronized(lock) {
+        val now = clock.instant()
+        removeExpired(now)
 
-            if (requesterId == targetId) {
-                return@synchronized CreateResult.SelfTarget
-            }
-            if (outgoing.values.any { it.requesterId == requesterId }) {
-                return@synchronized CreateResult.AlreadyPending
-            }
-
-            val request = TeleportRequest(
-                requesterId = requesterId,
-                requesterName = requesterName,
-                targetId = targetId,
-                targetName = targetName,
-                createdAt = now,
-                expiresAt = now.plus(expiration),
-                silent = silent,
-                direction = direction,
-            )
-            outgoing[RequestKey(requesterId, targetId)] = request
-            CreateResult.Created(request)
+        if (requesterId == targetId) {
+            return@synchronized CreateResult.SelfTarget
         }
+        if (pendingRequests.values.any { it.requesterId == requesterId }) {
+            return@synchronized CreateResult.AlreadyPending
+        }
+
+        val request = TeleportRequest(
+            requesterId = requesterId,
+            requesterName = requesterName,
+            targetId = targetId,
+            targetName = targetName,
+            createdAt = now,
+            expiresAt = now.plus(expiration),
+            silent = silent,
+            direction = direction,
+        )
+        pendingRequests[RequestKey(requesterId, targetId)] = request
+        CreateResult.Created(request)
+    }
 
     fun takeIncoming(
         targetId: UUID,
         requesterId: UUID?,
-    ): TakeResult =
-        synchronized(lock) {
-            val now = clock.instant()
-            val expired = outgoing.values.filter { it.targetId == targetId && !now.isBefore(it.expiresAt) }
-            removeExpired(now)
-
-            val matchingExpired =
-                expired.any {
-                    requesterId == null || it.requesterId == requesterId
-                }
-            val incoming = outgoing.values.filter { it.targetId == targetId }
-            if (requesterId == null && incoming.size > 1) return@synchronized TakeResult.Ambiguous
-
-            val request =
-                if (requesterId == null) {
-                    incoming.singleOrNull()
-                } else {
-                    incoming.firstOrNull { it.requesterId == requesterId }
-                }
-            if (request == null) {
-                return@synchronized if (matchingExpired) TakeResult.Expired else TakeResult.Missing
-            }
-
-            outgoing.remove(RequestKey(request.requesterId, request.targetId))
-            TakeResult.Taken(request)
+    ): TakeResult = synchronized(lock) {
+        val now = clock.instant()
+        val matching = pendingRequests.values.filter {
+            it.targetId == targetId && (requesterId == null || it.requesterId == requesterId)
         }
+        val matchingExpired = matching.any { it.expiresAt <= now }
+
+        removeExpired(now)
+
+        val incoming = pendingRequests.values.filter {
+            it.targetId == targetId
+        }
+        if (requesterId == null && incoming.size > 1) {
+            return@synchronized TakeResult.Ambiguous
+        }
+        val request = if (requesterId != null) {
+            incoming.firstOrNull { it.requesterId == requesterId }
+        } else {
+            incoming.singleOrNull()
+        }
+        if (request == null) {
+            return@synchronized if (matchingExpired) {
+                TakeResult.Expired
+            } else {
+                TakeResult.Missing
+            }
+        }
+
+        val key = RequestKey(request.requesterId, request.targetId)
+        pendingRequests.remove(key)
+
+        TakeResult.Taken(request)
+    }
 
     fun cancel(
         requesterId: UUID,
         targetId: UUID? = null,
-    ): List<TeleportRequest> =
-        synchronized(lock) {
-            removeExpired(clock.instant())
-            val requests =
-                outgoing.values.filter {
-                    it.requesterId == requesterId && (targetId == null || it.targetId == targetId)
-                }
-            requests.forEach { outgoing.remove(RequestKey(it.requesterId, it.targetId)) }
-            requests
+    ): List<TeleportRequest> = synchronized(lock) {
+        removeExpired(clock.instant())
+        val requests = pendingRequests.values.filter {
+            it.requesterId == requesterId && (targetId == null || it.targetId == targetId)
         }
+        requests.forEach {
+            val key = RequestKey(it.requesterId, it.targetId)
+            pendingRequests.remove(key)
+        }
+        requests
+    }
 
     fun expire(
         requesterId: UUID,
         targetId: UUID,
         createdAt: Instant,
-    ): TeleportRequest? =
-        synchronized(lock) {
-            val key = RequestKey(requesterId, targetId)
-            val request = outgoing[key] ?: return@synchronized null
-            if (request.createdAt != createdAt || clock.instant().isBefore(request.expiresAt)) {
-                return@synchronized null
-            }
-            outgoing.remove(key)
+    ): TeleportRequest? = synchronized(lock) {
+        val key = RequestKey(requesterId, targetId)
+        val request = pendingRequests[key] ?: return@synchronized null
+        val requestWasReplaced = request.createdAt != createdAt
+        if (requestWasReplaced) {
+            return@synchronized null
         }
+        pendingRequests.remove(key)
+    }
 
-    fun disconnect(playerId: UUID): List<TeleportRequest> =
-        synchronized(lock) {
-            val affected = outgoing.values.filter {
-                it.requesterId == playerId || it.targetId == playerId
-            }
-            affected.forEach { outgoing.remove(RequestKey(it.requesterId, it.targetId)) }
-            affected
+    fun disconnect(playerId: UUID): List<TeleportRequest> = synchronized(lock) {
+        val affected = pendingRequests.values.filter {
+            it.requesterId == playerId || it.targetId == playerId
         }
+        affected.forEach {
+            val key = RequestKey(it.requesterId, it.targetId)
+            pendingRequests.remove(key)
+        }
+        affected
+    }
 
     private fun removeExpired(now: Instant) {
-        outgoing.entries.removeIf { (_, request) ->
-            !now.isBefore(request.expiresAt)
+        pendingRequests.entries.removeIf { (_, request) ->
+            request.expiresAt <= now
         }
     }
 }

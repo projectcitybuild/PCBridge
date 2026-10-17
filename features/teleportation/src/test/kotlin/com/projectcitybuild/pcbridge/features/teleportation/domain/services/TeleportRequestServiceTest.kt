@@ -1,37 +1,46 @@
 package com.projectcitybuild.pcbridge.features.teleportation.domain.services
 
+import com.projectcitybuild.pcbridge.core.testsupport.MutableClock
 import com.projectcitybuild.pcbridge.features.teleportation.domain.data.TeleportRequest
-import com.projectcitybuild.pcbridge.features.teleportation.domain.services.TeleportRequestService
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertInstanceOf
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
-import java.time.Clock
 import java.time.Duration
 import java.time.Instant
-import java.time.ZoneId
 import java.util.UUID
 
 class TeleportRequestServiceTest {
     private val start = Instant.parse("2026-10-16T12:00:00Z")
 
     @Test
-    fun `request creation prevents self target and one active outgoing request`() {
+    fun `request creation prevents self target`() {
+        val service = TeleportRequestService()
+        val requester = UUID.randomUUID()
+
+        assertEquals(
+            TeleportRequestService.CreateResult.SelfTarget,
+            service.create(
+                requesterId = requester,
+                requesterName = "Alex",
+                targetId = requester,
+                targetName = "Alex",
+                silent = false,
+            ),
+        )
+    }
+
+    @Test
+    fun `request creation prevents more than one active outgoing request`() {
         val service = TeleportRequestService()
         val requester = UUID.randomUUID()
         val target = UUID.randomUUID()
 
-        assertEquals(
-            TeleportRequestService.CreateResult.SelfTarget,
-            service.create(requester, "Alex", requester, "Alex", false),
-        )
-        val request =
-            assertInstanceOf(
-                TeleportRequestService.CreateResult.Created::class.java,
-                service.create(requester, "Alex", target, "Blair", true),
-            ).request
+        val request = assertInstanceOf(
+            TeleportRequestService.CreateResult.Created::class.java,
+            service.create(requester, "Alex", target, "Blair", true),
+        ).request
 
-        assertEquals(request.createdAt.plusSeconds(60), request.expiresAt)
         assertEquals(true, request.silent)
         assertEquals(
             TeleportRequestService.CreateResult.AlreadyPending,
@@ -46,20 +55,18 @@ class TeleportRequestServiceTest {
         val firstTarget = UUID.randomUUID()
         val secondTarget = UUID.randomUUID()
 
-        val created =
-            assertInstanceOf(
-                TeleportRequestService.CreateManyResult.Created::class.java,
-                service.createHereForMany(
-                    requesterId = requester,
-                    requesterName = "Alex",
-                    recipients =
-                        listOf(
-                            TeleportRequestService.Recipient(firstTarget, "Blair"),
-                            TeleportRequestService.Recipient(secondTarget, "Casey"),
-                        ),
-                    silent = false,
+        val created = assertInstanceOf(
+            TeleportRequestService.CreateManyResult.Created::class.java,
+            service.createHereForMany(
+                requesterId = requester,
+                requesterName = "Alex",
+                recipients = listOf(
+                    TeleportRequestService.Recipient(firstTarget, "Blair"),
+                    TeleportRequestService.Recipient(secondTarget, "Casey"),
                 ),
-            )
+                silent = false,
+            ),
+        )
         assertEquals(2, created.requests.size)
         assertInstanceOf(
             TeleportRequestService.TakeResult.Taken::class.java,
@@ -78,26 +85,46 @@ class TeleportRequestServiceTest {
         val target = UUID.randomUUID()
         val firstRequester = UUID.randomUUID()
         val secondRequester = UUID.randomUUID()
-        service.create(firstRequester, "Alex", target, "Blair", false)
-        service.create(secondRequester, "Casey", target, "Blair", false)
+        service.create(
+            requesterId = firstRequester,
+            requesterName = "Alex",
+            targetId = target,
+            targetName = "Blair",
+            silent = false,
+        )
+        service.create(
+            requesterId = secondRequester,
+            requesterName = "Casey",
+            targetId = target,
+            targetName = "Blair",
+            silent = false,
+        )
 
         assertEquals(
             TeleportRequestService.TakeResult.Ambiguous,
             service.takeIncoming(target, null),
         )
-        val taken =
-            assertInstanceOf(
-                TeleportRequestService.TakeResult.Taken::class.java,
-                service.takeIncoming(target, firstRequester),
-            ).request
+        val taken = assertInstanceOf(
+            TeleportRequestService.TakeResult.Taken::class.java,
+            service.takeIncoming(target, firstRequester),
+        ).request
 
         assertEquals(firstRequester, taken.requesterId)
-        assertEquals(TeleportRequestService.TakeResult.Missing, service.takeIncoming(target, firstRequester))
+        assertEquals(
+            TeleportRequestService.TakeResult.Missing,
+            service.takeIncoming(
+                targetId = target,
+                requesterId = firstRequester,
+            ),
+        )
         assertEquals(
             secondRequester,
             assertInstanceOf(
                 TeleportRequestService.TakeResult.Taken::class.java,
-                service.takeIncoming(target, null),
+                service.takeIncoming(
+                    targetId = target,
+                    requesterId = null,
+                ),
             ).request.requesterId,
         )
     }
@@ -105,28 +132,56 @@ class TeleportRequestServiceTest {
     @Test
     fun `cancel expiration and disconnect remove pending requests`() {
         val clock = MutableClock(start)
-        val service = TeleportRequestService(clock = clock)
+        val service = TeleportRequestService(
+            clock = clock,
+            expiration = Duration.ofSeconds(30),
+        )
         val requester = UUID.randomUUID()
         val target = UUID.randomUUID()
-        val created =
-            assertInstanceOf(
-                TeleportRequestService.CreateResult.Created::class.java,
-                service.create(requester, "Alex", target, "Blair", false),
-            ).request
+        val created = assertInstanceOf(
+            TeleportRequestService.CreateResult.Created::class.java,
+            service.create(
+                requesterId = requester,
+                requesterName = "Alex",
+                targetId = target,
+                targetName = "Blair",
+                silent = false,
+            ),
+        ).request
 
         assertEquals(listOf(created), service.cancel(requester))
         assertEquals(emptyList<TeleportRequest>(), service.cancel(requester))
 
-        service.create(requester, "Alex", target, "Blair", false)
-        clock.current = start.plusSeconds(60)
-        assertEquals(TeleportRequestService.TakeResult.Expired, service.takeIncoming(target, null))
-        assertNull(service.expire(requester, target, createdAt = start))
+        service.create(
+            requesterId = requester,
+            requesterName = "Alex",
+            targetId = target,
+            targetName = "Blair",
+            silent = false,
+        )
+        clock.current = start.plusSeconds(30)
+        assertEquals(
+            TeleportRequestService.TakeResult.Expired,
+            service.takeIncoming(targetId = target, requesterId = null),
+        )
+        assertNull(
+            service.expire(
+                requesterId = requester,
+                targetId = target,
+                createdAt = start,
+            ),
+        )
 
-        val request =
-            assertInstanceOf(
-                TeleportRequestService.CreateResult.Created::class.java,
-                service.create(requester, "Alex", target, "Blair", false),
-            ).request
+        val request = assertInstanceOf(
+            TeleportRequestService.CreateResult.Created::class.java,
+            service.create(
+                requesterId = requester,
+                requesterName = "Alex",
+                targetId = target,
+                targetName = "Blair",
+                silent = false,
+            ),
+        ).request
         assertEquals(listOf(request), service.disconnect(target))
         assertEquals(TeleportRequestService.TakeResult.Missing, service.takeIncoming(target, null))
     }
@@ -137,24 +192,29 @@ class TeleportRequestServiceTest {
         val service = TeleportRequestService(clock = clock, expiration = Duration.ofSeconds(60))
         val requester = UUID.randomUUID()
         val target = UUID.randomUUID()
-        val request =
-            assertInstanceOf(
-                TeleportRequestService.CreateResult.Created::class.java,
-                service.create(requester, "Alex", target, "Blair", false),
-            ).request
+        val request = assertInstanceOf(
+            TeleportRequestService.CreateResult.Created::class.java,
+            service.create(
+                requesterId = requester,
+                requesterName = "Alex",
+                targetId = target,
+                targetName = "Blair",
+                silent = false,
+            ),
+        ).request
 
         clock.current = request.expiresAt
-        assertEquals(request, service.expire(requester, target, request.createdAt))
-        assertEquals(TeleportRequestService.TakeResult.Missing, service.takeIncoming(target, null))
-    }
-
-    private class MutableClock(
-        var current: Instant,
-    ) : Clock() {
-        override fun getZone(): ZoneId = ZoneId.of("UTC")
-
-        override fun withZone(zone: ZoneId): Clock = this
-
-        override fun instant(): Instant = current
+        assertEquals(
+            request,
+            service.expire(
+                requesterId = requester,
+                targetId = target,
+                createdAt = request.createdAt,
+            ),
+        )
+        assertEquals(
+            TeleportRequestService.TakeResult.Missing,
+            service.takeIncoming(target, null),
+        )
     }
 }

@@ -569,12 +569,11 @@ class TeleportApplication(
     }
 }
 
-private fun TeleportRequest.ttl() =
-    Duration
-        .between(Instant.now(), expiresAt)
-        .let { remaining ->
-            Duration.ofSeconds(remaining.seconds + if (remaining.nano == 0) 0 else 1)
-        }.toKotlinDuration()
+private fun TeleportRequest.ttl() = Duration
+    .between(Instant.now(), expiresAt)
+    .let { remaining ->
+        Duration.ofSeconds(remaining.seconds + if (remaining.nano == 0) 0 else 1)
+    }.toKotlinDuration()
 
 private fun TeleportRequest.timeUntilExpiry(): kotlin.time.Duration {
     val remaining = Duration.between(Instant.now(), expiresAt).toKotlinDuration()
