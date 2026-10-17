@@ -4,6 +4,8 @@ import com.projectcitybuild.pcbridge.core.permissions.PermissionNode
 import com.projectcitybuild.pcbridge.features.building.buildingTracer
 import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
+import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
+import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
 import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandContext
 import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandNode
@@ -12,13 +14,25 @@ import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.extensions
 import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.runtime.commands.scoped
 import io.papermc.paper.command.brigadier.Commands
+import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 
 class NightVisionCommand(
     private val plugin: Plugin,
+    private val commandTaskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
+    internal var hasNightVision: (Player) -> Boolean = {
+        it.hasPotionEffect(PotionEffectType.NIGHT_VISION)
+    }
+    internal var removeNightVision: (Player) -> Unit = {
+        it.removePotionEffect(PotionEffectType.NIGHT_VISION)
+    }
+    internal var enableNightVision: (Player) -> Unit = {
+        it.addPotionEffect(PotionEffect(PotionEffectType.NIGHT_VISION, Integer.MAX_VALUE, 1))
+    }
+
     override val description: String = "Toggles night-vision mode"
 
     override fun literal(): PaperCommandNode {
@@ -26,20 +40,15 @@ class NightVisionCommand(
             .requiresPermission(PermissionNode.BUILDING_NIGHT_VISION)
             .then(
                 Commands.argument("enabled", OnOffArgument())
-                    .executesSuspending(plugin, ::execute),
+                    .executesSuspending(commandTaskExecutor, ::execute),
             )
-            .executesSuspending(plugin, ::execute)
+            .executesSuspending(commandTaskExecutor, ::execute)
             .build()
     }
 
     private suspend fun execute(context: PaperCommandContext) =
         context.scoped(buildingTracer) {
             val player = context.source.requirePlayer()
-
-            val duration = Integer.MAX_VALUE
-            val amplifier = 1
-            val potionEffectType = PotionEffectType.NIGHT_VISION
-            val potionEffect = PotionEffect(potionEffectType, duration, amplifier)
 
             val desiredState =
                 runCatching {
@@ -48,12 +57,12 @@ class NightVisionCommand(
 
             val toggleOn =
                 desiredState
-                    ?: !player.hasPotionEffect(potionEffectType)
+                    ?: !hasNightVision(player)
 
-            player.removePotionEffect(potionEffectType)
+            removeNightVision(player)
 
             if (toggleOn) {
-                player.addPotionEffect(potionEffect)
+                enableNightVision(player)
                 player.sendMessage(l10n.nightVisionToggledOn)
             } else {
                 player.sendMessage(l10n.nightVisionToggledOff)

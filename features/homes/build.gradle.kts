@@ -3,6 +3,8 @@ plugins {
 }
 
 dependencies {
+    testImplementation(project(":core:test-support"))
+
     implementation(project(":core:l10n"))
     implementation(project(":core:pagination"))
     implementation(project(":core:permissions"))

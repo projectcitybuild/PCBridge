@@ -2,6 +2,8 @@ package com.projectcitybuild.pcbridge.features.workstations.commands
 
 import com.projectcitybuild.pcbridge.core.permissions.PermissionNode
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
+import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
+import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
 import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.extensions.requirePlayer
@@ -10,20 +12,24 @@ import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperComma
 import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandNode
 import com.projectcitybuild.pcbridge.features.workstations.workstationsTracer
 import io.papermc.paper.command.brigadier.Commands
+import org.bukkit.entity.Player
 import org.bukkit.inventory.MenuType
 import org.bukkit.plugin.Plugin
 
 class StoneCutterCommand(
     private val plugin: Plugin,
+    private val commandTaskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
+    internal var menuOpener: (String, Player) -> Unit = { _, player -> MenuType.STONECUTTER.create(player).open() }
+
     override fun literal(): PaperCommandNode
         = Commands.literal("stonecutter")
             .requiresPermission(PermissionNode.WORKSTATIONS_USE)
-            .executesSuspending(plugin, ::execute)
+            .executesSuspending(commandTaskExecutor, ::execute)
             .build()
 
     private suspend fun execute(context: PaperCommandContext) = context.scoped(workstationsTracer) {
         val player = context.source.requirePlayer()
-        MenuType.STONECUTTER.create(player).open()
+        menuOpener("stonecutter", player)
     }
 }

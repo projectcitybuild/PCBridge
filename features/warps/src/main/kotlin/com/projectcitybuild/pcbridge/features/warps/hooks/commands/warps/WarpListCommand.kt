@@ -7,6 +7,8 @@ import com.projectcitybuild.pcbridge.features.warps.domain.repositories.WarpRepo
 import com.projectcitybuild.pcbridge.features.warps.warpsTracer
 import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
+import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
+import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
 import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandContext
 import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandNode
@@ -21,15 +23,16 @@ class WarpListCommand(
     private val plugin: Plugin,
     private val warpRepository: WarpRepository,
     private val remoteConfig: RemoteConfig,
+    private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
     override fun literal(): PaperCommandNode {
         return Commands.literal("list")
             .requiresPermission(PermissionNode.WARP_TELEPORT)
             .then(
                 Commands.argument("page", IntegerArgumentType.integer(1))
-                    .executesSuspending(plugin, ::execute),
+                    .executesSuspending(taskExecutor, ::execute),
             )
-            .executesSuspending(plugin, ::execute)
+            .executesSuspending(taskExecutor, ::execute)
             .build()
     }
 

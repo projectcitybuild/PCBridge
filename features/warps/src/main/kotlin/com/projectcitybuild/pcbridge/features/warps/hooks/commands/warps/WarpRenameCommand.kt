@@ -8,6 +8,8 @@ import com.projectcitybuild.pcbridge.features.warps.hooks.dialogs.WarpRenameDial
 import com.projectcitybuild.pcbridge.features.warps.warpsTracer
 import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
+import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
+import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
 import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandContext
 import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandNode
@@ -22,6 +24,7 @@ class WarpRenameCommand(
     private val plugin: Plugin,
     private val warpNameSuggester: WarpNameSuggester,
     private val warpRepository: WarpRepository,
+    private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
     override fun literal(): PaperCommandNode {
         return Commands.literal("rename")
@@ -29,7 +32,7 @@ class WarpRenameCommand(
             .then(
                 Commands.argument("name", StringArgumentType.string())
                     .suggestsSuspending(plugin, warpNameSuggester::suggest)
-                    .executesSuspending(plugin, ::execute),
+                    .executesSuspending(taskExecutor, ::execute),
             )
             .build()
     }

@@ -7,6 +7,8 @@ import com.projectcitybuild.pcbridge.features.pim.domain.services.OpElevationSer
 import com.projectcitybuild.pcbridge.features.pim.hooks.dialogs.ConfirmOpElevateDialog
 import com.projectcitybuild.pcbridge.features.pim.pimTracer
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
+import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
+import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
 import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandContext
 import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandNode
@@ -14,17 +16,21 @@ import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.extensions
 import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.runtime.commands.scoped
 import io.papermc.paper.command.brigadier.Commands
+import net.kyori.adventure.dialog.DialogLike
 import org.bukkit.plugin.Plugin
 
 class OpGrantCommand(
     private val plugin: Plugin,
     private val opElevationService: OpElevationService,
     private val localizedTime: LocalizedTime,
+    private val commandTaskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
+    internal var confirmationDialog: () -> DialogLike = ConfirmOpElevateDialog::build
+
     override fun literal(): PaperCommandNode {
         return Commands.literal("grant")
             .requiresPermission(PermissionNode.PIM_OP)
-            .executesSuspending(plugin, ::execute)
+            .executesSuspending(commandTaskExecutor, ::execute)
             .build()
     }
 
@@ -42,7 +48,7 @@ class OpGrantCommand(
                 return@scoped
             }
 
-            val dialog = ConfirmOpElevateDialog.build()
+            val dialog = confirmationDialog()
             player.showDialog(dialog)
         }
 }

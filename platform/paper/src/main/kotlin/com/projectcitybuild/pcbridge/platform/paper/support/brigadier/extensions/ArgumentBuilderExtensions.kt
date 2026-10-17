@@ -8,6 +8,8 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import com.mojang.brigadier.builder.RequiredArgumentBuilder
 import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.suggestion.SuggestionsBuilder
+import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
+import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
 import org.bukkit.plugin.Plugin
 
 /**
@@ -32,11 +34,18 @@ fun <S, T> RequiredArgumentBuilder<S, T>.suggestsSuspending(
 fun <S, T> RequiredArgumentBuilder<S, T>.executesSuspending(
     plugin: Plugin,
     block: suspend (CommandContext<S>) -> Unit,
+): RequiredArgumentBuilder<S, T> =
+    executesSuspending(
+        executor = PluginCommandTaskExecutor(plugin),
+        block = block,
+    )
+
+fun <S, T> RequiredArgumentBuilder<S, T>.executesSuspending(
+    executor: CommandTaskExecutor,
+    block: suspend (CommandContext<S>) -> Unit,
 ): RequiredArgumentBuilder<S, T> {
     return executes { context ->
-        plugin.launch(plugin.minecraftDispatcher + object : CoroutineTimings() {}) {
-            block(context)
-        }
+        executor.execute { block(context) }
         Command.SINGLE_SUCCESS
     }
 }
@@ -47,11 +56,18 @@ fun <S, T> RequiredArgumentBuilder<S, T>.executesSuspending(
 fun <S> LiteralArgumentBuilder<S>.executesSuspending(
     plugin: Plugin,
     block: suspend (CommandContext<S>) -> Unit,
+): LiteralArgumentBuilder<S> =
+    executesSuspending(
+        executor = PluginCommandTaskExecutor(plugin),
+        block = block,
+    )
+
+fun <S> LiteralArgumentBuilder<S>.executesSuspending(
+    executor: CommandTaskExecutor,
+    block: suspend (CommandContext<S>) -> Unit,
 ): LiteralArgumentBuilder<S> {
     return executes { context ->
-        plugin.launch(plugin.minecraftDispatcher + object : CoroutineTimings() {}) {
-            block(context)
-        }
+        executor.execute { block(context) }
         Command.SINGLE_SUCCESS
     }
 }
