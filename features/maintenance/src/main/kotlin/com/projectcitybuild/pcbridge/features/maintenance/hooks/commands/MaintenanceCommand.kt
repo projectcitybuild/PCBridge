@@ -36,7 +36,7 @@ class MaintenanceCommand(
             .build()
     }
 
-    private suspend fun toggle(context: PaperCommandContext) =
+    internal suspend fun toggle(context: PaperCommandContext) =
         context.scoped(maintenanceTracer) {
             val sender = context.source.sender
 
@@ -61,7 +61,7 @@ class MaintenanceCommand(
             )
         }
 
-    private suspend fun status(context: PaperCommandContext) =
+    internal suspend fun status(context: PaperCommandContext) =
         context.scoped(maintenanceTracer) {
             val sender = context.source.sender
 

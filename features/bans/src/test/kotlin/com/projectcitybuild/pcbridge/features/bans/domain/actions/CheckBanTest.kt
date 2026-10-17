@@ -23,28 +23,24 @@ class CheckBanTest {
     fun `should deny if player is banned`() =
         runTest {
             val ban = Stubs.playerBan()
-            val result =
-                useCase.check(
-                    Authorization(bans = Bans(uuid = ban)),
-                )
+            val result = useCase.check(
+                Authorization(bans = Bans(uuid = ban)),
+            )
             assertEquals(CheckBan.Ban.UUID(ban), result)
         }
 
     @Test
     fun `should not deny if player ban is inactive`() =
         runTest {
-            val ban =
-                Stubs.playerBan().copy(
-                    unbannedAt =
-                        LocalDate
-                            .now()
-                            .atStartOfDay(ZoneId.systemDefault())
-                            .toLocalDateTime(),
-                )
-            val result =
-                useCase.check(
-                    Authorization(bans = Bans(uuid = ban)),
-                )
+            val ban = Stubs.playerBan().copy(
+                unbannedAt = LocalDate
+                    .now()
+                    .atStartOfDay(ZoneId.systemDefault())
+                    .toLocalDateTime(),
+            )
+            val result = useCase.check(
+                Authorization(bans = Bans(uuid = ban)),
+            )
             assertNull(result)
         }
 

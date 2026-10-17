@@ -12,6 +12,7 @@ import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.extensions
 import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.runtime.commands.scoped
 import io.papermc.paper.command.brigadier.Commands
+import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
@@ -19,6 +20,16 @@ import org.bukkit.potion.PotionEffectType
 class NightVisionCommand(
     private val plugin: Plugin,
 ) : BrigadierCommand {
+    internal var hasNightVision: (Player) -> Boolean = {
+        it.hasPotionEffect(PotionEffectType.NIGHT_VISION)
+    }
+    internal var removeNightVision: (Player) -> Unit = {
+        it.removePotionEffect(PotionEffectType.NIGHT_VISION)
+    }
+    internal var enableNightVision: (Player) -> Unit = {
+        it.addPotionEffect(PotionEffect(PotionEffectType.NIGHT_VISION, Integer.MAX_VALUE, 1))
+    }
+
     override val description: String = "Toggles night-vision mode"
 
     override fun literal(): PaperCommandNode {
@@ -32,14 +43,9 @@ class NightVisionCommand(
             .build()
     }
 
-    private suspend fun execute(context: PaperCommandContext) =
+    internal suspend fun execute(context: PaperCommandContext) =
         context.scoped(buildingTracer) {
             val player = context.source.requirePlayer()
-
-            val duration = Integer.MAX_VALUE
-            val amplifier = 1
-            val potionEffectType = PotionEffectType.NIGHT_VISION
-            val potionEffect = PotionEffect(potionEffectType, duration, amplifier)
 
             val desiredState =
                 runCatching {
@@ -48,12 +54,12 @@ class NightVisionCommand(
 
             val toggleOn =
                 desiredState
-                    ?: !player.hasPotionEffect(potionEffectType)
+                    ?: !hasNightVision(player)
 
-            player.removePotionEffect(potionEffectType)
+            removeNightVision(player)
 
             if (toggleOn) {
-                player.addPotionEffect(potionEffect)
+                enableNightVision(player)
                 player.sendMessage(l10n.nightVisionToggledOn)
             } else {
                 player.sendMessage(l10n.nightVisionToggledOff)

@@ -28,7 +28,7 @@ class RolesDebugCommand(
             .build()
     }
 
-    private suspend fun execute(context: PaperCommandContext) =
+    internal suspend fun execute(context: PaperCommandContext) =
         context.scoped(pimTracer) {
             val player = context.source.requirePlayer()
 

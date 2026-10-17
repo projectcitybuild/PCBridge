@@ -13,12 +13,15 @@ import com.projectcitybuild.pcbridge.features.register.dialogs.VerifyRegistratio
 import com.projectcitybuild.pcbridge.features.register.registerTracer
 import com.projectcitybuild.pcbridge.core.l10n.l10n
 import io.papermc.paper.command.brigadier.Commands
+import net.kyori.adventure.dialog.DialogLike
 import org.bukkit.plugin.Plugin
 
 class RegisterCommand(
     private val plugin: Plugin,
     private val registerHttpService: RegisterHttpService,
 ) : BrigadierCommand {
+    internal var dialogFactory: (String) -> DialogLike = { email -> VerifyRegistrationCodeDialog.build(email) }
+
     override val description: String = "Creates a new Project City Build account"
 
     override fun literal(): PaperCommandNode {
@@ -34,7 +37,7 @@ class RegisterCommand(
             .build()
     }
 
-    private suspend fun execute(
+    internal suspend fun execute(
         context: PaperCommandContext,
     ) = context.scoped(registerTracer) {
         val player = context.source.requirePlayer()
@@ -45,9 +48,7 @@ class RegisterCommand(
             playerAlias = player.name,
             playerUUID = player.uniqueId,
         )
-        val dialog = VerifyRegistrationCodeDialog.build(
-            email = email,
-        )
+        val dialog = dialogFactory(email)
         player.showDialog(dialog)
     }
 }

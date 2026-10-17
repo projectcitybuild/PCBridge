@@ -30,7 +30,7 @@ class SyncCommand(
             .build()
     }
 
-    private suspend fun syncSelf(
+    internal suspend fun syncSelf(
         context: PaperCommandContext,
     ) = context.scoped(syncTracer) {
         val player = context.source.requirePlayer()
@@ -39,7 +39,7 @@ class SyncCommand(
         syncPlayer.execute(playerUUID = player.uniqueId)
     }
 
-    private suspend fun syncOther(
+    internal suspend fun syncOther(
         context: PaperCommandContext,
     ) = context.scoped(syncTracer) {
         val sender = context.source.sender
