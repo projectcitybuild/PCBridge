@@ -22,7 +22,10 @@ class TeleportAcceptCommand(
         Commands.literal("accept")
             .executesSuspending(plugin) { context ->
                 context.scoped(teleportationTracer) {
-                    application.accept(context.source.requirePlayer(), requesterId = null)
+                    application.accept(
+                        target = context.source.requirePlayer(),
+                        requesterId = null,
+                    )
                 }
             }
             .then(
@@ -30,8 +33,8 @@ class TeleportAcceptCommand(
                     .executesSuspending(plugin) { context ->
                         context.scoped(teleportationTracer) {
                             application.accept(
-                                context.source.requirePlayer(),
-                                context.getArgument("requester", Player::class.java).uniqueId,
+                                target = context.source.requirePlayer(),
+                                requesterId = context.getArgument("requester", Player::class.java).uniqueId,
                             )
                         }
                     },

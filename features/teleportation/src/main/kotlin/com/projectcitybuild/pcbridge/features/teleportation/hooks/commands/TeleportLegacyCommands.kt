@@ -2,6 +2,7 @@ package com.projectcitybuild.pcbridge.features.teleportation.hooks.commands
 
 import com.mojang.brigadier.arguments.DoubleArgumentType
 import com.mojang.brigadier.arguments.StringArgumentType
+import com.mojang.brigadier.arguments.StringArgumentType.word
 import com.projectcitybuild.pcbridge.core.permissions.PermissionNode
 import com.projectcitybuild.pcbridge.features.teleportation.services.TeleportApplication
 import com.projectcitybuild.pcbridge.features.teleportation.services.TeleportFlags
@@ -16,7 +17,9 @@ import com.projectcitybuild.pcbridge.runtime.commands.scoped
 import com.projectcitybuild.pcbridge.runtime.teleportation.teleportationTracer
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
+import io.papermc.paper.command.brigadier.argument.ArgumentTypes
 import org.bukkit.Server
+import org.bukkit.World
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
 
@@ -30,7 +33,7 @@ class TeleportLegacyCommands(
             addAll(
                 playerCommands(
                     names = listOf("tpa"),
-                    permission = PermissionNode.TELEPORT_REQUEST,
+                    permissions = listOf(PermissionNode.TELEPORT_REQUEST),
                 ) { context, target ->
                     application.to(context.source.requirePlayer(), target)
                 },
@@ -38,7 +41,7 @@ class TeleportLegacyCommands(
             addAll(
                 playerCommands(
                     names = listOf("tpahere"),
-                    permission = PermissionNode.TELEPORT_REQUEST,
+                    permissions = listOf(PermissionNode.TELEPORT_REQUEST),
                 ) { context, target ->
                     application.requestHere(context.source.requirePlayer(), target)
                 },
@@ -61,8 +64,7 @@ class TeleportLegacyCommands(
             addAll(
                 playerCommands(
                     names = listOf("tpo"),
-                    permission = PermissionNode.TELEPORT_REQUEST,
-                    additionalPermissions = listOf(PermissionNode.TELEPORT_FORCE),
+                    permissions = listOf(PermissionNode.TELEPORT_REQUEST, PermissionNode.TELEPORT_FORCE),
                 ) { context, target ->
                     application.to(
                         requester = context.source.requirePlayer(),
@@ -74,8 +76,7 @@ class TeleportLegacyCommands(
             addAll(
                 playerCommands(
                     names = listOf("tpohere"),
-                    permission = PermissionNode.TELEPORT_OTHERS,
-                    additionalPermissions = listOf(PermissionNode.TELEPORT_FORCE),
+                    permissions = listOf(PermissionNode.TELEPORT_OTHERS, PermissionNode.TELEPORT_FORCE),
                 ) { context, target ->
                     application.here(
                         operator = context.source.requirePlayer(),
@@ -87,9 +88,13 @@ class TeleportLegacyCommands(
             addAll(
                 playerCommands(
                     names = listOf("tphere"),
-                    permission = PermissionNode.TELEPORT_OTHERS,
+                    permissions = listOf(PermissionNode.TELEPORT_OTHERS),
                 ) { context, target ->
-                    application.here(context.source.requirePlayer(), target)
+                    application.here(
+                        operator = context.source.requirePlayer(),
+                        target = target,
+                        flags = TeleportFlags(force = true),
+                    )
                 },
             )
             addAll(
@@ -108,15 +113,14 @@ class TeleportLegacyCommands(
 
     private fun playerCommands(
         names: List<String>,
-        permission: PermissionNode,
-        additionalPermissions: List<PermissionNode> = emptyList(),
+        permissions: List<PermissionNode>,
         action: suspend (PaperCommandContext, Player) -> Unit,
     ): List<BrigadierCommand> =
         names.map { name ->
             command(name) {
                 then(
                     Commands.argument("player", SingleOnlinePlayerArgument(server))
-                        .requiresPermission(permission, *additionalPermissions.toTypedArray())
+                        .requiresPermission(*permissions.toTypedArray())
                         .executesSuspending(plugin) { context ->
                             context.scoped(teleportationTracer) {
                                 action(context, context.getArgument("player", Player::class.java))
@@ -227,12 +231,10 @@ class TeleportLegacyCommands(
                                     Commands.argument("z", DoubleArgumentType.doubleArg())
                                         .executesSuspending(plugin) { executePosition(it, null) }
                                         .then(
-                                            Commands.argument("world", StringArgumentType.word())
-                                                .suggests { _, builder ->
-                                                    server.worlds.forEach { builder.suggest(it.name) }
-                                                    builder.buildFuture()
-                                                }
-                                                .executesSuspending(plugin) { executePosition(it, "world") },
+                                            Commands.argument("world", ArgumentTypes.world())
+                                                .executesSuspending(plugin) { context ->
+                                                    executePosition(context, context.getArgument("world", World::class.java))
+                                                },
                                         ),
                                 ),
                         ),
@@ -266,14 +268,14 @@ class TeleportLegacyCommands(
 
     private suspend fun executePosition(
         context: PaperCommandContext,
-        worldArgument: String?,
+        worldArgument: World?,
     ) = context.scoped(teleportationTracer) {
         application.position(
             player = context.source.requirePlayer(),
             x = DoubleArgumentType.getDouble(context, "x"),
             y = DoubleArgumentType.getDouble(context, "y"),
             z = DoubleArgumentType.getDouble(context, "z"),
-            worldName = worldArgument?.let { context.getArgument(it, String::class.java) },
+            worldName = worldArgument?.name,
         )
     }
 

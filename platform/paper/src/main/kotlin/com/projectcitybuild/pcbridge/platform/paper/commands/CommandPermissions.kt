@@ -7,18 +7,12 @@ import io.papermc.paper.command.brigadier.CommandSourceStack
 
 fun LiteralArgumentBuilder<CommandSourceStack>.requiresPermission(
     permission: PermissionNode,
-    vararg additionalPermissions: PermissionNode,
-): LiteralArgumentBuilder<CommandSourceStack> =
-    requires { context ->
-        context.sender.hasPermission(permission.node) &&
-            additionalPermissions.all { context.sender.hasPermission(it.node) }
-    }
+): LiteralArgumentBuilder<CommandSourceStack> = requires { context ->
+    context.sender.hasPermission(permission.node)
+}
 
 fun <S : CommandSourceStack, T> RequiredArgumentBuilder<S, T>.requiresPermission(
-    permission: PermissionNode,
-    vararg additionalPermissions: PermissionNode,
-): RequiredArgumentBuilder<S, T> =
-    requires { context ->
-        context.sender.hasPermission(permission.node) &&
-            additionalPermissions.all { context.sender.hasPermission(it.node) }
-    }
+    vararg permissions: PermissionNode,
+): RequiredArgumentBuilder<S, T> = requires { context ->
+    permissions.all { context.sender.hasPermission(it.node) }
+}

@@ -56,9 +56,12 @@ class TeleportCommandGrammarTest {
                     cancel = TeleportCancelCommand(plugin, application),
                 ).literal(),
             )
-            TeleportLegacyCommands(plugin, server, application)
-                .commands()
-                .forEach { root.addChild(it.literal()) }
+            root.addChild(
+                TeleportLegacyCommands(plugin, server, application)
+                    .commands()
+                    .last()
+                    .literal(),
+            )
         }
 
     @Test
@@ -117,6 +120,39 @@ class TeleportCommandGrammarTest {
     }
 
     @Test
+    fun `teleport flags are optional and may be used individually`() {
+        listOf(
+            "tp to Notch",
+            "tp to Notch --force",
+            "tp to Notch --silent",
+            "tp here Notch",
+            "tp here Notch --force",
+            "tp here Notch --silent",
+        ).forEach { input ->
+            val parse = dispatcher.parse(input, source)
+            assertTrue(parse.exceptions.isEmpty(), "Could not parse: $input")
+            assertFalse(parse.reader.canRead(), "Unparsed input remains: $input")
+        }
+    }
+
+    @Test
+    fun `teleport flags cannot be repeated or unsupported`() {
+        listOf(
+            "tp to Notch --force --force",
+            "tp to Notch --silent --silent",
+            "tp to Notch --unknown",
+            "tp send Notch accept --unknown",
+            "tp all --force --force",
+        ).forEach { input ->
+            val parse = dispatcher.parse(input, source)
+            assertTrue(
+                parse.exceptions.isNotEmpty() || parse.reader.canRead(),
+                "Unexpectedly accepted: $input",
+            )
+        }
+    }
+
+    @Test
     fun `root player shorthand is accepted without overriding reserved subcommands`() {
         val root = dispatcher.parse("tp", source)
         assertTrue(root.exceptions.isEmpty())
@@ -169,5 +205,12 @@ class TeleportCommandGrammarTest {
                 dispatcher.parse("tp to Notch --", source),
             ).get(1, TimeUnit.SECONDS).list.map { it.text }
         assertTrue(optionSuggestions.containsAll(listOf("--force", "--silent")))
+
+        val afterForceSuggestions =
+            dispatcher.getCompletionSuggestions(
+                dispatcher.parse("tp to Notch --force ", source),
+            ).get(1, TimeUnit.SECONDS).list.map { it.text }
+        assertTrue(afterForceSuggestions.contains("--silent"))
+        assertFalse(afterForceSuggestions.contains("--force"))
     }
 }

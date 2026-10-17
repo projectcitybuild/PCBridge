@@ -1,8 +1,7 @@
 package com.projectcitybuild.pcbridge.features.teleportation.hooks.commands
 
 import com.projectcitybuild.pcbridge.core.permissions.PermissionNode
-import com.projectcitybuild.pcbridge.features.teleportation.hooks.helpers.forceFlag
-import com.projectcitybuild.pcbridge.features.teleportation.hooks.helpers.silentFlag
+import com.projectcitybuild.pcbridge.features.teleportation.hooks.commands.helpers.withTeleportFlags
 import com.projectcitybuild.pcbridge.features.teleportation.services.TeleportApplication
 import com.projectcitybuild.pcbridge.features.teleportation.services.TeleportFlags
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
@@ -29,27 +28,7 @@ class TeleportHereCommand(
             .requiresPermission(PermissionNode.TELEPORT_OTHERS)
             .then(
                 Commands.argument("player", SingleOnlinePlayerArgument(server))
-                    .executesSuspending(plugin) { execute(it, TeleportFlags()) }
-                    .then(
-                        forceFlag(plugin) {
-                            execute(it, TeleportFlags(force = true))
-                        }
-                            .then(
-                                silentFlag(plugin) {
-                                    execute(it, TeleportFlags(force = true, silent = true))
-                                },
-                            ),
-                    )
-                    .then(
-                        silentFlag(plugin) {
-                            execute(it, TeleportFlags(silent = true))
-                        }
-                            .then(
-                                forceFlag(plugin) {
-                                    execute(it, TeleportFlags(force = true, silent = true))
-                                },
-                            ),
-                    ),
+                    .withTeleportFlags(plugin) { context, flags -> execute(context, flags) },
             )
             .build()
 

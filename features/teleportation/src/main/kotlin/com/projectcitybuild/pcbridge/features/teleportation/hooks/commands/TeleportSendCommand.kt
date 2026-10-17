@@ -1,8 +1,7 @@
 package com.projectcitybuild.pcbridge.features.teleportation.hooks.commands
 
 import com.projectcitybuild.pcbridge.core.permissions.PermissionNode
-import com.projectcitybuild.pcbridge.features.teleportation.hooks.helpers.forceFlag
-import com.projectcitybuild.pcbridge.features.teleportation.hooks.helpers.silentFlag
+import com.projectcitybuild.pcbridge.features.teleportation.hooks.commands.helpers.withTeleportFlags
 import com.projectcitybuild.pcbridge.features.teleportation.services.TeleportApplication
 import com.projectcitybuild.pcbridge.features.teleportation.services.TeleportFlags
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
@@ -29,75 +28,16 @@ class TeleportSendCommand(
                 Commands.argument("player", SingleOnlinePlayerArgument(server))
                     .then(
                         Commands.argument("target", SingleOnlinePlayerArgument(server))
-                            .executesSuspending(plugin) { context ->
+                            .withTeleportFlags(plugin) { context, flags ->
                                 context.scoped(teleportationTracer) {
                                     application.send(
                                         operator = context.source.sender,
                                         player = context.getArgument("player", Player::class.java),
                                         target = context.getArgument("target", Player::class.java),
+                                        flags = flags,
                                     )
                                 }
-                            }
-                            .then(
-                                silentFlag(plugin) { context ->
-                                    context.scoped(teleportationTracer) {
-                                        application.send(
-                                            operator = context.source.sender,
-                                            player = context.getArgument("player", Player::class.java),
-                                            target = context.getArgument("target", Player::class.java),
-                                            flags = TeleportFlags(silent = true),
-                                        )
-                                    }
-                                },
-                            )
-                            .then(
-                                forceFlag(plugin) { context ->
-                                    context.scoped(teleportationTracer) {
-                                        application.send(
-                                            operator = context.source.sender,
-                                            player = context.getArgument("player", Player::class.java),
-                                            target = context.getArgument("target", Player::class.java),
-                                            flags = TeleportFlags(force = true),
-                                        )
-                                    }
-                                }
-                                .then(
-                                    silentFlag(plugin) { context ->
-                                        context.scoped(teleportationTracer) {
-                                            application.send(
-                                                operator = context.source.sender,
-                                                player = context.getArgument("player", Player::class.java),
-                                                target = context.getArgument("target", Player::class.java),
-                                                flags = TeleportFlags(force = true, silent = true),
-                                            )
-                                        }
-                                    },
-                                ),
-                            )
-                            .then(
-                                silentFlag(plugin) { context ->
-                                    context.scoped(teleportationTracer) {
-                                        application.send(
-                                            operator = context.source.sender,
-                                            player = context.getArgument("player", Player::class.java),
-                                            target = context.getArgument("target", Player::class.java),
-                                            flags = TeleportFlags(silent = true),
-                                        )
-                                    }
-                                }
-                                .then(
-                                    forceFlag(plugin) { context ->
-                                        context.scoped(teleportationTracer) {
-                                            application.send(
-                                                operator = context.source.sender,
-                                                player = context.getArgument("player", Player::class.java),
-                                                target = context.getArgument("target", Player::class.java),
-                                                flags = TeleportFlags(force = true, silent = true),
-                                            )
-                                        }
-                                    }
-                                ),
-                            ),
+                            },
                     ),
             )
             .build()
