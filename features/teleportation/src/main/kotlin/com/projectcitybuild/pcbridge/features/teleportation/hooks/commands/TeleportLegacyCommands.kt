@@ -20,6 +20,7 @@ import io.papermc.paper.command.brigadier.Commands
 import org.bukkit.Server
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
+import java.util.UUID
 
 class TeleportLegacyCommands(
     private val plugin: Plugin,
@@ -44,16 +45,14 @@ class TeleportLegacyCommands(
             },
         )
         addAll(
-            requestResponseCommands(
-                names = listOf("tpaccept", "tpyes"),
-                accept = true,
-            ),
+            requestDecisionCommands(listOf("tpaccept", "tpyes")) { player, requesterId ->
+                application.accept(player, requesterId)
+            },
         )
         addAll(
-            requestResponseCommands(
-                names = listOf("tpdeny", "tpno"),
-                accept = false,
-            ),
+            requestDecisionCommands(listOf("tpdeny", "tpno")) { player, requesterId ->
+                application.deny(player, requesterId)
+            },
         )
         addAll(
             cancelCommands(listOf("tpcancel", "tpacancel")),
@@ -123,37 +122,6 @@ class TeleportLegacyCommands(
         }
     }
 
-    private fun requestResponseCommands(
-        names: List<String>,
-        accept: Boolean,
-    ): List<BrigadierCommand> = names.map { name ->
-        command(name) {
-            executesSuspending(plugin) { context ->
-                context.scoped(teleportationTracer) {
-                    if (accept) {
-                        application.accept(context.source.requirePlayer(), requesterId = null)
-                    } else {
-                        application.deny(context.source.requirePlayer(), requesterId = null)
-                    }
-                }
-            }
-            then(
-                Commands
-                    .argument("requester", SingleOnlinePlayerArgument(server))
-                    .executesSuspending(plugin) { context ->
-                        context.scoped(teleportationTracer) {
-                            val requester = context.getArgument("requester", Player::class.java)
-                            if (accept) {
-                                application.accept(context.source.requirePlayer(), requester.uniqueId)
-                            } else {
-                                application.deny(context.source.requirePlayer(), requester.uniqueId)
-                            }
-                        }
-                    },
-            )
-        }
-    }
-
     private fun cancelCommands(names: List<String>): List<BrigadierCommand> = names.map { name ->
         command(name) {
             executesSuspending(plugin) { context ->
@@ -211,7 +179,16 @@ class TeleportLegacyCommands(
         command(name) {
             requiresPermission(PermissionNode.TELEPORT_POSITION)
             then(
-                withCoordinateArgs(plugin, ::executePosition),
+                withCoordinateArgs(plugin) { context, yaw, pitch ->
+                    application.position(
+                        player = context.source.requirePlayer(),
+                        x = DoubleArgumentType.getDouble(context, "x"),
+                        y = DoubleArgumentType.getDouble(context, "y"),
+                        z = DoubleArgumentType.getDouble(context, "z"),
+                        yaw = yaw,
+                        pitch = pitch,
+                    )
+                },
             )
         }
     }
@@ -240,19 +217,30 @@ class TeleportLegacyCommands(
         }
     }
 
-    private suspend fun executePosition(
-        context: PaperCommandContext,
-        yaw: Float?,
-        pitch: Float?,
-    ) = context.scoped(teleportationTracer) {
-        application.position(
-            player = context.source.requirePlayer(),
-            x = DoubleArgumentType.getDouble(context, "x"),
-            y = DoubleArgumentType.getDouble(context, "y"),
-            z = DoubleArgumentType.getDouble(context, "z"),
-            yaw = yaw,
-            pitch = pitch,
-        )
+    private fun requestDecisionCommands(
+        names: List<String>,
+        action: suspend (Player, UUID?) -> Unit,
+    ): List<BrigadierCommand> = names.map { name ->
+        command(name) {
+            executesSuspending(plugin) { context ->
+                context.scoped(teleportationTracer) {
+                    action(context.source.requirePlayer(), null)
+                }
+            }
+
+            then(
+                Commands
+                    .argument("requester", SingleOnlinePlayerArgument(server))
+                    .executesSuspending(plugin) { context ->
+                        context.scoped(teleportationTracer) {
+                            action(
+                                context.source.requirePlayer(),
+                                context.getArgument("requester", Player::class.java).uniqueId,
+                            )
+                        }
+                    },
+            )
+        }
     }
 
     private fun command(

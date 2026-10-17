@@ -59,7 +59,13 @@ class TeleportApplication(
             return
         }
 
-        if (move(requester, target.location.clone(), target, flags.silent)) {
+        val moved = move(
+            player = requester,
+            destination = target.location.clone(),
+            recipient = target,
+            silent = flags.silent,
+        )
+        if (moved) {
             requester.sendMessage(l10n.teleportCompleted(target.name))
         }
     }
@@ -178,7 +184,13 @@ class TeleportApplication(
             createRequest(operator, target, flags.silent, direction = TeleportRequest.Direction.HERE)
             return
         }
-        if (move(target, operator.location.clone(), operator, flags.silent)) {
+        val moved = move(
+            player = target,
+            destination = operator.location.clone(),
+            recipient = operator,
+            silent = flags.silent,
+        )
+        if (moved) {
             operator.sendMessage(l10n.teleportOperationSucceeded(target.name, operator.name))
         }
     }
@@ -238,7 +250,13 @@ class TeleportApplication(
             }
             return
         }
-        if (move(player, target.location.clone(), target, flags.silent)) {
+        val moved = move(
+            player = player,
+            destination = target.location.clone(),
+            recipient = target,
+            silent = flags.silent,
+        )
+        if (moved) {
             operator.sendMessage(l10n.teleportOperationSucceeded(player.name, target.name))
         }
     }
@@ -316,7 +334,17 @@ class TeleportApplication(
         var failed = 0
         players.forEach { player ->
             try {
-                if (move(player, destination.clone(), target, flags.silent)) {
+                val options = PlayerTeleporter.TeleportOptions(
+                    playSound = players.size < 5,
+                )
+                val moved = move(
+                    player = player,
+                    destination = destination.clone(),
+                    recipient = target,
+                    silent = flags.silent,
+                    options = options,
+                )
+                if (moved) {
                     succeeded++
                 } else {
                     failed++
@@ -442,7 +470,7 @@ class TeleportApplication(
                 player = player,
                 destination = destination,
                 cause = TeleportCause.COMMAND,
-                options = options,
+                options = options.copy(playSound = !silent),
             )
         } catch (_: SafeDestinationNotFoundException) {
             if (reportFailure) {
@@ -456,7 +484,7 @@ class TeleportApplication(
             return false
         }
 
-        if (recipient != null && !silent && recipient.uniqueId != player.uniqueId && recipient.isOnline) {
+        if (!silent && recipient != null && recipient.uniqueId != player.uniqueId && recipient.isOnline) {
             recipient.sendMessage(l10n.teleportReceived(player.name))
         }
         return true
