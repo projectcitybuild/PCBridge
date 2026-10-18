@@ -1,15 +1,15 @@
 package com.projectcitybuild.pcbridge.features.teleportation.hooks.commands
 
 import com.projectcitybuild.pcbridge.core.l10n.l10n
-import com.projectcitybuild.pcbridge.core.permissions.PermissionNode
+import com.projectcitybuild.pcbridge.features.teleportation.TeleportationPermissions
 import com.projectcitybuild.pcbridge.features.teleportation.domain.services.TeleportService
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
+import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandNode
+import com.projectcitybuild.pcbridge.platform.paper.commands.argumenttypes.SingleOnlinePlayerArgument
+import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
+import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
 import com.projectcitybuild.pcbridge.platform.paper.commands.then
-import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandNode
-import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.argumenttypes.SingleOnlinePlayerArgument
-import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.extensions.executesSuspending
-import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.runtime.commands.scoped
 import com.projectcitybuild.pcbridge.runtime.teleportation.teleportationTracer
 import io.papermc.paper.command.brigadier.Commands
@@ -39,7 +39,7 @@ class TeleportCommand(
         }.then(
             Commands
                 .argument("player", SingleOnlinePlayerArgument(server))
-                .requiresPermission(PermissionNode.TELEPORT_REQUEST)
+                .requiresPermission(TeleportationPermissions.REQUEST)
                 .executesSuspending(plugin) { context ->
                     context.scoped(teleportationTracer) {
                         application.to(

@@ -2,7 +2,7 @@ package com.projectcitybuild.pcbridge.features.homes.hooks.commands
 
 import com.mojang.brigadier.suggestion.SuggestionsBuilder
 import com.projectcitybuild.pcbridge.features.homes.domain.repositories.HomeRepository
-import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandContext
+import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
 import org.bukkit.entity.Player
 
 class HomeNameSuggester(
@@ -18,7 +18,8 @@ class HomeNameSuggester(
 
         val input = suggestions.remaining
 
-        homeRepository.names(playerUUID = player.uniqueId)
+        homeRepository
+            .names(playerUUID = player.uniqueId)
             .filter { it.name.startsWith(input, ignoreCase = true) }
             .map { it.name }
             .forEach(suggestions::suggest)

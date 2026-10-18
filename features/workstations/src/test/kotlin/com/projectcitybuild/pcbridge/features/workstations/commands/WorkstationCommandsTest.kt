@@ -1,7 +1,7 @@
 package com.projectcitybuild.pcbridge.features.workstations.commands
 
 import com.mojang.brigadier.CommandDispatcher
-import com.projectcitybuild.pcbridge.core.permissions.PermissionNode
+import com.projectcitybuild.pcbridge.features.workstations.WorkstationsPermissions
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.CoroutineScopeCommandTaskExecutor
@@ -95,7 +95,7 @@ class WorkstationCommandsTest {
     ) {
         val openedMenus = mutableListOf<Pair<String, Player>>()
         whenever(source.sender).thenReturn(player)
-        whenever(player.hasPermission(PermissionNode.WORKSTATIONS_USE.node)).thenReturn(true)
+        whenever(player.hasPermission(WorkstationsPermissions.USE.node)).thenReturn(true)
         val command =
             createCommand(executor) { actualType, actualPlayer ->
                 openedMenus.add(actualType to actualPlayer)
@@ -104,9 +104,9 @@ class WorkstationCommandsTest {
 
         assertEquals(name, node.name)
         assertTrue(node.requirement.test(source))
-        whenever(player.hasPermission(PermissionNode.WORKSTATIONS_USE.node)).thenReturn(false)
+        whenever(player.hasPermission(WorkstationsPermissions.USE.node)).thenReturn(false)
         assertFalse(node.requirement.test(source))
-        whenever(player.hasPermission(PermissionNode.WORKSTATIONS_USE.node)).thenReturn(true)
+        whenever(player.hasPermission(WorkstationsPermissions.USE.node)).thenReturn(true)
 
         val dispatcher = CommandDispatcher<CommandSourceStack>()
         dispatcher.root.addChild(node)

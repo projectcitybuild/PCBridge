@@ -2,13 +2,14 @@ package com.projectcitybuild.pcbridge.features.spawns.hooks.commands
 
 import com.mojang.brigadier.CommandDispatcher
 import com.projectcitybuild.pcbridge.core.l10n.l10n
-import com.projectcitybuild.pcbridge.core.permissions.PermissionNode
+import com.projectcitybuild.pcbridge.features.spawns.SpawnsPermissions
 import com.projectcitybuild.pcbridge.features.spawns.domain.data.SpawnUpdatedEvent
 import com.projectcitybuild.pcbridge.features.spawns.domain.repositories.SpawnRepository
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.CoroutineScopeCommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.events.SpigotEventBroadcaster
 import io.papermc.paper.command.brigadier.CommandSourceStack
+import java.util.UUID
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
@@ -21,7 +22,6 @@ import org.mockito.Mockito.mock
 import org.mockito.Mockito.verify
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.whenever
-import java.util.UUID
 
 class SetSpawnCommandTest {
     private val player = mock(Player::class.java)
@@ -62,7 +62,7 @@ class SetSpawnCommandTest {
     private fun setUpPlayerSource(): CommandSourceStack {
         val source = mock(CommandSourceStack::class.java)
         whenever(source.sender).thenReturn(player)
-        whenever(player.hasPermission(PermissionNode.SPAWN_MANAGE.node)).thenReturn(true)
+        whenever(player.hasPermission(SpawnsPermissions.MANAGE.node)).thenReturn(true)
         return source
     }
 

@@ -4,11 +4,11 @@ import com.projectcitybuild.pcbridge.features.homes.domain.repositories.HomeRepo
 import com.projectcitybuild.pcbridge.features.homes.homesTracer
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
+import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
+import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandNode
 import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
-import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandContext
-import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandNode
-import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.extensions.executesSuspending
-import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.extensions.requirePlayer
+import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
+import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.runtime.commands.scoped
 import io.papermc.paper.command.brigadier.Commands
 import org.bukkit.plugin.Plugin
@@ -18,35 +18,33 @@ class HomeLimitCommand(
     private val homeRepository: HomeRepository,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override fun literal(): PaperCommandNode {
-        return Commands.literal("limit")
-            .executesSuspending(taskExecutor, ::execute)
-            .build()
-    }
+    override fun literal(): PaperCommandNode = Commands
+        .literal("limit")
+        .executesSuspending(taskExecutor, ::execute)
+        .build()
 
-    private suspend fun execute(context: PaperCommandContext) =
-        context.scoped(homesTracer) {
-            val player = context.source.requirePlayer()
+    private suspend fun execute(context: PaperCommandContext) = context.scoped(homesTracer) {
+        val player = context.source.requirePlayer()
 
-            val limit = homeRepository.limit(player)
-            if (limit.max == 0) {
-                context.source.sender.sendRichMessage(
-                    "<gray>You cannot create a home</gray>",
-                )
-                return@scoped
-            }
-
+        val limit = homeRepository.limit(player)
+        if (limit.max == 0) {
             context.source.sender.sendRichMessage(
-                "You currently have <aqua>${limit.current}</aqua> of <aqua>${limit.max}</aqua> homes",
+                "<gray>You cannot create a home</gray>",
             )
-            if (limit.sources.isNotEmpty()) {
-                val sources =
-                    limit.sources
-                        .map { "<newline><gray><white>${it.key}</white>: <aqua>+${it.value}</aqua> homes</gray>" }
-                        .joinToString()
-
-                context.source.sender.sendRichMessage("<gray>---</gray>")
-                context.source.sender.sendRichMessage("<gray>The following roles grant you homes:</gray> $sources")
-            }
+            return@scoped
         }
+
+        context.source.sender.sendRichMessage(
+            "You currently have <aqua>${limit.current}</aqua> of <aqua>${limit.max}</aqua> homes",
+        )
+        if (limit.sources.isNotEmpty()) {
+            val sources =
+                limit.sources
+                    .map { "<newline><gray><white>${it.key}</white>: <aqua>+${it.value}</aqua> homes</gray>" }
+                    .joinToString()
+
+            context.source.sender.sendRichMessage("<gray>---</gray>")
+            context.source.sender.sendRichMessage("<gray>The following roles grant you homes:</gray> $sources")
+        }
+    }
 }

@@ -2,6 +2,7 @@ package com.projectcitybuild.pcbridge.features.teleportation.domain.validation
 
 import com.projectcitybuild.pcbridge.core.permissions.PermissionNode
 import com.projectcitybuild.pcbridge.core.validation.ValidationResult
+import com.projectcitybuild.pcbridge.features.teleportation.TeleportationPermissions
 import com.projectcitybuild.pcbridge.features.teleportation.domain.data.TeleportFlags
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
@@ -12,11 +13,11 @@ class TeleportValidator {
         target: Player,
         flags: TeleportFlags = TeleportFlags(),
     ): ValidationResult<Unit> {
-        permission(requester, PermissionNode.TELEPORT_REQUEST)?.let {
+        permission(requester, TeleportationPermissions.REQUEST)?.let {
             return invalid(it)
         }
         if (flags.force) {
-            permission(requester, PermissionNode.TELEPORT_FORCE)?.let {
+            permission(requester, TeleportationPermissions.FORCE)?.let {
                 return invalid(it)
             }
         }
@@ -37,11 +38,11 @@ class TeleportValidator {
         target: Player,
         flags: TeleportFlags = TeleportFlags(),
     ): ValidationResult<Unit> {
-        permission(operator, PermissionNode.TELEPORT_OTHERS)?.let {
+        permission(operator, TeleportationPermissions.OTHERS)?.let {
             return invalid(it)
         }
         if (flags.force) {
-            permission(operator, PermissionNode.TELEPORT_FORCE)?.let {
+            permission(operator, TeleportationPermissions.FORCE)?.let {
                 return invalid(it)
             }
         }
@@ -61,7 +62,7 @@ class TeleportValidator {
         requester: Player,
         target: Player,
     ): ValidationResult<Unit> {
-        permission(requester, PermissionNode.TELEPORT_REQUEST)?.let {
+        permission(requester, TeleportationPermissions.REQUEST)?.let {
             return invalid(it)
         }
         if (!requester.isOnline || !target.isOnline) {
@@ -79,11 +80,11 @@ class TeleportValidator {
         target: Player,
         flags: TeleportFlags = TeleportFlags(),
     ): ValidationResult<Unit> {
-        permission(operator, PermissionNode.TELEPORT_OTHERS)?.let {
+        permission(operator, TeleportationPermissions.OTHERS)?.let {
             return invalid(it)
         }
         if (flags.force) {
-            permission(operator, PermissionNode.TELEPORT_FORCE)?.let {
+            permission(operator, TeleportationPermissions.FORCE)?.let {
                 return invalid(it)
             }
         }
@@ -110,11 +111,11 @@ class TeleportValidator {
         requestedTarget: Player?,
         flags: TeleportFlags = TeleportFlags(),
     ): ValidationResult<Player> {
-        permission(operator, PermissionNode.TELEPORT_ALL)?.let {
+        permission(operator, TeleportationPermissions.ALL)?.let {
             return invalid(it)
         }
         if (flags.force) {
-            permission(operator, PermissionNode.TELEPORT_FORCE)?.let {
+            permission(operator, TeleportationPermissions.FORCE)?.let {
                 return invalid(it)
             }
         }
@@ -139,7 +140,7 @@ class TeleportValidator {
         yaw: Float? = null,
         pitch: Float? = null,
     ): ValidationResult<Unit> {
-        permission(player, PermissionNode.TELEPORT_POSITION)?.let {
+        permission(player, TeleportationPermissions.POSITION)?.let {
             return invalid(it)
         }
         if (!player.isOnline) {
@@ -158,7 +159,7 @@ class TeleportValidator {
     }
 
     fun random(player: Player): ValidationResult<Unit> {
-        permission(player, PermissionNode.TELEPORT_RANDOM)?.let {
+        permission(player, TeleportationPermissions.RANDOM)?.let {
             return invalid(it)
         }
         if (!player.isOnline) {
@@ -173,9 +174,9 @@ class TeleportValidator {
     ): ValidationResult<Unit> {
         val senderPlayer = sender as? Player
         val requiredPermission = if (senderPlayer?.uniqueId == target.uniqueId) {
-            PermissionNode.TELEPORT_BACK
+            TeleportationPermissions.BACK
         } else {
-            PermissionNode.TELEPORT_BACK_OTHERS
+            TeleportationPermissions.BACK_OTHERS
         }
         permission(sender, requiredPermission)?.let {
             return invalid(it)
@@ -190,7 +191,7 @@ class TeleportValidator {
         sender: CommandSender,
         silent: Boolean,
     ): TeleportValidationError.MissingPermission? = if (silent) {
-        permission(sender, PermissionNode.TELEPORT_SILENT)
+        permission(sender, TeleportationPermissions.SILENT)
     } else {
         null
     }

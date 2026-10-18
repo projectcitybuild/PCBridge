@@ -14,7 +14,7 @@ include(
     "core:l10n",
     "core:pcbridge-api",
     "core:permissions",
-    "core:test-support",
+    "core:support:tests",
     "core:validation",
 )
 

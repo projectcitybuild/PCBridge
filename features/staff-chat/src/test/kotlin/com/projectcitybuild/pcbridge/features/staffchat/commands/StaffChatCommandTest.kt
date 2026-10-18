@@ -3,7 +3,7 @@ package com.projectcitybuild.pcbridge.features.staffchat.commands
 import com.mojang.brigadier.CommandDispatcher
 import com.projectcitybuild.pcbridge.core.pcbridgeapi.pcb.models.RemoteConfigKeyValues
 import com.projectcitybuild.pcbridge.core.pcbridgeapi.pcb.models.RemoteConfigVersion
-import com.projectcitybuild.pcbridge.core.permissions.PermissionNode
+import com.projectcitybuild.pcbridge.features.staffchat.StaffChatPermissions
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.CoroutineScopeCommandTaskExecutor
 import com.projectcitybuild.pcbridge.runtime.chat.decorators.ChatDecoratorChain
@@ -38,9 +38,9 @@ class StaffChatCommandTest {
             val source = mock(CommandSourceStack::class.java)
             whenever(source.sender).thenReturn(sender)
             whenever(sender.name).thenReturn("moderator")
-            whenever(sender.hasPermission(PermissionNode.STAFF_CHANNEL.node)).thenReturn(true)
-            whenever(authorizedRecipient.hasPermission(PermissionNode.STAFF_CHANNEL.node)).thenReturn(true)
-            whenever(unauthorizedRecipient.hasPermission(PermissionNode.STAFF_CHANNEL.node)).thenReturn(false)
+            whenever(sender.hasPermission(StaffChatPermissions.CHANNEL.node)).thenReturn(true)
+            whenever(authorizedRecipient.hasPermission(StaffChatPermissions.CHANNEL.node)).thenReturn(true)
+            whenever(unauthorizedRecipient.hasPermission(StaffChatPermissions.CHANNEL.node)).thenReturn(false)
             whenever(server.onlinePlayers).thenReturn(
                 setOf(sender, authorizedRecipient, unauthorizedRecipient),
             )

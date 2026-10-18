@@ -1,19 +1,19 @@
 package com.projectcitybuild.pcbridge.features.pim.hooks.commands.op
 
 import com.projectcitybuild.pcbridge.core.datetime.services.LocalizedTime
-import com.projectcitybuild.pcbridge.core.permissions.PermissionNode
 import com.projectcitybuild.pcbridge.core.support.java.humanReadable
+import com.projectcitybuild.pcbridge.features.pim.PimPermissions
 import com.projectcitybuild.pcbridge.features.pim.domain.services.OpElevationService
 import com.projectcitybuild.pcbridge.features.pim.hooks.dialogs.ConfirmOpElevateDialog
 import com.projectcitybuild.pcbridge.features.pim.pimTracer
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
+import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
+import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandNode
 import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
+import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
+import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
-import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandContext
-import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandNode
-import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.extensions.executesSuspending
-import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.runtime.commands.scoped
 import io.papermc.paper.command.brigadier.Commands
 import net.kyori.adventure.dialog.DialogLike
@@ -27,28 +27,26 @@ class OpGrantCommand(
 ) : BrigadierCommand {
     internal var confirmationDialog: () -> DialogLike = ConfirmOpElevateDialog::build
 
-    override fun literal(): PaperCommandNode {
-        return Commands.literal("grant")
-            .requiresPermission(PermissionNode.PIM_OP)
-            .executesSuspending(commandTaskExecutor, ::execute)
-            .build()
-    }
+    override fun literal(): PaperCommandNode = Commands
+        .literal("grant")
+        .requiresPermission(PimPermissions.OP)
+        .executesSuspending(commandTaskExecutor, ::execute)
+        .build()
 
-    suspend fun execute(context: PaperCommandContext) =
-        context.scoped(pimTracer) {
-            val player = context.source.requirePlayer()
+    suspend fun execute(context: PaperCommandContext) = context.scoped(pimTracer) {
+        val player = context.source.requirePlayer()
 
-            val elevation = opElevationService.elevation(player.uniqueId)
-            val now = localizedTime.nowInstant()
-            val isActive = elevation != null && elevation.isActiveAt(now)
-            if (isActive) {
-                player.sendRichMessage(
-                    "<red>Error: You are already OP elevated (remaining: ${elevation.remainingAt(now)?.humanReadable()}</red>",
-                )
-                return@scoped
-            }
-
-            val dialog = confirmationDialog()
-            player.showDialog(dialog)
+        val elevation = opElevationService.elevation(player.uniqueId)
+        val now = localizedTime.nowInstant()
+        val isActive = elevation != null && elevation.isActiveAt(now)
+        if (isActive) {
+            player.sendRichMessage(
+                "<red>Error: You are already OP elevated (remaining: ${elevation.remainingAt(now)?.humanReadable()}</red>",
+            )
+            return@scoped
         }
+
+        val dialog = confirmationDialog()
+        player.showDialog(dialog)
+    }
 }

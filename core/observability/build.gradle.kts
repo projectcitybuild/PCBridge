@@ -8,5 +8,5 @@ dependencies {
     implementation("io.sentry:sentry-opentelemetry-agentless:8.27.1")
     implementation("io.opentelemetry:opentelemetry-extension-kotlin:1.43.0")
 
-    testImplementation(project(":core:test-support"))
+    testImplementation(project(":core:support:tests"))
 }

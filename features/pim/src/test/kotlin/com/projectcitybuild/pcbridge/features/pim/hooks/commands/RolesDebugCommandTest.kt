@@ -1,12 +1,13 @@
 package com.projectcitybuild.pcbridge.features.pim.hooks.commands
 
 import com.mojang.brigadier.CommandDispatcher
-import com.projectcitybuild.pcbridge.core.permissions.PermissionNode
+import com.projectcitybuild.pcbridge.features.pim.PimPermissions
 import com.projectcitybuild.pcbridge.features.pim.hooks.commands.roles.RolesDebugCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.CoroutineScopeCommandTaskExecutor
 import com.projectcitybuild.pcbridge.runtime.permissions.Permissions
 import com.projectcitybuild.pcbridge.runtime.permissions.PermissionsProvider
 import io.papermc.paper.command.brigadier.CommandSourceStack
+import java.util.UUID
 import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import org.bukkit.entity.Player
@@ -15,7 +16,6 @@ import org.junit.jupiter.api.Test
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.verify
 import org.mockito.kotlin.whenever
-import java.util.UUID
 
 class RolesDebugCommandTest {
     @Test
@@ -28,7 +28,7 @@ class RolesDebugCommandTest {
             val playerId = UUID.randomUUID()
             whenever(source.sender).thenReturn(player)
             whenever(player.uniqueId).thenReturn(playerId)
-            whenever(player.hasPermission(PermissionNode.PIM_ROLES.node)).thenReturn(true)
+            whenever(player.hasPermission(PimPermissions.ROLES.node)).thenReturn(true)
             val command =
                 RolesDebugCommand(
                     mock(Plugin::class.java),

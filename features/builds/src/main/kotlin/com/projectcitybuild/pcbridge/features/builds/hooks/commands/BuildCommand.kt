@@ -1,20 +1,20 @@
 package com.projectcitybuild.pcbridge.features.builds.hooks.commands
 
 import com.mojang.brigadier.arguments.StringArgumentType
+import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.core.pcbridgeapi.pcb.models.Build
-import com.projectcitybuild.pcbridge.core.permissions.PermissionNode
+import com.projectcitybuild.pcbridge.features.builds.BuildsPermissions
 import com.projectcitybuild.pcbridge.features.builds.buildsTracer
 import com.projectcitybuild.pcbridge.features.builds.domain.repositories.BuildRepository
-import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
+import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
+import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandNode
 import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
+import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
+import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.requirePlayer
+import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.suggestsSuspending
 import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
-import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandContext
-import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandNode
-import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.extensions.executesSuspending
-import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.extensions.requirePlayer
-import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.extensions.suggestsSuspending
 import com.projectcitybuild.pcbridge.runtime.commands.scoped
 import com.projectcitybuild.pcbridge.runtime.teleportation.PlayerTeleporter
 import io.papermc.paper.command.brigadier.Commands
@@ -35,61 +35,59 @@ class BuildCommand(
     private val playerTeleporter: PlayerTeleporter,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override fun literal(): PaperCommandNode {
-        return Commands.literal("build")
-            .requiresPermission(PermissionNode.BUILDS_TELEPORT)
-            .then(
-                Commands.argument("name", StringArgumentType.greedyString())
-                    .suggestsSuspending(plugin, buildNameSuggester::suggest)
-                    .executesSuspending(taskExecutor, ::execute),
-            )
-            .build()
-    }
+    override fun literal(): PaperCommandNode = Commands
+        .literal("build")
+        .requiresPermission(BuildsPermissions.TELEPORT)
+        .then(
+            Commands
+                .argument("name", StringArgumentType.greedyString())
+                .suggestsSuspending(plugin, buildNameSuggester::suggest)
+                .executesSuspending(taskExecutor, ::execute),
+        ).build()
 
-    private suspend fun execute(context: PaperCommandContext) =
-        context.scoped(buildsTracer) {
-            val player = context.source.requirePlayer()
-            val name = context.getArgument("name", String::class.java)
+    private suspend fun execute(context: PaperCommandContext) = context.scoped(buildsTracer) {
+        val player = context.source.requirePlayer()
+        val name = context.getArgument("name", String::class.java)
 
-            val build = buildRepository.get(name = name)
-            checkNotNull(build) { "Build not found" }
+        val build = buildRepository.get(name = name)
+        checkNotNull(build) { "Build not found" }
 
-            val world = server.getWorld(build.world)
-            checkNotNull(world) { l10n.errorWorldNotFound(build.world) }
+        val world = server.getWorld(build.world)
+        checkNotNull(world) { l10n.errorWorldNotFound(build.world) }
 
-            playerTeleporter.move(
-                player,
-                destination = build.toLocation(world),
-                cause = PlayerTeleportEvent.TeleportCause.COMMAND,
-                options =
-                    PlayerTeleporter.TeleportOptions(
-                        preloadDestinationChunk = true,
-                    ),
-            )
-            val owner = build.player?.alias
-
-            player.showTitle(
-                Title.title(
-                    Component.text(build.name),
-                    MiniMessage.miniMessage().deserialize(
-                        if (owner.isNullOrEmpty()) {
-                            ""
-                        } else {
-                            "<gray>Created by $owner</gray>"
-                        },
-                    ),
+        playerTeleporter.move(
+            player,
+            destination = build.toLocation(world),
+            cause = PlayerTeleportEvent.TeleportCause.COMMAND,
+            options =
+                PlayerTeleporter.TeleportOptions(
+                    preloadDestinationChunk = true,
                 ),
-            )
-            context.source.sender.sendRichMessage(
-                "<gray>Teleported to <aqua>$name</aqua></gray>",
-            )
-            if (!build.description.isNullOrEmpty()) {
-                player.sendRichMessage("<gray>---<newline>${build.description}</gray>")
-            }
-            if (!build.lore.isNullOrEmpty()) {
-                player.sendRichMessage("<gray>---<newline><italic>${build.lore}</italic></gray>")
-            }
+        )
+        val owner = build.player?.alias
+
+        player.showTitle(
+            Title.title(
+                Component.text(build.name),
+                MiniMessage.miniMessage().deserialize(
+                    if (owner.isNullOrEmpty()) {
+                        ""
+                    } else {
+                        "<gray>Created by $owner</gray>"
+                    },
+                ),
+            ),
+        )
+        context.source.sender.sendRichMessage(
+            "<gray>Teleported to <aqua>$name</aqua></gray>",
+        )
+        if (!build.description.isNullOrEmpty()) {
+            player.sendRichMessage("<gray>---<newline>${build.description}</gray>")
         }
+        if (!build.lore.isNullOrEmpty()) {
+            player.sendRichMessage("<gray>---<newline><italic>${build.lore}</italic></gray>")
+        }
+    }
 }
 
 // TODO: reuse

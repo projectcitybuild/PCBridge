@@ -1,20 +1,20 @@
 package com.projectcitybuild.pcbridge.features.maintenance.hooks.commands
 
-import com.projectcitybuild.pcbridge.core.permissions.PermissionNode
+import com.projectcitybuild.pcbridge.features.maintenance.MaintenancePermissions
 import com.projectcitybuild.pcbridge.features.maintenance.domain.data.MaintenanceState
 import com.projectcitybuild.pcbridge.features.maintenance.domain.data.MaintenanceToggledEvent
 import com.projectcitybuild.pcbridge.features.maintenance.domain.data.maintenanceStateKey
 import com.projectcitybuild.pcbridge.features.maintenance.maintenanceTracer
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
+import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
+import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandNode
 import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
+import com.projectcitybuild.pcbridge.platform.paper.commands.argumenttypes.OnOffArgument
+import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
 import com.projectcitybuild.pcbridge.platform.paper.events.SpigotEventBroadcaster
 import com.projectcitybuild.pcbridge.platform.paper.extensions.broadcastRich
-import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandContext
-import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandNode
-import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.argumenttypes.OnOffArgument
-import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.runtime.commands.scoped
 import com.projectcitybuild.pcbridge.runtime.state.store.Store
 import io.papermc.paper.command.brigadier.Commands
@@ -28,51 +28,48 @@ class MaintenanceCommand(
     private val eventBroadcaster: SpigotEventBroadcaster,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override fun literal(): PaperCommandNode {
-        return Commands.literal("maintenance")
-            .requiresPermission(PermissionNode.MAINTENANCE_MANAGE)
-            .then(
-                Commands.argument("enabled", OnOffArgument())
-                    .executesSuspending(taskExecutor, ::toggle),
+    override fun literal(): PaperCommandNode = Commands
+        .literal("maintenance")
+        .requiresPermission(MaintenancePermissions.MANAGE)
+        .then(
+            Commands
+                .argument("enabled", OnOffArgument())
+                .executesSuspending(taskExecutor, ::toggle),
+        ).executesSuspending(taskExecutor, ::status)
+        .build()
+
+    private suspend fun toggle(context: PaperCommandContext) = context.scoped(maintenanceTracer) {
+        val sender = context.source.sender
+
+        val desiredState = context.getArgument("enabled", Boolean::class.java)
+        val currentState = store.state(maintenanceStateKey).enabled
+
+        if (currentState == desiredState) {
+            sender.sendRichMessage(
+                "<red>Maintenance mode is already ${desiredState.onOff().uppercase()}</red>",
             )
-            .executesSuspending(taskExecutor, ::status)
-            .build()
+            return@scoped
+        }
+
+        store.mutate(maintenanceStateKey) {
+            MaintenanceState(enabled = desiredState)
+        }
+        eventBroadcaster.broadcast(
+            MaintenanceToggledEvent(enabled = desiredState),
+        )
+        server.broadcastRich(
+            "<yellow>Maintenance mode is now ${desiredState.onOff().uppercase()}</yellow>",
+        )
     }
 
-    private suspend fun toggle(context: PaperCommandContext) =
-        context.scoped(maintenanceTracer) {
-            val sender = context.source.sender
+    private suspend fun status(context: PaperCommandContext) = context.scoped(maintenanceTracer) {
+        val sender = context.source.sender
 
-            val desiredState = context.getArgument("enabled", Boolean::class.java)
-            val currentState = store.state(maintenanceStateKey).enabled
-
-            if (currentState == desiredState) {
-                sender.sendRichMessage(
-                    "<red>Maintenance mode is already ${desiredState.onOff().uppercase()}</red>",
-                )
-                return@scoped
-            }
-
-            store.mutate(maintenanceStateKey) {
-                MaintenanceState(enabled = desiredState)
-            }
-            eventBroadcaster.broadcast(
-                MaintenanceToggledEvent(enabled = desiredState),
-            )
-            server.broadcastRich(
-                "<yellow>Maintenance mode is now ${desiredState.onOff().uppercase()}</yellow>",
-            )
-        }
-
-    private suspend fun status(context: PaperCommandContext) =
-        context.scoped(maintenanceTracer) {
-            val sender = context.source.sender
-
-            val state = store.state(maintenanceStateKey).enabled
-            sender.sendRichMessage(
-                "Maintenance mode is currently ${state.onOff().uppercase()}",
-            )
-        }
+        val state = store.state(maintenanceStateKey).enabled
+        sender.sendRichMessage(
+            "Maintenance mode is currently ${state.onOff().uppercase()}",
+        )
+    }
 }
 
 private fun Boolean.onOff(): String = if (this) "on" else "off"

@@ -1,14 +1,14 @@
 package com.projectcitybuild.pcbridge.features.teleportation.hooks.commands
 
 import com.mojang.brigadier.arguments.DoubleArgumentType
-import com.projectcitybuild.pcbridge.core.permissions.PermissionNode
+import com.projectcitybuild.pcbridge.features.teleportation.TeleportationPermissions
 import com.projectcitybuild.pcbridge.features.teleportation.domain.services.TeleportService
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
+import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
+import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandNode
+import com.projectcitybuild.pcbridge.platform.paper.commands.arguments.withCoordinateArgs
+import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
-import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandContext
-import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandNode
-import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.arguments.withCoordinateArgs
-import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.runtime.commands.scoped
 import com.projectcitybuild.pcbridge.runtime.teleportation.teleportationTracer
 import io.papermc.paper.command.brigadier.Commands
@@ -20,7 +20,7 @@ class TeleportPosCommand(
 ) : BrigadierCommand {
     override fun literal(): PaperCommandNode = Commands
         .literal("pos")
-        .requiresPermission(PermissionNode.TELEPORT_POSITION)
+        .requiresPermission(TeleportationPermissions.POSITION)
         .then(
             withCoordinateArgs(plugin) { context, yaw, pitch ->
                 execute(context, yaw, pitch)

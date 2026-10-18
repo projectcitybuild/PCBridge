@@ -1,18 +1,18 @@
 package com.projectcitybuild.pcbridge.features.sync.hooks.commands
 
-import com.projectcitybuild.pcbridge.core.permissions.PermissionNode
-import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
-import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
-import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
-import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
-import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.argumenttypes.SingleOnlinePlayerArgument
-import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.extensions.executesSuspending
-import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.extensions.requirePlayer
-import com.projectcitybuild.pcbridge.runtime.commands.scoped
-import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandContext
-import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandNode
+import com.projectcitybuild.pcbridge.features.sync.SyncPermissions
 import com.projectcitybuild.pcbridge.features.sync.domain.actions.SyncPlayer
 import com.projectcitybuild.pcbridge.features.sync.syncTracer
+import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
+import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
+import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
+import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandNode
+import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
+import com.projectcitybuild.pcbridge.platform.paper.commands.argumenttypes.SingleOnlinePlayerArgument
+import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
+import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.requirePlayer
+import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
+import com.projectcitybuild.pcbridge.runtime.commands.scoped
 import io.papermc.paper.command.brigadier.Commands
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
@@ -22,29 +22,24 @@ class SyncCommand(
     private val syncPlayer: SyncPlayer,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override fun literal(): PaperCommandNode {
-        return Commands.literal("sync")
-            .then(
-                Commands.argument("player", SingleOnlinePlayerArgument(plugin.server))
-                    .requiresPermission(PermissionNode.PLAYER_SYNC_OTHER)
-                    .executesSuspending(taskExecutor, ::syncOther)
-            )
-            .executesSuspending(taskExecutor, ::syncSelf)
-            .build()
-    }
+    override fun literal(): PaperCommandNode = Commands
+        .literal("sync")
+        .then(
+            Commands
+                .argument("player", SingleOnlinePlayerArgument(plugin.server))
+                .requiresPermission(SyncPermissions.OTHER)
+                .executesSuspending(taskExecutor, ::syncOther),
+        ).executesSuspending(taskExecutor, ::syncSelf)
+        .build()
 
-    private suspend fun syncSelf(
-        context: PaperCommandContext,
-    ) = context.scoped(syncTracer) {
+    private suspend fun syncSelf(context: PaperCommandContext) = context.scoped(syncTracer) {
         val player = context.source.requirePlayer()
 
         player.sendRichMessage("<gray>Fetching player data...</gray>")
         syncPlayer.execute(playerUUID = player.uniqueId)
     }
 
-    private suspend fun syncOther(
-        context: PaperCommandContext,
-    ) = context.scoped(syncTracer) {
+    private suspend fun syncOther(context: PaperCommandContext) = context.scoped(syncTracer) {
         val sender = context.source.sender
         val player = context.getArgument("player", Player::class.java)
 

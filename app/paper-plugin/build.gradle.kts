@@ -42,7 +42,7 @@ dependencies {
     // Runtime
     implementation(project(":runtime"))
 
-    testImplementation(project(":core:test-support"))
+    testImplementation(project(":core:support:tests"))
 
     // Integrations
     implementation(project(":integrations:dynmap"))

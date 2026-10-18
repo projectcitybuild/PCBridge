@@ -2,7 +2,7 @@ package com.projectcitybuild.pcbridge.features.pim.hooks.commands
 
 import com.mojang.brigadier.CommandDispatcher
 import com.projectcitybuild.pcbridge.core.datetime.services.LocalizedTime
-import com.projectcitybuild.pcbridge.core.permissions.PermissionNode
+import com.projectcitybuild.pcbridge.features.pim.PimPermissions
 import com.projectcitybuild.pcbridge.features.pim.domain.services.OpElevationService
 import com.projectcitybuild.pcbridge.features.pim.hooks.commands.op.OpGrantCommand
 import com.projectcitybuild.pcbridge.features.pim.hooks.commands.op.OpRevokeCommand
@@ -11,6 +11,7 @@ import com.projectcitybuild.pcbridge.features.pim.hooks.commands.roles.RolesDebu
 import com.projectcitybuild.pcbridge.platform.paper.commands.CoroutineScopeCommandTaskExecutor
 import com.projectcitybuild.pcbridge.runtime.permissions.Permissions
 import io.papermc.paper.command.brigadier.CommandSourceStack
+import java.util.UUID
 import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import org.bukkit.entity.Player
@@ -22,7 +23,6 @@ import org.junit.jupiter.api.Test
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.verify
 import org.mockito.kotlin.whenever
-import java.util.UUID
 
 class PimCommandTest {
     @Test
@@ -43,7 +43,7 @@ class PimCommandTest {
             val player = mock(Player::class.java)
             whenever(source.sender).thenReturn(player)
             whenever(player.uniqueId).thenReturn(UUID.randomUUID())
-            whenever(player.hasPermission(PermissionNode.PIM_OP.node)).thenReturn(true)
+            whenever(player.hasPermission(PimPermissions.OP.node)).thenReturn(true)
 
             assertEquals(setOf("op", "roles"), node.children.map { it.name }.toSet())
             assertTrue(node.requirement.test(source))
@@ -54,7 +54,7 @@ class PimCommandTest {
             runCurrent()
             verify(elevationService).revoke(org.mockito.kotlin.any())
 
-            whenever(player.hasPermission(PermissionNode.PIM_OP.node)).thenReturn(false)
+            whenever(player.hasPermission(PimPermissions.OP.node)).thenReturn(false)
             assertFalse(node.requirement.test(source))
         }
 }

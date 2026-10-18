@@ -1,15 +1,15 @@
 package com.projectcitybuild.pcbridge.features.spawns.hooks.commands
 
+import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.features.spawns.domain.repositories.SpawnRepository
 import com.projectcitybuild.pcbridge.features.spawns.spawnsTracer
-import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
+import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
+import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandNode
 import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
-import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandContext
-import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandNode
-import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.extensions.executesSuspending
-import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.extensions.requirePlayer
+import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
+import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.runtime.commands.scoped
 import com.projectcitybuild.pcbridge.runtime.teleportation.PlayerTeleporter
 import io.papermc.paper.command.brigadier.Commands
@@ -22,23 +22,21 @@ class SpawnCommand(
     private val playerTeleporter: PlayerTeleporter,
     private val commandTaskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override fun literal(): PaperCommandNode {
-        return Commands.literal("spawn")
-            .executesSuspending(commandTaskExecutor, ::execute)
-            .build()
+    override fun literal(): PaperCommandNode = Commands
+        .literal("spawn")
+        .executesSuspending(commandTaskExecutor, ::execute)
+        .build()
+
+    suspend fun execute(context: PaperCommandContext) = context.scoped(spawnsTracer) {
+        val player = context.source.requirePlayer()
+
+        val spawn = spawnRepository.get(player.location.world)
+
+        playerTeleporter.move(
+            player = player,
+            destination = spawn,
+            cause = PlayerTeleportEvent.TeleportCause.COMMAND,
+        )
+        player.sendMessage(l10n.teleportedToSpawn)
     }
-
-    suspend fun execute(context: PaperCommandContext) =
-        context.scoped(spawnsTracer) {
-            val player = context.source.requirePlayer()
-
-            val spawn = spawnRepository.get(player.location.world)
-
-            playerTeleporter.move(
-                player = player,
-                destination = spawn,
-                cause = PlayerTeleportEvent.TeleportCause.COMMAND,
-            )
-            player.sendMessage(l10n.teleportedToSpawn)
-        }
 }

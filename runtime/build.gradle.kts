@@ -20,7 +20,7 @@ dependencies {
     implementation(project(":platform:paper"))
     implementation(project(":platform:web-server"))
 
-    testImplementation(project(":core:test-support"))
+    testImplementation(project(":core:support:tests"))
 
     implementation("io.opentelemetry:opentelemetry-extension-kotlin:1.43.0")
     implementation("com.github.shynixn.mccoroutine:mccoroutine-bukkit-api:2.15.0")

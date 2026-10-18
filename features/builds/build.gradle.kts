@@ -3,7 +3,7 @@ plugins {
 }
 
 dependencies {
-    testImplementation(project(":core:test-support"))
+    testImplementation(project(":core:support:tests"))
 
     implementation(project(":core:l10n"))
     implementation(project(":core:pagination"))

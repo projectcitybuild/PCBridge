@@ -3,6 +3,7 @@ package com.projectcitybuild.pcbridge.features.building.hooks.commands
 import com.mojang.brigadier.CommandDispatcher
 import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.core.permissions.PermissionNode
+import com.projectcitybuild.pcbridge.features.building.BuildingPermissions
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.CoroutineScopeCommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.events.SpigotEventBroadcaster
@@ -37,7 +38,7 @@ class BuildingCommandsTest {
             var enabled = false
             command.enableNightVision = { enabled = true }
 
-            dispatch(command, "nv on", player, PermissionNode.BUILDING_NIGHT_VISION)
+            dispatch(command, "nv on", player, BuildingPermissions.NIGHT_VISION)
 
             assertTrue(enabled)
             verify(player).sendMessage(l10n.nightVisionToggledOn)
@@ -53,7 +54,7 @@ class BuildingCommandsTest {
             command.removeNightVision = { }
             command.enableNightVision = { enabled = true }
 
-            dispatch(command, "nv", player, PermissionNode.BUILDING_NIGHT_VISION)
+            dispatch(command, "nv", player, BuildingPermissions.NIGHT_VISION)
 
             assertFalse(enabled)
             verify(player).sendMessage(l10n.nightVisionToggledOff)
@@ -78,7 +79,7 @@ class BuildingCommandsTest {
                     broadcaster,
                     CoroutineScopeCommandTaskExecutor(this),
                 )
-            dispatch(command, "itemname &aCustom name", player, PermissionNode.BUILDING_ITEM_RENAME)
+            dispatch(command, "itemname &aCustom name", player, BuildingPermissions.ITEM_RENAME)
 
             verify(meta).displayName(any<Component>())
             verify(item).itemMeta = meta
@@ -105,7 +106,7 @@ class BuildingCommandsTest {
                 mock(ItemStack::class.java)
             }
 
-            dispatch(command, "invisframe", player, PermissionNode.BUILDING_INVIS_FRAME)
+            dispatch(command, "invisframe", player, BuildingPermissions.INVIS_FRAME)
 
             assertEquals(Material.ITEM_FRAME, createdMaterial)
             verify(inventory).addItem(any())
@@ -130,7 +131,7 @@ class BuildingCommandsTest {
                 mock(ItemStack::class.java)
             }
 
-            dispatch(command, "invisframe glowing", player, PermissionNode.BUILDING_INVIS_FRAME)
+            dispatch(command, "invisframe glowing", player, BuildingPermissions.INVIS_FRAME)
 
             assertEquals(Material.GLOW_ITEM_FRAME, createdMaterial)
             verify(inventory).addItem(any())

@@ -1,18 +1,18 @@
 package com.projectcitybuild.pcbridge.features.building.hooks.commands
 
-import com.projectcitybuild.pcbridge.core.permissions.PermissionNode
+import com.projectcitybuild.pcbridge.core.l10n.l10n
+import com.projectcitybuild.pcbridge.features.building.BuildingPermissions
 import com.projectcitybuild.pcbridge.features.building.buildingTracer
 import com.projectcitybuild.pcbridge.features.building.domain.data.InvisFrameKey
-import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
+import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
+import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandNode
 import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
+import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
+import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
 import com.projectcitybuild.pcbridge.platform.paper.namespace.SpigotNamespace
-import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandContext
-import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandNode
-import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.extensions.executesSuspending
-import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.runtime.commands.scopedSync
 import io.papermc.paper.command.brigadier.Commands
 import net.kyori.adventure.text.Component
@@ -32,28 +32,25 @@ class InvisFrameCommand(
 
     override val description: String = "Gives you an itemframe that turns invisible when holding an item"
 
-    override fun literal(): PaperCommandNode {
-        return Commands.literal("invisframe")
-            .requiresPermission(PermissionNode.BUILDING_INVIS_FRAME)
-            .then(
-                Commands.literal("glowing")
-                    .executesSuspending(commandTaskExecutor, ::giveGlowing),
-            )
-            .executesSuspending(commandTaskExecutor, ::giveNormal)
-            .build()
-    }
+    override fun literal(): PaperCommandNode = Commands
+        .literal("invisframe")
+        .requiresPermission(BuildingPermissions.INVIS_FRAME)
+        .then(
+            Commands
+                .literal("glowing")
+                .executesSuspending(commandTaskExecutor, ::giveGlowing),
+        ).executesSuspending(commandTaskExecutor, ::giveNormal)
+        .build()
 
-    private fun giveNormal(context: PaperCommandContext) =
-        give(
-            context = context,
-            glowing = false,
-        )
+    private fun giveNormal(context: PaperCommandContext) = give(
+        context = context,
+        glowing = false,
+    )
 
-    private fun giveGlowing(context: PaperCommandContext) =
-        give(
-            context = context,
-            glowing = true,
-        )
+    private fun giveGlowing(context: PaperCommandContext) = give(
+        context = context,
+        glowing = true,
+    )
 
     private fun give(
         context: PaperCommandContext,
@@ -76,7 +73,8 @@ class InvisFrameCommand(
             itemStack.apply {
                 editMeta { meta ->
                     meta.displayName(
-                        Component.text(itemName)
+                        Component
+                            .text(itemName)
                             .color(NamedTextColor.LIGHT_PURPLE)
                             .decorate(TextDecoration.ITALIC),
                     )

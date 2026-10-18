@@ -2,7 +2,7 @@ package com.projectcitybuild.pcbridge.features.warps.hooks.commands
 
 import com.mojang.brigadier.suggestion.SuggestionsBuilder
 import com.projectcitybuild.pcbridge.features.warps.domain.repositories.WarpRepository
-import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandContext
+import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
 
 class WarpNameSuggester(
     private val warpRepository: WarpRepository,
@@ -13,7 +13,8 @@ class WarpNameSuggester(
     ) {
         val input = suggestions.remaining
 
-        warpRepository.names()
+        warpRepository
+            .names()
             .filter { it.name.startsWith(input, ignoreCase = true) }
             .map { it.name }
             .forEach(suggestions::suggest)
