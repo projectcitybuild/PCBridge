@@ -48,6 +48,8 @@ import com.projectcitybuild.pcbridge.features.workstations.workstationsModule
 import com.projectcitybuild.pcbridge.integrations.dynmap.dynmapModule
 import com.projectcitybuild.pcbridge.integrations.essentials.essentialsModule
 import com.projectcitybuild.pcbridge.integrations.luckperms.luckPermsModule
+import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
+import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.events.SpigotEventBroadcaster
 import com.projectcitybuild.pcbridge.platform.paper.listeners.SpigotListenerRegistry
 import com.projectcitybuild.pcbridge.platform.paper.namespace.SpigotNamespace
@@ -130,6 +132,7 @@ private val integrationModules =
 private fun Module.platform(plugin: JavaPlugin) {
     single { plugin }
     single { plugin as org.bukkit.plugin.Plugin }
+    single<CommandTaskExecutor> { PluginCommandTaskExecutor(plugin) }
 
     factory { get<JavaPlugin>().server }
 
