@@ -6,6 +6,7 @@ import com.projectcitybuild.pcbridge.runtime.teleportation.exceptions.TeleportFa
 import com.projectcitybuild.pcbridge.runtime.teleportation.storage.TeleportHistoryStorage
 import kotlinx.coroutines.future.await
 import org.bukkit.Location
+import org.bukkit.Sound
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause
 
@@ -17,6 +18,7 @@ class PlayerTeleporter(
         val preloadDestinationChunk: Boolean = true,
         val adjustYForSafety: Boolean = false,
         val snapToBlockCenter: Boolean = false,
+        val playSound: Boolean = true,
     )
 
     suspend fun move(
@@ -37,9 +39,14 @@ class PlayerTeleporter(
             throw TeleportFailedException("Failed to teleport to $destination")
         }
 
+        if (options.playSound) {
+            val volume = 1F
+            val pitch = 1F
+            player.world.playSound(destination, Sound.ENTITY_PLAYER_TELEPORT, volume, pitch)
+        }
+
         teleportHistoryStorage.put(
             prev = currentLocation,
-            next = teleportLocation,
             player = player,
         )
     }
@@ -58,13 +65,12 @@ class PlayerTeleporter(
         return location
     }
 
-    private fun safeLocation(initial: Location): Location {
-        return initial.apply {
-            y = safeYLocationFinder.findY(
+    private fun safeLocation(initial: Location): Location = initial.apply {
+        y = safeYLocationFinder
+            .findY(
                 world = world,
                 x = x.toInt(),
                 z = z.toInt(),
             )?.toDouble() ?: throw SafeDestinationNotFoundException("Safe destination could not be found")
-        }
     }
 }

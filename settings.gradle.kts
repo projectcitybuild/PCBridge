@@ -15,6 +15,7 @@ include(
     "core:pcbridge-api",
     "core:permissions",
     "core:test-support",
+    "core:validation",
 )
 
 include(
@@ -45,7 +46,6 @@ include(
     "features:moderate",
     "features:onboarding",
     "features:pim",
-    "features:random-teleport",
     "features:register",
     "features:roles",
     "features:server-links",
@@ -53,6 +53,7 @@ include(
     "features:staff-chat",
     "features:stats",
     "features:sync",
+    "features:teleportation",
     "features:warnings",
     "features:warps",
     "features:watchdog",

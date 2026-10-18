@@ -1,6 +1,8 @@
 package com.projectcitybuild.pcbridge.core.permissions
 
-enum class PermissionNode(val node: String) {
+enum class PermissionNode(
+    val node: String,
+) {
     // Can ban a player
     BANS_MANAGE("pcbridge.bans.manage"),
 
@@ -51,6 +53,30 @@ enum class PermissionNode(val node: String) {
 
     // Can teleport to a random location
     TELEPORT_RANDOM("pcbridge.teleport.random"),
+
+    // Can request to teleport to another player
+    TELEPORT_REQUEST("pcbridge.teleport.request"),
+
+    // Can bypass teleport requests
+    TELEPORT_FORCE("pcbridge.teleport.force"),
+
+    // Can teleport other players
+    TELEPORT_OTHERS("pcbridge.teleport.others"),
+
+    // Can teleport all online players
+    TELEPORT_ALL("pcbridge.teleport.all"),
+
+    // Can teleport to coordinates
+    TELEPORT_POSITION("pcbridge.teleport.position"),
+
+    // Can return to the previous location
+    TELEPORT_BACK("pcbridge.teleport.back"),
+
+    // Can return another player to their previous location
+    TELEPORT_BACK_OTHERS("pcbridge.teleport.back.others"),
+
+    // Can suppress destination-side teleport notifications
+    TELEPORT_SILENT("pcbridge.teleport.silent"),
 
     // Can teleport to a warp
     WARP_TELEPORT("pcbridge.warp.teleport"),

@@ -12,7 +12,9 @@ import org.junit.jupiter.api.extension.ExtensionContext
  * https://docs.junit.org/current/user-guide/#extensions-registration-automatic)
  * for any module that depends on `core:test-support` in its test sources.
  */
-class TestRun : BeforeAllCallback, ExtensionContext.Store.CloseableResource {
+class TestRun :
+    BeforeAllCallback,
+    ExtensionContext.Store.CloseableResource {
     override fun beforeAll(context: ExtensionContext) {
         if (!started) {
             started = true

@@ -11,7 +11,7 @@ import com.projectcitybuild.pcbridge.platform.paper.events.SpigotEventBroadcaste
 import com.projectcitybuild.pcbridge.platform.paper.extensions.broadcastRich
 import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandContext
 import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandNode
-import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.arguments.OnOffArgument
+import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.argumenttypes.OnOffArgument
 import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.runtime.commands.scoped
 import com.projectcitybuild.pcbridge.runtime.state.store.Store

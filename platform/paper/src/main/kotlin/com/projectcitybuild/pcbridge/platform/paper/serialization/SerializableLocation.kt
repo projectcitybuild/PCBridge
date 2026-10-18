@@ -2,7 +2,9 @@ package com.projectcitybuild.pcbridge.platform.paper.serialization
 
 import kotlinx.serialization.Serializable
 import org.bukkit.Location
+import org.bukkit.Server
 import org.bukkit.World
+import java.util.UUID
 
 @Serializable
 data class SerializableLocation(
@@ -27,5 +29,15 @@ data class SerializableLocation(
             yaw = location.yaw,
             pitch = location.pitch,
         )
+    }
+
+    fun toLocation(server: Server): Location? {
+        val worldId = try {
+            UUID.fromString(worldId)
+        } catch (_: IllegalArgumentException) {
+            return null
+        }
+        val world = server.getWorld(worldId) ?: return null
+        return Location(world, x, y, z, yaw, pitch)
     }
 }
