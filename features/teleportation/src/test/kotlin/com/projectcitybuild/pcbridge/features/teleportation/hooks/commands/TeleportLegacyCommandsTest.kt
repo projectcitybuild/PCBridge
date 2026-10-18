@@ -87,7 +87,7 @@ class TeleportLegacyCommandsTest {
         assertTrue(
             registered.containsAll(
                 setOf(
-                    "tpa",
+                    "tp",
                     "tpahere",
                     "tpaccept",
                     "tpyes",
@@ -109,11 +109,11 @@ class TeleportLegacyCommandsTest {
     }
 
     @Test
-    fun `legacy roots use the canonical PCBridge permissions`() {
+    fun `legacy roots use their respective permissions`() {
         whenever(operator.hasPermission(any<String>())).thenReturn(false)
         whenever(operator.hasPermission(PermissionNode.TELEPORT_REQUEST.node)).thenReturn(true)
 
-        val tpaPlayer = commands.single { it.literal().name == "tpa" }.literal().getChild("player")
+        val tpaherePlayer = commands.single { it.literal().name == "tpahere" }.literal().getChild("player")
         val tpPlayer = dispatcher.root.getChild("tp")?.getChild("player")
         val forcePlayer = commands.single { it.literal().name == "tpo" }.literal().getChild("player")
         val tpoherePlayer = commands.single { it.literal().name == "tpohere" }.literal().getChild("player")
@@ -121,19 +121,22 @@ class TeleportLegacyCommandsTest {
         val randomAlias = commands.single { it.literal().name == "rtp" }.literal()
         val randomSubcommand = dispatcher.root.getChild("tp")?.getChild("random")
 
-        assertTrue(tpaPlayer.canUse(source))
         assertTrue(tpPlayer?.canUse(source) == true)
         assertFalse(forcePlayer.canUse(source))
+        assertFalse(tpaherePlayer.canUse(source))
         assertFalse(tpoherePlayer.canUse(source))
         assertFalse(tpherePlayer.canUse(source))
 
-        whenever(operator.hasPermission(PermissionNode.TELEPORT_OTHERS.node)).thenReturn(true)
+        whenever(operator.hasPermission("essentials.tpahere")).thenReturn(true)
+        assertTrue(tpaherePlayer.canUse(source))
+        whenever(operator.hasPermission("essentials.tphere")).thenReturn(true)
         assertTrue(tpherePlayer.canUse(source))
         assertFalse(tpoherePlayer.canUse(source))
 
-        whenever(operator.hasPermission(PermissionNode.TELEPORT_FORCE.node)).thenReturn(true)
-        assertTrue(forcePlayer.canUse(source))
+        whenever(operator.hasPermission("essentials.tpohere")).thenReturn(true)
         assertTrue(tpoherePlayer.canUse(source))
+        whenever(operator.hasPermission("essentials.tpo")).thenReturn(true)
+        assertTrue(forcePlayer.canUse(source))
 
         assertFalse(randomAlias.canUse(source))
         assertFalse(randomSubcommand?.canUse(source) == true)
@@ -198,6 +201,7 @@ class TeleportLegacyCommandsTest {
     @Test
     fun `legacy forced operations are denied without force permission`() {
         whenever(operator.hasPermission(PermissionNode.TELEPORT_FORCE.node)).thenReturn(false)
+        whenever(operator.hasPermission("essentials.tpohere")).thenReturn(false)
 
         listOf("tpohere Notch", "tpall", "tpall Notch").forEach { input ->
             assertThrows(CommandSyntaxException::class.java) {
@@ -211,7 +215,7 @@ class TeleportLegacyCommandsTest {
     @Test
     fun `legacy command argument forms match their canonical operations`() {
         listOf(
-            "tpa Notch",
+            "tp Notch",
             "tpahere Notch",
             "tpaccept",
             "tpaccept Notch",

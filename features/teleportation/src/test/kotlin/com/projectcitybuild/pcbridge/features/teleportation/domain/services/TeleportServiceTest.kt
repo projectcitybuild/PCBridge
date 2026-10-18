@@ -4,6 +4,7 @@ import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.core.permissions.PermissionNode
 import com.projectcitybuild.pcbridge.features.teleportation.domain.data.TeleportFlags
 import com.projectcitybuild.pcbridge.features.teleportation.domain.data.TeleportRequest
+import com.projectcitybuild.pcbridge.features.teleportation.domain.validation.TeleportValidator
 import com.projectcitybuild.pcbridge.platform.paper.scheduling.SpigotTimer
 import com.projectcitybuild.pcbridge.runtime.cooldowns.Cooldown
 import com.projectcitybuild.pcbridge.runtime.teleportation.PlayerTeleporter
@@ -41,6 +42,7 @@ class TeleportServiceTest {
     private val historyStorage = mock<TeleportHistoryStorage>()
     private val cooldown = mock<Cooldown>()
     private val findRandomLocation = mock<FindRandomLocation>()
+    private val validator = TeleportValidator()
     private val requests = TeleportRequestService()
     private val application =
         TeleportService(
@@ -48,6 +50,7 @@ class TeleportServiceTest {
             server = server,
             playerTeleporter = playerTeleporter,
             historyStorage = historyStorage,
+            validator = validator,
             requestService = requests,
             timer = timer,
             cooldown = cooldown,
@@ -85,6 +88,7 @@ class TeleportServiceTest {
                 PlayerTeleporter.TeleportOptions(
                     adjustYForSafety = true,
                     snapToBlockCenter = true,
+                    playSound = false,
                 ),
             ),
         )
