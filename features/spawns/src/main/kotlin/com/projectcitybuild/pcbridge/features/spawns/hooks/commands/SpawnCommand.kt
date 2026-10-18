@@ -4,6 +4,8 @@ import com.projectcitybuild.pcbridge.features.spawns.domain.repositories.SpawnRe
 import com.projectcitybuild.pcbridge.features.spawns.spawnsTracer
 import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
+import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
+import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandContext
 import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandNode
 import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.extensions.executesSuspending
@@ -18,10 +20,11 @@ class SpawnCommand(
     private val plugin: Plugin,
     private val spawnRepository: SpawnRepository,
     private val playerTeleporter: PlayerTeleporter,
+    private val commandTaskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
     override fun literal(): PaperCommandNode {
         return Commands.literal("spawn")
-            .executesSuspending(plugin, ::execute)
+            .executesSuspending(commandTaskExecutor, ::execute)
             .build()
     }
 

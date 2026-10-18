@@ -8,6 +8,8 @@ import com.projectcitybuild.pcbridge.features.warps.hooks.commands.WarpNameSugge
 import com.projectcitybuild.pcbridge.features.warps.warpsTracer
 import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
+import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
+import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
 import com.projectcitybuild.pcbridge.platform.paper.events.SpigotEventBroadcaster
 import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandContext
@@ -23,6 +25,7 @@ class WarpDeleteCommand(
     private val warpNameSuggester: WarpNameSuggester,
     private val warpRepository: WarpRepository,
     private val eventBroadcaster: SpigotEventBroadcaster,
+    private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
     override fun literal(): PaperCommandNode {
         return Commands.literal("delete")
@@ -30,7 +33,7 @@ class WarpDeleteCommand(
             .then(
                 Commands.argument("name", StringArgumentType.string())
                     .suggestsSuspending(plugin, warpNameSuggester::suggest)
-                    .executesSuspending(plugin, ::execute),
+                    .executesSuspending(taskExecutor, ::execute),
             )
             .build()
     }

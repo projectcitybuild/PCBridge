@@ -11,6 +11,8 @@ import com.projectcitybuild.pcbridge.features.sync.domain.actions.SyncPlayer
 import com.projectcitybuild.pcbridge.core.l10n.l10n
 import io.papermc.paper.connection.PlayerGameConnection
 import io.papermc.paper.event.player.PlayerCustomClickEvent
+import net.kyori.adventure.dialog.DialogLike
+import net.kyori.adventure.text.Component
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 
@@ -18,6 +20,10 @@ class VerifyCodeDialogListener(
     private val registerHttpService: RegisterHttpService,
     private val syncPlayer: SyncPlayer,
 ) : Listener {
+    internal var errorDialogFactory: (Component) -> DialogLike = { error ->
+        VerifyRegistrationCodeDialog.build(email = null, error = error)
+    }
+
     @EventHandler
     suspend fun onPlayerCustomClickEvent(
         event: PlayerCustomClickEvent,
@@ -38,10 +44,7 @@ class VerifyCodeDialogListener(
         val player = connection?.player ?: return@scoped
 
         if (code.isNullOrEmpty()) {
-            val dialog = VerifyRegistrationCodeDialog.build(
-                email = null,
-                error = l10n.errorNoCodeSpecified,
-            )
+            val dialog = errorDialogFactory(l10n.errorNoCodeSpecified)
             player.showDialog(dialog)
             return@scoped
         }
@@ -55,10 +58,7 @@ class VerifyCodeDialogListener(
             syncPlayer.execute(playerUUID = player.uniqueId)
 
         } catch (_: ResponseParserError.NotFound) {
-            val dialog = VerifyRegistrationCodeDialog.build(
-                email = null,
-                error = l10n.errorCodeInvalidOrExpired,
-            )
+            val dialog = errorDialogFactory(l10n.errorCodeInvalidOrExpired)
             player.showDialog(dialog)
             return@scoped
         }

@@ -7,6 +7,8 @@ import com.projectcitybuild.pcbridge.features.builds.buildsTracer
 import com.projectcitybuild.pcbridge.features.builds.domain.data.EditableBuildField
 import com.projectcitybuild.pcbridge.features.builds.domain.repositories.BuildRepository
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
+import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
+import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
 import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandContext
 import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandNode
@@ -21,6 +23,7 @@ import org.bukkit.plugin.Plugin
 class BuildSetCommand(
     private val plugin: Plugin,
     private val buildRepository: BuildRepository,
+    private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
     override fun literal(): PaperCommandNode {
         return Commands.literal("set")
@@ -31,9 +34,9 @@ class BuildSetCommand(
                         Commands.argument("field", EnumArgument(EditableBuildField::class.java))
                             .then(
                                 Commands.argument("value", StringArgumentType.greedyString())
-                                    .executesSuspending(plugin, ::execute),
+                                    .executesSuspending(taskExecutor, ::execute),
                             )
-                            .executesSuspending(plugin, ::execute),
+                            .executesSuspending(taskExecutor, ::execute),
                     ),
             )
             .build()

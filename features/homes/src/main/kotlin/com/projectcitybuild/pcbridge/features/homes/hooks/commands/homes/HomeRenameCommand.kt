@@ -7,6 +7,8 @@ import com.projectcitybuild.pcbridge.features.homes.hooks.commands.HomeNameSugge
 import com.projectcitybuild.pcbridge.features.homes.hooks.dialogs.HomeRenameDialog
 import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
+import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
+import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandContext
 import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandNode
 import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.extensions.executesSuspending
@@ -20,13 +22,14 @@ class HomeRenameCommand(
     private val plugin: Plugin,
     private val homeNameSuggester: HomeNameSuggester,
     private val homeRepository: HomeRepository,
+    private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
     override fun literal(): PaperCommandNode {
         return Commands.literal("rename")
             .then(
                 Commands.argument("name", StringArgumentType.greedyString())
                     .suggestsSuspending(plugin, homeNameSuggester::suggest)
-                    .executesSuspending(plugin, ::execute),
+                    .executesSuspending(taskExecutor, ::execute),
             )
             .build()
     }

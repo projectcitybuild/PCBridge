@@ -7,6 +7,8 @@ import com.projectcitybuild.pcbridge.features.builds.buildsTracer
 import com.projectcitybuild.pcbridge.features.builds.domain.repositories.BuildRepository
 import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
+import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
+import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
 import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandContext
 import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandNode
@@ -20,14 +22,15 @@ import kotlin.math.ceil
 class BuildListCommand(
     private val plugin: Plugin,
     private val buildRepository: BuildRepository,
+    private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
     override fun literal(): PaperCommandNode {
         return Commands.literal("list")
             .requiresPermission(PermissionNode.BUILDS_TELEPORT)
-            .executesSuspending(plugin, ::execute)
+            .executesSuspending(taskExecutor, ::execute)
             .then(
                 Commands.argument("page", IntegerArgumentType.integer())
-                    .executesSuspending(plugin, ::execute),
+                    .executesSuspending(taskExecutor, ::execute),
             )
             .build()
     }

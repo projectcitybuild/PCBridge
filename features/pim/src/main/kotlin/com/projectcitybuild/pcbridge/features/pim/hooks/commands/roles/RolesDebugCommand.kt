@@ -4,6 +4,8 @@ import com.mojang.brigadier.arguments.StringArgumentType
 import com.projectcitybuild.pcbridge.core.permissions.PermissionNode
 import com.projectcitybuild.pcbridge.features.pim.pimTracer
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
+import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
+import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
 import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandContext
 import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandNode
@@ -17,13 +19,14 @@ import org.bukkit.plugin.Plugin
 class RolesDebugCommand(
     private val plugin: Plugin,
     private val permissions: Permissions,
+    private val commandTaskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
     override fun literal(): PaperCommandNode {
         return Commands.literal("debug")
             .requiresPermission(PermissionNode.PIM_ROLES)
             .then(
                 Commands.argument("roles", StringArgumentType.greedyString())
-                    .executesSuspending(plugin, ::execute),
+                    .executesSuspending(commandTaskExecutor, ::execute),
             )
             .build()
     }

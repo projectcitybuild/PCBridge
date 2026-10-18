@@ -6,6 +6,8 @@ import com.projectcitybuild.pcbridge.features.building.buildingTracer
 import com.projectcitybuild.pcbridge.features.building.domain.data.ItemRenamedEvent
 import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
+import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
+import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
 import com.projectcitybuild.pcbridge.platform.paper.events.SpigotEventBroadcaster
 import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandContext
@@ -22,6 +24,7 @@ import org.bukkit.plugin.Plugin
 class ItemNameCommand(
     private val plugin: Plugin,
     private val eventBroadcaster: SpigotEventBroadcaster,
+    private val commandTaskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
     override val description: String = "Renames the item in your primary hand"
 
@@ -30,7 +33,7 @@ class ItemNameCommand(
             .requiresPermission(PermissionNode.BUILDING_ITEM_RENAME)
             .then(
                 Commands.argument("name", StringArgumentType.greedyString())
-                    .executesSuspending(plugin, ::execute),
+                    .executesSuspending(commandTaskExecutor, ::execute),
             )
             .build()
     }
