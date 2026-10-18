@@ -11,8 +11,18 @@ fun LiteralArgumentBuilder<CommandSourceStack>.requiresPermission(
     permissions.all { context.sender.hasPermission(it.node) }
 }
 
+fun LiteralArgumentBuilder<CommandSourceStack>.requiresPermission(permission: String): LiteralArgumentBuilder<CommandSourceStack> =
+    requires { context ->
+        context.sender.hasPermission(permission)
+    }
+
 fun <S : CommandSourceStack, T> RequiredArgumentBuilder<S, T>.requiresPermission(
     vararg permissions: PermissionNode,
 ): RequiredArgumentBuilder<S, T> = requires { context ->
     permissions.all { context.sender.hasPermission(it.node) }
 }
+
+fun <S : CommandSourceStack, T> RequiredArgumentBuilder<S, T>.requiresPermission(permission: String): RequiredArgumentBuilder<S, T> =
+    requires { context ->
+        context.sender.hasPermission(permission)
+    }

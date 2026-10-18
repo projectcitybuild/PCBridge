@@ -25,7 +25,6 @@ class TeleportLegacyCommands(
     private val server: Server,
     private val teleportService: TeleportService,
 ) {
-    // TODO: switch to Essentials permissions instead
     fun commands(): List<BrigadierCommand> = buildList {
         add(tp())
         add(tpahere())
@@ -45,7 +44,7 @@ class TeleportLegacyCommands(
         then(
             Commands
                 .argument("player", SingleOnlinePlayerArgument(server))
-                .requiresPermission(PermissionNode.TELEPORT_LEGACY)
+                .requiresPermission("essentials.tp")
                 .executesSuspending(plugin) { context ->
                     context.scoped(teleportationTracer) {
                         val player = context.source.requirePlayer()
@@ -60,7 +59,7 @@ class TeleportLegacyCommands(
         then(
             Commands
                 .argument("player", SingleOnlinePlayerArgument(server))
-                .requiresPermission(PermissionNode.TELEPORT_REQUEST)
+                .requiresPermission("essentials.tpahere")
                 .executesSuspending(plugin) { context ->
                     context.scoped(teleportationTracer) {
                         val player = context.source.requirePlayer()
@@ -75,7 +74,7 @@ class TeleportLegacyCommands(
         then(
             Commands
                 .argument("player", SingleOnlinePlayerArgument(server))
-                .requiresPermission(PermissionNode.TELEPORT_FORCE)
+                .requiresPermission("essentials.tpo")
                 .executesSuspending(plugin) { context ->
                     context.scoped(teleportationTracer) {
                         val target = context.getArgument("player", Player::class.java)
@@ -93,7 +92,7 @@ class TeleportLegacyCommands(
         then(
             Commands
                 .argument("player", SingleOnlinePlayerArgument(server))
-                .requiresPermission(PermissionNode.TELEPORT_OTHERS, PermissionNode.TELEPORT_FORCE)
+                .requiresPermission("essentials.tpohere")
                 .executesSuspending(plugin) { context ->
                     context.scoped(teleportationTracer) {
                         teleportService.here(
@@ -110,7 +109,7 @@ class TeleportLegacyCommands(
         then(
             Commands
                 .argument("player", SingleOnlinePlayerArgument(server))
-                .requiresPermission(PermissionNode.TELEPORT_OTHERS)
+                .requiresPermission("essentials.tphere")
                 .executesSuspending(plugin) { context ->
                     context.scoped(teleportationTracer) {
                         teleportService.here(
@@ -122,8 +121,9 @@ class TeleportLegacyCommands(
         )
     }
 
-    private fun tpcancel() = listOf("tpcancel", "tpacancel").map { name ->
-        command(name) {
+    private fun tpcancel() = listOf("tpcancel", "tpacancel").map {
+        command(it) {
+            requiresPermission("essentials.tpcancel")
             executesSuspending(plugin) { context ->
                 context.scoped(teleportationTracer) {
                     teleportService.cancel(context.source.requirePlayer(), targetId = null)
@@ -132,6 +132,7 @@ class TeleportLegacyCommands(
             then(
                 Commands
                     .argument("player", SingleOnlinePlayerArgument(server))
+                    .requiresPermission("essentials.tpcancel")
                     .executesSuspending(plugin) { context ->
                         context.scoped(teleportationTracer) {
                             teleportService.cancel(
@@ -145,6 +146,7 @@ class TeleportLegacyCommands(
     }
 
     private fun back(): BrigadierCommand = command("back") {
+        requiresPermission(PermissionNode.TELEPORT_BACK)
         executesSuspending(plugin) { context ->
             context.scoped(teleportationTracer) {
                 val player = context.source.requirePlayer()
@@ -215,6 +217,7 @@ class TeleportLegacyCommands(
 
     private fun tpaccept() = listOf("tpaccept", "tpyes").map { name ->
         command(name) {
+            requiresPermission("essentials.tpaccept")
             executesSuspending(plugin) { context ->
                 context.scoped(teleportationTracer) {
                     teleportService.accept(context.source.requirePlayer(), requesterId = null)
@@ -223,6 +226,7 @@ class TeleportLegacyCommands(
             then(
                 Commands
                     .argument("requester", SingleOnlinePlayerArgument(server))
+                    .requiresPermission("essentials.tpaccept")
                     .executesSuspending(plugin) { context ->
                         context.scoped(teleportationTracer) {
                             teleportService.accept(
@@ -237,6 +241,7 @@ class TeleportLegacyCommands(
 
     private fun tpdeny() = listOf("tpdeny", "tpno").map { name ->
         command(name) {
+            requiresPermission("essentials.tpdeny")
             executesSuspending(plugin) { context ->
                 context.scoped(teleportationTracer) {
                     teleportService.deny(context.source.requirePlayer(), requesterId = null)
