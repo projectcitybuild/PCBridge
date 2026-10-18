@@ -185,15 +185,17 @@ class TeleportLegacyCommandsTest {
     fun `legacy here aliases execute normal and forced operations`() {
         val forced = TeleportFlags(force = true)
 
-        executeCommand("tphere Notch")
-        executeCommand("tpohere Notch")
-        executeCommand("tpall")
-        executeCommand("tpall Notch")
-
         runBlocking {
-            verify(application).here(operator, player, TeleportFlags())
+            executeCommand("tphere Notch")
             verify(application).here(operator, player, forced)
+
+            executeCommand("tpohere Notch")
+            verify(application).here(operator, player, forced)
+
+            executeCommand("tpall")
             verify(application).all(operator, null, forced)
+
+            executeCommand("tpall Notch")
             verify(application).all(operator, player, forced)
         }
     }

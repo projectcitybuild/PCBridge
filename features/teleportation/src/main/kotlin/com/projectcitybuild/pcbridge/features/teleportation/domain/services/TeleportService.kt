@@ -5,6 +5,7 @@ import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.core.observability.logging.logSync
 import com.projectcitybuild.pcbridge.core.validation.ValidationError
 import com.projectcitybuild.pcbridge.core.validation.ValidationResult
+import com.projectcitybuild.pcbridge.core.validation.errors
 import com.projectcitybuild.pcbridge.features.teleportation.domain.data.TeleportFlags
 import com.projectcitybuild.pcbridge.features.teleportation.domain.data.TeleportRequest
 import com.projectcitybuild.pcbridge.features.teleportation.domain.validation.TeleportValidationError
@@ -26,6 +27,7 @@ import org.bukkit.plugin.java.JavaPlugin
 import java.time.Duration
 import java.time.Instant
 import java.util.UUID
+import kotlin.coroutines.cancellation.CancellationException
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.toKotlinDuration
@@ -282,9 +284,8 @@ class TeleportService(
         requestedTarget: Player?,
         flags: TeleportFlags = TeleportFlags(),
     ) {
-        val target = when (
-            val result = validator.all(operator, requestedTarget, flags)
-        ) {
+        val result = validator.all(operator, requestedTarget, flags)
+        val target = when (result) {
             is ValidationResult.Valid -> {
                 result.value
             }
@@ -359,13 +360,15 @@ class TeleportService(
                 val moved = move(
                     player = player,
                     destination = destination.clone(),
-                    recipient = target,
+                    recipient = null, // Prevent spamming the recipient
                     silent = flags.silent,
                     options = PlayerTeleporter.TeleportOptions(
                         playSound = players.size < 5,
                     ),
                 )
                 if (moved) succeeded++ else failed++
+            } catch (exception: CancellationException) {
+                throw exception
             } catch (exception: Exception) {
                 failed++
 
@@ -506,7 +509,7 @@ class TeleportService(
                 player = player,
                 destination = destination,
                 cause = TeleportCause.COMMAND,
-                options = options.copy(playSound = !silent),
+                options = options.copy(playSound = options.playSound && !silent),
             )
         } catch (_: SafeDestinationNotFoundException) {
             if (reportFailure) {

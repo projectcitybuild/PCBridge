@@ -5,8 +5,8 @@ import com.projectcitybuild.pcbridge.runtime.teleportation.exceptions.SafeDestin
 import com.projectcitybuild.pcbridge.runtime.teleportation.exceptions.TeleportFailedException
 import com.projectcitybuild.pcbridge.runtime.teleportation.storage.TeleportHistoryStorage
 import kotlinx.coroutines.future.await
-import net.kyori.adventure.sound.Sound
 import org.bukkit.Location
+import org.bukkit.Sound
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause
 
@@ -42,7 +42,7 @@ class PlayerTeleporter(
         if (options.playSound) {
             val volume = 1F
             val pitch = 1F
-            player.playSound(player, org.bukkit.Sound.ENTITY_PLAYER_TELEPORT, volume, pitch)
+            player.world.playSound(destination, Sound.ENTITY_PLAYER_TELEPORT, volume, pitch)
         }
 
         teleportHistoryStorage.put(

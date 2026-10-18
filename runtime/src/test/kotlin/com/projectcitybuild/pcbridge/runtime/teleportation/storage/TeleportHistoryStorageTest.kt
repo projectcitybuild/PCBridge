@@ -7,8 +7,8 @@ import com.projectcitybuild.pcbridge.platform.paper.events.SpigotEventBroadcaste
 import com.projectcitybuild.pcbridge.platform.paper.serialization.SerializableLocation
 import com.projectcitybuild.pcbridge.runtime.state.store.Store
 import com.projectcitybuild.pcbridge.runtime.teleportation.PlayerTeleporter
-import com.projectcitybuild.pcbridge.runtime.teleportation.exceptions.TeleportFailedException
 import com.projectcitybuild.pcbridge.runtime.teleportation.events.PlayerPreTeleportEvent
+import com.projectcitybuild.pcbridge.runtime.teleportation.exceptions.TeleportFailedException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.bukkit.Location
@@ -98,7 +98,7 @@ class TeleportHistoryStorageTest {
         teleporter.move(
             player = player,
             destination = destination,
-            options = PlayerTeleporter.TeleportOptions(preloadDestinationChunk = false),
+            options = PlayerTeleporter.TeleportOptions(preloadDestinationChunk = false, playSound = false),
         )
 
         val firstBackLocation = assertInstanceOf(
@@ -110,7 +110,7 @@ class TeleportHistoryStorageTest {
         teleporter.move(
             player = player,
             destination = firstBackLocation,
-            options = PlayerTeleporter.TeleportOptions(preloadDestinationChunk = false),
+            options = PlayerTeleporter.TeleportOptions(preloadDestinationChunk = false, playSound = false),
         )
 
         val secondBackLocation = assertInstanceOf(
