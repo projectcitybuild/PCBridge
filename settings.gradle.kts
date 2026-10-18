@@ -15,6 +15,7 @@ include(
     "core:pcbridge-api",
     "core:permissions",
     "core:test-support",
+    "core:validation",
 )
 
 include(

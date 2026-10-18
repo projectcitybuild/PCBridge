@@ -3,8 +3,12 @@ package com.projectcitybuild.pcbridge.features.teleportation.domain.services
 import com.github.shynixn.mccoroutine.bukkit.minecraftDispatcher
 import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.core.observability.logging.logSync
+import com.projectcitybuild.pcbridge.core.validation.ValidationError
+import com.projectcitybuild.pcbridge.core.validation.ValidationResult
 import com.projectcitybuild.pcbridge.features.teleportation.domain.data.TeleportFlags
 import com.projectcitybuild.pcbridge.features.teleportation.domain.data.TeleportRequest
+import com.projectcitybuild.pcbridge.features.teleportation.domain.validation.TeleportValidationError
+import com.projectcitybuild.pcbridge.features.teleportation.domain.validation.TeleportValidator
 import com.projectcitybuild.pcbridge.platform.paper.scheduling.SpigotTimer
 import com.projectcitybuild.pcbridge.runtime.cooldowns.Cooldown
 import com.projectcitybuild.pcbridge.runtime.teleportation.PlayerTeleporter
@@ -19,6 +23,7 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause
 import org.bukkit.plugin.java.JavaPlugin
+import sun.security.util.KeyUtil.validate
 import java.time.Duration
 import java.time.Instant
 import java.util.UUID
@@ -31,7 +36,7 @@ class TeleportApplication(
     private val server: Server,
     private val playerTeleporter: PlayerTeleporter,
     private val historyStorage: TeleportHistoryStorage,
-    private val validationService: TeleportValidationService,
+    private val validator: TeleportValidator,
     private val requestService: TeleportRequestService,
     private val timer: SpigotTimer,
     private val cooldown: Cooldown,
@@ -42,8 +47,9 @@ class TeleportApplication(
         target: Player,
         flags: TeleportFlags = TeleportFlags(),
     ) {
-        if (!validationService.to(requester, target, flags)) return
-
+        if (!validate(requester, validator.to(requester, target, flags))) {
+            return
+        }
         if (!flags.force) {
             createRequest(
                 requester = requester,
@@ -67,42 +73,64 @@ class TeleportApplication(
         target: Player,
         requesterId: UUID?,
     ) {
-        when (val result = requestService.takeIncoming(targetId = target.uniqueId, requesterId)) {
+        val result = requestService.takeIncoming(
+            targetId = target.uniqueId,
+            requesterId = requesterId,
+        )
+        when (result) {
             TeleportRequestService.TakeResult.Ambiguous -> {
                 target.sendMessage(l10n.errorTeleportRequestAmbiguous)
-                return
             }
             TeleportRequestService.TakeResult.Missing -> {
                 target.sendMessage(l10n.errorTeleportRequestMissing)
-                return
             }
             TeleportRequestService.TakeResult.Expired -> {
                 target.sendMessage(l10n.errorTeleportRequestExpired)
-                return
             }
             is TeleportRequestService.TakeResult.Taken -> {
                 val request = result.request
                 val requester = server.getPlayer(request.requesterId)
+
                 if (requester == null || !requester.isOnline || !target.isOnline) {
                     target.sendMessage(l10n.errorTeleportTargetOffline)
                     requester?.sendMessage(l10n.errorTeleportTargetOffline)
                     return
                 }
-                val playerToMove = if (request.direction == TeleportRequest.Direction.TO) requester else target
-                val destinationPlayer = if (request.direction == TeleportRequest.Direction.TO) target else requester
-                val moved = move(
-                    player = playerToMove,
-                    destination = destinationPlayer.location.clone(),
-                    recipient = destinationPlayer,
-                    silent = request.silent,
-                )
-                if (moved) {
-                    target.sendMessage(l10n.teleportRequestAccepted(requester.name))
+
+                val playerToMove =
+                    if (request.direction == TeleportRequest.Direction.TO) {
+                        requester
+                    } else {
+                        target
+                    }
+
+                val destinationPlayer =
+                    if (request.direction == TeleportRequest.Direction.TO) {
+                        target
+                    } else {
+                        requester
+                    }
+
+                if (
+                    move(
+                        player = playerToMove,
+                        destination = destinationPlayer.location.clone(),
+                        recipient = destinationPlayer,
+                        silent = request.silent,
+                    )
+                ) {
+                    target.sendMessage(
+                        l10n.teleportRequestAccepted(requester.name),
+                    )
+
                     requester.sendMessage(
                         if (request.direction == TeleportRequest.Direction.TO) {
                             l10n.teleportCompleted(target.name)
                         } else {
-                            l10n.teleportOperationSucceeded(target.name, requester.name)
+                            l10n.teleportOperationSucceeded(
+                                target.name,
+                                requester.name,
+                            )
                         },
                     )
                 }
@@ -114,7 +142,11 @@ class TeleportApplication(
         target: Player,
         requesterId: UUID?,
     ) {
-        when (val result = requestService.takeIncoming(targetId = target.uniqueId, requesterId)) {
+        val result = requestService.takeIncoming(
+            targetId = target.uniqueId,
+            requesterId = requesterId,
+        )
+        when (result) {
             TeleportRequestService.TakeResult.Ambiguous -> {
                 target.sendMessage(l10n.errorTeleportRequestAmbiguous)
             }
@@ -126,7 +158,9 @@ class TeleportApplication(
             }
             is TeleportRequestService.TakeResult.Taken -> {
                 val request = result.request
-                target.sendMessage(l10n.teleportRequestDenied(request.requesterName))
+                target.sendMessage(
+                    l10n.teleportRequestDenied(request.requesterName),
+                )
                 server.getPlayer(request.requesterId)?.sendMessage(
                     l10n.teleportRequestWasDenied(target.name),
                 )
@@ -148,7 +182,9 @@ class TeleportApplication(
             return
         }
         requests.forEach { request ->
-            requester.sendMessage(l10n.teleportRequestCancelled(request.targetName))
+            requester.sendMessage(
+                l10n.teleportRequestCancelled(request.targetName),
+            )
             server.getPlayer(request.targetId)?.sendMessage(
                 l10n.teleportRequestWasCancelled(requester.name),
             )
@@ -160,8 +196,9 @@ class TeleportApplication(
         target: Player,
         flags: TeleportFlags = TeleportFlags(),
     ) {
-        if (!validationService.here(operator, target, flags)) return
-
+        if (!validate(operator, validator.here(operator, target, flags))) {
+            return
+        }
         if (!flags.force) {
             createRequest(
                 requester = operator,
@@ -182,28 +219,15 @@ class TeleportApplication(
         }
     }
 
-    fun requestHere(
-        requester: Player,
-        target: Player,
-    ) {
-        if (!validationService.requestHere(requester, target)) return
-
-        createRequest(
-            requester = requester,
-            target = target,
-            silent = false,
-            direction = TeleportRequest.Direction.HERE,
-        )
-    }
-
     suspend fun send(
         operator: CommandSender,
         player: Player,
         target: Player,
         flags: TeleportFlags = TeleportFlags(),
     ) {
-        if (!validationService.send(operator, player, target, flags)) return
-
+        if (!validate(operator, validator.send(operator, player, target, flags))) {
+            return
+        }
         if (!flags.force) {
             val result = createRequest(
                 requester = target,
@@ -244,9 +268,17 @@ class TeleportApplication(
         requestedTarget: Player?,
         flags: TeleportFlags = TeleportFlags(),
     ) {
-        val target = validationService.all(operator, requestedTarget, flags)
-            ?: return
-
+        val target = when (
+            val result = validator.all(operator, requestedTarget, flags)
+        ) {
+            is ValidationResult.Valid -> {
+                result.value
+            }
+            is ValidationResult.Invalid -> {
+                reportValidationErrors(operator, result.errors)
+                return
+            }
+        }
         if (!flags.force) {
             val players = server.onlinePlayers.filter {
                 it.uniqueId != target.uniqueId
@@ -255,14 +287,13 @@ class TeleportApplication(
             val recipients = players.map {
                 TeleportRequestService.Recipient(it.uniqueId, it.name)
             }
-            when (
-                val result = requestService.createHereForMany(
-                    requesterId = target.uniqueId,
-                    requesterName = target.name,
-                    recipients = recipients,
-                    silent = flags.silent,
-                )
-            ) {
+            val result = requestService.createHereForMany(
+                requesterId = target.uniqueId,
+                requesterName = target.name,
+                recipients = recipients,
+                silent = flags.silent,
+            )
+            when (result) {
                 is TeleportRequestService.CreateManyResult.Created -> {
                     result.requests.forEach { request ->
                         notifyRequestTarget(
@@ -278,13 +309,25 @@ class TeleportApplication(
                     )
                 }
                 TeleportRequestService.CreateManyResult.NoRecipients -> {
-                    notifyOperatorAndRequester(operator, target, l10n.teleportRequestsCreated(0))
+                    notifyOperatorAndRequester(
+                        operator,
+                        target,
+                        l10n.teleportRequestsCreated(0),
+                    )
                 }
                 TeleportRequestService.CreateManyResult.SelfTarget -> {
-                    notifyOperatorAndRequester(operator, target, l10n.errorTeleportSelf)
+                    notifyOperatorAndRequester(
+                        operator,
+                        target,
+                        l10n.errorTeleportSelf,
+                    )
                 }
                 TeleportRequestService.CreateManyResult.AlreadyPending -> {
-                    notifyOperatorAndRequester(operator, target, l10n.errorTeleportRequestPending)
+                    notifyOperatorAndRequester(
+                        operator,
+                        target,
+                        l10n.errorTeleportRequestPending,
+                    )
                 }
             }
             return
@@ -294,27 +337,24 @@ class TeleportApplication(
         val players = server.onlinePlayers.filter {
             it.uniqueId != target.uniqueId
         }
+
         var succeeded = 0
         var failed = 0
         players.forEach { player ->
             try {
-                val options = PlayerTeleporter.TeleportOptions(
-                    playSound = players.size < 5,
-                )
                 val moved = move(
                     player = player,
                     destination = destination.clone(),
                     recipient = target,
                     silent = flags.silent,
-                    options = options,
+                    options = PlayerTeleporter.TeleportOptions(
+                        playSound = players.size < 5,
+                    ),
                 )
-                if (moved) {
-                    succeeded++
-                } else {
-                    failed++
-                }
+                if (moved) succeeded++ else failed++
             } catch (exception: Exception) {
                 failed++
+
                 logSync.error(exception) {
                     "Bulk teleport failed for player ${player.uniqueId} to ${target.uniqueId}"
                 }
@@ -331,8 +371,9 @@ class TeleportApplication(
         yaw: Float? = null,
         pitch: Float? = null,
     ) {
-        if (!validationService.position(player, x, y, z, yaw, pitch)) return
-
+        if (!validate(player, validator.position(player, x, y, z, yaw, pitch))) {
+            return
+        }
         val currentLocation = player.location
         val destination = Location(
             player.world,
@@ -348,8 +389,9 @@ class TeleportApplication(
     }
 
     suspend fun random(player: Player) {
-        if (!validationService.random(player)) return
-
+        if (!validate(player, validator.random(player))) {
+            return
+        }
         cooldown.throttle(5.seconds, player, "rtp")
         player.sendMessage(l10n.searchingForSafeLocation)
 
@@ -381,20 +423,57 @@ class TeleportApplication(
         operator: CommandSender,
         target: Player,
     ) {
-        if (!validationService.back(operator, target)) return
-
+        if (!validate(operator, validator.back(operator, target))) {
+            return
+        }
         when (val history = historyStorage.retrieve(target.uniqueId)) {
             TeleportHistoryStorage.Lookup.Missing -> {
                 operator.sendMessage(l10n.errorTeleportHistoryMissing)
             }
-
             TeleportHistoryStorage.Lookup.Unavailable -> {
                 operator.sendMessage(l10n.errorTeleportHistoryWorldUnavailable)
             }
-
             is TeleportHistoryStorage.Lookup.Found -> {
                 if (move(target, history.location, recipient = null, silent = true)) {
                     operator.sendMessage(l10n.teleportBackCompleted(target.name))
+                }
+            }
+        }
+    }
+
+    private fun validate(
+        sender: CommandSender,
+        result: ValidationResult<Unit>,
+    ): Boolean = when (result) {
+        is ValidationResult.Valid -> {
+            true
+        }
+        is ValidationResult.Invalid -> {
+            reportValidationErrors(sender, result.errors)
+            false
+        }
+    }
+
+    private fun reportValidationErrors(
+        sender: CommandSender,
+        errors: List<ValidationError>,
+    ) {
+        errors.forEach { error ->
+            when (error) {
+                is TeleportValidationError.MissingPermission -> {
+                    sender.sendMessage(l10n.errorTeleportPermission)
+                }
+                TeleportValidationError.TargetOffline -> {
+                    sender.sendMessage(l10n.errorTeleportTargetOffline)
+                }
+                TeleportValidationError.SelfTarget -> {
+                    sender.sendMessage(l10n.errorTeleportSelf)
+                }
+                TeleportValidationError.ExplicitTargetRequired -> {
+                    sender.sendMessage(l10n.errorTeleportExplicitTargetRequired)
+                }
+                TeleportValidationError.InvalidCoordinates -> {
+                    sender.sendMessage(l10n.errorTeleportCoordinatesInvalid)
                 }
             }
         }

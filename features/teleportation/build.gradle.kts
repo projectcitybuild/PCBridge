@@ -7,6 +7,7 @@ dependencies {
     implementation(project(":core:permissions"))
     implementation(project(":core:utils"))
     implementation(project(":core:test-support"))
+    implementation(project(":core:validation"))
     implementation(project(":platform:paper"))
     implementation(project(":runtime"))
 }
