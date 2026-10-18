@@ -4,7 +4,7 @@ import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.exceptions.CommandSyntaxException
 import com.projectcitybuild.pcbridge.core.permissions.PermissionNode
 import com.projectcitybuild.pcbridge.features.teleportation.domain.data.TeleportFlags
-import com.projectcitybuild.pcbridge.features.teleportation.domain.services.TeleportApplication
+import com.projectcitybuild.pcbridge.features.teleportation.domain.services.TeleportService
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import kotlinx.coroutines.runBlocking
 import org.bukkit.Server
@@ -49,13 +49,13 @@ class TeleportLegacyCommandsTest {
         whenever(it.isEnabled).thenReturn(true)
     }
 
-    private val application = mock<TeleportApplication>()
+    private val application = mock<TeleportService>()
     private val random = TeleportRandomCommand(plugin, application)
 
     private val commands = TeleportLegacyCommands(
         plugin = plugin,
         server = server,
-        application = application,
+        teleportService = application,
     ).commands()
 
     private val dispatcher = CommandDispatcher<CommandSourceStack>().apply {
@@ -116,15 +116,24 @@ class TeleportLegacyCommandsTest {
         val tpaPlayer = commands.single { it.literal().name == "tpa" }.literal().getChild("player")
         val tpPlayer = dispatcher.root.getChild("tp")?.getChild("player")
         val forcePlayer = commands.single { it.literal().name == "tpo" }.literal().getChild("player")
+        val tpoherePlayer = commands.single { it.literal().name == "tpohere" }.literal().getChild("player")
+        val tpherePlayer = commands.single { it.literal().name == "tphere" }.literal().getChild("player")
         val randomAlias = commands.single { it.literal().name == "rtp" }.literal()
         val randomSubcommand = dispatcher.root.getChild("tp")?.getChild("random")
 
         assertTrue(tpaPlayer.canUse(source))
         assertTrue(tpPlayer?.canUse(source) == true)
         assertFalse(forcePlayer.canUse(source))
+        assertFalse(tpoherePlayer.canUse(source))
+        assertFalse(tpherePlayer.canUse(source))
+
+        whenever(operator.hasPermission(PermissionNode.TELEPORT_OTHERS.node)).thenReturn(true)
+        assertTrue(tpherePlayer.canUse(source))
+        assertFalse(tpoherePlayer.canUse(source))
 
         whenever(operator.hasPermission(PermissionNode.TELEPORT_FORCE.node)).thenReturn(true)
         assertTrue(forcePlayer.canUse(source))
+        assertTrue(tpoherePlayer.canUse(source))
 
         assertFalse(randomAlias.canUse(source))
         assertFalse(randomSubcommand?.canUse(source) == true)
@@ -170,7 +179,7 @@ class TeleportLegacyCommandsTest {
     }
 
     @Test
-    fun `legacy here and all aliases execute forced operations`() {
+    fun `legacy here aliases execute normal and forced operations`() {
         val forced = TeleportFlags(force = true)
 
         executeCommand("tphere Notch")
@@ -179,7 +188,8 @@ class TeleportLegacyCommandsTest {
         executeCommand("tpall Notch")
 
         runBlocking {
-            verify(application, times(2)).here(operator, player, forced)
+            verify(application).here(operator, player, TeleportFlags())
+            verify(application).here(operator, player, forced)
             verify(application).all(operator, null, forced)
             verify(application).all(operator, player, forced)
         }
@@ -189,7 +199,7 @@ class TeleportLegacyCommandsTest {
     fun `legacy forced operations are denied without force permission`() {
         whenever(operator.hasPermission(PermissionNode.TELEPORT_FORCE.node)).thenReturn(false)
 
-        listOf("tphere Notch", "tpohere Notch", "tpall", "tpall Notch").forEach { input ->
+        listOf("tpohere Notch", "tpall", "tpall Notch").forEach { input ->
             assertThrows(CommandSyntaxException::class.java) {
                 executeCommand(input)
             }

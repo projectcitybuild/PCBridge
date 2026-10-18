@@ -33,7 +33,7 @@ import org.mockito.kotlin.whenever
 import java.util.UUID
 import kotlin.time.Duration.Companion.seconds
 
-class TeleportApplicationTest {
+class TeleportServiceTest {
     private val server = mock<Server>()
     private val plugin = mock<JavaPlugin>()
     private val timer = mock<SpigotTimer>()
@@ -43,7 +43,7 @@ class TeleportApplicationTest {
     private val findRandomLocation = mock<FindRandomLocation>()
     private val requests = TeleportRequestService()
     private val application =
-        TeleportApplication(
+        TeleportService(
             plugin = plugin,
             server = server,
             playerTeleporter = playerTeleporter,

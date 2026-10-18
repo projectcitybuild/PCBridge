@@ -4,10 +4,9 @@ import com.mojang.brigadier.arguments.DoubleArgumentType
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import com.projectcitybuild.pcbridge.core.permissions.PermissionNode
 import com.projectcitybuild.pcbridge.features.teleportation.domain.data.TeleportFlags
-import com.projectcitybuild.pcbridge.features.teleportation.domain.services.TeleportApplication
+import com.projectcitybuild.pcbridge.features.teleportation.domain.services.TeleportService
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
-import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandContext
 import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandNode
 import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.arguments.withCoordinateArgs
 import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.argumenttypes.SingleOnlinePlayerArgument
@@ -20,113 +19,114 @@ import io.papermc.paper.command.brigadier.Commands
 import org.bukkit.Server
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
-import java.util.UUID
 
 class TeleportLegacyCommands(
     private val plugin: Plugin,
     private val server: Server,
-    private val application: TeleportApplication,
+    private val teleportService: TeleportService,
 ) {
+    // TODO: switch to Essentials permissions instead
     fun commands(): List<BrigadierCommand> = buildList {
-        addAll(
-            playerCommands(
-                names = listOf("tpa"),
-                permissions = listOf(PermissionNode.TELEPORT_REQUEST),
-            ) { context, target ->
-                application.to(context.source.requirePlayer(), target)
-            },
-        )
-        addAll(
-            playerCommands(
-                names = listOf("tpahere"),
-                permissions = listOf(PermissionNode.TELEPORT_REQUEST),
-            ) { context, target ->
-                application.requestHere(context.source.requirePlayer(), target)
-            },
-        )
-        addAll(
-            requestDecisionCommands(listOf("tpaccept", "tpyes")) { player, requesterId ->
-                application.accept(player, requesterId)
-            },
-        )
-        addAll(
-            requestDecisionCommands(listOf("tpdeny", "tpno")) { player, requesterId ->
-                application.deny(player, requesterId)
-            },
-        )
-        addAll(
-            cancelCommands(listOf("tpcancel", "tpacancel")),
-        )
-        addAll(
-            playerCommands(
-                names = listOf("tpo"),
-                permissions = listOf(PermissionNode.TELEPORT_REQUEST, PermissionNode.TELEPORT_FORCE),
-            ) { context, target ->
-                application.to(
-                    requester = context.source.requirePlayer(),
-                    target = target,
-                    flags = TeleportFlags(force = true),
-                )
-            },
-        )
-        addAll(
-            playerCommands(
-                names = listOf("tpohere"),
-                permissions = listOf(PermissionNode.TELEPORT_OTHERS, PermissionNode.TELEPORT_FORCE),
-            ) { context, target ->
-                application.here(
-                    operator = context.source.requirePlayer(),
-                    target = target,
-                    flags = TeleportFlags(force = true),
-                )
-            },
-        )
-        addAll(
-            playerCommands(
-                names = listOf("tphere"),
-                permissions = listOf(PermissionNode.TELEPORT_OTHERS, PermissionNode.TELEPORT_FORCE),
-            ) { context, target ->
-                application.here(
-                    operator = context.source.requirePlayer(),
-                    target = target,
-                    flags = TeleportFlags(force = true),
-                )
-            },
-        )
-        addAll(
-            allCommands(listOf("tpall")),
-        )
-        addAll(
-            positionCommands(listOf("tppos")),
-        )
-        add(backCommand())
-        add(randomCommand())
+        add(tp())
+        add(tpahere())
+        addAll(tpaccept())
+        addAll(tpdeny())
+        addAll(tpcancel())
+        add(tpo())
+        add(tpohere())
+        add(tphere())
+        add(tpall())
+        add(tppos())
+        add(back())
+        add(rtp())
     }
 
-    private fun playerCommands(
-        names: List<String>,
-        permissions: List<PermissionNode>,
-        action: suspend (PaperCommandContext, Player) -> Unit,
-    ): List<BrigadierCommand> = names.map { name ->
-        command(name) {
-            then(
-                Commands
-                    .argument("player", SingleOnlinePlayerArgument(server))
-                    .requiresPermission(*permissions.toTypedArray())
-                    .executesSuspending(plugin) { context ->
-                        context.scoped(teleportationTracer) {
-                            action(context, context.getArgument("player", Player::class.java))
-                        }
-                    },
-            )
-        }
+    private fun tp() = command("tp") {
+        then(
+            Commands
+                .argument("player", SingleOnlinePlayerArgument(server))
+                .requiresPermission(PermissionNode.TELEPORT_LEGACY)
+                .executesSuspending(plugin) { context ->
+                    context.scoped(teleportationTracer) {
+                        val player = context.source.requirePlayer()
+                        val target = context.getArgument("player", Player::class.java)
+                        teleportService.to(player, target)
+                    }
+                },
+        )
     }
 
-    private fun cancelCommands(names: List<String>): List<BrigadierCommand> = names.map { name ->
+    private fun tpahere() = command("tpahere") {
+        then(
+            Commands
+                .argument("player", SingleOnlinePlayerArgument(server))
+                .requiresPermission(PermissionNode.TELEPORT_REQUEST)
+                .executesSuspending(plugin) { context ->
+                    context.scoped(teleportationTracer) {
+                        val player = context.source.requirePlayer()
+                        val target = context.getArgument("player", Player::class.java)
+                        teleportService.requestHere(player, target)
+                    }
+                },
+        )
+    }
+
+    private fun tpo() = command("tpo") {
+        then(
+            Commands
+                .argument("player", SingleOnlinePlayerArgument(server))
+                .requiresPermission(PermissionNode.TELEPORT_FORCE)
+                .executesSuspending(plugin) { context ->
+                    context.scoped(teleportationTracer) {
+                        val target = context.getArgument("player", Player::class.java)
+                        teleportService.to(
+                            requester = context.source.requirePlayer(),
+                            target = target,
+                            flags = TeleportFlags(force = true),
+                        )
+                    }
+                },
+        )
+    }
+
+    private fun tpohere() = command("tpohere") {
+        then(
+            Commands
+                .argument("player", SingleOnlinePlayerArgument(server))
+                .requiresPermission(PermissionNode.TELEPORT_OTHERS, PermissionNode.TELEPORT_FORCE)
+                .executesSuspending(plugin) { context ->
+                    context.scoped(teleportationTracer) {
+                        teleportService.here(
+                            operator = context.source.requirePlayer(),
+                            target = context.getArgument("player", Player::class.java),
+                            flags = TeleportFlags(force = true),
+                        )
+                    }
+                },
+        )
+    }
+
+    private fun tphere() = command("tphere") {
+        then(
+            Commands
+                .argument("player", SingleOnlinePlayerArgument(server))
+                .requiresPermission(PermissionNode.TELEPORT_OTHERS)
+                .executesSuspending(plugin) { context ->
+                    context.scoped(teleportationTracer) {
+                        teleportService.here(
+                            operator = context.source.requirePlayer(),
+                            target = context.getArgument("player", Player::class.java),
+                        )
+                    }
+                },
+        )
+    }
+
+    private fun tpcancel() = listOf("tpcancel", "tpacancel").map { name ->
         command(name) {
             executesSuspending(plugin) { context ->
                 context.scoped(teleportationTracer) {
-                    application.cancel(context.source.requirePlayer(), targetId = null)
+                    teleportService.cancel(context.source.requirePlayer(), targetId = null)
                 }
             }
             then(
@@ -134,7 +134,7 @@ class TeleportLegacyCommands(
                     .argument("player", SingleOnlinePlayerArgument(server))
                     .executesSuspending(plugin) { context ->
                         context.scoped(teleportationTracer) {
-                            application.cancel(
+                            teleportService.cancel(
                                 context.source.requirePlayer(),
                                 context.getArgument("player", Player::class.java).uniqueId,
                             )
@@ -144,11 +144,11 @@ class TeleportLegacyCommands(
         }
     }
 
-    private fun backCommand(): BrigadierCommand = command("back") {
+    private fun back(): BrigadierCommand = command("back") {
         executesSuspending(plugin) { context ->
             context.scoped(teleportationTracer) {
                 val player = context.source.requirePlayer()
-                application.back(player, player)
+                teleportService.back(player, player)
             }
         }
         then(
@@ -157,7 +157,7 @@ class TeleportLegacyCommands(
                 .requiresPermission(PermissionNode.TELEPORT_BACK_OTHERS)
                 .executesSuspending(plugin) { context ->
                     context.scoped(teleportationTracer) {
-                        application.back(
+                        teleportService.back(
                             operator = context.source.sender,
                             target = context.getArgument("player", Player::class.java),
                         )
@@ -166,74 +166,88 @@ class TeleportLegacyCommands(
         )
     }
 
-    private fun randomCommand(): BrigadierCommand = command("rtp") {
+    private fun rtp(): BrigadierCommand = command("rtp") {
         requiresPermission(PermissionNode.TELEPORT_RANDOM)
         executesSuspending(plugin) { context ->
             context.scoped(teleportationTracer) {
-                application.random(context.source.requirePlayer())
+                teleportService.random(context.source.requirePlayer())
             }
         }
     }
 
-    private fun positionCommands(names: List<String>): List<BrigadierCommand> = names.map { name ->
-        command(name) {
-            requiresPermission(PermissionNode.TELEPORT_POSITION)
-            then(
-                withCoordinateArgs(plugin) { context, yaw, pitch ->
-                    application.position(
-                        player = context.source.requirePlayer(),
-                        x = DoubleArgumentType.getDouble(context, "x"),
-                        y = DoubleArgumentType.getDouble(context, "y"),
-                        z = DoubleArgumentType.getDouble(context, "z"),
-                        yaw = yaw,
-                        pitch = pitch,
+    private fun tppos(): BrigadierCommand = command("tppos") {
+        requiresPermission(PermissionNode.TELEPORT_POSITION)
+        then(
+            withCoordinateArgs(plugin) { context, yaw, pitch ->
+                teleportService.position(
+                    player = context.source.requirePlayer(),
+                    x = DoubleArgumentType.getDouble(context, "x"),
+                    y = DoubleArgumentType.getDouble(context, "y"),
+                    z = DoubleArgumentType.getDouble(context, "z"),
+                    yaw = yaw,
+                    pitch = pitch,
+                )
+            },
+        )
+    }
+
+    private fun tpall(): BrigadierCommand = command("tpall") {
+        requiresPermission(PermissionNode.TELEPORT_ALL, PermissionNode.TELEPORT_FORCE)
+        executesSuspending(plugin) { context ->
+            teleportService.all(
+                operator = context.source.sender,
+                requestedTarget = null,
+                flags = TeleportFlags(force = true),
+            )
+        }
+        then(
+            Commands
+                .argument("target", SingleOnlinePlayerArgument(server))
+                .executesSuspending(plugin) { context ->
+                    teleportService.all(
+                        operator = context.source.sender,
+                        requestedTarget = context.getArgument("target", Player::class.java),
+                        flags = TeleportFlags(force = true),
                     )
                 },
-            )
-        }
+        )
     }
 
-    private fun allCommands(names: List<String>): List<BrigadierCommand> = names.map { name ->
-        command(name) {
-            requiresPermission(PermissionNode.TELEPORT_ALL, PermissionNode.TELEPORT_FORCE)
-            executesSuspending(plugin) { context ->
-                application.all(
-                    operator = context.source.sender,
-                    requestedTarget = null,
-                    flags = TeleportFlags(force = true),
-                )
-            }
-            then(
-                Commands
-                    .argument("target", SingleOnlinePlayerArgument(server))
-                    .executesSuspending(plugin) { context ->
-                        application.all(
-                            operator = context.source.sender,
-                            requestedTarget = context.getArgument("target", Player::class.java),
-                            flags = TeleportFlags(force = true),
-                        )
-                    },
-            )
-        }
-    }
-
-    private fun requestDecisionCommands(
-        names: List<String>,
-        action: suspend (Player, UUID?) -> Unit,
-    ): List<BrigadierCommand> = names.map { name ->
+    private fun tpaccept() = listOf("tpaccept", "tpyes").map { name ->
         command(name) {
             executesSuspending(plugin) { context ->
                 context.scoped(teleportationTracer) {
-                    action(context.source.requirePlayer(), null)
+                    teleportService.accept(context.source.requirePlayer(), requesterId = null)
                 }
             }
-
             then(
                 Commands
                     .argument("requester", SingleOnlinePlayerArgument(server))
                     .executesSuspending(plugin) { context ->
                         context.scoped(teleportationTracer) {
-                            action(
+                            teleportService.accept(
+                                context.source.requirePlayer(),
+                                context.getArgument("requester", Player::class.java).uniqueId,
+                            )
+                        }
+                    },
+            )
+        }
+    }
+
+    private fun tpdeny() = listOf("tpdeny", "tpno").map { name ->
+        command(name) {
+            executesSuspending(plugin) { context ->
+                context.scoped(teleportationTracer) {
+                    teleportService.deny(context.source.requirePlayer(), requesterId = null)
+                }
+            }
+            then(
+                Commands
+                    .argument("requester", SingleOnlinePlayerArgument(server))
+                    .executesSuspending(plugin) { context ->
+                        context.scoped(teleportationTracer) {
+                            teleportService.deny(
                                 context.source.requirePlayer(),
                                 context.getArgument("requester", Player::class.java).uniqueId,
                             )

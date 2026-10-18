@@ -1,9 +1,9 @@
 package com.projectcitybuild.pcbridge.features.teleportation
 
 import com.projectcitybuild.pcbridge.features.teleportation.domain.services.FindRandomLocation
-import com.projectcitybuild.pcbridge.features.teleportation.domain.services.TeleportApplication
 import com.projectcitybuild.pcbridge.features.teleportation.domain.services.TeleportRequestService
-import com.projectcitybuild.pcbridge.features.teleportation.domain.services.TeleportValidationService
+import com.projectcitybuild.pcbridge.features.teleportation.domain.services.TeleportService
+import com.projectcitybuild.pcbridge.features.teleportation.domain.validation.TeleportValidator
 import com.projectcitybuild.pcbridge.features.teleportation.hooks.commands.TeleportAcceptCommand
 import com.projectcitybuild.pcbridge.features.teleportation.hooks.commands.TeleportAllCommand
 import com.projectcitybuild.pcbridge.features.teleportation.hooks.commands.TeleportBackCommand
@@ -44,9 +44,9 @@ val teleportationModule =
         factoryOf(::TeleportAcceptCommand)
         factoryOf(::TeleportDenyCommand)
         factoryOf(::TeleportCancelCommand)
-        singleOf(::TeleportApplication)
+        singleOf(::TeleportService)
         single { TeleportRequestService() }
-        factoryOf(::TeleportValidationService)
+        factoryOf(::TeleportValidator)
         factoryOf(::TeleportRequestListener)
         factoryOf(::FindRandomLocation)
     }

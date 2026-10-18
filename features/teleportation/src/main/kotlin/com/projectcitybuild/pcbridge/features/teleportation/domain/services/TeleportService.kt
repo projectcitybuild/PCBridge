@@ -23,7 +23,6 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause
 import org.bukkit.plugin.java.JavaPlugin
-import sun.security.util.KeyUtil.validate
 import java.time.Duration
 import java.time.Instant
 import java.util.UUID
@@ -31,7 +30,7 @@ import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.toKotlinDuration
 
-class TeleportApplication(
+class TeleportService(
     private val plugin: JavaPlugin,
     private val server: Server,
     private val playerTeleporter: PlayerTeleporter,
@@ -217,6 +216,21 @@ class TeleportApplication(
         if (moved) {
             operator.sendMessage(l10n.teleportOperationSucceeded(target.name, operator.name))
         }
+    }
+
+    // TODO: Only for the legacy /tphere command. Ideally this should be removed in the future.
+    fun requestHere(
+        requester: Player,
+        target: Player,
+    ) {
+        if (!validate(requester, validator.requestHere(requester, target))) return
+
+        createRequest(
+            requester,
+            target,
+            silent = false,
+            direction = TeleportRequest.Direction.HERE,
+        )
     }
 
     suspend fun send(

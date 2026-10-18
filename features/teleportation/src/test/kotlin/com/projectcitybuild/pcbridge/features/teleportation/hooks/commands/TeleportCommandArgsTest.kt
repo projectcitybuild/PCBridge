@@ -1,7 +1,7 @@
 package com.projectcitybuild.pcbridge.features.teleportation.hooks.commands
 
 import com.mojang.brigadier.CommandDispatcher
-import com.projectcitybuild.pcbridge.features.teleportation.domain.services.TeleportApplication
+import com.projectcitybuild.pcbridge.features.teleportation.domain.services.TeleportService
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import org.bukkit.Server
 import org.bukkit.command.CommandSender
@@ -30,7 +30,7 @@ class TeleportCommandArgsTest {
         whenever(it.hasPermission(any<String>())).thenReturn(true)
     }
     private val plugin = mock<Plugin>()
-    private val application = mock<TeleportApplication>()
+    private val application = mock<TeleportService>()
     private val random = TeleportRandomCommand(plugin, application)
 
     private val dispatcher = CommandDispatcher<CommandSourceStack>().apply {
@@ -213,33 +213,48 @@ class TeleportCommandArgsTest {
     @Test
     fun `subcommands player names and valid options are suggested`() {
         val rootSuggestions =
-            dispatcher.getCompletionSuggestions(
-                dispatcher.parse("tp ", source),
-            ).get(1, TimeUnit.SECONDS).list.map { it.text }
+            dispatcher
+                .getCompletionSuggestions(
+                    dispatcher.parse("tp ", source),
+                ).get(1, TimeUnit.SECONDS)
+                .list
+                .map { it.text }
         assertTrue(rootSuggestions.containsAll(listOf("to", "here", "send", "all", "pos", "random", "back")))
 
         val playerSuggestions =
-            dispatcher.getCompletionSuggestions(
-                dispatcher.parse("tp to ", source),
-            ).get(1, TimeUnit.SECONDS).list.map { it.text }
+            dispatcher
+                .getCompletionSuggestions(
+                    dispatcher.parse("tp to ", source),
+                ).get(1, TimeUnit.SECONDS)
+                .list
+                .map { it.text }
         assertTrue(playerSuggestions.contains("Notch"))
 
         val optionSuggestions =
-            dispatcher.getCompletionSuggestions(
-                dispatcher.parse("tp to Notch --", source),
-            ).get(1, TimeUnit.SECONDS).list.map { it.text }
+            dispatcher
+                .getCompletionSuggestions(
+                    dispatcher.parse("tp to Notch --", source),
+                ).get(1, TimeUnit.SECONDS)
+                .list
+                .map { it.text }
         assertTrue(optionSuggestions.containsAll(listOf("--force", "--silent")))
 
         val shortOptionSuggestions =
-            dispatcher.getCompletionSuggestions(
-                dispatcher.parse("tp to Notch -", source),
-            ).get(1, TimeUnit.SECONDS).list.map { it.text }
+            dispatcher
+                .getCompletionSuggestions(
+                    dispatcher.parse("tp to Notch -", source),
+                ).get(1, TimeUnit.SECONDS)
+                .list
+                .map { it.text }
         assertTrue(shortOptionSuggestions.containsAll(listOf("-f", "-s")))
 
         val afterForceSuggestions =
-            dispatcher.getCompletionSuggestions(
-                dispatcher.parse("tp to Notch --force ", source),
-            ).get(1, TimeUnit.SECONDS).list.map { it.text }
+            dispatcher
+                .getCompletionSuggestions(
+                    dispatcher.parse("tp to Notch --force ", source),
+                ).get(1, TimeUnit.SECONDS)
+                .list
+                .map { it.text }
         assertTrue(afterForceSuggestions.contains("--silent"))
         assertFalse(afterForceSuggestions.contains("--force"))
         assertFalse(afterForceSuggestions.contains("-f"))

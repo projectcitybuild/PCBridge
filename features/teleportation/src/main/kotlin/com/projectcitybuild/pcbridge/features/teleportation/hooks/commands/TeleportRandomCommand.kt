@@ -1,7 +1,7 @@
 package com.projectcitybuild.pcbridge.features.teleportation.hooks.commands
 
 import com.projectcitybuild.pcbridge.core.permissions.PermissionNode
-import com.projectcitybuild.pcbridge.features.teleportation.domain.services.TeleportApplication
+import com.projectcitybuild.pcbridge.features.teleportation.domain.services.TeleportService
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
 import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandNode
@@ -14,15 +14,14 @@ import org.bukkit.plugin.Plugin
 
 class TeleportRandomCommand(
     private val plugin: Plugin,
-    private val application: TeleportApplication,
+    private val application: TeleportService,
 ) : BrigadierCommand {
-    override fun literal(): PaperCommandNode =
-        Commands.literal("random")
-            .requiresPermission(PermissionNode.TELEPORT_RANDOM)
-            .executesSuspending(plugin) { context ->
-                context.scoped(teleportationTracer) {
-                    application.random(context.source.requirePlayer())
-                }
+    override fun literal(): PaperCommandNode = Commands
+        .literal("random")
+        .requiresPermission(PermissionNode.TELEPORT_RANDOM)
+        .executesSuspending(plugin) { context ->
+            context.scoped(teleportationTracer) {
+                application.random(context.source.requirePlayer())
             }
-            .build()
+        }.build()
 }

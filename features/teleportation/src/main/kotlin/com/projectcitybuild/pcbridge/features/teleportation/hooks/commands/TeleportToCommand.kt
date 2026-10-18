@@ -1,9 +1,9 @@
 package com.projectcitybuild.pcbridge.features.teleportation.hooks.commands
 
 import com.projectcitybuild.pcbridge.core.permissions.PermissionNode
-import com.projectcitybuild.pcbridge.features.teleportation.hooks.commands.args.withTeleportFlags
-import com.projectcitybuild.pcbridge.features.teleportation.domain.services.TeleportApplication
 import com.projectcitybuild.pcbridge.features.teleportation.domain.data.TeleportFlags
+import com.projectcitybuild.pcbridge.features.teleportation.domain.services.TeleportService
+import com.projectcitybuild.pcbridge.features.teleportation.hooks.commands.args.withTeleportFlags
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
 import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandContext
@@ -20,14 +20,16 @@ import org.bukkit.plugin.Plugin
 class TeleportToCommand(
     private val plugin: Plugin,
     private val server: Server,
-    private val application: TeleportApplication,
+    private val application: TeleportService,
 ) : BrigadierCommand {
     override fun literal(): PaperCommandNode {
-        val player = Commands.argument("player", SingleOnlinePlayerArgument(server))
+        val player = Commands
+            .argument("player", SingleOnlinePlayerArgument(server))
             .requiresPermission(PermissionNode.TELEPORT_REQUEST)
             .withTeleportFlags(plugin) { context, flags -> execute(context, flags) }
 
-        return Commands.literal("to")
+        return Commands
+            .literal("to")
             .then(player)
             .build()
     }

@@ -54,6 +54,9 @@ enum class PermissionNode(
     // Can teleport to a random location
     TELEPORT_RANDOM("pcbridge.teleport.random"),
 
+    // Can teleport to another player without consent
+    TELEPORT_LEGACY("pcbridge.teleport.legacy"),
+
     // Can request to teleport to another player
     TELEPORT_REQUEST("pcbridge.teleport.request"),
 
