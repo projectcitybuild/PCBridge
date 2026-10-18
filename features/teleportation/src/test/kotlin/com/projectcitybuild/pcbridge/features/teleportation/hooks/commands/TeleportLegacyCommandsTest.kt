@@ -187,10 +187,8 @@ class TeleportLegacyCommandsTest {
 
         runBlocking {
             executeCommand("tphere Notch")
-            verify(application).here(operator, player, forced)
-
             executeCommand("tpohere Notch")
-            verify(application).here(operator, player, forced)
+            verify(application, times(2)).here(operator, player, forced)
 
             executeCommand("tpall")
             verify(application).all(operator, null, forced)
