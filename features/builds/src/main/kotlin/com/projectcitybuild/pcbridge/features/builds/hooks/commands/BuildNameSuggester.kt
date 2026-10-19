@@ -2,7 +2,7 @@ package com.projectcitybuild.pcbridge.features.builds.hooks.commands
 
 import com.mojang.brigadier.suggestion.SuggestionsBuilder
 import com.projectcitybuild.pcbridge.features.builds.domain.repositories.BuildRepository
-import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandContext
+import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
 
 class BuildNameSuggester(
     private val buildRepository: BuildRepository,
@@ -13,7 +13,8 @@ class BuildNameSuggester(
     ) {
         val name = suggestions.remaining.lowercase()
 
-        buildRepository.names()
+        buildRepository
+            .names()
             .filter { it.lowercase().startsWith(name) }
             .forEach(suggestions::suggest)
     }

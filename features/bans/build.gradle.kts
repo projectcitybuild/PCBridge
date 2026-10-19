@@ -12,5 +12,5 @@ dependencies {
     implementation(project(":platform:web-server"))
     implementation(project(":runtime"))
 
-    testImplementation(project(":core:test-support"))
+    testImplementation(project(":core:support:tests"))
 }

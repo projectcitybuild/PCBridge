@@ -5,5 +5,5 @@ plugins {
 dependencies {
     implementation(project(":runtime"))
 
-    testImplementation(project(":core:test-support"))
+    testImplementation(project(":core:support:tests"))
 }

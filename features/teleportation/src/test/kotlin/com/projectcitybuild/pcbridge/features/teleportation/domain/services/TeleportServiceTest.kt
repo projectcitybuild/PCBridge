@@ -2,6 +2,7 @@ package com.projectcitybuild.pcbridge.features.teleportation.domain.services
 
 import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.core.permissions.PermissionNode
+import com.projectcitybuild.pcbridge.features.teleportation.TeleportationPermissions
 import com.projectcitybuild.pcbridge.features.teleportation.domain.data.TeleportFlags
 import com.projectcitybuild.pcbridge.features.teleportation.domain.data.TeleportRequest
 import com.projectcitybuild.pcbridge.features.teleportation.domain.validation.TeleportValidator
@@ -9,6 +10,8 @@ import com.projectcitybuild.pcbridge.platform.paper.scheduling.SpigotTimer
 import com.projectcitybuild.pcbridge.runtime.cooldowns.Cooldown
 import com.projectcitybuild.pcbridge.runtime.teleportation.PlayerTeleporter
 import com.projectcitybuild.pcbridge.runtime.teleportation.storage.TeleportHistoryStorage
+import java.util.UUID
+import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.runBlocking
 import net.kyori.adventure.text.Component
 import org.bukkit.Location
@@ -31,8 +34,6 @@ import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.verifyNoInteractions
 import org.mockito.kotlin.whenever
-import java.util.UUID
-import kotlin.time.Duration.Companion.seconds
 
 class TeleportServiceTest {
     private val server = mock<Server>()
@@ -70,7 +71,7 @@ class TeleportServiceTest {
     @Test
     fun `random teleport uses the shared movement path and reports the destination`() = runBlocking {
         val world = mock<World>()
-        val player = player("Steve", PermissionNode.TELEPORT_RANDOM)
+        val player = player("Steve", TeleportationPermissions.RANDOM)
         val candidate = Location(world, 12.0, 0.0, -8.0)
         val destination = Location(world, 12.5, 64.0, -8.5)
         whenever(player.location).thenReturn(destination)
@@ -97,7 +98,7 @@ class TeleportServiceTest {
 
     @Test
     fun `random teleport reports failure when no candidates are available`() = runBlocking {
-        val player = player("Steve", PermissionNode.TELEPORT_RANDOM)
+        val player = player("Steve", TeleportationPermissions.RANDOM)
         whenever(findRandomLocation.candidates(player, attempts = 5)).thenReturn(emptyList())
 
         application.random(player)
@@ -108,7 +109,7 @@ class TeleportServiceTest {
 
     @Test
     fun `force and silent flags require their dedicated permissions`() = runBlocking {
-        val requester = player("Steve", PermissionNode.TELEPORT_REQUEST)
+        val requester = player("Steve", TeleportationPermissions.REQUEST)
         val target = player("Alex")
 
         application.to(requester, target, TeleportFlags(force = true, silent = true))
@@ -123,9 +124,9 @@ class TeleportServiceTest {
         val requester =
             player(
                 "Steve",
-                PermissionNode.TELEPORT_REQUEST,
-                PermissionNode.TELEPORT_FORCE,
-                PermissionNode.TELEPORT_SILENT,
+                TeleportationPermissions.REQUEST,
+                TeleportationPermissions.FORCE,
+                TeleportationPermissions.SILENT,
             )
         val target = player("Alex")
         whenever(target.location).thenReturn(Location(mock<World>(), 10.0, 70.0, 20.0))
@@ -165,9 +166,9 @@ class TeleportServiceTest {
 
     @Test
     fun `to and here commands create consent requests in the correct directions`() = runBlocking {
-        val requester = player("Steve", PermissionNode.TELEPORT_REQUEST)
+        val requester = player("Steve", TeleportationPermissions.REQUEST)
         val target = player("Alex")
-        val hereRequester = player("Casey", PermissionNode.TELEPORT_OTHERS)
+        val hereRequester = player("Casey", TeleportationPermissions.OTHERS)
         val hereTarget = player("Devon")
         val requesterLocation = Location(mock<World>(), 1.0, 64.0, 1.0)
         whenever(server.getPlayer(requester.uniqueId)).thenReturn(requester)
@@ -213,7 +214,7 @@ class TeleportServiceTest {
 
     @Test
     fun `send requests the selected player to teleport to the destination`() = runBlocking {
-        val operator = player("Staff", PermissionNode.TELEPORT_OTHERS, PermissionNode.TELEPORT_SILENT)
+        val operator = player("Staff", TeleportationPermissions.OTHERS, TeleportationPermissions.SILENT)
         val selected = player("Alex")
         val target = player("Casey")
         val targetLocation = Location(mock<World>(), 5.0, 70.0, 5.0)
@@ -245,14 +246,14 @@ class TeleportServiceTest {
         val targetLocation = Location(mock<World>(), 5.0, 70.0, 5.0)
         whenever(target.location).thenReturn(targetLocation)
         val selected = player("Alex")
-        val unauthorized = player("Staff", PermissionNode.TELEPORT_OTHERS)
+        val unauthorized = player("Staff", TeleportationPermissions.OTHERS)
 
         application.send(unauthorized, selected, target, TeleportFlags(force = true))
 
         verify(unauthorized).sendMessage(l10n.errorTeleportPermission)
         verifyNoInteractions(playerTeleporter)
 
-        val authorized = player("Admin", PermissionNode.TELEPORT_OTHERS, PermissionNode.TELEPORT_FORCE)
+        val authorized = player("Admin", TeleportationPermissions.OTHERS, TeleportationPermissions.FORCE)
         application.send(authorized, selected, target, TeleportFlags(force = true))
 
         verify(playerTeleporter).move(
@@ -265,7 +266,7 @@ class TeleportServiceTest {
 
     @Test
     fun `all requests every other online player to teleport to the destination`() = runBlocking {
-        val operator = player("Staff", PermissionNode.TELEPORT_ALL)
+        val operator = player("Staff", TeleportationPermissions.ALL)
         val target = player("Target")
         val first = player("Alex")
         val second = player("Casey")
@@ -301,14 +302,14 @@ class TeleportServiceTest {
         val second = player("Casey")
         whenever(target.location).thenReturn(Location(mock<World>(), 5.0, 70.0, 5.0))
         whenever(server.onlinePlayers).thenReturn(listOf(target, first, second))
-        val unauthorized = player("Staff", PermissionNode.TELEPORT_ALL)
+        val unauthorized = player("Staff", TeleportationPermissions.ALL)
 
         application.all(unauthorized, target, TeleportFlags(force = true))
 
         verify(unauthorized).sendMessage(l10n.errorTeleportPermission)
         verifyNoInteractions(playerTeleporter)
 
-        val authorized = player("Admin", PermissionNode.TELEPORT_ALL, PermissionNode.TELEPORT_FORCE)
+        val authorized = player("Admin", TeleportationPermissions.ALL, TeleportationPermissions.FORCE)
         application.all(authorized, target, TeleportFlags(force = true))
 
         verify(playerTeleporter, times(2)).move(
@@ -321,7 +322,7 @@ class TeleportServiceTest {
 
     @Test
     fun `force here requires force permission in addition to staff permission`() = runBlocking {
-        val operator = player("Steve", PermissionNode.TELEPORT_OTHERS)
+        val operator = player("Steve", TeleportationPermissions.OTHERS)
         val target = player("Alex")
 
         application.here(operator, target, TeleportFlags(force = true))
@@ -332,7 +333,7 @@ class TeleportServiceTest {
 
     @Test
     fun `force here keeps the canonical staff operation and shared movement path`() = runBlocking {
-        val operator = player("Steve", PermissionNode.TELEPORT_OTHERS, PermissionNode.TELEPORT_FORCE)
+        val operator = player("Steve", TeleportationPermissions.OTHERS, TeleportationPermissions.FORCE)
         val target = player("Alex")
         val operatorLocation = Location(mock<World>(), 5.0, 70.0, 5.0)
         whenever(operator.location).thenReturn(operatorLocation)
@@ -372,7 +373,7 @@ class TeleportServiceTest {
 
     @Test
     fun `back reports missing history`() = runBlocking {
-        val player = player("Steve", PermissionNode.TELEPORT_BACK)
+        val player = player("Steve", TeleportationPermissions.BACK)
         whenever(historyStorage.retrieve(player.uniqueId)).thenReturn(TeleportHistoryStorage.Lookup.Missing)
 
         application.back(player, player)
@@ -384,7 +385,7 @@ class TeleportServiceTest {
     @Test
     fun `position defaults to the current world and preserves coordinate precision`() = runBlocking {
         val world = mock<World>()
-        val player = player("Steve", PermissionNode.TELEPORT_POSITION)
+        val player = player("Steve", TeleportationPermissions.POSITION)
         whenever(player.world).thenReturn(world)
         whenever(player.location).thenReturn(Location(world, 1.0, 65.0, 1.0, 30.0f, 10.0f))
 
@@ -413,7 +414,7 @@ class TeleportServiceTest {
     @Test
     fun `position uses supplied yaw and pitch`() = runBlocking {
         val world = mock<World>()
-        val player = player("Steve", PermissionNode.TELEPORT_POSITION)
+        val player = player("Steve", TeleportationPermissions.POSITION)
         whenever(player.world).thenReturn(world)
         whenever(player.location).thenReturn(Location(world, 1.0, 65.0, 1.0, 30.0f, 10.0f))
 

@@ -2,7 +2,7 @@ package com.projectcitybuild.pcbridge.features.pim.hooks.commands
 
 import com.mojang.brigadier.CommandDispatcher
 import com.projectcitybuild.pcbridge.core.datetime.services.LocalizedTime
-import com.projectcitybuild.pcbridge.core.permissions.PermissionNode
+import com.projectcitybuild.pcbridge.features.pim.PimPermissions
 import com.projectcitybuild.pcbridge.features.pim.domain.services.OpElevationService
 import com.projectcitybuild.pcbridge.features.pim.hooks.commands.op.OpGrantCommand
 import com.projectcitybuild.pcbridge.features.pim.hooks.commands.op.OpRevokeCommand
@@ -11,6 +11,8 @@ import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.CoroutineScopeCommandTaskExecutor
 import com.projectcitybuild.pcbridge.runtime.state.data.OpElevation
 import io.papermc.paper.command.brigadier.CommandSourceStack
+import java.time.Instant
+import java.util.UUID
 import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import net.kyori.adventure.dialog.DialogLike
@@ -22,8 +24,6 @@ import org.mockito.Mockito.never
 import org.mockito.Mockito.verify
 import org.mockito.kotlin.any
 import org.mockito.kotlin.whenever
-import java.time.Instant
-import java.util.UUID
 
 class OpCommandsTest {
     private val playerId = UUID.randomUUID()
@@ -118,7 +118,7 @@ class OpCommandsTest {
         val source = mock(CommandSourceStack::class.java)
         whenever(source.sender).thenReturn(player)
         whenever(player.uniqueId).thenReturn(playerId)
-        whenever(player.hasPermission(PermissionNode.PIM_OP.node)).thenReturn(true)
+        whenever(player.hasPermission(PimPermissions.OP.node)).thenReturn(true)
         val dispatcher = CommandDispatcher<CommandSourceStack>()
         dispatcher.root.addChild(command.literal())
         dispatcher.execute(input, source)

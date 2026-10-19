@@ -2,7 +2,7 @@ package com.projectcitybuild.pcbridge.features.teleportation.hooks.commands
 
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.exceptions.CommandSyntaxException
-import com.projectcitybuild.pcbridge.core.permissions.PermissionNode
+import com.projectcitybuild.pcbridge.features.teleportation.TeleportationPermissions
 import com.projectcitybuild.pcbridge.features.teleportation.domain.data.TeleportFlags
 import com.projectcitybuild.pcbridge.features.teleportation.domain.services.TeleportService
 import io.papermc.paper.command.brigadier.CommandSourceStack
@@ -111,7 +111,7 @@ class TeleportLegacyCommandsTest {
     @Test
     fun `legacy roots use their respective permissions`() {
         whenever(operator.hasPermission(any<String>())).thenReturn(false)
-        whenever(operator.hasPermission(PermissionNode.TELEPORT_REQUEST.node)).thenReturn(true)
+        whenever(operator.hasPermission(TeleportationPermissions.REQUEST.node)).thenReturn(true)
 
         val tpaherePlayer = commands.single { it.literal().name == "tpahere" }.literal().getChild("player")
         val tpPlayer = dispatcher.root.getChild("tp")?.getChild("player")
@@ -140,7 +140,7 @@ class TeleportLegacyCommandsTest {
 
         assertFalse(randomAlias.canUse(source))
         assertFalse(randomSubcommand?.canUse(source) == true)
-        whenever(operator.hasPermission(PermissionNode.TELEPORT_RANDOM.node)).thenReturn(true)
+        whenever(operator.hasPermission(TeleportationPermissions.RANDOM.node)).thenReturn(true)
         assertTrue(randomAlias.canUse(source))
         assertTrue(randomSubcommand?.canUse(source) == true)
     }
@@ -200,7 +200,7 @@ class TeleportLegacyCommandsTest {
 
     @Test
     fun `legacy forced operations are denied without force permission`() {
-        whenever(operator.hasPermission(PermissionNode.TELEPORT_FORCE.node)).thenReturn(false)
+        whenever(operator.hasPermission(TeleportationPermissions.FORCE.node)).thenReturn(false)
         whenever(operator.hasPermission("essentials.tpohere")).thenReturn(false)
 
         listOf("tpohere Notch", "tpall", "tpall Notch").forEach { input ->

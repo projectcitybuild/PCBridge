@@ -1,20 +1,20 @@
 package com.projectcitybuild.pcbridge.features.warps.hooks.commands
 
 import com.mojang.brigadier.arguments.StringArgumentType
+import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.core.pcbridgeapi.pcb.models.Warp
-import com.projectcitybuild.pcbridge.core.permissions.PermissionNode
+import com.projectcitybuild.pcbridge.features.warps.WarpsPermissions
 import com.projectcitybuild.pcbridge.features.warps.domain.repositories.WarpRepository
 import com.projectcitybuild.pcbridge.features.warps.warpsTracer
-import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
+import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
+import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandNode
 import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
+import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
+import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.requirePlayer
+import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.suggestsSuspending
 import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
-import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandContext
-import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandNode
-import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.extensions.executesSuspending
-import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.extensions.requirePlayer
-import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.extensions.suggestsSuspending
 import com.projectcitybuild.pcbridge.runtime.commands.scoped
 import com.projectcitybuild.pcbridge.runtime.teleportation.PlayerTeleporter
 import io.papermc.paper.command.brigadier.Commands
@@ -34,35 +34,33 @@ class WarpCommand(
 ) : BrigadierCommand {
     override val description: String = "Teleports to a warp"
 
-    override fun literal(): PaperCommandNode {
-        return Commands.literal("warp")
-            .requiresPermission(PermissionNode.WARP_TELEPORT)
-            .then(
-                Commands.argument("name", StringArgumentType.string())
-                    .suggestsSuspending(plugin, warpNameSuggester::suggest)
-                    .executesSuspending(taskExecutor, ::execute),
-            )
-            .build()
+    override fun literal(): PaperCommandNode = Commands
+        .literal("warp")
+        .requiresPermission(WarpsPermissions.TELEPORT)
+        .then(
+            Commands
+                .argument("name", StringArgumentType.string())
+                .suggestsSuspending(plugin, warpNameSuggester::suggest)
+                .executesSuspending(taskExecutor, ::execute),
+        ).build()
+
+    private suspend fun execute(context: PaperCommandContext) = context.scoped(warpsTracer) {
+        val player = context.source.requirePlayer()
+        val warpName = context.getArgument("name", String::class.java)
+
+        val warp = warpRepository.get(name = warpName)
+        checkNotNull(warp) { l10n.errorWarpNotFound(warpName) }
+
+        val world = server.getWorld(warp.world)
+        checkNotNull(world) { l10n.errorWorldNotFound(warp.world) }
+
+        playerTeleporter.move(
+            player,
+            destination = warp.toLocation(world),
+            cause = PlayerTeleportEvent.TeleportCause.COMMAND,
+        )
+        player.sendMessage(l10n.teleportedToName(warp.name))
     }
-
-    private suspend fun execute(context: PaperCommandContext) =
-        context.scoped(warpsTracer) {
-            val player = context.source.requirePlayer()
-            val warpName = context.getArgument("name", String::class.java)
-
-            val warp = warpRepository.get(name = warpName)
-            checkNotNull(warp) { l10n.errorWarpNotFound(warpName) }
-
-            val world = server.getWorld(warp.world)
-            checkNotNull(world) { l10n.errorWorldNotFound(warp.world) }
-
-            playerTeleporter.move(
-                player,
-                destination = warp.toLocation(world),
-                cause = PlayerTeleportEvent.TeleportCause.COMMAND,
-            )
-            player.sendMessage(l10n.teleportedToName(warp.name))
-        }
 }
 
 private fun Warp.toLocation(world: World) = Location(world, x, y, z, yaw, pitch)

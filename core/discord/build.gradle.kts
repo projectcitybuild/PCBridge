@@ -8,5 +8,5 @@ dependencies {
     implementation(project(":core:observability"))
     implementation(project(":core:utils"))
 
-    testImplementation(project(":core:test-support"))
+    testImplementation(project(":core:support:tests"))
 }

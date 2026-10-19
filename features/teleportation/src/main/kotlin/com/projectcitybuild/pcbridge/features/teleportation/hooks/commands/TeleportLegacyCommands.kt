@@ -2,16 +2,16 @@ package com.projectcitybuild.pcbridge.features.teleportation.hooks.commands
 
 import com.mojang.brigadier.arguments.DoubleArgumentType
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
-import com.projectcitybuild.pcbridge.core.permissions.PermissionNode
+import com.projectcitybuild.pcbridge.features.teleportation.TeleportationPermissions
 import com.projectcitybuild.pcbridge.features.teleportation.domain.data.TeleportFlags
 import com.projectcitybuild.pcbridge.features.teleportation.domain.services.TeleportService
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
+import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandNode
+import com.projectcitybuild.pcbridge.platform.paper.commands.arguments.withCoordinateArgs
+import com.projectcitybuild.pcbridge.platform.paper.commands.argumenttypes.SingleOnlinePlayerArgument
+import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
+import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
-import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandNode
-import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.arguments.withCoordinateArgs
-import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.argumenttypes.SingleOnlinePlayerArgument
-import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.extensions.executesSuspending
-import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.runtime.commands.scoped
 import com.projectcitybuild.pcbridge.runtime.teleportation.teleportationTracer
 import io.papermc.paper.command.brigadier.CommandSourceStack
@@ -164,7 +164,7 @@ class TeleportLegacyCommands(
     }
 
     private fun back(): BrigadierCommand = command("back") {
-        requiresPermission(PermissionNode.TELEPORT_BACK)
+        requiresPermission(TeleportationPermissions.BACK)
         executesSuspending(plugin) { context ->
             context.scoped(teleportationTracer) {
                 val player = context.source.requirePlayer()
@@ -174,7 +174,7 @@ class TeleportLegacyCommands(
         then(
             Commands
                 .argument("player", SingleOnlinePlayerArgument(server))
-                .requiresPermission(PermissionNode.TELEPORT_BACK_OTHERS)
+                .requiresPermission(TeleportationPermissions.BACK_OTHERS)
                 .executesSuspending(plugin) { context ->
                     context.scoped(teleportationTracer) {
                         teleportService.back(
@@ -187,7 +187,7 @@ class TeleportLegacyCommands(
     }
 
     private fun rtp(): BrigadierCommand = command("rtp") {
-        requiresPermission(PermissionNode.TELEPORT_RANDOM)
+        requiresPermission(TeleportationPermissions.RANDOM)
         executesSuspending(plugin) { context ->
             context.scoped(teleportationTracer) {
                 teleportService.random(context.source.requirePlayer())
@@ -196,7 +196,7 @@ class TeleportLegacyCommands(
     }
 
     private fun tppos(): BrigadierCommand = command("tppos") {
-        requiresPermission(PermissionNode.TELEPORT_POSITION)
+        requiresPermission(TeleportationPermissions.POSITION)
         then(
             withCoordinateArgs(plugin) { context, yaw, pitch ->
                 teleportService.position(
@@ -212,7 +212,7 @@ class TeleportLegacyCommands(
     }
 
     private fun tpall(): BrigadierCommand = command("tpall") {
-        requiresPermission(PermissionNode.TELEPORT_ALL, PermissionNode.TELEPORT_FORCE)
+        requiresPermission(TeleportationPermissions.ALL, TeleportationPermissions.FORCE)
         executesSuspending(plugin) { context ->
             teleportService.all(
                 operator = context.source.sender,

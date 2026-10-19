@@ -15,5 +15,5 @@ dependencies {
     implementation("com.github.shynixn.mccoroutine:mccoroutine-bukkit-api:2.15.0")
     implementation("com.github.shynixn.mccoroutine:mccoroutine-bukkit-core:2.15.0")
 
-    testImplementation(project(":core:test-support"))
+    testImplementation(project(":core:support:tests"))
 }

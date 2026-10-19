@@ -1,15 +1,15 @@
 package com.projectcitybuild.pcbridge.features.spawns.hooks.commands
 
+import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.core.observability.logging.log
 import com.projectcitybuild.pcbridge.features.spawns.spawnsTracer
-import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
+import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
+import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandNode
 import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
-import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandContext
-import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.PaperCommandNode
-import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.extensions.executesSuspending
-import com.projectcitybuild.pcbridge.platform.paper.support.brigadier.extensions.requirePlayer
+import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
+import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.runtime.commands.scoped
 import com.projectcitybuild.pcbridge.runtime.remoteconfig.RemoteConfig
 import com.projectcitybuild.pcbridge.runtime.teleportation.PlayerTeleporter
@@ -27,37 +27,35 @@ class HubCommand(
     private val playerTeleporter: PlayerTeleporter,
     private val commandTaskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override fun literal(): PaperCommandNode {
-        return Commands.literal("hub")
-            .executesSuspending(commandTaskExecutor, ::execute)
-            .build()
-    }
+    override fun literal(): PaperCommandNode = Commands
+        .literal("hub")
+        .executesSuspending(commandTaskExecutor, ::execute)
+        .build()
 
-    suspend fun execute(context: PaperCommandContext) =
-        context.scoped(spawnsTracer) {
-            val player = context.source.requirePlayer()
+    suspend fun execute(context: PaperCommandContext) = context.scoped(spawnsTracer) {
+        val player = context.source.requirePlayer()
 
-            val hub = remoteConfig.latest.config.hub
-            if (hub == null) {
-                log.error { "Hub not set" }
-                player.sendMessage(l10n.errorHubNotSet)
-                return@scoped
-            }
-
-            val worldId = UUID.fromString(hub.worldId)
-            val world = server.getWorld(worldId)
-            if (world == null) {
-                log.error { "Hub world (${hub.worldId}) not found" }
-                player.sendMessage(l10n.errorHubWorldNotFound)
-                return@scoped
-            }
-            val location = Location(world, hub.x, hub.y, hub.z, hub.yaw, hub.pitch)
-
-            playerTeleporter.move(
-                player = player,
-                destination = location,
-                cause = PlayerTeleportEvent.TeleportCause.COMMAND,
-            )
-            player.sendMessage(l10n.teleportedToHub)
+        val hub = remoteConfig.latest.config.hub
+        if (hub == null) {
+            log.error { "Hub not set" }
+            player.sendMessage(l10n.errorHubNotSet)
+            return@scoped
         }
+
+        val worldId = UUID.fromString(hub.worldId)
+        val world = server.getWorld(worldId)
+        if (world == null) {
+            log.error { "Hub world (${hub.worldId}) not found" }
+            player.sendMessage(l10n.errorHubWorldNotFound)
+            return@scoped
+        }
+        val location = Location(world, hub.x, hub.y, hub.z, hub.yaw, hub.pitch)
+
+        playerTeleporter.move(
+            player = player,
+            destination = location,
+            cause = PlayerTeleportEvent.TeleportCause.COMMAND,
+        )
+        player.sendMessage(l10n.teleportedToHub)
+    }
 }
