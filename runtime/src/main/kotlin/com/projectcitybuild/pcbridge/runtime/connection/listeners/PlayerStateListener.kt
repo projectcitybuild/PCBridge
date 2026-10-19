@@ -1,5 +1,6 @@
 package com.projectcitybuild.pcbridge.runtime.connection.listeners
 
+import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.core.datetime.services.LocalizedTime
 import com.projectcitybuild.pcbridge.core.observability.logging.log
 import com.projectcitybuild.pcbridge.platform.paper.events.SpigotEventBroadcaster
@@ -62,9 +63,7 @@ class PlayerStateListener(
             val playerState = session.state.players[event.player.uniqueId]
             if (playerState == null) {
                 log.warn { "Player state was missing on join event" }
-                event.player.sendRichMessage(
-                    "Warning: Unable to retrieve player data. Your permissions, rank and other data may be missing. Please type /sync or try reconnect in a moment",
-                )
+                event.player.sendMessage(l10n.connection.playerStateUnavailableWarning)
             }
         }
 

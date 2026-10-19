@@ -1,6 +1,7 @@
 package com.projectcitybuild.pcbridge.features.warnings.commands
 
 import com.mojang.brigadier.CommandDispatcher
+import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.core.pcbridgeapi.pcb.models.RemoteConfigKeyValues
 import com.projectcitybuild.pcbridge.core.pcbridgeapi.pcb.models.RemoteConfigVersion
 import com.projectcitybuild.pcbridge.platform.paper.commands.CoroutineScopeCommandTaskExecutor
@@ -45,8 +46,8 @@ class WarnCommandTest {
             advanceUntilIdle()
 
             val url = "https://manage/warnings/create?uuid=$id"
-            verify(sender).sendRichMessage("<gray>Click the link below to create a warning for this player</gray>")
-            verify(sender).sendRichMessage("<click:OPEN_URL:$url><aqua><underlined>$url</underlined></aqua></click>")
+            verify(sender).sendMessage(l10n.warnings.warningCreationInstructions)
+            verify(sender).sendMessage(l10n.warnings.warningCreationLink(url))
         }
 
     @Test
@@ -62,7 +63,7 @@ class WarnCommandTest {
             advanceUntilIdle()
 
             val url = "http://localhost/manage/warnings/create?uuid=Offline"
-            verify(sender).sendRichMessage("<click:OPEN_URL:$url><aqua><underlined>$url</underlined></aqua></click>")
+            verify(sender).sendMessage(l10n.warnings.warningCreationLink(url))
         }
 
     private fun dispatcher(executor: CoroutineScopeCommandTaskExecutor): CommandDispatcher<CommandSourceStack> {

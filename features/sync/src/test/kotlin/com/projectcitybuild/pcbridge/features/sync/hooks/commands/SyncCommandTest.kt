@@ -1,6 +1,7 @@
 package com.projectcitybuild.pcbridge.features.sync.hooks.commands
 
 import com.mojang.brigadier.CommandDispatcher
+import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.features.sync.domain.actions.SyncPlayer
 import com.projectcitybuild.pcbridge.platform.paper.commands.CoroutineScopeCommandTaskExecutor
 import io.papermc.paper.command.brigadier.CommandSourceStack
@@ -37,7 +38,7 @@ class SyncCommandTest {
             runCurrent()
             advanceUntilIdle()
 
-            verify(player).sendRichMessage("<gray>Fetching player data...</gray>")
+            verify(player).sendMessage(l10n.sync.syncFetchingPlayerData)
             verify(syncPlayer).execute(playerUUID = playerId)
         }
 
@@ -56,9 +57,9 @@ class SyncCommandTest {
             runCurrent()
             advanceUntilIdle()
 
-            verify(sender).sendRichMessage("<gray>Fetching player data for Steve...</gray>")
+            verify(sender).sendMessage(l10n.sync.syncFetchingPlayerDataFor("Steve"))
             verify(syncPlayer).execute(playerUUID = playerId)
-            verify(sender).sendRichMessage("<green>Player data synced</green>")
+            verify(sender).sendMessage(l10n.sync.syncPlayerDataSynced)
         }
 
     @Test
@@ -75,7 +76,7 @@ class SyncCommandTest {
             runCurrent()
             advanceUntilIdle()
 
-            verify(player).sendRichMessage("<gray>Fetching player data...</gray>")
+            verify(player).sendMessage(l10n.sync.syncFetchingPlayerData)
             verify(syncPlayer).execute(playerUUID = playerId)
         }
 

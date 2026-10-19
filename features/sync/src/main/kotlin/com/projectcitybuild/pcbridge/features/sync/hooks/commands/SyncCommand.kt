@@ -1,5 +1,6 @@
 package com.projectcitybuild.pcbridge.features.sync.hooks.commands
 
+import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.features.sync.SyncPermissions
 import com.projectcitybuild.pcbridge.features.sync.domain.actions.SyncPlayer
 import com.projectcitybuild.pcbridge.features.sync.syncTracer
@@ -35,7 +36,7 @@ class SyncCommand(
     private suspend fun syncSelf(context: PaperCommandContext) = context.scoped(syncTracer) {
         val player = context.source.requirePlayer()
 
-        player.sendRichMessage("<gray>Fetching player data...</gray>")
+        player.sendMessage(l10n.sync.syncFetchingPlayerData)
         syncPlayer.execute(playerUUID = player.uniqueId)
     }
 
@@ -47,8 +48,8 @@ class SyncCommand(
             syncSelf(context)
             return@scoped
         }
-        sender.sendRichMessage("<gray>Fetching player data for ${player.name}...</gray>")
+        sender.sendMessage(l10n.sync.syncFetchingPlayerDataFor(player.name))
         syncPlayer.execute(playerUUID = player.uniqueId)
-        sender.sendRichMessage("<green>Player data synced</green>")
+        sender.sendMessage(l10n.sync.syncPlayerDataSynced)
     }
 }

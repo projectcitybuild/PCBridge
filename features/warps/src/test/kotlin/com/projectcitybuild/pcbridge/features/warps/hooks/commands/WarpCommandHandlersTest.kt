@@ -1,6 +1,7 @@
 package com.projectcitybuild.pcbridge.features.warps.hooks.commands
 
 import com.mojang.brigadier.CommandDispatcher
+import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.core.pcbridgeapi.pcb.models.PaginatedList
 import com.projectcitybuild.pcbridge.core.pcbridgeapi.pcb.models.RemoteConfigKeyValues
 import com.projectcitybuild.pcbridge.core.pcbridgeapi.pcb.models.RemoteConfigVersion
@@ -59,7 +60,7 @@ class WarpCommandHandlersTest {
 
             verify(repository).create("Market", location)
             verify(broadcaster).broadcast(any<WarpCreateEvent>())
-            verify(player).sendMessage(com.projectcitybuild.pcbridge.core.l10n.l10n.warpCreated("Market"))
+            verify(player).sendMessage(l10n.warps.warpCreated("Market"))
         }
 
     @Test
@@ -72,7 +73,7 @@ class WarpCommandHandlersTest {
 
             verify(repository).delete("Market")
             verify(broadcaster).broadcast(any<WarpDeleteEvent>())
-            verify(player).sendMessage(com.projectcitybuild.pcbridge.core.l10n.l10n.warpDeleted("Market"))
+            verify(player).sendMessage(l10n.warps.warpDeleted("Market"))
         }
 
     @Test
@@ -84,7 +85,7 @@ class WarpCommandHandlersTest {
             runCommand(this, warpsCommand(executor), "warps list 4")
 
             verify(repository).all(4, 15)
-            verify(player).sendMessage(com.projectcitybuild.pcbridge.core.l10n.l10n.errorPageNotFound)
+            verify(player).sendMessage(l10n.pagination.errorPageNotFound)
         }
 
     @Test
@@ -96,7 +97,7 @@ class WarpCommandHandlersTest {
             runCommand(this, warpsCommand(executor), "warps move Market")
 
             verify(repository).move("Market", location)
-            verify(player).sendMessage(com.projectcitybuild.pcbridge.core.l10n.l10n.warpMoved("Market"))
+            verify(player).sendMessage(l10n.warps.warpMoved("Market"))
         }
 
     @Test
@@ -132,7 +133,7 @@ class WarpCommandHandlersTest {
                 eq(PlayerTeleportEvent.TeleportCause.COMMAND),
                 eq(PlayerTeleporter.TeleportOptions()),
             )
-            verify(player).sendMessage(com.projectcitybuild.pcbridge.core.l10n.l10n.teleportedToName("Market"))
+            verify(player).sendMessage(l10n.teleportation.teleportedToName("Market"))
         }
 
     @Test
@@ -166,7 +167,7 @@ class WarpCommandHandlersTest {
             runCommand(this, command, "warps")
 
             verify(repository).all(1, 15)
-            verify(player).sendMessage(com.projectcitybuild.pcbridge.core.l10n.l10n.noWarpsFound)
+            verify(player).sendMessage(l10n.warps.noWarpsFound)
         }
 
     private fun warpsCommand(

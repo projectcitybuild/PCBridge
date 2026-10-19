@@ -46,7 +46,7 @@ class SpawnCommandTest {
                 destination = spawn,
                 cause = PlayerTeleportEvent.TeleportCause.COMMAND,
             )
-            verify(player).sendMessage(l10n.teleportedToSpawn)
+            verify(player).sendMessage(l10n.spawns.teleportedToSpawn)
         }
 
     private fun command(scope: CoroutineScope) =

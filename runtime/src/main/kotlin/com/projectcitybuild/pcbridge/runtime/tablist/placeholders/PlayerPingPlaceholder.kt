@@ -2,13 +2,13 @@ package com.projectcitybuild.pcbridge.runtime.tablist.placeholders
 
 import com.github.shynixn.mccoroutine.bukkit.minecraftDispatcher
 import com.projectcitybuild.pcbridge.core.utils.Cancellable
+import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.core.observability.logging.logSync
 import com.projectcitybuild.pcbridge.platform.paper.scheduling.SpigotTimer
 import com.projectcitybuild.pcbridge.runtime.tablist.TabRenderer
 import com.projectcitybuild.pcbridge.runtime.tablist.UpdatableTabPlaceholder
 import kotlinx.coroutines.withContext
 import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.Server
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -31,7 +31,7 @@ class PlayerPingPlaceholder(
 
     override suspend fun value(player: Player): Component {
         val ping = player.ping
-        return MiniMessage.miniMessage().deserialize(" <gray>$ping</gray>")
+        return l10n.tablist.playerPing(ping)
     }
 
     @EventHandler(priority = EventPriority.MONITOR)

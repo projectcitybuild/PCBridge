@@ -1,5 +1,6 @@
 package com.projectcitybuild.pcbridge.features.warnings.commands
 
+import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.features.warnings.WarningsPermissions
 import com.projectcitybuild.pcbridge.features.warnings.warningsTracer
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
@@ -42,11 +43,7 @@ class WarnCommand(
         val url = manageBaseUrl + "warnings/create?uuid=$lookup"
 
         val sender = context.source.sender
-        sender.sendRichMessage(
-            "<gray>Click the link below to create a warning for this player</gray>",
-        )
-        sender.sendRichMessage(
-            "<click:OPEN_URL:$url><aqua><underlined>$url</underlined></aqua></click>",
-        )
+        sender.sendMessage(l10n.warnings.warningCreationInstructions)
+        sender.sendMessage(l10n.warnings.warningCreationLink(url))
     }
 }

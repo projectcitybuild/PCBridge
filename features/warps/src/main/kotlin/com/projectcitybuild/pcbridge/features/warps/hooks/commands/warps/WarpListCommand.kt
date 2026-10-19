@@ -47,23 +47,21 @@ class WarpListCommand(
         if (warps.data.isEmpty()) {
             sender.sendMessage(
                 if (pageNumber == 1) {
-                    l10n.noWarpsFound
+                    l10n.warps.noWarpsFound
                 } else {
-                    l10n.errorPageNotFound
+                    l10n.pagination.errorPageNotFound
                 },
             )
             return@scoped
         }
         val message =
-            PageComponentBuilder().build(
-                title = "Warps",
+            PageComponentBuilder().buildWithComponents(
+                title = l10n.warps.warpsListTitle,
                 paginated = warps,
                 pageCommand = { index -> "/warps list $index" },
                 itemClickCommand = { "/warp ${it.name}" },
-                itemHover = { "Teleport to ${it.name}" },
-                itemDecorator = {
-                    "<gray>\"<aqua><u>${it.name}</u></aqua>\" (${it.world})</gray>"
-                },
+                itemHover = { l10n.lists.teleportTo(it.name) },
+                itemDecorator = { l10n.warps.warpListItem(it.name, it.world) },
             )
         sender.sendMessage(message)
     }

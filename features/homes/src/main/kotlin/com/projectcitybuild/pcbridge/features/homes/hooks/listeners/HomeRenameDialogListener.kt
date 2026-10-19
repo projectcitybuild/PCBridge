@@ -41,11 +41,11 @@ class HomeRenameDialogListener(
             val player = connection?.player ?: return@scoped
 
             if (newName.isNullOrEmpty()) {
-                player.sendRichMessage("<red>Error: New name cannot be empty</red>")
+                player.sendMessage(l10n.errors.errorNewNameCannotBeEmpty)
                 return@scoped
             }
             if (homeId.isNullOrEmpty()) {
-                player.sendRichMessage("<red>Error: Home not found</red>")
+                player.sendMessage(l10n.homes.errorRenameHomeNotFound)
                 throw Exception("Rename failed: home id was null")
             }
             try {
@@ -54,9 +54,9 @@ class HomeRenameDialogListener(
                     newName = newName,
                     player = player,
                 )
-                player.sendMessage(l10n.homeRenamed(newName))
+                player.sendMessage(l10n.homes.homeRenamed(newName))
             } catch (e: Exception) {
-                player.sendRichMessage("<red>Error: ${e.message}</red>")
+                player.sendMessage(l10n.errors.errorWithMessage(e.message))
                 throw e
             }
         }

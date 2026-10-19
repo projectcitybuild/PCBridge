@@ -1,6 +1,7 @@
 package com.projectcitybuild.pcbridge.features.pim.hooks.commands
 
 import com.mojang.brigadier.CommandDispatcher
+import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.features.pim.PimPermissions
 import com.projectcitybuild.pcbridge.features.pim.hooks.commands.roles.RolesDebugCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.CoroutineScopeCommandTaskExecutor
@@ -42,8 +43,6 @@ class RolesDebugCommandTest {
             runCurrent()
 
             verify(provider).setUserRoles(playerId, setOf("builder", "staff"))
-            verify(player).sendRichMessage(
-                "<red>Your roles have been set to builder,staff</red>\n<gray>Use /sync or reconnect to revert this</gray>",
-            )
+            verify(player).sendMessage(l10n.pim.rolesSet("builder,staff"))
         }
 }

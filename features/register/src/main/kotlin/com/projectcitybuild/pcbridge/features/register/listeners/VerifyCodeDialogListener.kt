@@ -44,7 +44,7 @@ class VerifyCodeDialogListener(
         val player = connection?.player ?: return@scoped
 
         if (code.isNullOrEmpty()) {
-            val dialog = errorDialogFactory(l10n.errorNoCodeSpecified)
+            val dialog = errorDialogFactory(l10n.registration.errorNoCodeSpecified)
             player.showDialog(dialog)
             return@scoped
         }
@@ -54,11 +54,11 @@ class VerifyCodeDialogListener(
                 code = code,
                 playerUUID = player.uniqueId,
             )
-            player.sendMessage(l10n.registrationComplete)
+            player.sendMessage(l10n.registration.registrationComplete)
             syncPlayer.execute(playerUUID = player.uniqueId)
 
         } catch (_: ResponseParserError.NotFound) {
-            val dialog = errorDialogFactory(l10n.errorCodeInvalidOrExpired)
+            val dialog = errorDialogFactory(l10n.registration.errorCodeInvalidOrExpired)
             player.showDialog(dialog)
             return@scoped
         }

@@ -48,7 +48,7 @@ class SetSpawnCommandTest {
             verify(eventBroadcaster).broadcast(eventCaptor.capture())
             org.junit.jupiter.api.Assertions.assertEquals(worldId, eventCaptor.firstValue.worldId)
             org.junit.jupiter.api.Assertions.assertEquals(location, eventCaptor.firstValue.location)
-            verify(player).sendMessage(l10n.spawnSet(location))
+            verify(player).sendMessage(l10n.spawns.spawnSet(location))
         }
 
     private fun command(scope: CoroutineScope) =

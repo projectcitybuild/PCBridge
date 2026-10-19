@@ -43,7 +43,7 @@ class KickCommandTest {
             advanceUntilIdle()
 
             verify(target).kick(net.kyori.adventure.text.Component.text("Griefing"), PlayerKickEvent.Cause.KICK_COMMAND)
-            verify(server).broadcast(l10n.playerWasKickedForReason("Steve", "Griefing"))
+            verify(server).broadcast(l10n.moderation.playerWasKickedForReason("Steve", "Griefing"))
         }
 
     @Test
@@ -62,8 +62,8 @@ class KickCommandTest {
             runCurrent()
             advanceUntilIdle()
 
-            verify(target).kick(l10n.kickedFromServer, PlayerKickEvent.Cause.KICK_COMMAND)
-            verify(server).broadcast(l10n.playerWasKicked("Steve"))
+            verify(target).kick(l10n.moderation.kickedFromServer, PlayerKickEvent.Cause.KICK_COMMAND)
+            verify(server).broadcast(l10n.moderation.playerWasKicked("Steve"))
         }
 
     private fun source(): CommandSourceStack =

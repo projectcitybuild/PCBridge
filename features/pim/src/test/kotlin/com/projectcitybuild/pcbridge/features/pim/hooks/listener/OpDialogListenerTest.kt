@@ -1,5 +1,6 @@
 package com.projectcitybuild.pcbridge.features.pim.hooks.listener
 
+import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.features.pim.domain.services.OpElevationService
 import com.projectcitybuild.pcbridge.features.pim.hooks.dialogs.ConfirmOpElevateDialog
 import io.papermc.paper.connection.PlayerGameConnection
@@ -40,7 +41,7 @@ class OpDialogListenerTest {
 
             listener.onPlayerCustomClickEvent(event)
 
-            verify(player).sendRichMessage("<red>Error: elevation reason is required</red>")
+            verify(player).sendMessage(l10n.pim.errorOpElevationReasonRequired)
             verify(service, never()).elevate(any(), any())
         }
 

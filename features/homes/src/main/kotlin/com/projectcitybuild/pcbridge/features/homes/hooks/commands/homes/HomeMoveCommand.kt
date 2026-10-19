@@ -43,7 +43,7 @@ class HomeMoveCommand(
                 location = player.location,
             )
         context.source.sender.sendMessage(
-            l10n.homeMoved(home.name),
+            l10n.homes.homeMoved(home.name),
         )
     }
 }

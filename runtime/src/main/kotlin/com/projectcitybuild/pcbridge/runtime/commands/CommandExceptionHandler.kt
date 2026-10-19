@@ -1,5 +1,6 @@
 package com.projectcitybuild.pcbridge.runtime.commands
 
+import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.core.http.parsing.ResponseParserError
 import com.projectcitybuild.pcbridge.core.observability.logging.logSync
 import com.projectcitybuild.pcbridge.runtime.cooldowns.CooldownException
@@ -11,24 +12,25 @@ class CommandExceptionHandler private constructor() {
             sender: CommandSender,
             e: Throwable,
         ) = when (e) {
-            is IllegalStateException -> sender.sendError("Error: ${e.message}")
+            is IllegalStateException -> sender.sendMessage(l10n.errors.commandErrorWithPrefix(e.message ?: "null"))
             is ResponseParserError ->
                 when (e) {
-                    is ResponseParserError.Validation -> sender.sendError("Error: ${e.message ?: "Validation failed"}")
-                    is ResponseParserError.NotFound -> sender.sendError("Error: ${e.message ?: "Not Found"}")
-                    is ResponseParserError.Forbidden -> sender.sendError("Error: Not permitted to perform this action")
-                    is ResponseParserError.Conflict -> sender.sendError("Error: ${e.message ?: "Conflict"}")
+                    is ResponseParserError.Validation ->
+                        sender.sendMessage(e.message?.let(l10n.errors::commandErrorWithPrefix) ?: l10n.errors.commandErrorValidationFailed)
+                    is ResponseParserError.NotFound ->
+                        sender.sendMessage(e.message?.let(l10n.errors::commandErrorWithPrefix) ?: l10n.errors.commandErrorNotFound)
+                    is ResponseParserError.Forbidden -> sender.sendMessage(l10n.errors.commandErrorNotPermitted)
+                    is ResponseParserError.Conflict ->
+                        sender.sendMessage(e.message?.let(l10n.errors::commandErrorWithPrefix) ?: l10n.errors.commandErrorConflict)
                 }
             is CooldownException ->
-                sender.sendError(
-                    "Error: Please wait ${e.remainingTime.inWholeMilliseconds} seconds before trying again",
+                sender.sendMessage(
+                    l10n.errors.commandErrorCooldown(e.remainingTime.inWholeMilliseconds),
                 )
             else -> {
-                sender.sendError("An unexpected error occurred")
+                sender.sendMessage(l10n.errors.commandUnexpectedError)
                 logSync.error(e) { "Failed to execute command" }
             }
         }
     }
 }
-
-private fun CommandSender.sendError(message: String) = sendRichMessage("<red>$message</red>")

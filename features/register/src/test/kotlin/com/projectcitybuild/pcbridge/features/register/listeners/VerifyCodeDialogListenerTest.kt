@@ -1,6 +1,7 @@
 package com.projectcitybuild.pcbridge.features.register.listeners
 
 import com.projectcitybuild.pcbridge.core.http.parsing.ResponseParserError
+import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.core.pcbridgeapi.pcb.services.RegisterHttpService
 import com.projectcitybuild.pcbridge.features.register.dialogs.VerifyRegistrationCodeDialog
 import com.projectcitybuild.pcbridge.features.sync.domain.actions.SyncPlayer
@@ -61,7 +62,7 @@ class VerifyCodeDialogListenerTest {
             listener.onPlayerCustomClickEvent(event)
 
             verify(registerService).verifyCode(code = "123456", playerUUID = playerId)
-            verify(player).sendMessage(com.projectcitybuild.pcbridge.core.l10n.l10n.registrationComplete)
+            verify(player).sendMessage(l10n.registration.registrationComplete)
             verify(syncPlayer).execute(playerUUID = playerId)
         }
 

@@ -1,5 +1,6 @@
 package com.projectcitybuild.pcbridge.features.bans.hooks.listeners
 
+import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.core.observability.logging.logSync
 import com.projectcitybuild.pcbridge.core.support.java.uuidFromUnsanitizedString
 import com.projectcitybuild.pcbridge.features.bans.bansTracer
@@ -9,7 +10,6 @@ import com.projectcitybuild.pcbridge.platform.paper.utilities.SpigotSanitizer
 import com.projectcitybuild.pcbridge.runtime.listeners.scopedSync
 import com.projectcitybuild.pcbridge.runtime.webhooks.events.WebhookReceivedEvent
 import com.projectcitybuild.pcbridge.platform.webserver.data.WebhookEvent
-import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.Server
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -44,9 +44,7 @@ class BanWebhookListener(
                 ban.toMiniMessage(),
                 PlayerKickEvent.Cause.IP_BANNED,
             )
-            server.broadcast(
-                MiniMessage.miniMessage().deserialize("<gray>${matchingPlayer.name} has been banned</gray>"),
-            )
+            server.broadcast(l10n.bans.playerBannedAnnouncement(matchingPlayer.name))
         }
 
     @EventHandler
@@ -74,8 +72,6 @@ class BanWebhookListener(
                 ban.toMiniMessage(),
                 PlayerKickEvent.Cause.BANNED,
             )
-            server.broadcast(
-                MiniMessage.miniMessage().deserialize("<gray>${matchingPlayer.name} has been banned</gray>"),
-            )
+            server.broadcast(l10n.bans.playerBannedAnnouncement(matchingPlayer.name))
         }
 }

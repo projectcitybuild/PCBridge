@@ -43,25 +43,23 @@ class BuildListCommand(
         if (builds.data.isEmpty()) {
             sender.sendMessage(
                 if (pageNumber == 1) {
-                    l10n.errorNoBuildsFound
+                    l10n.builds.errorNoBuildsFound
                 } else {
-                    l10n.errorPageNotFound
+                    l10n.pagination.errorPageNotFound
                 },
             )
             return@scoped
         }
         val message =
-            PageComponentBuilder().build(
-                title = "Build List",
+            PageComponentBuilder().buildWithComponents(
+                title = l10n.builds.buildListTitle,
                 items = builds.data,
                 pageNumber = pageNumber,
                 totalPages = totalPages,
                 pageCommand = { index -> "/builds list $index" },
                 itemClickCommand = { "/build ${it.name}" },
-                itemHover = { "Teleport to ${it.name}" },
-                itemDecorator = {
-                    "<gray>#${it.id} \"<aqua>${it.name}</aqua>\" (<white>${it.votes}</white> votes)</gray>"
-                },
+                itemHover = { l10n.lists.teleportTo(it.name) },
+                itemDecorator = { l10n.builds.buildListItem(it.id, it.name, it.votes) },
             )
         sender.sendMessage(message)
     }

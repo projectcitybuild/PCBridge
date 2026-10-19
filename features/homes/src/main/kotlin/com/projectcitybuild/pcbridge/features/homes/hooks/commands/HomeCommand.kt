@@ -47,10 +47,10 @@ class HomeCommand(
         val name = context.getArgument("name", String::class.java)
 
         val home = homeRepository.get(player.uniqueId, name)
-        checkNotNull(home) { l10n.errorHomeNotFound(name) }
+        checkNotNull(home) { l10n.homes.errorHomeNotFound(name) }
 
         val world = server.getWorld(home.world)
-        checkNotNull(world) { l10n.errorWorldNotFound(home.world) }
+        checkNotNull(world) { l10n.errors.errorWorldNotFound(home.world) }
 
         playerTeleporter.move(
             player,
@@ -58,7 +58,7 @@ class HomeCommand(
             cause = PlayerTeleportEvent.TeleportCause.COMMAND,
         )
         context.source.sender.sendMessage(
-            l10n.teleportedToName(home.name),
+            l10n.teleportation.teleportedToName(home.name),
         )
     }
 }

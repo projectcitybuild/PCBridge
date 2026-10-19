@@ -1,5 +1,6 @@
 package com.projectcitybuild.pcbridge.features.config.hooks.commands
 
+import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.features.config.ConfigPermissions
 import com.projectcitybuild.pcbridge.features.config.configTracer
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
@@ -32,8 +33,8 @@ class ConfigCommand(
     private suspend fun execute(context: PaperCommandContext) = context.scoped(configTracer) {
         val sender = context.source.sender
 
-        sender.sendRichMessage("<gray>Fetching config...</gray>")
+        sender.sendMessage(l10n.config.configFetching)
         remoteConfig.fetch()
-        sender.sendRichMessage("<green>Remote config reloaded</green>")
+        sender.sendMessage(l10n.config.configReloaded)
     }
 }

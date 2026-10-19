@@ -64,7 +64,7 @@ class TeleportServiceTest {
 
         application.random(player)
 
-        verify(player).sendMessage(l10n.errorTeleportPermission)
+        verify(player).sendMessage(l10n.teleportation.errorTeleportPermission)
         verifyNoInteractions(cooldown, findRandomLocation, playerTeleporter)
     }
 
@@ -80,7 +80,7 @@ class TeleportServiceTest {
         application.random(player)
 
         verify(cooldown).throttle(5.seconds, player, "rtp")
-        verify(player).sendMessage(l10n.searchingForSafeLocation)
+        verify(player).sendMessage(l10n.teleportation.searchingForSafeLocation)
         verify(playerTeleporter).move(
             eq(player),
             eq(candidate),
@@ -93,7 +93,7 @@ class TeleportServiceTest {
                 ),
             ),
         )
-        verify(player).sendMessage(l10n.teleportedToCoordinate(12, 64, -8))
+        verify(player).sendMessage(l10n.teleportation.teleportedToCoordinate(12, 64, -8))
     }
 
     @Test
@@ -103,7 +103,7 @@ class TeleportServiceTest {
 
         application.random(player)
 
-        verify(player).sendMessage(l10n.errorCouldNotFindSafeLocation)
+        verify(player).sendMessage(l10n.teleportation.errorCouldNotFindSafeLocation)
         verifyNoInteractions(playerTeleporter)
     }
 
@@ -114,7 +114,7 @@ class TeleportServiceTest {
 
         application.to(requester, target, TeleportFlags(force = true, silent = true))
 
-        verify(requester).sendMessage(l10n.errorTeleportPermission)
+        verify(requester).sendMessage(l10n.teleportation.errorTeleportPermission)
         verify(target, never()).sendMessage(any<Component>())
         verifyNoInteractions(playerTeleporter)
     }
@@ -209,7 +209,7 @@ class TeleportServiceTest {
         )
         assertEquals(requesterLocation.world, destination.firstValue.world)
         assertEquals(requesterLocation.x, destination.firstValue.x)
-        verify(hereRequester).sendMessage(l10n.teleportReceived(hereTarget.name))
+        verify(hereRequester).sendMessage(l10n.teleportation.teleportReceived(hereTarget.name))
     }
 
     @Test
@@ -224,7 +224,7 @@ class TeleportServiceTest {
         application.send(operator, selected, target, TeleportFlags(silent = true))
 
         verifyNoInteractions(playerTeleporter)
-        verify(selected).sendMessage(l10n.teleportHereRequestReceived(target.name))
+        verify(selected).sendMessage(l10n.teleportation.teleportHereRequestReceived(target.name))
 
         application.accept(selected, target.uniqueId)
 
@@ -237,7 +237,7 @@ class TeleportServiceTest {
         )
         assertEquals(targetLocation.world, destination.firstValue.world)
         assertEquals(targetLocation.x, destination.firstValue.x)
-        verify(target, never()).sendMessage(l10n.teleportReceived(selected.name))
+        verify(target, never()).sendMessage(l10n.teleportation.teleportReceived(selected.name))
     }
 
     @Test
@@ -250,7 +250,7 @@ class TeleportServiceTest {
 
         application.send(unauthorized, selected, target, TeleportFlags(force = true))
 
-        verify(unauthorized).sendMessage(l10n.errorTeleportPermission)
+        verify(unauthorized).sendMessage(l10n.teleportation.errorTeleportPermission)
         verifyNoInteractions(playerTeleporter)
 
         val authorized = player("Admin", TeleportationPermissions.OTHERS, TeleportationPermissions.FORCE)
@@ -306,7 +306,7 @@ class TeleportServiceTest {
 
         application.all(unauthorized, target, TeleportFlags(force = true))
 
-        verify(unauthorized).sendMessage(l10n.errorTeleportPermission)
+        verify(unauthorized).sendMessage(l10n.teleportation.errorTeleportPermission)
         verifyNoInteractions(playerTeleporter)
 
         val authorized = player("Admin", TeleportationPermissions.ALL, TeleportationPermissions.FORCE)
@@ -327,7 +327,7 @@ class TeleportServiceTest {
 
         application.here(operator, target, TeleportFlags(force = true))
 
-        verify(operator).sendMessage(l10n.errorTeleportPermission)
+        verify(operator).sendMessage(l10n.teleportation.errorTeleportPermission)
         verifyNoInteractions(playerTeleporter)
     }
 
@@ -361,14 +361,14 @@ class TeleportServiceTest {
 
         application.deny(target, requester.uniqueId)
 
-        verify(target).sendMessage(l10n.teleportRequestDenied(requester.name))
-        verify(requester).sendMessage(l10n.teleportRequestWasDenied(target.name))
+        verify(target).sendMessage(l10n.teleportation.teleportRequestDenied(requester.name))
+        verify(requester).sendMessage(l10n.teleportation.teleportRequestWasDenied(target.name))
 
         requests.create(requester.uniqueId, requester.name, target.uniqueId, target.name, silent = false)
         application.cancel(requester)
 
-        verify(requester).sendMessage(l10n.teleportRequestCancelled(target.name))
-        verify(target).sendMessage(l10n.teleportRequestWasCancelled(requester.name))
+        verify(requester).sendMessage(l10n.teleportation.teleportRequestCancelled(target.name))
+        verify(target).sendMessage(l10n.teleportation.teleportRequestWasCancelled(requester.name))
     }
 
     @Test
@@ -378,7 +378,7 @@ class TeleportServiceTest {
 
         application.back(player, player)
 
-        verify(player).sendMessage(l10n.errorTeleportHistoryMissing)
+        verify(player).sendMessage(l10n.teleportation.errorTeleportHistoryMissing)
         verifyNoInteractions(playerTeleporter)
     }
 

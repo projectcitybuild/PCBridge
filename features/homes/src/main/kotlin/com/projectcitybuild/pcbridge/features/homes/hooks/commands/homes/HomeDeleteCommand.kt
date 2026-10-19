@@ -41,7 +41,7 @@ class HomeDeleteCommand(
             name = name,
         )
         context.source.sender.sendMessage(
-            l10n.homeDeleted(name),
+            l10n.homes.homeDeleted(name),
         )
     }
 }

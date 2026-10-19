@@ -1,6 +1,7 @@
 package com.projectcitybuild.pcbridge.features.builds.hooks.commands
 
 import com.mojang.brigadier.CommandDispatcher
+import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.core.pcbridgeapi.pcb.models.Build
 import com.projectcitybuild.pcbridge.core.pcbridgeapi.pcb.models.PaginatedList
 import com.projectcitybuild.pcbridge.features.builds.domain.data.EditableBuildField
@@ -30,7 +31,6 @@ import org.bukkit.plugin.Plugin
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.mock
-import org.mockito.Mockito.never
 import org.mockito.Mockito.verify
 import org.mockito.kotlin.any
 import org.mockito.kotlin.eq
@@ -66,7 +66,7 @@ class BuildCommandHandlersTest {
             runCommand(this, buildsCommand(executor), "builds create Sky Base")
 
             verify(repository).create("Sky Base", "world", location, player)
-            verify(player).sendRichMessage("<green>Sky Base created</green>")
+            verify(player).sendMessage(l10n.builds.buildCreated("Sky Base"))
             verify(server).broadcast(any<Component>())
         }
 
@@ -78,7 +78,7 @@ class BuildCommandHandlersTest {
             runCommand(this, buildsCommand(executor), "builds delete Old Base")
 
             verify(repository).delete("Old Base", player)
-            verify(player).sendRichMessage("<green>Old Base deleted</green>")
+            verify(player).sendMessage(l10n.builds.buildDeleted("Old Base"))
         }
 
     @Test
@@ -90,7 +90,7 @@ class BuildCommandHandlersTest {
             runCommand(this, buildsCommand(executor), "builds edit Missing")
 
             verify(repository).get("Missing")
-            verify(player, never()).sendMessage(any<Component>())
+            verify(player).sendMessage(l10n.errors.commandErrorWithPrefix("Build not found"))
         }
 
     @Test
@@ -113,7 +113,7 @@ class BuildCommandHandlersTest {
             runCommand(this, buildsCommand(executor), "builds list 3")
 
             verify(repository).all(3)
-            verify(player).sendMessage(com.projectcitybuild.pcbridge.core.l10n.l10n.errorPageNotFound)
+            verify(player).sendMessage(l10n.pagination.errorPageNotFound)
         }
 
     @Test
@@ -129,7 +129,7 @@ class BuildCommandHandlersTest {
             runCommand(this, buildsCommand(executor), "builds move Main Base")
 
             verify(repository).update("Main Base", "world", location, player)
-            verify(player).sendRichMessage("<green>Main Base moved to your location</green>")
+            verify(player).sendMessage(l10n.builds.buildMoved("Main Base"))
         }
 
     @Test
@@ -140,7 +140,7 @@ class BuildCommandHandlersTest {
             runCommand(this, buildsCommand(executor), "builds set 42 LORE A detailed legend")
 
             verify(repository).set(42, player, EditableBuildField.LORE, "A detailed legend")
-            verify(player).sendRichMessage("<green>Build updated</green>")
+            verify(player).sendMessage(l10n.builds.buildUpdated)
         }
 
     @Test
@@ -152,7 +152,7 @@ class BuildCommandHandlersTest {
             runCommand(this, buildsCommand(executor), "builds unvote Main Base")
 
             verify(repository).unvote("Main Base", player)
-            verify(player).sendRichMessage("<gray>You removed your vote for Main Base</gray>")
+            verify(player).sendMessage(l10n.builds.buildVoteRemoved("Main Base"))
         }
 
     @Test
@@ -167,7 +167,7 @@ class BuildCommandHandlersTest {
             runCommand(this, buildsCommand(executor), "builds vote Main Base")
 
             verify(repository).vote("Main Base", player)
-            verify(player).sendRichMessage("<green>You voted for Main Base</green>")
+            verify(player).sendMessage(l10n.builds.buildVoteRecorded("Main Base"))
             verify(server).broadcast(any<Component>())
         }
 
@@ -190,7 +190,7 @@ class BuildCommandHandlersTest {
                 eq(PlayerTeleporter.TeleportOptions(preloadDestinationChunk = true)),
             )
             verify(player).showTitle(any<Title>())
-            verify(player).sendRichMessage("<gray>Teleported to <aqua>Main Base</aqua></gray>")
+            verify(player).sendMessage(l10n.builds.buildTeleportedTo("Main Base"))
         }
 
     @Test
@@ -207,7 +207,7 @@ class BuildCommandHandlersTest {
             runCommand(this, command, "builds")
 
             verify(repository).all(1)
-            verify(player).sendMessage(com.projectcitybuild.pcbridge.core.l10n.l10n.errorNoBuildsFound)
+            verify(player).sendMessage(l10n.builds.errorNoBuildsFound)
         }
 
     private fun buildsCommand(executor: CoroutineScopeCommandTaskExecutor) =

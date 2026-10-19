@@ -1,11 +1,11 @@
 package com.projectcitybuild.pcbridge.features.maintenance.hooks.middleware
 
+import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.core.pcbridgeapi.pcb.models.Authorization
 import com.projectcitybuild.pcbridge.features.maintenance.domain.data.maintenanceStateKey
 import com.projectcitybuild.pcbridge.runtime.connection.middleware.ConnectionMiddleware
 import com.projectcitybuild.pcbridge.runtime.connection.middleware.ConnectionResult
 import com.projectcitybuild.pcbridge.runtime.state.store.Store
-import net.kyori.adventure.text.minimessage.MiniMessage
 import java.net.InetAddress
 import java.util.UUID
 
@@ -23,9 +23,8 @@ class MaintenanceConnectionMiddleware(
         if (playerData != null && playerData.isStaff) {
             return ConnectionResult.Allowed
         }
-        val message = "<bold>Server Maintenance</bold><newline><newline><gray>Please try again later</gray>"
         return ConnectionResult.Denied(
-            reason = MiniMessage.miniMessage().deserialize(message),
+            reason = l10n.maintenance.maintenanceConnectionDenied,
         )
     }
 }

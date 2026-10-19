@@ -47,22 +47,28 @@ class HomeListCommand(
         if (homes.data.isEmpty()) {
             player.sendMessage(
                 if (pageNumber == 1) {
-                    l10n.noHomesFound
+                    l10n.homes.noHomesFound
                 } else {
-                    l10n.errorPageNotFound
+                    l10n.pagination.errorPageNotFound
                 },
             )
             return@scoped
         }
         val message =
-            PageComponentBuilder().build(
-                title = "Your Homes",
+            PageComponentBuilder().buildWithComponents(
+                title = l10n.homes.homesListTitle,
                 paginated = homes,
                 pageCommand = { index -> "/homes list $index" },
                 itemClickCommand = { "/home ${it.name}" },
-                itemHover = { "Teleport to ${it.name}" },
+                itemHover = { l10n.lists.teleportTo(it.name) },
                 itemDecorator = {
-                    "<aqua>${it.name}</aqua> <gray>(${it.world}: ${it.x.toInt()}, ${it.y.toInt()}, ${it.z.toInt()})</gray>"
+                    l10n.homes.homesListItem(
+                        it.name,
+                        it.world,
+                        it.x.toInt(),
+                        it.y.toInt(),
+                        it.z.toInt(),
+                    )
                 },
             )
         player.sendMessage(message)

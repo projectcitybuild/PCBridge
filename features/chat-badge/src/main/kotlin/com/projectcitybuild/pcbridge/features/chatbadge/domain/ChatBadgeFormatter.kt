@@ -1,9 +1,9 @@
 package com.projectcitybuild.pcbridge.features.chatbadge.domain
 
+import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.core.pcbridgeapi.pcb.models.Badge
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.HoverEvent
-import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.minimessage.MiniMessage
 
 class ChatBadgeFormatter {
@@ -16,12 +16,9 @@ class ChatBadgeFormatter {
         }
         val formattedBadge =
             Component.text().append(
-                Component.text("Badges")
-                    .color(NamedTextColor.YELLOW)
+                l10n.chatBadge.chatBadgeHeader
                     .appendNewline(),
-                Component.text("---")
-                    .color(NamedTextColor.GRAY)
-                    .appendNewline(),
+                l10n.chatBadge.chatBadgeDivider.appendNewline(),
             )
         badges.withIndex().forEach { (index, badge) ->
             formattedBadge.append(

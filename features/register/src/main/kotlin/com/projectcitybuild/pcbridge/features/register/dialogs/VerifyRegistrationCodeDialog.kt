@@ -23,7 +23,7 @@ class VerifyRegistrationCodeDialog {
         fun build(email: String?, error: Component? = null) = Dialog.create { builder ->
             builder.empty()
                 .base(
-                    DialogBase.builder(Component.text("Enter Code"))
+                    DialogBase.builder(l10n.registration.verifyRegistrationDialogTitle)
                         .afterAction(DialogBase.DialogAfterAction.CLOSE)
                         .body(body(email, error))
                         .inputs(listOf(
@@ -46,8 +46,8 @@ class VerifyRegistrationCodeDialog {
             }
             list.add(
                 DialogBody.plainMessage(
-                    if (email != null) l10n.codeHasBeenEmailedTo(email)
-                    else l10n.codeHasBeenEmailed
+                    if (email != null) l10n.registration.codeHasBeenEmailedTo(email)
+                    else l10n.registration.codeHasBeenEmailed
                 )
             )
             return list.toList()
@@ -61,21 +61,20 @@ class VerifyRegistrationCodeDialog {
 
         private fun codeInput() = DialogInput.text(
             codeKey,
-            Component.text("Code")
-                .append { Component.text("*").color(NamedTextColor.RED) }
+            l10n.registration.registrationCodeInputLabel
             )
             .maxLength(6)
             .build()
 
         private val verifyButton get() = ActionButton.create(
-            Component.text("Verify"),
+            l10n.registration.verifyRegistrationButton,
             null,
             100,
             DialogAction.customClick(verifyButtonKey, null),
             )
 
         private val cancelButton get() = ActionButton.create(
-            Component.text("Cancel").color(NamedTextColor.GRAY),
+            l10n.dialogs.dialogCancelButtonGray,
             null,
             100,
             null,

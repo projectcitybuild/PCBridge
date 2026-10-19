@@ -41,7 +41,7 @@ class BuildingCommandsTest {
             dispatch(command, "nv on", player, BuildingPermissions.NIGHT_VISION)
 
             assertTrue(enabled)
-            verify(player).sendMessage(l10n.nightVisionToggledOn)
+            verify(player).sendMessage(l10n.building.nightVisionToggledOn)
         }
 
     @Test
@@ -57,7 +57,7 @@ class BuildingCommandsTest {
             dispatch(command, "nv", player, BuildingPermissions.NIGHT_VISION)
 
             assertFalse(enabled)
-            verify(player).sendMessage(l10n.nightVisionToggledOff)
+            verify(player).sendMessage(l10n.building.nightVisionToggledOff)
         }
 
     @Test
@@ -110,7 +110,7 @@ class BuildingCommandsTest {
 
             assertEquals(Material.ITEM_FRAME, createdMaterial)
             verify(inventory).addItem(any())
-            verify(player).sendMessage(l10n.receivedInvisFrame)
+            verify(player).sendMessage(l10n.building.receivedInvisFrame)
         }
 
     @Test
@@ -135,7 +135,7 @@ class BuildingCommandsTest {
 
             assertEquals(Material.GLOW_ITEM_FRAME, createdMaterial)
             verify(inventory).addItem(any())
-            verify(player).sendMessage(l10n.receivedInvisFrameGlowing)
+            verify(player).sendMessage(l10n.building.receivedInvisFrameGlowing)
         }
 
     private suspend fun kotlinx.coroutines.test.TestScope.dispatch(

@@ -6,6 +6,6 @@ import org.bukkit.entity.Player
 
 fun CommandSourceStack.requirePlayer(): Player {
     val player = sender as? Player
-    checkNotNull(player) { l10n.errorOnlyPlayersCanUseThisCommand }
+    checkNotNull(player) { l10n.errors.errorOnlyPlayersCanUseThisCommand }
     return player
 }

@@ -7,6 +7,7 @@ import com.projectcitybuild.pcbridge.core.datetime.services.LocalizedTime
 import com.projectcitybuild.pcbridge.core.datetime.extensions.toISO8601
 import com.projectcitybuild.pcbridge.core.discord.DiscordSend
 import com.projectcitybuild.pcbridge.features.building.domain.data.ItemRenamedEvent
+import com.projectcitybuild.pcbridge.core.l10n.l10n
 import io.github.petertrr.diffutils.text.DiffRow
 import io.github.petertrr.diffutils.text.DiffRowGenerator
 import io.github.petertrr.diffutils.text.DiffTagGenerator
@@ -38,13 +39,13 @@ class ItemTextListener(
         if (lines.isEmpty() || description.isEmpty()) return
 
         val embed = DiscordEmbed(
-            title = "Sign Edited",
+            title = l10n.discord.discordSignEditedTitle,
             author = event.player.toDiscordEmbed(),
             description = description,
             timestamp = time.now().toISO8601(),
             fields = listOf(
               DiscordFieldEmbed(
-                  name = "Location",
+                  name = l10n.discord.discordLocationField,
                   value = event.block.location.toString(),
               ),
             ),
@@ -79,15 +80,17 @@ class ItemTextListener(
             )
 
             val embed = DiscordEmbed(
-                title = "Book Edited",
+                title = l10n.discord.discordBookEditedTitle,
                 author = event.player.toDiscordEmbed(),
-                description = diff.joinToString(separator = "\n---\n") { "[OLD] ${it.oldLine}\n[NEW] ${it.newLine}" },
+                description = diff.joinToString(separator = "\n${l10n.discord.discordTextDiffSeparator}\n") {
+                    l10n.discord.discordTextDiff(it.oldLine, it.newLine)
+                },
                 timestamp = time.now().toISO8601(),
                 fields = mutableListOf<DiscordFieldEmbed>().also {
                     if (nextMeta.title != null) {
                         it.add(
                             DiscordFieldEmbed(
-                                name = "Title",
+                                name = l10n.discord.discordTitleField,
                                 value = nextMeta.title,
                             )
                         )
@@ -95,7 +98,7 @@ class ItemTextListener(
                     if (nextMeta.author != null) {
                         it.add(
                             DiscordFieldEmbed(
-                                name = "Book Author",
+                                name = l10n.discord.discordBookAuthorField,
                                 value = nextMeta.author,
                             )
                         )
@@ -135,16 +138,16 @@ class ItemTextListener(
         val displayName = PlainTextComponentSerializer.plainText().serialize(event.displayName)
 
         val embed = DiscordEmbed(
-            title = "Item Renamed",
+            title = l10n.discord.discordItemRenamedTitle,
             author = event.player.toDiscordEmbed(),
             description = displayName,
             fields = listOf(
                 DiscordFieldEmbed(
-                    name = "Item",
+                    name = l10n.discord.discordItemField,
                     value = event.item.type.name,
                 ),
                 DiscordFieldEmbed(
-                    name = "Item Quantity",
+                    name = l10n.discord.discordItemQuantityField,
                     value = event.item.amount.toString(),
                 ),
             ),

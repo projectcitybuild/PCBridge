@@ -39,6 +39,6 @@ class SetSpawnCommand(
         eventBroadcaster.broadcast(
             SpawnUpdatedEvent(location.world.uid, location),
         )
-        player.sendMessage(l10n.spawnSet(location))
+        player.sendMessage(l10n.spawns.spawnSet(location))
     }
 }

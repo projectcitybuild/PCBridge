@@ -45,15 +45,15 @@ class KickCommand(
         val reason = context.getOptionalArgument("reason", String::class.java)
 
         val message = reason?.let { Component.text(it) }
-            ?: l10n.kickedFromServer
+            ?: l10n.moderation.kickedFromServer
 
         player.kick(message, PlayerKickEvent.Cause.KICK_COMMAND)
 
         server.broadcast(
             if (!reason.isNullOrEmpty()) {
-                l10n.playerWasKickedForReason(player.name, reason)
+                l10n.moderation.playerWasKickedForReason(player.name, reason)
             } else {
-                l10n.playerWasKicked(player.name)
+                l10n.moderation.playerWasKicked(player.name)
             },
         )
     }

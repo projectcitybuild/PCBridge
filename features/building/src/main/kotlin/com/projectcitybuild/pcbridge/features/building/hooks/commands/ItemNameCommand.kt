@@ -40,7 +40,7 @@ class ItemNameCommand(
         val player = context.source.requirePlayer()
 
         val itemStack = player.inventory.itemInMainHand
-        check(itemStack.type != Material.AIR) { l10n.errorNoItemToRename }
+        check(itemStack.type != Material.AIR) { l10n.building.errorNoItemToRename }
 
         val rawName = context.getArgument("name", String::class.java)
         val name = LegacyComponentSerializer.legacyAmpersand().deserialize(rawName)
@@ -48,7 +48,7 @@ class ItemNameCommand(
         itemMeta.displayName(name)
         itemStack.setItemMeta(itemMeta)
 
-        player.sendMessage(l10n.renamedItem(name))
+        player.sendMessage(l10n.building.renamedItem(name))
 
         eventBroadcaster.broadcast(
             ItemRenamedEvent(

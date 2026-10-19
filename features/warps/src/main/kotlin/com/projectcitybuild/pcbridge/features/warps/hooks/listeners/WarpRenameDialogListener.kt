@@ -41,11 +41,11 @@ class WarpRenameDialogListener(
             val player = connection?.player ?: return@scoped
 
             if (newName.isNullOrEmpty()) {
-                player.sendRichMessage("<red>Error: New name cannot be empty</red>")
+                player.sendMessage(l10n.errors.errorNewNameCannotBeEmpty)
                 return@scoped
             }
             if (warpId.isNullOrEmpty()) {
-                player.sendRichMessage("<red>Error: Warp not found</red>")
+                player.sendMessage(l10n.warps.errorRenameWarpNotFound)
                 throw Exception("Rename failed: warp id was null")
             }
             try {
@@ -53,9 +53,9 @@ class WarpRenameDialogListener(
                     id = warpId.toInt(),
                     newName = newName,
                 )
-                player.sendMessage(l10n.warpRenamed(newName))
+                player.sendMessage(l10n.warps.warpRenamed(newName))
             } catch (e: Exception) {
-                player.sendRichMessage("<red>Error: ${e.message}</red>")
+                player.sendMessage(l10n.errors.errorWithMessage(e.message))
                 throw e
             }
         }
