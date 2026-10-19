@@ -46,6 +46,6 @@ class WarpCreateCommand(
 
         eventBroadcaster.broadcast(WarpCreateEvent())
 
-        player.sendMessage(l10n.warpCreated(warp.name))
+        player.sendMessage(l10n.warps.warpCreated(warp.name))
     }
 }

@@ -61,9 +61,9 @@ class NightVisionCommand(
 
         if (toggleOn) {
             enableNightVision(player)
-            player.sendMessage(l10n.nightVisionToggledOn)
+            player.sendMessage(l10n.building.nightVisionToggledOn)
         } else {
-            player.sendMessage(l10n.nightVisionToggledOff)
+            player.sendMessage(l10n.building.nightVisionToggledOff)
         }
     }
 }

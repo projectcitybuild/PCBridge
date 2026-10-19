@@ -53,7 +53,7 @@ class BuildCommand(
         checkNotNull(build) { "Build not found" }
 
         val world = server.getWorld(build.world)
-        checkNotNull(world) { l10n.errorWorldNotFound(build.world) }
+        checkNotNull(world) { l10n.errors.errorWorldNotFound(build.world) }
 
         playerTeleporter.move(
             player,
@@ -69,23 +69,20 @@ class BuildCommand(
         player.showTitle(
             Title.title(
                 Component.text(build.name),
-                MiniMessage.miniMessage().deserialize(
-                    if (owner.isNullOrEmpty()) {
-                        ""
-                    } else {
-                        "<gray>Created by $owner</gray>"
-                    },
-                ),
+                if (owner.isNullOrEmpty()) Component.empty() else l10n.builds.buildCreatedBy(owner),
             ),
         )
-        context.source.sender.sendRichMessage(
-            "<gray>Teleported to <aqua>$name</aqua></gray>",
-        )
-        if (!build.description.isNullOrEmpty()) {
-            player.sendRichMessage("<gray>---<newline>${build.description}</gray>")
+        context.source.sender.sendMessage(l10n.builds.buildTeleportedTo(name))
+
+        val description = build.description
+        if (!description.isNullOrEmpty()) {
+            player.sendMessage(
+                l10n.builds.buildDescription(MiniMessage.miniMessage().deserialize(description)),
+            )
         }
-        if (!build.lore.isNullOrEmpty()) {
-            player.sendRichMessage("<gray>---<newline><italic>${build.lore}</italic></gray>")
+        val lore = build.lore
+        if (!lore.isNullOrEmpty()) {
+            player.sendMessage(l10n.builds.buildLore(MiniMessage.miniMessage().deserialize(lore)))
         }
     }
 }

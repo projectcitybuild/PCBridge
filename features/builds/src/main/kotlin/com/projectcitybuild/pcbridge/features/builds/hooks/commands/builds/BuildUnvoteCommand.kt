@@ -1,6 +1,7 @@
 package com.projectcitybuild.pcbridge.features.builds.hooks.commands.builds
 
 import com.mojang.brigadier.arguments.StringArgumentType
+import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.features.builds.BuildsPermissions
 import com.projectcitybuild.pcbridge.features.builds.buildsTracer
 import com.projectcitybuild.pcbridge.features.builds.domain.repositories.BuildRepository
@@ -40,8 +41,6 @@ class BuildUnvoteCommand(
 
         val build = buildRepository.unvote(name = name, player = player)
 
-        context.source.sender.sendRichMessage(
-            "<gray>You removed your vote for ${build.name}</gray>",
-        )
+        context.source.sender.sendMessage(l10n.builds.buildVoteRemoved(build.name))
     }
 }

@@ -1,5 +1,6 @@
 package com.projectcitybuild.pcbridge.features.pim.hooks.commands.op
 
+import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.core.datetime.services.LocalizedTime
 import com.projectcitybuild.pcbridge.core.support.java.humanReadable
 import com.projectcitybuild.pcbridge.features.pim.PimPermissions
@@ -40,9 +41,7 @@ class OpGrantCommand(
         val now = localizedTime.nowInstant()
         val isActive = elevation != null && elevation.isActiveAt(now)
         if (isActive) {
-            player.sendRichMessage(
-                "<red>Error: You are already OP elevated (remaining: ${elevation.remainingAt(now)?.humanReadable()}</red>",
-            )
+            player.sendMessage(l10n.pim.opElevationAlreadyActive(elevation?.remainingAt(now)?.humanReadable()))
             return@scoped
         }
 

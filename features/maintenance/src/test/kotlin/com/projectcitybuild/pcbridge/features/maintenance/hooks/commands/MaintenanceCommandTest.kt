@@ -1,6 +1,7 @@
 package com.projectcitybuild.pcbridge.features.maintenance.hooks.commands
 
 import com.mojang.brigadier.CommandDispatcher
+import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.features.maintenance.domain.data.MaintenanceState
 import com.projectcitybuild.pcbridge.features.maintenance.domain.data.MaintenanceToggledEvent
 import com.projectcitybuild.pcbridge.features.maintenance.domain.data.maintenanceStateKey
@@ -40,7 +41,7 @@ class MaintenanceCommandTest {
             runCurrent()
             advanceUntilIdle()
 
-            verify(sender).sendRichMessage("Maintenance mode is currently ON")
+            verify(sender).sendMessage(l10n.maintenance.maintenanceStatus(true))
         }
 
     @Test
@@ -70,7 +71,7 @@ class MaintenanceCommandTest {
             runCurrent()
             advanceUntilIdle()
 
-            verify(sender).sendRichMessage("<red>Maintenance mode is already ON</red>")
+            verify(sender).sendMessage(l10n.maintenance.maintenanceAlreadyInState(true))
             verify(store, never()).mutate(eq(maintenanceStateKey), any())
             verify(events, never()).broadcast(any<MaintenanceToggledEvent>())
         }

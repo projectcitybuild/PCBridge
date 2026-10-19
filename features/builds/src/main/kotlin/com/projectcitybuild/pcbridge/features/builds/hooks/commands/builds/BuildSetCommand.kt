@@ -2,6 +2,7 @@ package com.projectcitybuild.pcbridge.features.builds.hooks.commands.builds
 
 import com.mojang.brigadier.arguments.IntegerArgumentType
 import com.mojang.brigadier.arguments.StringArgumentType
+import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.features.builds.BuildsPermissions
 import com.projectcitybuild.pcbridge.features.builds.buildsTracer
 import com.projectcitybuild.pcbridge.features.builds.domain.data.EditableBuildField
@@ -54,8 +55,6 @@ class BuildSetCommand(
             field = field,
             value = value,
         )
-        context.source.sender.sendRichMessage(
-            "<green>Build updated</green>",
-        )
+        context.source.sender.sendMessage(l10n.builds.buildUpdated)
     }
 }

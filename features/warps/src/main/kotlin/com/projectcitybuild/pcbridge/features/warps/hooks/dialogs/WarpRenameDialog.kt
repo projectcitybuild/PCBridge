@@ -1,5 +1,6 @@
 package com.projectcitybuild.pcbridge.features.warps.hooks.dialogs
 
+import com.projectcitybuild.pcbridge.core.l10n.l10n
 import io.papermc.paper.dialog.Dialog
 import io.papermc.paper.registry.data.dialog.ActionButton
 import io.papermc.paper.registry.data.dialog.DialogBase
@@ -11,8 +12,6 @@ import io.papermc.paper.registry.data.dialog.input.SingleOptionDialogInput
 import io.papermc.paper.registry.data.dialog.type.DialogType
 import net.kyori.adventure.key.Key
 import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.format.NamedTextColor
-import net.kyori.adventure.text.minimessage.MiniMessage
 
 class WarpRenameDialog {
     companion object {
@@ -27,7 +26,7 @@ class WarpRenameDialog {
         ) = Dialog.create { builder ->
             builder.empty()
                 .base(
-                    DialogBase.builder(Component.text("Rename Warp"))
+                    DialogBase.builder(l10n.warps.renameWarpDialogTitle)
                         .afterAction(DialogBase.DialogAfterAction.CLOSE)
                         .body(body(prevName))
                         .inputs(
@@ -49,9 +48,7 @@ class WarpRenameDialog {
         private fun body(prevName: String): List<PlainMessageDialogBody> {
             return listOf(
                 DialogBody.plainMessage(
-                    MiniMessage.miniMessage().deserialize(
-                        "Current name: <aqua>$prevName</aqua>",
-                    ),
+                    l10n.dialogs.currentResourceName(prevName),
                 ),
             )
         }
@@ -59,8 +56,7 @@ class WarpRenameDialog {
         private fun newNameInput(newName: String?) =
             DialogInput.text(
                 newNameKey,
-                Component.text("New Name")
-                    .append { Component.text("*").color(NamedTextColor.RED) },
+                l10n.dialogs.newNameInputLabel,
             )
                 .initial(newName ?: "")
                 .build()
@@ -68,7 +64,7 @@ class WarpRenameDialog {
         private fun idInput(id: String) =
             DialogInput.singleOption(
                 idKey,
-                Component.text("Warp Id"),
+                l10n.warps.warpIdInputLabel,
                 listOf(
                     SingleOptionDialogInput.OptionEntry.create(
                         id,
@@ -80,16 +76,16 @@ class WarpRenameDialog {
 
         private val verifyButton get() =
             ActionButton.create(
-                Component.text("Save"),
-                Component.text("Click to rename the warp"),
+                l10n.dialogs.dialogSaveButton,
+                l10n.warps.renameWarpButtonHover,
                 100,
                 DialogAction.customClick(saveButtonKey, null),
             )
 
         private val cancelButton get() =
             ActionButton.create(
-                Component.text("Cancel").color(NamedTextColor.GRAY),
-                Component.text("Click to discard your input"),
+                l10n.dialogs.dialogCancelButtonGray,
+                l10n.dialogs.discardDialogInputHover,
                 100,
                 null,
             )

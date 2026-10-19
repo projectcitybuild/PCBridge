@@ -7,10 +7,9 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType
 import com.mojang.brigadier.suggestion.Suggestions
 import com.mojang.brigadier.suggestion.SuggestionsBuilder
+import com.projectcitybuild.pcbridge.core.l10n.l10n
 import io.papermc.paper.command.brigadier.MessageComponentSerializer
 import io.papermc.paper.command.brigadier.argument.CustomArgumentType
-import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.format.NamedTextColor
 import java.util.concurrent.CompletableFuture
 
 class OnOffArgument : CustomArgumentType.Converted<Boolean, String> {
@@ -27,7 +26,7 @@ class OnOffArgument : CustomArgumentType.Converted<Boolean, String> {
             val message =
                 MessageComponentSerializer
                     .message()
-                    .serialize(Component.text("Invalid value: $nativeType", NamedTextColor.RED))
+                    .serialize(l10n.errors.invalidArgumentValue(nativeType))
 
             throw CommandSyntaxException(SimpleCommandExceptionType(message), message)
         }

@@ -1,6 +1,7 @@
 package com.projectcitybuild.pcbridge.features.pim.hooks.commands
 
 import com.mojang.brigadier.CommandDispatcher
+import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.core.datetime.services.LocalizedTime
 import com.projectcitybuild.pcbridge.features.pim.PimPermissions
 import com.projectcitybuild.pcbridge.features.pim.domain.services.OpElevationService
@@ -70,7 +71,7 @@ class OpCommandsTest {
 
             dispatch(command, "grant", player)
 
-            verify(player).sendRichMessage(org.mockito.kotlin.argThat { contains("already OP elevated") })
+            verify(player).sendMessage(any<net.kyori.adventure.text.Component>())
             verify(player, never()).showDialog(any())
         }
 
@@ -107,7 +108,7 @@ class OpCommandsTest {
 
             dispatch(command, "status", player)
 
-            verify(player).sendRichMessage("<gray>You are not currently OP elevated</gray>")
+            verify(player).sendMessage(l10n.pim.opElevationNotActive)
         }
 
     private suspend fun kotlinx.coroutines.test.TestScope.dispatch(

@@ -1,6 +1,7 @@
 package com.projectcitybuild.pcbridge.features.builds.hooks.commands.builds
 
 import com.mojang.brigadier.arguments.StringArgumentType
+import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.core.support.component.join
 import com.projectcitybuild.pcbridge.features.builds.BuildsPermissions
 import com.projectcitybuild.pcbridge.features.builds.buildsTracer
@@ -77,8 +78,7 @@ class BuildEditCommand(
             )
 
         player.sendMessage(
-            Component
-                .text("Click a field to edit:", NamedTextColor.GRAY)
+            l10n.builds.clickBuildFieldToEdit
                 .appendNewline()
                 .append(actionComponent),
         )

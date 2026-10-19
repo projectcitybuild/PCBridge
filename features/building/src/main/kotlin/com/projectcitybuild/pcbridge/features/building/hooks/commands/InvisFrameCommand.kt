@@ -90,9 +90,9 @@ class InvisFrameCommand(
         )
         player.sendMessage(
             if (glowing) {
-                l10n.receivedInvisFrameGlowing
+                l10n.building.receivedInvisFrameGlowing
             } else {
-                l10n.receivedInvisFrame
+                l10n.building.receivedInvisFrame
             },
         )
     }

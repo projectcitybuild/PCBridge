@@ -1,6 +1,7 @@
 package com.projectcitybuild.pcbridge.features.builds.hooks.commands.builds
 
 import com.mojang.brigadier.arguments.StringArgumentType
+import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.features.builds.BuildsPermissions
 import com.projectcitybuild.pcbridge.features.builds.buildsTracer
 import com.projectcitybuild.pcbridge.features.builds.domain.repositories.BuildRepository
@@ -12,7 +13,6 @@ import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskEx
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
-import com.projectcitybuild.pcbridge.platform.paper.extensions.broadcastRich
 import com.projectcitybuild.pcbridge.runtime.commands.scoped
 import io.papermc.paper.command.brigadier.Commands
 import org.bukkit.plugin.Plugin
@@ -44,11 +44,7 @@ class BuildCreateCommand(
                 location = player.location,
             )
 
-        context.source.sender.sendRichMessage(
-            "<green>${build.name} created</green>",
-        )
-        plugin.server.broadcastRich(
-            "<gray>[<red>✎</red>] ${player.name} created build \"<white><click:run_command:'/build ${build.name}'><hover:show_text:'Click to teleport'>${build.name}</hover></click></white>\"</gray>",
-        )
+        context.source.sender.sendMessage(l10n.builds.buildCreated(build.name))
+        plugin.server.broadcast(l10n.builds.buildCreatedAnnouncement(player.name, build.name))
     }
 }

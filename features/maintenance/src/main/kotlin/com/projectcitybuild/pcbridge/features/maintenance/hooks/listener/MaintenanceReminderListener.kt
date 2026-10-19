@@ -1,5 +1,6 @@
 package com.projectcitybuild.pcbridge.features.maintenance.hooks.listener
 
+import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.core.utils.Cancellable
 import com.projectcitybuild.pcbridge.features.maintenance.domain.data.MaintenanceToggledEvent
 import com.projectcitybuild.pcbridge.features.maintenance.domain.data.maintenanceStateKey
@@ -7,7 +8,6 @@ import com.projectcitybuild.pcbridge.features.maintenance.maintenanceTracer
 import com.projectcitybuild.pcbridge.platform.paper.scheduling.SpigotTimer
 import com.projectcitybuild.pcbridge.runtime.listeners.scopedSync
 import com.projectcitybuild.pcbridge.runtime.state.store.Store
-import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.Server
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -46,29 +46,22 @@ class MaintenanceReminderListener(
     }
 
     @EventHandler
-    fun onMaintenanceToggled(event: MaintenanceToggledEvent) =
-        event.scopedSync(maintenanceTracer, this::class.java) {
-            if (event.enabled) {
-                enable()
-            } else {
-                disable()
-            }
+    fun onMaintenanceToggled(event: MaintenanceToggledEvent) = event.scopedSync(maintenanceTracer, this::class.java) {
+        if (event.enabled) {
+            enable()
+        } else {
+            disable()
         }
+    }
 
     private fun enable() {
         cancellable?.cancel()
         cancellable =
             timer.scheduleRepeating(
-                identifier = timerId,
+                identifier = TIMER_ID,
                 delay = 5.minutes,
                 repeatingInterval = 5.minutes,
-                work = {
-                    server.broadcast(
-                        MiniMessage.miniMessage().deserialize(
-                            "<italic><yellow>[Reminder] Maintenance mode is currently ON",
-                        ),
-                    )
-                },
+                work = { server.broadcast(l10n.maintenance.maintenanceReminder) },
             )
     }
 
@@ -78,6 +71,6 @@ class MaintenanceReminderListener(
     }
 
     companion object {
-        private const val timerId = "maintenance_reminder"
+        private const val TIMER_ID = "maintenance_reminder"
     }
 }

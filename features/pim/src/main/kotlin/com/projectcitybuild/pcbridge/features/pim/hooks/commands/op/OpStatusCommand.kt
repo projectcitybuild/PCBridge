@@ -1,5 +1,6 @@
 package com.projectcitybuild.pcbridge.features.pim.hooks.commands.op
 
+import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.core.datetime.services.LocalizedTime
 import com.projectcitybuild.pcbridge.core.support.java.humanReadable
 import com.projectcitybuild.pcbridge.features.pim.PimPermissions
@@ -34,10 +35,10 @@ class OpStatusCommand(
 
         val elevation = opElevationService.elevation(player.uniqueId)
         if (elevation == null) {
-            player.sendRichMessage("<gray>You are not currently OP elevated</gray>")
+            player.sendMessage(l10n.pim.opElevationNotActive)
         } else {
             val now = localizedTime.nowInstant()
-            player.sendRichMessage("<gray>You are OP elevated (remaining: ${elevation.remainingAt(now)?.humanReadable()})</gray>")
+            player.sendMessage(l10n.pim.opElevationActive(elevation.remainingAt(now)?.humanReadable()))
         }
     }
 }

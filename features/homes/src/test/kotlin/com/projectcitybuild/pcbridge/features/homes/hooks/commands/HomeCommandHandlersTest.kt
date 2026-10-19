@@ -1,6 +1,7 @@
 package com.projectcitybuild.pcbridge.features.homes.hooks.commands
 
 import com.mojang.brigadier.CommandDispatcher
+import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.core.pcbridgeapi.pcb.models.Home
 import com.projectcitybuild.pcbridge.core.pcbridgeapi.pcb.models.HomeLimit
 import com.projectcitybuild.pcbridge.core.pcbridgeapi.pcb.models.PaginatedList
@@ -58,7 +59,7 @@ class HomeCommandHandlersTest {
             runCommand(this, homesCommand(executor), "homes create Mine")
 
             verify(repository).create("Mine", location, player)
-            verify(player).sendMessage(com.projectcitybuild.pcbridge.core.l10n.l10n.homeCreated("Mine"))
+            verify(player).sendMessage(l10n.homes.homeCreated("Mine"))
         }
 
     @Test
@@ -69,7 +70,7 @@ class HomeCommandHandlersTest {
             runCommand(this, homesCommand(executor), "homes delete Cabin")
 
             verify(repository).delete(player, "Cabin")
-            verify(player).sendMessage(com.projectcitybuild.pcbridge.core.l10n.l10n.homeDeleted("Cabin"))
+            verify(player).sendMessage(l10n.homes.homeDeleted("Cabin"))
         }
 
     @Test
@@ -80,7 +81,7 @@ class HomeCommandHandlersTest {
 
             runCommand(this, homesCommand(executor), "homes limit")
 
-            verify(player).sendRichMessage("<gray>You cannot create a home</gray>")
+            verify(player).sendMessage(l10n.homes.homesCannotCreate)
         }
 
     @Test
@@ -91,13 +92,9 @@ class HomeCommandHandlersTest {
 
             runCommand(this, homesCommand(executor), "homes limit")
 
-            verify(player).sendRichMessage("You currently have <aqua>2</aqua> of <aqua>5</aqua> homes")
-            verify(player).sendRichMessage("<gray>---</gray>")
-            verify(
-                player,
-            ).sendRichMessage(
-                "<gray>The following roles grant you homes:</gray> <newline><gray><white>VIP</white>: <aqua>+2</aqua> homes</gray>",
-            )
+            verify(player).sendMessage(l10n.homes.homesLimit(2, 5))
+            verify(player).sendMessage(l10n.homes.homesLimitDivider)
+            verify(player).sendMessage(l10n.homes.homesLimitRoles(listOf("VIP" to 2)))
         }
 
     @Test
@@ -110,7 +107,7 @@ class HomeCommandHandlersTest {
             runCommand(this, homesCommand(executor, remoteConfig), "homes list 2")
 
             verify(repository).all(playerId, 2, 15)
-            verify(player).sendMessage(com.projectcitybuild.pcbridge.core.l10n.l10n.errorPageNotFound)
+            verify(player).sendMessage(l10n.pagination.errorPageNotFound)
         }
 
     @Test
@@ -123,7 +120,7 @@ class HomeCommandHandlersTest {
             runCommand(this, homesCommand(executor), "homes move Cabin")
 
             verify(repository).move("Cabin", location, player)
-            verify(player).sendMessage(com.projectcitybuild.pcbridge.core.l10n.l10n.homeMoved("Cabin"))
+            verify(player).sendMessage(l10n.homes.homeMoved("Cabin"))
         }
 
     @Test
@@ -159,7 +156,7 @@ class HomeCommandHandlersTest {
                 eq(PlayerTeleportEvent.TeleportCause.COMMAND),
                 eq(PlayerTeleporter.TeleportOptions()),
             )
-            verify(player).sendMessage(com.projectcitybuild.pcbridge.core.l10n.l10n.teleportedToName("Cabin"))
+            verify(player).sendMessage(l10n.teleportation.teleportedToName("Cabin"))
         }
 
     @Test
@@ -193,7 +190,7 @@ class HomeCommandHandlersTest {
             runCommand(this, command, "homes")
 
             verify(repository).all(playerId, 1, 15)
-            verify(player).sendMessage(com.projectcitybuild.pcbridge.core.l10n.l10n.noHomesFound)
+            verify(player).sendMessage(l10n.homes.noHomesFound)
         }
 
     private fun homesCommand(

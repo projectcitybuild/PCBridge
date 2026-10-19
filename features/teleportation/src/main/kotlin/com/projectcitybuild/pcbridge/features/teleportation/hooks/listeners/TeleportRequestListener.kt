@@ -16,11 +16,11 @@ class TeleportRequestListener(
         requestService.disconnect(event.player.uniqueId).forEach { request ->
             if (request.requesterId == event.player.uniqueId) {
                 server.getPlayer(request.targetId)?.sendMessage(
-                    l10n.teleportRequestDisconnected(request.requesterName),
+                    l10n.teleportation.teleportRequestDisconnected(request.requesterName),
                 )
             } else {
                 server.getPlayer(request.requesterId)?.sendMessage(
-                    l10n.teleportRequestDisconnected(request.targetName),
+                    l10n.teleportation.teleportRequestDisconnected(request.targetName),
                 )
             }
         }

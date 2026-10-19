@@ -1,6 +1,7 @@
 package com.projectcitybuild.pcbridge.features.builds.hooks.commands.builds
 
 import com.mojang.brigadier.arguments.StringArgumentType
+import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.features.builds.BuildsPermissions
 import com.projectcitybuild.pcbridge.features.builds.buildsTracer
 import com.projectcitybuild.pcbridge.features.builds.domain.repositories.BuildRepository
@@ -42,6 +43,6 @@ class BuildDeleteCommand(
             name = name,
             player = player,
         )
-        context.source.sender.sendRichMessage("<green>$name deleted</green>")
+        context.source.sender.sendMessage(l10n.builds.buildDeleted(name))
     }
 }

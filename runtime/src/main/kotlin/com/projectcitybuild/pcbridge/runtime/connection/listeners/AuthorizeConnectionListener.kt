@@ -72,7 +72,7 @@ class AuthorizeConnectionListener(
 
                     event.disallow(
                         AsyncPlayerPreLoginEvent.Result.KICK_OTHER,
-                        l10n.errorUnableToAuthConnection,
+                        l10n.connection.errorUnableToAuthConnection,
                     )
                 }
             }

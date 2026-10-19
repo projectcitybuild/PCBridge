@@ -41,7 +41,7 @@ class WarpRenameCommand(
         val name = context.getArgument("name", String::class.java)
 
         val warp = warpRepository.get(name)
-        checkNotNull(warp) { l10n.errorWarpNotFound(name) }
+        checkNotNull(warp) { l10n.warps.errorWarpNotFound(name) }
 
         val dialog =
             WarpRenameDialog.build(

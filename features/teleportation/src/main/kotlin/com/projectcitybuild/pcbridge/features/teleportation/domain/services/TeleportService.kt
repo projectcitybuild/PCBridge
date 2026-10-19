@@ -66,7 +66,7 @@ class TeleportService(
             silent = flags.silent,
         )
         if (moved) {
-            requester.sendMessage(l10n.teleportCompleted(target.name))
+            requester.sendMessage(l10n.teleportation.teleportCompleted(target.name))
         }
     }
 
@@ -80,21 +80,21 @@ class TeleportService(
         )
         when (result) {
             TeleportRequestService.TakeResult.Ambiguous -> {
-                target.sendMessage(l10n.errorTeleportRequestAmbiguous)
+                target.sendMessage(l10n.teleportation.errorTeleportRequestAmbiguous)
             }
             TeleportRequestService.TakeResult.Missing -> {
-                target.sendMessage(l10n.errorTeleportRequestMissing)
+                target.sendMessage(l10n.teleportation.errorTeleportRequestMissing)
             }
             TeleportRequestService.TakeResult.Expired -> {
-                target.sendMessage(l10n.errorTeleportRequestExpired)
+                target.sendMessage(l10n.teleportation.errorTeleportRequestExpired)
             }
             is TeleportRequestService.TakeResult.Taken -> {
                 val request = result.request
                 val requester = server.getPlayer(request.requesterId)
 
                 if (requester == null || !requester.isOnline || !target.isOnline) {
-                    target.sendMessage(l10n.errorTeleportTargetOffline)
-                    requester?.sendMessage(l10n.errorTeleportTargetOffline)
+                    target.sendMessage(l10n.teleportation.errorTeleportTargetOffline)
+                    requester?.sendMessage(l10n.teleportation.errorTeleportTargetOffline)
                     return
                 }
 
@@ -121,14 +121,14 @@ class TeleportService(
                     )
                 ) {
                     target.sendMessage(
-                        l10n.teleportRequestAccepted(requester.name),
+                        l10n.teleportation.teleportRequestAccepted(requester.name),
                     )
 
                     requester.sendMessage(
                         if (request.direction == TeleportRequest.Direction.TO) {
-                            l10n.teleportCompleted(target.name)
+                            l10n.teleportation.teleportCompleted(target.name)
                         } else {
-                            l10n.teleportOperationSucceeded(
+                            l10n.teleportation.teleportOperationSucceeded(
                                 target.name,
                                 requester.name,
                             )
@@ -149,21 +149,21 @@ class TeleportService(
         )
         when (result) {
             TeleportRequestService.TakeResult.Ambiguous -> {
-                target.sendMessage(l10n.errorTeleportRequestAmbiguous)
+                target.sendMessage(l10n.teleportation.errorTeleportRequestAmbiguous)
             }
             TeleportRequestService.TakeResult.Missing -> {
-                target.sendMessage(l10n.errorTeleportRequestMissing)
+                target.sendMessage(l10n.teleportation.errorTeleportRequestMissing)
             }
             TeleportRequestService.TakeResult.Expired -> {
-                target.sendMessage(l10n.errorTeleportRequestExpired)
+                target.sendMessage(l10n.teleportation.errorTeleportRequestExpired)
             }
             is TeleportRequestService.TakeResult.Taken -> {
                 val request = result.request
                 target.sendMessage(
-                    l10n.teleportRequestDenied(request.requesterName),
+                    l10n.teleportation.teleportRequestDenied(request.requesterName),
                 )
                 server.getPlayer(request.requesterId)?.sendMessage(
-                    l10n.teleportRequestWasDenied(target.name),
+                    l10n.teleportation.teleportRequestWasDenied(target.name),
                 )
             }
         }
@@ -179,15 +179,15 @@ class TeleportService(
     ) {
         val requests = requestService.cancel(requester.uniqueId, targetId)
         if (requests.isEmpty()) {
-            requester.sendMessage(l10n.errorTeleportRequestMissing)
+            requester.sendMessage(l10n.teleportation.errorTeleportRequestMissing)
             return
         }
         requests.forEach { request ->
             requester.sendMessage(
-                l10n.teleportRequestCancelled(request.targetName),
+                l10n.teleportation.teleportRequestCancelled(request.targetName),
             )
             server.getPlayer(request.targetId)?.sendMessage(
-                l10n.teleportRequestWasCancelled(requester.name),
+                l10n.teleportation.teleportRequestWasCancelled(requester.name),
             )
         }
     }
@@ -216,7 +216,7 @@ class TeleportService(
             silent = flags.silent,
         )
         if (moved) {
-            operator.sendMessage(l10n.teleportOperationSucceeded(target.name, operator.name))
+            operator.sendMessage(l10n.teleportation.teleportOperationSucceeded(target.name, operator.name))
         }
     }
 
@@ -257,12 +257,12 @@ class TeleportService(
             ) {
                 operator.sendMessage(
                     when (result) {
-                        is TeleportRequestService.CreateResult.Created -> l10n.teleportRequestCreated(
+                        is TeleportRequestService.CreateResult.Created -> l10n.teleportation.teleportRequestCreated(
                             player.name,
                             ttl = result.request.ttl(),
                         )
-                        TeleportRequestService.CreateResult.AlreadyPending -> l10n.errorTeleportRequestPending
-                        TeleportRequestService.CreateResult.SelfTarget -> l10n.errorTeleportSelf
+                        TeleportRequestService.CreateResult.AlreadyPending -> l10n.teleportation.errorTeleportRequestPending
+                        TeleportRequestService.CreateResult.SelfTarget -> l10n.teleportation.errorTeleportSelf
                     },
                 )
             }
@@ -275,7 +275,7 @@ class TeleportService(
             silent = flags.silent,
         )
         if (moved) {
-            operator.sendMessage(l10n.teleportOperationSucceeded(player.name, target.name))
+            operator.sendMessage(l10n.teleportation.teleportOperationSucceeded(player.name, target.name))
         }
     }
 
@@ -320,28 +320,28 @@ class TeleportService(
                     notifyOperatorAndRequester(
                         operator,
                         target,
-                        l10n.teleportRequestsCreated(result.requests.size),
+                        l10n.teleportation.teleportRequestsCreated(result.requests.size),
                     )
                 }
                 TeleportRequestService.CreateManyResult.NoRecipients -> {
                     notifyOperatorAndRequester(
                         operator,
                         target,
-                        l10n.teleportRequestsCreated(0),
+                        l10n.teleportation.teleportRequestsCreated(0),
                     )
                 }
                 TeleportRequestService.CreateManyResult.SelfTarget -> {
                     notifyOperatorAndRequester(
                         operator,
                         target,
-                        l10n.errorTeleportSelf,
+                        l10n.teleportation.errorTeleportSelf,
                     )
                 }
                 TeleportRequestService.CreateManyResult.AlreadyPending -> {
                     notifyOperatorAndRequester(
                         operator,
                         target,
-                        l10n.errorTeleportRequestPending,
+                        l10n.teleportation.errorTeleportRequestPending,
                     )
                 }
             }
@@ -377,7 +377,7 @@ class TeleportService(
                 }
             }
         }
-        operator.sendMessage(l10n.teleportBulkSummary(succeeded, failed))
+        operator.sendMessage(l10n.teleportation.teleportBulkSummary(succeeded, failed))
     }
 
     suspend fun position(
@@ -401,7 +401,7 @@ class TeleportService(
             pitch ?: currentLocation.pitch,
         )
         if (move(player, destination, recipient = null, silent = true)) {
-            player.sendMessage(l10n.teleportedToCoordinate(x, y, z))
+            player.sendMessage(l10n.teleportation.teleportedToCoordinate(x, y, z))
         }
     }
 
@@ -410,7 +410,7 @@ class TeleportService(
             return
         }
         cooldown.throttle(5.seconds, player, "rtp")
-        player.sendMessage(l10n.searchingForSafeLocation)
+        player.sendMessage(l10n.teleportation.searchingForSafeLocation)
 
         val options = PlayerTeleporter.TeleportOptions(
             adjustYForSafety = true,
@@ -428,12 +428,12 @@ class TeleportService(
             if (moved) {
                 val location = player.location
                 player.sendMessage(
-                    l10n.teleportedToCoordinate(location.x.toInt(), location.y.toInt(), location.z.toInt()),
+                    l10n.teleportation.teleportedToCoordinate(location.x.toInt(), location.y.toInt(), location.z.toInt()),
                 )
                 return
             }
         }
-        player.sendMessage(l10n.errorCouldNotFindSafeLocation)
+        player.sendMessage(l10n.teleportation.errorCouldNotFindSafeLocation)
     }
 
     suspend fun back(
@@ -445,14 +445,14 @@ class TeleportService(
         }
         when (val history = historyStorage.retrieve(target.uniqueId)) {
             TeleportHistoryStorage.Lookup.Missing -> {
-                operator.sendMessage(l10n.errorTeleportHistoryMissing)
+                operator.sendMessage(l10n.teleportation.errorTeleportHistoryMissing)
             }
             TeleportHistoryStorage.Lookup.Unavailable -> {
-                operator.sendMessage(l10n.errorTeleportHistoryWorldUnavailable)
+                operator.sendMessage(l10n.teleportation.errorTeleportHistoryWorldUnavailable)
             }
             is TeleportHistoryStorage.Lookup.Found -> {
                 if (move(target, history.location, recipient = null, silent = true)) {
-                    operator.sendMessage(l10n.teleportBackCompleted(target.name))
+                    operator.sendMessage(l10n.teleportation.teleportBackCompleted(target.name))
                 }
             }
         }
@@ -478,19 +478,19 @@ class TeleportService(
         errors.forEach { error ->
             when (error) {
                 is TeleportValidationError.MissingPermission -> {
-                    sender.sendMessage(l10n.errorTeleportPermission)
+                    sender.sendMessage(l10n.teleportation.errorTeleportPermission)
                 }
                 TeleportValidationError.TargetOffline -> {
-                    sender.sendMessage(l10n.errorTeleportTargetOffline)
+                    sender.sendMessage(l10n.teleportation.errorTeleportTargetOffline)
                 }
                 TeleportValidationError.SelfTarget -> {
-                    sender.sendMessage(l10n.errorTeleportSelf)
+                    sender.sendMessage(l10n.teleportation.errorTeleportSelf)
                 }
                 TeleportValidationError.ExplicitTargetRequired -> {
-                    sender.sendMessage(l10n.errorTeleportExplicitTargetRequired)
+                    sender.sendMessage(l10n.teleportation.errorTeleportExplicitTargetRequired)
                 }
                 TeleportValidationError.InvalidCoordinates -> {
-                    sender.sendMessage(l10n.errorTeleportCoordinatesInvalid)
+                    sender.sendMessage(l10n.teleportation.errorTeleportCoordinatesInvalid)
                 }
             }
         }
@@ -513,18 +513,18 @@ class TeleportService(
             )
         } catch (_: SafeDestinationNotFoundException) {
             if (reportFailure) {
-                player.sendMessage(l10n.errorCouldNotFindSafeLocation)
+                player.sendMessage(l10n.teleportation.errorCouldNotFindSafeLocation)
             }
             return false
         } catch (_: TeleportFailedException) {
             if (reportFailure) {
-                player.sendMessage(l10n.errorTeleportFailed)
+                player.sendMessage(l10n.teleportation.errorTeleportFailed)
             }
             return false
         }
 
         if (!silent && recipient != null && recipient.uniqueId != player.uniqueId && recipient.isOnline) {
-            recipient.sendMessage(l10n.teleportReceived(player.name))
+            recipient.sendMessage(l10n.teleportation.teleportReceived(player.name))
         }
         return true
     }
@@ -558,14 +558,14 @@ class TeleportService(
 
         when (result) {
             is TeleportRequestService.CreateResult.Created -> {
-                requester.sendMessage(l10n.teleportRequestCreated(target.name, ttl = result.request.ttl()))
+                requester.sendMessage(l10n.teleportation.teleportRequestCreated(target.name, ttl = result.request.ttl()))
                 notifyRequestTarget(target, result.request, direction)
             }
             TeleportRequestService.CreateResult.AlreadyPending -> {
-                requester.sendMessage(l10n.errorTeleportRequestPending)
+                requester.sendMessage(l10n.teleportation.errorTeleportRequestPending)
             }
             TeleportRequestService.CreateResult.SelfTarget -> {
-                requester.sendMessage(l10n.errorTeleportSelf)
+                requester.sendMessage(l10n.teleportation.errorTeleportSelf)
             }
         }
         return result
@@ -578,9 +578,9 @@ class TeleportService(
     ) {
         target?.sendMessage(
             if (direction == TeleportRequest.Direction.TO) {
-                l10n.teleportRequestReceived(request.requesterName)
+                l10n.teleportation.teleportRequestReceived(request.requesterName)
             } else {
-                l10n.teleportHereRequestReceived(request.requesterName)
+                l10n.teleportation.teleportHereRequestReceived(request.requesterName)
             },
         )
         scheduleExpiration(request)
@@ -595,10 +595,10 @@ class TeleportService(
                 if (expired != null) {
                     withContext(plugin.minecraftDispatcher) {
                         server.getPlayer(expired.requesterId)?.sendMessage(
-                            l10n.teleportRequestSentExpired(expired.targetName),
+                            l10n.teleportation.teleportRequestSentExpired(expired.targetName),
                         )
                         server.getPlayer(expired.targetId)?.sendMessage(
-                            l10n.teleportRequestExpired(expired.requesterName),
+                            l10n.teleportation.teleportRequestExpired(expired.requesterName),
                         )
                     }
                 }

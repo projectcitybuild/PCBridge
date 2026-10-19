@@ -39,7 +39,7 @@ class HomeCreateCommand(
                 location = player.location,
             )
         context.source.sender.sendMessage(
-            l10n.homeCreated(home.name),
+            l10n.homes.homeCreated(home.name),
         )
     }
 }

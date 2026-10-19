@@ -43,7 +43,7 @@ class HubCommandTest {
             execute(command, "hub", source)
             advanceUntilIdle()
 
-            verify(player).sendMessage(l10n.errorHubNotSet)
+            verify(player).sendMessage(l10n.spawns.errorHubNotSet)
             verify(server, never()).getWorld(org.mockito.kotlin.any<UUID>())
             verify(
                 playerTeleporter,
@@ -68,7 +68,7 @@ class HubCommandTest {
             execute(command, "hub", source)
             advanceUntilIdle()
 
-            verify(player).sendMessage(l10n.errorHubWorldNotFound)
+            verify(player).sendMessage(l10n.spawns.errorHubWorldNotFound)
             verify(playerTeleporter, never()).move(
                 org.mockito.kotlin.any(),
                 org.mockito.kotlin.any(),
@@ -96,7 +96,7 @@ class HubCommandTest {
                 PlayerTeleportEvent.TeleportCause.COMMAND,
                 PlayerTeleporter.TeleportOptions(),
             )
-            verify(player).sendMessage(l10n.teleportedToHub)
+            verify(player).sendMessage(l10n.spawns.teleportedToHub)
         }
 
     private fun command(scope: CoroutineScope) =

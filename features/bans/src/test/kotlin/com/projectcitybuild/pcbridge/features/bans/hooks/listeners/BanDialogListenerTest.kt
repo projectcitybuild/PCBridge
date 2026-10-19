@@ -75,7 +75,7 @@ class BanDialogListenerTest {
             listener.onPlayerCustomClickEvent(event)
 
             verify(createUuidBan).create("Steve", playerId, "Moderator", "Griefing", "Context")
-            verify(server).broadcast(l10n.playerHasBeenBanned("Steve"))
-            verify(player).sendMessage(l10n.clickToEditBan(creation.editUrl))
+            verify(server).broadcast(l10n.bans.playerHasBeenBanned("Steve"))
+            verify(player).sendMessage(l10n.bans.clickToEditBan(creation.editUrl))
         }
 }

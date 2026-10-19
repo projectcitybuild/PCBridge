@@ -1,5 +1,6 @@
 package com.projectcitybuild.pcbridge.features.sync.domain.actions
 
+import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.runtime.state.data.PlayerSession
 import com.projectcitybuild.pcbridge.runtime.state.events.PlayerStateUpdatedEvent
 import com.projectcitybuild.pcbridge.core.datetime.services.LocalizedTime
@@ -46,6 +47,6 @@ class SyncPlayer(
                 playerUUID = playerUUID,
             ),
         )
-        matchingPlayer.sendRichMessage("<green>Your account has been synced</green>")
+        matchingPlayer.sendMessage(l10n.sync.syncAccountSynced)
     }
 }

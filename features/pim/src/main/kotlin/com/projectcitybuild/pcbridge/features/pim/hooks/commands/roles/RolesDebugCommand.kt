@@ -1,6 +1,7 @@
 package com.projectcitybuild.pcbridge.features.pim.hooks.commands.roles
 
 import com.mojang.brigadier.arguments.StringArgumentType
+import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.features.pim.PimPermissions
 import com.projectcitybuild.pcbridge.features.pim.pimTracer
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
@@ -39,9 +40,6 @@ class RolesDebugCommand(
 
         permissions.provider.setUserRoles(player.uniqueId, roles)
 
-        player.sendRichMessage(
-            "<red>Your roles have been set to ${roles.joinToString(",")}</red>\n" +
-                "<gray>Use /sync or reconnect to revert this</gray>",
-        )
+        player.sendMessage(l10n.pim.rolesSet(roles.joinToString(",")))
     }
 }

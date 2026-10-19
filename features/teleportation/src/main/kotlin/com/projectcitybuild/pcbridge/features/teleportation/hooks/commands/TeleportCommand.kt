@@ -34,9 +34,7 @@ class TeleportCommand(
 ) : BrigadierCommand {
     override fun literal(): PaperCommandNode = Commands
         .literal("tp")
-        .executesSuspending(plugin) { context ->
-            context.source.sender.sendMessage(l10n.teleportCommandHelp)
-        }.then(
+        .then(
             Commands
                 .argument("player", SingleOnlinePlayerArgument(server))
                 .requiresPermission(TeleportationPermissions.REQUEST)

@@ -38,7 +38,7 @@ class HomeRenameCommand(
         val name = context.getArgument("name", String::class.java)
 
         val home = homeRepository.get(player.uniqueId, name)
-        checkNotNull(home) { l10n.errorHomeNotFound(name) }
+        checkNotNull(home) { l10n.homes.errorHomeNotFound(name) }
 
         val dialog =
             HomeRenameDialog.build(

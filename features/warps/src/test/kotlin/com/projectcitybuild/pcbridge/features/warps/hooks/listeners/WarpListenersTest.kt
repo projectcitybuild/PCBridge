@@ -1,5 +1,6 @@
 package com.projectcitybuild.pcbridge.features.warps.hooks.listeners
 
+import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.core.pcbridgeapi.pcb.models.NamedResource
 import com.projectcitybuild.pcbridge.features.warps.domain.repositories.WarpRepository
 import com.projectcitybuild.pcbridge.features.warps.hooks.dialogs.WarpRenameDialog
@@ -54,7 +55,7 @@ class WarpRenameDialogListenerTest {
             listener.onPlayerCustomClickEvent(event)
 
             verify(repository).rename(11, "Market")
-            verify(player).sendMessage(com.projectcitybuild.pcbridge.core.l10n.l10n.warpRenamed("Market"))
+            verify(player).sendMessage(l10n.warps.warpRenamed("Market"))
         }
 
     @Test
@@ -68,7 +69,7 @@ class WarpRenameDialogListenerTest {
             listener.onPlayerCustomClickEvent(event)
 
             verify(repository, never()).rename(any(), any())
-            verify(player).sendRichMessage("<red>Error: New name cannot be empty</red>")
+            verify(player).sendMessage(l10n.errors.errorNewNameCannotBeEmpty)
         }
 
     @Test
@@ -82,7 +83,7 @@ class WarpRenameDialogListenerTest {
             listener.onPlayerCustomClickEvent(event)
 
             verify(repository, never()).rename(any(), any())
-            verify(player).sendRichMessage("<red>Error: Warp not found</red>")
+            verify(player).sendMessage(l10n.warps.errorRenameWarpNotFound)
         }
 
     private fun eventWithResponse(view: DialogResponseView?): PlayerCustomClickEvent {

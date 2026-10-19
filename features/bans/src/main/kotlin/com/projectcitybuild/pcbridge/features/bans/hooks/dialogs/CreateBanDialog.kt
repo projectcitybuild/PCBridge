@@ -1,5 +1,6 @@
 package com.projectcitybuild.pcbridge.features.bans.hooks.dialogs
 
+import com.projectcitybuild.pcbridge.core.l10n.l10n
 import io.papermc.paper.dialog.Dialog
 import io.papermc.paper.registry.data.dialog.ActionButton
 import io.papermc.paper.registry.data.dialog.DialogBase
@@ -28,13 +29,13 @@ class CreateBanDialog {
         ) = Dialog.create { builder ->
             builder.empty()
                 .base(
-                    DialogBase.builder(Component.text("Ban Player"))
+                    DialogBase.builder(l10n.bans.createBanDialogTitle)
                         .afterAction(DialogBase.DialogAfterAction.CLOSE)
                         .body(error?.let { listOf(errorText(it)) } ?: listOf())
                         .inputs(
                             listOf(
                                 playerNameInput(initial = playerName),
-                                reasonInput(initial = reason ?: "Griefing"),
+                                reasonInput(initial = reason ?: l10n.bans.defaultBanReason),
                                 additionalInfoInput(initial = additionalInfo),
                             ),
                         )
@@ -58,8 +59,7 @@ class CreateBanDialog {
         private fun playerNameInput(initial: String?) =
             DialogInput.text(
                 playerNameKey,
-                Component.text("Player Name")
-                    .append { Component.text("*").color(NamedTextColor.RED) },
+                l10n.bans.banPlayerNameInputLabel,
             )
                 .initial(initial ?: "")
                 .build()
@@ -67,15 +67,14 @@ class CreateBanDialog {
         private fun reasonInput(initial: String?) =
             DialogInput.text(
                 reasonKey,
-                Component.text("Reason (shown to player)")
-                    .append { Component.text("*").color(NamedTextColor.RED) },
+                l10n.bans.banReasonInputLabel,
             )
                 .initial(initial ?: "")
                 .maxLength(200)
                 .build()
 
         private fun additionalInfoInput(initial: String?) =
-            DialogInput.text(additionalInfoKey, Component.text("Additional Info/Context"))
+            DialogInput.text(additionalInfoKey, l10n.bans.banAdditionalInfoInputLabel)
                 .initial(initial ?: "")
                 .multiline(MultilineOptions.create(null, 80))
                 .maxLength(1000)
@@ -83,16 +82,16 @@ class CreateBanDialog {
 
         private val createButton get() =
             ActionButton.create(
-                Component.text("Ban Player").color(NamedTextColor.RED),
-                Component.text("Click to ban the player"),
+                l10n.bans.confirmBanButton,
+                l10n.bans.confirmBanButtonHover,
                 100,
                 DialogAction.customClick(submitBanButtonKey, null),
             )
 
         private val cancelButton get() =
             ActionButton.create(
-                Component.text("Cancel"),
-                Component.text("Click to discard your input"),
+                l10n.dialogs.dialogCancelButton,
+                l10n.dialogs.discardDialogInputHover,
                 100,
                 null,
             )

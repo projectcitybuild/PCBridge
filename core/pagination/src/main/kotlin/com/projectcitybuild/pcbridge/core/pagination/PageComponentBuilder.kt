@@ -28,6 +28,25 @@ class PageComponentBuilder {
             itemDecorator = itemDecorator,
         )
 
+    fun <T> buildWithComponents(
+        title: String,
+        paginated: PaginatedList<T>,
+        pageCommand: (Int) -> String,
+        itemClickCommand: ((T) -> String)? = null,
+        itemHover: ((T) -> Component)? = null,
+        itemDecorator: (T) -> Component,
+    ): Component =
+        buildWithComponents(
+            title = title,
+            items = paginated.data,
+            pageNumber = paginated.currentPage,
+            totalPages = ceil(paginated.total.toDouble() / paginated.perPage.toDouble()).toInt(),
+            pageCommand = pageCommand,
+            itemClickCommand = itemClickCommand,
+            itemHover = itemHover,
+            itemDecorator = itemDecorator,
+        )
+
     fun <T> build(
         title: String,
         items: List<T>,
@@ -37,8 +56,28 @@ class PageComponentBuilder {
         itemClickCommand: ((T) -> String)? = null,
         itemHover: ((T) -> String)? = null,
         itemDecorator: (T) -> String,
+    ): Component =
+        buildWithComponents(
+            title = title,
+            items = items,
+            pageNumber = pageNumber,
+            totalPages = totalPages,
+            pageCommand = pageCommand,
+            itemClickCommand = itemClickCommand,
+            itemHover = itemHover?.let { hover -> { item -> Component.text(hover(item)) } },
+            itemDecorator = { item -> MiniMessage.miniMessage().deserialize(itemDecorator(item)) },
+        )
+
+    fun <T> buildWithComponents(
+        title: String,
+        items: List<T>,
+        pageNumber: Int,
+        totalPages: Int,
+        pageCommand: (Int) -> String,
+        itemClickCommand: ((T) -> String)? = null,
+        itemHover: ((T) -> Component)? = null,
+        itemDecorator: (T) -> Component,
     ): Component {
-        val miniMessage = MiniMessage.miniMessage()
         var component: Component = Component.empty()
 
         component =
@@ -46,10 +85,7 @@ class PageComponentBuilder {
                 header(title, pageNumber, totalPages),
             )
         items.forEach {
-            var decorated =
-                miniMessage.deserialize(
-                    itemDecorator(it),
-                )
+            var decorated = itemDecorator(it)
             if (itemClickCommand != null) {
                 decorated =
                     decorated
@@ -60,7 +96,7 @@ class PageComponentBuilder {
                 decorated =
                     decorated
                         // Not using MiniMessage for click to ensure character escaping for the name
-                        .hoverEvent(HoverEvent.showText(Component.text(itemHover(it))))
+                        .hoverEvent(HoverEvent.showText(itemHover(it)))
             }
             component = component.append(decorated)
             component = component.appendNewline()
@@ -80,7 +116,7 @@ class PageComponentBuilder {
         val miniMessage = MiniMessage.miniMessage()
 
         return miniMessage.deserialize(
-            "<gray>--- <dark_aqua>$title</dark_aqua> - Page <white>$pageNumber</white>/<white>$totalPages</white> ---</gray><newline>",
+            "<gray>--- <dark_aqua>$title</dark_aqua> - ${l10n.pagination.pageLabel} <white>$pageNumber</white>/<white>$totalPages</white> ---</gray><newline>",
         )
     }
 
@@ -116,14 +152,14 @@ class PageComponentBuilder {
     }
 
     private fun prevButton(command: String): Component {
-        return MiniMessage.miniMessage().deserialize("${l10n.pagePrevButton} ")
+        return MiniMessage.miniMessage().deserialize("${l10n.pagination.pagePrevButton} ")
             .clickEvent(ClickEvent.runCommand(command))
-            .hoverEvent(HoverEvent.showText(l10n.pagePrevButtonHover))
+            .hoverEvent(HoverEvent.showText(l10n.pagination.pagePrevButtonHover))
     }
 
     private fun nextButton(command: String): Component {
-        return MiniMessage.miniMessage().deserialize("${l10n.pageNextButton} ")
+        return MiniMessage.miniMessage().deserialize("${l10n.pagination.pageNextButton} ")
             .clickEvent(ClickEvent.runCommand(command))
-            .hoverEvent(HoverEvent.showText(l10n.pageNextButtonHover))
+            .hoverEvent(HoverEvent.showText(l10n.pagination.pageNextButtonHover))
     }
 }

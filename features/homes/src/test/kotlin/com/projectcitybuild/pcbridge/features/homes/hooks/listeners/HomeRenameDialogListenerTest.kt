@@ -52,7 +52,7 @@ class HomeRenameDialogListenerTest {
             listener.onPlayerCustomClickEvent(event)
 
             verify(repository).rename(27, "Workshop", player)
-            verify(player).sendMessage(l10n.homeRenamed("Workshop"))
+            verify(player).sendMessage(l10n.homes.homeRenamed("Workshop"))
         }
 
     @Test
@@ -66,7 +66,7 @@ class HomeRenameDialogListenerTest {
             listener.onPlayerCustomClickEvent(event)
 
             verify(repository, never()).rename(any(), any(), any())
-            verify(player).sendRichMessage("<red>Error: New name cannot be empty</red>")
+            verify(player).sendMessage(l10n.errors.errorNewNameCannotBeEmpty)
         }
 
     @Test
@@ -80,7 +80,7 @@ class HomeRenameDialogListenerTest {
             listener.onPlayerCustomClickEvent(event)
 
             verify(repository, never()).rename(any(), any(), any())
-            verify(player).sendRichMessage("<red>Error: Home not found</red>")
+            verify(player).sendMessage(l10n.homes.errorRenameHomeNotFound)
         }
 
     @Test

@@ -35,7 +35,7 @@ class RegisterCommand(
                     .argument("email", StringArgumentType.greedyString())
                     .executesSuspending(commandTaskExecutor, ::execute),
             ).executes { context ->
-                context.source.sender.sendMessage(l10n.errorNoRegisterEmailSpecified)
+                context.source.sender.sendMessage(l10n.registration.errorNoRegisterEmailSpecified)
                 return@executes Command.SINGLE_SUCCESS
             }.build()
     }

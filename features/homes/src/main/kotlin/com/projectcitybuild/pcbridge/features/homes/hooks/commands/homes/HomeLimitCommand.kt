@@ -1,5 +1,6 @@
 package com.projectcitybuild.pcbridge.features.homes.hooks.commands.homes
 
+import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.features.homes.domain.repositories.HomeRepository
 import com.projectcitybuild.pcbridge.features.homes.homesTracer
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
@@ -28,23 +29,15 @@ class HomeLimitCommand(
 
         val limit = homeRepository.limit(player)
         if (limit.max == 0) {
-            context.source.sender.sendRichMessage(
-                "<gray>You cannot create a home</gray>",
-            )
+            context.source.sender.sendMessage(l10n.homes.homesCannotCreate)
             return@scoped
         }
 
-        context.source.sender.sendRichMessage(
-            "You currently have <aqua>${limit.current}</aqua> of <aqua>${limit.max}</aqua> homes",
-        )
+        context.source.sender.sendMessage(l10n.homes.homesLimit(limit.current, limit.max))
         if (limit.sources.isNotEmpty()) {
-            val sources =
-                limit.sources
-                    .map { "<newline><gray><white>${it.key}</white>: <aqua>+${it.value}</aqua> homes</gray>" }
-                    .joinToString()
-
-            context.source.sender.sendRichMessage("<gray>---</gray>")
-            context.source.sender.sendRichMessage("<gray>The following roles grant you homes:</gray> $sources")
+            val sources = limit.sources.map { it.key to it.value }
+            context.source.sender.sendMessage(l10n.homes.homesLimitDivider)
+            context.source.sender.sendMessage(l10n.homes.homesLimitRoles(sources))
         }
     }
 }

@@ -38,7 +38,7 @@ class HubCommand(
         val hub = remoteConfig.latest.config.hub
         if (hub == null) {
             log.error { "Hub not set" }
-            player.sendMessage(l10n.errorHubNotSet)
+            player.sendMessage(l10n.spawns.errorHubNotSet)
             return@scoped
         }
 
@@ -46,7 +46,7 @@ class HubCommand(
         val world = server.getWorld(worldId)
         if (world == null) {
             log.error { "Hub world (${hub.worldId}) not found" }
-            player.sendMessage(l10n.errorHubWorldNotFound)
+            player.sendMessage(l10n.spawns.errorHubWorldNotFound)
             return@scoped
         }
         val location = Location(world, hub.x, hub.y, hub.z, hub.yaw, hub.pitch)
@@ -56,6 +56,6 @@ class HubCommand(
             destination = location,
             cause = PlayerTeleportEvent.TeleportCause.COMMAND,
         )
-        player.sendMessage(l10n.teleportedToHub)
+        player.sendMessage(l10n.spawns.teleportedToHub)
     }
 }

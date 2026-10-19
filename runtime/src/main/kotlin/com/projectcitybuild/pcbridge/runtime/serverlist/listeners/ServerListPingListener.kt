@@ -1,6 +1,7 @@
 package com.projectcitybuild.pcbridge.runtime.serverlist.listeners
 
 import com.destroystokyo.paper.event.server.PaperServerListPingEvent
+import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.runtime.remoteconfig.RemoteConfig
 import com.projectcitybuild.pcbridge.runtime.serverlist.decorators.ServerListing
 import com.projectcitybuild.pcbridge.runtime.serverlist.decorators.ServerListingDecoratorChain
@@ -26,7 +27,7 @@ class ServerListPingListener(
         val config = remoteConfig.latest.config
         val motd = config.motd
         if (motd.isEmpty()) {
-            return Component.text("Project City Build")
+            return l10n.serverList.defaultServerListMotd
         }
         return MiniMessage.miniMessage().deserialize(motd)
     }

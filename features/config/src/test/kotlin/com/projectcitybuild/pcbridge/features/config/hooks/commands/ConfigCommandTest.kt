@@ -2,6 +2,7 @@ package com.projectcitybuild.pcbridge.features.config.hooks.commands
 
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.exceptions.CommandSyntaxException
+import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.platform.paper.commands.CoroutineScopeCommandTaskExecutor
 import com.projectcitybuild.pcbridge.runtime.remoteconfig.RemoteConfig
 import io.papermc.paper.command.brigadier.CommandSourceStack
@@ -36,9 +37,9 @@ class ConfigCommandTest {
             runCurrent()
             advanceUntilIdle()
 
-            verify(sender).sendRichMessage("<gray>Fetching config...</gray>")
+            verify(sender).sendMessage(l10n.config.configFetching)
             verify(remoteConfig).fetch()
-            verify(sender).sendRichMessage("<green>Remote config reloaded</green>")
+            verify(sender).sendMessage(l10n.config.configReloaded)
         }
 
     @Test

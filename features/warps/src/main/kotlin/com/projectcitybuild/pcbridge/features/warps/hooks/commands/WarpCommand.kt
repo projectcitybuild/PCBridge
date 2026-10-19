@@ -49,17 +49,17 @@ class WarpCommand(
         val warpName = context.getArgument("name", String::class.java)
 
         val warp = warpRepository.get(name = warpName)
-        checkNotNull(warp) { l10n.errorWarpNotFound(warpName) }
+        checkNotNull(warp) { l10n.warps.errorWarpNotFound(warpName) }
 
         val world = server.getWorld(warp.world)
-        checkNotNull(world) { l10n.errorWorldNotFound(warp.world) }
+        checkNotNull(world) { l10n.errors.errorWorldNotFound(warp.world) }
 
         playerTeleporter.move(
             player,
             destination = warp.toLocation(world),
             cause = PlayerTeleportEvent.TeleportCause.COMMAND,
         )
-        player.sendMessage(l10n.teleportedToName(warp.name))
+        player.sendMessage(l10n.teleportation.teleportedToName(warp.name))
     }
 }
 

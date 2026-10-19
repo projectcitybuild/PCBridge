@@ -1,5 +1,6 @@
 package com.projectcitybuild.pcbridge.features.pim.hooks.listener
 
+import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.core.observability.logging.log
 import com.projectcitybuild.pcbridge.core.observability.logging.logSync
 import com.projectcitybuild.pcbridge.features.pim.domain.services.OpElevationService
@@ -33,14 +34,14 @@ class OpDialogListener(
             val player = connection?.player ?: return@scoped
 
             if (reason.isNullOrEmpty()) {
-                player.sendRichMessage("<red>Error: elevation reason is required</red>")
+                player.sendMessage(l10n.pim.errorOpElevationReasonRequired)
                 return@scoped
             }
 
             try {
                 opElevationService.elevate(player.uniqueId, reason)
             } catch (e: Exception) {
-                player.sendRichMessage("<red>Error: ${e.message}</red>")
+                player.sendMessage(l10n.errors.errorWithMessage(e.message))
                 throw e
             }
         }

@@ -44,7 +44,7 @@ class WarpMoveCommand(
             location = player.location,
         )
         context.source.sender.sendMessage(
-            l10n.warpMoved(warpName),
+            l10n.warps.warpMoved(warpName),
         )
     }
 }
