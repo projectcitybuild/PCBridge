@@ -7,9 +7,9 @@ import com.projectcitybuild.pcbridge.features.moderate.moderateTracer
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
-import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandNode
 import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.argumenttypes.SingleOnlinePlayerArgument
+import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.getOptionalArgument
 import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
@@ -27,18 +27,17 @@ class KickCommand(
     private val server: Server,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override fun literal(): PaperCommandNode = Commands
-        .literal("kick")
-        .requiresPermission(ModeratePermissions.MODERATE)
-        .then(
-            Commands
-                .argument("player", SingleOnlinePlayerArgument(plugin.server))
-                .then(
-                    Commands
-                        .argument("reason", StringArgumentType.greedyString())
-                        .executesSuspending(taskExecutor, ::execute),
-                ).executesSuspending(taskExecutor, ::execute),
-        ).build()
+    override val builder = command("kick") {
+        description = "Kicks a player from the server"
+        requiresPermission(ModeratePermissions.MODERATE)
+        argument("player", SingleOnlinePlayerArgument(plugin.server)) {
+            then(
+                Commands
+                    .argument("reason", StringArgumentType.greedyString())
+                    .executesSuspending(taskExecutor, ::execute),
+            ).executesSuspending(taskExecutor, ::execute)
+        }
+    }
 
     private suspend fun execute(context: PaperCommandContext) = context.scoped(moderateTracer) {
         val player = context.getArgument("player", Player::class.java)

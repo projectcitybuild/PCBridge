@@ -6,13 +6,12 @@ import com.projectcitybuild.pcbridge.features.teleportation.domain.services.Tele
 import com.projectcitybuild.pcbridge.features.teleportation.hooks.commands.args.withTeleportFlags
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
-import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandNode
 import com.projectcitybuild.pcbridge.platform.paper.commands.argumenttypes.SingleOnlinePlayerArgument
+import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
 import com.projectcitybuild.pcbridge.runtime.commands.scoped
 import com.projectcitybuild.pcbridge.runtime.teleportation.teleportationTracer
-import io.papermc.paper.command.brigadier.Commands
 import org.bukkit.Server
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
@@ -22,14 +21,13 @@ class TeleportHereCommand(
     private val server: Server,
     private val application: TeleportService,
 ) : BrigadierCommand {
-    override fun literal(): PaperCommandNode = Commands
-        .literal("here")
-        .requiresPermission(TeleportationPermissions.OTHERS)
-        .then(
-            Commands
-                .argument("player", SingleOnlinePlayerArgument(server))
-                .withTeleportFlags(plugin) { context, flags -> execute(context, flags) },
-        ).build()
+    override val builder = command("here") {
+        description = "Teleports a target player to you"
+        requiresPermission(TeleportationPermissions.OTHERS)
+        argument("player", SingleOnlinePlayerArgument(server)) {
+            withTeleportFlags(plugin) { context, flags -> execute(context, flags) }
+        }
+    }
 
     private suspend fun execute(
         context: PaperCommandContext,

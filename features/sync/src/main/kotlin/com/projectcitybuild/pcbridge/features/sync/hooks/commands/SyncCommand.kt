@@ -7,14 +7,13 @@ import com.projectcitybuild.pcbridge.features.sync.syncTracer
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
-import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandNode
 import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.argumenttypes.SingleOnlinePlayerArgument
+import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
 import com.projectcitybuild.pcbridge.runtime.commands.scoped
-import io.papermc.paper.command.brigadier.Commands
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
 
@@ -23,15 +22,14 @@ class SyncCommand(
     private val syncPlayer: SyncPlayer,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override fun literal(): PaperCommandNode = Commands
-        .literal("sync")
-        .then(
-            Commands
-                .argument("player", SingleOnlinePlayerArgument(plugin.server))
-                .requiresPermission(SyncPermissions.OTHER)
-                .executesSuspending(taskExecutor, ::syncOther),
-        ).executesSuspending(taskExecutor, ::syncSelf)
-        .build()
+    override val builder = command("sync") {
+        description = "Synchronizes server data"
+        argument("player", SingleOnlinePlayerArgument(plugin.server)) {
+            requiresPermission(SyncPermissions.OTHER)
+                .executesSuspending(taskExecutor, ::syncOther)
+        }
+        executesSuspending(taskExecutor, ::syncSelf)
+    }
 
     private suspend fun syncSelf(context: PaperCommandContext) = context.scoped(syncTracer) {
         val player = context.source.requirePlayer()

@@ -6,14 +6,13 @@ import com.projectcitybuild.pcbridge.features.building.buildingTracer
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
-import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandNode
 import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.argumenttypes.OnOffArgument
+import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
 import com.projectcitybuild.pcbridge.runtime.commands.scoped
-import io.papermc.paper.command.brigadier.Commands
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
 import org.bukkit.potion.PotionEffect
@@ -33,17 +32,14 @@ class NightVisionCommand(
         it.addPotionEffect(PotionEffect(PotionEffectType.NIGHT_VISION, Integer.MAX_VALUE, 1))
     }
 
-    override val description: String = "Toggles night-vision mode"
-
-    override fun literal(): PaperCommandNode = Commands
-        .literal("nv")
-        .requiresPermission(BuildingPermissions.NIGHT_VISION)
-        .then(
-            Commands
-                .argument("enabled", OnOffArgument())
-                .executesSuspending(commandTaskExecutor, ::execute),
-        ).executesSuspending(commandTaskExecutor, ::execute)
-        .build()
+    override val builder = command("nv") {
+        description = "Toggles night-vision mode"
+        requiresPermission(BuildingPermissions.NIGHT_VISION)
+        argument("enabled", OnOffArgument()) {
+            executesSuspending(commandTaskExecutor, ::execute)
+        }
+        executesSuspending(commandTaskExecutor, ::execute)
+    }
 
     private suspend fun execute(context: PaperCommandContext) = context.scoped(buildingTracer) {
         val player = context.source.requirePlayer()

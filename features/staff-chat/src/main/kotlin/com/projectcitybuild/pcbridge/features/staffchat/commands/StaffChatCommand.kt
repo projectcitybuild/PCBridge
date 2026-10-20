@@ -6,16 +6,14 @@ import com.projectcitybuild.pcbridge.features.staffchat.staffChatTracer
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
-import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandNode
 import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
+import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.requirePlayer
-import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
 import com.projectcitybuild.pcbridge.runtime.chat.decorators.ChatDecoratorChain
 import com.projectcitybuild.pcbridge.runtime.chat.decorators.ChatMessage
 import com.projectcitybuild.pcbridge.runtime.commands.scoped
 import com.projectcitybuild.pcbridge.runtime.remoteconfig.RemoteConfig
-import io.papermc.paper.command.brigadier.Commands
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.MiniMessage
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
@@ -29,14 +27,13 @@ class StaffChatCommand(
     private val decorators: ChatDecoratorChain,
     private val commandTaskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override fun literal(): PaperCommandNode = Commands
-        .literal("a")
-        .requiresPermission(StaffChatPermissions.CHANNEL)
-        .then(
-            Commands
-                .argument("message", StringArgumentType.greedyString())
-                .executesSuspending(commandTaskExecutor, ::execute),
-        ).build()
+    override val builder = command("a") {
+        description = "Sends a message to staff chat"
+        requiresPermission(StaffChatPermissions.CHANNEL)
+        argument("message", StringArgumentType.greedyString()) {
+            executesSuspending(commandTaskExecutor, ::execute)
+        }
+    }
 
     suspend fun execute(context: PaperCommandContext) = context.scoped(staffChatTracer) {
         val player = context.source.requirePlayer()

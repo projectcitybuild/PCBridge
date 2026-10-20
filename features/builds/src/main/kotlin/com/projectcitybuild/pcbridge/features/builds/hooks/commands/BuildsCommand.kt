@@ -10,10 +10,7 @@ import com.projectcitybuild.pcbridge.features.builds.hooks.commands.builds.Build
 import com.projectcitybuild.pcbridge.features.builds.hooks.commands.builds.BuildUnvoteCommand
 import com.projectcitybuild.pcbridge.features.builds.hooks.commands.builds.BuildVoteCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
-import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandNode
-import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
-import com.projectcitybuild.pcbridge.platform.paper.commands.then
-import io.papermc.paper.command.brigadier.Commands
+import com.projectcitybuild.pcbridge.platform.paper.commands.command
 
 class BuildsCommand(
     private val buildCreateCommand: BuildCreateCommand,
@@ -25,18 +22,18 @@ class BuildsCommand(
     private val buildUnvoteCommand: BuildUnvoteCommand,
     private val buildVoteCommand: BuildVoteCommand,
 ) : BrigadierCommand {
-    override fun literal(): PaperCommandNode = Commands
-        .literal("builds")
-        .then(command = buildCreateCommand)
-        .then(command = buildDeleteCommand)
-        .then(command = buildEditCommand)
-        .then(command = buildListCommand)
-        .then(command = buildMoveCommand)
-        .then(command = buildSetCommand)
-        .then(command = buildUnvoteCommand)
-        .then(command = buildVoteCommand)
+    override val builder = command("builds") {
+        description = "Lists available builds"
+        then(buildCreateCommand)
+        then(buildDeleteCommand)
+        then(buildEditCommand)
+        then(buildListCommand)
+        then(buildMoveCommand)
+        then(buildSetCommand)
+        then(buildUnvoteCommand)
+        then(buildVoteCommand)
         // TODO: can we use a Redirect here? Would be good to allow a page arg
-        .requiresPermission(BuildsPermissions.TELEPORT)
-        .executes(buildListCommand.literal().command)
-        .build()
+        requiresPermission(BuildsPermissions.TELEPORT)
+        executes(buildListCommand.literal().command)
+    }
 }

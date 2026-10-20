@@ -10,15 +10,13 @@ import com.projectcitybuild.pcbridge.features.builds.domain.repositories.BuildRe
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
-import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandNode
 import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.argumenttypes.EnumArgument
+import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.getOptionalArgument
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.requirePlayer
-import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
 import com.projectcitybuild.pcbridge.runtime.commands.scoped
-import io.papermc.paper.command.brigadier.Commands
 import org.bukkit.plugin.Plugin
 
 class BuildSetCommand(
@@ -26,22 +24,18 @@ class BuildSetCommand(
     private val buildRepository: BuildRepository,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override fun literal(): PaperCommandNode = Commands
-        .literal("set")
-        .requiresPermission(BuildsPermissions.MANAGE)
-        .then(
-            Commands
-                .argument("id", IntegerArgumentType.integer())
-                .then(
-                    Commands
-                        .argument("field", EnumArgument(EditableBuildField::class.java))
-                        .then(
-                            Commands
-                                .argument("value", StringArgumentType.greedyString())
-                                .executesSuspending(taskExecutor, ::execute),
-                        ).executesSuspending(taskExecutor, ::execute),
-                ),
-        ).build()
+    override val builder = command("set") {
+        description = "Updates a field on a build"
+        requiresPermission(BuildsPermissions.MANAGE)
+        argument("id", IntegerArgumentType.integer()) {
+            this.argument("field", EnumArgument(EditableBuildField::class.java)) {
+                executesSuspending(taskExecutor, ::execute)
+                this.argument("value", StringArgumentType.greedyString()) {
+                    executesSuspending(taskExecutor, ::execute)
+                }
+            }
+        }
+    }
 
     private suspend fun execute(context: PaperCommandContext) = context.scoped(buildsTracer) {
         val player = context.source.requirePlayer()

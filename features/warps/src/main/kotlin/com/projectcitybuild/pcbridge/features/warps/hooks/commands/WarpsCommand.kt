@@ -7,10 +7,7 @@ import com.projectcitybuild.pcbridge.features.warps.hooks.commands.warps.WarpLis
 import com.projectcitybuild.pcbridge.features.warps.hooks.commands.warps.WarpMoveCommand
 import com.projectcitybuild.pcbridge.features.warps.hooks.commands.warps.WarpRenameCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
-import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandNode
-import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
-import com.projectcitybuild.pcbridge.platform.paper.commands.then
-import io.papermc.paper.command.brigadier.Commands
+import com.projectcitybuild.pcbridge.platform.paper.commands.command
 
 class WarpsCommand(
     private val createCommand: WarpCreateCommand,
@@ -19,15 +16,14 @@ class WarpsCommand(
     private val moveCommand: WarpMoveCommand,
     private val renameCommand: WarpRenameCommand,
 ) : BrigadierCommand {
-    override fun literal(): PaperCommandNode = Commands
-        .literal("warps")
-        .requiresPermission(WarpsPermissions.TELEPORT)
-        .then(command = createCommand)
-        .then(command = deleteCommand)
-        .then(command = listCommand)
-        .then(command = moveCommand)
-        .then(command = renameCommand)
-        // TODO: can we use a Redirect here? Would be good to allow a page arg
-        .executes(listCommand.literal().command)
-        .build()
+    override val builder = command("warps") {
+        description = "Lists available warps"
+        requiresPermission(WarpsPermissions.TELEPORT)
+        then(createCommand)
+        then(deleteCommand)
+        then(listCommand)
+        then(moveCommand)
+        then(renameCommand)
+        executes(listCommand.literal().command)
+    }
 }

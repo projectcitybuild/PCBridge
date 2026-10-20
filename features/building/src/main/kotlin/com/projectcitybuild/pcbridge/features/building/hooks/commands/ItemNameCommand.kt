@@ -8,14 +8,13 @@ import com.projectcitybuild.pcbridge.features.building.domain.data.ItemRenamedEv
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
-import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandNode
 import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
+import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
 import com.projectcitybuild.pcbridge.platform.paper.events.SpigotEventBroadcaster
 import com.projectcitybuild.pcbridge.runtime.commands.scoped
-import io.papermc.paper.command.brigadier.Commands
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import org.bukkit.Material
 import org.bukkit.plugin.Plugin
@@ -25,16 +24,13 @@ class ItemNameCommand(
     private val eventBroadcaster: SpigotEventBroadcaster,
     private val commandTaskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override val description: String = "Renames the item in your primary hand"
-
-    override fun literal(): PaperCommandNode = Commands
-        .literal("itemname")
-        .requiresPermission(BuildingPermissions.ITEM_RENAME)
-        .then(
-            Commands
-                .argument("name", StringArgumentType.greedyString())
-                .executesSuspending(commandTaskExecutor, ::execute),
-        ).build()
+    override val builder = command("itemname") {
+        description = "Renames the item in your primary hand"
+        requiresPermission(BuildingPermissions.ITEM_RENAME)
+        argument("name", StringArgumentType.greedyString()) {
+            executesSuspending(commandTaskExecutor, ::execute)
+        }
+    }
 
     private suspend fun execute(context: PaperCommandContext) = context.scoped(buildingTracer) {
         val player = context.source.requirePlayer()

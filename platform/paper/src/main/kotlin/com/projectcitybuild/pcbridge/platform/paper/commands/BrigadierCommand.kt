@@ -1,7 +1,5 @@
 package com.projectcitybuild.pcbridge.platform.paper.commands
 
-import com.mojang.brigadier.builder.LiteralArgumentBuilder
-import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents
 import org.bukkit.plugin.java.JavaPlugin
@@ -11,16 +9,18 @@ import org.bukkit.plugin.java.JavaPlugin
  * registered with Brigadier
  */
 interface BrigadierCommand {
-    val description: String?
-        get() = null
+    val builder: CommandDefinition
 
-    fun literal(): PaperCommandNode
+    val description: String?
+        get() = builder.description
+
+    fun literal(): PaperCommandNode = builder.node
 }
 
-fun LiteralArgumentBuilder<CommandSourceStack>.then(command: BrigadierCommand): LiteralArgumentBuilder<CommandSourceStack> =
-    then(command.literal())
-
-fun Commands.register(command: BrigadierCommand) = register(command.literal(), command.description)
+fun Commands.register(command: BrigadierCommand) {
+    val definition = command.builder
+    register(definition.node, definition.description)
+}
 
 fun JavaPlugin.registerCommands(vararg commands: BrigadierCommand) =
     lifecycleManager.registerEventHandler(LifecycleEvents.COMMANDS) { event ->

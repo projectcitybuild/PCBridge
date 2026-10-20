@@ -6,12 +6,11 @@ import com.projectcitybuild.pcbridge.features.teleportation.domain.services.Tele
 import com.projectcitybuild.pcbridge.features.teleportation.hooks.commands.args.withTeleportFlags
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
-import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandNode
 import com.projectcitybuild.pcbridge.platform.paper.commands.argumenttypes.SingleOnlinePlayerArgument
+import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
 import com.projectcitybuild.pcbridge.runtime.commands.scoped
 import com.projectcitybuild.pcbridge.runtime.teleportation.teleportationTracer
-import io.papermc.paper.command.brigadier.Commands
 import org.bukkit.Server
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
@@ -21,23 +20,19 @@ class TeleportAllCommand(
     private val server: Server,
     private val application: TeleportService,
 ) : BrigadierCommand {
-    override fun literal(): PaperCommandNode {
-        val command =
-            Commands
-                .literal("all")
-                .requiresPermission(TeleportationPermissions.ALL)
-                .withTeleportFlags(plugin) { context, flags ->
-                    execute(context, targetArgument = null, flags = flags)
-                }
-
-        command.then(
-            Commands
-                .argument("target", SingleOnlinePlayerArgument(server))
-                .withTeleportFlags(plugin) { context, flags ->
-                    execute(context, "target", flags)
-                },
-        )
-        return command.build()
+    override val builder = command("all") {
+        description = "Teleports all players to a target"
+        requiresPermission(TeleportationPermissions.ALL)
+        brigadier {
+            withTeleportFlags(plugin) { context, flags ->
+                execute(context, targetArgument = null, flags = flags)
+            }
+        }
+        argument("target", SingleOnlinePlayerArgument(server)) {
+            withTeleportFlags(plugin) { context, flags ->
+                execute(context, "target", flags)
+            }
+        }
     }
 
     private suspend fun execute(

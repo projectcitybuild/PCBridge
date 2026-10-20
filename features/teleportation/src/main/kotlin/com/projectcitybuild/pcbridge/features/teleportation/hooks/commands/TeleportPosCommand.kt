@@ -5,27 +5,30 @@ import com.projectcitybuild.pcbridge.features.teleportation.TeleportationPermiss
 import com.projectcitybuild.pcbridge.features.teleportation.domain.services.TeleportService
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
-import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandNode
 import com.projectcitybuild.pcbridge.platform.paper.commands.arguments.withCoordinateArgs
+import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
 import com.projectcitybuild.pcbridge.runtime.commands.scoped
 import com.projectcitybuild.pcbridge.runtime.teleportation.teleportationTracer
-import io.papermc.paper.command.brigadier.Commands
 import org.bukkit.plugin.Plugin
 
 class TeleportPosCommand(
     private val plugin: Plugin,
     private val application: TeleportService,
 ) : BrigadierCommand {
-    override fun literal(): PaperCommandNode = Commands
-        .literal("pos")
-        .requiresPermission(TeleportationPermissions.POSITION)
-        .then(
-            withCoordinateArgs(plugin) { context, yaw, pitch ->
-                execute(context, yaw, pitch)
-            },
-        ).build()
+    override val builder = command("pos") {
+        description = "Teleports you to coordinates"
+        requiresPermission(TeleportationPermissions.POSITION)
+        brigadier {
+            this
+                .then(
+                    withCoordinateArgs(plugin) { context, yaw, pitch ->
+                        execute(context, yaw, pitch)
+                    },
+                )
+        }
+    }
 
     private suspend fun execute(
         context: PaperCommandContext,
