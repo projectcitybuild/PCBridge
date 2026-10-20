@@ -1,6 +1,9 @@
+import me.drownek.plugwright.local.LocalMode
+
 plugins {
     id("com.github.johnrengelman.shadow") version "8.1.1"
     id("xyz.jpenilla.run-paper") version "3.0.2"
+    id("io.github.drownek.plugwright") version "3.0.0"
     id("pcbridge.paper-conventions")
 }
 
@@ -110,6 +113,57 @@ tasks {
 
             // TODO: re-enable once it supports Paper 1.21.8
             // modrinth("dynmap", "3.7-beta-8")
+        }
+    }
+}
+
+plugwright {
+    testsDir.set(file("src/test/e2e"))
+    downloadNode.set(false)
+
+    environments {
+        create("local", LocalMode) {
+            minecraftVersion.set("1.21.10")
+            acceptEula.set(true)
+
+            downloadPlugins {
+                url("https://cdn.modrinth.com/data/Vebnzrzj/versions/OrIs0S6b/LuckPerms-Bukkit-5.5.17.jar")
+            }
+
+            writeFiles {
+                file(
+                    "server.properties",
+                    """
+                    online-mode=false
+                    enforce-secure-profile=false
+                    """.trimIndent(),
+                )
+                file(
+                    "plugins/PCBridge/config.json",
+                    """
+                    {
+                      "environment": "DEV",
+                      "api": {
+                        "token": "pcbridge_local",
+                        "base_url": "http://api.localhost/",
+                        "log_level": "trace"
+                      },
+                      "web_server": {
+                        "token": "pcbridge_e2e_local_only",
+                        "host": "127.0.0.1",
+                        "port": 8080
+                      },
+                      "observability": {
+                        "sentry_dsn": "",
+                        "trace_sample_rate": 1.0
+                      },
+                      "discord": {
+                        "content_alert_webhook": ""
+                      }
+                    }
+                    """.trimIndent(),
+                )
+            }
         }
     }
 }

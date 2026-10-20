@@ -7,13 +7,13 @@ import com.projectcitybuild.pcbridge.core.observability.tracing.TracerFactory
 import com.projectcitybuild.pcbridge.features.stats.domain.StatsCollector
 import com.projectcitybuild.pcbridge.platform.paper.listeners.SpigotListenerRegistry
 import com.projectcitybuild.pcbridge.platform.paper.scheduling.SpigotTimer
+import com.projectcitybuild.pcbridge.platform.webserver.HttpServer
 import com.projectcitybuild.pcbridge.runtime.features.PaperFeatureRegistrar
 import com.projectcitybuild.pcbridge.runtime.features.PaperFeatureRegistration
 import com.projectcitybuild.pcbridge.runtime.integrations.PaperIntegration
 import com.projectcitybuild.pcbridge.runtime.integrations.PaperIntegrationRegistrar
 import com.projectcitybuild.pcbridge.runtime.remoteconfig.RemoteConfig
 import com.projectcitybuild.pcbridge.runtime.state.store.Store
-import com.projectcitybuild.pcbridge.platform.webserver.HttpServer
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.koin.core.component.inject
@@ -29,36 +29,37 @@ class PluginLifecycle : KoinComponent {
 
     private val tracer by lazy { TracerFactory.make("lifecycle") }
 
-    suspend fun boot() =
-        errorTracker.catching {
-            TracerFactory.configure(otel)
-            tracer.trace("boot") {
-                httpServer.start()
-                remoteConfig.fetch()
-                store.hydrate()
+    suspend fun boot() = errorTracker.catching {
+        TracerFactory.configure(otel)
+        tracer.trace("boot") {
+            httpServer.start()
+            remoteConfig.fetch()
+            store.hydrate()
 
-                get<PaperFeatureRegistrar>().register(getKoin().getAll<PaperFeatureRegistration>())
+            get<PaperFeatureRegistrar>().register(
+                getKoin().getAll<PaperFeatureRegistration>(),
+            )
+            get<PaperIntegrationRegistrar>().enable(
+                getKoin().getAll<PaperIntegration>(),
+            )
 
-                get<PaperIntegrationRegistrar>().enable(getKoin().getAll<PaperIntegration>())
-
-                statsCollector.start()
-            }
+            statsCollector.start()
         }
+    }
 
-    suspend fun shutdown() =
-        errorTracker.catching {
-            tracer.trace("shutdown") {
-                statsCollector.flush()
-                statsCollector.stop()
+    suspend fun shutdown() = errorTracker.catching {
+        tracer.trace("shutdown") {
+            statsCollector.flush()
+            statsCollector.stop()
 
-                httpServer.stop()
-                store.persist()
+            httpServer.stop()
+            store.persist()
 
-                get<SpigotTimer>().shutdown()
+            get<SpigotTimer>().shutdown()
 
-                get<PaperIntegrationRegistrar>().disable(getKoin().getAll<PaperIntegration>())
+            get<PaperIntegrationRegistrar>().disable(getKoin().getAll<PaperIntegration>())
 
-                listenerRegistry.unregisterAll()
-            }
+            listenerRegistry.unregisterAll()
         }
+    }
 }

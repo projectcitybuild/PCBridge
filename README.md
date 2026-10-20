@@ -32,10 +32,23 @@ To generate the shaded JAR file
 
 ### Testing
 
-To boot up a local Minecraft server
+To boot up the development Minecraft server
 
 ```
 ./gradlew runServer
 ```
 
 Then connect to `localhost` in Minecraft
+
+### End-to-end tests
+
+Install the Node.js version configured in `.mise.toml` with mise, then run the Plugwright
+tests. Plugwright starts an isolated Paper server and connects real, offline player bots.
+
+```
+mise install
+mise exec -- ./gradlew :app:paper-plugin:plugwrightTest
+```
+
+The server workspace, generated tests, and Node dependencies live under
+`app/paper-plugin/src/test/e2e`.

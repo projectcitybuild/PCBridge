@@ -26,7 +26,6 @@ class TeleportLegacyCommands(
     private val teleportService: TeleportService,
 ) {
     fun commands(): List<BrigadierCommand> = buildList {
-        add(tp())
         add(tphere())
         add(tpa())
         add(tpahere())
@@ -42,21 +41,6 @@ class TeleportLegacyCommands(
     }
 
     // TODO: support tptoggle
-    private fun tp() = command("tp") {
-        then(
-            Commands
-                .argument("player", SingleOnlinePlayerArgument(server))
-                .requiresPermission("essentials.tp")
-                .executesSuspending(plugin) { context ->
-                    context.scoped(teleportationTracer) {
-                        val player = context.source.requirePlayer()
-                        val target = context.getArgument("player", Player::class.java)
-                        teleportService.to(player, target)
-                    }
-                },
-        )
-    }
-
     private fun tpa() = command("tpa") {
         then(
             Commands

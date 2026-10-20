@@ -87,7 +87,6 @@ class TeleportLegacyCommandsTest {
         assertTrue(
             registered.containsAll(
                 setOf(
-                    "tp",
                     "tpahere",
                     "tpaccept",
                     "tpyes",
@@ -137,6 +136,9 @@ class TeleportLegacyCommandsTest {
         assertTrue(tpoherePlayer.canUse(source))
         whenever(operator.hasPermission("essentials.tpo")).thenReturn(true)
         assertTrue(forcePlayer.canUse(source))
+        whenever(operator.hasPermission(TeleportationPermissions.REQUEST.node)).thenReturn(false)
+        whenever(operator.hasPermission("essentials.tp")).thenReturn(true)
+        assertTrue(tpPlayer?.canUse(source) == true)
 
         assertFalse(randomAlias.canUse(source))
         assertFalse(randomSubcommand?.canUse(source) == true)
@@ -215,7 +217,6 @@ class TeleportLegacyCommandsTest {
     @Test
     fun `legacy command argument forms match their canonical operations`() {
         listOf(
-            "tp Notch",
             "tpahere Notch",
             "tpaccept",
             "tpaccept Notch",
