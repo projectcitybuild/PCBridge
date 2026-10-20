@@ -37,7 +37,10 @@ class TeleportCommand(
         .then(
             Commands
                 .argument("player", SingleOnlinePlayerArgument(server))
-                .requiresPermission(TeleportationPermissions.REQUEST)
+                .requires { context ->
+                    context.sender.hasPermission(TeleportationPermissions.REQUEST.node) ||
+                        context.sender.hasPermission("essentials.tp")
+                }
                 .executesSuspending(plugin) { context ->
                     context.scoped(teleportationTracer) {
                         application.to(
