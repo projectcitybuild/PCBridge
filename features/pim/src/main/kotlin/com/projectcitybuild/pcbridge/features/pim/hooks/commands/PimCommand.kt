@@ -14,19 +14,17 @@ class PimCommand(
     private val opStatusCommand: OpStatusCommand,
     private val rolesDebugCommand: RolesDebugCommand,
 ) : BrigadierCommand {
-    override val commandDefinition by lazy {
-        command("pim") {
-            description = "Opens player identity management commands"
-            requiresPermission(PimPermissions.OP)
+    override val build = command("pim") {
+        description = "Opens player identity management commands"
+        requiresPermission(PimPermissions.OP)
 
-            literal("op") {
-                then(opGrantCommand)
-                then(opRevokeCommand)
-                then(opStatusCommand)
-            }
-            literal("roles") {
-                then(rolesDebugCommand)
-            }
+        literal("op") {
+            then(opGrantCommand)
+            then(opRevokeCommand)
+            then(opStatusCommand)
+        }
+        literal("roles") {
+            then(rolesDebugCommand)
         }
     }
 }

@@ -21,12 +21,10 @@ class LoomCommand(
 ) : BrigadierCommand {
     internal var menuOpener: (String, Player) -> Unit = { _, player -> MenuType.LOOM.create(player).open() }
 
-    override val commandDefinition by lazy {
-        command("loom") {
-            description = "Opens a portable loom"
-            requiresPermission(WorkstationsPermissions.USE)
-            executesSuspending(commandTaskExecutor, ::execute)
-        }
+    override val build = command("loom") {
+        description = "Opens a portable loom"
+        requiresPermission(WorkstationsPermissions.USE)
+        executesSuspending(commandTaskExecutor, ::execute)
     }
 
     private suspend fun execute(context: PaperCommandContext) = context.scoped(workstationsTracer) {

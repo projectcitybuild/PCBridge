@@ -27,13 +27,11 @@ class StaffChatCommand(
     private val decorators: ChatDecoratorChain,
     private val commandTaskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override val commandDefinition by lazy {
-        command("a") {
-            description = "Sends a message to staff chat"
-            requiresPermission(StaffChatPermissions.CHANNEL)
-            argument("message", StringArgumentType.greedyString()) {
-                executesSuspending(commandTaskExecutor, ::execute)
-            }
+    override val build = command("a") {
+        description = "Sends a message to staff chat"
+        requiresPermission(StaffChatPermissions.CHANNEL)
+        argument("message", StringArgumentType.greedyString()) {
+            executesSuspending(commandTaskExecutor, ::execute)
         }
     }
 

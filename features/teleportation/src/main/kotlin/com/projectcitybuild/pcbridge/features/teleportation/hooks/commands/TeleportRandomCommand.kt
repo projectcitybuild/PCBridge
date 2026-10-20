@@ -15,14 +15,12 @@ class TeleportRandomCommand(
     private val plugin: Plugin,
     private val application: TeleportService,
 ) : BrigadierCommand {
-    override val commandDefinition by lazy {
-        command("random") {
-            description = "Teleports you to a random location"
-            requiresPermission(TeleportationPermissions.RANDOM)
-            executesSuspending(plugin) { context ->
-                context.scoped(teleportationTracer) {
-                    application.random(context.source.requirePlayer())
-                }
+    override val build = command("random") {
+        description = "Teleports you to a random location"
+        requiresPermission(TeleportationPermissions.RANDOM)
+        executesSuspending(plugin) { context ->
+            context.scoped(teleportationTracer) {
+                application.random(context.source.requirePlayer())
             }
         }
     }

@@ -21,11 +21,9 @@ class SpawnCommand(
     private val playerTeleporter: PlayerTeleporter,
     private val commandTaskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override val commandDefinition by lazy {
-        command("spawn") {
-            description = "Teleports to the server spawn"
-            executesSuspending(commandTaskExecutor, ::execute)
-        }
+    override val build = command("spawn") {
+        description = "Teleports to the server spawn"
+        executesSuspending(commandTaskExecutor, ::execute)
     }
 
     suspend fun execute(context: PaperCommandContext) = context.scoped(spawnsTracer) {

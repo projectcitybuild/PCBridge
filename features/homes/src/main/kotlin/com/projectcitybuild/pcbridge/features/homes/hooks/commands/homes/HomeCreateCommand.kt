@@ -19,12 +19,10 @@ class HomeCreateCommand(
     private val homeRepository: HomeRepository,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override val commandDefinition by lazy {
-        command("create") {
-            description = "Creates a home at your current location"
-            argument("name", StringArgumentType.greedyString()) {
-                executesSuspending(taskExecutor, ::execute)
-            }
+    override val build = command("create") {
+        description = "Creates a home at your current location"
+        argument("name", StringArgumentType.greedyString()) {
+            executesSuspending(taskExecutor, ::execute)
         }
     }
 

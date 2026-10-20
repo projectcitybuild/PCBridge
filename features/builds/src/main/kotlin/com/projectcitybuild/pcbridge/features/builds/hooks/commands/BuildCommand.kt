@@ -34,14 +34,12 @@ class BuildCommand(
     private val playerTeleporter: PlayerTeleporter,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override val commandDefinition by lazy {
-        command("build") {
-            description = "Teleports to a build"
-            requiresPermission(BuildsPermissions.TELEPORT)
-            argument("name", StringArgumentType.greedyString()) {
-                suggestsSuspending(plugin, buildNameSuggester::suggest)
-                executesSuspending(taskExecutor, ::execute)
-            }
+    override val build = command("build") {
+        description = "Teleports to a build"
+        requiresPermission(BuildsPermissions.TELEPORT)
+        argument("name", StringArgumentType.greedyString()) {
+            suggestsSuspending(plugin, buildNameSuggester::suggest)
+            executesSuspending(taskExecutor, ::execute)
         }
     }
 

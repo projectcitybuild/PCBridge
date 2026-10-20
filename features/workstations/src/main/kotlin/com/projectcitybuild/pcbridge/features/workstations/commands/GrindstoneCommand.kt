@@ -21,12 +21,10 @@ class GrindstoneCommand(
 ) : BrigadierCommand {
     internal var menuOpener: (String, Player) -> Unit = { _, player -> MenuType.GRINDSTONE.create(player).open() }
 
-    override val commandDefinition by lazy {
-        command("grindstone") {
-            description = "Opens a portable grindstone"
-            requiresPermission(WorkstationsPermissions.USE)
-            executesSuspending(commandTaskExecutor, ::execute)
-        }
+    override val build = command("grindstone") {
+        description = "Opens a portable grindstone"
+        requiresPermission(WorkstationsPermissions.USE)
+        executesSuspending(commandTaskExecutor, ::execute)
     }
 
     private suspend fun execute(context: PaperCommandContext) = context.scoped(workstationsTracer) {

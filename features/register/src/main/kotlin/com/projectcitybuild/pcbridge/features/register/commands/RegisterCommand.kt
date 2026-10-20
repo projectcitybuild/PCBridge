@@ -24,16 +24,14 @@ class RegisterCommand(
 ) : BrigadierCommand {
     internal var dialogFactory: (String) -> DialogLike = { email -> VerifyRegistrationCodeDialog.build(email) }
 
-    override val commandDefinition by lazy {
-        command("register") {
-            description = "Creates a new Project City Build account"
-            argument("email", StringArgumentType.greedyString()) {
-                executesSuspending(commandTaskExecutor, ::execute)
-            }
-            executes { context ->
-                context.source.sender.sendMessage(l10n.registration.errorNoRegisterEmailSpecified)
-                Command.SINGLE_SUCCESS
-            }
+    override val build = command("register") {
+        description = "Creates a new Project City Build account"
+        argument("email", StringArgumentType.greedyString()) {
+            executesSuspending(commandTaskExecutor, ::execute)
+        }
+        executes { context ->
+            context.source.sender.sendMessage(l10n.registration.errorNoRegisterEmailSpecified)
+            Command.SINGLE_SUCCESS
         }
     }
 

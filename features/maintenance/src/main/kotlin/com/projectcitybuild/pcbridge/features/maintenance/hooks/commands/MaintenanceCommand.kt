@@ -27,15 +27,13 @@ class MaintenanceCommand(
     private val eventBroadcaster: SpigotEventBroadcaster,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override val commandDefinition by lazy {
-        command("maintenance") {
-            description = "Enables or disables server maintenance mode"
-            requiresPermission(MaintenancePermissions.MANAGE)
-            argument("enabled", OnOffArgument()) {
-                executesSuspending(taskExecutor, ::toggle)
-            }
-            executesSuspending(taskExecutor, ::status)
+    override val build = command("maintenance") {
+        description = "Enables or disables server maintenance mode"
+        requiresPermission(MaintenancePermissions.MANAGE)
+        argument("enabled", OnOffArgument()) {
+            executesSuspending(taskExecutor, ::toggle)
         }
+        executesSuspending(taskExecutor, ::status)
     }
 
     private suspend fun toggle(context: PaperCommandContext) = context.scoped(maintenanceTracer) {

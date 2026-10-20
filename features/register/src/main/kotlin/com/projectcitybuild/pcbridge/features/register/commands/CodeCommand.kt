@@ -19,11 +19,9 @@ class CodeCommand(
 ) : BrigadierCommand {
     internal var dialogFactory: () -> DialogLike = { VerifyRegistrationCodeDialog.build(email = null) }
 
-    override val commandDefinition by lazy {
-        command("code") {
-            description = "Finishes account registration by verifying a code"
-            executesSuspending(commandTaskExecutor, ::execute)
-        }
+    override val build = command("code") {
+        description = "Finishes account registration by verifying a code"
+        executesSuspending(commandTaskExecutor, ::execute)
     }
 
     private suspend fun execute(context: PaperCommandContext) = context.scoped(registerTracer) {

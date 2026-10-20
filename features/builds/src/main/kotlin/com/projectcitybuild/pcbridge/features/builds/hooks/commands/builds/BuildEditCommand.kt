@@ -31,14 +31,12 @@ class BuildEditCommand(
     private val buildRepository: BuildRepository,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override val commandDefinition by lazy {
-        command("edit") {
-            description = "Edits a build description"
-            requiresPermission(BuildsPermissions.MANAGE)
-            argument("name", StringArgumentType.greedyString()) {
-                suggestsSuspending(plugin, buildNameSuggester::suggest)
-                executesSuspending(taskExecutor, ::execute)
-            }
+    override val build = command("edit") {
+        description = "Edits a build description"
+        requiresPermission(BuildsPermissions.MANAGE)
+        argument("name", StringArgumentType.greedyString()) {
+            suggestsSuspending(plugin, buildNameSuggester::suggest)
+            executesSuspending(taskExecutor, ::execute)
         }
     }
 

@@ -25,14 +25,12 @@ class WarpRenameCommand(
     private val warpRepository: WarpRepository,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override val commandDefinition by lazy {
-        command("rename") {
-            description = "Renames a warp"
-            requiresPermission(WarpsPermissions.MANAGE)
-            argument("name", StringArgumentType.string()) {
-                suggestsSuspending(plugin, warpNameSuggester::suggest)
-                    .executesSuspending(taskExecutor, ::execute)
-            }
+    override val build = command("rename") {
+        description = "Renames a warp"
+        requiresPermission(WarpsPermissions.MANAGE)
+        argument("name", StringArgumentType.string()) {
+            suggestsSuspending(plugin, warpNameSuggester::suggest)
+                .executesSuspending(taskExecutor, ::execute)
         }
     }
 

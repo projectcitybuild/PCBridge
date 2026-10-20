@@ -23,13 +23,11 @@ class WarnCommand(
     private val remoteConfig: RemoteConfig,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override val commandDefinition by lazy {
-        command("warn") {
-            description = "Issues a warning to a player"
-            requiresPermission(WarningsPermissions.MANAGE)
-            argument("player", OnlinePlayerNameArgument(server)) {
-                executesSuspending(taskExecutor, ::execute)
-            }
+    override val build = command("warn") {
+        description = "Issues a warning to a player"
+        requiresPermission(WarningsPermissions.MANAGE)
+        argument("player", OnlinePlayerNameArgument(server)) {
+            executesSuspending(taskExecutor, ::execute)
         }
     }
 

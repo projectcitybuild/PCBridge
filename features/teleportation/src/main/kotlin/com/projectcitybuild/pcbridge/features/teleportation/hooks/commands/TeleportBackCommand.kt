@@ -19,25 +19,23 @@ class TeleportBackCommand(
     private val server: Server,
     private val application: TeleportService,
 ) : BrigadierCommand {
-    override val commandDefinition by lazy {
-        command("back") {
-            description = "Returns you to your previous location"
-            argument("player", SingleOnlinePlayerArgument(server)) {
-                requiresPermission(TeleportationPermissions.BACK_OTHERS)
-                executesSuspending(plugin) { context ->
-                    context.scoped(teleportationTracer) {
-                        application.back(
-                            operator = context.source.sender,
-                            target = context.getArgument("player", Player::class.java),
-                        )
-                    }
-                }
-            }
+    override val build = command("back") {
+        description = "Returns you to your previous location"
+        argument("player", SingleOnlinePlayerArgument(server)) {
+            requiresPermission(TeleportationPermissions.BACK_OTHERS)
             executesSuspending(plugin) { context ->
                 context.scoped(teleportationTracer) {
-                    val player = context.source.requirePlayer()
-                    application.back(player, player)
+                    application.back(
+                        operator = context.source.sender,
+                        target = context.getArgument("player", Player::class.java),
+                    )
                 }
+            }
+        }
+        executesSuspending(plugin) { context ->
+            context.scoped(teleportationTracer) {
+                val player = context.source.requirePlayer()
+                application.back(player, player)
             }
         }
     }

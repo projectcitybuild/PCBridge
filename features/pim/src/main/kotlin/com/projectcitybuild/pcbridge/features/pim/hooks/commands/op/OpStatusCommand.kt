@@ -23,12 +23,10 @@ class OpStatusCommand(
     private val localizedTime: LocalizedTime,
     private val commandTaskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override val commandDefinition by lazy {
-        command("status") {
-            description = "Shows a player's operator status"
-            requiresPermission(PimPermissions.OP)
-            executesSuspending(commandTaskExecutor, ::execute)
-        }
+    override val build = command("status") {
+        description = "Shows a player's operator status"
+        requiresPermission(PimPermissions.OP)
+        executesSuspending(commandTaskExecutor, ::execute)
     }
 
     suspend fun execute(context: PaperCommandContext) = context.scoped(pimTracer) {

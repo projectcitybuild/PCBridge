@@ -32,15 +32,13 @@ class NightVisionCommand(
         it.addPotionEffect(PotionEffect(PotionEffectType.NIGHT_VISION, Integer.MAX_VALUE, 1))
     }
 
-    override val commandDefinition by lazy {
-        command("nv") {
-            description = "Toggles night-vision mode"
-            requiresPermission(BuildingPermissions.NIGHT_VISION)
-            argument("enabled", OnOffArgument()) {
-                executesSuspending(commandTaskExecutor, ::execute)
-            }
+    override val build = command("nv") {
+        description = "Toggles night-vision mode"
+        requiresPermission(BuildingPermissions.NIGHT_VISION)
+        argument("enabled", OnOffArgument()) {
             executesSuspending(commandTaskExecutor, ::execute)
         }
+        executesSuspending(commandTaskExecutor, ::execute)
     }
 
     private suspend fun execute(context: PaperCommandContext) = context.scoped(buildingTracer) {

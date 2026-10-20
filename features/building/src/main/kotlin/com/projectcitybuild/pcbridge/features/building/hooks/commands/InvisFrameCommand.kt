@@ -28,15 +28,13 @@ class InvisFrameCommand(
 ) : BrigadierCommand {
     internal var frameFactory: (Material) -> ItemStack = ::ItemStack
 
-    override val commandDefinition by lazy {
-        command("invisframe") {
-            description = "Gives you an itemframe that turns invisible when holding an item"
-            requiresPermission(BuildingPermissions.INVIS_FRAME)
-            literal("glowing") {
-                executesSuspending(commandTaskExecutor, ::giveGlowing)
-            }
-            executesSuspending(commandTaskExecutor, ::giveNormal)
+    override val build = command("invisframe") {
+        description = "Gives you an itemframe that turns invisible when holding an item"
+        requiresPermission(BuildingPermissions.INVIS_FRAME)
+        literal("glowing") {
+            executesSuspending(commandTaskExecutor, ::giveGlowing)
         }
+        executesSuspending(commandTaskExecutor, ::giveNormal)
     }
 
     private fun giveNormal(context: PaperCommandContext) = give(

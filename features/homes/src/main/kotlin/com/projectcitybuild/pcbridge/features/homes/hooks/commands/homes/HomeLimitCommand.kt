@@ -18,11 +18,9 @@ class HomeLimitCommand(
     private val homeRepository: HomeRepository,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override val commandDefinition by lazy {
-        command("limit") {
-            description = "Checks your home limit"
-            executesSuspending(taskExecutor, ::execute)
-        }
+    override val build = command("limit") {
+        description = "Checks your home limit"
+        executesSuspending(taskExecutor, ::execute)
     }
 
     private suspend fun execute(context: PaperCommandContext) = context.scoped(homesTracer) {

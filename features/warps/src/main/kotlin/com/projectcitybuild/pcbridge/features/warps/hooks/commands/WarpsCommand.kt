@@ -16,16 +16,14 @@ class WarpsCommand(
     private val moveCommand: WarpMoveCommand,
     private val renameCommand: WarpRenameCommand,
 ) : BrigadierCommand {
-    override val commandDefinition by lazy {
-        command("warps") {
-            description = "Lists available warps"
-            requiresPermission(WarpsPermissions.TELEPORT)
-            then(createCommand)
-            then(deleteCommand)
-            then(listCommand)
-            then(moveCommand)
-            then(renameCommand)
-            executes(listCommand.literal().command)
-        }
+    override val build = command("warps") {
+        description = "Lists available warps"
+        requiresPermission(WarpsPermissions.TELEPORT)
+        then(createCommand)
+        then(deleteCommand)
+        then(listCommand)
+        then(moveCommand)
+        then(renameCommand)
+        executes(listCommand.literal().command)
     }
 }

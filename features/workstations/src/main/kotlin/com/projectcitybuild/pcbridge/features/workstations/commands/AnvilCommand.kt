@@ -21,12 +21,10 @@ class AnvilCommand(
 ) : BrigadierCommand {
     internal var menuOpener: (String, Player) -> Unit = { _, player -> MenuType.ANVIL.create(player).open() }
 
-    override val commandDefinition by lazy {
-        command("anvil") {
-            description = "Opens a portable anvil interface"
-            requiresPermission(WorkstationsPermissions.USE)
-            executesSuspending(commandTaskExecutor, ::execute)
-        }
+    override val build = command("anvil") {
+        description = "Opens a portable anvil interface"
+        requiresPermission(WorkstationsPermissions.USE)
+        executesSuspending(commandTaskExecutor, ::execute)
     }
 
     private suspend fun execute(context: PaperCommandContext) = context.scoped(workstationsTracer) {

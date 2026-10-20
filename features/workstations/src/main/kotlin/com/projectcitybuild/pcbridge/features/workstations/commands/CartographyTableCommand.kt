@@ -21,12 +21,10 @@ class CartographyTableCommand(
 ) : BrigadierCommand {
     internal var menuOpener: (String, Player) -> Unit = { _, player -> MenuType.CARTOGRAPHY_TABLE.create(player).open() }
 
-    override val commandDefinition by lazy {
-        command("cartographytable") {
-            description = "Opens a portable cartography table"
-            requiresPermission(WorkstationsPermissions.USE)
-            executesSuspending(commandTaskExecutor, ::execute)
-        }
+    override val build = command("cartographytable") {
+        description = "Opens a portable cartography table"
+        requiresPermission(WorkstationsPermissions.USE)
+        executesSuspending(commandTaskExecutor, ::execute)
     }
 
     private suspend fun execute(context: PaperCommandContext) = context.scoped(workstationsTracer) {

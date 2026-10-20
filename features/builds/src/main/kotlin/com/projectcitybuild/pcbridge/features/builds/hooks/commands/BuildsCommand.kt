@@ -22,20 +22,18 @@ class BuildsCommand(
     private val buildUnvoteCommand: BuildUnvoteCommand,
     private val buildVoteCommand: BuildVoteCommand,
 ) : BrigadierCommand {
-    override val commandDefinition by lazy {
-        command("builds") {
-            description = "Lists available builds"
-            then(buildCreateCommand)
-            then(buildDeleteCommand)
-            then(buildEditCommand)
-            then(buildListCommand)
-            then(buildMoveCommand)
-            then(buildSetCommand)
-            then(buildUnvoteCommand)
-            then(buildVoteCommand)
-            // TODO: can we use a Redirect here? Would be good to allow a page arg
-            requiresPermission(BuildsPermissions.TELEPORT)
-            executes(buildListCommand.literal().command)
-        }
+    override val build = command("builds") {
+        description = "Lists available builds"
+        then(buildCreateCommand)
+        then(buildDeleteCommand)
+        then(buildEditCommand)
+        then(buildListCommand)
+        then(buildMoveCommand)
+        then(buildSetCommand)
+        then(buildUnvoteCommand)
+        then(buildVoteCommand)
+        // TODO: can we use a Redirect here? Would be good to allow a page arg
+        requiresPermission(BuildsPermissions.TELEPORT)
+        executes(buildListCommand.literal().command)
     }
 }

@@ -17,23 +17,21 @@ class TeleportDenyCommand(
     private val server: Server,
     private val application: TeleportService,
 ) : BrigadierCommand {
-    override val commandDefinition by lazy {
-        command("deny") {
-            description = "Declines a pending teleport request"
-            argument("requester", SingleOnlinePlayerArgument(server)) {
-                executesSuspending(plugin) { context ->
-                    context.scoped(teleportationTracer) {
-                        application.deny(
-                            context.source.requirePlayer(),
-                            context.getArgument("requester", Player::class.java).uniqueId,
-                        )
-                    }
-                }
-            }
+    override val build = command("deny") {
+        description = "Declines a pending teleport request"
+        argument("requester", SingleOnlinePlayerArgument(server)) {
             executesSuspending(plugin) { context ->
                 context.scoped(teleportationTracer) {
-                    application.deny(context.source.requirePlayer(), requesterId = null)
+                    application.deny(
+                        context.source.requirePlayer(),
+                        context.getArgument("requester", Player::class.java).uniqueId,
+                    )
                 }
+            }
+        }
+        executesSuspending(plugin) { context ->
+            context.scoped(teleportationTracer) {
+                application.deny(context.source.requirePlayer(), requesterId = null)
             }
         }
     }

@@ -17,18 +17,16 @@ class TeleportPosCommand(
     private val plugin: Plugin,
     private val application: TeleportService,
 ) : BrigadierCommand {
-    override val commandDefinition by lazy {
-        command("pos") {
-            description = "Teleports you to coordinates"
-            requiresPermission(TeleportationPermissions.POSITION)
-            brigadier {
-                this
-                    .then(
-                        withCoordinateArgs(plugin) { context, yaw, pitch ->
-                            execute(context, yaw, pitch)
-                        },
-                    )
-            }
+    override val build = command("pos") {
+        description = "Teleports you to coordinates"
+        requiresPermission(TeleportationPermissions.POSITION)
+        brigadier {
+            this
+                .then(
+                    withCoordinateArgs(plugin) { context, yaw, pitch ->
+                        execute(context, yaw, pitch)
+                    },
+                )
         }
     }
 

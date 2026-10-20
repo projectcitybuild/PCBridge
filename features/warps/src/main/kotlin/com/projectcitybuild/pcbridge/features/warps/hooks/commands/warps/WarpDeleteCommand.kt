@@ -26,14 +26,12 @@ class WarpDeleteCommand(
     private val eventBroadcaster: SpigotEventBroadcaster,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override val commandDefinition by lazy {
-        command("delete") {
-            description = "Deletes a warp"
-            requiresPermission(WarpsPermissions.MANAGE)
-            argument("name", StringArgumentType.string()) {
-                suggestsSuspending(plugin, warpNameSuggester::suggest)
-                    .executesSuspending(taskExecutor, ::execute)
-            }
+    override val build = command("delete") {
+        description = "Deletes a warp"
+        requiresPermission(WarpsPermissions.MANAGE)
+        argument("name", StringArgumentType.string()) {
+            suggestsSuspending(plugin, warpNameSuggester::suggest)
+                .executesSuspending(taskExecutor, ::execute)
         }
     }
 

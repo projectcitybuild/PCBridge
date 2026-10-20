@@ -22,15 +22,13 @@ class SyncCommand(
     private val syncPlayer: SyncPlayer,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override val commandDefinition by lazy {
-        command("sync") {
-            description = "Synchronizes server data"
-            argument("player", SingleOnlinePlayerArgument(plugin.server)) {
-                requiresPermission(SyncPermissions.OTHER)
-                    .executesSuspending(taskExecutor, ::syncOther)
-            }
-            executesSuspending(taskExecutor, ::syncSelf)
+    override val build = command("sync") {
+        description = "Synchronizes server data"
+        argument("player", SingleOnlinePlayerArgument(plugin.server)) {
+            requiresPermission(SyncPermissions.OTHER)
+                .executesSuspending(taskExecutor, ::syncOther)
         }
+        executesSuspending(taskExecutor, ::syncSelf)
     }
 
     private suspend fun syncSelf(context: PaperCommandContext) = context.scoped(syncTracer) {

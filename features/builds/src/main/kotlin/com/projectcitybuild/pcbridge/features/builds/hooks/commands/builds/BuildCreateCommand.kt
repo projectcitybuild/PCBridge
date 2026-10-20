@@ -21,13 +21,11 @@ class BuildCreateCommand(
     private val buildRepository: BuildRepository,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override val commandDefinition by lazy {
-        command("create") {
-            description = "Creates a new build"
-            requiresPermission(BuildsPermissions.MANAGE)
-            argument("name", StringArgumentType.greedyString()) {
-                executesSuspending(taskExecutor, ::execute)
-            }
+    override val build = command("create") {
+        description = "Creates a new build"
+        requiresPermission(BuildsPermissions.MANAGE)
+        argument("name", StringArgumentType.greedyString()) {
+            executesSuspending(taskExecutor, ::execute)
         }
     }
 

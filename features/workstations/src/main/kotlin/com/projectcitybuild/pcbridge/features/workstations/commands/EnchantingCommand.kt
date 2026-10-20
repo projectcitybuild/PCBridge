@@ -21,12 +21,10 @@ class EnchantingCommand(
 ) : BrigadierCommand {
     internal var menuOpener: (String, Player) -> Unit = { _, player -> MenuType.ENCHANTMENT.create(player).open() }
 
-    override val commandDefinition by lazy {
-        command("enchanting") {
-            description = "Opens a portable enchanting table"
-            requiresPermission(WorkstationsPermissions.USE)
-            executesSuspending(commandTaskExecutor, ::execute)
-        }
+    override val build = command("enchanting") {
+        description = "Opens a portable enchanting table"
+        requiresPermission(WorkstationsPermissions.USE)
+        executesSuspending(commandTaskExecutor, ::execute)
     }
 
     private suspend fun execute(context: PaperCommandContext) = context.scoped(workstationsTracer) {

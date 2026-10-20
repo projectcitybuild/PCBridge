@@ -23,14 +23,12 @@ class HomeListCommand(
     private val remoteConfig: RemoteConfig,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override val commandDefinition by lazy {
-        command("list") {
-            description = "Lists your saved homes"
-            argument("page", IntegerArgumentType.integer()) {
-                executesSuspending(taskExecutor, ::execute)
-            }
+    override val build = command("list") {
+        description = "Lists your saved homes"
+        argument("page", IntegerArgumentType.integer()) {
             executesSuspending(taskExecutor, ::execute)
         }
+        executesSuspending(taskExecutor, ::execute)
     }
 
     private suspend fun execute(context: PaperCommandContext) = context.scoped(homesTracer) {

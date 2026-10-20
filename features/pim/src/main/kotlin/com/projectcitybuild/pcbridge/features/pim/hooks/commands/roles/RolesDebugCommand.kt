@@ -21,13 +21,11 @@ class RolesDebugCommand(
     private val permissions: Permissions,
     private val commandTaskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override val commandDefinition by lazy {
-        command("debug") {
-            description = "Displays role debugging information"
-            requiresPermission(PimPermissions.ROLES)
-            argument("roles", StringArgumentType.greedyString()) {
-                executesSuspending(commandTaskExecutor, ::execute)
-            }
+    override val build = command("debug") {
+        description = "Displays role debugging information"
+        requiresPermission(PimPermissions.ROLES)
+        argument("roles", StringArgumentType.greedyString()) {
+            executesSuspending(commandTaskExecutor, ::execute)
         }
     }
 

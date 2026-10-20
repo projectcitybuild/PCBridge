@@ -23,15 +23,13 @@ class BuildListCommand(
     private val buildRepository: BuildRepository,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override val commandDefinition by lazy {
-        command("list") {
-            description = "Lists available builds"
-            requiresPermission(BuildsPermissions.TELEPORT)
-            argument("page", IntegerArgumentType.integer()) {
-                executesSuspending(taskExecutor, ::execute)
-            }
+    override val build = command("list") {
+        description = "Lists available builds"
+        requiresPermission(BuildsPermissions.TELEPORT)
+        argument("page", IntegerArgumentType.integer()) {
             executesSuspending(taskExecutor, ::execute)
         }
+        executesSuspending(taskExecutor, ::execute)
     }
 
     private suspend fun execute(context: PaperCommandContext) = context.scoped(buildsTracer) {

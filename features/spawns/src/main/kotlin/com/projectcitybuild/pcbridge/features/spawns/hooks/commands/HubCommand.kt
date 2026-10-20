@@ -26,11 +26,9 @@ class HubCommand(
     private val playerTeleporter: PlayerTeleporter,
     private val commandTaskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override val commandDefinition by lazy {
-        command("hub") {
-            description = "Teleports to the server hub"
-            executesSuspending(commandTaskExecutor, ::execute)
-        }
+    override val build = command("hub") {
+        description = "Teleports to the server hub"
+        executesSuspending(commandTaskExecutor, ::execute)
     }
 
     suspend fun execute(context: PaperCommandContext) = context.scoped(spawnsTracer) {

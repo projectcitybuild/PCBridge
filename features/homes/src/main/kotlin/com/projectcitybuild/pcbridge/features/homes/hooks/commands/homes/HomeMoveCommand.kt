@@ -22,13 +22,11 @@ class HomeMoveCommand(
     private val homeRepository: HomeRepository,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override val commandDefinition by lazy {
-        command("move") {
-            description = "Moves a saved home to your current location"
-            argument("name", StringArgumentType.greedyString()) {
-                suggestsSuspending(plugin, homeNameSuggester::suggest)
-                executesSuspending(taskExecutor, ::execute)
-            }
+    override val build = command("move") {
+        description = "Moves a saved home to your current location"
+        argument("name", StringArgumentType.greedyString()) {
+            suggestsSuspending(plugin, homeNameSuggester::suggest)
+            executesSuspending(taskExecutor, ::execute)
         }
     }
 

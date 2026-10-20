@@ -21,12 +21,10 @@ class WorkbenchCommand(
 ) : BrigadierCommand {
     internal var menuOpener: (String, Player) -> Unit = { _, player -> MenuType.CRAFTING.create(player).open() }
 
-    override val commandDefinition by lazy {
-        command("workbench") {
-            description = "Opens a portable crafting table"
-            requiresPermission(WorkstationsPermissions.USE)
-            executesSuspending(commandTaskExecutor, ::execute)
-        }
+    override val build = command("workbench") {
+        description = "Opens a portable crafting table"
+        requiresPermission(WorkstationsPermissions.USE)
+        executesSuspending(commandTaskExecutor, ::execute)
     }
 
     private suspend fun execute(context: PaperCommandContext) = context.scoped(workstationsTracer) {

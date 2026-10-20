@@ -31,14 +31,12 @@ class HomeCommand(
     private val playerTeleporter: PlayerTeleporter,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override val commandDefinition by lazy {
-        command("home") {
-            description = "Teleports to one of your homes"
-            requiresPermission(HomesPermissions.USE)
-            argument("name", StringArgumentType.greedyString()) {
-                suggestsSuspending(plugin, homeNameSuggester::suggest)
-                executesSuspending(taskExecutor, ::execute)
-            }
+    override val build = command("home") {
+        description = "Teleports to one of your homes"
+        requiresPermission(HomesPermissions.USE)
+        argument("name", StringArgumentType.greedyString()) {
+            suggestsSuspending(plugin, homeNameSuggester::suggest)
+            executesSuspending(taskExecutor, ::execute)
         }
     }
 

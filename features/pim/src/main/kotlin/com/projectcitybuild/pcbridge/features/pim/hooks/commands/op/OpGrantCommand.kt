@@ -27,12 +27,10 @@ class OpGrantCommand(
 ) : BrigadierCommand {
     internal var confirmationDialog: () -> DialogLike = ConfirmOpElevateDialog::build
 
-    override val commandDefinition by lazy {
-        command("grant") {
-            description = "Grants a player an operator role"
-            requiresPermission(PimPermissions.OP)
-            executesSuspending(commandTaskExecutor, ::execute)
-        }
+    override val build = command("grant") {
+        description = "Grants a player an operator role"
+        requiresPermission(PimPermissions.OP)
+        executesSuspending(commandTaskExecutor, ::execute)
     }
 
     suspend fun execute(context: PaperCommandContext) = context.scoped(pimTracer) {

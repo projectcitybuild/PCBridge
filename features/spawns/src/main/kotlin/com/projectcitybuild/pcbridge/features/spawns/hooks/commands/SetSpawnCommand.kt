@@ -23,12 +23,10 @@ class SetSpawnCommand(
     private val eventBroadcaster: SpigotEventBroadcaster,
     private val commandTaskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override val commandDefinition by lazy {
-        command("setspawn") {
-            description = "Sets the server spawn location"
-            requiresPermission(SpawnsPermissions.MANAGE)
-            executesSuspending(commandTaskExecutor, ::execute)
-        }
+    override val build = command("setspawn") {
+        description = "Sets the server spawn location"
+        requiresPermission(SpawnsPermissions.MANAGE)
+        executesSuspending(commandTaskExecutor, ::execute)
     }
 
     suspend fun execute(context: PaperCommandContext) = context.scoped(spawnsTracer) {

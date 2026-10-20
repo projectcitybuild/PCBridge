@@ -23,13 +23,11 @@ class HomeRenameCommand(
     private val homeRepository: HomeRepository,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override val commandDefinition by lazy {
-        command("rename") {
-            description = "Renames a saved home"
-            argument("name", StringArgumentType.greedyString()) {
-                suggestsSuspending(plugin, homeNameSuggester::suggest)
-                executesSuspending(taskExecutor, ::execute)
-            }
+    override val build = command("rename") {
+        description = "Renames a saved home"
+        argument("name", StringArgumentType.greedyString()) {
+            suggestsSuspending(plugin, homeNameSuggester::suggest)
+            executesSuspending(taskExecutor, ::execute)
         }
     }
 

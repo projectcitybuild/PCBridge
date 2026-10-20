@@ -18,14 +18,12 @@ class ConfigCommand(
     private val remoteConfig: RemoteConfig,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override val commandDefinition by lazy {
-        command("config") {
-            description = "Reloads server configuration"
+    override val build = command("config") {
+        description = "Reloads server configuration"
+        requiresPermission(ConfigPermissions.RELOAD)
+        literal("reload") {
             requiresPermission(ConfigPermissions.RELOAD)
-            literal("reload") {
-                requiresPermission(ConfigPermissions.RELOAD)
-                executesSuspending(taskExecutor, ::execute)
-            }
+            executesSuspending(taskExecutor, ::execute)
         }
     }
 

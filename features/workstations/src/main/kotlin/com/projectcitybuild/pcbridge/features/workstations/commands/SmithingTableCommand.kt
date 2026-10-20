@@ -21,12 +21,10 @@ class SmithingTableCommand(
 ) : BrigadierCommand {
     internal var menuOpener: (String, Player) -> Unit = { _, player -> MenuType.SMITHING.create(player).open() }
 
-    override val commandDefinition by lazy {
-        command("smithingtable") {
-            description = "Opens a portable smithing table"
-            requiresPermission(WorkstationsPermissions.USE)
-            executesSuspending(commandTaskExecutor, ::execute)
-        }
+    override val build = command("smithingtable") {
+        description = "Opens a portable smithing table"
+        requiresPermission(WorkstationsPermissions.USE)
+        executesSuspending(commandTaskExecutor, ::execute)
     }
 
     private suspend fun execute(context: PaperCommandContext) = context.scoped(workstationsTracer) {

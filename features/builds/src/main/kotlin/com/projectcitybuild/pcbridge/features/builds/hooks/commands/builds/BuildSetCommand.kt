@@ -24,16 +24,14 @@ class BuildSetCommand(
     private val buildRepository: BuildRepository,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override val commandDefinition by lazy {
-        command("set") {
-            description = "Updates a field on a build"
-            requiresPermission(BuildsPermissions.MANAGE)
-            argument("id", IntegerArgumentType.integer()) {
-                this.argument("field", EnumArgument(EditableBuildField::class.java)) {
+    override val build = command("set") {
+        description = "Updates a field on a build"
+        requiresPermission(BuildsPermissions.MANAGE)
+        argument("id", IntegerArgumentType.integer()) {
+            this.argument("field", EnumArgument(EditableBuildField::class.java)) {
+                executesSuspending(taskExecutor, ::execute)
+                this.argument("value", StringArgumentType.greedyString()) {
                     executesSuspending(taskExecutor, ::execute)
-                    this.argument("value", StringArgumentType.greedyString()) {
-                        executesSuspending(taskExecutor, ::execute)
-                    }
                 }
             }
         }

@@ -23,13 +23,11 @@ class BanCommand(
     private val createDialog: (String?) -> DialogLike = CreateBanDialog::build,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override val commandDefinition by lazy {
-        command("ban") {
-            description = "Bans a player from the server"
-            requiresPermission(BansPermissions.MANAGE)
-            argument("player", OnlinePlayerNameArgument(server)) {
-                executesSuspending(taskExecutor, ::execute)
-            }
+    override val build = command("ban") {
+        description = "Bans a player from the server"
+        requiresPermission(BansPermissions.MANAGE)
+        argument("player", OnlinePlayerNameArgument(server)) {
+            executesSuspending(taskExecutor, ::execute)
         }
     }
 

@@ -258,6 +258,6 @@ class TeleportLegacyCommands(
         name: String,
         configure: CommandBuilder.() -> Unit,
     ): BrigadierCommand = object : BrigadierCommand {
-        override val commandDefinition by lazy { commandDsl(name, configure) }
+        override val build = commandDsl(name, configure)
     }
-        }
+}

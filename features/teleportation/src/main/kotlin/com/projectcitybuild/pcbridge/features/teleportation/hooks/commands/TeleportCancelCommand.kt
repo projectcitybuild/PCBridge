@@ -13,13 +13,11 @@ class TeleportCancelCommand(
     private val plugin: Plugin,
     private val application: TeleportService,
 ) : BrigadierCommand {
-    override val commandDefinition by lazy {
-        command("cancel") {
-            description = "Cancels a pending teleport request"
-            executesSuspending(plugin) { context ->
-                context.scoped(teleportationTracer) {
-                    application.cancel(context.source.requirePlayer())
-                }
+    override val build = command("cancel") {
+        description = "Cancels a pending teleport request"
+        executesSuspending(plugin) { context ->
+            context.scoped(teleportationTracer) {
+                application.cancel(context.source.requirePlayer())
             }
         }
     }

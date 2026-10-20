@@ -21,13 +21,11 @@ class TeleportHereCommand(
     private val server: Server,
     private val application: TeleportService,
 ) : BrigadierCommand {
-    override val commandDefinition by lazy {
-        command("here") {
-            description = "Teleports a target player to you"
-            requiresPermission(TeleportationPermissions.OTHERS)
-            argument("player", SingleOnlinePlayerArgument(server)) {
-                withTeleportFlags(plugin) { context, flags -> execute(context, flags) }
-            }
+    override val build = command("here") {
+        description = "Teleports a target player to you"
+        requiresPermission(TeleportationPermissions.OTHERS)
+        argument("player", SingleOnlinePlayerArgument(server)) {
+            withTeleportFlags(plugin) { context, flags -> execute(context, flags) }
         }
     }
 

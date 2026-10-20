@@ -24,14 +24,12 @@ class BuildUnvoteCommand(
     private val buildRepository: BuildRepository,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override val commandDefinition by lazy {
-        command("unvote") {
-            description = "Removes your vote from a build"
-            requiresPermission(BuildsPermissions.VOTE)
-            argument("name", StringArgumentType.greedyString()) {
-                suggestsSuspending(plugin, buildNameSuggester::suggest)
-                executesSuspending(taskExecutor, ::execute)
-            }
+    override val build = command("unvote") {
+        description = "Removes your vote from a build"
+        requiresPermission(BuildsPermissions.VOTE)
+        argument("name", StringArgumentType.greedyString()) {
+            suggestsSuspending(plugin, buildNameSuggester::suggest)
+            executesSuspending(taskExecutor, ::execute)
         }
     }
 

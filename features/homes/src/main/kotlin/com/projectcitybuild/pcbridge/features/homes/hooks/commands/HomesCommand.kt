@@ -18,17 +18,15 @@ class HomesCommand(
     private val homeLimitCommand: HomeLimitCommand,
     private val homeRenameCommand: HomeRenameCommand,
 ) : BrigadierCommand {
-    override val commandDefinition by lazy {
-        command("homes") {
-            description = "Lists your saved homes"
-            requiresPermission(HomesPermissions.USE)
-            then(homeCreateCommand)
-            then(homeDeleteCommand)
-            then(homeListCommand)
-            then(homeMoveCommand)
-            then(homeLimitCommand)
-            then(homeRenameCommand)
-            executes(homeListCommand.literal().command)
-        }
+    override val build = command("homes") {
+        description = "Lists your saved homes"
+        requiresPermission(HomesPermissions.USE)
+        then(homeCreateCommand)
+        then(homeDeleteCommand)
+        then(homeListCommand)
+        then(homeMoveCommand)
+        then(homeLimitCommand)
+        then(homeRenameCommand)
+        executes(homeListCommand.literal().command)
     }
 }

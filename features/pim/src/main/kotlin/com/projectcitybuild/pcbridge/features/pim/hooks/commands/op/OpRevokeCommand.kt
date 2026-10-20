@@ -19,12 +19,10 @@ class OpRevokeCommand(
     private val opElevationService: OpElevationService,
     private val commandTaskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override val commandDefinition by lazy {
-        command("revoke") {
-            description = "Revokes a player's operator role"
-            requiresPermission(PimPermissions.OP)
-            executesSuspending(commandTaskExecutor, ::execute)
-        }
+    override val build = command("revoke") {
+        description = "Revokes a player's operator role"
+        requiresPermission(PimPermissions.OP)
+        executesSuspending(commandTaskExecutor, ::execute)
     }
 
     suspend fun execute(context: PaperCommandContext) = context.scoped(pimTracer) {

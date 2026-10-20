@@ -27,17 +27,15 @@ class KickCommand(
     private val server: Server,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override val commandDefinition by lazy {
-        command("kick") {
-            description = "Kicks a player from the server"
-            requiresPermission(ModeratePermissions.MODERATE)
-            argument("player", SingleOnlinePlayerArgument(plugin.server)) {
-                then(
-                    Commands
-                        .argument("reason", StringArgumentType.greedyString())
-                        .executesSuspending(taskExecutor, ::execute),
-                ).executesSuspending(taskExecutor, ::execute)
-            }
+    override val build = command("kick") {
+        description = "Kicks a player from the server"
+        requiresPermission(ModeratePermissions.MODERATE)
+        argument("player", SingleOnlinePlayerArgument(plugin.server)) {
+            then(
+                Commands
+                    .argument("reason", StringArgumentType.greedyString())
+                    .executesSuspending(taskExecutor, ::execute),
+            ).executesSuspending(taskExecutor, ::execute)
         }
     }
 

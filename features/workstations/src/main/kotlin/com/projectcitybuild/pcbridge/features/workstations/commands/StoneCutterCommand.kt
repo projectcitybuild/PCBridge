@@ -21,12 +21,10 @@ class StoneCutterCommand(
 ) : BrigadierCommand {
     internal var menuOpener: (String, Player) -> Unit = { _, player -> MenuType.STONECUTTER.create(player).open() }
 
-    override val commandDefinition by lazy {
-        command("stonecutter") {
-            description = "Opens a portable stonecutter"
-            requiresPermission(WorkstationsPermissions.USE)
-            executesSuspending(commandTaskExecutor, ::execute)
-        }
+    override val build = command("stonecutter") {
+        description = "Opens a portable stonecutter"
+        requiresPermission(WorkstationsPermissions.USE)
+        executesSuspending(commandTaskExecutor, ::execute)
     }
 
     private suspend fun execute(context: PaperCommandContext) = context.scoped(workstationsTracer) {
