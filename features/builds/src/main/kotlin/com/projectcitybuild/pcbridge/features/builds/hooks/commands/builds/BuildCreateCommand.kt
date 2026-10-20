@@ -6,6 +6,7 @@ import com.projectcitybuild.pcbridge.features.builds.BuildsPermissions
 import com.projectcitybuild.pcbridge.features.builds.buildsTracer
 import com.projectcitybuild.pcbridge.features.builds.domain.repositories.BuildRepository
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
+import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandNode
@@ -14,7 +15,6 @@ import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executes
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
 import com.projectcitybuild.pcbridge.runtime.commands.scoped
-import io.papermc.paper.command.brigadier.Commands
 import org.bukkit.plugin.Plugin
 
 class BuildCreateCommand(
@@ -22,14 +22,12 @@ class BuildCreateCommand(
     private val buildRepository: BuildRepository,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override fun literal(): PaperCommandNode = Commands
-        .literal("create")
-        .requiresPermission(BuildsPermissions.MANAGE)
-        .then(
-            Commands
-                .argument("name", StringArgumentType.greedyString())
-                .executesSuspending(taskExecutor, ::execute),
-        ).build()
+    override fun literal(): PaperCommandNode = command("create") {
+        requiresPermission(BuildsPermissions.MANAGE)
+        argument("name", StringArgumentType.greedyString()) {
+            executesSuspending(taskExecutor, ::execute)
+        }
+    }
 
     private suspend fun execute(context: PaperCommandContext) = context.scoped(buildsTracer) {
         val player = context.source.requirePlayer()

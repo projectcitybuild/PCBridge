@@ -12,12 +12,12 @@ import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandNode
 import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.argumenttypes.OnOffArgument
+import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
 import com.projectcitybuild.pcbridge.platform.paper.events.SpigotEventBroadcaster
 import com.projectcitybuild.pcbridge.runtime.commands.scoped
 import com.projectcitybuild.pcbridge.runtime.state.store.Store
-import io.papermc.paper.command.brigadier.Commands
 import org.bukkit.Server
 import org.bukkit.plugin.Plugin
 
@@ -28,15 +28,13 @@ class MaintenanceCommand(
     private val eventBroadcaster: SpigotEventBroadcaster,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override fun literal(): PaperCommandNode = Commands
-        .literal("maintenance")
-        .requiresPermission(MaintenancePermissions.MANAGE)
-        .then(
-            Commands
-                .argument("enabled", OnOffArgument())
-                .executesSuspending(taskExecutor, ::toggle),
-        ).executesSuspending(taskExecutor, ::status)
-        .build()
+    override fun literal(): PaperCommandNode = command("maintenance") {
+        requiresPermission(MaintenancePermissions.MANAGE)
+        argument("enabled", OnOffArgument()) {
+            executesSuspending(taskExecutor, ::toggle)
+        }
+        executesSuspending(taskExecutor, ::status)
+    }
 
     private suspend fun toggle(context: PaperCommandContext) = context.scoped(maintenanceTracer) {
         val sender = context.source.sender

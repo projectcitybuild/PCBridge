@@ -5,16 +5,15 @@ import com.projectcitybuild.pcbridge.features.building.BuildingPermissions
 import com.projectcitybuild.pcbridge.features.building.buildingTracer
 import com.projectcitybuild.pcbridge.features.building.domain.data.InvisFrameKey
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
+import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandNode
 import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.requirePlayer
-import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
 import com.projectcitybuild.pcbridge.platform.paper.namespace.SpigotNamespace
 import com.projectcitybuild.pcbridge.runtime.commands.scopedSync
-import io.papermc.paper.command.brigadier.Commands
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextDecoration
@@ -32,15 +31,13 @@ class InvisFrameCommand(
 
     override val description: String = "Gives you an itemframe that turns invisible when holding an item"
 
-    override fun literal(): PaperCommandNode = Commands
-        .literal("invisframe")
-        .requiresPermission(BuildingPermissions.INVIS_FRAME)
-        .then(
-            Commands
-                .literal("glowing")
-                .executesSuspending(commandTaskExecutor, ::giveGlowing),
-        ).executesSuspending(commandTaskExecutor, ::giveNormal)
-        .build()
+    override fun literal(): PaperCommandNode = command("invisframe") {
+        requiresPermission(BuildingPermissions.INVIS_FRAME)
+        literal("glowing") {
+            executesSuspending(commandTaskExecutor, ::giveGlowing)
+        }
+        executesSuspending(commandTaskExecutor, ::giveNormal)
+    }
 
     private fun giveNormal(context: PaperCommandContext) = give(
         context = context,

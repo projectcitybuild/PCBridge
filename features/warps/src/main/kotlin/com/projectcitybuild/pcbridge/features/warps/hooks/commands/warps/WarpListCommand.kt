@@ -7,6 +7,7 @@ import com.projectcitybuild.pcbridge.features.warps.WarpsPermissions
 import com.projectcitybuild.pcbridge.features.warps.domain.repositories.WarpRepository
 import com.projectcitybuild.pcbridge.features.warps.warpsTracer
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
+import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandNode
@@ -16,7 +17,6 @@ import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.getOptio
 import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
 import com.projectcitybuild.pcbridge.runtime.commands.scoped
 import com.projectcitybuild.pcbridge.runtime.remoteconfig.RemoteConfig
-import io.papermc.paper.command.brigadier.Commands
 import org.bukkit.plugin.Plugin
 
 class WarpListCommand(
@@ -25,15 +25,14 @@ class WarpListCommand(
     private val remoteConfig: RemoteConfig,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override fun literal(): PaperCommandNode = Commands
-        .literal("list")
-        .requiresPermission(WarpsPermissions.TELEPORT)
-        .then(
-            Commands
-                .argument("page", IntegerArgumentType.integer(1))
-                .executesSuspending(taskExecutor, ::execute),
-        ).executesSuspending(taskExecutor, ::execute)
-        .build()
+    override fun literal(): PaperCommandNode = command("list") {
+        requiresPermission(WarpsPermissions.TELEPORT)
+        argument("page", IntegerArgumentType.integer(1)) {
+            executesSuspending(taskExecutor, ::execute)
+        }
+        executesSuspending(taskExecutor, ::execute)
+
+    }
 
     private suspend fun execute(context: PaperCommandContext) = context.scoped(warpsTracer) {
         val pageNumber = context.getOptionalArgument("page", Int::class.java) ?: 1

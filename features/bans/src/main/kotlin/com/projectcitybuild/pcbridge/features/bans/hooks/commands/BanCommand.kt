@@ -4,6 +4,7 @@ import com.projectcitybuild.pcbridge.features.bans.BansPermissions
 import com.projectcitybuild.pcbridge.features.bans.bansTracer
 import com.projectcitybuild.pcbridge.features.bans.hooks.dialogs.CreateBanDialog
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
+import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandNode
@@ -13,7 +14,6 @@ import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executes
 import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
 import com.projectcitybuild.pcbridge.platform.paper.extensions.onlinePlayer
 import com.projectcitybuild.pcbridge.runtime.commands.scoped
-import io.papermc.paper.command.brigadier.Commands
 import net.kyori.adventure.dialog.DialogLike
 import org.bukkit.Server
 import org.bukkit.plugin.Plugin
@@ -24,14 +24,12 @@ class BanCommand(
     private val createDialog: (String?) -> DialogLike = CreateBanDialog::build,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override fun literal(): PaperCommandNode = Commands
-        .literal("ban")
-        .requiresPermission(BansPermissions.MANAGE)
-        .then(
-            Commands
-                .argument("player", OnlinePlayerNameArgument(server))
-                .executesSuspending(taskExecutor, ::execute),
-        ).build()
+    override fun literal(): PaperCommandNode = command("ban") {
+        requiresPermission(BansPermissions.MANAGE)
+        argument("player", OnlinePlayerNameArgument(server)) {
+            executesSuspending(taskExecutor, ::execute)
+        }
+    }
 
     private suspend fun execute(context: PaperCommandContext) = context.scoped(bansTracer) {
         val inputPlayerName = context.getArgument("player", String::class.java)

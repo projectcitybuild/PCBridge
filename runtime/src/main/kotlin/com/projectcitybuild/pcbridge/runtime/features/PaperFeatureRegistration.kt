@@ -54,11 +54,9 @@ class PaperFeatureRegistrationBuilder internal constructor(
 
     inline fun <reified T : Any> get(): T = resolve(T::class)
 
-    fun commands(vararg commands: BrigadierCommand)
-        = commands.forEach { this.commands.add(it.ordered()) }
+    fun commands(vararg commands: BrigadierCommand) = commands.forEach { this.commands.add(it.ordered()) }
 
-    fun listeners(vararg listeners: Listener)
-        = listeners.forEach { this.listeners.add(it.ordered()) }
+    fun listeners(vararg listeners: Listener) = listeners.forEach { this.listeners.add(it.ordered()) }
 
     fun connectionMiddleware(
         middleware: ConnectionMiddleware,
@@ -90,28 +88,26 @@ class PaperFeatureRegistrationBuilder internal constructor(
         priority: Int,
     ) = tabPlayerPlaceholders.add(placeholder.ordered(priority))
 
-    internal fun build() =
-        PaperFeatureRegistration(
-            name = name,
-            commands = commands,
-            listeners = listeners,
-            connectionMiddleware = connectionMiddleware,
-            chatSenderDecorators = chatSenderDecorators,
-            chatMessageDecorators = chatMessageDecorators,
-            serverListingDecorators = serverListingDecorators,
-            tabSectionPlaceholders = tabSectionPlaceholders,
-            tabPlayerPlaceholders = tabPlayerPlaceholders,
-        )
+    internal fun build() = PaperFeatureRegistration(
+        name = name,
+        commands = commands,
+        listeners = listeners,
+        connectionMiddleware = connectionMiddleware,
+        chatSenderDecorators = chatSenderDecorators,
+        chatMessageDecorators = chatMessageDecorators,
+        serverListingDecorators = serverListingDecorators,
+        tabSectionPlaceholders = tabSectionPlaceholders,
+        tabPlayerPlaceholders = tabPlayerPlaceholders,
+    )
 
     @PublishedApi
     internal fun <T : Any> resolve(type: KClass<T>): T = scope.get(type)
 
-    private fun <T> T.ordered(priority: Int = 0) =
-        OrderedHook(
-            value = this,
-            priority = priority,
-            sequence = sequence++,
-        )
+    private fun <T> T.ordered(priority: Int = 0) = OrderedHook(
+        value = this,
+        priority = priority,
+        sequence = sequence++,
+    )
 }
 
 fun Module.paperFeature(
@@ -144,15 +140,14 @@ class PaperFeatureRegistrar(
         tabPlaceholders.players(*registrations.ordered { tabPlayerPlaceholders }.toTypedArray())
     }
 
-    private fun <T> List<PaperFeatureRegistration>.ordered(
-        select: PaperFeatureRegistration.() -> List<OrderedHook<T>>
-    ): List<T> = flatMap { registration ->
-        registration.select().map { hook -> Triple(hook, registration.name, hook.sequence) }
-    }.sortedWith(
-        compareBy<Triple<OrderedHook<T>, String, Int>>(
-            { it.first.priority },
-            { it.second },
-            { it.third },
-        ),
-    ).map { it.first.value }
+    private fun <T> List<PaperFeatureRegistration>.ordered(select: PaperFeatureRegistration.() -> List<OrderedHook<T>>): List<T> =
+        flatMap { registration ->
+            registration.select().map { hook -> Triple(hook, registration.name, hook.sequence) }
+        }.sortedWith(
+            compareBy<Triple<OrderedHook<T>, String, Int>>(
+                { it.first.priority },
+                { it.second },
+                { it.third },
+            ),
+        ).map { it.first.value }
 }

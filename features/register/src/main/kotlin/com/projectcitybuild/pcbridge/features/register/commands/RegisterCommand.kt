@@ -11,10 +11,10 @@ import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandNode
 import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
+import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.runtime.commands.scoped
-import io.papermc.paper.command.brigadier.Commands
 import net.kyori.adventure.dialog.DialogLike
 import org.bukkit.plugin.Plugin
 
@@ -27,17 +27,14 @@ class RegisterCommand(
 
     override val description: String = "Creates a new Project City Build account"
 
-    override fun literal(): PaperCommandNode {
-        return Commands
-            .literal("register")
-            .then(
-                Commands
-                    .argument("email", StringArgumentType.greedyString())
-                    .executesSuspending(commandTaskExecutor, ::execute),
-            ).executes { context ->
-                context.source.sender.sendMessage(l10n.registration.errorNoRegisterEmailSpecified)
-                return@executes Command.SINGLE_SUCCESS
-            }.build()
+    override fun literal(): PaperCommandNode = command("register") {
+        argument("email", StringArgumentType.greedyString()) {
+            executesSuspending(commandTaskExecutor, ::execute)
+        }
+        executes { context ->
+            context.source.sender.sendMessage(l10n.registration.errorNoRegisterEmailSpecified)
+            Command.SINGLE_SUCCESS
+        }
     }
 
     private suspend fun execute(context: PaperCommandContext) = context.scoped(registerTracer) {

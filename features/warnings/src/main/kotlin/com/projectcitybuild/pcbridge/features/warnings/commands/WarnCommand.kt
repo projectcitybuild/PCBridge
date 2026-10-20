@@ -4,6 +4,7 @@ import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.features.warnings.WarningsPermissions
 import com.projectcitybuild.pcbridge.features.warnings.warningsTracer
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
+import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandNode
@@ -14,7 +15,6 @@ import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
 import com.projectcitybuild.pcbridge.platform.paper.extensions.onlinePlayer
 import com.projectcitybuild.pcbridge.runtime.commands.scoped
 import com.projectcitybuild.pcbridge.runtime.remoteconfig.RemoteConfig
-import io.papermc.paper.command.brigadier.Commands
 import org.bukkit.Server
 import org.bukkit.plugin.Plugin
 
@@ -24,14 +24,12 @@ class WarnCommand(
     private val remoteConfig: RemoteConfig,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override fun literal(): PaperCommandNode = Commands
-        .literal("warn")
-        .requiresPermission(WarningsPermissions.MANAGE)
-        .then(
-            Commands
-                .argument("player", OnlinePlayerNameArgument(server))
-                .executesSuspending(taskExecutor, ::execute),
-        ).build()
+    override fun literal(): PaperCommandNode = command("warn") {
+        requiresPermission(WarningsPermissions.MANAGE)
+        argument("player", OnlinePlayerNameArgument(server)) {
+            executesSuspending(taskExecutor, ::execute)
+        }
+    }
 
     private suspend fun execute(context: PaperCommandContext) = context.scoped(warningsTracer) {
         val playerName = context.getArgument("player", String::class.java)

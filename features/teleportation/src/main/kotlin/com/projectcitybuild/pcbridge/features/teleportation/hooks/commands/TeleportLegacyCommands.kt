@@ -1,11 +1,11 @@
 package com.projectcitybuild.pcbridge.features.teleportation.hooks.commands
 
 import com.mojang.brigadier.arguments.DoubleArgumentType
-import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import com.projectcitybuild.pcbridge.features.teleportation.TeleportationPermissions
 import com.projectcitybuild.pcbridge.features.teleportation.domain.data.TeleportFlags
 import com.projectcitybuild.pcbridge.features.teleportation.domain.services.TeleportService
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
+import com.projectcitybuild.pcbridge.platform.paper.commands.CommandBuilder
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandNode
 import com.projectcitybuild.pcbridge.platform.paper.commands.arguments.withCoordinateArgs
 import com.projectcitybuild.pcbridge.platform.paper.commands.argumenttypes.SingleOnlinePlayerArgument
@@ -14,18 +14,17 @@ import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.requireP
 import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
 import com.projectcitybuild.pcbridge.runtime.commands.scoped
 import com.projectcitybuild.pcbridge.runtime.teleportation.teleportationTracer
-import io.papermc.paper.command.brigadier.CommandSourceStack
-import io.papermc.paper.command.brigadier.Commands
 import org.bukkit.Server
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
+import com.projectcitybuild.pcbridge.platform.paper.commands.command as commandDsl
 
 class TeleportLegacyCommands(
     private val plugin: Plugin,
     private val server: Server,
     private val teleportService: TeleportService,
 ) {
-    fun commands(): List<BrigadierCommand> = buildList {
+    fun commands() = buildList {
         add(tphere())
         add(tpa())
         add(tpahere())
@@ -42,85 +41,75 @@ class TeleportLegacyCommands(
 
     // TODO: support tptoggle
     private fun tpa() = command("tpa") {
-        then(
-            Commands
-                .argument("player", SingleOnlinePlayerArgument(server))
-                .requiresPermission("essentials.tpa")
-                .executesSuspending(plugin) { context ->
-                    context.scoped(teleportationTracer) {
-                        val player = context.source.requirePlayer()
-                        val target = context.getArgument("player", Player::class.java)
-                        teleportService.to(player, target)
-                    }
-                },
-        )
+        argument("player", SingleOnlinePlayerArgument(server)) {
+            requiresPermission("essentials.tpa")
+            executesSuspending(plugin) { context ->
+                context.scoped(teleportationTracer) {
+                    val player = context.source.requirePlayer()
+                    val target = context.getArgument("player", Player::class.java)
+                    teleportService.to(player, target)
+                }
+            }
+        }
     }
 
     private fun tpahere() = command("tpahere") {
-        then(
-            Commands
-                .argument("player", SingleOnlinePlayerArgument(server))
-                .requiresPermission("essentials.tpahere")
-                .executesSuspending(plugin) { context ->
-                    context.scoped(teleportationTracer) {
-                        val player = context.source.requirePlayer()
-                        val target = context.getArgument("player", Player::class.java)
-                        teleportService.requestHere(player, target)
-                    }
-                },
-        )
+        argument("player", SingleOnlinePlayerArgument(server)) {
+            requiresPermission("essentials.tpahere")
+            executesSuspending(plugin) { context ->
+                context.scoped(teleportationTracer) {
+                    val player = context.source.requirePlayer()
+                    val target = context.getArgument("player", Player::class.java)
+                    teleportService.requestHere(player, target)
+                }
+            }
+        }
     }
 
     private fun tpo() = command("tpo") {
-        then(
-            Commands
-                .argument("player", SingleOnlinePlayerArgument(server))
-                .requiresPermission("essentials.tpo")
-                .executesSuspending(plugin) { context ->
-                    context.scoped(teleportationTracer) {
-                        val target = context.getArgument("player", Player::class.java)
-                        teleportService.to(
-                            requester = context.source.requirePlayer(),
-                            target = target,
-                            flags = TeleportFlags(force = true),
-                        )
-                    }
-                },
-        )
+        argument("player", SingleOnlinePlayerArgument(server)) {
+            requiresPermission("essentials.tpo")
+            executesSuspending(plugin) { context ->
+                context.scoped(teleportationTracer) {
+                    val target = context.getArgument("player", Player::class.java)
+                    teleportService.to(
+                        requester = context.source.requirePlayer(),
+                        target = target,
+                        flags = TeleportFlags(force = true),
+                    )
+                }
+            }
+        }
     }
 
     private fun tpohere() = command("tpohere") {
-        then(
-            Commands
-                .argument("player", SingleOnlinePlayerArgument(server))
-                .requiresPermission("essentials.tpohere")
-                .executesSuspending(plugin) { context ->
-                    context.scoped(teleportationTracer) {
-                        teleportService.here(
-                            operator = context.source.requirePlayer(),
-                            target = context.getArgument("player", Player::class.java),
-                            flags = TeleportFlags(force = true),
-                        )
-                    }
-                },
-        )
+        argument("player", SingleOnlinePlayerArgument(server)) {
+            requiresPermission("essentials.tpohere")
+            executesSuspending(plugin) { context ->
+                context.scoped(teleportationTracer) {
+                    teleportService.here(
+                        operator = context.source.requirePlayer(),
+                        target = context.getArgument("player", Player::class.java),
+                        flags = TeleportFlags(force = true),
+                    )
+                }
+            }
+        }
     }
 
     private fun tphere() = command("tphere") {
-        then(
-            Commands
-                .argument("player", SingleOnlinePlayerArgument(server))
-                .requiresPermission("essentials.tphere")
-                .executesSuspending(plugin) { context ->
-                    context.scoped(teleportationTracer) {
-                        teleportService.here(
-                            operator = context.source.requirePlayer(),
-                            target = context.getArgument("player", Player::class.java),
-                            flags = TeleportFlags(force = true),
-                        )
-                    }
-                },
-        )
+        argument("player", SingleOnlinePlayerArgument(server)) {
+            requiresPermission("essentials.tphere")
+            executesSuspending(plugin) { context ->
+                context.scoped(teleportationTracer) {
+                    teleportService.here(
+                        operator = context.source.requirePlayer(),
+                        target = context.getArgument("player", Player::class.java),
+                        flags = TeleportFlags(force = true),
+                    )
+                }
+            }
+        }
     }
 
     private fun tpcancel() = listOf("tpcancel", "tpacancel").map {
@@ -131,23 +120,21 @@ class TeleportLegacyCommands(
                     teleportService.cancel(context.source.requirePlayer(), targetId = null)
                 }
             }
-            then(
-                Commands
-                    .argument("player", SingleOnlinePlayerArgument(server))
-                    .requiresPermission("essentials.tpcancel")
-                    .executesSuspending(plugin) { context ->
-                        context.scoped(teleportationTracer) {
-                            teleportService.cancel(
-                                context.source.requirePlayer(),
-                                context.getArgument("player", Player::class.java).uniqueId,
-                            )
-                        }
-                    },
-            )
+            argument("player", SingleOnlinePlayerArgument(server)) {
+                requiresPermission("essentials.tpcancel")
+                executesSuspending(plugin) { context ->
+                    context.scoped(teleportationTracer) {
+                        teleportService.cancel(
+                            context.source.requirePlayer(),
+                            context.getArgument("player", Player::class.java).uniqueId,
+                        )
+                    }
+                }
+            }
         }
     }
 
-    private fun back(): BrigadierCommand = command("back") {
+    private fun back() = command("back") {
         requiresPermission(TeleportationPermissions.BACK)
         executesSuspending(plugin) { context ->
             context.scoped(teleportationTracer) {
@@ -155,22 +142,20 @@ class TeleportLegacyCommands(
                 teleportService.back(player, player)
             }
         }
-        then(
-            Commands
-                .argument("player", SingleOnlinePlayerArgument(server))
-                .requiresPermission(TeleportationPermissions.BACK_OTHERS)
-                .executesSuspending(plugin) { context ->
-                    context.scoped(teleportationTracer) {
-                        teleportService.back(
-                            operator = context.source.sender,
-                            target = context.getArgument("player", Player::class.java),
-                        )
-                    }
-                },
-        )
+        argument("player", SingleOnlinePlayerArgument(server)) {
+            requiresPermission(TeleportationPermissions.BACK_OTHERS)
+            executesSuspending(plugin) { context ->
+                context.scoped(teleportationTracer) {
+                    teleportService.back(
+                        operator = context.source.sender,
+                        target = context.getArgument("player", Player::class.java),
+                    )
+                }
+            }
+        }
     }
 
-    private fun rtp(): BrigadierCommand = command("rtp") {
+    private fun rtp() = command("rtp") {
         requiresPermission(TeleportationPermissions.RANDOM)
         executesSuspending(plugin) { context ->
             context.scoped(teleportationTracer) {
@@ -179,7 +164,7 @@ class TeleportLegacyCommands(
         }
     }
 
-    private fun tppos(): BrigadierCommand = command("tppos") {
+    private fun tppos() = command("tppos") {
         requiresPermission(TeleportationPermissions.POSITION)
         then(
             withCoordinateArgs(plugin) { context, yaw, pitch ->
@@ -195,7 +180,7 @@ class TeleportLegacyCommands(
         )
     }
 
-    private fun tpall(): BrigadierCommand = command("tpall") {
+    private fun tpall() = command("tpall") {
         requiresPermission(TeleportationPermissions.ALL, TeleportationPermissions.FORCE)
         executesSuspending(plugin) { context ->
             teleportService.all(
@@ -204,17 +189,15 @@ class TeleportLegacyCommands(
                 flags = TeleportFlags(force = true),
             )
         }
-        then(
-            Commands
-                .argument("target", SingleOnlinePlayerArgument(server))
-                .executesSuspending(plugin) { context ->
-                    teleportService.all(
-                        operator = context.source.sender,
-                        requestedTarget = context.getArgument("target", Player::class.java),
-                        flags = TeleportFlags(force = true),
-                    )
-                },
-        )
+        argument("target", SingleOnlinePlayerArgument(server)) {
+            executesSuspending(plugin) { context ->
+                teleportService.all(
+                    operator = context.source.sender,
+                    requestedTarget = context.getArgument("target", Player::class.java),
+                    flags = TeleportFlags(force = true),
+                )
+            }
+        }
     }
 
     private fun tpaccept() = listOf("tpaccept", "tpyes").map { name ->
@@ -225,19 +208,17 @@ class TeleportLegacyCommands(
                     teleportService.accept(context.source.requirePlayer(), requesterId = null)
                 }
             }
-            then(
-                Commands
-                    .argument("requester", SingleOnlinePlayerArgument(server))
-                    .requiresPermission("essentials.tpaccept")
-                    .executesSuspending(plugin) { context ->
-                        context.scoped(teleportationTracer) {
-                            teleportService.accept(
-                                context.source.requirePlayer(),
-                                context.getArgument("requester", Player::class.java).uniqueId,
-                            )
-                        }
-                    },
-            )
+            argument("requester", SingleOnlinePlayerArgument(server)) {
+                requiresPermission("essentials.tpaccept")
+                executesSuspending(plugin) { context ->
+                    context.scoped(teleportationTracer) {
+                        teleportService.accept(
+                            context.source.requirePlayer(),
+                            context.getArgument("requester", Player::class.java).uniqueId,
+                        )
+                    }
+                }
+            }
         }
     }
 
@@ -249,28 +230,23 @@ class TeleportLegacyCommands(
                     teleportService.deny(context.source.requirePlayer(), requesterId = null)
                 }
             }
-            then(
-                Commands
-                    .argument("requester", SingleOnlinePlayerArgument(server))
-                    .executesSuspending(plugin) { context ->
-                        context.scoped(teleportationTracer) {
-                            teleportService.deny(
-                                context.source.requirePlayer(),
-                                context.getArgument("requester", Player::class.java).uniqueId,
-                            )
-                        }
-                    },
-            )
+            argument("requester", SingleOnlinePlayerArgument(server)) {
+                executesSuspending(plugin) { context ->
+                    context.scoped(teleportationTracer) {
+                        teleportService.deny(
+                            context.source.requirePlayer(),
+                            context.getArgument("requester", Player::class.java).uniqueId,
+                        )
+                    }
+                }
+            }
         }
     }
 
     private fun command(
         name: String,
-        configure: LiteralArgumentBuilder<CommandSourceStack>.() -> Unit,
+        configure: CommandBuilder.() -> Unit,
     ): BrigadierCommand = object : BrigadierCommand {
-        override fun literal(): PaperCommandNode = Commands
-            .literal(name)
-            .apply(configure)
-            .build()
+        override fun literal(): PaperCommandNode = commandDsl(name, configure)
     }
 }

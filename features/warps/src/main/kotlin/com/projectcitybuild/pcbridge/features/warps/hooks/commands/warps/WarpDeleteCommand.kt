@@ -8,6 +8,7 @@ import com.projectcitybuild.pcbridge.features.warps.domain.repositories.WarpRepo
 import com.projectcitybuild.pcbridge.features.warps.hooks.commands.WarpNameSuggester
 import com.projectcitybuild.pcbridge.features.warps.warpsTracer
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
+import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandNode
@@ -17,7 +18,6 @@ import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.suggests
 import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
 import com.projectcitybuild.pcbridge.platform.paper.events.SpigotEventBroadcaster
 import com.projectcitybuild.pcbridge.runtime.commands.scoped
-import io.papermc.paper.command.brigadier.Commands
 import org.bukkit.plugin.Plugin
 
 class WarpDeleteCommand(
@@ -27,15 +27,13 @@ class WarpDeleteCommand(
     private val eventBroadcaster: SpigotEventBroadcaster,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override fun literal(): PaperCommandNode = Commands
-        .literal("delete")
-        .requiresPermission(WarpsPermissions.MANAGE)
-        .then(
-            Commands
-                .argument("name", StringArgumentType.string())
-                .suggestsSuspending(plugin, warpNameSuggester::suggest)
-                .executesSuspending(taskExecutor, ::execute),
-        ).build()
+    override fun literal(): PaperCommandNode = command("delete") {
+        requiresPermission(WarpsPermissions.MANAGE)
+        argument("name", StringArgumentType.string()) {
+            suggestsSuspending(plugin, warpNameSuggester::suggest)
+                            .executesSuspending(taskExecutor, ::execute)
+        }
+    }
 
     private suspend fun execute(context: PaperCommandContext) = context.scoped(warpsTracer) {
         val warpName = context.getArgument("name", String::class.java)

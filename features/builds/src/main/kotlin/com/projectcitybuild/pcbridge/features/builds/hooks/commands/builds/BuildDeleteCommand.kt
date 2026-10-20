@@ -11,12 +11,12 @@ import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandNode
 import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
+import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.suggestsSuspending
 import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
 import com.projectcitybuild.pcbridge.runtime.commands.scoped
-import io.papermc.paper.command.brigadier.Commands
 import org.bukkit.plugin.Plugin
 
 class BuildDeleteCommand(
@@ -25,15 +25,13 @@ class BuildDeleteCommand(
     private val buildRepository: BuildRepository,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override fun literal(): PaperCommandNode = Commands
-        .literal("delete")
-        .requiresPermission(BuildsPermissions.MANAGE)
-        .then(
-            Commands
-                .argument("name", StringArgumentType.greedyString())
-                .suggestsSuspending(plugin, buildNameSuggester::suggest)
-                .executesSuspending(taskExecutor, ::execute),
-        ).build()
+    override fun literal(): PaperCommandNode = command("delete") {
+        requiresPermission(BuildsPermissions.MANAGE)
+        argument("name", StringArgumentType.greedyString()) {
+            suggestsSuspending(plugin, buildNameSuggester::suggest)
+            executesSuspending(taskExecutor, ::execute)
+        }
+    }
 
     private suspend fun execute(context: PaperCommandContext) = context.scoped(buildsTracer) {
         val player = context.source.requirePlayer()

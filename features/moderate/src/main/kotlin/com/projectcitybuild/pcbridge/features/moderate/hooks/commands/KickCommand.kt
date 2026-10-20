@@ -5,6 +5,7 @@ import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.features.moderate.ModeratePermissions
 import com.projectcitybuild.pcbridge.features.moderate.moderateTracer
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
+import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandNode
@@ -27,18 +28,16 @@ class KickCommand(
     private val server: Server,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override fun literal(): PaperCommandNode = Commands
-        .literal("kick")
-        .requiresPermission(ModeratePermissions.MODERATE)
-        .then(
-            Commands
-                .argument("player", SingleOnlinePlayerArgument(plugin.server))
-                .then(
-                    Commands
-                        .argument("reason", StringArgumentType.greedyString())
-                        .executesSuspending(taskExecutor, ::execute),
-                ).executesSuspending(taskExecutor, ::execute),
-        ).build()
+    override fun literal(): PaperCommandNode = command("kick") {
+        requiresPermission(ModeratePermissions.MODERATE)
+        argument("player", SingleOnlinePlayerArgument(plugin.server)) {
+            then(
+                Commands
+                    .argument("reason", StringArgumentType.greedyString())
+                    .executesSuspending(taskExecutor, ::execute),
+            ).executesSuspending(taskExecutor, ::execute)
+        }
+    }
 
     private suspend fun execute(context: PaperCommandContext) = context.scoped(moderateTracer) {
         val player = context.getArgument("player", Player::class.java)

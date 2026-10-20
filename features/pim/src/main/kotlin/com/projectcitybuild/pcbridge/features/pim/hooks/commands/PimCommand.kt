@@ -7,9 +7,7 @@ import com.projectcitybuild.pcbridge.features.pim.hooks.commands.op.OpStatusComm
 import com.projectcitybuild.pcbridge.features.pim.hooks.commands.roles.RolesDebugCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandNode
-import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
-import com.projectcitybuild.pcbridge.platform.paper.commands.then
-import io.papermc.paper.command.brigadier.Commands
+import com.projectcitybuild.pcbridge.platform.paper.commands.command
 
 class PimCommand(
     private val opGrantCommand: OpGrantCommand,
@@ -17,18 +15,16 @@ class PimCommand(
     private val opStatusCommand: OpStatusCommand,
     private val rolesDebugCommand: RolesDebugCommand,
 ) : BrigadierCommand {
-    override fun literal(): PaperCommandNode = Commands
-        .literal("pim")
-        .requiresPermission(PimPermissions.OP)
-        .then(
-            Commands
-                .literal("op")
-                .then(command = opGrantCommand)
-                .then(command = opRevokeCommand)
-                .then(command = opStatusCommand),
-        ).then(
-            Commands
-                .literal("roles")
-                .then(command = rolesDebugCommand),
-        ).build()
+    override fun literal(): PaperCommandNode = command("pim") {
+        requiresPermission(PimPermissions.OP)
+
+        literal("op") {
+            then(opGrantCommand)
+            then(opRevokeCommand)
+            then(opStatusCommand)
+        }
+        literal("roles") {
+            then(rolesDebugCommand)
+        }
+    }
 }

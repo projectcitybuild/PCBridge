@@ -5,6 +5,7 @@ import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.features.pim.PimPermissions
 import com.projectcitybuild.pcbridge.features.pim.pimTracer
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
+import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandNode
@@ -14,7 +15,6 @@ import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.requireP
 import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
 import com.projectcitybuild.pcbridge.runtime.commands.scoped
 import com.projectcitybuild.pcbridge.runtime.permissions.Permissions
-import io.papermc.paper.command.brigadier.Commands
 import org.bukkit.plugin.Plugin
 
 class RolesDebugCommand(
@@ -22,14 +22,12 @@ class RolesDebugCommand(
     private val permissions: Permissions,
     private val commandTaskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override fun literal(): PaperCommandNode = Commands
-        .literal("debug")
-        .requiresPermission(PimPermissions.ROLES)
-        .then(
-            Commands
-                .argument("roles", StringArgumentType.greedyString())
-                .executesSuspending(commandTaskExecutor, ::execute),
-        ).build()
+    override fun literal(): PaperCommandNode = command("debug") {
+        requiresPermission(PimPermissions.ROLES)
+        argument("roles", StringArgumentType.greedyString()) {
+            executesSuspending(commandTaskExecutor, ::execute)
+        }
+    }
 
     private suspend fun execute(context: PaperCommandContext) = context.scoped(pimTracer) {
         val player = context.source.requirePlayer()

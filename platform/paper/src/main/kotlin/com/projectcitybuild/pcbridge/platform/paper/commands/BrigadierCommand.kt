@@ -1,7 +1,5 @@
 package com.projectcitybuild.pcbridge.platform.paper.commands
 
-import com.mojang.brigadier.builder.LiteralArgumentBuilder
-import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents
 import org.bukkit.plugin.java.JavaPlugin
@@ -16,9 +14,6 @@ interface BrigadierCommand {
 
     fun literal(): PaperCommandNode
 }
-
-fun LiteralArgumentBuilder<CommandSourceStack>.then(command: BrigadierCommand): LiteralArgumentBuilder<CommandSourceStack> =
-    then(command.literal())
 
 fun Commands.register(command: BrigadierCommand) = register(command.literal(), command.description)
 

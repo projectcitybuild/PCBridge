@@ -8,11 +8,11 @@ import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandNode
 import com.projectcitybuild.pcbridge.platform.paper.commands.argumenttypes.SingleOnlinePlayerArgument
+import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
 import com.projectcitybuild.pcbridge.runtime.commands.scoped
 import com.projectcitybuild.pcbridge.runtime.teleportation.teleportationTracer
-import io.papermc.paper.command.brigadier.Commands
 import org.bukkit.Server
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
@@ -22,16 +22,13 @@ class TeleportToCommand(
     private val server: Server,
     private val application: TeleportService,
 ) : BrigadierCommand {
-    override fun literal(): PaperCommandNode {
-        val player = Commands
-            .argument("player", SingleOnlinePlayerArgument(server))
-            .requiresPermission(TeleportationPermissions.REQUEST)
-            .withTeleportFlags(plugin) { context, flags -> execute(context, flags) }
-
-        return Commands
-            .literal("to")
-            .then(player)
-            .build()
+    override fun literal(): PaperCommandNode = command("to") {
+        argument("player", SingleOnlinePlayerArgument(server)) {
+            requiresPermission(TeleportationPermissions.REQUEST)
+            withTeleportFlags(plugin) { context, flags ->
+                execute(context, flags)
+            }
+        }
     }
 
     private suspend fun execute(

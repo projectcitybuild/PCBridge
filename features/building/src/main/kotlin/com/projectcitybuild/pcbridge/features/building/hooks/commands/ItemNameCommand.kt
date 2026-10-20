@@ -6,6 +6,7 @@ import com.projectcitybuild.pcbridge.features.building.BuildingPermissions
 import com.projectcitybuild.pcbridge.features.building.buildingTracer
 import com.projectcitybuild.pcbridge.features.building.domain.data.ItemRenamedEvent
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
+import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandNode
@@ -15,7 +16,6 @@ import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.requireP
 import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
 import com.projectcitybuild.pcbridge.platform.paper.events.SpigotEventBroadcaster
 import com.projectcitybuild.pcbridge.runtime.commands.scoped
-import io.papermc.paper.command.brigadier.Commands
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import org.bukkit.Material
 import org.bukkit.plugin.Plugin
@@ -27,14 +27,12 @@ class ItemNameCommand(
 ) : BrigadierCommand {
     override val description: String = "Renames the item in your primary hand"
 
-    override fun literal(): PaperCommandNode = Commands
-        .literal("itemname")
-        .requiresPermission(BuildingPermissions.ITEM_RENAME)
-        .then(
-            Commands
-                .argument("name", StringArgumentType.greedyString())
-                .executesSuspending(commandTaskExecutor, ::execute),
-        ).build()
+    override fun literal(): PaperCommandNode = command("itemname") {
+        requiresPermission(BuildingPermissions.ITEM_RENAME)
+        argument("name", StringArgumentType.greedyString()) {
+            executesSuspending(commandTaskExecutor, ::execute)
+        }
+    }
 
     private suspend fun execute(context: PaperCommandContext) = context.scoped(buildingTracer) {
         val player = context.source.requirePlayer()
