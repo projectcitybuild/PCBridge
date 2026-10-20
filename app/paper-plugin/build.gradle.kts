@@ -126,6 +126,10 @@ plugwright {
             minecraftVersion.set("1.21.10")
             acceptEula.set(true)
 
+            plugins {
+                local("reset-player-permissions")
+            }
+
             downloadPlugins {
                 url("https://cdn.modrinth.com/data/Vebnzrzj/versions/OrIs0S6b/LuckPerms-Bukkit-5.5.17.jar")
             }
