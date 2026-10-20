@@ -22,7 +22,7 @@ class TeleportToCommand(
     private val server: Server,
     private val application: TeleportService,
 ) : BrigadierCommand {
-    override fun literal(): PaperCommandNode = command("to") {
+    override fun literal() = command("to") {
         argument("player", SingleOnlinePlayerArgument(server)) {
             requiresPermission(TeleportationPermissions.REQUEST)
             withTeleportFlags(plugin) { context, flags ->

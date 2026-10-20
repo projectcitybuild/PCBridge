@@ -35,7 +35,7 @@ class NightVisionCommand(
 
     override val description: String = "Toggles night-vision mode"
 
-    override fun literal(): PaperCommandNode = command("nv") {
+    override fun literal() = command("nv") {
         requiresPermission(BuildingPermissions.NIGHT_VISION)
         argument("enabled", OnOffArgument()) {
             executesSuspending(commandTaskExecutor, ::execute)

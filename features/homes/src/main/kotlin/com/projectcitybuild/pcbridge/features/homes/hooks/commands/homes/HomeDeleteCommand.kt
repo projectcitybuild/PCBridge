@@ -23,7 +23,7 @@ class HomeDeleteCommand(
     private val homeRepository: HomeRepository,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override fun literal(): PaperCommandNode = command("delete") {
+    override fun literal() = command("delete") {
         argument("name", StringArgumentType.greedyString()) {
             suggestsSuspending(plugin, homeNameSuggester::suggest)
             executesSuspending(taskExecutor, ::execute)

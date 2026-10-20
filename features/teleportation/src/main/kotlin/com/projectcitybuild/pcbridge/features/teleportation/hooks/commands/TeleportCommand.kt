@@ -30,7 +30,7 @@ class TeleportCommand(
     private val deny: TeleportDenyCommand,
     private val cancel: TeleportCancelCommand,
 ) : BrigadierCommand {
-    override fun literal(): PaperCommandNode = command("tp") {
+    override fun literal() = command("tp") {
         argument("player", SingleOnlinePlayerArgument(server)) {
             requires { context ->
                 context.sender.hasPermission(TeleportationPermissions.REQUEST.node) ||

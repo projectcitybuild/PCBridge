@@ -21,7 +21,7 @@ class TeleportAllCommand(
     private val server: Server,
     private val application: TeleportService,
 ) : BrigadierCommand {
-    override fun literal(): PaperCommandNode = command("all") {
+    override fun literal() = command("all") {
         requiresPermission(TeleportationPermissions.ALL)
         brigadier {
             withTeleportFlags(plugin) { context, flags ->

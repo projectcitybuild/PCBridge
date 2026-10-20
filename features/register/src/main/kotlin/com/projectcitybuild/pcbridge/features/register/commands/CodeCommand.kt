@@ -22,7 +22,7 @@ class CodeCommand(
 
     override val description: String = "Finishes account registration by verifying a code"
 
-    override fun literal(): PaperCommandNode = command("code") {
+    override fun literal() = command("code") {
         executesSuspending(commandTaskExecutor, ::execute)
     }
 

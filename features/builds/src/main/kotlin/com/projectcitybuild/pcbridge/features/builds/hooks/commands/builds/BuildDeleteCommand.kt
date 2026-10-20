@@ -25,7 +25,7 @@ class BuildDeleteCommand(
     private val buildRepository: BuildRepository,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override fun literal(): PaperCommandNode = command("delete") {
+    override fun literal() = command("delete") {
         requiresPermission(BuildsPermissions.MANAGE)
         argument("name", StringArgumentType.greedyString()) {
             suggestsSuspending(plugin, buildNameSuggester::suggest)

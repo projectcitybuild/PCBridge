@@ -15,7 +15,7 @@ class PimCommand(
     private val opStatusCommand: OpStatusCommand,
     private val rolesDebugCommand: RolesDebugCommand,
 ) : BrigadierCommand {
-    override fun literal(): PaperCommandNode = command("pim") {
+    override fun literal() = command("pim") {
         requiresPermission(PimPermissions.OP)
 
         literal("op") {

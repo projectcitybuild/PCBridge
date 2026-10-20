@@ -8,8 +8,8 @@ import com.projectcitybuild.pcbridge.features.homes.hooks.commands.homes.HomeLis
 import com.projectcitybuild.pcbridge.features.homes.hooks.commands.homes.HomeMoveCommand
 import com.projectcitybuild.pcbridge.features.homes.hooks.commands.homes.HomeRenameCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
-import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandNode
+import com.projectcitybuild.pcbridge.platform.paper.commands.command
 
 class HomesCommand(
     private val homeCreateCommand: HomeCreateCommand,
@@ -19,7 +19,7 @@ class HomesCommand(
     private val homeLimitCommand: HomeLimitCommand,
     private val homeRenameCommand: HomeRenameCommand,
 ) : BrigadierCommand {
-    override fun literal(): PaperCommandNode = command("homes") {
+    override fun literal() = command("homes") {
         requiresPermission(HomesPermissions.USE)
         then(homeCreateCommand)
         then(homeDeleteCommand)

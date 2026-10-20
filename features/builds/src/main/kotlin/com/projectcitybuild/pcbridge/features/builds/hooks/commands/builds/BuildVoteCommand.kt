@@ -25,7 +25,7 @@ class BuildVoteCommand(
     private val buildRepository: BuildRepository,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override fun literal(): PaperCommandNode = command("vote") {
+    override fun literal() = command("vote") {
         requiresPermission(BuildsPermissions.VOTE)
         argument("name", StringArgumentType.greedyString()) {
             suggestsSuspending(plugin, buildNameSuggester::suggest)

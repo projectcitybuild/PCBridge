@@ -8,11 +8,11 @@ import com.projectcitybuild.pcbridge.features.warps.hooks.commands.WarpNameSugge
 import com.projectcitybuild.pcbridge.features.warps.hooks.dialogs.WarpRenameDialog
 import com.projectcitybuild.pcbridge.features.warps.warpsTracer
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
-import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandNode
 import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
+import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.suggestsSuspending
@@ -26,11 +26,11 @@ class WarpRenameCommand(
     private val warpRepository: WarpRepository,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override fun literal(): PaperCommandNode = command("rename") {
+    override fun literal() = command("rename") {
         requiresPermission(WarpsPermissions.MANAGE)
         argument("name", StringArgumentType.string()) {
             suggestsSuspending(plugin, warpNameSuggester::suggest)
-                            .executesSuspending(taskExecutor, ::execute)
+                .executesSuspending(taskExecutor, ::execute)
         }
     }
 

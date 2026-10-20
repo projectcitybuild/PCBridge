@@ -28,7 +28,7 @@ class MaintenanceCommand(
     private val eventBroadcaster: SpigotEventBroadcaster,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override fun literal(): PaperCommandNode = command("maintenance") {
+    override fun literal() = command("maintenance") {
         requiresPermission(MaintenancePermissions.MANAGE)
         argument("enabled", OnOffArgument()) {
             executesSuspending(taskExecutor, ::toggle)

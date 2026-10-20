@@ -22,7 +22,7 @@ class SpawnCommand(
     private val playerTeleporter: PlayerTeleporter,
     private val commandTaskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override fun literal(): PaperCommandNode = command("spawn") {
+    override fun literal() = command("spawn") {
         executesSuspending(commandTaskExecutor, ::execute)
     }
 

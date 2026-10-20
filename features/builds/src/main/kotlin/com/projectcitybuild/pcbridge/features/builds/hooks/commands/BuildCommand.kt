@@ -35,7 +35,7 @@ class BuildCommand(
     private val playerTeleporter: PlayerTeleporter,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override fun literal(): PaperCommandNode = command("build") {
+    override fun literal() = command("build") {
         requiresPermission(BuildsPermissions.TELEPORT)
         argument("name", StringArgumentType.greedyString()) {
             suggestsSuspending(plugin, buildNameSuggester::suggest)

@@ -20,7 +20,7 @@ class OpRevokeCommand(
     private val opElevationService: OpElevationService,
     private val commandTaskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override fun literal(): PaperCommandNode = command("revoke") {
+    override fun literal() = command("revoke") {
         requiresPermission(PimPermissions.OP)
         executesSuspending(commandTaskExecutor, ::execute)
     }

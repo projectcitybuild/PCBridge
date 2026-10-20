@@ -7,8 +7,8 @@ import com.projectcitybuild.pcbridge.features.warps.hooks.commands.warps.WarpLis
 import com.projectcitybuild.pcbridge.features.warps.hooks.commands.warps.WarpMoveCommand
 import com.projectcitybuild.pcbridge.features.warps.hooks.commands.warps.WarpRenameCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
-import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandNode
+import com.projectcitybuild.pcbridge.platform.paper.commands.command
 
 class WarpsCommand(
     private val createCommand: WarpCreateCommand,
@@ -17,7 +17,7 @@ class WarpsCommand(
     private val moveCommand: WarpMoveCommand,
     private val renameCommand: WarpRenameCommand,
 ) : BrigadierCommand {
-    override fun literal(): PaperCommandNode = command("warps") {
+    override fun literal() = command("warps") {
         requiresPermission(WarpsPermissions.TELEPORT)
         then(createCommand)
         then(deleteCommand)

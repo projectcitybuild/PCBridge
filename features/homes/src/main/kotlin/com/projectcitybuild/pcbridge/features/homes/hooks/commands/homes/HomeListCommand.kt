@@ -24,7 +24,7 @@ class HomeListCommand(
     private val remoteConfig: RemoteConfig,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override fun literal(): PaperCommandNode = command("list") {
+    override fun literal() = command("list") {
         argument("page", IntegerArgumentType.integer()) {
             executesSuspending(taskExecutor, ::execute)
         }

@@ -27,7 +27,7 @@ class HubCommand(
     private val playerTeleporter: PlayerTeleporter,
     private val commandTaskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override fun literal(): PaperCommandNode = command("hub") {
+    override fun literal() = command("hub") {
         executesSuspending(commandTaskExecutor, ::execute)
     }
 

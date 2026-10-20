@@ -24,7 +24,7 @@ class BuildListCommand(
     private val buildRepository: BuildRepository,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override fun literal(): PaperCommandNode = command("list") {
+    override fun literal() = command("list") {
         requiresPermission(BuildsPermissions.TELEPORT)
         argument("page", IntegerArgumentType.integer()) {
             executesSuspending(taskExecutor, ::execute)

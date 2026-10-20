@@ -5,11 +5,11 @@ import com.projectcitybuild.pcbridge.features.building.BuildingPermissions
 import com.projectcitybuild.pcbridge.features.building.buildingTracer
 import com.projectcitybuild.pcbridge.features.building.domain.data.InvisFrameKey
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
-import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandNode
 import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
+import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.platform.paper.namespace.SpigotNamespace
@@ -31,7 +31,7 @@ class InvisFrameCommand(
 
     override val description: String = "Gives you an itemframe that turns invisible when holding an item"
 
-    override fun literal(): PaperCommandNode = command("invisframe") {
+    override fun literal() = command("invisframe") {
         requiresPermission(BuildingPermissions.INVIS_FRAME)
         literal("glowing") {
             executesSuspending(commandTaskExecutor, ::giveGlowing)

@@ -28,7 +28,7 @@ class OpGrantCommand(
 ) : BrigadierCommand {
     internal var confirmationDialog: () -> DialogLike = ConfirmOpElevateDialog::build
 
-    override fun literal(): PaperCommandNode = command("grant") {
+    override fun literal() = command("grant") {
         requiresPermission(PimPermissions.OP)
         executesSuspending(commandTaskExecutor, ::execute)
     }

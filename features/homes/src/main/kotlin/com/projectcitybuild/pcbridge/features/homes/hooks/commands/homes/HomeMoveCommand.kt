@@ -23,7 +23,7 @@ class HomeMoveCommand(
     private val homeRepository: HomeRepository,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override fun literal(): PaperCommandNode = command("move") {
+    override fun literal() = command("move") {
         argument("name", StringArgumentType.greedyString()) {
             suggestsSuspending(plugin, homeNameSuggester::suggest)
             executesSuspending(taskExecutor, ::execute)

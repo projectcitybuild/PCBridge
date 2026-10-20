@@ -4,12 +4,12 @@ import com.projectcitybuild.pcbridge.features.bans.BansPermissions
 import com.projectcitybuild.pcbridge.features.bans.bansTracer
 import com.projectcitybuild.pcbridge.features.bans.hooks.dialogs.CreateBanDialog
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
-import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandNode
 import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.argumenttypes.OnlinePlayerNameArgument
+import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
 import com.projectcitybuild.pcbridge.platform.paper.extensions.onlinePlayer
@@ -24,7 +24,7 @@ class BanCommand(
     private val createDialog: (String?) -> DialogLike = CreateBanDialog::build,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override fun literal(): PaperCommandNode = command("ban") {
+    override fun literal() = command("ban") {
         requiresPermission(BansPermissions.MANAGE)
         argument("player", OnlinePlayerNameArgument(server)) {
             executesSuspending(taskExecutor, ::execute)

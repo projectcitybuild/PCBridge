@@ -7,11 +7,11 @@ import com.projectcitybuild.pcbridge.features.warps.WarpsPermissions
 import com.projectcitybuild.pcbridge.features.warps.domain.repositories.WarpRepository
 import com.projectcitybuild.pcbridge.features.warps.warpsTracer
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
-import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandNode
 import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
+import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.suggestsSuspending
@@ -34,11 +34,11 @@ class WarpCommand(
 ) : BrigadierCommand {
     override val description: String = "Teleports to a warp"
 
-    override fun literal(): PaperCommandNode = command("warp") {
+    override fun literal() = command("warp") {
         requiresPermission(WarpsPermissions.TELEPORT)
         argument("name", StringArgumentType.string()) {
             suggestsSuspending(plugin, warpNameSuggester::suggest)
-                            .executesSuspending(taskExecutor, ::execute)
+                .executesSuspending(taskExecutor, ::execute)
         }
     }
 

@@ -3,11 +3,11 @@ package com.projectcitybuild.pcbridge.features.workstations.commands
 import com.projectcitybuild.pcbridge.features.workstations.WorkstationsPermissions
 import com.projectcitybuild.pcbridge.features.workstations.workstationsTracer
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
-import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandNode
 import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
+import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
@@ -22,10 +22,9 @@ class WorkbenchCommand(
 ) : BrigadierCommand {
     internal var menuOpener: (String, Player) -> Unit = { _, player -> MenuType.CRAFTING.create(player).open() }
 
-    override fun literal(): PaperCommandNode = command("workbench") {
+    override fun literal() = command("workbench") {
         requiresPermission(WorkstationsPermissions.USE)
         executesSuspending(commandTaskExecutor, ::execute)
-
     }
 
     private suspend fun execute(context: PaperCommandContext) = context.scoped(workstationsTracer) {

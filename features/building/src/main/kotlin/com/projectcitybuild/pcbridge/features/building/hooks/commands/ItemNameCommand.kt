@@ -6,11 +6,11 @@ import com.projectcitybuild.pcbridge.features.building.BuildingPermissions
 import com.projectcitybuild.pcbridge.features.building.buildingTracer
 import com.projectcitybuild.pcbridge.features.building.domain.data.ItemRenamedEvent
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
-import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandNode
 import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
+import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
@@ -27,7 +27,7 @@ class ItemNameCommand(
 ) : BrigadierCommand {
     override val description: String = "Renames the item in your primary hand"
 
-    override fun literal(): PaperCommandNode = command("itemname") {
+    override fun literal() = command("itemname") {
         requiresPermission(BuildingPermissions.ITEM_RENAME)
         argument("name", StringArgumentType.greedyString()) {
             executesSuspending(commandTaskExecutor, ::execute)

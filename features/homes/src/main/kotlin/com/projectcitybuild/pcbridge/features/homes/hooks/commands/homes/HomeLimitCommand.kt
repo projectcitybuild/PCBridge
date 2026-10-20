@@ -19,7 +19,7 @@ class HomeLimitCommand(
     private val homeRepository: HomeRepository,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override fun literal(): PaperCommandNode = command("limit") {
+    override fun literal() = command("limit") {
         executesSuspending(taskExecutor, ::execute)
     }
 

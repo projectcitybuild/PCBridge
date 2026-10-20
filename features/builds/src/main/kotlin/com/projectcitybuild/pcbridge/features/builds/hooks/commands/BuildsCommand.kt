@@ -23,7 +23,7 @@ class BuildsCommand(
     private val buildUnvoteCommand: BuildUnvoteCommand,
     private val buildVoteCommand: BuildVoteCommand,
 ) : BrigadierCommand {
-    override fun literal(): PaperCommandNode = command("builds") {
+    override fun literal() = command("builds") {
         then(buildCreateCommand)
         then(buildDeleteCommand)
         then(buildEditCommand)

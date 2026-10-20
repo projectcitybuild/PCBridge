@@ -25,7 +25,7 @@ class BuildMoveCommand(
     private val buildRepository: BuildRepository,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override fun literal(): PaperCommandNode = command("move") {
+    override fun literal() = command("move") {
         requiresPermission(BuildsPermissions.MANAGE)
         argument("name", StringArgumentType.greedyString()) {
             suggestsSuspending(plugin, buildNameSuggester::suggest)

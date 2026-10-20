@@ -5,12 +5,12 @@ import com.projectcitybuild.pcbridge.features.sync.SyncPermissions
 import com.projectcitybuild.pcbridge.features.sync.domain.actions.SyncPlayer
 import com.projectcitybuild.pcbridge.features.sync.syncTracer
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
-import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandNode
 import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.argumenttypes.SingleOnlinePlayerArgument
+import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
@@ -23,13 +23,12 @@ class SyncCommand(
     private val syncPlayer: SyncPlayer,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override fun literal(): PaperCommandNode = command("sync") {
+    override fun literal() = command("sync") {
         argument("player", SingleOnlinePlayerArgument(plugin.server)) {
             requiresPermission(SyncPermissions.OTHER)
-                            .executesSuspending(taskExecutor, ::syncOther)
+                .executesSuspending(taskExecutor, ::syncOther)
         }
         executesSuspending(taskExecutor, ::syncSelf)
-
     }
 
     private suspend fun syncSelf(context: PaperCommandContext) = context.scoped(syncTracer) {

@@ -24,7 +24,7 @@ class SetSpawnCommand(
     private val eventBroadcaster: SpigotEventBroadcaster,
     private val commandTaskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override fun literal(): PaperCommandNode = command("setspawn") {
+    override fun literal() = command("setspawn") {
         requiresPermission(SpawnsPermissions.MANAGE)
         executesSuspending(commandTaskExecutor, ::execute)
     }

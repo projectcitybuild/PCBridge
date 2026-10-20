@@ -24,7 +24,7 @@ class OpStatusCommand(
     private val localizedTime: LocalizedTime,
     private val commandTaskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override fun literal(): PaperCommandNode = command("status") {
+    override fun literal() = command("status") {
         requiresPermission(PimPermissions.OP)
         executesSuspending(commandTaskExecutor, ::execute)
     }

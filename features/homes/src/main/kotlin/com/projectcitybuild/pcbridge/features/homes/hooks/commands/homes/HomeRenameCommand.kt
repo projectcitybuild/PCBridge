@@ -24,7 +24,7 @@ class HomeRenameCommand(
     private val homeRepository: HomeRepository,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override fun literal(): PaperCommandNode = command("rename") {
+    override fun literal() = command("rename") {
         argument("name", StringArgumentType.greedyString()) {
             suggestsSuspending(plugin, homeNameSuggester::suggest)
             executesSuspending(taskExecutor, ::execute)

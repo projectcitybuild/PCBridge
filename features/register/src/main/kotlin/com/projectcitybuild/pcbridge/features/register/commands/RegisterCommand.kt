@@ -27,7 +27,7 @@ class RegisterCommand(
 
     override val description: String = "Creates a new Project City Build account"
 
-    override fun literal(): PaperCommandNode = command("register") {
+    override fun literal() = command("register") {
         argument("email", StringArgumentType.greedyString()) {
             executesSuspending(commandTaskExecutor, ::execute)
         }
