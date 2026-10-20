@@ -9,7 +9,6 @@ import com.projectcitybuild.pcbridge.features.register.registerTracer
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
-import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandNode
 import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
@@ -25,15 +24,16 @@ class RegisterCommand(
 ) : BrigadierCommand {
     internal var dialogFactory: (String) -> DialogLike = { email -> VerifyRegistrationCodeDialog.build(email) }
 
-    override val description: String = "Creates a new Project City Build account"
-
-    override fun literal() = command("register") {
-        argument("email", StringArgumentType.greedyString()) {
-            executesSuspending(commandTaskExecutor, ::execute)
-        }
-        executes { context ->
-            context.source.sender.sendMessage(l10n.registration.errorNoRegisterEmailSpecified)
-            Command.SINGLE_SUCCESS
+    override val commandDefinition by lazy {
+        command("register") {
+            description = "Creates a new Project City Build account"
+            argument("email", StringArgumentType.greedyString()) {
+                executesSuspending(commandTaskExecutor, ::execute)
+            }
+            executes { context ->
+                context.source.sender.sendMessage(l10n.registration.errorNoRegisterEmailSpecified)
+                Command.SINGLE_SUCCESS
+            }
         }
     }
 

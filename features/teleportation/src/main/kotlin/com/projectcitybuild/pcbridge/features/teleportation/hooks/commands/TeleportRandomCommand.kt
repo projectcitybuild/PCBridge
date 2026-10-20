@@ -3,7 +3,6 @@ package com.projectcitybuild.pcbridge.features.teleportation.hooks.commands
 import com.projectcitybuild.pcbridge.features.teleportation.TeleportationPermissions
 import com.projectcitybuild.pcbridge.features.teleportation.domain.services.TeleportService
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
-import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandNode
 import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.requirePlayer
@@ -16,11 +15,14 @@ class TeleportRandomCommand(
     private val plugin: Plugin,
     private val application: TeleportService,
 ) : BrigadierCommand {
-    override fun literal() = command("random") {
-        requiresPermission(TeleportationPermissions.RANDOM)
-        executesSuspending(plugin) { context ->
-            context.scoped(teleportationTracer) {
-                application.random(context.source.requirePlayer())
+    override val commandDefinition by lazy {
+        command("random") {
+            description = "Teleports you to a random location"
+            requiresPermission(TeleportationPermissions.RANDOM)
+            executesSuspending(plugin) { context ->
+                context.scoped(teleportationTracer) {
+                    application.random(context.source.requirePlayer())
+                }
             }
         }
     }

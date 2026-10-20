@@ -9,7 +9,6 @@ import com.projectcitybuild.pcbridge.features.warps.warpsTracer
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
-import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandNode
 import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
@@ -25,10 +24,13 @@ class WarpCreateCommand(
     private val eventBroadcaster: SpigotEventBroadcaster,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override fun literal() = command("create") {
-        requiresPermission(WarpsPermissions.MANAGE)
-        argument("name", StringArgumentType.string()) {
-            executesSuspending(taskExecutor, ::execute)
+    override val commandDefinition by lazy {
+        command("create") {
+            description = "Creates a warp at your current location"
+            requiresPermission(WarpsPermissions.MANAGE)
+            argument("name", StringArgumentType.string()) {
+                executesSuspending(taskExecutor, ::execute)
+            }
         }
     }
 

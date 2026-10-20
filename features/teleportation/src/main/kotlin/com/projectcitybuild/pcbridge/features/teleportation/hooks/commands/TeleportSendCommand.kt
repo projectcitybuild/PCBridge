@@ -4,7 +4,6 @@ import com.projectcitybuild.pcbridge.features.teleportation.TeleportationPermiss
 import com.projectcitybuild.pcbridge.features.teleportation.domain.services.TeleportService
 import com.projectcitybuild.pcbridge.features.teleportation.hooks.commands.args.withTeleportFlags
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
-import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandNode
 import com.projectcitybuild.pcbridge.platform.paper.commands.argumenttypes.SingleOnlinePlayerArgument
 import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
@@ -20,23 +19,26 @@ class TeleportSendCommand(
     private val server: Server,
     private val application: TeleportService,
 ) : BrigadierCommand {
-    override fun literal() = command("send") {
-        requiresPermission(TeleportationPermissions.OTHERS)
-        argument("player", SingleOnlinePlayerArgument(server)) {
-            then(
-                Commands
-                    .argument("target", SingleOnlinePlayerArgument(server))
-                    .withTeleportFlags(plugin) { context, flags ->
-                        context.scoped(teleportationTracer) {
-                            application.send(
-                                operator = context.source.sender,
-                                player = context.getArgument("player", Player::class.java),
-                                target = context.getArgument("target", Player::class.java),
-                                flags = flags,
-                            )
-                        }
-                    },
-            )
+    override val commandDefinition by lazy {
+        command("send") {
+            description = "Sends a teleport request to a player"
+            requiresPermission(TeleportationPermissions.OTHERS)
+            argument("player", SingleOnlinePlayerArgument(server)) {
+                then(
+                    Commands
+                        .argument("target", SingleOnlinePlayerArgument(server))
+                        .withTeleportFlags(plugin) { context, flags ->
+                            context.scoped(teleportationTracer) {
+                                application.send(
+                                    operator = context.source.sender,
+                                    player = context.getArgument("player", Player::class.java),
+                                    target = context.getArgument("target", Player::class.java),
+                                    flags = flags,
+                                )
+                            }
+                        },
+                )
+            }
         }
     }
 }

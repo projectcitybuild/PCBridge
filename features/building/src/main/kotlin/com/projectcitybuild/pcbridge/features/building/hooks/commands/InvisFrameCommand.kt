@@ -7,7 +7,6 @@ import com.projectcitybuild.pcbridge.features.building.domain.data.InvisFrameKey
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
-import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandNode
 import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
@@ -29,14 +28,15 @@ class InvisFrameCommand(
 ) : BrigadierCommand {
     internal var frameFactory: (Material) -> ItemStack = ::ItemStack
 
-    override val description: String = "Gives you an itemframe that turns invisible when holding an item"
-
-    override fun literal() = command("invisframe") {
-        requiresPermission(BuildingPermissions.INVIS_FRAME)
-        literal("glowing") {
-            executesSuspending(commandTaskExecutor, ::giveGlowing)
+    override val commandDefinition by lazy {
+        command("invisframe") {
+            description = "Gives you an itemframe that turns invisible when holding an item"
+            requiresPermission(BuildingPermissions.INVIS_FRAME)
+            literal("glowing") {
+                executesSuspending(commandTaskExecutor, ::giveGlowing)
+            }
+            executesSuspending(commandTaskExecutor, ::giveNormal)
         }
-        executesSuspending(commandTaskExecutor, ::giveNormal)
     }
 
     private fun giveNormal(context: PaperCommandContext) = give(

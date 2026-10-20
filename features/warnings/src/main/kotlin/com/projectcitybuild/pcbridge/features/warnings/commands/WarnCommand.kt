@@ -6,7 +6,6 @@ import com.projectcitybuild.pcbridge.features.warnings.warningsTracer
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
-import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandNode
 import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.argumenttypes.OnlinePlayerNameArgument
 import com.projectcitybuild.pcbridge.platform.paper.commands.command
@@ -24,10 +23,13 @@ class WarnCommand(
     private val remoteConfig: RemoteConfig,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override fun literal() = command("warn") {
-        requiresPermission(WarningsPermissions.MANAGE)
-        argument("player", OnlinePlayerNameArgument(server)) {
-            executesSuspending(taskExecutor, ::execute)
+    override val commandDefinition by lazy {
+        command("warn") {
+            description = "Issues a warning to a player"
+            requiresPermission(WarningsPermissions.MANAGE)
+            argument("player", OnlinePlayerNameArgument(server)) {
+                executesSuspending(taskExecutor, ::execute)
+            }
         }
     }
 

@@ -6,7 +6,6 @@ import com.projectcitybuild.pcbridge.features.bans.hooks.dialogs.CreateBanDialog
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
-import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandNode
 import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.argumenttypes.OnlinePlayerNameArgument
 import com.projectcitybuild.pcbridge.platform.paper.commands.command
@@ -24,10 +23,13 @@ class BanCommand(
     private val createDialog: (String?) -> DialogLike = CreateBanDialog::build,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override fun literal() = command("ban") {
-        requiresPermission(BansPermissions.MANAGE)
-        argument("player", OnlinePlayerNameArgument(server)) {
-            executesSuspending(taskExecutor, ::execute)
+    override val commandDefinition by lazy {
+        command("ban") {
+            description = "Bans a player from the server"
+            requiresPermission(BansPermissions.MANAGE)
+            argument("player", OnlinePlayerNameArgument(server)) {
+                executesSuspending(taskExecutor, ::execute)
+            }
         }
     }
 

@@ -8,7 +8,6 @@ import com.projectcitybuild.pcbridge.features.homes.hooks.commands.HomeNameSugge
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
-import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandNode
 import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
@@ -23,10 +22,13 @@ class HomeMoveCommand(
     private val homeRepository: HomeRepository,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override fun literal() = command("move") {
-        argument("name", StringArgumentType.greedyString()) {
-            suggestsSuspending(plugin, homeNameSuggester::suggest)
-            executesSuspending(taskExecutor, ::execute)
+    override val commandDefinition by lazy {
+        command("move") {
+            description = "Moves a saved home to your current location"
+            argument("name", StringArgumentType.greedyString()) {
+                suggestsSuspending(plugin, homeNameSuggester::suggest)
+                executesSuspending(taskExecutor, ::execute)
+            }
         }
     }
 

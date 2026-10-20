@@ -6,7 +6,6 @@ import com.projectcitybuild.pcbridge.features.homes.homesTracer
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
-import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandNode
 import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
@@ -19,8 +18,11 @@ class HomeLimitCommand(
     private val homeRepository: HomeRepository,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override fun literal() = command("limit") {
-        executesSuspending(taskExecutor, ::execute)
+    override val commandDefinition by lazy {
+        command("limit") {
+            description = "Checks your home limit"
+            executesSuspending(taskExecutor, ::execute)
+        }
     }
 
     private suspend fun execute(context: PaperCommandContext) = context.scoped(homesTracer) {

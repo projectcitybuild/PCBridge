@@ -6,7 +6,6 @@ import com.projectcitybuild.pcbridge.features.config.configTracer
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
-import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandNode
 import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
@@ -19,11 +18,14 @@ class ConfigCommand(
     private val remoteConfig: RemoteConfig,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override fun literal() = command("config") {
-        requiresPermission(ConfigPermissions.RELOAD)
-        literal("reload") {
+    override val commandDefinition by lazy {
+        command("config") {
+            description = "Reloads server configuration"
             requiresPermission(ConfigPermissions.RELOAD)
-            executesSuspending(taskExecutor, ::execute)
+            literal("reload") {
+                requiresPermission(ConfigPermissions.RELOAD)
+                executesSuspending(taskExecutor, ::execute)
+            }
         }
     }
 

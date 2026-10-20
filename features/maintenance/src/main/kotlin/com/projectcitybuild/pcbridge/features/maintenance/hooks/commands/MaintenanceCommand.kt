@@ -9,7 +9,6 @@ import com.projectcitybuild.pcbridge.features.maintenance.maintenanceTracer
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
-import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandNode
 import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.argumenttypes.OnOffArgument
 import com.projectcitybuild.pcbridge.platform.paper.commands.command
@@ -28,12 +27,15 @@ class MaintenanceCommand(
     private val eventBroadcaster: SpigotEventBroadcaster,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override fun literal() = command("maintenance") {
-        requiresPermission(MaintenancePermissions.MANAGE)
-        argument("enabled", OnOffArgument()) {
-            executesSuspending(taskExecutor, ::toggle)
+    override val commandDefinition by lazy {
+        command("maintenance") {
+            description = "Enables or disables server maintenance mode"
+            requiresPermission(MaintenancePermissions.MANAGE)
+            argument("enabled", OnOffArgument()) {
+                executesSuspending(taskExecutor, ::toggle)
+            }
+            executesSuspending(taskExecutor, ::status)
         }
-        executesSuspending(taskExecutor, ::status)
     }
 
     private suspend fun toggle(context: PaperCommandContext) = context.scoped(maintenanceTracer) {

@@ -8,7 +8,6 @@ import com.projectcitybuild.pcbridge.features.spawns.spawnsTracer
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
-import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandNode
 import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
@@ -24,9 +23,12 @@ class SetSpawnCommand(
     private val eventBroadcaster: SpigotEventBroadcaster,
     private val commandTaskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override fun literal() = command("setspawn") {
-        requiresPermission(SpawnsPermissions.MANAGE)
-        executesSuspending(commandTaskExecutor, ::execute)
+    override val commandDefinition by lazy {
+        command("setspawn") {
+            description = "Sets the server spawn location"
+            requiresPermission(SpawnsPermissions.MANAGE)
+            executesSuspending(commandTaskExecutor, ::execute)
+        }
     }
 
     suspend fun execute(context: PaperCommandContext) = context.scoped(spawnsTracer) {

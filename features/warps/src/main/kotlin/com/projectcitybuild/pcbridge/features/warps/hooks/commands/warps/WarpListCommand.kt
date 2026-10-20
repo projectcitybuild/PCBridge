@@ -9,7 +9,6 @@ import com.projectcitybuild.pcbridge.features.warps.warpsTracer
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
-import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandNode
 import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
@@ -25,12 +24,15 @@ class WarpListCommand(
     private val remoteConfig: RemoteConfig,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override fun literal() = command("list") {
-        requiresPermission(WarpsPermissions.TELEPORT)
-        argument("page", IntegerArgumentType.integer(1)) {
+    override val commandDefinition by lazy {
+        command("list") {
+            description = "Lists available warps"
+            requiresPermission(WarpsPermissions.TELEPORT)
+            argument("page", IntegerArgumentType.integer(1)) {
+                executesSuspending(taskExecutor, ::execute)
+            }
             executesSuspending(taskExecutor, ::execute)
         }
-        executesSuspending(taskExecutor, ::execute)
     }
 
     private suspend fun execute(context: PaperCommandContext) = context.scoped(warpsTracer) {

@@ -5,7 +5,6 @@ import com.projectcitybuild.pcbridge.features.teleportation.TeleportationPermiss
 import com.projectcitybuild.pcbridge.features.teleportation.domain.services.TeleportService
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
-import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandNode
 import com.projectcitybuild.pcbridge.platform.paper.commands.arguments.withCoordinateArgs
 import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.requirePlayer
@@ -18,15 +17,18 @@ class TeleportPosCommand(
     private val plugin: Plugin,
     private val application: TeleportService,
 ) : BrigadierCommand {
-    override fun literal() = command("pos") {
-        requiresPermission(TeleportationPermissions.POSITION)
-        brigadier {
-            this
-                .then(
-                    withCoordinateArgs(plugin) { context, yaw, pitch ->
-                        execute(context, yaw, pitch)
-                    },
-                )
+    override val commandDefinition by lazy {
+        command("pos") {
+            description = "Teleports you to coordinates"
+            requiresPermission(TeleportationPermissions.POSITION)
+            brigadier {
+                this
+                    .then(
+                        withCoordinateArgs(plugin) { context, yaw, pitch ->
+                            execute(context, yaw, pitch)
+                        },
+                    )
+            }
         }
     }
 

@@ -8,7 +8,6 @@ import com.projectcitybuild.pcbridge.features.building.domain.data.ItemRenamedEv
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
-import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandNode
 import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
@@ -25,12 +24,14 @@ class ItemNameCommand(
     private val eventBroadcaster: SpigotEventBroadcaster,
     private val commandTaskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override val description: String = "Renames the item in your primary hand"
 
-    override fun literal() = command("itemname") {
-        requiresPermission(BuildingPermissions.ITEM_RENAME)
-        argument("name", StringArgumentType.greedyString()) {
-            executesSuspending(commandTaskExecutor, ::execute)
+    override val commandDefinition by lazy {
+        command("itemname") {
+            description = "Renames the item in your primary hand"
+            requiresPermission(BuildingPermissions.ITEM_RENAME)
+            argument("name", StringArgumentType.greedyString()) {
+                executesSuspending(commandTaskExecutor, ::execute)
+            }
         }
     }
 

@@ -9,7 +9,6 @@ import com.projectcitybuild.pcbridge.features.warps.warpsTracer
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
-import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandNode
 import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
@@ -32,13 +31,15 @@ class WarpCommand(
     private val playerTeleporter: PlayerTeleporter,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override val description: String = "Teleports to a warp"
 
-    override fun literal() = command("warp") {
-        requiresPermission(WarpsPermissions.TELEPORT)
-        argument("name", StringArgumentType.string()) {
-            suggestsSuspending(plugin, warpNameSuggester::suggest)
-                .executesSuspending(taskExecutor, ::execute)
+    override val commandDefinition by lazy {
+        command("warp") {
+            description = "Teleports to a warp"
+            requiresPermission(WarpsPermissions.TELEPORT)
+            argument("name", StringArgumentType.string()) {
+                suggestsSuspending(plugin, warpNameSuggester::suggest)
+                    .executesSuspending(taskExecutor, ::execute)
+            }
         }
     }
 

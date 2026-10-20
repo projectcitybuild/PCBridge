@@ -7,7 +7,6 @@ import com.projectcitybuild.pcbridge.features.pim.pimTracer
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
-import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandNode
 import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
@@ -22,10 +21,13 @@ class RolesDebugCommand(
     private val permissions: Permissions,
     private val commandTaskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override fun literal() = command("debug") {
-        requiresPermission(PimPermissions.ROLES)
-        argument("roles", StringArgumentType.greedyString()) {
-            executesSuspending(commandTaskExecutor, ::execute)
+    override val commandDefinition by lazy {
+        command("debug") {
+            description = "Displays role debugging information"
+            requiresPermission(PimPermissions.ROLES)
+            argument("roles", StringArgumentType.greedyString()) {
+                executesSuspending(commandTaskExecutor, ::execute)
+            }
         }
     }
 

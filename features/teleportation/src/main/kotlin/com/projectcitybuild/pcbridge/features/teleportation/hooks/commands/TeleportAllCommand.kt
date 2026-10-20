@@ -6,7 +6,6 @@ import com.projectcitybuild.pcbridge.features.teleportation.domain.services.Tele
 import com.projectcitybuild.pcbridge.features.teleportation.hooks.commands.args.withTeleportFlags
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
-import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandNode
 import com.projectcitybuild.pcbridge.platform.paper.commands.argumenttypes.SingleOnlinePlayerArgument
 import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
@@ -21,16 +20,19 @@ class TeleportAllCommand(
     private val server: Server,
     private val application: TeleportService,
 ) : BrigadierCommand {
-    override fun literal() = command("all") {
-        requiresPermission(TeleportationPermissions.ALL)
-        brigadier {
-            withTeleportFlags(plugin) { context, flags ->
-                execute(context, targetArgument = null, flags = flags)
+    override val commandDefinition by lazy {
+        command("all") {
+            description = "Teleports all players to a target"
+            requiresPermission(TeleportationPermissions.ALL)
+            brigadier {
+                withTeleportFlags(plugin) { context, flags ->
+                    execute(context, targetArgument = null, flags = flags)
+                }
             }
-        }
-        argument("target", SingleOnlinePlayerArgument(server)) {
-            withTeleportFlags(plugin) { context, flags ->
-                execute(context, "target", flags)
+            argument("target", SingleOnlinePlayerArgument(server)) {
+                withTeleportFlags(plugin) { context, flags ->
+                    execute(context, "target", flags)
+                }
             }
         }
     }

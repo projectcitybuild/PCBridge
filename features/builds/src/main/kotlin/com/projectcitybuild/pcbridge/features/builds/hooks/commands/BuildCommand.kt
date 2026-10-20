@@ -9,7 +9,6 @@ import com.projectcitybuild.pcbridge.features.builds.domain.repositories.BuildRe
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
-import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandNode
 import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
@@ -35,11 +34,14 @@ class BuildCommand(
     private val playerTeleporter: PlayerTeleporter,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override fun literal() = command("build") {
-        requiresPermission(BuildsPermissions.TELEPORT)
-        argument("name", StringArgumentType.greedyString()) {
-            suggestsSuspending(plugin, buildNameSuggester::suggest)
-            executesSuspending(taskExecutor, ::execute)
+    override val commandDefinition by lazy {
+        command("build") {
+            description = "Teleports to a build"
+            requiresPermission(BuildsPermissions.TELEPORT)
+            argument("name", StringArgumentType.greedyString()) {
+                suggestsSuspending(plugin, buildNameSuggester::suggest)
+                executesSuspending(taskExecutor, ::execute)
+            }
         }
     }
 

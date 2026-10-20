@@ -8,7 +8,6 @@ import com.projectcitybuild.pcbridge.features.homes.hooks.commands.homes.HomeLis
 import com.projectcitybuild.pcbridge.features.homes.hooks.commands.homes.HomeMoveCommand
 import com.projectcitybuild.pcbridge.features.homes.hooks.commands.homes.HomeRenameCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
-import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandNode
 import com.projectcitybuild.pcbridge.platform.paper.commands.command
 
 class HomesCommand(
@@ -19,14 +18,17 @@ class HomesCommand(
     private val homeLimitCommand: HomeLimitCommand,
     private val homeRenameCommand: HomeRenameCommand,
 ) : BrigadierCommand {
-    override fun literal() = command("homes") {
-        requiresPermission(HomesPermissions.USE)
-        then(homeCreateCommand)
-        then(homeDeleteCommand)
-        then(homeListCommand)
-        then(homeMoveCommand)
-        then(homeLimitCommand)
-        then(homeRenameCommand)
-        executes(homeListCommand.literal().command)
+    override val commandDefinition by lazy {
+        command("homes") {
+            description = "Lists your saved homes"
+            requiresPermission(HomesPermissions.USE)
+            then(homeCreateCommand)
+            then(homeDeleteCommand)
+            then(homeListCommand)
+            then(homeMoveCommand)
+            then(homeLimitCommand)
+            then(homeRenameCommand)
+            executes(homeListCommand.literal().command)
+        }
     }
 }

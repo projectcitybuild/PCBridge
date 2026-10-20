@@ -8,7 +8,6 @@ import com.projectcitybuild.pcbridge.features.builds.domain.repositories.BuildRe
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
-import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandNode
 import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
@@ -22,10 +21,13 @@ class BuildCreateCommand(
     private val buildRepository: BuildRepository,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override fun literal() = command("create") {
-        requiresPermission(BuildsPermissions.MANAGE)
-        argument("name", StringArgumentType.greedyString()) {
-            executesSuspending(taskExecutor, ::execute)
+    override val commandDefinition by lazy {
+        command("create") {
+            description = "Creates a new build"
+            requiresPermission(BuildsPermissions.MANAGE)
+            argument("name", StringArgumentType.greedyString()) {
+                executesSuspending(taskExecutor, ::execute)
+            }
         }
     }
 

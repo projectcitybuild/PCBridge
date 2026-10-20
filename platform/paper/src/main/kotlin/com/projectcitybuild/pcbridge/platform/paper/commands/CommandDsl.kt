@@ -17,6 +17,11 @@ class CommandBuilder internal constructor(
     private val builder: LiteralArgumentBuilder<CommandSourceStack>,
 ) {
     /**
+     * Describes this root command for command suggestions and help.
+     */
+    var description: String = ""
+
+    /**
      * Applies a permission-node checks to this command.
      */
     fun requiresPermission(vararg permissions: PermissionNode) {
@@ -127,8 +132,16 @@ class CommandBuilder internal constructor(
         builder.block()
     }
 
-    internal fun build(): PaperCommandNode = builder.build()
+    internal fun build() = CommandDefinition(
+        node = builder.build(),
+        description = description,
+    )
 }
+
+data class CommandDefinition(
+    val node: PaperCommandNode,
+    val description: String,
+)
 
 /**
  * Declares a root command.
@@ -136,9 +149,8 @@ class CommandBuilder internal constructor(
 fun command(
     name: String,
     block: CommandBuilder.() -> Unit = {},
-): PaperCommandNode {
+): CommandDefinition {
     val command = CommandBuilder(Commands.literal(name))
     command.block()
-
     return command.build()
 }

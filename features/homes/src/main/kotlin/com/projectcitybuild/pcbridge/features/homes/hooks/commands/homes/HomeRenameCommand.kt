@@ -9,7 +9,6 @@ import com.projectcitybuild.pcbridge.features.homes.hooks.dialogs.HomeRenameDial
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
-import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandNode
 import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
@@ -24,10 +23,13 @@ class HomeRenameCommand(
     private val homeRepository: HomeRepository,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override fun literal() = command("rename") {
-        argument("name", StringArgumentType.greedyString()) {
-            suggestsSuspending(plugin, homeNameSuggester::suggest)
-            executesSuspending(taskExecutor, ::execute)
+    override val commandDefinition by lazy {
+        command("rename") {
+            description = "Renames a saved home"
+            argument("name", StringArgumentType.greedyString()) {
+                suggestsSuspending(plugin, homeNameSuggester::suggest)
+                executesSuspending(taskExecutor, ::execute)
+            }
         }
     }
 

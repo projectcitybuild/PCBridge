@@ -10,7 +10,6 @@ import com.projectcitybuild.pcbridge.features.warps.warpsTracer
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
-import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandNode
 import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
@@ -27,11 +26,14 @@ class WarpDeleteCommand(
     private val eventBroadcaster: SpigotEventBroadcaster,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override fun literal() = command("delete") {
-        requiresPermission(WarpsPermissions.MANAGE)
-        argument("name", StringArgumentType.string()) {
-            suggestsSuspending(plugin, warpNameSuggester::suggest)
-                .executesSuspending(taskExecutor, ::execute)
+    override val commandDefinition by lazy {
+        command("delete") {
+            description = "Deletes a warp"
+            requiresPermission(WarpsPermissions.MANAGE)
+            argument("name", StringArgumentType.string()) {
+                suggestsSuspending(plugin, warpNameSuggester::suggest)
+                    .executesSuspending(taskExecutor, ::execute)
+            }
         }
     }
 

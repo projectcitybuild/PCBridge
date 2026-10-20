@@ -6,7 +6,6 @@ import com.projectcitybuild.pcbridge.features.pim.pimTracer
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
-import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandNode
 import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
@@ -20,9 +19,12 @@ class OpRevokeCommand(
     private val opElevationService: OpElevationService,
     private val commandTaskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override fun literal() = command("revoke") {
-        requiresPermission(PimPermissions.OP)
-        executesSuspending(commandTaskExecutor, ::execute)
+    override val commandDefinition by lazy {
+        command("revoke") {
+            description = "Revokes a player's operator role"
+            requiresPermission(PimPermissions.OP)
+            executesSuspending(commandTaskExecutor, ::execute)
+        }
     }
 
     suspend fun execute(context: PaperCommandContext) = context.scoped(pimTracer) {

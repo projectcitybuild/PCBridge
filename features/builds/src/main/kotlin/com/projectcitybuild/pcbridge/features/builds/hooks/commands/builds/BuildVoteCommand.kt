@@ -9,7 +9,6 @@ import com.projectcitybuild.pcbridge.features.builds.hooks.commands.BuildNameSug
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
-import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandNode
 import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
@@ -25,11 +24,14 @@ class BuildVoteCommand(
     private val buildRepository: BuildRepository,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override fun literal() = command("vote") {
-        requiresPermission(BuildsPermissions.VOTE)
-        argument("name", StringArgumentType.greedyString()) {
-            suggestsSuspending(plugin, buildNameSuggester::suggest)
-            executesSuspending(taskExecutor, ::execute)
+    override val commandDefinition by lazy {
+        command("vote") {
+            description = "Votes for a build"
+            requiresPermission(BuildsPermissions.VOTE)
+            argument("name", StringArgumentType.greedyString()) {
+                suggestsSuspending(plugin, buildNameSuggester::suggest)
+                executesSuspending(taskExecutor, ::execute)
+            }
         }
     }
 

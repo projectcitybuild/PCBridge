@@ -5,7 +5,6 @@ import com.projectcitybuild.pcbridge.features.workstations.workstationsTracer
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
-import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandNode
 import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
@@ -22,9 +21,12 @@ class SmithingTableCommand(
 ) : BrigadierCommand {
     internal var menuOpener: (String, Player) -> Unit = { _, player -> MenuType.SMITHING.create(player).open() }
 
-    override fun literal() = command("smithingtable") {
-        requiresPermission(WorkstationsPermissions.USE)
-        executesSuspending(commandTaskExecutor, ::execute)
+    override val commandDefinition by lazy {
+        command("smithingtable") {
+            description = "Opens a portable smithing table"
+            requiresPermission(WorkstationsPermissions.USE)
+            executesSuspending(commandTaskExecutor, ::execute)
+        }
     }
 
     private suspend fun execute(context: PaperCommandContext) = context.scoped(workstationsTracer) {

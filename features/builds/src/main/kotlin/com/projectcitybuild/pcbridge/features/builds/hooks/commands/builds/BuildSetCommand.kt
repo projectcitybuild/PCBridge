@@ -10,14 +10,12 @@ import com.projectcitybuild.pcbridge.features.builds.domain.repositories.BuildRe
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
-import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandNode
 import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.argumenttypes.EnumArgument
 import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.getOptionalArgument
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.requirePlayer
-import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
 import com.projectcitybuild.pcbridge.runtime.commands.scoped
 import org.bukkit.plugin.Plugin
 
@@ -26,13 +24,16 @@ class BuildSetCommand(
     private val buildRepository: BuildRepository,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override fun literal() = command("set") {
-        requiresPermission(BuildsPermissions.MANAGE)
-        argument("id", IntegerArgumentType.integer()) {
-            this.argument("field", EnumArgument(EditableBuildField::class.java)) {
-                executesSuspending(taskExecutor, ::execute)
-                this.argument("value", StringArgumentType.greedyString()) {
+    override val commandDefinition by lazy {
+        command("set") {
+            description = "Updates a field on a build"
+            requiresPermission(BuildsPermissions.MANAGE)
+            argument("id", IntegerArgumentType.integer()) {
+                this.argument("field", EnumArgument(EditableBuildField::class.java)) {
                     executesSuspending(taskExecutor, ::execute)
+                    this.argument("value", StringArgumentType.greedyString()) {
+                        executesSuspending(taskExecutor, ::execute)
+                    }
                 }
             }
         }

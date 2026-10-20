@@ -10,7 +10,6 @@ import com.projectcitybuild.pcbridge.features.builds.hooks.commands.builds.Build
 import com.projectcitybuild.pcbridge.features.builds.hooks.commands.builds.BuildUnvoteCommand
 import com.projectcitybuild.pcbridge.features.builds.hooks.commands.builds.BuildVoteCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
-import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandNode
 import com.projectcitybuild.pcbridge.platform.paper.commands.command
 
 class BuildsCommand(
@@ -23,17 +22,20 @@ class BuildsCommand(
     private val buildUnvoteCommand: BuildUnvoteCommand,
     private val buildVoteCommand: BuildVoteCommand,
 ) : BrigadierCommand {
-    override fun literal() = command("builds") {
-        then(buildCreateCommand)
-        then(buildDeleteCommand)
-        then(buildEditCommand)
-        then(buildListCommand)
-        then(buildMoveCommand)
-        then(buildSetCommand)
-        then(buildUnvoteCommand)
-        then(buildVoteCommand)
-        // TODO: can we use a Redirect here? Would be good to allow a page arg
-        requiresPermission(BuildsPermissions.TELEPORT)
-        executes(buildListCommand.literal().command)
+    override val commandDefinition by lazy {
+        command("builds") {
+            description = "Lists available builds"
+            then(buildCreateCommand)
+            then(buildDeleteCommand)
+            then(buildEditCommand)
+            then(buildListCommand)
+            then(buildMoveCommand)
+            then(buildSetCommand)
+            then(buildUnvoteCommand)
+            then(buildVoteCommand)
+            // TODO: can we use a Redirect here? Would be good to allow a page arg
+            requiresPermission(BuildsPermissions.TELEPORT)
+            executes(buildListCommand.literal().command)
+        }
     }
 }
