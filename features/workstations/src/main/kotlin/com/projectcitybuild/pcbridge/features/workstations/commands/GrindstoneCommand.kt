@@ -21,7 +21,7 @@ class GrindstoneCommand(
 ) : BrigadierCommand {
     internal var menuOpener: (String, Player) -> Unit = { _, player -> MenuType.GRINDSTONE.create(player).open() }
 
-    override val build = command("grindstone") {
+    override val builder = command("grindstone") {
         description = "Opens a portable grindstone"
         requiresPermission(WorkstationsPermissions.USE)
         executesSuspending(commandTaskExecutor, ::execute)

@@ -31,7 +31,7 @@ class WarpCommand(
     private val playerTeleporter: PlayerTeleporter,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override val build = command("warp") {
+    override val builder = command("warp") {
         description = "Teleports to a warp"
         requiresPermission(WarpsPermissions.TELEPORT)
         argument("name", StringArgumentType.string()) {

@@ -31,7 +31,7 @@ class HomeCommand(
     private val playerTeleporter: PlayerTeleporter,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override val build = command("home") {
+    override val builder = command("home") {
         description = "Teleports to one of your homes"
         requiresPermission(HomesPermissions.USE)
         argument("name", StringArgumentType.greedyString()) {

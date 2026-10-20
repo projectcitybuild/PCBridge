@@ -19,7 +19,7 @@ class OpRevokeCommand(
     private val opElevationService: OpElevationService,
     private val commandTaskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override val build = command("revoke") {
+    override val builder = command("revoke") {
         description = "Revokes a player's operator role"
         requiresPermission(PimPermissions.OP)
         executesSuspending(commandTaskExecutor, ::execute)

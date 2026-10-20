@@ -29,7 +29,7 @@ class TeleportCommand(
     private val deny: TeleportDenyCommand,
     private val cancel: TeleportCancelCommand,
 ) : BrigadierCommand {
-    override val build = command("tp") {
+    override val builder = command("tp") {
         description = "Teleports a player to a target"
         argument("player", SingleOnlinePlayerArgument(server)) {
             requires { context ->

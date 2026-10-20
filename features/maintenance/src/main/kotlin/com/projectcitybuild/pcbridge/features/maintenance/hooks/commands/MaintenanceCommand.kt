@@ -27,7 +27,7 @@ class MaintenanceCommand(
     private val eventBroadcaster: SpigotEventBroadcaster,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override val build = command("maintenance") {
+    override val builder = command("maintenance") {
         description = "Enables or disables server maintenance mode"
         requiresPermission(MaintenancePermissions.MANAGE)
         argument("enabled", OnOffArgument()) {

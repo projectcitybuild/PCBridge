@@ -18,7 +18,7 @@ class ConfigCommand(
     private val remoteConfig: RemoteConfig,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override val build = command("config") {
+    override val builder = command("config") {
         description = "Reloads server configuration"
         requiresPermission(ConfigPermissions.RELOAD)
         literal("reload") {

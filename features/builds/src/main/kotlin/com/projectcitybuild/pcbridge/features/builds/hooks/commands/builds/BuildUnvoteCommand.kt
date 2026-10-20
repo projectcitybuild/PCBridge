@@ -24,7 +24,7 @@ class BuildUnvoteCommand(
     private val buildRepository: BuildRepository,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override val build = command("unvote") {
+    override val builder = command("unvote") {
         description = "Removes your vote from a build"
         requiresPermission(BuildsPermissions.VOTE)
         argument("name", StringArgumentType.greedyString()) {

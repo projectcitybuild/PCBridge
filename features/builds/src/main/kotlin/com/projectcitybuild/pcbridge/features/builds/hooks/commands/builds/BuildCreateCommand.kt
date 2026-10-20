@@ -21,7 +21,7 @@ class BuildCreateCommand(
     private val buildRepository: BuildRepository,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override val build = command("create") {
+    override val builder = command("create") {
         description = "Creates a new build"
         requiresPermission(BuildsPermissions.MANAGE)
         argument("name", StringArgumentType.greedyString()) {

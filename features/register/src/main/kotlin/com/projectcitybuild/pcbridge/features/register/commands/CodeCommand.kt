@@ -19,7 +19,7 @@ class CodeCommand(
 ) : BrigadierCommand {
     internal var dialogFactory: () -> DialogLike = { VerifyRegistrationCodeDialog.build(email = null) }
 
-    override val build = command("code") {
+    override val builder = command("code") {
         description = "Finishes account registration by verifying a code"
         executesSuspending(commandTaskExecutor, ::execute)
     }

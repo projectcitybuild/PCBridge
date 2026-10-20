@@ -34,7 +34,7 @@ class BuildCommand(
     private val playerTeleporter: PlayerTeleporter,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override val build = command("build") {
+    override val builder = command("build") {
         description = "Teleports to a build"
         requiresPermission(BuildsPermissions.TELEPORT)
         argument("name", StringArgumentType.greedyString()) {

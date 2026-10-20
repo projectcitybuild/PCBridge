@@ -18,7 +18,7 @@ class HomesCommand(
     private val homeLimitCommand: HomeLimitCommand,
     private val homeRenameCommand: HomeRenameCommand,
 ) : BrigadierCommand {
-    override val build = command("homes") {
+    override val builder = command("homes") {
         description = "Lists your saved homes"
         requiresPermission(HomesPermissions.USE)
         then(homeCreateCommand)

@@ -20,7 +20,7 @@ class TeleportAllCommand(
     private val server: Server,
     private val application: TeleportService,
 ) : BrigadierCommand {
-    override val build = command("all") {
+    override val builder = command("all") {
         description = "Teleports all players to a target"
         requiresPermission(TeleportationPermissions.ALL)
         brigadier {

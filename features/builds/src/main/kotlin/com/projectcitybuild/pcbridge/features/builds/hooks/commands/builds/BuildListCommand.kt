@@ -23,7 +23,7 @@ class BuildListCommand(
     private val buildRepository: BuildRepository,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override val build = command("list") {
+    override val builder = command("list") {
         description = "Lists available builds"
         requiresPermission(BuildsPermissions.TELEPORT)
         argument("page", IntegerArgumentType.integer()) {

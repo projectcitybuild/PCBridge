@@ -17,7 +17,7 @@ class TeleportDenyCommand(
     private val server: Server,
     private val application: TeleportService,
 ) : BrigadierCommand {
-    override val build = command("deny") {
+    override val builder = command("deny") {
         description = "Declines a pending teleport request"
         argument("requester", SingleOnlinePlayerArgument(server)) {
             executesSuspending(plugin) { context ->

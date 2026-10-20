@@ -21,7 +21,7 @@ class WorkbenchCommand(
 ) : BrigadierCommand {
     internal var menuOpener: (String, Player) -> Unit = { _, player -> MenuType.CRAFTING.create(player).open() }
 
-    override val build = command("workbench") {
+    override val builder = command("workbench") {
         description = "Opens a portable crafting table"
         requiresPermission(WorkstationsPermissions.USE)
         executesSuspending(commandTaskExecutor, ::execute)

@@ -27,7 +27,7 @@ class KickCommand(
     private val server: Server,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override val build = command("kick") {
+    override val builder = command("kick") {
         description = "Kicks a player from the server"
         requiresPermission(ModeratePermissions.MODERATE)
         argument("player", SingleOnlinePlayerArgument(plugin.server)) {

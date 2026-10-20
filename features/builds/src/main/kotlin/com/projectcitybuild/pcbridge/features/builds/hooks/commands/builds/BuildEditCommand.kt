@@ -31,7 +31,7 @@ class BuildEditCommand(
     private val buildRepository: BuildRepository,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override val build = command("edit") {
+    override val builder = command("edit") {
         description = "Edits a build description"
         requiresPermission(BuildsPermissions.MANAGE)
         argument("name", StringArgumentType.greedyString()) {

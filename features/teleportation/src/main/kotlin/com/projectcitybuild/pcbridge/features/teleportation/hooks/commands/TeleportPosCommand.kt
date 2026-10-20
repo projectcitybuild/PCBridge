@@ -17,7 +17,7 @@ class TeleportPosCommand(
     private val plugin: Plugin,
     private val application: TeleportService,
 ) : BrigadierCommand {
-    override val build = command("pos") {
+    override val builder = command("pos") {
         description = "Teleports you to coordinates"
         requiresPermission(TeleportationPermissions.POSITION)
         brigadier {

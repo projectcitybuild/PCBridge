@@ -21,7 +21,7 @@ class CartographyTableCommand(
 ) : BrigadierCommand {
     internal var menuOpener: (String, Player) -> Unit = { _, player -> MenuType.CARTOGRAPHY_TABLE.create(player).open() }
 
-    override val build = command("cartographytable") {
+    override val builder = command("cartographytable") {
         description = "Opens a portable cartography table"
         requiresPermission(WorkstationsPermissions.USE)
         executesSuspending(commandTaskExecutor, ::execute)

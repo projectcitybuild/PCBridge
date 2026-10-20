@@ -19,7 +19,7 @@ class TeleportBackCommand(
     private val server: Server,
     private val application: TeleportService,
 ) : BrigadierCommand {
-    override val build = command("back") {
+    override val builder = command("back") {
         description = "Returns you to your previous location"
         argument("player", SingleOnlinePlayerArgument(server)) {
             requiresPermission(TeleportationPermissions.BACK_OTHERS)

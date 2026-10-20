@@ -26,7 +26,7 @@ class WarpDeleteCommand(
     private val eventBroadcaster: SpigotEventBroadcaster,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override val build = command("delete") {
+    override val builder = command("delete") {
         description = "Deletes a warp"
         requiresPermission(WarpsPermissions.MANAGE)
         argument("name", StringArgumentType.string()) {

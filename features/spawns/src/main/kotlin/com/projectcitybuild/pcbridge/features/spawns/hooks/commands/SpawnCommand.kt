@@ -21,7 +21,7 @@ class SpawnCommand(
     private val playerTeleporter: PlayerTeleporter,
     private val commandTaskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override val build = command("spawn") {
+    override val builder = command("spawn") {
         description = "Teleports to the server spawn"
         executesSuspending(commandTaskExecutor, ::execute)
     }

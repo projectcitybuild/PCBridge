@@ -24,7 +24,7 @@ class BuildVoteCommand(
     private val buildRepository: BuildRepository,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override val build = command("vote") {
+    override val builder = command("vote") {
         description = "Votes for a build"
         requiresPermission(BuildsPermissions.VOTE)
         argument("name", StringArgumentType.greedyString()) {

@@ -28,7 +28,7 @@ class InvisFrameCommand(
 ) : BrigadierCommand {
     internal var frameFactory: (Material) -> ItemStack = ::ItemStack
 
-    override val build = command("invisframe") {
+    override val builder = command("invisframe") {
         description = "Gives you an itemframe that turns invisible when holding an item"
         requiresPermission(BuildingPermissions.INVIS_FRAME)
         literal("glowing") {

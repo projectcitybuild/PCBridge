@@ -24,7 +24,7 @@ class BuildMoveCommand(
     private val buildRepository: BuildRepository,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override val build = command("move") {
+    override val builder = command("move") {
         description = "Moves a build to a new location"
         requiresPermission(BuildsPermissions.MANAGE)
         argument("name", StringArgumentType.greedyString()) {

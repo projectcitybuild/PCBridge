@@ -24,7 +24,7 @@ class BuildSetCommand(
     private val buildRepository: BuildRepository,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override val build = command("set") {
+    override val builder = command("set") {
         description = "Updates a field on a build"
         requiresPermission(BuildsPermissions.MANAGE)
         argument("id", IntegerArgumentType.integer()) {

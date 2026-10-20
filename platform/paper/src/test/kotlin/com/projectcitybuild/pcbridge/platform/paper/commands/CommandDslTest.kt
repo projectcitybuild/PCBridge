@@ -21,7 +21,7 @@ class CommandDslTest {
     @Test
     fun `brigadier command exposes its DSL description and literal`() {
         val brigadierCommand = object : BrigadierCommand {
-            override val build = command("test") {
+            override val builder = command("test") {
                 description = "Runs a test command"
             }
         }

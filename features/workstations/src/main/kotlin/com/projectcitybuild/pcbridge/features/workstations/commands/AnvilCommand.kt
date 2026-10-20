@@ -21,7 +21,7 @@ class AnvilCommand(
 ) : BrigadierCommand {
     internal var menuOpener: (String, Player) -> Unit = { _, player -> MenuType.ANVIL.create(player).open() }
 
-    override val build = command("anvil") {
+    override val builder = command("anvil") {
         description = "Opens a portable anvil interface"
         requiresPermission(WorkstationsPermissions.USE)
         executesSuspending(commandTaskExecutor, ::execute)

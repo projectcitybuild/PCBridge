@@ -21,7 +21,7 @@ class LoomCommand(
 ) : BrigadierCommand {
     internal var menuOpener: (String, Player) -> Unit = { _, player -> MenuType.LOOM.create(player).open() }
 
-    override val build = command("loom") {
+    override val builder = command("loom") {
         description = "Opens a portable loom"
         requiresPermission(WorkstationsPermissions.USE)
         executesSuspending(commandTaskExecutor, ::execute)

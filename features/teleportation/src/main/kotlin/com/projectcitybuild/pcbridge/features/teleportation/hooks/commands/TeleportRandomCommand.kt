@@ -15,7 +15,7 @@ class TeleportRandomCommand(
     private val plugin: Plugin,
     private val application: TeleportService,
 ) : BrigadierCommand {
-    override val build = command("random") {
+    override val builder = command("random") {
         description = "Teleports you to a random location"
         requiresPermission(TeleportationPermissions.RANDOM)
         executesSuspending(plugin) { context ->

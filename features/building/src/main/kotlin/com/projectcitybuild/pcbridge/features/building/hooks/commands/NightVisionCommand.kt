@@ -32,7 +32,7 @@ class NightVisionCommand(
         it.addPotionEffect(PotionEffect(PotionEffectType.NIGHT_VISION, Integer.MAX_VALUE, 1))
     }
 
-    override val build = command("nv") {
+    override val builder = command("nv") {
         description = "Toggles night-vision mode"
         requiresPermission(BuildingPermissions.NIGHT_VISION)
         argument("enabled", OnOffArgument()) {

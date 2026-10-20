@@ -21,7 +21,7 @@ class EnchantingCommand(
 ) : BrigadierCommand {
     internal var menuOpener: (String, Player) -> Unit = { _, player -> MenuType.ENCHANTMENT.create(player).open() }
 
-    override val build = command("enchanting") {
+    override val builder = command("enchanting") {
         description = "Opens a portable enchanting table"
         requiresPermission(WorkstationsPermissions.USE)
         executesSuspending(commandTaskExecutor, ::execute)

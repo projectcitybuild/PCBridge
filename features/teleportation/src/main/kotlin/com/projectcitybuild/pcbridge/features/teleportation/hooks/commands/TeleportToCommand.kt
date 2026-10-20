@@ -21,7 +21,7 @@ class TeleportToCommand(
     private val server: Server,
     private val application: TeleportService,
 ) : BrigadierCommand {
-    override val build = command("to") {
+    override val builder = command("to") {
         description = "Teleports to a player"
         argument("player", SingleOnlinePlayerArgument(server)) {
             requiresPermission(TeleportationPermissions.REQUEST)

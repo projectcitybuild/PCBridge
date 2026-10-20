@@ -25,7 +25,7 @@ class WarpRenameCommand(
     private val warpRepository: WarpRepository,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override val build = command("rename") {
+    override val builder = command("rename") {
         description = "Renames a warp"
         requiresPermission(WarpsPermissions.MANAGE)
         argument("name", StringArgumentType.string()) {

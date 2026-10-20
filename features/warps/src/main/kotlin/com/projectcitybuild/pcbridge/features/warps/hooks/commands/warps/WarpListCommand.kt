@@ -24,7 +24,7 @@ class WarpListCommand(
     private val remoteConfig: RemoteConfig,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override val build = command("list") {
+    override val builder = command("list") {
         description = "Lists available warps"
         requiresPermission(WarpsPermissions.TELEPORT)
         argument("page", IntegerArgumentType.integer(1)) {

@@ -23,7 +23,7 @@ class OpStatusCommand(
     private val localizedTime: LocalizedTime,
     private val commandTaskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override val build = command("status") {
+    override val builder = command("status") {
         description = "Shows a player's operator status"
         requiresPermission(PimPermissions.OP)
         executesSuspending(commandTaskExecutor, ::execute)

@@ -22,7 +22,7 @@ class BuildsCommand(
     private val buildUnvoteCommand: BuildUnvoteCommand,
     private val buildVoteCommand: BuildVoteCommand,
 ) : BrigadierCommand {
-    override val build = command("builds") {
+    override val builder = command("builds") {
         description = "Lists available builds"
         then(buildCreateCommand)
         then(buildDeleteCommand)

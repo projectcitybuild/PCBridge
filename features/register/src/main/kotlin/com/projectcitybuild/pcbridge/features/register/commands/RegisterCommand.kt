@@ -24,7 +24,7 @@ class RegisterCommand(
 ) : BrigadierCommand {
     internal var dialogFactory: (String) -> DialogLike = { email -> VerifyRegistrationCodeDialog.build(email) }
 
-    override val build = command("register") {
+    override val builder = command("register") {
         description = "Creates a new Project City Build account"
         argument("email", StringArgumentType.greedyString()) {
             executesSuspending(commandTaskExecutor, ::execute)

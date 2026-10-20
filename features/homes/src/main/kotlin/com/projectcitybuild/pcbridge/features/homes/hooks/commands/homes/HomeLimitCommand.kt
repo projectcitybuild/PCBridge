@@ -18,7 +18,7 @@ class HomeLimitCommand(
     private val homeRepository: HomeRepository,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override val build = command("limit") {
+    override val builder = command("limit") {
         description = "Checks your home limit"
         executesSuspending(taskExecutor, ::execute)
     }

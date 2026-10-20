@@ -21,7 +21,7 @@ class RolesDebugCommand(
     private val permissions: Permissions,
     private val commandTaskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override val build = command("debug") {
+    override val builder = command("debug") {
         description = "Displays role debugging information"
         requiresPermission(PimPermissions.ROLES)
         argument("roles", StringArgumentType.greedyString()) {

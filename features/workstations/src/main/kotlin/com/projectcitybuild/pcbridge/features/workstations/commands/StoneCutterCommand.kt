@@ -21,7 +21,7 @@ class StoneCutterCommand(
 ) : BrigadierCommand {
     internal var menuOpener: (String, Player) -> Unit = { _, player -> MenuType.STONECUTTER.create(player).open() }
 
-    override val build = command("stonecutter") {
+    override val builder = command("stonecutter") {
         description = "Opens a portable stonecutter"
         requiresPermission(WorkstationsPermissions.USE)
         executesSuspending(commandTaskExecutor, ::execute)

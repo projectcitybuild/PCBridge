@@ -24,7 +24,7 @@ class BuildDeleteCommand(
     private val buildRepository: BuildRepository,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override val build = command("delete") {
+    override val builder = command("delete") {
         description = "Deletes a build"
         requiresPermission(BuildsPermissions.MANAGE)
         argument("name", StringArgumentType.greedyString()) {

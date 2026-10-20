@@ -24,7 +24,7 @@ class ItemNameCommand(
     private val eventBroadcaster: SpigotEventBroadcaster,
     private val commandTaskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override val build = command("itemname") {
+    override val builder = command("itemname") {
         description = "Renames the item in your primary hand"
         requiresPermission(BuildingPermissions.ITEM_RENAME)
         argument("name", StringArgumentType.greedyString()) {

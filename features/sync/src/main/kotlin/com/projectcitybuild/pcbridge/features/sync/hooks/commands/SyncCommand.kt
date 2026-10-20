@@ -22,7 +22,7 @@ class SyncCommand(
     private val syncPlayer: SyncPlayer,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override val build = command("sync") {
+    override val builder = command("sync") {
         description = "Synchronizes server data"
         argument("player", SingleOnlinePlayerArgument(plugin.server)) {
             requiresPermission(SyncPermissions.OTHER)

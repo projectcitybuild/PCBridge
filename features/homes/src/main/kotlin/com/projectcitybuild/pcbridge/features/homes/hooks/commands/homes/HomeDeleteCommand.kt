@@ -22,7 +22,7 @@ class HomeDeleteCommand(
     private val homeRepository: HomeRepository,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override val build = command("delete") {
+    override val builder = command("delete") {
         description = "Deletes a saved home"
         argument("name", StringArgumentType.greedyString()) {
             suggestsSuspending(plugin, homeNameSuggester::suggest)

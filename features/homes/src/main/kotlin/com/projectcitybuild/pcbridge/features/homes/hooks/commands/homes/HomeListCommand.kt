@@ -23,7 +23,7 @@ class HomeListCommand(
     private val remoteConfig: RemoteConfig,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override val build = command("list") {
+    override val builder = command("list") {
         description = "Lists your saved homes"
         argument("page", IntegerArgumentType.integer()) {
             executesSuspending(taskExecutor, ::execute)

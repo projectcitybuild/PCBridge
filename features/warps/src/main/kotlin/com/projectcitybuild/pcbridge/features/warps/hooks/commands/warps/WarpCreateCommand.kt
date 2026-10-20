@@ -24,7 +24,7 @@ class WarpCreateCommand(
     private val eventBroadcaster: SpigotEventBroadcaster,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override val build = command("create") {
+    override val builder = command("create") {
         description = "Creates a warp at your current location"
         requiresPermission(WarpsPermissions.MANAGE)
         argument("name", StringArgumentType.string()) {

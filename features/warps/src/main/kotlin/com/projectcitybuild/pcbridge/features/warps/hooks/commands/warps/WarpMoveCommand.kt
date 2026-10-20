@@ -24,7 +24,7 @@ class WarpMoveCommand(
     private val warpRepository: WarpRepository,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override val build = command("move") {
+    override val builder = command("move") {
         description = "Moves a warp to your current location"
         requiresPermission(WarpsPermissions.MANAGE)
         argument("name", StringArgumentType.string()) {

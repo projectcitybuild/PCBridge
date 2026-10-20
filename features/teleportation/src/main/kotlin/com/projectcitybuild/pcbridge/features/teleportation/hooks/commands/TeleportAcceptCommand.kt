@@ -17,7 +17,7 @@ class TeleportAcceptCommand(
     private val server: Server,
     private val application: TeleportService,
 ) : BrigadierCommand {
-    override val build = command("accept") {
+    override val builder = command("accept") {
         description = "Accepts a pending teleport request"
         argument("requester", SingleOnlinePlayerArgument(server)) {
             executesSuspending(plugin) { context ->

@@ -9,16 +9,16 @@ import org.bukkit.plugin.java.JavaPlugin
  * registered with Brigadier
  */
 interface BrigadierCommand {
-    val build: CommandDefinition
+    val builder: CommandDefinition
 
     val description: String?
-        get() = build.description
+        get() = builder.description
 
-    fun literal(): PaperCommandNode = build.node
+    fun literal(): PaperCommandNode = builder.node
 }
 
 fun Commands.register(command: BrigadierCommand) {
-    val definition = command.build
+    val definition = command.builder
     register(definition.node, definition.description)
 }
 

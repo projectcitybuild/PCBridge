@@ -19,7 +19,7 @@ class HomeCreateCommand(
     private val homeRepository: HomeRepository,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override val build = command("create") {
+    override val builder = command("create") {
         description = "Creates a home at your current location"
         argument("name", StringArgumentType.greedyString()) {
             executesSuspending(taskExecutor, ::execute)

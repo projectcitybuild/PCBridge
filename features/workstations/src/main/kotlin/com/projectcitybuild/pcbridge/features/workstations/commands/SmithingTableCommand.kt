@@ -21,7 +21,7 @@ class SmithingTableCommand(
 ) : BrigadierCommand {
     internal var menuOpener: (String, Player) -> Unit = { _, player -> MenuType.SMITHING.create(player).open() }
 
-    override val build = command("smithingtable") {
+    override val builder = command("smithingtable") {
         description = "Opens a portable smithing table"
         requiresPermission(WorkstationsPermissions.USE)
         executesSuspending(commandTaskExecutor, ::execute)

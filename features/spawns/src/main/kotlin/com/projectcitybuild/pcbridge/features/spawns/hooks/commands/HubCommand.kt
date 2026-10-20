@@ -26,7 +26,7 @@ class HubCommand(
     private val playerTeleporter: PlayerTeleporter,
     private val commandTaskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override val build = command("hub") {
+    override val builder = command("hub") {
         description = "Teleports to the server hub"
         executesSuspending(commandTaskExecutor, ::execute)
     }

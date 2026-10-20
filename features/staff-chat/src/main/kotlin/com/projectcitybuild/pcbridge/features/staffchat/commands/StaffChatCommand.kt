@@ -27,7 +27,7 @@ class StaffChatCommand(
     private val decorators: ChatDecoratorChain,
     private val commandTaskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override val build = command("a") {
+    override val builder = command("a") {
         description = "Sends a message to staff chat"
         requiresPermission(StaffChatPermissions.CHANNEL)
         argument("message", StringArgumentType.greedyString()) {

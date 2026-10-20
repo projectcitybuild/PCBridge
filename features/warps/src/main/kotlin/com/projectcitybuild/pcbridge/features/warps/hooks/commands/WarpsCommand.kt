@@ -16,7 +16,7 @@ class WarpsCommand(
     private val moveCommand: WarpMoveCommand,
     private val renameCommand: WarpRenameCommand,
 ) : BrigadierCommand {
-    override val build = command("warps") {
+    override val builder = command("warps") {
         description = "Lists available warps"
         requiresPermission(WarpsPermissions.TELEPORT)
         then(createCommand)

@@ -14,7 +14,7 @@ class PimCommand(
     private val opStatusCommand: OpStatusCommand,
     private val rolesDebugCommand: RolesDebugCommand,
 ) : BrigadierCommand {
-    override val build = command("pim") {
+    override val builder = command("pim") {
         description = "Opens player identity management commands"
         requiresPermission(PimPermissions.OP)
 
