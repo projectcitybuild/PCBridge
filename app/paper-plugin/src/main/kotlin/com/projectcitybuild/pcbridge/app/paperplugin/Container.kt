@@ -78,21 +78,19 @@ import java.time.ZoneId
 import java.util.Locale
 import kotlin.time.Duration.Companion.seconds
 
-fun pluginModules(plugin: JavaPlugin) =
-    buildList {
-        add(mainModule(plugin))
-        add(runtimeModule)
-        addAll(featureModules)
-        addAll(integrationModules)
-    }
+fun pluginModules(plugin: JavaPlugin) = buildList {
+    add(mainModule(plugin))
+    add(runtimeModule)
+    addAll(featureModules)
+    addAll(integrationModules)
+}
 
-private fun mainModule(plugin: JavaPlugin) =
-    module {
-        platform(plugin)
-        core()
-        http()
-        webServer()
-    }
+private fun mainModule(plugin: JavaPlugin) = module {
+    platform(plugin)
+    core()
+    http()
+    webServer()
+}
 
 private val featureModules =
     listOf(
@@ -139,7 +137,7 @@ private fun Module.platform(plugin: JavaPlugin) {
     singleOf(::SpigotNamespace)
     singleOf(::SpigotListenerRegistry)
 
-    factory {
+    single {
         SpigotTimer(
             plugin = get(),
             errorTracker = get(),

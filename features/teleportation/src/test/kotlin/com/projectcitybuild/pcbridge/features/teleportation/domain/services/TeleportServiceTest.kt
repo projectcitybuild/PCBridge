@@ -22,6 +22,7 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause
 import org.bukkit.plugin.java.JavaPlugin
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertSame
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.mockingDetails
 import org.mockito.kotlin.any
@@ -214,10 +215,11 @@ class TeleportServiceTest {
 
     @Test
     fun `send requests the selected player to teleport to the destination`() = runBlocking {
+        val world = mock<World>()
         val operator = player("Staff", TeleportationPermissions.OTHERS, TeleportationPermissions.SILENT)
         val selected = player("Alex")
         val target = player("Casey")
-        val targetLocation = Location(mock<World>(), 5.0, 70.0, 5.0)
+        val targetLocation = Location(world, 5.0, 70.0, 5.0)
         whenever(server.getPlayer(target.uniqueId)).thenReturn(target)
         whenever(target.location).thenReturn(targetLocation)
 
@@ -235,7 +237,7 @@ class TeleportServiceTest {
             eq(TeleportCause.COMMAND),
             any(),
         )
-        assertEquals(targetLocation.world, destination.firstValue.world)
+        assertSame(world, destination.firstValue.world)
         assertEquals(targetLocation.x, destination.firstValue.x)
         verify(target, never()).sendMessage(l10n.teleportation.teleportReceived(selected.name))
     }

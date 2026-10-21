@@ -32,7 +32,6 @@ class PluginLifecycle : KoinComponent {
     suspend fun boot() = errorTracker.catching {
         TracerFactory.configure(otel)
         tracer.trace("boot") {
-            httpServer.start()
             remoteConfig.fetch()
             store.hydrate()
 
@@ -42,8 +41,8 @@ class PluginLifecycle : KoinComponent {
             get<PaperIntegrationRegistrar>().enable(
                 getKoin().getAll<PaperIntegration>(),
             )
-
             statsCollector.start()
+            httpServer.start()
         }
     }
 
