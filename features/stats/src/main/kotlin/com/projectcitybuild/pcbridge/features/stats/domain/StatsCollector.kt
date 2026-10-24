@@ -1,22 +1,25 @@
 package com.projectcitybuild.pcbridge.features.stats.domain
 
-import com.projectcitybuild.pcbridge.core.pcbridgeapi.pcb.models.PlayerStats
 import com.projectcitybuild.pcbridge.core.observability.errors.ErrorTracker
+import com.projectcitybuild.pcbridge.core.observability.errors.reportSafely
 import com.projectcitybuild.pcbridge.core.observability.logging.log
 import com.projectcitybuild.pcbridge.core.observability.logging.logSync
-import com.projectcitybuild.pcbridge.runtime.remoteconfig.RemoteConfig
+import com.projectcitybuild.pcbridge.core.pcbridgeapi.pcb.models.PlayerStats
 import com.projectcitybuild.pcbridge.features.stats.domain.repositories.StatsRepository
+import com.projectcitybuild.pcbridge.runtime.remoteconfig.RemoteConfig
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import java.time.Duration
 import java.util.UUID
-import java.util.concurrent.ConcurrentHashMap
 import kotlin.time.Duration.Companion.seconds
 
 data class CollectedStats(
@@ -30,78 +33,109 @@ class StatsCollector(
     private val remoteConfig: RemoteConfig,
     private val errorTracker: ErrorTracker,
 ) {
-    private val stats = ConcurrentHashMap<UUID, CollectedStats>()
-    private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+    private val statsLock = Any()
+    private val stats = mutableMapOf<UUID, CollectedStats>()
+    private val flushMutex = Mutex()
+    private val scopeJob = SupervisorJob()
+    private val scope = CoroutineScope(Dispatchers.IO + scopeJob)
     private var job: Job? = null
 
-    fun blockPlaced(playerUuid: UUID) {
-        val current = stats[playerUuid] ?: CollectedStats()
-
-        stats[playerUuid] = current.copy(
-            blocksPlaced = current.blocksPlaced + 1
-        )
+    fun blockPlaced(playerUuid: UUID) = update(playerUuid) {
+        copy(blocksPlaced = blocksPlaced + 1)
     }
 
-    fun blockDestroyed(playerUuid: UUID) {
-        val current = stats[playerUuid] ?: CollectedStats()
-
-        stats[playerUuid] = current.copy(
-            blocksDestroyed = current.blocksDestroyed + 1
-        )
+    fun blockDestroyed(playerUuid: UUID) = update(playerUuid) {
+        copy(blocksDestroyed = blocksDestroyed + 1)
     }
 
-    fun afkEnded(playerUuid: UUID, duration: Duration) {
-        val current = stats[playerUuid] ?: CollectedStats()
+    fun afkEnded(playerUuid: UUID, duration: Duration) = update(playerUuid) {
+        copy(afkTime = afkTime + duration.seconds)
+    }
 
-        stats[playerUuid] = current.copy(
-            afkTime = current.afkTime + duration.seconds,
-        )
+    private fun update(
+        playerUuid: UUID,
+        change: CollectedStats.() -> CollectedStats,
+    ) {
+        synchronized(statsLock) {
+            stats[playerUuid] = (stats[playerUuid] ?: CollectedStats()).change()
+        }
     }
 
     fun start() {
+        check(scopeJob.isActive) { "StatsCollector has been shut down" }
         if (job?.isActive == true) return
 
         logSync.info { "Stats collector started" }
-
         job = scope.launch {
             while (isActive) {
                 val interval = remoteConfig.latest.config.statCollectionIntervalSeconds
-
                 delay(interval.seconds)
-                ensureActive()
-                flush()
+                try {
+                    flush()
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (e: Exception) {
+                    log.error(e) { "Failed to flush collected stats; the batch will be retried" }
+                }
             }
         }
     }
 
-    suspend fun stop() {
-        job?.cancel()
+    suspend fun stopCollection() {
+        job?.cancelAndJoin()
         job = null
+        logSync.info { "Stats collection stopped" }
+    }
 
-        if (stats.isNotEmpty()) {
-            logSync.info { "Sending stats before stopping" }
-            flush()
+    suspend fun shutdown() {
+        try {
+            stopCollection()
+        } finally {
+            scopeJob.cancel()
         }
+    }
+
+    suspend fun stop() {
+        stopCollection()
+        flush()
         logSync.info { "Stats collector stopped" }
     }
 
+    /**
+     * Detached batches are restored on failure. A request may have reached the server
+     * before a transport failure, so retries can duplicate delivery without server deduplication.
+     */
     suspend fun flush() {
-        if (stats.isEmpty()) return
+        flushMutex.withLock {
+            val batch = synchronized(statsLock) {
+                if (stats.isEmpty()) return
+                stats.toMap().also { stats.clear() }
+            }
+            log.trace { "Sending stats ($batch)" }
 
-        log.trace { "Sending stats (${stats})" }
-
-        runCatching {
-            statsRepository.increment(
-                stats
-                    .map { it.key.toString() to it.value.toPlayerStats() }
-                    .toMap()
-            )
-            stats.clear()
-        }.onFailure {
-            errorTracker.report(it)
+            try {
+                statsRepository.increment(batch.mapKeys { it.key.toString() }.mapValues { it.value.toPlayerStats() })
+            } catch (e: Throwable) {
+                synchronized(statsLock) {
+                    batch.forEach { (playerUuid, detached) ->
+                        val current = stats[playerUuid] ?: CollectedStats()
+                        stats[playerUuid] = current + detached
+                    }
+                }
+                if (e !is CancellationException) {
+                    errorTracker.reportSafely(e)
+                }
+                throw e
+            }
         }
     }
 }
+
+private operator fun CollectedStats.plus(other: CollectedStats) = CollectedStats(
+    blocksPlaced = blocksPlaced + other.blocksPlaced,
+    blocksDestroyed = blocksDestroyed + other.blocksDestroyed,
+    afkTime = afkTime + other.afkTime,
+)
 
 private fun CollectedStats.toPlayerStats() = PlayerStats(
     blocksPlaced = blocksPlaced,

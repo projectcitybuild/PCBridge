@@ -28,7 +28,7 @@ class Cooldown(
         cooldowns[identifier] = now
 
         timer.scheduleOnce(
-            identifier = identifier,
+            identifier = "cooldown:$identifier",
             delay = duration,
             work = {
                 cooldowns.remove(identifier)

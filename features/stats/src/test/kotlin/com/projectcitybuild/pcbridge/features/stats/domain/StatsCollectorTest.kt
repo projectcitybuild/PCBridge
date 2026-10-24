@@ -5,12 +5,18 @@ import com.projectcitybuild.pcbridge.core.pcbridgeapi.pcb.models.PlayerStats
 import com.projectcitybuild.pcbridge.features.stats.domain.repositories.StatsRepository
 import com.projectcitybuild.pcbridge.runtime.remoteconfig.RemoteConfig
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.Assertions.assertSame
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.never
 import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
 import org.mockito.kotlin.any
+import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.whenever
 import java.time.Duration
 import java.util.UUID
@@ -73,11 +79,63 @@ class StatsCollectorTest {
             whenever(repository.increment(any())).thenThrow(failure)
 
             collector.blockPlaced(playerUuid)
-            collector.flush()
-            collector.flush()
+            repeat(2) {
+                val thrown = runCatching { collector.flush() }.exceptionOrNull()
+                assertSame(failure, thrown)
+            }
 
             verify(repository, times(2)).increment(stats)
             verify(errorTracker, times(2)).report(failure)
+        }
+
+    @Test
+    fun `failed detached batch merges with concurrent increments`() =
+        runTest {
+            val repository = mock(StatsRepository::class.java)
+            val collector = collector(repository)
+            val playerUuid = UUID.randomUUID()
+            val requestStarted = CompletableDeferred<Unit>()
+            val allowFailure = CompletableDeferred<Unit>()
+            val failure = IllegalStateException("request failed")
+
+            doAnswer { invocation ->
+                runBlocking {
+                    requestStarted.complete(Unit)
+                    allowFailure.await()
+                }
+                throw failure
+            }.whenever(repository).increment(any())
+
+            collector.blockPlaced(playerUuid)
+            val firstFlush = async(Dispatchers.IO) {
+                runCatching { collector.flush() }.exceptionOrNull()
+            }
+            requestStarted.await()
+            collector.blockPlaced(playerUuid)
+            allowFailure.complete(Unit)
+            assertSame(failure, firstFlush.await())
+
+            doAnswer { null }.whenever(repository).increment(any())
+            collector.flush()
+
+            verify(repository).increment(
+                mapOf(
+                    playerUuid.toString() to PlayerStats(
+                        blocksPlaced = 1,
+                        blocksDestroyed = 0,
+                        afkTime = 0,
+                    ),
+                ),
+            )
+            verify(repository).increment(
+                mapOf(
+                    playerUuid.toString() to PlayerStats(
+                        blocksPlaced = 2,
+                        blocksDestroyed = 0,
+                        afkTime = 0,
+                    ),
+                ),
+            )
         }
 
     private fun collector(

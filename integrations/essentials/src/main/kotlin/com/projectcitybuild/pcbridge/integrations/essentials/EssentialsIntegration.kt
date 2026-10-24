@@ -3,7 +3,6 @@ package com.projectcitybuild.pcbridge.integrations.essentials
 import com.earth2me.essentials.Essentials
 import com.github.shynixn.mccoroutine.bukkit.registerSuspendingEvents
 import com.projectcitybuild.pcbridge.core.datetime.services.LocalizedTime
-import com.projectcitybuild.pcbridge.core.observability.errors.ErrorTracker
 import com.projectcitybuild.pcbridge.core.observability.logging.log
 import com.projectcitybuild.pcbridge.core.observability.logging.logSync
 import com.projectcitybuild.pcbridge.core.observability.tracing.TracerFactory
@@ -16,11 +15,13 @@ import com.projectcitybuild.pcbridge.runtime.state.store.SessionStore
 import com.projectcitybuild.pcbridge.runtime.tablist.TabRenderer
 import com.projectcitybuild.pcbridge.runtime.teleportation.events.PlayerPreTeleportEvent
 import io.papermc.paper.command.brigadier.argument.ArgumentTypes.players
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.runBlocking
 import net.ess3.api.events.AfkStatusChangeEvent
 import net.ess3.api.events.NickChangeEvent
 import org.bukkit.Server
 import org.bukkit.event.EventHandler
+import org.bukkit.event.HandlerList
 import org.bukkit.event.Listener
 import org.bukkit.plugin.java.JavaPlugin
 
@@ -30,7 +31,6 @@ class EssentialsIntegration(
     private val session: SessionStore,
     private val eventBroadcaster: SpigotEventBroadcaster,
     private val tabRenderer: TabRenderer,
-    private val errorTracker: ErrorTracker,
     private val localizedTime: LocalizedTime,
 ) : PaperIntegration,
     Listener {
@@ -40,11 +40,11 @@ class EssentialsIntegration(
     private val tracer = TracerFactory.make("integrations.essentials")
 
     override suspend fun enable() {
-        runCatching {
+        try {
             val integratedPlugin = server.pluginManager.getPlugin("Essentials")
             if (integratedPlugin == null) {
                 log.warn { "Cannot find Essentials. Disabling integration" }
-                return@runCatching
+                return
             }
             check(integratedPlugin is Essentials) {
                 "Found Essentials plugin but cannot cast to Essentials class"
@@ -52,17 +52,22 @@ class EssentialsIntegration(
             essentials = integratedPlugin
             plugin.server.pluginManager.registerSuspendingEvents(this, plugin)
             log.info { "Essentials integration enabled" }
-        }.onFailure {
-            log.error(it) { "Failed to enable Essentials integration" }
-            errorTracker.report(it)
+        } catch (failure: Throwable) {
+            try {
+                disable()
+            } catch (cleanupFailure: Throwable) {
+                failure.addSuppressed(cleanupFailure)
+            }
+            if (failure !is CancellationException) {
+                log.error(failure) { "Failed to enable Essentials integration" }
+            }
+            throw failure
         }
     }
 
     override fun disable() {
-        if (essentials != null) {
-            PlayerPreTeleportEvent.getHandlerList().unregister(this)
-            essentials = null
-        }
+        HandlerList.unregisterAll(this)
+        essentials = null
     }
 
     /**

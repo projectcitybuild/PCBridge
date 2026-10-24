@@ -18,7 +18,7 @@ class OpElevationScheduler(
         cancel(playerUUID)
         timers[playerUUID] =
             timer.scheduleOnce(
-                identifier = playerUUID.toString(),
+                identifier = "pim:op-elevation:$playerUUID",
                 delay = duration,
                 work = {
                     timers.remove(playerUUID)

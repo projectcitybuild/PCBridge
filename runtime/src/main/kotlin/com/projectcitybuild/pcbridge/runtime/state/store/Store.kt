@@ -29,7 +29,9 @@ class Store(
     private val mutex = Mutex()
     private val gson = Gson()
 
+    @Volatile
     private var slots: Map<String, JsonElement> = emptyMap()
+    private var hydrated = false
 
     /**
      * Restores the state from storage
@@ -37,24 +39,26 @@ class Store(
     suspend fun hydrate() = tracer.trace("hydrate") {
         log.info { "Hydrating Store state from storage" }
 
-        val deserialized = fileStorage.read(file)
-        if (deserialized != null) {
-            mutex.withLock { slots = deserialized }
-        } else {
-            log.info { "No persisted data found" }
+        mutex.withLock {
+            val deserialized = fileStorage.read(file)
+            slots = deserialized ?: emptyMap()
+            hydrated = true
+            if (deserialized == null) {
+                log.info { "No persisted data found" }
+            }
         }
     }
 
     /**
      * Saves the state to storage
      */
-    fun persist() = tracer.traceSync("persist") {
+    suspend fun persist() = tracer.trace("persist") {
         logSync.info { "Persisting Store state to storage" }
 
-        fileStorage.writeSync(
-            file = file,
-            data = slots,
-        )
+        mutex.withLock {
+            check(hydrated) { "Cannot persist Store before successful hydration" }
+            fileStorage.write(file, slots)
+        }
     }
 
     /**

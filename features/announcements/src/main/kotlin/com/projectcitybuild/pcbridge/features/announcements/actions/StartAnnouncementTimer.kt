@@ -17,7 +17,7 @@ class StartAnnouncementTimer(
     private val timer: SpigotTimer,
     private val server: Server,
 ) {
-    private val timerId = "scheduled_announcements"
+    private val timerId = "announcements:scheduled_announcements"
 
     fun start() {
         val config = remoteConfig.latest.config

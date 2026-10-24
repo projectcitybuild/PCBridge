@@ -11,6 +11,8 @@ class ConnectionMiddlewareChain(
             middlewares.add(it)
         }
 
+    fun clear() = middlewares.clear()
+
     suspend fun pipe(
         uuid: UUID,
         ip: java.net.InetAddress,

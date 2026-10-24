@@ -57,6 +57,8 @@ import com.projectcitybuild.pcbridge.platform.paper.scheduling.SpigotTimer
 import com.projectcitybuild.pcbridge.platform.webserver.HttpServer
 import com.projectcitybuild.pcbridge.platform.webserver.data.HttpServerConfig
 import com.projectcitybuild.pcbridge.runtime.cooldowns.Cooldown
+import com.projectcitybuild.pcbridge.runtime.features.PaperFeatureRegistration
+import com.projectcitybuild.pcbridge.runtime.integrations.PaperIntegration
 import com.projectcitybuild.pcbridge.runtime.playerlookup.PlayerLookup
 import com.projectcitybuild.pcbridge.runtime.remoteconfig.RemoteConfig
 import com.projectcitybuild.pcbridge.runtime.runtimeModule
@@ -70,8 +72,10 @@ import org.bukkit.plugin.java.JavaPlugin
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
+import org.koin.core.Koin
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 import org.koin.dsl.module
-import org.koin.dsl.onClose
 import java.io.File
 import java.time.Clock
 import java.time.ZoneId
@@ -83,6 +87,30 @@ fun pluginModules(plugin: JavaPlugin) = buildList {
     add(runtimeModule)
     addAll(featureModules)
     addAll(integrationModules)
+}
+
+fun createPCBridgeApplication(koin: Koin) = ApplicationCompositionRoot(koin).create()
+
+private class ApplicationCompositionRoot(
+    private val koin: Koin,
+) : KoinComponent {
+    override fun getKoin() = koin
+
+    fun create() = PCBridgeApplication(
+        errorTracker = get(),
+        sentryProvider = get(),
+        openTelemetryProvider = get(),
+        remoteConfig = get(),
+        store = get(),
+        featureRegistrar = get(),
+        featureRegistrations = { koin.getAll<PaperFeatureRegistration>() },
+        integrationRegistrar = get(),
+        integrations = { koin.getAll<PaperIntegration>() },
+        statsCollector = get(),
+        discordSend = get(),
+        httpServer = get(),
+        timer = get(),
+    )
 }
 
 private fun mainModule(plugin: JavaPlugin) = module {
@@ -186,11 +214,7 @@ private fun Module.core() {
             dsn = config.observability.sentryDsn,
             environment = config.environment.name.lowercase(),
             traceSampleRate = config.observability.traceSampleRate,
-        ).also {
-            it.init()
-        }
-    } onClose {
-        it?.close()
+        )
     }
 
     singleOf(::ErrorTracker)
