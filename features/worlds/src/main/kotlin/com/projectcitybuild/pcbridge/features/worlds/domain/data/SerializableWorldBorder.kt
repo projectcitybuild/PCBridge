@@ -64,16 +64,17 @@ data class SerializableWorldBorder(
         val clamped = location.clone()
         when (effectiveShape) {
             WorldBorderShape.SQUARE, WorldBorderShape.RECTANGLE -> {
-                clamped.x = clamped.x.coerceIn(minX, maxX)
-                clamped.z = clamped.z.coerceIn(minZ, maxZ)
+                clamped.x = clampCoordinate(clamped.x, minX, maxX, PLAYER_HALF_WIDTH)
+                clamped.z = clampCoordinate(clamped.z, minZ, maxZ, PLAYER_HALF_WIDTH)
             }
             WorldBorderShape.CIRCLE -> {
                 val deltaX = clamped.x - centerX
                 val deltaZ = clamped.z - centerZ
                 val borderRadius = requireNotNull(radius) { "Border radius must be specified." }
                 val distance = sqrt(deltaX * deltaX + deltaZ * deltaZ)
-                if (distance > borderRadius) {
-                    val scale = borderRadius / distance
+                val safeRadius = (borderRadius - CIRCLE_PLAYER_MARGIN).coerceAtLeast(0.0)
+                if (distance > safeRadius) {
+                    val scale = safeRadius / distance
                     clamped.x = centerX + deltaX * scale
                     clamped.z = centerZ + deltaZ * scale
                 }
@@ -151,8 +152,22 @@ data class SerializableWorldBorder(
         const val MAX_RADIUS = 29_999_984.0
         const val MAX_DIMENSION = MAX_RADIUS * 2
         private const val CHUNK_SIZE = 16.0
+        // Keep the player's 0.6-block-wide hitbox inside the border edge.
+        private const val PLAYER_HALF_WIDTH = 0.3
+        private val CIRCLE_PLAYER_MARGIN = PLAYER_HALF_WIDTH * sqrt(2.0)
 
         private fun chunkCoordinateRange(coordinate: Double) = kotlin.math.floor(coordinate / CHUNK_SIZE).toInt()
+
+        private fun clampCoordinate(
+            value: Double,
+            min: Double,
+            max: Double,
+            margin: Double,
+        ): Double {
+            val safeMin = min + margin
+            val safeMax = max - margin
+            return if (safeMin > safeMax) (min + max) / 2 else value.coerceIn(safeMin, safeMax)
+        }
     }
 }
 

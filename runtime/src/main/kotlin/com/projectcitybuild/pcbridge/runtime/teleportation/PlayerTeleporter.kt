@@ -69,8 +69,8 @@ class PlayerTeleporter(
         y = safeYLocationFinder
             .findY(
                 world = world,
-                x = x.toInt(),
-                z = z.toInt(),
+                x = blockX,
+                z = blockZ,
             )?.toDouble() ?: throw SafeDestinationNotFoundException("Safe destination could not be found")
     }
 }

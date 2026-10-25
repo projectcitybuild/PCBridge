@@ -12,9 +12,9 @@ class SafeYLocationFinder {
         teleportationTracer.traceSync("SafeYLocationFinder.findY") {
             val highestBlock = world.getHighestBlockAt(x, z)
             val aboveBlock = world.getBlockAt(x, highestBlock.y + 1, z)
+            val headroomBlock = world.getBlockAt(x, highestBlock.y + 2, z)
 
-            // Need headroom to teleport
-            if (aboveBlock.type != Material.AIR) return@traceSync null
+            if (!aboveBlock.type.isAirBlock() || !headroomBlock.type.isAirBlock()) return@traceSync null
 
             // Need a surface we can actually stand on
             if (!highestBlock.type.isSolid || highestBlock.type.isDangerous()) return@traceSync null
@@ -22,6 +22,8 @@ class SafeYLocationFinder {
             highestBlock.y + 1
         }
 }
+
+private fun Material.isAirBlock() = this == Material.AIR || this == Material.CAVE_AIR || this == Material.VOID_AIR
 
 private fun Material.isDangerous(): Boolean {
     return this in

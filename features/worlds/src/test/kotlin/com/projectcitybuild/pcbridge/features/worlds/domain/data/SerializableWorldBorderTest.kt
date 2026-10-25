@@ -63,9 +63,9 @@ class SerializableWorldBorderTest {
 
         val clamped = border.clamp(location)
 
-        assertEquals(30.0, clamped.x)
+        assertEquals(29.7, clamped.x)
         assertEquals(64.0, clamped.y)
-        assertEquals(-25.0, clamped.z)
+        assertEquals(-24.7, clamped.z)
         assertEquals(45.0f, clamped.yaw)
         assertEquals(10.0f, clamped.pitch)
     }
@@ -84,8 +84,8 @@ class SerializableWorldBorderTest {
 
         val clamped = rectangle.clamp(location)
 
-        assertEquals(16.0, clamped.x)
-        assertEquals(8.0, clamped.z)
+        assertEquals(15.7, clamped.x)
+        assertEquals(7.7, clamped.z)
     }
 
     @Test
@@ -101,7 +101,7 @@ class SerializableWorldBorderTest {
 
         val clamped = circle.clamp(location)
 
-        assertEquals(10.0, kotlin.math.hypot(clamped.x, clamped.z), 1e-9)
+        assertEquals(10.0 - 0.3 * kotlin.math.sqrt(2.0), kotlin.math.hypot(clamped.x, clamped.z), 1e-9)
     }
 
     @Test

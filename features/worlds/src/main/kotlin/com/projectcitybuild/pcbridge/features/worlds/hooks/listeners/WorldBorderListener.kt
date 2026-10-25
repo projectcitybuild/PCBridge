@@ -1,7 +1,10 @@
 package com.projectcitybuild.pcbridge.features.worlds.hooks.listeners
 
+import com.projectcitybuild.pcbridge.features.worlds.domain.data.SerializableWorldBorder
 import com.projectcitybuild.pcbridge.features.worlds.domain.data.WorldBorderShape
 import com.projectcitybuild.pcbridge.features.worlds.domain.repositories.WorldBorderRepository
+import com.projectcitybuild.pcbridge.runtime.teleportation.SafeYLocationFinder
+import org.bukkit.Location
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
@@ -14,6 +17,7 @@ import org.bukkit.event.world.WorldLoadEvent
 
 class WorldBorderListener(
     private val worldBorderRepository: WorldBorderRepository,
+    private val safeYLocationFinder: SafeYLocationFinder,
 ) : Listener {
     init {
         worldBorderRepository.loadAllLoaded()
@@ -29,12 +33,23 @@ class WorldBorderListener(
         val player = event.player
         val border = worldBorderRepository.get(player.world) ?: return
         if (!border.contains(player.location.x, player.location.z)) {
-            player.teleport(border.clamp(player.location))
+            safeBorderLocation(border, player.location)?.let(player::teleport)
         }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     fun onPlayerMove(event: PlayerMoveEvent) {
+        if (event is PlayerTeleportEvent) return
+
+        enforceBorder(event)
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    fun onPlayerTeleport(event: PlayerTeleportEvent) {
+        enforceBorder(event)
+    }
+
+    private fun enforceBorder(event: PlayerMoveEvent) {
         val from = event.from
         val destination = event.to ?: return
 
@@ -50,7 +65,12 @@ class WorldBorderListener(
         if (event !is PlayerTeleportEvent && border.effectiveShape == WorldBorderShape.SQUARE) return
 
         if (!border.contains(destination.x, destination.z)) {
-            event.to = border.clamp(destination)
+            val safeDestination = safeBorderLocation(border, destination)
+            if (safeDestination == null) {
+                event.isCancelled = true
+            } else {
+                event.to = safeDestination
+            }
         }
     }
 
@@ -59,7 +79,7 @@ class WorldBorderListener(
         val destination = event.respawnLocation
         val border = worldBorderRepository.get(destination.world) ?: return
         if (!border.contains(destination.x, destination.z)) {
-            event.respawnLocation = border.clamp(destination)
+            safeBorderLocation(border, destination)?.let { event.respawnLocation = it }
         }
     }
 
@@ -69,5 +89,14 @@ class WorldBorderListener(
         if (!border.contains(event.location.x, event.location.z)) {
             event.isCancelled = true
         }
+    }
+
+    private fun safeBorderLocation(
+        border: SerializableWorldBorder,
+        location: Location,
+    ): Location? {
+        val clamped = border.clamp(location)
+        val safeY = safeYLocationFinder.findY(clamped.world, clamped.blockX, clamped.blockZ) ?: return null
+        return clamped.apply { y = safeY.toDouble() }
     }
 }

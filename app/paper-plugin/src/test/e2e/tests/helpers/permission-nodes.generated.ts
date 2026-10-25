@@ -59,4 +59,7 @@ export const permissionNodes = {
   workstations: {
     use: 'pcbridge.workstations',
   },
+  worlds: {
+    manage: 'pcbridge.worlds.manage',
+  },
 } as const;

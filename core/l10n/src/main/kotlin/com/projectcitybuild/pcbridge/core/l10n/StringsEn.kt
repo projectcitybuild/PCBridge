@@ -807,8 +807,10 @@ class StringsEn {
         val borderCommandDescription = "Sets and enforces a world's border"
         val borderSetCommandDescription = "Sets a square, circle, or rectangle border with an optional center"
         val borderFillCommandDescription = "Generates missing chunks inside the world border"
+        val borderClearCommandDescription = "Clears the world's border"
 
         val borderNotConfigured = mm("<red>No world border is configured for this world.</red>")
+        val borderCleared = mm("<green>World border cleared.</green>")
 
         fun borderStatus(
             shape: String,

@@ -4,6 +4,7 @@ import com.google.gson.reflect.TypeToken
 import com.projectcitybuild.pcbridge.core.filestorage.JsonFileStorage
 import com.projectcitybuild.pcbridge.features.worlds.domain.data.SerializableWorldBorder
 import com.projectcitybuild.pcbridge.features.worlds.domain.repositories.WorldBorderRepository
+import com.projectcitybuild.pcbridge.features.worlds.hooks.commands.BorderClearCommand
 import com.projectcitybuild.pcbridge.features.worlds.hooks.commands.BorderFillCommand
 import com.projectcitybuild.pcbridge.features.worlds.hooks.commands.BorderSetCommand
 import com.projectcitybuild.pcbridge.features.worlds.hooks.commands.WorldBorderCommand
@@ -23,6 +24,7 @@ val worldsModule =
         factoryOf(::WorldsCommand)
         factoryOf(::BorderFillCommand)
         factoryOf(::BorderSetCommand)
+        factoryOf(::BorderClearCommand)
         factoryOf(::WorldBorderCommand)
         factoryOf(::WorldBorderListener)
 

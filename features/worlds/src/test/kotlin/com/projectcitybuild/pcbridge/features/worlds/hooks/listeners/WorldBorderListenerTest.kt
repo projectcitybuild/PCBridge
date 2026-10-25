@@ -3,6 +3,7 @@ package com.projectcitybuild.pcbridge.features.worlds.hooks.listeners
 import com.projectcitybuild.pcbridge.features.worlds.domain.data.SerializableWorldBorder
 import com.projectcitybuild.pcbridge.features.worlds.domain.data.WorldBorderShape
 import com.projectcitybuild.pcbridge.features.worlds.domain.repositories.WorldBorderRepository
+import com.projectcitybuild.pcbridge.runtime.teleportation.SafeYLocationFinder
 import org.bukkit.Location
 import org.bukkit.World
 import org.bukkit.entity.Creature
@@ -21,7 +22,8 @@ import org.mockito.kotlin.whenever
 class WorldBorderListenerTest {
     private val world = mock(World::class.java)
     private val borderRepository = mock(WorldBorderRepository::class.java)
-    private val listener = WorldBorderListener(borderRepository)
+    private val safeYLocationFinder = mock(SafeYLocationFinder::class.java)
+    private val listener = WorldBorderListener(borderRepository, safeYLocationFinder)
     private val border =
         SerializableWorldBorder(
             centerX = 0.0,
@@ -33,6 +35,7 @@ class WorldBorderListenerTest {
     @Test
     fun `clamps player movement to the configured border`() {
         whenever(borderRepository.get(world)).thenReturn(border)
+        whenever(safeYLocationFinder.findY(world, 9, 0)).thenReturn(80)
         val event =
             PlayerMoveEvent(
                 mock(Player::class.java),
@@ -42,7 +45,8 @@ class WorldBorderListenerTest {
 
         listener.onPlayerMove(event)
 
-        assertEquals(10.0, event.to?.x)
+        assertEquals(10.0 - 0.3 * kotlin.math.sqrt(2.0), requireNotNull(event.to).x, 1e-9)
+        assertEquals(80.0, event.to?.y)
     }
 
     @Test
@@ -85,6 +89,7 @@ class WorldBorderListenerTest {
                 depth = 16.0,
             ),
         )
+        whenever(safeYLocationFinder.findY(world, 15, 7)).thenReturn(80)
         val event =
             PlayerMoveEvent(
                 mock(Player::class.java),
@@ -94,13 +99,15 @@ class WorldBorderListenerTest {
 
         listener.onPlayerMove(event)
 
-        assertEquals(16.0, event.to?.x)
-        assertEquals(8.0, event.to?.z)
+        assertEquals(15.7, event.to?.x)
+        assertEquals(7.7, event.to?.z)
+        assertEquals(80.0, event.to?.y)
     }
 
     @Test
-    fun `still clamps teleports against a square border`() {
+    fun `clamps teleport events against a square border`() {
         whenever(borderRepository.get(world)).thenReturn(border.copy(shape = WorldBorderShape.SQUARE))
+        whenever(safeYLocationFinder.findY(world, 9, 0)).thenReturn(80)
         val event =
             PlayerTeleportEvent(
                 mock(Player::class.java),
@@ -109,9 +116,26 @@ class WorldBorderListenerTest {
                 PlayerTeleportEvent.TeleportCause.PLUGIN,
             )
 
+        listener.onPlayerTeleport(event)
+
+        assertEquals(9.7, event.to?.x)
+        assertEquals(80.0, event.to?.y)
+    }
+
+    @Test
+    fun `cancels border crossing when no safe destination exists`() {
+        whenever(borderRepository.get(world)).thenReturn(border)
+        whenever(safeYLocationFinder.findY(world, 9, 0)).thenReturn(null)
+        val event =
+            PlayerMoveEvent(
+                mock(Player::class.java),
+                Location(world, 9.0, 64.0, 0.0),
+                Location(world, 12.0, 64.0, 0.0),
+            )
+
         listener.onPlayerMove(event)
 
-        assertEquals(10.0, event.to?.x)
+        assertTrue(event.isCancelled)
     }
 
     @Test
