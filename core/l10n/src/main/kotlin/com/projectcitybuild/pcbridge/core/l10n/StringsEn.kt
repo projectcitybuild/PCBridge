@@ -811,6 +811,7 @@ class StringsEn {
 
         val borderNotConfigured = mm("<red>No world border is configured for this world.</red>")
         val borderCleared = mm("<green>World border cleared.</green>")
+        val borderReached = mm("<red>You have reached the world border.</red>")
 
         fun borderStatus(
             shape: String,

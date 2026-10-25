@@ -3,27 +3,26 @@ package com.projectcitybuild.pcbridge.features.worlds.hooks.commands
 import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.core.observability.logging.log
 import com.projectcitybuild.pcbridge.features.worlds.WorldsPermissions
-import com.projectcitybuild.pcbridge.features.worlds.domain.data.SerializableWorldBorder
+import com.projectcitybuild.pcbridge.features.worlds.domain.data.WorldBorder
+import com.projectcitybuild.pcbridge.features.worlds.domain.geometry.WorldBorderGeometry
 import com.projectcitybuild.pcbridge.features.worlds.domain.repositories.WorldBorderRepository
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
 import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.command
-import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.requirePlayer
-import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.suspendCancellableCoroutine
+import org.bukkit.World
+import org.bukkit.plugin.Plugin
+import java.util.UUID
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.TimeMark
 import kotlin.time.TimeSource
-import org.bukkit.World
-import org.bukkit.plugin.Plugin
-import java.util.UUID
 
 class BorderFillCommand(
     private val plugin: Plugin,
@@ -32,7 +31,7 @@ class BorderFillCommand(
 ) : BrigadierCommand {
     private data class PendingFill(
         val worldId: UUID,
-        val border: SerializableWorldBorder,
+        val border: WorldBorder,
         val expiresAt: TimeMark,
     )
 
@@ -58,7 +57,8 @@ class BorderFillCommand(
                 player.sendMessage(l10n.worlds.fillRequiresBorder)
                 return
             }
-        val bounds = chunkBounds(border)
+        val geometry = WorldBorderGeometry(border)
+        val bounds = chunkBounds(geometry)
         val chunkCount = (bounds.maxX.toLong() - bounds.minX + 1) *
             (bounds.maxZ.toLong() - bounds.minZ + 1)
 
@@ -92,16 +92,17 @@ class BorderFillCommand(
             return
         }
 
-        val bounds = chunkBounds(pending.border)
+        val geometry = WorldBorderGeometry(pending.border)
+        val bounds = chunkBounds(geometry)
         var checked = 0L
         var generated = 0L
         try {
             player.sendMessage(l10n.worlds.fillStarted)
 
             for (chunkX in bounds.minX..bounds.maxX) {
-                val chunkZRange = pending.border.chunkZRange(chunkX) ?: continue
+                val chunkZRange = geometry.chunkZRange(chunkX) ?: continue
                 for (chunkZ in chunkZRange) {
-                    if (!pending.border.chunkIntersects(chunkX, chunkZ)) continue
+                    if (!geometry.chunkIntersects(chunkX, chunkZ)) continue
                     if (worldBorderRepository.get(world) != pending.border) {
                         player.sendMessage(l10n.worlds.fillStoppedBorderChanged)
                         return
@@ -151,11 +152,11 @@ class BorderFillCommand(
         val maxZ: Int,
     )
 
-    private fun chunkBounds(border: SerializableWorldBorder): ChunkBounds = ChunkBounds(
-        minX = kotlin.math.floor(border.minX / CHUNK_SIZE).toInt(),
-        maxX = kotlin.math.floor(border.maxX / CHUNK_SIZE).toInt(),
-        minZ = kotlin.math.floor(border.minZ / CHUNK_SIZE).toInt(),
-        maxZ = kotlin.math.floor(border.maxZ / CHUNK_SIZE).toInt(),
+    private fun chunkBounds(geometry: WorldBorderGeometry): ChunkBounds = ChunkBounds(
+        minX = kotlin.math.floor(geometry.minX / CHUNK_SIZE).toInt(),
+        maxX = kotlin.math.floor(geometry.maxX / CHUNK_SIZE).toInt(),
+        minZ = kotlin.math.floor(geometry.minZ / CHUNK_SIZE).toInt(),
+        maxZ = kotlin.math.floor(geometry.maxZ / CHUNK_SIZE).toInt(),
     )
 
     companion object {

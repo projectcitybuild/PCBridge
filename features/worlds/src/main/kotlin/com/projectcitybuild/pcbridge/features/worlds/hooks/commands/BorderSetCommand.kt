@@ -3,9 +3,9 @@ package com.projectcitybuild.pcbridge.features.worlds.hooks.commands
 import com.mojang.brigadier.arguments.DoubleArgumentType
 import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.features.worlds.WorldsPermissions
-import com.projectcitybuild.pcbridge.features.worlds.domain.data.SerializableWorldBorder
-import com.projectcitybuild.pcbridge.features.worlds.domain.data.WorldBorderShape
+import com.projectcitybuild.pcbridge.features.worlds.domain.data.WorldBorder
 import com.projectcitybuild.pcbridge.features.worlds.domain.data.WorldBorderUpdatedEvent
+import com.projectcitybuild.pcbridge.features.worlds.domain.geometry.WorldBorderGeometry
 import com.projectcitybuild.pcbridge.features.worlds.domain.repositories.WorldBorderRepository
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandBuilder
@@ -15,7 +15,6 @@ import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskEx
 import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.requirePlayer
-import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
 import com.projectcitybuild.pcbridge.platform.paper.events.SpigotEventBroadcaster
 import org.bukkit.plugin.Plugin
 
@@ -29,23 +28,28 @@ class BorderSetCommand(
         description = l10n.worlds.borderSetCommandDescription
         requiresPermission(WorldsPermissions.MANAGE)
         literal("square") {
-            radiusArguments(WorldBorderShape.SQUARE)
+            radiusArguments { x, z, radius -> WorldBorder.Square(x, z, radius) }
         }
         literal("circle") {
-            radiusArguments(WorldBorderShape.CIRCLE)
+            radiusArguments { x, z, radius -> WorldBorder.Circle(x, z, radius) }
         }
         literal("rectangle") {
             rectangleArguments()
         }
     }
 
-    private fun CommandBuilder.radiusArguments(shape: WorldBorderShape) {
-        argument("radius", DoubleArgumentType.doubleArg(1.0, SerializableWorldBorder.MAX_RADIUS)) {
+    private fun CommandBuilder.radiusArguments(createBorder: (Double, Double, Double) -> WorldBorder) {
+        argument("radius", DoubleArgumentType.doubleArg(1.0, WorldBorderGeometry.MAX_RADIUS)) {
             executesSuspending(taskExecutor) { context ->
                 set(
                     context = context,
-                    shape = shape,
-                    radius = DoubleArgumentType.getDouble(context, "radius"),
+                    createBorder = { centerX, centerZ ->
+                        createBorder(
+                            centerX,
+                            centerZ,
+                            DoubleArgumentType.getDouble(context, "radius"),
+                        )
+                    },
                 )
             }
             argument("x", DoubleArgumentType.doubleArg()) {
@@ -53,10 +57,15 @@ class BorderSetCommand(
                     executesSuspending(taskExecutor) { context ->
                         set(
                             context = context,
-                            shape = shape,
-                            radius = DoubleArgumentType.getDouble(context, "radius"),
                             centerX = DoubleArgumentType.getDouble(context, "x"),
                             centerZ = DoubleArgumentType.getDouble(context, "z"),
+                            createBorder = { x, z ->
+                                createBorder(
+                                    x,
+                                    z,
+                                    DoubleArgumentType.getDouble(context, "radius"),
+                                )
+                            },
                         )
                     }
                 }
@@ -65,14 +74,19 @@ class BorderSetCommand(
     }
 
     private fun CommandBuilder.rectangleArguments() {
-        argument("width", DoubleArgumentType.doubleArg(1.0, SerializableWorldBorder.MAX_DIMENSION)) {
-            argument("depth", DoubleArgumentType.doubleArg(1.0, SerializableWorldBorder.MAX_DIMENSION)) {
+        argument("width", DoubleArgumentType.doubleArg(1.0, WorldBorderGeometry.MAX_DIMENSION)) {
+            argument("depth", DoubleArgumentType.doubleArg(1.0, WorldBorderGeometry.MAX_DIMENSION)) {
                 executesSuspending(taskExecutor) { context ->
                     set(
                         context = context,
-                        shape = WorldBorderShape.RECTANGLE,
-                        width = DoubleArgumentType.getDouble(context, "width"),
-                        depth = DoubleArgumentType.getDouble(context, "depth"),
+                        createBorder = { centerX, centerZ ->
+                            WorldBorder.Rectangle(
+                                centerX,
+                                centerZ,
+                                DoubleArgumentType.getDouble(context, "width"),
+                                DoubleArgumentType.getDouble(context, "depth"),
+                            )
+                        },
                     )
                 }
                 argument("x", DoubleArgumentType.doubleArg()) {
@@ -80,11 +94,16 @@ class BorderSetCommand(
                         executesSuspending(taskExecutor) { context ->
                             set(
                                 context = context,
-                                shape = WorldBorderShape.RECTANGLE,
-                                width = DoubleArgumentType.getDouble(context, "width"),
-                                depth = DoubleArgumentType.getDouble(context, "depth"),
                                 centerX = DoubleArgumentType.getDouble(context, "x"),
                                 centerZ = DoubleArgumentType.getDouble(context, "z"),
+                                createBorder = { x, z ->
+                                    WorldBorder.Rectangle(
+                                        x,
+                                        z,
+                                        DoubleArgumentType.getDouble(context, "width"),
+                                        DoubleArgumentType.getDouble(context, "depth"),
+                                    )
+                                },
                             )
                         }
                     }
@@ -95,22 +114,17 @@ class BorderSetCommand(
 
     private suspend fun set(
         context: PaperCommandContext,
-        shape: WorldBorderShape,
-        radius: Double? = null,
-        width: Double? = null,
-        depth: Double? = null,
+        createBorder: (Double, Double) -> WorldBorder,
         centerX: Double? = null,
         centerZ: Double? = null,
     ) {
         val player = context.source.requirePlayer()
         val border = try {
-            SerializableWorldBorder(
-                centerX = centerX ?: player.location.x,
-                centerZ = centerZ ?: player.location.z,
-                shape = shape,
-                radius = radius,
-                width = width,
-                depth = depth,
+            WorldBorderGeometry(
+                createBorder(
+                    centerX ?: player.location.x,
+                    centerZ ?: player.location.z,
+                ),
             ).validate()
         } catch (failure: IllegalArgumentException) {
             player.sendMessage(l10n.worlds.invalidBorder(failure.message))
@@ -122,22 +136,30 @@ class BorderSetCommand(
         eventBroadcaster.broadcast(
             WorldBorderUpdatedEvent(player.world, border),
         )
-        player.sendMessage(
-            if (shape == WorldBorderShape.RECTANGLE) {
-                l10n.worlds.rectangleBorderSet(
-                    centerX = border.centerX,
-                    centerZ = border.centerZ,
-                    width = requireNotNull(border.width),
-                    depth = requireNotNull(border.depth),
-                )
-            } else {
-                l10n.worlds.borderSet(
-                    shape = shape.name.lowercase(),
-                    centerX = border.centerX,
-                    centerZ = border.centerZ,
-                    radius = requireNotNull(border.radius),
-                )
-            },
-        )
+        val message =
+            when (border) {
+                is WorldBorder.Rectangle ->
+                    l10n.worlds.rectangleBorderSet(
+                        centerX = border.centerX,
+                        centerZ = border.centerZ,
+                        width = border.width,
+                        depth = border.depth,
+                    )
+                is WorldBorder.Square ->
+                    l10n.worlds.borderSet(
+                        shape = border.shape.name.lowercase(),
+                        centerX = border.centerX,
+                        centerZ = border.centerZ,
+                        radius = border.radius,
+                    )
+                is WorldBorder.Circle ->
+                    l10n.worlds.borderSet(
+                        shape = border.shape.name.lowercase(),
+                        centerX = border.centerX,
+                        centerZ = border.centerZ,
+                        radius = border.radius,
+                    )
+            }
+        player.sendMessage(message)
     }
 }

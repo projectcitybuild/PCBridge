@@ -1,8 +1,8 @@
 package com.projectcitybuild.pcbridge.integrations.dynmap
 
 import com.projectcitybuild.pcbridge.core.observability.logging.logSync
-import com.projectcitybuild.pcbridge.features.worlds.domain.data.SerializableWorldBorder
-import com.projectcitybuild.pcbridge.features.worlds.domain.data.WorldBorderShape
+import com.projectcitybuild.pcbridge.features.worlds.domain.data.WorldBorder
+import com.projectcitybuild.pcbridge.features.worlds.domain.geometry.WorldBorderGeometry
 import java.util.UUID
 
 class DynmapAdapter {
@@ -27,18 +27,19 @@ class DynmapAdapter {
 
         val markerSet =
             markerAPI.getMarkerSet(setId)
-                ?: markerAPI.createMarkerSet(
-                    setId,
-                    setLabel,
-                    null,
-                    false,
-                ).apply {
-                    layerPriority = 1
-                    hideByDefault = false
-                    markers.forEach { it.deleteMarker() }
-                }.also {
-                    logSync.info { "Created new dynmap marker set: $setId" }
-                }
+                ?: markerAPI
+                    .createMarkerSet(
+                        setId,
+                        setLabel,
+                        null,
+                        false,
+                    ).apply {
+                        layerPriority = 1
+                        hideByDefault = false
+                        markers.forEach { it.deleteMarker() }
+                    }.also {
+                        logSync.info { "Created new dynmap marker set: $setId" }
+                    }
 
         val icon =
             markerAPI.getMarkerIcon(iconName)
@@ -59,19 +60,19 @@ class DynmapAdapter {
         logSync.info { "Created new dynmap marker: $id" }
     }
 
-    fun synchronizeBorderMarkers(
-        borders: List<Triple<UUID, String, SerializableWorldBorder>>,
-    ) {
+    fun synchronizeBorderMarkers(borders: List<Triple<UUID, String, WorldBorder>>) {
         checkNotNull(delegate.instance) { "Dynmap unavailable" }
         val markerAPI = checkNotNull(delegate.instance?.markerAPI) { "Marker API unavailable" }
         val markerSet =
             markerAPI.getMarkerSet(BORDER_SET_ID)
-                ?: markerAPI.createMarkerSet(BORDER_SET_ID, BORDER_SET_LABEL, null, false).apply {
-                    layerPriority = 1
-                    hideByDefault = false
-                }.also {
-                    logSync.info { "Created new dynmap marker set: $BORDER_SET_ID" }
-                }
+                ?: markerAPI
+                    .createMarkerSet(BORDER_SET_ID, BORDER_SET_LABEL, null, false)
+                    .apply {
+                        layerPriority = 1
+                        hideByDefault = false
+                    }.also {
+                        logSync.info { "Created new dynmap marker set: $BORDER_SET_ID" }
+                    }
 
         val expectedIds = borders.mapTo(mutableSetOf()) { borderMarkerId(it.first) }
         markerSet.areaMarkers
@@ -84,8 +85,9 @@ class DynmapAdapter {
         borders.forEach { (worldId, worldName, border) ->
             val id = borderMarkerId(worldId)
             val label = "$worldName Border"
-            if (border.effectiveShape == WorldBorderShape.CIRCLE) {
-                val radius = requireNotNull(border.radius)
+            val geometry = WorldBorderGeometry(border)
+            if (border is WorldBorder.Circle) {
+                val radius = border.radius
                 markerSet.findAreaMarker(id)?.deleteMarker()
                 val existing = markerSet.findCircleMarker(id)
                 val marker =
@@ -118,17 +120,17 @@ class DynmapAdapter {
             markerSet.findCircleMarker(id)?.deleteMarker()
             val x =
                 doubleArrayOf(
-                    border.minX,
-                    border.maxX,
-                    border.maxX,
-                    border.minX,
+                    geometry.minX,
+                    geometry.maxX,
+                    geometry.maxX,
+                    geometry.minX,
                 )
             val z =
                 doubleArrayOf(
-                    border.minZ,
-                    border.minZ,
-                    border.maxZ,
-                    border.maxZ,
+                    geometry.minZ,
+                    geometry.minZ,
+                    geometry.maxZ,
+                    geometry.maxZ,
                 )
             val existing = markerSet.findAreaMarker(id)
             val marker =

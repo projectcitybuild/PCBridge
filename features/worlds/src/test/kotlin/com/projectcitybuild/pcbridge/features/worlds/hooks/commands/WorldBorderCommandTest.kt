@@ -3,8 +3,7 @@ package com.projectcitybuild.pcbridge.features.worlds.hooks.commands
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.exceptions.CommandSyntaxException
 import com.projectcitybuild.pcbridge.features.worlds.WorldsPermissions
-import com.projectcitybuild.pcbridge.features.worlds.domain.data.SerializableWorldBorder
-import com.projectcitybuild.pcbridge.features.worlds.domain.data.WorldBorderShape
+import com.projectcitybuild.pcbridge.features.worlds.domain.data.WorldBorder
 import com.projectcitybuild.pcbridge.features.worlds.domain.data.WorldBorderUpdatedEvent
 import com.projectcitybuild.pcbridge.features.worlds.domain.repositories.WorldBorderRepository
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
@@ -47,13 +46,12 @@ class WorldBorderCommandTest {
         execute(command, "border set square 96", source())
         advanceUntilIdle()
 
-        val borderCaptor = argumentCaptor<SerializableWorldBorder>()
+        val borderCaptor = argumentCaptor<WorldBorder>()
         verify(worldBorderRepository).set(eq(world), borderCaptor.capture())
         assertEquals(
-            SerializableWorldBorder(
+            WorldBorder.Square(
                 12.5,
                 -8.0,
-                shape = WorldBorderShape.SQUARE,
                 radius = 96.0,
             ),
             borderCaptor.firstValue,
@@ -75,13 +73,12 @@ class WorldBorderCommandTest {
         execute(command, "border set circle 48 -10 15", source())
         advanceUntilIdle()
 
-        val borderCaptor = argumentCaptor<SerializableWorldBorder>()
+        val borderCaptor = argumentCaptor<WorldBorder>()
         verify(worldBorderRepository).set(eq(world), borderCaptor.capture())
         assertEquals(
-            SerializableWorldBorder(
+            WorldBorder.Circle(
                 -10.0,
                 15.0,
-                shape = WorldBorderShape.CIRCLE,
                 radius = 48.0,
             ),
             borderCaptor.firstValue,
@@ -98,13 +95,12 @@ class WorldBorderCommandTest {
         execute(command, "border set rectangle 80 40 -10 15", source())
         advanceUntilIdle()
 
-        val borderCaptor = argumentCaptor<SerializableWorldBorder>()
+        val borderCaptor = argumentCaptor<WorldBorder>()
         verify(worldBorderRepository).set(eq(world), borderCaptor.capture())
         assertEquals(
-            SerializableWorldBorder(
+            WorldBorder.Rectangle(
                 -10.0,
                 15.0,
-                shape = WorldBorderShape.RECTANGLE,
                 width = 80.0,
                 depth = 40.0,
             ),
