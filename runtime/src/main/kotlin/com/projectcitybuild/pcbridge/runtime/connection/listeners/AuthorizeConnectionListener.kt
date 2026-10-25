@@ -68,7 +68,7 @@ class AuthorizeConnectionListener(
                     }
                 }.onFailure {
                     log.error(it) { "An error occurred while authorizing a connection" }
-                    errorTracker.report(it)
+                    errorTracker.reportSafely(it)
 
                     event.disallow(
                         AsyncPlayerPreLoginEvent.Result.KICK_OTHER,

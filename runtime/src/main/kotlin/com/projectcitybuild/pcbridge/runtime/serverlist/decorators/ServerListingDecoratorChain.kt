@@ -5,6 +5,8 @@ class ServerListingDecoratorChain(
 ) {
     fun register(vararg decorators: ServerListingDecorator) = decorators.forEach { this.decorators.add(it) }
 
+    fun clear() = decorators.clear()
+
     suspend fun pipe(listing: ServerListing): ServerListing {
         var updated = listing
         for (decorator in decorators) {

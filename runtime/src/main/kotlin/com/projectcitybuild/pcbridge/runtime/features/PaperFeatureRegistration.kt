@@ -130,14 +130,31 @@ class PaperFeatureRegistrar(
     private val tabPlaceholders: TabPlaceholders,
 ) {
     fun register(registrations: List<PaperFeatureRegistration>) {
-        plugin.registerCommands(*registrations.ordered { commands }.toTypedArray())
-        listenerRegistry.register(*registrations.ordered { listeners }.toTypedArray())
-        connectionMiddlewareChain.register(*registrations.ordered { connectionMiddleware }.toTypedArray())
-        chatDecoratorChain.senders(*registrations.ordered { chatSenderDecorators }.toTypedArray())
-        chatDecoratorChain.messages(*registrations.ordered { chatMessageDecorators }.toTypedArray())
-        serverListingDecoratorChain.register(*registrations.ordered { serverListingDecorators }.toTypedArray())
-        tabPlaceholders.sections(*registrations.ordered { tabSectionPlaceholders }.toTypedArray())
-        tabPlaceholders.players(*registrations.ordered { tabPlayerPlaceholders }.toTypedArray())
+        try {
+            plugin.registerCommands(*registrations.ordered { commands }.toTypedArray())
+            listenerRegistry.register(*registrations.ordered { listeners }.toTypedArray())
+            connectionMiddlewareChain.register(*registrations.ordered { connectionMiddleware }.toTypedArray())
+            chatDecoratorChain.senders(*registrations.ordered { chatSenderDecorators }.toTypedArray())
+            chatDecoratorChain.messages(*registrations.ordered { chatMessageDecorators }.toTypedArray())
+            serverListingDecoratorChain.register(*registrations.ordered { serverListingDecorators }.toTypedArray())
+            tabPlaceholders.sections(*registrations.ordered { tabSectionPlaceholders }.toTypedArray())
+            tabPlaceholders.players(*registrations.ordered { tabPlayerPlaceholders }.toTypedArray())
+        } catch (failure: Throwable) {
+            try {
+                unregister()
+            } catch (cleanupFailure: Throwable) {
+                failure.addSuppressed(cleanupFailure)
+            }
+            throw failure
+        }
+    }
+
+    fun unregister() {
+        listenerRegistry.unregisterAll()
+        connectionMiddlewareChain.clear()
+        chatDecoratorChain.clear()
+        serverListingDecoratorChain.clear()
+        tabPlaceholders.clear()
     }
 
     private fun <T> List<PaperFeatureRegistration>.ordered(select: PaperFeatureRegistration.() -> List<OrderedHook<T>>): List<T> =

@@ -3,12 +3,13 @@ package com.projectcitybuild.pcbridge.core.filestorage
 import com.google.gson.FieldNamingPolicy
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
-import com.projectcitybuild.pcbridge.core.observability.logging.logSync
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
-import java.io.PrintWriter
-import java.lang.Exception
+import java.nio.charset.StandardCharsets.UTF_8
+import java.nio.file.AtomicMoveNotSupportedException
+import java.nio.file.Files
+import java.nio.file.StandardCopyOption
 
 class JsonFileStorage<T>(
     private val typeToken: TypeToken<T>,
@@ -32,36 +33,35 @@ class JsonFileStorage<T>(
     }
 
     override fun readSync(file: File): T? {
-        return try {
-            if (!file.exists()) return null
-
-            // Normally we'd pass a FileReader+JsonReader to gson to read the file contents,
-            // but it's unable to interpret ASCII characters. For some reason, feeding a
-            // JSON string to it instead doesn't have the same problem...
-            var jsonString = ""
-            file.inputStream().bufferedReader().forEachLine { jsonString += it }
-            gson.fromJson(jsonString, typeToken.type)
-        } catch (e: Exception) {
-            // TODO: throw errors instead of handling them here
-            logSync.error(e) { "Failed to deserialize from json" }
-            null
-        }
+        if (!file.exists()) return null
+        return gson.fromJson(file.readText(UTF_8), typeToken.type)
     }
 
     override fun writeSync(
         file: File,
         data: T,
     ) {
+        val parent = file.absoluteFile.parentFile
+        Files.createDirectories(parent.toPath())
+        val temporary = Files.createTempFile(parent.toPath(), "${file.name}.", ".tmp")
         try {
-            file.parentFile.mkdirs()
-            file.createNewFile()
-
-            PrintWriter(file).use { writer ->
-                gson.toJson(data, typeToken.type, writer)
+            Files.writeString(temporary, gson.toJson(data, typeToken.type), UTF_8)
+            try {
+                Files.move(
+                    temporary,
+                    file.toPath(),
+                    StandardCopyOption.ATOMIC_MOVE,
+                    StandardCopyOption.REPLACE_EXISTING,
+                )
+            } catch (_: AtomicMoveNotSupportedException) {
+                Files.move(
+                    temporary,
+                    file.toPath(),
+                    StandardCopyOption.REPLACE_EXISTING,
+                )
             }
-        } catch (e: Exception) {
-            // TODO: throw errors instead of handling them here
-            logSync.error(e) { "Failed to serialize to json" }
+        } finally {
+            Files.deleteIfExists(temporary)
         }
     }
 }

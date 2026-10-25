@@ -37,7 +37,7 @@ class EndConnectionListener(
                 )
             }.onFailure {
                 log.error(it) { "An error occurred while authorizing a connection" }
-                errorTracker.report(it)
+                errorTracker.reportSafely(it)
             }
         }
 }

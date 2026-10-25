@@ -52,6 +52,7 @@ class TeleportHistoryStorageTest {
         )
         val playerId = UUID.randomUUID()
         val store = makeStore(storeFile)
+        store.hydrate()
 
         store.mutate(teleportHistoryStateKey) {
             it.copy(previousLocations = mapOf(playerId.toString() to location))

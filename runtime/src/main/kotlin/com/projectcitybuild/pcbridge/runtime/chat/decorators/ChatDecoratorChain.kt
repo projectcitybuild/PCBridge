@@ -8,6 +8,11 @@ class ChatDecoratorChain(
 
     fun messages(vararg decorator: ChatMessageDecorator) = decorator.forEach { messageDecorators.add(it) }
 
+    fun clear() {
+        senderDecorators.clear()
+        messageDecorators.clear()
+    }
+
     suspend fun pipe(sender: ChatSender): ChatSender {
         var updated = sender
         for (decorator in senderDecorators) {

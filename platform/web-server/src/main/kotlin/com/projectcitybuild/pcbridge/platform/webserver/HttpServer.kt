@@ -29,7 +29,9 @@ class HttpServer(
     private val config: HttpServerConfig,
     private val webhookDelegate: WebhookDelegate,
 ) {
+    @Volatile
     private var server: EmbeddedServer<NettyApplicationEngine, NettyApplicationEngine.Configuration>? = null
+    private val ingress = WebhookIngress(webhookDelegate)
 
     private val log
         get() = LoggerFactory.getLogger("com.projectcitybuild.pcbridge.webserver")
@@ -48,22 +50,44 @@ class HttpServer(
             log.info("Web server will only be accessible locally")
         }
 
-        server?.stop(gracePeriodMillis = 0, timeoutMillis = 0)
-        server = embeddedServer(Netty, port = config.port, host = config.host) {
+        check(server == null) { "HTTP server is already started" }
+        ingress.quiesce()
+        val candidate = embeddedServer(Netty, port = config.port, host = config.host) {
             configureLogging()
             configureContentNegotiation()
             configureAuthentication(authToken = config.authToken)
-            configureRouting(webhookDelegate)
+            configureRouting(ingress)
+        }
+        try {
+            candidate.start(wait = false)
+            server = candidate
+        } catch (failure: Throwable) {
+            try {
+                candidate.stop(gracePeriodMillis = 0, timeoutMillis = 5_000)
+            } catch (cleanupFailure: Throwable) {
+                failure.addSuppressed(cleanupFailure)
+            }
+            throw failure
+        }
+    }
 
-        }.start(wait = false)
+    fun acceptIngress() {
+        check(server != null) { "HTTP server must be started before accepting ingress" }
+        ingress.markReady()
     }
 
     fun stop() {
         log.info("Stopping web server")
-
-        server?.stop(gracePeriodMillis = 0, timeoutMillis = 0)
-        server = null
+        ingress.quiesce()
+        val running = server
+        if (running != null) {
+            running.stop(gracePeriodMillis = 1_000, timeoutMillis = 5_000)
+            server = null
+        }
     }
+
+    val isReady: Boolean
+        get() = server != null && ingress.isReady
 }
 
 fun Application.configureLogging() {

@@ -71,6 +71,6 @@ class MaintenanceReminderListener(
     }
 
     companion object {
-        private const val TIMER_ID = "maintenance_reminder"
+        private const val TIMER_ID = "maintenance:maintenance_reminder"
     }
 }

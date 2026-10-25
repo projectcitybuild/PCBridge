@@ -22,6 +22,6 @@ class CoroutineExceptionListener(
         // https://shynixn.github.io/MCCoroutine/wiki/site/exception/
         if (event.plugin.name != plugin.name) return
 
-        errorTracker.report(event.exception)
+        errorTracker.reportSafely(event.exception)
     }
 }

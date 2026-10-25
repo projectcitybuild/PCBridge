@@ -40,7 +40,7 @@ class PlayerPingPlaceholder(
 
         cancellable?.cancel()
         cancellable = spigotTimer.scheduleRepeating(
-            identifier = "tab_player_ping",
+            identifier = "runtime:tab_player_ping",
             delay = updateFrequency,
             repeatingInterval = updateFrequency,
         ) {

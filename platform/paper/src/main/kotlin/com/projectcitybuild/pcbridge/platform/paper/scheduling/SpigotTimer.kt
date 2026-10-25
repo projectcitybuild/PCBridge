@@ -13,12 +13,14 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeoutOrNull
 import org.bukkit.plugin.java.JavaPlugin
 import java.util.concurrent.RejectedExecutionException
 import kotlin.time.Duration
 import kotlinx.coroutines.currentCoroutineContext
 import kotlin.coroutines.CoroutineContext
 import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
 
 class SpigotTimer(
     plugin: JavaPlugin,
@@ -27,6 +29,7 @@ class SpigotTimer(
 ) {
     private val lock = Any()
     private val tasks = mutableMapOf<String, Job>()
+    private val shutdownJobs = mutableSetOf<Job>()
 
     private val scopeJob = SupervisorJob()
     private val scope = CoroutineScope(context + scopeJob)
@@ -78,7 +81,7 @@ class SpigotTimer(
                 } catch (e: CancellationException) {
                     throw e
                 } catch (e: Exception) {
-                    errorTracker.report(e)
+                    errorTracker.reportSafely(e)
                     log.e("Error occurred in repeating task '$identifier'", e)
                 }
                 delay(repeatingInterval)
@@ -161,6 +164,7 @@ class SpigotTimer(
             isShutdown = true
 
             tasks.values.toList().also {
+                shutdownJobs.addAll(it)
                 tasks.clear()
             }
         }
@@ -169,6 +173,28 @@ class SpigotTimer(
         scope.cancel(
             CancellationException("SpigotTimer is shutting down")
         )
+    }
+
+    suspend fun shutdownAndJoin(timeout: Duration = 5.seconds) {
+        val jobs = synchronized(lock) {
+            if (!isShutdown) {
+                isShutdown = true
+                shutdownJobs.addAll(tasks.values)
+                tasks.clear()
+            }
+            shutdownJobs.toList()
+        }
+
+        jobs.forEach { it.cancel() }
+        scope.cancel(CancellationException("SpigotTimer is shutting down"))
+        jobs.forEach { job ->
+            withTimeoutOrNull(timeout) {
+                job.join()
+            }
+        }
+        synchronized(lock) {
+            shutdownJobs.removeAll { !it.isActive }
+        }
     }
 
     val isClosed: Boolean

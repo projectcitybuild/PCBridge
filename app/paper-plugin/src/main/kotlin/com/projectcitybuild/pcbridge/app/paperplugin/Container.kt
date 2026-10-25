@@ -57,6 +57,8 @@ import com.projectcitybuild.pcbridge.platform.paper.scheduling.SpigotTimer
 import com.projectcitybuild.pcbridge.platform.webserver.HttpServer
 import com.projectcitybuild.pcbridge.platform.webserver.data.HttpServerConfig
 import com.projectcitybuild.pcbridge.runtime.cooldowns.Cooldown
+import com.projectcitybuild.pcbridge.runtime.features.PaperFeatureRegistration
+import com.projectcitybuild.pcbridge.runtime.integrations.PaperIntegration
 import com.projectcitybuild.pcbridge.runtime.playerlookup.PlayerLookup
 import com.projectcitybuild.pcbridge.runtime.remoteconfig.RemoteConfig
 import com.projectcitybuild.pcbridge.runtime.runtimeModule
@@ -70,24 +72,55 @@ import org.bukkit.plugin.java.JavaPlugin
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
+import org.koin.core.Koin
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 import org.koin.dsl.module
-import org.koin.dsl.onClose
 import java.io.File
 import java.time.Clock
 import java.time.ZoneId
 import java.util.Locale
 import kotlin.time.Duration.Companion.seconds
 
-fun pluginModules(plugin: JavaPlugin) = buildList {
-    add(mainModule(plugin))
+fun pluginModules(
+    plugin: JavaPlugin,
+    openTelemetryProvider: OpenTelemetryProvider,
+) = buildList {
+    add(mainModule(plugin, openTelemetryProvider))
     add(runtimeModule)
     addAll(featureModules)
     addAll(integrationModules)
 }
 
-private fun mainModule(plugin: JavaPlugin) = module {
+fun createPCBridgeApplication(koin: Koin) = ApplicationCompositionRoot(koin).create()
+
+private class ApplicationCompositionRoot(
+    private val koin: Koin,
+) : KoinComponent {
+    override fun getKoin() = koin
+
+    fun create() = PCBridgeApplication(
+        errorTracker = get(),
+        sentryProvider = get(),
+        remoteConfig = get(),
+        store = get(),
+        featureRegistrar = get(),
+        featureRegistrations = { koin.getAll<PaperFeatureRegistration>() },
+        integrationRegistrar = get(),
+        integrations = { koin.getAll<PaperIntegration>() },
+        statsCollector = get(),
+        discordSend = get(),
+        httpServer = get(),
+        timer = get(),
+    )
+}
+
+private fun mainModule(
+    plugin: JavaPlugin,
+    openTelemetryProvider: OpenTelemetryProvider,
+) = module {
     platform(plugin)
-    core()
+    core(openTelemetryProvider)
     http()
     webServer()
 }
@@ -152,7 +185,7 @@ private fun Module.platform(plugin: JavaPlugin) {
     }
 }
 
-private fun Module.core() {
+private fun Module.core(openTelemetryProvider: OpenTelemetryProvider) {
     single {
         val fileStorage =
             JsonFileStorage(
@@ -174,9 +207,7 @@ private fun Module.core() {
         )
     }
 
-    single {
-        OpenTelemetryProvider()
-    }
+    single { openTelemetryProvider }
 
     single {
         val localConfig = get<LocalConfig>()
@@ -186,11 +217,7 @@ private fun Module.core() {
             dsn = config.observability.sentryDsn,
             environment = config.environment.name.lowercase(),
             traceSampleRate = config.observability.traceSampleRate,
-        ).also {
-            it.init()
-        }
-    } onClose {
-        it?.close()
+        )
     }
 
     singleOf(::ErrorTracker)

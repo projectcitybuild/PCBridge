@@ -13,7 +13,9 @@ import com.projectcitybuild.pcbridge.runtime.integrations.PaperIntegration
 import com.projectcitybuild.pcbridge.runtime.listeners.scoped
 import com.projectcitybuild.pcbridge.runtime.remoteconfig.RemoteConfig
 import com.projectcitybuild.pcbridge.runtime.remoteconfig.RemoteConfigUpdatedEvent
+import kotlinx.coroutines.CancellationException
 import org.bukkit.event.EventHandler
+import org.bukkit.event.HandlerList
 import org.bukkit.event.Listener
 import org.bukkit.plugin.java.JavaPlugin
 
@@ -39,21 +41,27 @@ class DynmapIntegration(
             return
         }
 
-        log.info { "Registering Dynmap integration..." }
-        adapter = DynmapAdapter()
-        plugin.server.pluginManager.registerSuspendingEvents(this, plugin)
+        try {
+            log.info { "Registering Dynmap integration..." }
+            adapter = DynmapAdapter()
+            plugin.server.pluginManager.registerSuspendingEvents(this, plugin)
 
-        log.info { "Dynmap integration loaded" }
+            log.info { "Dynmap integration loaded" }
 
-        updateWarpMarkers()
-        updateSpawnMarkers()
+            updateWarpMarkers()
+            updateSpawnMarkers()
+        } catch (failure: Throwable) {
+            try {
+                disable()
+            } catch (cleanupFailure: Throwable) {
+                failure.addSuppressed(cleanupFailure)
+            }
+            throw failure
+        }
     }
 
     override fun disable() {
-        if (adapter == null) return
-
-        WarpCreateEvent.getHandlerList().unregister(this)
-        WarpDeleteEvent.getHandlerList().unregister(this)
+        HandlerList.unregisterAll(this)
         adapter = null
 
         logSync.info { "Dynmap integration disabled" }
@@ -106,6 +114,8 @@ class DynmapIntegration(
                         setLabel = "Warps",
                     )
                 }
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
                 log.error(e) { "Failed to draw warp markers" }
             }
@@ -135,6 +145,8 @@ class DynmapIntegration(
                         setLabel = "Spawns",
                     )
                 }
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
                 log.error(e) { "Failed to draw spawn markers" }
             }

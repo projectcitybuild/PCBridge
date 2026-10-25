@@ -5,6 +5,7 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
@@ -39,22 +40,37 @@ class JsonFileStorageTest {
     }
 
     @Test
-    fun `read sync should return null for invalid json`() {
+    fun `read sync should report invalid json`() {
         val file = tempDirectory.resolve("invalid.json").toFile()
         file.writeText("{invalid")
 
-        assertNull(recordStorage.readSync(file))
+        assertThrows(RuntimeException::class.java) {
+            recordStorage.readSync(file)
+        }
     }
 
     @Test
-    fun `write sync should log and swallow file errors`() {
+    fun `write sync should report file errors and preserve destination`() {
         val directory = tempDirectory.resolve("directory").toFile()
         assertTrue(directory.mkdir())
 
-        recordStorage.writeSync(directory, StoredRecord())
+        assertThrows(Exception::class.java) {
+            recordStorage.writeSync(directory, StoredRecord())
+        }
 
         assertTrue(directory.isDirectory)
         assertFalse(directory.isFile)
+    }
+
+    @Test
+    fun `write sync replaces existing data atomically`() {
+        val file = tempDirectory.resolve("state.json").toFile()
+        recordStorage.writeSync(file, StoredRecord(itemName = "before"))
+
+        recordStorage.writeSync(file, StoredRecord(itemName = "after"))
+
+        assertEquals(StoredRecord(itemName = "after"), recordStorage.readSync(file))
+        assertTrue(tempDirectory.toFile().listFiles()!!.none { it.name.endsWith(".tmp") })
     }
 
     @Test
