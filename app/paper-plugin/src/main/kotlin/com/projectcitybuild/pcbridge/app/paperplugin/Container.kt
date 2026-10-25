@@ -82,8 +82,11 @@ import java.time.ZoneId
 import java.util.Locale
 import kotlin.time.Duration.Companion.seconds
 
-fun pluginModules(plugin: JavaPlugin) = buildList {
-    add(mainModule(plugin))
+fun pluginModules(
+    plugin: JavaPlugin,
+    openTelemetryProvider: OpenTelemetryProvider,
+) = buildList {
+    add(mainModule(plugin, openTelemetryProvider))
     add(runtimeModule)
     addAll(featureModules)
     addAll(integrationModules)
@@ -99,7 +102,6 @@ private class ApplicationCompositionRoot(
     fun create() = PCBridgeApplication(
         errorTracker = get(),
         sentryProvider = get(),
-        openTelemetryProvider = get(),
         remoteConfig = get(),
         store = get(),
         featureRegistrar = get(),
@@ -113,9 +115,12 @@ private class ApplicationCompositionRoot(
     )
 }
 
-private fun mainModule(plugin: JavaPlugin) = module {
+private fun mainModule(
+    plugin: JavaPlugin,
+    openTelemetryProvider: OpenTelemetryProvider,
+) = module {
     platform(plugin)
-    core()
+    core(openTelemetryProvider)
     http()
     webServer()
 }
@@ -180,7 +185,7 @@ private fun Module.platform(plugin: JavaPlugin) {
     }
 }
 
-private fun Module.core() {
+private fun Module.core(openTelemetryProvider: OpenTelemetryProvider) {
     single {
         val fileStorage =
             JsonFileStorage(
@@ -202,9 +207,7 @@ private fun Module.core() {
         )
     }
 
-    single {
-        OpenTelemetryProvider()
-    }
+    single { openTelemetryProvider }
 
     single {
         val localConfig = get<LocalConfig>()

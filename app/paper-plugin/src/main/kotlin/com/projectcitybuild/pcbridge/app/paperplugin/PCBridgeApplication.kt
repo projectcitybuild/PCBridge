@@ -3,8 +3,6 @@ package com.projectcitybuild.pcbridge.app.paperplugin
 import com.projectcitybuild.pcbridge.core.discord.DiscordSend
 import com.projectcitybuild.pcbridge.core.observability.errors.ErrorTracker
 import com.projectcitybuild.pcbridge.core.observability.errors.SentryProvider
-import com.projectcitybuild.pcbridge.core.observability.tracing.OpenTelemetryProvider
-import com.projectcitybuild.pcbridge.core.observability.tracing.TracerFactory
 import com.projectcitybuild.pcbridge.features.stats.domain.StatsCollector
 import com.projectcitybuild.pcbridge.platform.paper.scheduling.SpigotTimer
 import com.projectcitybuild.pcbridge.platform.webserver.HttpServer
@@ -24,9 +22,6 @@ import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
 import kotlin.time.Duration.Companion.seconds
 
-private val lifecycleTimeout = 30.seconds
-private val cleanupStepTimeout = 6.seconds
-
 enum class ApplicationState {
     NEW,
     STARTING,
@@ -39,7 +34,6 @@ enum class ApplicationState {
 class PCBridgeApplication(
     private val errorTracker: ErrorTracker,
     private val sentryProvider: SentryProvider,
-    private val openTelemetryProvider: OpenTelemetryProvider,
     private val remoteConfig: RemoteConfig,
     private val store: Store,
     private val featureRegistrar: PaperFeatureRegistrar,
@@ -52,6 +46,11 @@ class PCBridgeApplication(
     private val timer: SpigotTimer,
 ) {
     private val lifecycleMutex = Mutex()
+
+    private companion object {
+        val lifecycleTimeout = 30.seconds
+        val cleanupStepTimeout = 6.seconds
+    }
 
     @Volatile
     var state: ApplicationState = ApplicationState.NEW
@@ -101,7 +100,6 @@ class PCBridgeApplication(
     private suspend fun startRuntime() {
         sentryInitialized = true
         sentryProvider.init()
-        TracerFactory.configure(openTelemetryProvider)
 
         remoteConfig.initialize()
         store.hydrate()
@@ -141,22 +139,18 @@ class PCBridgeApplication(
         val failures = mutableListOf<Throwable>()
         try {
             withTimeout(lifecycleTimeout) {
-                runCleanupSequence(failures)
+                stopHttpServer(failures)
+                stopBackgroundServices(failures)
+                disableIntegrations(failures)
+                unregisterFeatures(failures)
+                persistState(failures)
+                reportCleanupFailures(failures)
+                closeSentry(failures)
             }
         } catch (failure: Throwable) {
             failures.add(failure)
         }
         return failures
-    }
-
-    private suspend fun runCleanupSequence(failures: MutableList<Throwable>) {
-        stopHttpServer(failures)
-        stopBackgroundServices(failures)
-        disableIntegrations(failures)
-        unregisterFeatures(failures)
-        persistState(failures)
-        reportCleanupFailures(failures)
-        closeSentry(failures)
     }
 
     private suspend fun stopHttpServer(failures: MutableList<Throwable>) {

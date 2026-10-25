@@ -3,7 +3,6 @@ package com.projectcitybuild.pcbridge.app.paperplugin
 import com.projectcitybuild.pcbridge.core.discord.DiscordSend
 import com.projectcitybuild.pcbridge.core.observability.errors.ErrorTracker
 import com.projectcitybuild.pcbridge.core.observability.errors.SentryProvider
-import com.projectcitybuild.pcbridge.core.observability.tracing.OpenTelemetryProvider
 import com.projectcitybuild.pcbridge.features.stats.domain.StatsCollector
 import com.projectcitybuild.pcbridge.platform.paper.scheduling.SpigotTimer
 import com.projectcitybuild.pcbridge.platform.webserver.HttpServer
@@ -249,7 +248,6 @@ class PCBridgeApplicationTest {
         val application = PCBridgeApplication(
             errorTracker = errorTracker,
             sentryProvider = sentryProvider,
-            openTelemetryProvider = mock<OpenTelemetryProvider>(),
             remoteConfig = remoteConfig,
             store = store,
             featureRegistrar = featureRegistrar,

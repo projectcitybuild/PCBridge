@@ -1,65 +1,72 @@
 package com.projectcitybuild.pcbridge.app.paperplugin
 
 import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
+import com.projectcitybuild.pcbridge.core.observability.tracing.OpenTelemetryProvider
+import com.projectcitybuild.pcbridge.core.observability.tracing.TracerFactory
 import org.koin.core.KoinApplication
 import org.koin.core.context.GlobalContext.startKoin
 import org.koin.core.context.GlobalContext.stopKoin
 import java.util.logging.Level
 
-class Plugin : SuspendingJavaPlugin() {
+class Plugin(
+    private val openTelemetryProvider: OpenTelemetryProvider,
+) : SuspendingJavaPlugin() {
     private var container: KoinApplication? = null
     private var application: PCBridgeApplication? = null
     private var ownsGlobalKoin = false
+    private val lifecycleTracer = TracerFactory.make("app.plugin.lifecycle")
 
     override suspend fun onEnableAsync() {
-        printLogo()
+        lifecycleTracer.trace("plugin.enable") {
+            printLogo()
 
-        try {
-            val moduleList = pluginModules(this)
-            val startedContainer = startKoin { modules(moduleList) }
-            container = startedContainer
-            ownsGlobalKoin = true
-
-            val startedApplication = createPCBridgeApplication(startedContainer.koin)
-            application = startedApplication
-            startedApplication.start()
-        } catch (failure: Throwable) {
-            logger.log(Level.SEVERE, "PCBridge failed to start", failure)
             try {
-                server.pluginManager.disablePlugin(this)
-            } catch (disableFailure: Throwable) {
-                failure.addSuppressed(disableFailure)
+                val moduleList = pluginModules(this, openTelemetryProvider)
+                val startedContainer = startKoin { modules(moduleList) }
+                container = startedContainer
+                ownsGlobalKoin = true
+
+                val startedApplication = createPCBridgeApplication(startedContainer.koin)
+                application = startedApplication
+                startedApplication.start()
+            } catch (failure: Throwable) {
+                logger.log(Level.SEVERE, "Failed to start", failure)
+                try {
+                    server.pluginManager.disablePlugin(this)
+                } catch (disableFailure: Throwable) {
+                    failure.addSuppressed(disableFailure)
+                }
+                throw failure
             }
-            throw failure
         }
     }
 
     override suspend fun onDisableAsync() {
-        var failure: Throwable? = null
-        try {
-            shutdownPluginRuntime(
-                application = application,
-                closeContainer = { container?.close() },
-                ownsGlobalKoin = ownsGlobalKoin,
-                stopGlobalKoin = ::stopKoin,
-            )
-        } catch (stopFailure: Throwable) {
-            failure = stopFailure
-        } finally {
-            application = null
-            container = null
-            ownsGlobalKoin = false
-        }
+        lifecycleTracer.trace("plugin.disable") {
+            var failure: Throwable? = null
+            try {
+                shutdownPluginRuntime(
+                    application = application,
+                    closeContainer = { container?.close() },
+                    ownsGlobalKoin = ownsGlobalKoin,
+                    stopGlobalKoin = ::stopKoin,
+                )
+            } catch (stopFailure: Throwable) {
+                failure = stopFailure
+            } finally {
+                application = null
+                container = null
+                ownsGlobalKoin = false
+            }
 
-        logger.info("Goodbye")
-        failure?.let { throw it }
+            logger.info("Goodbye")
+            failure?.let { throw it }
+        }
     }
 
-    private fun printLogo() =
-        logo
-            .split("\n")
-            .forEach(logger::info)
-
+    private fun printLogo() = logo
+        .split("\n")
+        .forEach(logger::info)
 }
 
 internal suspend fun shutdownPluginRuntime(
