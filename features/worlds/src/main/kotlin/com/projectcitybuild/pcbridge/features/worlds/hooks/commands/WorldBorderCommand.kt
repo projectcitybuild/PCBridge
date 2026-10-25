@@ -1,5 +1,6 @@
 package com.projectcitybuild.pcbridge.features.worlds.hooks.commands
 
+import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.features.worlds.WorldsPermissions
 import com.projectcitybuild.pcbridge.features.worlds.domain.data.WorldBorderShape
 import com.projectcitybuild.pcbridge.features.worlds.domain.repositories.WorldBorderRepository
@@ -22,7 +23,7 @@ class WorldBorderCommand(
 ) : BrigadierCommand {
     override val builder =
         command("border") {
-            description = "Sets and enforces a world's border"
+            description = l10n.worlds.borderCommandDescription
             requiresPermission(WorldsPermissions.MANAGE)
             executesSuspending(taskExecutor, ::show)
             then(borderSetCommand)
@@ -33,16 +34,25 @@ class WorldBorderCommand(
         val player = context.source.requirePlayer()
         val border = worldBorderRepository.get(player.world)
         if (border == null) {
-            player.sendMessage("No world border is configured for this world.")
+            player.sendMessage(l10n.worlds.borderNotConfigured)
             return
         }
-        val shape = if (border.effectiveShape == WorldBorderShape.CIRCLE) {
-            "circular"
-        } else {
-            "square"
-        }
-        player.sendMessage(
-            "World border: $shape, center ${border.centerX}, ${border.centerZ}; radius ${border.radius} blocks.",
-        )
+        val message =
+            if (border.effectiveShape == WorldBorderShape.RECTANGLE) {
+                l10n.worlds.rectangleBorderStatus(
+                    centerX = border.centerX,
+                    centerZ = border.centerZ,
+                    width = requireNotNull(border.width),
+                    depth = requireNotNull(border.depth),
+                )
+            } else {
+                l10n.worlds.borderStatus(
+                    shape = border.effectiveShape.name.lowercase(),
+                    centerX = border.centerX,
+                    centerZ = border.centerZ,
+                    radius = requireNotNull(border.radius),
+                )
+            }
+        player.sendMessage(message)
     }
 }

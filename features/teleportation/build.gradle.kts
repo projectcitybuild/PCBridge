@@ -3,7 +3,6 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":core:l10n"))
     implementation(project(":core:permissions"))
     implementation(project(":core:utils"))
     implementation(project(":core:support:tests"))

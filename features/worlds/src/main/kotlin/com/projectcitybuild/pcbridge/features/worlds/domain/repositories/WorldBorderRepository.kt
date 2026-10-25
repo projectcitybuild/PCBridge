@@ -29,7 +29,7 @@ class WorldBorderRepository(
         fileStorage.write(world.borderMetaFile(), validated)
         cache[world.uid] = CachedBorder(validated)
         world.worldBorder.setCenter(validated.centerX, validated.centerZ)
-        world.worldBorder.size = validated.radius * 2
+        world.worldBorder.size = validated.nativeBorderSize
         server.onlinePlayers
             .filter { it.world.uid == world.uid && !validated.contains(it.location.x, it.location.z) }
             .forEach { it.teleport(validated.clamp(it.location)) }
@@ -38,7 +38,7 @@ class WorldBorderRepository(
     fun load(world: World): SerializableWorldBorder? {
         val border = get(world) ?: return null
         world.worldBorder.setCenter(border.centerX, border.centerZ)
-        world.worldBorder.size = border.radius * 2
+        world.worldBorder.size = border.nativeBorderSize
         return border
     }
 

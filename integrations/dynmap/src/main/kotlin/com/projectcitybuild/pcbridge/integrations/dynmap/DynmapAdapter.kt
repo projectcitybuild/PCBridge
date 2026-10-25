@@ -85,6 +85,7 @@ class DynmapAdapter {
             val id = borderMarkerId(worldId)
             val label = "$worldName Border"
             if (border.effectiveShape == WorldBorderShape.CIRCLE) {
+                val radius = requireNotNull(border.radius)
                 markerSet.findAreaMarker(id)?.deleteMarker()
                 val existing = markerSet.findCircleMarker(id)
                 val marker =
@@ -92,7 +93,7 @@ class DynmapAdapter {
                         existing.apply {
                             setLabel(label)
                             setCenter(worldName, border.centerX, 64.0, border.centerZ)
-                            setRadius(border.radius, border.radius)
+                            setRadius(radius, radius)
                         }
                     } else {
                         existing?.deleteMarker()
@@ -104,8 +105,8 @@ class DynmapAdapter {
                             border.centerX,
                             64.0,
                             border.centerZ,
-                            border.radius,
-                            border.radius,
+                            radius,
+                            radius,
                             false,
                         )
                     }
@@ -117,17 +118,17 @@ class DynmapAdapter {
             markerSet.findCircleMarker(id)?.deleteMarker()
             val x =
                 doubleArrayOf(
-                    border.centerX - border.radius,
-                    border.centerX + border.radius,
-                    border.centerX + border.radius,
-                    border.centerX - border.radius,
+                    border.minX,
+                    border.maxX,
+                    border.maxX,
+                    border.minX,
                 )
             val z =
                 doubleArrayOf(
-                    border.centerZ - border.radius,
-                    border.centerZ - border.radius,
-                    border.centerZ + border.radius,
-                    border.centerZ + border.radius,
+                    border.minZ,
+                    border.minZ,
+                    border.maxZ,
+                    border.maxZ,
                 )
             val existing = markerSet.findAreaMarker(id)
             val marker =

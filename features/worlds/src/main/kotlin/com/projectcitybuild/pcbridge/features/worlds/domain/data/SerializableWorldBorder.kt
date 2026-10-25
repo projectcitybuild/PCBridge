@@ -2,16 +2,48 @@ package com.projectcitybuild.pcbridge.features.worlds.domain.data
 
 import org.bukkit.Location
 import kotlin.math.abs
+import kotlin.math.max
 import kotlin.math.sqrt
 
 data class SerializableWorldBorder(
     val centerX: Double,
     val centerZ: Double,
-    val radius: Double,
-    val shape: WorldBorderShape? = null,
+    val shape: WorldBorderShape?,
+    val radius: Double? = null,
+    val width: Double? = null,
+    val depth: Double? = null,
 ) {
     val effectiveShape: WorldBorderShape
-        get() = shape ?: WorldBorderShape.SQUARE
+        get() = requireNotNull(shape) { "Border shape must be specified." }
+
+    val halfWidth: Double
+        get() =
+            when (effectiveShape) {
+                WorldBorderShape.SQUARE, WorldBorderShape.CIRCLE -> requireNotNull(radius) { "Border radius must be specified." }
+                WorldBorderShape.RECTANGLE -> requireNotNull(width) { "Rectangle width must be specified." } / 2
+            }
+
+    val halfDepth: Double
+        get() =
+            when (effectiveShape) {
+                WorldBorderShape.SQUARE, WorldBorderShape.CIRCLE -> requireNotNull(radius) { "Border radius must be specified." }
+                WorldBorderShape.RECTANGLE -> requireNotNull(depth) { "Rectangle depth must be specified." } / 2
+            }
+
+    val minX: Double
+        get() = centerX - halfWidth
+
+    val maxX: Double
+        get() = centerX + halfWidth
+
+    val minZ: Double
+        get() = centerZ - halfDepth
+
+    val maxZ: Double
+        get() = centerZ + halfDepth
+
+    val nativeBorderSize: Double
+        get() = max(halfWidth, halfDepth) * 2
 
     fun contains(
         x: Double,
@@ -20,24 +52,28 @@ data class SerializableWorldBorder(
         val deltaX = x - centerX
         val deltaZ = z - centerZ
         return when (effectiveShape) {
-            WorldBorderShape.SQUARE -> abs(deltaX) <= radius && abs(deltaZ) <= radius
-            WorldBorderShape.CIRCLE -> deltaX * deltaX + deltaZ * deltaZ <= radius * radius
+            WorldBorderShape.SQUARE, WorldBorderShape.RECTANGLE -> abs(deltaX) <= halfWidth && abs(deltaZ) <= halfDepth
+            WorldBorderShape.CIRCLE -> {
+                val borderRadius = requireNotNull(radius) { "Border radius must be specified." }
+                deltaX * deltaX + deltaZ * deltaZ <= borderRadius * borderRadius
+            }
         }
     }
 
     fun clamp(location: Location): Location {
         val clamped = location.clone()
         when (effectiveShape) {
-            WorldBorderShape.SQUARE -> {
-                clamped.x = clamped.x.coerceIn(centerX - radius, centerX + radius)
-                clamped.z = clamped.z.coerceIn(centerZ - radius, centerZ + radius)
+            WorldBorderShape.SQUARE, WorldBorderShape.RECTANGLE -> {
+                clamped.x = clamped.x.coerceIn(minX, maxX)
+                clamped.z = clamped.z.coerceIn(minZ, maxZ)
             }
             WorldBorderShape.CIRCLE -> {
                 val deltaX = clamped.x - centerX
                 val deltaZ = clamped.z - centerZ
+                val borderRadius = requireNotNull(radius) { "Border radius must be specified." }
                 val distance = sqrt(deltaX * deltaX + deltaZ * deltaZ)
-                if (distance > radius) {
-                    val scale = radius / distance
+                if (distance > borderRadius) {
+                    val scale = borderRadius / distance
                     clamped.x = centerX + deltaX * scale
                     clamped.z = centerZ + deltaZ * scale
                 }
@@ -50,7 +86,7 @@ data class SerializableWorldBorder(
         chunkX: Int,
         chunkZ: Int,
     ): Boolean {
-        if (effectiveShape == WorldBorderShape.SQUARE) return true
+        if (effectiveShape != WorldBorderShape.CIRCLE) return true
 
         val minX = chunkX * CHUNK_SIZE
         val minZ = chunkZ * CHUNK_SIZE
@@ -58,18 +94,20 @@ data class SerializableWorldBorder(
         val nearestZ = centerZ.coerceIn(minZ, minZ + CHUNK_SIZE)
         val deltaX = nearestX - centerX
         val deltaZ = nearestZ - centerZ
-        return deltaX * deltaX + deltaZ * deltaZ <= radius * radius
+        val borderRadius = requireNotNull(radius) { "Border radius must be specified." }
+        return deltaX * deltaX + deltaZ * deltaZ <= borderRadius * borderRadius
     }
 
     fun chunkZRange(chunkX: Int): IntRange? {
-        if (effectiveShape == WorldBorderShape.SQUARE) {
-            return chunkCoordinateRange(centerZ - radius)..chunkCoordinateRange(centerZ + radius)
+        if (effectiveShape != WorldBorderShape.CIRCLE) {
+            return chunkCoordinateRange(minZ)..chunkCoordinateRange(maxZ)
         }
 
+        val borderRadius = requireNotNull(radius) { "Border radius must be specified." }
         val minX = chunkX * CHUNK_SIZE
         val nearestX = centerX.coerceIn(minX, minX + CHUNK_SIZE)
         val deltaX = nearestX - centerX
-        val remainingRadiusSquared = radius * radius - deltaX * deltaX
+        val remainingRadiusSquared = borderRadius * borderRadius - deltaX * deltaX
         if (remainingRadiusSquared < 0) return null
 
         val zOffset = sqrt(remainingRadiusSquared)
@@ -78,18 +116,40 @@ data class SerializableWorldBorder(
 
     fun validate(): SerializableWorldBorder {
         require(centerX.isFinite() && centerZ.isFinite()) { "Border center must be finite" }
-        require(radius.isFinite() && radius > 0 && radius <= MAX_RADIUS) { "Border radius is out of range" }
+
+        when (effectiveShape) {
+            WorldBorderShape.SQUARE, WorldBorderShape.CIRCLE -> {
+                val borderRadius = requireNotNull(radius) { "Border radius must be specified." }
+                require(borderRadius.isFinite() && borderRadius > 0 && borderRadius <= MAX_RADIUS) {
+                    "Border radius is out of range"
+                }
+                require(width == null && depth == null) { "Square and circular borders cannot have width or depth" }
+            }
+            WorldBorderShape.RECTANGLE -> {
+                val borderWidth = requireNotNull(width) { "Rectangle width must be specified." }
+                val borderDepth = requireNotNull(depth) { "Rectangle depth must be specified." }
+                require(radius == null) { "Rectangular borders cannot have a radius" }
+                require(borderWidth.isFinite() && borderWidth > 0 && borderWidth <= MAX_DIMENSION) {
+                    "Rectangle width is out of range"
+                }
+                require(borderDepth.isFinite() && borderDepth > 0 && borderDepth <= MAX_DIMENSION) {
+                    "Rectangle depth is out of range"
+                }
+            }
+        }
+
         require(
-            centerX - radius >= -MAX_RADIUS &&
-                centerX + radius <= MAX_RADIUS &&
-                centerZ - radius >= -MAX_RADIUS &&
-                centerZ + radius <= MAX_RADIUS,
+            minX >= -MAX_RADIUS &&
+                maxX <= MAX_RADIUS &&
+                minZ >= -MAX_RADIUS &&
+                maxZ <= MAX_RADIUS,
         ) { "Border edges are outside the supported world range" }
         return this
     }
 
     companion object {
         const val MAX_RADIUS = 29_999_984.0
+        const val MAX_DIMENSION = MAX_RADIUS * 2
         private const val CHUNK_SIZE = 16.0
 
         private fun chunkCoordinateRange(coordinate: Double) = kotlin.math.floor(coordinate / CHUNK_SIZE).toInt()
@@ -99,4 +159,5 @@ data class SerializableWorldBorder(
 enum class WorldBorderShape {
     SQUARE,
     CIRCLE,
+    RECTANGLE,
 }

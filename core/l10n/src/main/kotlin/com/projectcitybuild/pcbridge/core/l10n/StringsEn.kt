@@ -49,6 +49,7 @@ class StringsEn {
     val serverList = ServerList()
     val tablist = Tablist()
     val maintenance = Maintenance()
+    val worlds = Worlds()
 
     inner class Pagination {
         val pagePrevButton = mm("<white>[← Prev]</white>")
@@ -799,5 +800,114 @@ class StringsEn {
             "Maintenance mode is currently <state>",
             Placeholder.unparsed("state", enabled.onOff()),
         )
+    }
+
+    inner class Worlds {
+        val worldsCommandDescription = "Manages world settings"
+        val borderCommandDescription = "Sets and enforces a world's border"
+        val borderSetCommandDescription = "Sets a square, circle, or rectangle border with an optional center"
+        val borderFillCommandDescription = "Generates missing chunks inside the world border"
+
+        val borderNotConfigured = mm("<red>No world border is configured for this world.</red>")
+
+        fun borderStatus(
+            shape: String,
+            centerX: Double,
+            centerZ: Double,
+            radius: Double,
+        ) = mm(
+            "<gray>World border: <shape>, center <x>, <z>; radius <radius> blocks.</gray>",
+            Placeholder.unparsed("shape", shape),
+            Placeholder.unparsed("x", centerX.toString()),
+            Placeholder.unparsed("z", centerZ.toString()),
+            Placeholder.unparsed("radius", radius.toString()),
+        )
+
+        fun rectangleBorderStatus(
+            centerX: Double,
+            centerZ: Double,
+            width: Double,
+            depth: Double,
+        ) = mm(
+            "<gray>World border: rectangle, center <x>, <z>; width <width>, depth <depth> blocks.</gray>",
+            Placeholder.unparsed("x", centerX.toString()),
+            Placeholder.unparsed("z", centerZ.toString()),
+            Placeholder.unparsed("width", width.toString()),
+            Placeholder.unparsed("depth", depth.toString()),
+        )
+
+        fun invalidBorder(reason: String?) = mm(
+            "<red>Invalid world border: <reason></red>",
+            Placeholder.unparsed("reason", reason ?: "unknown reason"),
+        )
+
+        fun borderSet(
+            shape: String,
+            centerX: Double,
+            centerZ: Double,
+            radius: Double,
+        ) = mm(
+            "<green>World border set: <shape>, center <x>, <z>; radius <radius> blocks.</green>",
+            Placeholder.unparsed("shape", shape),
+            Placeholder.unparsed("x", centerX.toString()),
+            Placeholder.unparsed("z", centerZ.toString()),
+            Placeholder.unparsed("radius", radius.toString()),
+        )
+
+        fun rectangleBorderSet(
+            centerX: Double,
+            centerZ: Double,
+            width: Double,
+            depth: Double,
+        ) = mm(
+            "<green>World border set: rectangle, center <x>, <z>; width <width>, depth <depth> blocks.</green>",
+            Placeholder.unparsed("x", centerX.toString()),
+            Placeholder.unparsed("z", centerZ.toString()),
+            Placeholder.unparsed("width", width.toString()),
+            Placeholder.unparsed("depth", depth.toString()),
+        )
+
+        val fillRequiresBorder = mm("<red>Set a world border before filling chunks.</red>")
+
+        fun fillPreview(
+            chunkCount: Long,
+            worldName: String,
+        ) = mm(
+            "<green>Fill preview: up to <count> chunks may be checked in <world>. " +
+                "Only missing chunks will be generated. Run /worlds border fill confirm within 60 seconds to continue.</green>",
+            Placeholder.unparsed("count", chunkCount.toString()),
+            Placeholder.unparsed("world", worldName),
+        )
+
+        val fillPreviewMissing = mm("<red>There is no active fill preview. Run /worlds border fill first.</red>")
+        val fillWrongWorld = mm("<red>You must confirm the fill in the world where it was previewed.</red>")
+        val fillBorderChanged =
+            mm(
+                "<red>The world border changed. Run /worlds border fill again to preview the updated area.</red>",
+            )
+        val fillAlreadyRunning = mm("<red>A world border fill is already running for this world.</red>")
+        val fillStarted = mm("<yellow>Starting world border fill...</yellow>")
+        val fillStoppedBorderChanged =
+            mm("<red>World border changed during fill; the operation was stopped.</red>")
+
+        fun fillProgress(
+            checked: Long,
+            generated: Long,
+        ) = mm(
+            "<yellow>World border fill progress: checked <checked> chunks; generated <generated>.</yellow>",
+            Placeholder.unparsed("checked", checked.toString()),
+            Placeholder.unparsed("generated", generated.toString()),
+        )
+
+        fun fillComplete(
+            checked: Long,
+            generated: Long,
+        ) = mm(
+            "<green>World border fill complete: checked <checked> chunks; generated <generated>.</green>",
+            Placeholder.unparsed("checked", checked.toString()),
+            Placeholder.unparsed("generated", generated.toString()),
+        )
+
+        val fillFailed = mm("<red>World border fill failed. See the server log for details.</red>")
     }
 }

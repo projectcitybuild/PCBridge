@@ -1,5 +1,6 @@
 package com.projectcitybuild.pcbridge.features.worlds.hooks.commands
 
+import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.command
 
@@ -8,7 +9,7 @@ class WorldsCommand(
 ) : BrigadierCommand {
     override val builder =
         command("worlds") {
-            description = "Manages world settings"
+            description = l10n.worlds.worldsCommandDescription
             then(worldBorderCommand)
         }
 }

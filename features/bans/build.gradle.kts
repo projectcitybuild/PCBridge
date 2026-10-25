@@ -4,7 +4,6 @@ plugins {
 
 dependencies {
     implementation(project(":core:http"))
-    implementation(project(":core:l10n"))
     implementation(project(":core:permissions"))
     implementation(project(":core:support:component"))
     implementation(project(":core:support:java"))

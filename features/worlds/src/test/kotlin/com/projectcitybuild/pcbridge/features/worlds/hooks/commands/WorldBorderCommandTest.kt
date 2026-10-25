@@ -10,6 +10,7 @@ import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.CoroutineScopeCommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.events.SpigotEventBroadcaster
 import io.papermc.paper.command.brigadier.CommandSourceStack
+import com.mojang.brigadier.exceptions.CommandSyntaxException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -20,6 +21,7 @@ import org.bukkit.entity.Player
 import org.bukkit.event.Event
 import org.bukkit.plugin.Plugin
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.verify
@@ -43,13 +45,18 @@ class WorldBorderCommandTest {
             whenever(player.hasPermission(WorldsPermissions.MANAGE.node)).thenReturn(true)
             val command = command(this)
 
-            execute(command, "border set 96", source())
+            execute(command, "border set square 96", source())
             advanceUntilIdle()
 
             val borderCaptor = argumentCaptor<SerializableWorldBorder>()
             verify(worldBorderRepository).set(eq(world), borderCaptor.capture())
             assertEquals(
-                SerializableWorldBorder(12.5, -8.0, 96.0, WorldBorderShape.SQUARE),
+                SerializableWorldBorder(
+                    12.5,
+                    -8.0,
+                    shape = WorldBorderShape.SQUARE,
+                    radius = 96.0,
+                ),
                 borderCaptor.firstValue,
             )
             val eventCaptor = argumentCaptor<Event>()
@@ -73,9 +80,50 @@ class WorldBorderCommandTest {
             val borderCaptor = argumentCaptor<SerializableWorldBorder>()
             verify(worldBorderRepository).set(eq(world), borderCaptor.capture())
             assertEquals(
-                SerializableWorldBorder(-10.0, 15.0, 48.0, WorldBorderShape.CIRCLE),
+                SerializableWorldBorder(
+                    -10.0,
+                    15.0,
+                    shape = WorldBorderShape.CIRCLE,
+                    radius = 48.0,
+                ),
                 borderCaptor.firstValue,
             )
+        }
+
+    @Test
+    fun `sets a rectangular border with explicit width depth and center`() =
+        runTest {
+            val world = mock(World::class.java)
+            whenever(player.world).thenReturn(world)
+            whenever(player.hasPermission(WorldsPermissions.MANAGE.node)).thenReturn(true)
+            val command = command(this)
+
+            execute(command, "border set rectangle 80 40 -10 15", source())
+            advanceUntilIdle()
+
+            val borderCaptor = argumentCaptor<SerializableWorldBorder>()
+            verify(worldBorderRepository).set(eq(world), borderCaptor.capture())
+            assertEquals(
+                SerializableWorldBorder(
+                    -10.0,
+                    15.0,
+                    shape = WorldBorderShape.RECTANGLE,
+                    width = 80.0,
+                    depth = 40.0,
+                ),
+                borderCaptor.firstValue,
+            )
+        }
+
+    @Test
+    fun `requires a shape when setting a border`() =
+        runTest {
+            whenever(player.hasPermission(WorldsPermissions.MANAGE.node)).thenReturn(true)
+            val command = command(this)
+
+            assertThrows<CommandSyntaxException> {
+                execute(command, "border set 96", source())
+            }
         }
 
     private fun command(scope: CoroutineScope): BrigadierCommand {

@@ -75,6 +75,30 @@ class WorldBorderListenerTest {
     }
 
     @Test
+    fun `clamps rectangular border movement using width and depth`() {
+        whenever(borderRepository.get(world)).thenReturn(
+            SerializableWorldBorder(
+                centerX = 0.0,
+                centerZ = 0.0,
+                shape = WorldBorderShape.RECTANGLE,
+                width = 32.0,
+                depth = 16.0,
+            ),
+        )
+        val event =
+            PlayerMoveEvent(
+                mock(Player::class.java),
+                Location(world, 15.0, 64.0, 7.0),
+                Location(world, 20.0, 64.0, 12.0),
+            )
+
+        listener.onPlayerMove(event)
+
+        assertEquals(16.0, event.to?.x)
+        assertEquals(8.0, event.to?.z)
+    }
+
+    @Test
     fun `still clamps teleports against a square border`() {
         whenever(borderRepository.get(world)).thenReturn(border.copy(shape = WorldBorderShape.SQUARE))
         val event =
