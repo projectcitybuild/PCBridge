@@ -12,7 +12,12 @@ class VanillaOpInterceptListenerTest {
 
     @Test
     fun `cancels op and deop player commands case insensitively`() {
-        listOf("/op target", "/DEOP target ").forEach { message ->
+        listOf(
+            "/op target",
+            "/DEOP target ",
+            "/minecraft:op target",
+            "/BUKKIT:DEOP target",
+        ).forEach { message ->
             val event = mock(PlayerCommandPreprocessEvent::class.java)
             whenever(event.message).thenReturn(message)
 
@@ -24,7 +29,7 @@ class VanillaOpInterceptListenerTest {
 
     @Test
     fun `does not cancel unrelated commands or op words`() {
-        listOf("/open", "/deopper", "/say hello").forEach { message ->
+        listOf("/open", "/deopper", "/say hello", "/say op", "/myplugin:op").forEach { message ->
             val event = mock(PlayerCommandPreprocessEvent::class.java)
             whenever(event.message).thenReturn(message)
 
