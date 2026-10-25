@@ -22,22 +22,16 @@ class PaperIntegrationRegistrar {
                 active.add(integration)
             }
         } catch (failure: Throwable) {
-            disableActive(failure)
+            disableActive().forEach(failure::addSuppressed)
             throw failure
         }
     }
 
     fun disable() {
-        var failure: Throwable? = null
-        active.asReversed().forEach { integration ->
-            try {
-                integration.disable()
-            } catch (cleanupFailure: Throwable) {
-                if (failure == null) failure = cleanupFailure else failure!!.addSuppressed(cleanupFailure)
-            }
-        }
-        active.clear()
-        failure?.let { throw it }
+        val failures = disableActive()
+        val firstFailure = failures.firstOrNull() ?: return
+        failures.drop(1).forEach(firstFailure::addSuppressed)
+        throw firstFailure
     }
 
     fun disable(integrations: List<PaperIntegration>) {
@@ -47,14 +41,16 @@ class PaperIntegrationRegistrar {
         disable()
     }
 
-    private fun disableActive(originalFailure: Throwable) {
+    private fun disableActive(): List<Throwable> {
+        val failures = mutableListOf<Throwable>()
         active.asReversed().forEach { integration ->
             try {
                 integration.disable()
             } catch (cleanupFailure: Throwable) {
-                originalFailure.addSuppressed(cleanupFailure)
+                failures.add(cleanupFailure)
             }
         }
         active.clear()
+        return failures
     }
 }

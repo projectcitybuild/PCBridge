@@ -24,6 +24,9 @@ import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
 import kotlin.time.Duration.Companion.seconds
 
+private val lifecycleTimeout = 30.seconds
+private val cleanupStepTimeout = 6.seconds
+
 enum class ApplicationState {
     NEW,
     STARTING,
@@ -54,71 +57,38 @@ class PCBridgeApplication(
     var state: ApplicationState = ApplicationState.NEW
         private set
 
-    private var hydrated = false
-    private var registrationsAttempted = false
+    private var storeHydrated = false
+    private var featureRegistrationAttempted = false
     private var integrationsEnabled = false
-    private var ingressStarted = false
+    private var httpServerStarted = false
     private var sentryInitialized = false
 
-    suspend fun start() {
-        lifecycleMutex.withLock {
-            check(state == ApplicationState.NEW) { "Cannot start application in state $state" }
-            state = ApplicationState.STARTING
-            try {
-                sentryInitialized = true
-                sentryProvider.init()
-                TracerFactory.configure(openTelemetryProvider)
-
-                remoteConfig.initialize()
-                store.hydrate()
-                hydrated = true
-
-                registrationsAttempted = true
-                featureRegistrar.register(featureRegistrations())
-
-                integrationRegistrar.enable(integrations())
-                integrationsEnabled = true
-
-                statsCollector.start()
-
-                httpServer.start()
-                ingressStarted = true
-                state = ApplicationState.RUNNING
-                httpServer.acceptIngress()
-            } catch (failure: Throwable) {
-                if (failure !is CancellationException) {
-                    errorTracker.reportSafely(failure)
-                }
-                state = ApplicationState.FAILED
-                rollback(failure)
-                throw failure
+    suspend fun start() = lifecycleMutex.withLock {
+        check(state == ApplicationState.NEW) { "Cannot start application in state $state" }
+        state = ApplicationState.STARTING
+        try {
+            startRuntime()
+        } catch (failure: Throwable) {
+            if (failure !is CancellationException) {
+                errorTracker.reportSafely(failure)
             }
+            state = ApplicationState.FAILED
+            rollback(failure)
+            throw failure
         }
     }
 
     suspend fun stop() {
-        var cleanupFailure: Throwable? = null
-        try {
+        // Complete shutdown before propagating cancellation from the caller.
+        val cleanupFailure: Throwable? = try {
             withContext(NonCancellable) {
-                lifecycleMutex.withLock {
-                    if (state == ApplicationState.STOPPED) return@withLock
-                    state = ApplicationState.STOPPING
-                    val failures = mutableListOf<Throwable>()
-                    try {
-                        withTimeout(30.seconds) {
-                            cleanup(failures)
-                        }
-                    } catch (failure: Throwable) {
-                        failures.add(failure)
-                    } finally {
-                        state = ApplicationState.STOPPED
-                    }
-                    throwCleanupFailures(failures)
-                }
+                lifecycleMutex.withLock { stopWithLockHeld() }
             }
+            null
         } catch (failure: Throwable) {
-            cleanupFailure = failure
+            failure
         }
+
         try {
             currentCoroutineContext().ensureActive()
         } catch (cancellation: CancellationException) {
@@ -128,72 +98,129 @@ class PCBridgeApplication(
         cleanupFailure?.let { throw it }
     }
 
-    private suspend fun rollback(originalFailure: Throwable) {
-        withContext(NonCancellable) {
-            val failures = mutableListOf<Throwable>()
-            try {
-                withTimeout(30.seconds) {
-                    cleanup(failures)
-                }
-            } catch (cleanupFailure: Throwable) {
-                failures.add(cleanupFailure)
-            }
-            failures.forEach(originalFailure::addSuppressed)
-            state = ApplicationState.FAILED
+    private suspend fun startRuntime() {
+        sentryInitialized = true
+        sentryProvider.init()
+        TracerFactory.configure(openTelemetryProvider)
+
+        remoteConfig.initialize()
+        store.hydrate()
+        storeHydrated = true
+
+        featureRegistrationAttempted = true // Registration can fail after partial setup.
+        featureRegistrar.register(featureRegistrations())
+
+        integrationRegistrar.enable(integrations())
+        integrationsEnabled = true
+
+        statsCollector.start()
+
+        httpServer.start()
+        httpServerStarted = true
+        state = ApplicationState.RUNNING
+        httpServer.acceptIngress()
+    }
+
+    private suspend fun stopWithLockHeld() {
+        if (state == ApplicationState.STOPPED) return
+
+        state = ApplicationState.STOPPING
+        try {
+            throwCleanupFailures(cleanupWithinTimeout())
+        } finally {
+            state = ApplicationState.STOPPED
         }
     }
 
-    private suspend fun cleanup(failures: MutableList<Throwable>) {
-        if (ingressStarted) {
-            attempt(failures) {
-                httpServer.stop()
-                ingressStarted = false
-            }
-        }
+    private suspend fun rollback(originalFailure: Throwable) = withContext(NonCancellable) {
+        cleanupWithinTimeout().forEach(originalFailure::addSuppressed)
+        state = ApplicationState.FAILED
+    }
 
-        attempt(failures) { statsCollector.shutdown() }
-        attempt(failures) { discordSend.shutdown() }
-        attempt(failures) { timer.shutdownAndJoin() }
-
-        if (integrationsEnabled) {
-            attempt(failures) {
-                integrationRegistrar.disable()
-                integrationsEnabled = false
+    private suspend fun cleanupWithinTimeout(): List<Throwable> {
+        val failures = mutableListOf<Throwable>()
+        try {
+            withTimeout(lifecycleTimeout) {
+                runCleanupSequence(failures)
             }
+        } catch (failure: Throwable) {
+            failures.add(failure)
         }
-        if (registrationsAttempted) {
-            attempt(failures) {
-                featureRegistrar.unregister()
-                registrationsAttempted = false
-            }
-        }
+        return failures
+    }
 
-        // State mutation has stopped. Flush and persist only a hydrated store.
-        attempt(failures) { statsCollector.flush() }
-        if (hydrated) {
-            attempt(failures) {
-                store.persist()
-                hydrated = false
-            }
-        }
+    private suspend fun runCleanupSequence(failures: MutableList<Throwable>) {
+        stopHttpServer(failures)
+        stopBackgroundServices(failures)
+        disableIntegrations(failures)
+        unregisterFeatures(failures)
+        persistState(failures)
+        reportCleanupFailures(failures)
+        closeSentry(failures)
+    }
 
+    private suspend fun stopHttpServer(failures: MutableList<Throwable>) {
+        if (!httpServerStarted) return
+
+        attemptCleanupStep(failures) {
+            httpServer.stop()
+            httpServerStarted = false
+        }
+    }
+
+    private suspend fun stopBackgroundServices(failures: MutableList<Throwable>) {
+        attemptCleanupStep(failures) { statsCollector.shutdown() }
+        attemptCleanupStep(failures) { discordSend.shutdown() }
+        attemptCleanupStep(failures) { timer.shutdownAndJoin() }
+    }
+
+    private suspend fun disableIntegrations(failures: MutableList<Throwable>) {
+        if (!integrationsEnabled) return
+
+        attemptCleanupStep(failures) {
+            integrationRegistrar.disable()
+            integrationsEnabled = false
+        }
+    }
+
+    private suspend fun unregisterFeatures(failures: MutableList<Throwable>) {
+        if (!featureRegistrationAttempted) return
+
+        attemptCleanupStep(failures) {
+            featureRegistrar.unregister()
+            featureRegistrationAttempted = false
+        }
+    }
+
+    private suspend fun persistState(failures: MutableList<Throwable>) {
+        attemptCleanupStep(failures) { statsCollector.flush() }
+        if (!storeHydrated) return
+
+        attemptCleanupStep(failures) {
+            store.persist()
+            storeHydrated = false
+        }
+    }
+
+    private fun reportCleanupFailures(failures: List<Throwable>) {
         failures.forEach(errorTracker::reportSafely)
+    }
 
-        // Close observability after reporting earlier cleanup failures.
+    private suspend fun closeSentry(failures: MutableList<Throwable>) {
         if (sentryInitialized) {
-            attempt(failures) {
+            attemptCleanupStep(failures) {
                 sentryProvider.close()
                 sentryInitialized = false
             }
         }
     }
 
-    private suspend fun attempt(
+    private suspend fun attemptCleanupStep(
         failures: MutableList<Throwable>,
         action: suspend () -> Unit,
     ) {
         try {
-            withTimeout(6.seconds) { action() }
+            withTimeout(cleanupStepTimeout) { action() }
         } catch (failure: Throwable) {
             failures.add(failure)
         }

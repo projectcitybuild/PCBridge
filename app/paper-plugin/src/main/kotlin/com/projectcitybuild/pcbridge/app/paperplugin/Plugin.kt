@@ -68,36 +68,30 @@ internal suspend fun shutdownPluginRuntime(
     ownsGlobalKoin: Boolean,
     stopGlobalKoin: () -> Unit,
 ) {
-    var failure: Throwable? = null
-    try {
-        application?.stop()
-    } catch (stopFailure: Throwable) {
-        failure = stopFailure
-    } finally {
-        try {
-            closeContainer()
-        } catch (closeFailure: Throwable) {
-            failure = combineFailures(failure, closeFailure)
-        } finally {
-            if (ownsGlobalKoin) {
-                try {
-                    stopGlobalKoin()
-                } catch (stopKoinFailure: Throwable) {
-                    failure = combineFailures(failure, stopKoinFailure)
-                }
-            }
-        }
+    val failures = mutableListOf<Throwable>()
+    attemptCleanup(failures) { application?.stop() }
+    attemptCleanup(failures, closeContainer)
+    if (ownsGlobalKoin) {
+        attemptCleanup(failures, stopGlobalKoin)
     }
-    failure?.let { throw it }
+    throwCleanupFailures(failures)
 }
 
-private fun combineFailures(
-    current: Throwable?,
-    next: Throwable,
-): Throwable {
-    if (current == null) return next
-    current.addSuppressed(next)
-    return current
+private suspend fun attemptCleanup(
+    failures: MutableList<Throwable>,
+    action: suspend () -> Unit,
+) {
+    try {
+        action()
+    } catch (failure: Throwable) {
+        failures.add(failure)
+    }
+}
+
+private fun throwCleanupFailures(failures: List<Throwable>) {
+    val firstFailure = failures.firstOrNull() ?: return
+    failures.drop(1).forEach(firstFailure::addSuppressed)
+    throw firstFailure
 }
 
 private val logo =
