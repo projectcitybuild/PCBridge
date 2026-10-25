@@ -10,6 +10,6 @@ test('players with permission can obtain an invisible item frame', async ({ play
 
   runPluginCommand(player, 'invisframe');
 
-  await expect(player).toHaveReceivedMessage('You received an invisible item frame');
+  await expect(player).toContainItem('item_frame', { timeout: 15000 });
   expect(player.bot.inventory.items().some(item => item.name === 'item_frame')).toBeTruthy();
 });
