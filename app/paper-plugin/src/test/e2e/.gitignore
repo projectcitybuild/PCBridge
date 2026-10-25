@@ -4,5 +4,7 @@ node_modules/
 .npmrc
 # Compiled specs and plugins
 dist/
+# Generated from Kotlin permission nodes
+tests/helpers/permission-nodes.generated.ts
 # Whatever the environments write while they run: servers, worlds, logs
 generated/
