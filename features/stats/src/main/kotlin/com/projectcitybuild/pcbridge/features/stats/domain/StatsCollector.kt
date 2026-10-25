@@ -1,7 +1,6 @@
 package com.projectcitybuild.pcbridge.features.stats.domain
 
 import com.projectcitybuild.pcbridge.core.observability.errors.ErrorTracker
-import com.projectcitybuild.pcbridge.core.observability.errors.reportSafely
 import com.projectcitybuild.pcbridge.core.observability.logging.log
 import com.projectcitybuild.pcbridge.core.observability.logging.logSync
 import com.projectcitybuild.pcbridge.core.pcbridgeapi.pcb.models.PlayerStats

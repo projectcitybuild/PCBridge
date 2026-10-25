@@ -2,7 +2,6 @@ package com.projectcitybuild.pcbridge.runtime.remoteconfig
 
 import com.projectcitybuild.pcbridge.core.filestorage.FileStorage
 import com.projectcitybuild.pcbridge.core.observability.errors.ErrorTracker
-import com.projectcitybuild.pcbridge.core.observability.errors.reportSafely
 import com.projectcitybuild.pcbridge.core.observability.logging.log
 import com.projectcitybuild.pcbridge.core.pcbridgeapi.pcb.models.RemoteConfigKeyValues
 import com.projectcitybuild.pcbridge.core.pcbridgeapi.pcb.models.RemoteConfigVersion

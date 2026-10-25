@@ -20,8 +20,10 @@ import org.junit.jupiter.api.Assertions.assertSame
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.mockito.InOrder
-import org.mockito.kotlin.doThrow
+import org.mockito.kotlin.any
+import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.doAnswer
+import org.mockito.kotlin.doThrow
 import org.mockito.kotlin.inOrder
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
@@ -45,7 +47,7 @@ class PCBridgeApplicationTest {
 
             assertSame(failure, thrown)
             assertEquals(ApplicationState.FAILED, f.application.state)
-            verify(f.errorTracker).report(failure)
+            verify(f.errorTracker).reportSafely(failure)
             verify(f.statsCollector).shutdown()
             verify(f.integrationRegistrar).disable()
             verify(f.featureRegistrar).unregister()
@@ -124,6 +126,15 @@ class PCBridgeApplicationTest {
         runTest {
             val f = fixtures()
             val failure = IllegalStateException("server stop failed")
+            val cleanupEvents = mutableListOf<String>()
+            doAnswer {
+                cleanupEvents.add("reported")
+                null
+            }.whenever(f.errorTracker).reportSafely(any())
+            doAnswer {
+                cleanupEvents.add("closed")
+                null
+            }.whenever(f.sentryProvider).close()
             f.application.start()
             doThrow(failure).whenever(f.httpServer).stop()
 
@@ -139,6 +150,10 @@ class PCBridgeApplicationTest {
             verify(f.timer).shutdownAndJoin()
             verify(f.statsCollector).flush()
             verify(f.store).persist()
+            assertEquals(listOf("reported", "closed"), cleanupEvents)
+            val reportedFailure = argumentCaptor<Throwable>()
+            verify(f.errorTracker).reportSafely(reportedFailure.capture())
+            assertEquals(failure.message, reportedFailure.firstValue.message)
             verify(f.sentryProvider).close()
         }
 
@@ -171,7 +186,7 @@ class PCBridgeApplicationTest {
 
             assertSame(cancellation, thrown)
             assertEquals(ApplicationState.FAILED, f.application.state)
-            verify(f.errorTracker, never()).report(cancellation)
+            verify(f.errorTracker, never()).reportSafely(cancellation)
             verify(f.store, never()).persist()
         }
 

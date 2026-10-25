@@ -2,7 +2,6 @@ package com.projectcitybuild.pcbridge.runtime.connection.listeners
 
 import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.core.observability.errors.ErrorTracker
-import com.projectcitybuild.pcbridge.core.observability.errors.reportSafely
 import com.projectcitybuild.pcbridge.core.observability.logging.log
 import com.projectcitybuild.pcbridge.platform.paper.events.SpigotEventBroadcaster
 import com.projectcitybuild.pcbridge.runtime.connection.ConnectionRepository

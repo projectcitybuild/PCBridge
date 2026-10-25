@@ -2,7 +2,6 @@ package com.projectcitybuild.pcbridge.runtime.connection.listeners
 
 import com.projectcitybuild.pcbridge.core.datetime.services.LocalizedTime
 import com.projectcitybuild.pcbridge.core.observability.errors.ErrorTracker
-import com.projectcitybuild.pcbridge.core.observability.errors.reportSafely
 import com.projectcitybuild.pcbridge.core.observability.logging.log
 import com.projectcitybuild.pcbridge.runtime.connection.ConnectionRepository
 import com.projectcitybuild.pcbridge.runtime.connection.connectionTracer

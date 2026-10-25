@@ -2,7 +2,6 @@ package com.projectcitybuild.pcbridge.core.discord
 
 import com.projectcitybuild.pcbridge.core.localconfig.LocalConfig
 import com.projectcitybuild.pcbridge.core.observability.errors.ErrorTracker
-import com.projectcitybuild.pcbridge.core.observability.errors.reportSafely
 import com.projectcitybuild.pcbridge.core.observability.logging.log
 import com.projectcitybuild.pcbridge.core.observability.logging.logSync
 import com.projectcitybuild.pcbridge.core.pcbridgeapi.discord.models.DiscordEmbed

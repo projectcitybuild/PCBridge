@@ -3,7 +3,6 @@ package com.projectcitybuild.pcbridge.platform.paper.scheduling
 import com.github.shynixn.mccoroutine.bukkit.asyncDispatcher
 import com.projectcitybuild.pcbridge.core.utils.Cancellable
 import com.projectcitybuild.pcbridge.core.observability.errors.ErrorTracker
-import com.projectcitybuild.pcbridge.core.observability.errors.reportSafely
 import com.projectcitybuild.pcbridge.core.observability.logging.log
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
