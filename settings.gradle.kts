@@ -56,6 +56,7 @@ include(
     "features:teleportation",
     "features:warnings",
     "features:warps",
+    "features:worlds",
     "features:watchdog",
     "features:workstations",
 )

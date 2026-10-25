@@ -9,6 +9,8 @@ import com.projectcitybuild.pcbridge.features.spawns.domain.repositories.SpawnRe
 import com.projectcitybuild.pcbridge.features.warps.domain.events.WarpCreateEvent
 import com.projectcitybuild.pcbridge.features.warps.domain.events.WarpDeleteEvent
 import com.projectcitybuild.pcbridge.features.warps.domain.repositories.WarpRepository
+import com.projectcitybuild.pcbridge.features.worlds.domain.data.WorldBorderUpdatedEvent
+import com.projectcitybuild.pcbridge.features.worlds.domain.repositories.WorldBorderRepository
 import com.projectcitybuild.pcbridge.runtime.integrations.PaperIntegration
 import com.projectcitybuild.pcbridge.runtime.listeners.scoped
 import com.projectcitybuild.pcbridge.runtime.remoteconfig.RemoteConfig
@@ -17,12 +19,14 @@ import kotlinx.coroutines.CancellationException
 import org.bukkit.event.EventHandler
 import org.bukkit.event.HandlerList
 import org.bukkit.event.Listener
+import org.bukkit.event.world.WorldLoadEvent
 import org.bukkit.plugin.java.JavaPlugin
 
 class DynmapIntegration(
     private val plugin: JavaPlugin,
     private val spawnRepository: SpawnRepository,
     private val warpRepository: WarpRepository,
+    private val worldBorderRepository: WorldBorderRepository,
     private val remoteConfig: RemoteConfig,
 ) : PaperIntegration,
     Listener {
@@ -50,6 +54,7 @@ class DynmapIntegration(
 
             updateWarpMarkers()
             updateSpawnMarkers()
+            updateBorderMarkers()
         } catch (failure: Throwable) {
             try {
                 disable()
@@ -75,6 +80,14 @@ class DynmapIntegration(
 
     @EventHandler
     suspend fun onSpawnUpdate(event: SpawnUpdatedEvent) = event.scoped(tracer, this::class.java) { updateSpawnMarkers() }
+
+    @EventHandler
+    suspend fun onWorldBorderUpdated(event: WorldBorderUpdatedEvent) =
+        event.scoped(tracer, this::class.java) { updateBorderMarkers() }
+
+    @EventHandler
+    suspend fun onWorldLoad(event: WorldLoadEvent) =
+        event.scoped(tracer, this::class.java) { updateBorderMarkers() }
 
     @EventHandler
     suspend fun onRemoteConfigUpdated(event: RemoteConfigUpdatedEvent) =
@@ -149,6 +162,27 @@ class DynmapIntegration(
                 throw e
             } catch (e: Exception) {
                 log.error(e) { "Failed to draw spawn markers" }
+            }
+        }
+
+    private suspend fun updateBorderMarkers() =
+        tracer.trace("updateBorderMarkers") {
+            val adapter = adapter
+            if (adapter == null) {
+                log.error { "Dynmap integration disabled but attempted to draw world borders" }
+                return@trace
+            }
+
+            try {
+                adapter.synchronizeBorderMarkers(
+                    worldBorderRepository.allLoaded().map { (world, border) ->
+                        Triple(world.uid, world.name, border)
+                    },
+                )
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                log.error(e) { "Failed to draw world border markers" }
             }
         }
 }

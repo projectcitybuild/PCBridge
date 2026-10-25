@@ -14,6 +14,7 @@ dependencies {
     implementation(project(":core:observability"))
     implementation(project(":features:spawns"))
     implementation(project(":features:warps"))
+    implementation(project(":features:worlds"))
     implementation(project(":platform:paper"))
     implementation(project(":runtime"))
     implementation("com.github.shynixn.mccoroutine:mccoroutine-bukkit-api:2.15.0")

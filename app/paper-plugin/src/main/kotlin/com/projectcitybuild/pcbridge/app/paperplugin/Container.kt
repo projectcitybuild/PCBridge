@@ -43,6 +43,7 @@ import com.projectcitybuild.pcbridge.features.sync.syncModule
 import com.projectcitybuild.pcbridge.features.teleportation.teleportationModule
 import com.projectcitybuild.pcbridge.features.warnings.warningsModule
 import com.projectcitybuild.pcbridge.features.warps.warpsModule
+import com.projectcitybuild.pcbridge.features.worlds.worldsModule
 import com.projectcitybuild.pcbridge.features.watchdog.watchDogModule
 import com.projectcitybuild.pcbridge.features.workstations.workstationsModule
 import com.projectcitybuild.pcbridge.integrations.dynmap.dynmapModule
@@ -149,6 +150,7 @@ private val featureModules =
         teleportationModule,
         warningsModule,
         warpsModule,
+        worldsModule,
         watchDogModule,
         workstationsModule,
     )
