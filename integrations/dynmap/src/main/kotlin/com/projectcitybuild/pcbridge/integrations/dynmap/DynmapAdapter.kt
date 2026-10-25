@@ -85,7 +85,7 @@ class DynmapAdapter {
         borders.forEach { (worldId, worldName, border) ->
             val id = borderMarkerId(worldId)
             val label = "$worldName Border"
-            val geometry = WorldBorderGeometry(border)
+            val geometry = border.geometry
             if (border is WorldBorder.Circle) {
                 val radius = border.radius
                 markerSet.findAreaMarker(id)?.deleteMarker()

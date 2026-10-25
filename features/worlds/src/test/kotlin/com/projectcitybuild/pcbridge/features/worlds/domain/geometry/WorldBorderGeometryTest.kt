@@ -1,15 +1,12 @@
 package com.projectcitybuild.pcbridge.features.worlds.domain.geometry
 
 import com.projectcitybuild.pcbridge.features.worlds.domain.data.WorldBorder
-import org.bukkit.Location
-import org.bukkit.World
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
-import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.assertSame
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import org.mockito.Mockito.mock
 
 class WorldBorderGeometryTest {
     private val border =
@@ -57,16 +54,11 @@ class WorldBorderGeometryTest {
     }
 
     @Test
-    fun `clamps location coordinates while preserving other location values`() {
-        val location = Location(mock(World::class.java), 40.0, 64.0, -30.0, 45.0f, 10.0f)
+    fun `clamps coordinates to keep a player inside the square border`() {
+        val (x, z) = border.geometry().clamp(40.0, -30.0)
 
-        val clamped = border.geometry().clamp(location)
-
-        assertEquals(29.7, clamped.x)
-        assertEquals(64.0, clamped.y)
-        assertEquals(-24.7, clamped.z)
-        assertEquals(45.0f, clamped.yaw)
-        assertEquals(10.0f, clamped.pitch)
+        assertEquals(29.7, x)
+        assertEquals(-24.7, z)
     }
 
     @Test
@@ -78,12 +70,10 @@ class WorldBorderGeometryTest {
                 width = 32.0,
                 depth = 16.0,
             )
-        val location = Location(mock(World::class.java), 30.0, 64.0, 20.0)
+        val (x, z) = rectangle.geometry().clamp(30.0, 20.0)
 
-        val clamped = rectangle.geometry().clamp(location)
-
-        assertEquals(15.7, clamped.x)
-        assertEquals(7.7, clamped.z)
+        assertEquals(15.7, x)
+        assertEquals(7.7, z)
     }
 
     @Test
@@ -94,11 +84,9 @@ class WorldBorderGeometryTest {
                 0.0,
                 radius = 10.0,
             )
-        val location = Location(mock(World::class.java), 20.0, 64.0, 20.0)
+        val (x, z) = circle.geometry().clamp(20.0, 20.0)
 
-        val clamped = circle.geometry().clamp(location)
-
-        assertEquals(10.0 - 0.3 * kotlin.math.sqrt(2.0), kotlin.math.hypot(clamped.x, clamped.z), 1e-9)
+        assertEquals(10.0 - 0.3 * kotlin.math.sqrt(2.0), kotlin.math.hypot(x, z), 1e-9)
     }
 
     @Test
@@ -113,7 +101,15 @@ class WorldBorderGeometryTest {
         assertTrue(circle.geometry().chunkIntersects(0, 0))
         assertFalse(circle.geometry().chunkIntersects(1, 1))
         assertTrue(circle.geometry().chunkZRange(0) != null)
-        assertNull(circle.geometry().chunkZRange(1))
+    }
+
+    @Test
+    fun `chunk coordinate iteration emits only intersecting chunks without duplicates`() {
+        val geometry = WorldBorder.Circle(0.0, 0.0, 20.0).geometry
+        val chunks = geometry.chunkCoordinates().toList()
+
+        assertEquals(chunks.size, chunks.distinct().size)
+        assertTrue(chunks.all { geometry.chunkIntersects(it.x, it.z) })
     }
 
     @Test
@@ -132,30 +128,42 @@ class WorldBorderGeometryTest {
 
     @Test
     fun `validates border dimensions and supported world range`() {
-        assertThrows<IllegalArgumentException> {
-            WorldBorder.Square(0.0, 0.0, radius = 0.0)
-                .geometry()
-                .validate()
-        }
+        assertThrows<IllegalArgumentException> { WorldBorder.Square(0.0, 0.0, radius = 0.0) }
         assertThrows<IllegalArgumentException> {
             WorldBorder.Square(Double.NaN, 0.0, radius = 1.0)
-                .geometry()
-                .validate()
         }
         assertThrows<IllegalArgumentException> {
             WorldBorder.Square(
                 0.0,
                 0.0,
                 radius = WorldBorderGeometry.MAX_RADIUS + 1,
-            ).geometry().validate()
+            )
         }
         assertThrows<IllegalArgumentException> {
             WorldBorder.Square(
                 WorldBorderGeometry.MAX_RADIUS,
                 0.0,
                 radius = 1.0,
-            ).geometry().validate()
+            )
         }
+    }
+
+    @Test
+    fun `clamping non-finite coordinates returns finite values`() {
+        val (x, z) = border.geometry().clamp(Double.NaN, Double.POSITIVE_INFINITY)
+
+        assertTrue(x.isFinite())
+        assertTrue(z.isFinite())
+    }
+
+    @Test
+    fun `reuses cached geometry and handles a zero-distance circle clamp`() {
+        val circle = WorldBorder.Circle(0.0, 0.0, radius = 10.0)
+        val (x, z) = circle.geometry.clamp(0.0, 0.0)
+
+        assertSame(circle.geometry, circle.geometry)
+        assertEquals(0.0, x)
+        assertEquals(0.0, z)
     }
 
     private fun WorldBorder.geometry() = WorldBorderGeometry(this)

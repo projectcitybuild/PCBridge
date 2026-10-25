@@ -28,11 +28,11 @@ class PlayerTeleporter(
         options: TeleportOptions = TeleportOptions(),
     ) = teleportationTracer.trace("PlayerTeleporter.move") {
         val currentLocation = player.location.clone()
-        val teleportLocation = adjustedDestination(destination, options)
 
         if (options.preloadDestinationChunk) {
-            destination.world.getChunkAtAsyncUrgently(teleportLocation).await()
+            destination.world.getChunkAtAsyncUrgently(destination).await()
         }
+        val teleportLocation = adjustedDestination(destination, options)
         val success = player.teleportAsync(teleportLocation, cause).await()
         if (!success) {
             log.warn { "Teleport failed ($teleportLocation)" }

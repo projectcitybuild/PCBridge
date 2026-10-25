@@ -4,9 +4,8 @@ import com.mojang.brigadier.arguments.DoubleArgumentType
 import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.features.worlds.WorldsPermissions
 import com.projectcitybuild.pcbridge.features.worlds.domain.data.WorldBorder
-import com.projectcitybuild.pcbridge.features.worlds.domain.data.WorldBorderUpdatedEvent
 import com.projectcitybuild.pcbridge.features.worlds.domain.geometry.WorldBorderGeometry
-import com.projectcitybuild.pcbridge.features.worlds.domain.repositories.WorldBorderRepository
+import com.projectcitybuild.pcbridge.features.worlds.domain.services.WorldBorderService
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandBuilder
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
@@ -15,13 +14,11 @@ import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskEx
 import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.requirePlayer
-import com.projectcitybuild.pcbridge.platform.paper.events.SpigotEventBroadcaster
 import org.bukkit.plugin.Plugin
 
 class BorderSetCommand(
     private val plugin: Plugin,
-    private val worldBorderRepository: WorldBorderRepository,
-    private val eventBroadcaster: SpigotEventBroadcaster,
+    private val worldBorderService: WorldBorderService,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
     override val builder = command("set") {
@@ -120,22 +117,16 @@ class BorderSetCommand(
     ) {
         val player = context.source.requirePlayer()
         val border = try {
-            WorldBorderGeometry(
-                createBorder(
-                    centerX ?: player.location.x,
-                    centerZ ?: player.location.z,
-                ),
-            ).validate()
+            createBorder(
+                centerX ?: player.location.x,
+                centerZ ?: player.location.z,
+            )
         } catch (failure: IllegalArgumentException) {
             player.sendMessage(l10n.worlds.invalidBorder(failure.message))
             return
         }
 
-        worldBorderRepository.set(player.world, border)
-
-        eventBroadcaster.broadcast(
-            WorldBorderUpdatedEvent(player.world, border),
-        )
+        worldBorderService.set(player.world, border)
         val message =
             when (border) {
                 is WorldBorder.Rectangle ->

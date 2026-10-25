@@ -6,7 +6,7 @@ import org.bukkit.event.HandlerList
 
 class WorldBorderUpdatedEvent(
     val world: World,
-    val border: WorldBorder,
+    val border: WorldBorder?,
 ) : Event() {
     override fun getHandlers(): HandlerList = handlerList
 

@@ -1,62 +1,51 @@
 package com.projectcitybuild.pcbridge.features.worlds.domain.repositories
 
 import com.projectcitybuild.pcbridge.core.filestorage.FileStorage
+import com.projectcitybuild.pcbridge.core.observability.logging.logSync
 import com.projectcitybuild.pcbridge.features.worlds.domain.bridging.toSerializableWorldBorder
 import com.projectcitybuild.pcbridge.features.worlds.domain.bridging.toWorldBorder
 import com.projectcitybuild.pcbridge.features.worlds.domain.data.SerializableWorldBorder
 import com.projectcitybuild.pcbridge.features.worlds.domain.data.WorldBorder
-import com.projectcitybuild.pcbridge.features.worlds.domain.geometry.WorldBorderGeometry
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.bukkit.Server
 import org.bukkit.World
 import java.io.File
 import java.nio.file.Files
 import java.util.UUID
-
-private const val MAX_WORLD_BORDER_SIZE = WorldBorderGeometry.MAX_DIMENSION
+import java.util.concurrent.ConcurrentHashMap
 
 class WorldBorderRepository(
     private val server: Server,
     private val fileStorage: FileStorage<SerializableWorldBorder>,
 ) {
-    private val cache = mutableMapOf<UUID, CachedBorder>()
+    private val cache = ConcurrentHashMap<UUID, CachedBorder>()
 
-    fun get(world: World): WorldBorder? {
-        cache[world.uid]?.let { return it.border }
+    fun get(world: World): WorldBorder? = cache.computeIfAbsent(world.uid) {
+        val border = try {
+            fileStorage.readSync(world.borderMetaFile())?.toWorldBorder()
+        } catch (failure: Exception) {
+            logSync.error(failure) { "Failed to read world border for ${world.name}" }
+            null
+        }
+        CachedBorder(border)
+    }.border
 
-        val border = fileStorage.readSync(world.borderMetaFile())?.toWorldBorder()
+    suspend fun set(world: World, border: WorldBorder) {
+        fileStorage.write(world.borderMetaFile(), border.toSerializableWorldBorder())
         cache[world.uid] = CachedBorder(border)
-        return border
     }
 
-    suspend fun set(
-        world: World,
-        border: WorldBorder,
-    ) {
-        val validated = WorldBorderGeometry(border).validate()
-        fileStorage.write(world.borderMetaFile(), validated.toSerializableWorldBorder())
-        cache[world.uid] = CachedBorder(validated)
-        world.applyNativeBorder(validated)
-        val geometry = WorldBorderGeometry(validated)
-        server.onlinePlayers
-            .filter { it.world.uid == world.uid && !geometry.contains(it.location.x, it.location.z) }
-            .forEach { it.teleport(geometry.clamp(it.location)) }
-    }
-
-    fun clear(world: World) {
-        Files.deleteIfExists(world.borderMetaFile().toPath())
+    suspend fun clear(world: World) {
+        val borderFile = world.borderMetaFile()
+        withContext(Dispatchers.IO) {
+            Files.deleteIfExists(borderFile.toPath())
+        }
         cache[world.uid] = CachedBorder(null)
-        world.worldBorder.setCenter(0.0, 0.0)
-        world.worldBorder.size = MAX_WORLD_BORDER_SIZE
     }
 
-    fun load(world: World): WorldBorder? {
-        val border = get(world) ?: return null
-        world.applyNativeBorder(border)
-        return border
-    }
-
-    fun loadAllLoaded() {
-        server.worlds.forEach(::load)
+    fun unload(world: World) {
+        cache.remove(world.uid)
     }
 
     fun allLoaded(): List<Pair<World, WorldBorder>> = server.worlds.mapNotNull { world ->
@@ -67,15 +56,5 @@ class WorldBorderRepository(
 private data class CachedBorder(
     val border: WorldBorder?,
 )
-
-private fun World.applyNativeBorder(border: WorldBorder) {
-    if (border is WorldBorder.Square) {
-        worldBorder.setCenter(border.centerX, border.centerZ)
-        worldBorder.size = WorldBorderGeometry(border).nativeBorderSize
-    } else {
-        worldBorder.setCenter(0.0, 0.0)
-        worldBorder.size = MAX_WORLD_BORDER_SIZE
-    }
-}
 
 private fun World.borderMetaFile() = File(worldFolder, "meta/border.json")

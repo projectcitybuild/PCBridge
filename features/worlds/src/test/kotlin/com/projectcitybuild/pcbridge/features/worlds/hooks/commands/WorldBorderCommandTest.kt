@@ -3,12 +3,12 @@ package com.projectcitybuild.pcbridge.features.worlds.hooks.commands
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.exceptions.CommandSyntaxException
 import com.projectcitybuild.pcbridge.features.worlds.WorldsPermissions
+import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.features.worlds.domain.data.WorldBorder
-import com.projectcitybuild.pcbridge.features.worlds.domain.data.WorldBorderUpdatedEvent
 import com.projectcitybuild.pcbridge.features.worlds.domain.repositories.WorldBorderRepository
+import com.projectcitybuild.pcbridge.features.worlds.domain.services.WorldBorderService
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.CoroutineScopeCommandTaskExecutor
-import com.projectcitybuild.pcbridge.platform.paper.events.SpigotEventBroadcaster
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -17,14 +17,12 @@ import kotlinx.coroutines.test.runTest
 import org.bukkit.Location
 import org.bukkit.World
 import org.bukkit.entity.Player
-import org.bukkit.event.Event
 import org.bukkit.plugin.Plugin
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.verify
-import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.whenever
 
@@ -32,7 +30,7 @@ import org.mockito.kotlin.whenever
 class WorldBorderCommandTest {
     private val player = mock(Player::class.java)
     private val worldBorderRepository = mock(WorldBorderRepository::class.java)
-    private val eventBroadcaster = mock(SpigotEventBroadcaster::class.java)
+    private val worldBorderService = mock(WorldBorderService::class.java)
     private val plugin = mock(Plugin::class.java)
 
     @Test
@@ -46,21 +44,10 @@ class WorldBorderCommandTest {
         execute(command, "border set square 96", source())
         advanceUntilIdle()
 
-        val borderCaptor = argumentCaptor<WorldBorder>()
-        verify(worldBorderRepository).set(eq(world), borderCaptor.capture())
-        assertEquals(
-            WorldBorder.Square(
-                12.5,
-                -8.0,
-                radius = 96.0,
-            ),
-            borderCaptor.firstValue,
+        verify(worldBorderService).set(
+            eq(world),
+            eq(WorldBorder.Square(12.5, -8.0, radius = 96.0)),
         )
-        val eventCaptor = argumentCaptor<Event>()
-        verify(eventBroadcaster).broadcast(eventCaptor.capture())
-        val event = eventCaptor.firstValue as WorldBorderUpdatedEvent
-        assertEquals(world, event.world)
-        assertEquals(borderCaptor.firstValue, event.border)
     }
 
     @Test
@@ -73,15 +60,13 @@ class WorldBorderCommandTest {
         execute(command, "border set circle 48 -10 15", source())
         advanceUntilIdle()
 
-        val borderCaptor = argumentCaptor<WorldBorder>()
-        verify(worldBorderRepository).set(eq(world), borderCaptor.capture())
-        assertEquals(
-            WorldBorder.Circle(
+        verify(worldBorderService).set(
+            eq(world),
+            eq(WorldBorder.Circle(
                 -10.0,
                 15.0,
                 radius = 48.0,
-            ),
-            borderCaptor.firstValue,
+            )),
         )
     }
 
@@ -95,16 +80,14 @@ class WorldBorderCommandTest {
         execute(command, "border set rectangle 80 40 -10 15", source())
         advanceUntilIdle()
 
-        val borderCaptor = argumentCaptor<WorldBorder>()
-        verify(worldBorderRepository).set(eq(world), borderCaptor.capture())
-        assertEquals(
-            WorldBorder.Rectangle(
+        verify(worldBorderService).set(
+            eq(world),
+            eq(WorldBorder.Rectangle(
                 -10.0,
                 15.0,
                 width = 80.0,
                 depth = 40.0,
-            ),
-            borderCaptor.firstValue,
+            )),
         )
     }
 
@@ -126,13 +109,29 @@ class WorldBorderCommandTest {
         val command =
             WorldsCommand(
                 command(this),
-                BorderClearCommand(worldBorderRepository),
+                BorderClearCommand(plugin, worldBorderService, CoroutineScopeCommandTaskExecutor(this)),
             )
 
         execute(command, "worlds clear", source())
         advanceUntilIdle()
 
-        verify(worldBorderRepository).clear(world)
+        verify(worldBorderService).clear(world)
+    }
+
+    @Test
+    fun `rejects a fill preview above the chunk limit`() = runTest {
+        val world = mock(World::class.java)
+        whenever(world.uid).thenReturn(java.util.UUID.randomUUID())
+        whenever(world.name).thenReturn("world")
+        whenever(player.world).thenReturn(world)
+        whenever(player.hasPermission(WorldsPermissions.MANAGE.node)).thenReturn(true)
+        whenever(worldBorderRepository.get(world)).thenReturn(WorldBorder.Circle(0.0, 0.0, 2_200.0))
+        val fill = BorderFillCommand(plugin, worldBorderRepository, CoroutineScopeCommandTaskExecutor(this))
+
+        execute(fill, "fill", source())
+        advanceUntilIdle()
+
+        verify(player).sendMessage(l10n.worlds.fillTooLarge(50_000))
     }
 
     private fun command(scope: CoroutineScope): WorldBorderCommand {
@@ -145,8 +144,7 @@ class WorldBorderCommandTest {
         val borderSetCommand =
             BorderSetCommand(
                 plugin,
-                worldBorderRepository,
-                eventBroadcaster,
+                worldBorderService,
                 CoroutineScopeCommandTaskExecutor(scope),
             )
         return WorldBorderCommand(

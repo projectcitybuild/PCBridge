@@ -1,7 +1,7 @@
 package com.projectcitybuild.pcbridge.features.worlds.domain.geometry
 
 import com.projectcitybuild.pcbridge.features.worlds.domain.data.WorldBorder
-import org.bukkit.Location
+import com.projectcitybuild.pcbridge.features.worlds.domain.data.WorldBorderLimits
 import kotlin.math.abs
 import kotlin.math.floor
 import kotlin.math.max
@@ -10,6 +10,8 @@ import kotlin.math.sqrt
 class WorldBorderGeometry(
     private val border: WorldBorder,
 ) {
+    data class ChunkCoordinate(val x: Int, val z: Int)
+
     private val halfWidth: Double
         get() = when (border) {
             is WorldBorder.Square -> border.radius
@@ -39,10 +41,9 @@ class WorldBorderGeometry(
     val nativeBorderSize: Double
         get() = max(halfWidth, halfDepth) * 2
 
-    fun contains(
-        x: Double,
-        z: Double,
-    ): Boolean {
+    fun contains(x: Double, z: Double): Boolean {
+        if (!x.isFinite() || !z.isFinite()) return false
+
         val deltaX = x - border.centerX
         val deltaZ = z - border.centerZ
 
@@ -57,33 +58,31 @@ class WorldBorderGeometry(
         }
     }
 
-    fun clamp(location: Location): Location {
-        val clamped = location.clone()
-        when (border) {
+    fun clamp(x: Double, z: Double): Pair<Double, Double> {
+        val safeX = x.takeIf(Double::isFinite) ?: border.centerX
+        val safeZ = z.takeIf(Double::isFinite) ?: border.centerZ
+
+        return when (border) {
             is WorldBorder.Square, is WorldBorder.Rectangle -> {
-                clamped.x = clampCoordinate(clamped.x, minX, maxX, PLAYER_HALF_WIDTH)
-                clamped.z = clampCoordinate(clamped.z, minZ, maxZ, PLAYER_HALF_WIDTH)
+                clampCoordinate(safeX, minX, maxX, PLAYER_HALF_WIDTH) to
+                    clampCoordinate(safeZ, minZ, maxZ, PLAYER_HALF_WIDTH)
             }
             is WorldBorder.Circle -> {
-                val deltaX = clamped.x - border.centerX
-                val deltaZ = clamped.z - border.centerZ
-                val radius = border.radius
-                val distance = sqrt(deltaX * deltaX + deltaZ * deltaZ)
-                val safeRadius = (radius - CIRCLE_PLAYER_MARGIN).coerceAtLeast(0.0)
-                if (distance > safeRadius) {
-                    val scale = safeRadius / distance
-                    clamped.x = border.centerX + deltaX * scale
-                    clamped.z = border.centerZ + deltaZ * scale
+                val deltaX = safeX - border.centerX
+                val deltaZ = safeZ - border.centerZ
+                val radius = (border.radius - CIRCLE_PLAYER_MARGIN).coerceAtLeast(0.0)
+                val distance = kotlin.math.hypot(deltaX, deltaZ)
+                if (distance <= radius || distance == 0.0) {
+                    safeX to safeZ
+                } else {
+                    val scale = radius / distance
+                    (border.centerX + deltaX * scale) to (border.centerZ + deltaZ * scale)
                 }
             }
         }
-        return clamped
     }
 
-    fun chunkIntersects(
-        chunkX: Int,
-        chunkZ: Int,
-    ): Boolean {
+    fun chunkIntersects(chunkX: Int, chunkZ: Int): Boolean {
         if (border !is WorldBorder.Circle) return true
 
         val minX = chunkX * CHUNK_SIZE
@@ -96,68 +95,38 @@ class WorldBorderGeometry(
         return deltaX * deltaX + deltaZ * deltaZ <= radius * radius
     }
 
+    fun chunkXRange(): IntRange = chunkCoordinateRange(minX)..chunkCoordinateRange(maxX)
+
+    fun chunkCoordinates(): Sequence<ChunkCoordinate> = sequence {
+        for (chunkX in chunkXRange()) {
+            val chunkZRange = chunkZRange(chunkX) ?: continue
+            for (chunkZ in chunkZRange) {
+                if (chunkIntersects(chunkX, chunkZ)) yield(ChunkCoordinate(chunkX, chunkZ))
+            }
+        }
+    }
+
     fun chunkZRange(chunkX: Int): IntRange? {
         if (border !is WorldBorder.Circle) {
             return chunkCoordinateRange(minZ)..chunkCoordinateRange(maxZ)
         }
 
-        val radius = border.radius
-        val minX = chunkX * CHUNK_SIZE
-        val nearestX = border.centerX.coerceIn(minX, minX + CHUNK_SIZE)
+        val minChunkX = chunkX * CHUNK_SIZE
+        val nearestX = border.centerX.coerceIn(minChunkX, minChunkX + CHUNK_SIZE)
         val deltaX = nearestX - border.centerX
-        val remainingRadiusSquared = radius * radius - deltaX * deltaX
+        val remainingRadiusSquared = border.radius * border.radius - deltaX * deltaX
         if (remainingRadiusSquared < 0) return null
 
         val zOffset = sqrt(remainingRadiusSquared)
         return chunkCoordinateRange(border.centerZ - zOffset)..chunkCoordinateRange(border.centerZ + zOffset)
     }
 
-    fun validate(): WorldBorder {
-        require(border.centerX.isFinite() && border.centerZ.isFinite()) { "Border center must be finite" }
-
-        when (border) {
-            is WorldBorder.Square -> {
-                val radius = border.radius
-                require(radius.isFinite() && radius > 0 && radius <= MAX_RADIUS) {
-                    "Border radius is out of range"
-                }
-            }
-            is WorldBorder.Circle -> {
-                val radius = border.radius
-                require(radius.isFinite() && radius > 0 && radius <= MAX_RADIUS) {
-                    "Border radius is out of range"
-                }
-            }
-            is WorldBorder.Rectangle -> {
-                val width = border.width
-                val depth = border.depth
-                require(width.isFinite() && width > 0 && width <= MAX_DIMENSION) {
-                    "Rectangle width is out of range"
-                }
-                require(depth.isFinite() && depth > 0 && depth <= MAX_DIMENSION) {
-                    "Rectangle depth is out of range"
-                }
-            }
-        }
-
-        require(
-            minX >= -MAX_RADIUS &&
-                maxX <= MAX_RADIUS &&
-                minZ >= -MAX_RADIUS &&
-                maxZ <= MAX_RADIUS,
-        ) { "Border edges are outside the supported world range" }
-        return border
-    }
-
     companion object {
-        const val MAX_RADIUS = 29_999_984.0
-        const val MAX_DIMENSION = MAX_RADIUS * 2
+        const val MAX_RADIUS = WorldBorderLimits.MAX_RADIUS
+        const val MAX_DIMENSION = WorldBorderLimits.MAX_DIMENSION
 
         private const val CHUNK_SIZE = 16.0
-
-        // Keep the player's 0.6-block-wide hitbox inside the border edge.
         private const val PLAYER_HALF_WIDTH = 0.3
-
         private val CIRCLE_PLAYER_MARGIN = PLAYER_HALF_WIDTH * sqrt(2.0)
 
         private fun chunkCoordinateRange(coordinate: Double) = floor(coordinate / CHUNK_SIZE).toInt()
@@ -170,7 +139,12 @@ class WorldBorderGeometry(
         ): Double {
             val safeMin = min + margin
             val safeMax = max - margin
-            return if (safeMin > safeMax) (min + max) / 2 else value.coerceIn(safeMin, safeMax)
+
+            return if (safeMin > safeMax) {
+                (min + max) / 2
+            } else {
+                value.coerceIn(safeMin, safeMax)
+            }
         }
     }
 }

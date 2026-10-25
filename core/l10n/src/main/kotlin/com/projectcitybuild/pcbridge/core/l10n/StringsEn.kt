@@ -871,6 +871,10 @@ class StringsEn {
         )
 
         val fillRequiresBorder = mm("<red>Set a world border before filling chunks.</red>")
+        fun fillTooLarge(maxChunks: Long) = mm(
+            "<red>Fill preview exceeds the limit of <maximum> chunks. Reduce the border size.</red>",
+            Placeholder.unparsed("maximum", maxChunks.toString()),
+        )
 
         fun fillPreview(
             chunkCount: Long,
