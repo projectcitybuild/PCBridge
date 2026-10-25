@@ -12,15 +12,21 @@ class VanillaOpInterceptListener : Listener {
      * Intercepts /op /deop usage by players and cancels them
      */
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    fun onPlayerCommandPreprocess(event: PlayerCommandPreprocessEvent) =
-        event.scopedSync(pimTracer, this::class.java) {
-            // Event only triggered by players. No further checks needed - we still
-            // want to allow console to /op players in emergencies
-            val message = event.message.trimEnd().lowercase()
-            if (message == "/op" || message.startsWith("/op ") ||
-                message == "/deop" || message.startsWith("/deop ")
-            ) {
-                event.isCancelled = true
-            }
+    fun onPlayerCommandPreprocess(event: PlayerCommandPreprocessEvent) = event.scopedSync(pimTracer, this::class.java) {
+        // Event only triggered by players. No further checks needed - we still
+        // want to allow console to /op players in emergencies
+        val label = event.message
+            .trim()
+            .removePrefix("/")
+            .split(Regex("\\s+"), limit = 2)
+            .first()
+            .lowercase()
+
+        val namespace = label.substringBefore(':').takeIf { ':' in label }
+        val command = label.substringAfterLast(':')
+        val isVanillaCommand = namespace == null || namespace == "minecraft" || namespace == "bukkit"
+        if (isVanillaCommand && (command == "op" || command == "deop")) {
+            event.isCancelled = true
         }
+    }
 }
