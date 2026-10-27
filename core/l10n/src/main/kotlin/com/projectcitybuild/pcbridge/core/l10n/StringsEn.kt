@@ -870,6 +870,11 @@ class StringsEn {
             Placeholder.unparsed("depth", depth.toString()),
         )
 
+        fun borderRelocationFailures(count: Int) = mm(
+            "<yellow>World border was committed, but relocation failed for <count> player(s). See server logs.</yellow>",
+            Placeholder.unparsed("count", count.toString()),
+        )
+
         val fillRequiresBorder = mm("<red>Set a world border before filling chunks.</red>")
         fun fillTooLarge(maxChunks: Long) = mm(
             "<red>Fill preview exceeds the limit of <maximum> chunks. Reduce the border size.</red>",
@@ -899,22 +904,52 @@ class StringsEn {
 
         fun fillProgress(
             checked: Long,
+            total: Long,
             generated: Long,
         ) = mm(
-            "<yellow>World border fill progress: checked <checked> chunks; generated <generated>.</yellow>",
+            "<yellow>World border fill progress: checked <checked>/<total> chunks; generated <generated>.</yellow>",
             Placeholder.unparsed("checked", checked.toString()),
+            Placeholder.unparsed("total", total.toString()),
             Placeholder.unparsed("generated", generated.toString()),
         )
 
         fun fillComplete(
             checked: Long,
+            total: Long,
             generated: Long,
         ) = mm(
-            "<green>World border fill complete: checked <checked> chunks; generated <generated>.</green>",
+            "<green>World border fill complete: checked <checked>/<total> chunks; generated <generated>.</green>",
             Placeholder.unparsed("checked", checked.toString()),
+            Placeholder.unparsed("total", total.toString()),
+            Placeholder.unparsed("generated", generated.toString()),
+        )
+
+        fun fillStatus(
+            checked: Long,
+            total: Long,
+            generated: Long,
+            status: String,
+        ) = mm(
+            "<yellow>World border fill <status>: checked <checked>/<total> chunks; generated <generated>.</yellow>",
+            Placeholder.unparsed("status", status),
+            Placeholder.unparsed("checked", checked.toString()),
+            Placeholder.unparsed("total", total.toString()),
+            Placeholder.unparsed("generated", generated.toString()),
+        )
+
+        fun fillCancelled(
+            checked: Long,
+            total: Long,
+            generated: Long,
+        ) = mm(
+            "<yellow>World border fill cancelled: checked <checked>/<total> chunks; generated <generated>.</yellow>",
+            Placeholder.unparsed("checked", checked.toString()),
+            Placeholder.unparsed("total", total.toString()),
             Placeholder.unparsed("generated", generated.toString()),
         )
 
         val fillFailed = mm("<red>World border fill failed. See the server log for details.</red>")
+        val fillNoActiveJob = mm("<red>There is no world border fill running in this world.</red>")
+        val fillCancelRequested = mm("<yellow>World border fill cancellation requested.</yellow>")
     }
 }

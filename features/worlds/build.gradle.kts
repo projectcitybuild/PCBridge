@@ -4,6 +4,7 @@ plugins {
 
 dependencies {
     implementation(project(":core:file-storage"))
+    implementation(project(":core:local-config"))
     implementation(project(":core:permissions"))
     implementation(project(":platform:paper"))
     implementation(project(":runtime"))

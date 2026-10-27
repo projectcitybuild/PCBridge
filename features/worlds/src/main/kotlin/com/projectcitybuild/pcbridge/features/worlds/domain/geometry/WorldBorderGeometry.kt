@@ -6,6 +6,7 @@ import kotlin.math.abs
 import kotlin.math.floor
 import kotlin.math.max
 import kotlin.math.sqrt
+import kotlin.random.Random
 
 class WorldBorderGeometry(
     private val border: WorldBorder,
@@ -53,10 +54,23 @@ class WorldBorderGeometry(
             }
             is WorldBorder.Circle -> {
                 val radius = border.radius
-                deltaX * deltaX + deltaZ * deltaZ <= radius * radius
+                kotlin.math.hypot(deltaX, deltaZ) <= radius
             }
         }
     }
+
+    fun sample(random: Random): Pair<Double, Double> =
+        when (border) {
+            is WorldBorder.Square, is WorldBorder.Rectangle -> {
+                random.nextDouble(minX, maxX) to random.nextDouble(minZ, maxZ)
+            }
+            is WorldBorder.Circle -> {
+                val radius = border.radius * sqrt(random.nextDouble())
+                val angle = random.nextDouble(0.0, 2 * Math.PI)
+                (border.centerX + radius * kotlin.math.cos(angle)) to
+                    (border.centerZ + radius * kotlin.math.sin(angle))
+            }
+        }
 
     fun clamp(x: Double, z: Double): Pair<Double, Double> {
         val safeX = x.takeIf(Double::isFinite) ?: border.centerX
@@ -92,7 +106,7 @@ class WorldBorderGeometry(
         val deltaX = nearestX - border.centerX
         val deltaZ = nearestZ - border.centerZ
         val radius = border.radius
-        return deltaX * deltaX + deltaZ * deltaZ <= radius * radius
+        return kotlin.math.hypot(deltaX, deltaZ) <= radius
     }
 
     fun chunkXRange(): IntRange = chunkCoordinateRange(minX)..chunkCoordinateRange(maxX)
@@ -114,10 +128,11 @@ class WorldBorderGeometry(
         val minChunkX = chunkX * CHUNK_SIZE
         val nearestX = border.centerX.coerceIn(minChunkX, minChunkX + CHUNK_SIZE)
         val deltaX = nearestX - border.centerX
-        val remainingRadiusSquared = border.radius * border.radius - deltaX * deltaX
-        if (remainingRadiusSquared < 0) return null
+        val radius = border.radius
+        if (abs(deltaX) > radius) return null
 
-        val zOffset = sqrt(remainingRadiusSquared)
+        val normalizedX = (deltaX / radius).coerceIn(-1.0, 1.0)
+        val zOffset = radius * sqrt((1 - normalizedX * normalizedX).coerceAtLeast(0.0))
         return chunkCoordinateRange(border.centerZ - zOffset)..chunkCoordinateRange(border.centerZ + zOffset)
     }
 

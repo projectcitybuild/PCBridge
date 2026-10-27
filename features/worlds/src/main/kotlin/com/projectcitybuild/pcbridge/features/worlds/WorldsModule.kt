@@ -1,7 +1,9 @@
 package com.projectcitybuild.pcbridge.features.worlds
 
+import com.github.shynixn.mccoroutine.bukkit.minecraftDispatcher
 import com.google.gson.reflect.TypeToken
 import com.projectcitybuild.pcbridge.core.filestorage.JsonFileStorage
+import com.projectcitybuild.pcbridge.core.localconfig.LocalConfig
 import com.projectcitybuild.pcbridge.features.worlds.domain.data.SerializableWorldBorder
 import com.projectcitybuild.pcbridge.features.worlds.domain.repositories.WorldBorderRepository
 import com.projectcitybuild.pcbridge.features.worlds.domain.services.WorldBorderService
@@ -14,6 +16,7 @@ import com.projectcitybuild.pcbridge.features.worlds.hooks.listeners.WorldBorder
 import com.projectcitybuild.pcbridge.runtime.features.paperFeature
 import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.module
+import org.bukkit.plugin.java.JavaPlugin
 
 val worldsModule =
     module {
@@ -23,12 +26,26 @@ val worldsModule =
         }
 
         factoryOf(::WorldsCommand)
-        single { BorderFillCommand(get(), get()) }
+        single {
+            BorderFillCommand(
+                plugin = get(),
+                worldBorderRepository = get(),
+                configuredChunkLimit = get<LocalConfig>().get().worlds?.borderFillMaxChunks,
+            )
+        }
         factoryOf(::BorderSetCommand)
         factoryOf(::BorderClearCommand)
         factoryOf(::WorldBorderCommand)
         factoryOf(::WorldBorderListener)
-        factoryOf(::WorldBorderService)
+        factory {
+            WorldBorderService(
+                server = get(),
+                repository = get(),
+                eventBroadcaster = get(),
+                playerTeleporter = get(),
+                minecraftDispatcher = get<JavaPlugin>().minecraftDispatcher,
+            )
+        }
 
         single {
             WorldBorderRepository(

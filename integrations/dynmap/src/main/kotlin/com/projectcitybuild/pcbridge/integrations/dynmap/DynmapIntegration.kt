@@ -20,7 +20,9 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.HandlerList
 import org.bukkit.event.Listener
 import org.bukkit.event.world.WorldLoadEvent
+import org.bukkit.event.world.WorldUnloadEvent
 import org.bukkit.plugin.java.JavaPlugin
+import java.util.UUID
 
 class DynmapIntegration(
     private val plugin: JavaPlugin,
@@ -88,6 +90,10 @@ class DynmapIntegration(
     @EventHandler
     suspend fun onWorldLoad(event: WorldLoadEvent) =
         event.scoped(tracer, this::class.java) { updateBorderMarkers() }
+
+    @EventHandler
+    suspend fun onWorldUnload(event: WorldUnloadEvent) =
+        event.scoped(tracer, this::class.java) { removeBorderMarker(event.world.uid) }
 
     @EventHandler
     suspend fun onRemoteConfigUpdated(event: RemoteConfigUpdatedEvent) =
@@ -183,6 +189,18 @@ class DynmapIntegration(
                 throw e
             } catch (e: Exception) {
                 log.error(e) { "Failed to draw world border markers" }
+            }
+        }
+
+    private suspend fun removeBorderMarker(worldId: UUID) =
+        tracer.trace("removeBorderMarker") {
+            val adapter = adapter ?: return@trace
+            try {
+                adapter.removeBorderMarker(worldId)
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                log.error(e) { "Failed to remove Dynmap world border marker for $worldId" }
             }
         }
 }

@@ -2,12 +2,11 @@ package com.projectcitybuild.pcbridge.integrations.dynmap
 
 import com.projectcitybuild.pcbridge.core.observability.logging.logSync
 import com.projectcitybuild.pcbridge.features.worlds.domain.data.WorldBorder
-import com.projectcitybuild.pcbridge.features.worlds.domain.geometry.WorldBorderGeometry
 import java.util.UUID
 
-class DynmapAdapter {
-    private var delegate = DynmapDelegate()
-
+class DynmapAdapter(
+    private val delegate: DynmapDelegate = DynmapDelegate(),
+) {
     fun createMarker(
         id: String,
         label: String,
@@ -147,6 +146,15 @@ class DynmapAdapter {
             marker.setLineStyle(2, 1.0, BORDER_COLOR)
             marker.setFillStyle(0.08, BORDER_COLOR)
         }
+    }
+
+    fun removeBorderMarker(worldId: UUID) {
+        checkNotNull(delegate.instance) { "Dynmap unavailable" }
+        val markerAPI = checkNotNull(delegate.instance?.markerAPI) { "Marker API unavailable" }
+        val markerSet = markerAPI.getMarkerSet(BORDER_SET_ID) ?: return
+        val markerId = borderMarkerId(worldId)
+        markerSet.findAreaMarker(markerId)?.deleteMarker()
+        markerSet.findCircleMarker(markerId)?.deleteMarker()
     }
 
     private fun borderMarkerId(worldId: UUID) = "world_border_$worldId"

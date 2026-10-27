@@ -7,6 +7,8 @@ import org.junit.jupiter.api.Assertions.assertSame
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import kotlin.math.sqrt
+import kotlin.random.Random
 
 class WorldBorderGeometryTest {
     private val border =
@@ -35,6 +37,37 @@ class WorldBorderGeometryTest {
 
         assertTrue(circle.geometry().contains(22.0, 4.0))
         assertFalse(circle.geometry().contains(25.0, 10.0))
+    }
+
+    @Test
+    fun `samples square rectangle and circle positions inside exact geometry`() {
+        val borders = listOf(
+            WorldBorder.Square(-20.0, 12.0, radius = 8.0),
+            WorldBorder.Rectangle(-20.0, 12.0, width = 12.0, depth = 4.0),
+            WorldBorder.Circle(-20.0, 12.0, radius = 8.0),
+        )
+
+        borders.forEach { sampledBorder ->
+            val random = Random(42)
+            repeat(500) {
+                val (x, z) = sampledBorder.geometry.sample(random)
+                assertTrue(sampledBorder.geometry.contains(x, z))
+            }
+        }
+    }
+
+    @Test
+    fun `circle sampling uses square root radius for uniform area`() {
+        val circle = WorldBorder.Circle(-20.0, 12.0, radius = 8.0)
+        val random = Random(42)
+        val expectedRandom = Random(42)
+        val radius = circle.radius * sqrt(expectedRandom.nextDouble())
+        val angle = expectedRandom.nextDouble(0.0, 2 * Math.PI)
+
+        val (x, z) = circle.geometry.sample(random)
+
+        assertEquals(circle.centerX + radius * kotlin.math.cos(angle), x)
+        assertEquals(circle.centerZ + radius * kotlin.math.sin(angle), z)
     }
 
     @Test
@@ -86,7 +119,7 @@ class WorldBorderGeometryTest {
             )
         val (x, z) = circle.geometry().clamp(20.0, 20.0)
 
-        assertEquals(10.0 - 0.3 * kotlin.math.sqrt(2.0), kotlin.math.hypot(x, z), 1e-9)
+        assertEquals(10.0 - 0.3 * sqrt(2.0), kotlin.math.hypot(x, z), 1e-9)
     }
 
     @Test
@@ -129,8 +162,18 @@ class WorldBorderGeometryTest {
     @Test
     fun `validates border dimensions and supported world range`() {
         assertThrows<IllegalArgumentException> { WorldBorder.Square(0.0, 0.0, radius = 0.0) }
+        assertThrows<IllegalArgumentException> { WorldBorder.Square(0.0, 0.0, radius = -1.0) }
         assertThrows<IllegalArgumentException> {
             WorldBorder.Square(Double.NaN, 0.0, radius = 1.0)
+        }
+        assertThrows<IllegalArgumentException> {
+            WorldBorder.Circle(Double.POSITIVE_INFINITY, 0.0, radius = 1.0)
+        }
+        assertThrows<IllegalArgumentException> {
+            WorldBorder.Rectangle(0.0, 0.0, width = Double.POSITIVE_INFINITY, depth = 1.0)
+        }
+        assertThrows<IllegalArgumentException> {
+            WorldBorder.Rectangle(0.0, 0.0, width = 1.0, depth = -1.0)
         }
         assertThrows<IllegalArgumentException> {
             WorldBorder.Square(
@@ -146,6 +189,59 @@ class WorldBorderGeometryTest {
                 radius = 1.0,
             )
         }
+    }
+
+    @Test
+    fun `rejects dimensions that collapse at the configured floating point center`() {
+        assertThrows<IllegalArgumentException> {
+            WorldBorder.Rectangle(10_000_000.0, 0.0, width = 1e-10, depth = 1.0)
+        }
+    }
+
+    @Test
+    fun `circle containment remains accurate when squared distances underflow`() {
+        val circle = WorldBorder.Circle(0.0, 0.0, radius = 1e-200)
+
+        assertTrue(circle.geometry.contains(1e-200, 0.0))
+        assertFalse(circle.geometry.contains(2e-200, 0.0))
+    }
+
+    @Test
+    fun `tiny circle at chunk boundaries includes every intersecting chunk`() {
+        val geometry = WorldBorder.Circle(0.0, 0.0, radius = 1e-200).geometry
+
+        assertEquals(
+            setOf(
+                WorldBorderGeometry.ChunkCoordinate(-1, -1),
+                WorldBorderGeometry.ChunkCoordinate(-1, 0),
+                WorldBorderGeometry.ChunkCoordinate(0, -1),
+                WorldBorderGeometry.ChunkCoordinate(0, 0),
+            ),
+            geometry.chunkCoordinates().toSet(),
+        )
+    }
+
+    @Test
+    fun `world limit edges map to the expected chunk range`() {
+        val border = WorldBorder.Square(0.0, 0.0, WorldBorderGeometry.MAX_RADIUS)
+
+        assertEquals(
+            -1_874_999..1_874_999,
+            border.geometry.chunkXRange(),
+        )
+        assertTrue(border.geometry.contains(-WorldBorderGeometry.MAX_RADIUS, 0.0))
+        assertTrue(border.geometry.contains(WorldBorderGeometry.MAX_RADIUS, 0.0))
+    }
+
+    @Test
+    fun `circle and rectangle boundaries are exact at negative coordinates`() {
+        val circle = WorldBorder.Circle(-16.0, -16.0, radius = 10.0)
+        val rectangle = WorldBorder.Rectangle(-16.0, -16.0, width = 32.0, depth = 16.0)
+
+        assertTrue(circle.geometry.contains(-6.0, -16.0))
+        assertFalse(circle.geometry.contains(-5.9999, -16.0))
+        assertTrue(rectangle.geometry.contains(0.0, -24.0))
+        assertFalse(rectangle.geometry.contains(0.0001, -24.0))
     }
 
     @Test

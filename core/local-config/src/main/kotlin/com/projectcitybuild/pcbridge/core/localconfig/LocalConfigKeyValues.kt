@@ -15,6 +15,7 @@ data class LocalConfigKeyValues(
     val webServer: WebServer,
     val observability: Observability,
     val discord: Discord,
+    val worlds: Worlds? = null,
 ) {
     @Serializable
     data class Api(
@@ -59,30 +60,31 @@ data class LocalConfigKeyValues(
     data class Discord(
         val contentAlertWebhook: String,
     )
+
+    @Serializable
+    data class Worlds(
+        val borderFillMaxChunks: Int = 4_096,
+    )
 }
 
-fun LocalConfigKeyValues.Companion.default() =
-    LocalConfigKeyValues(
-        environment = Environment.DEV,
-        api =
-            LocalConfigKeyValues.Api(
-                token = "pcbridge_local",
-                baseUrl = "http://api.localhost/",
-                logLevel = LocalConfigKeyValues.Api.LogLevel.Trace,
-            ),
-        webServer =
-            LocalConfigKeyValues.WebServer(
-                token = "REPLACE_WITH_A_RANDOM_SECRET",
-                host = "127.0.0.1", // Use 0.0.0.0 to publicly expose
-                port = 8080,
-            ),
-        observability =
-            LocalConfigKeyValues.Observability(
-                sentryDsn = "",
-                traceSampleRate = 1.0,
-            ),
-        discord =
-            LocalConfigKeyValues.Discord(
-                contentAlertWebhook = "",
-            ),
-    )
+fun LocalConfigKeyValues.Companion.default() = LocalConfigKeyValues(
+    environment = Environment.DEV,
+    api = LocalConfigKeyValues.Api(
+        token = "pcbridge_local",
+        baseUrl = "http://api.localhost/",
+        logLevel = LocalConfigKeyValues.Api.LogLevel.Trace,
+    ),
+    webServer = LocalConfigKeyValues.WebServer(
+        token = "REPLACE_WITH_A_RANDOM_SECRET",
+        host = "127.0.0.1", // Use 0.0.0.0 to publicly expose
+        port = 8080,
+    ),
+    observability = LocalConfigKeyValues.Observability(
+        sentryDsn = "",
+        traceSampleRate = 1.0,
+    ),
+    discord = LocalConfigKeyValues.Discord(
+        contentAlertWebhook = "",
+    ),
+    worlds = LocalConfigKeyValues.Worlds(),
+)

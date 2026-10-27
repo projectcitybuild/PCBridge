@@ -48,5 +48,5 @@ val teleportationModule =
         single { TeleportRequestService() }
         factoryOf(::TeleportValidator)
         factoryOf(::TeleportRequestListener)
-        factoryOf(::FindRandomLocation)
+        factory { FindRandomLocation(constraintProvider = get()) }
     }

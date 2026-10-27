@@ -2,32 +2,74 @@ package com.projectcitybuild.pcbridge.runtime.teleportation
 
 import org.bukkit.Material
 import org.bukkit.World
+import org.bukkit.block.Block
 
 class SafeYLocationFinder {
     fun findY(
         world: World,
         x: Int,
         z: Int,
-    ): Int? = teleportationTracer.traceSync("SafeYLocationFinder.findY") {
-        if (!world.isChunkLoaded(x shr 4, z shr 4)) return@traceSync null
+    ): Int? = findY(
+        world = world,
+        x = x,
+        z = z,
+        isSafeFloor = { block ->
+            block.type.let { it.isSolid && !it.isDangerous() }
+        },
+        isAir = { it.type.isAirBlock() },
+    )
 
-        val highestY = if (world.environment == World.Environment.NETHER) {
-            world.maxHeight - 32 // Nether ceiling
-        } else {
-            world.maxHeight - 3 // Max build height minus player height
-        }.coerceAtLeast(world.minHeight)
+    internal fun findY(
+        world: World,
+        x: Int,
+        z: Int,
+        isSafeFloor: (Block) -> Boolean,
+        isAir: (Block) -> Boolean,
+    ): Int? = teleportationTracer.traceSync("SafeYLocationFinder.findY") { span ->
+        val startedAtNanos = System.nanoTime()
+        var verticalPositionsChecked = 0L
+        var blockLookups = 0L
+        var outcome = "error"
 
-        for (y in highestY downTo world.minHeight) {
-            val floor = world.getBlockAt(x, y, z)
-            val above = world.getBlockAt(x, y + 1, z)
-            val headroom = world.getBlockAt(x, y + 2, z)
-            if (floor.type.isSolid && !floor.type.isDangerous() &&
-                above.type.isAirBlock() && headroom.type.isAirBlock()
-            ) {
-                return@traceSync y + 1
+        try {
+            if (!world.isChunkLoaded(x shr 4, z shr 4)) {
+                outcome = "chunk_unloaded"
+                return@traceSync null
             }
+
+            val highestY = if (world.environment == World.Environment.NETHER) {
+                world.maxHeight - 32
+            } else {
+                world.maxHeight - 3
+            }.coerceAtLeast(world.minHeight)
+
+            for (y in highestY downTo world.minHeight) {
+                verticalPositionsChecked++
+                blockLookups++
+                val floor = world.getBlockAt(x, y, z)
+                if (!isSafeFloor(floor)) continue
+
+                blockLookups++
+                val above = world.getBlockAt(x, y + 1, z)
+                if (!isAir(above)) continue
+
+                blockLookups++
+                val headroom = world.getBlockAt(x, y + 2, z)
+                if (isAir(headroom)) {
+                    outcome = "found"
+                    return@traceSync y + 1
+                }
+            }
+
+            outcome = "not_found"
+            null
+        } finally {
+            span.setAttribute("safe_y.search_duration_ns", System.nanoTime() - startedAtNanos)
+            span.setAttribute("safe_y.vertical_positions_checked", verticalPositionsChecked)
+            span.setAttribute("safe_y.block_lookups", blockLookups)
+            span.setAttribute("safe_y.outcome", outcome)
+            span.setAttribute("safe_y.failed", outcome != "found")
         }
-        null
     }
 }
 

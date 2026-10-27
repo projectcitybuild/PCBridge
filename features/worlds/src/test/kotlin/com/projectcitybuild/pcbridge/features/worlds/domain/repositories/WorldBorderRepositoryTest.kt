@@ -76,6 +76,28 @@ class WorldBorderRepositoryTest {
     }
 
     @Test
+    fun `does not observe external metadata edits until the world cache is evicted`() {
+        val world = mock(World::class.java)
+        whenever(world.uid).thenReturn(UUID.randomUUID())
+        whenever(world.worldFolder).thenReturn(temporaryDirectory)
+        val borderFile = File(temporaryDirectory, "meta/border.json")
+        val repository =
+            WorldBorderRepository(
+                mock(Server::class.java),
+                JsonFileStorage(object : TypeToken<SerializableWorldBorder>() {}),
+            )
+
+        assertEquals(null, repository.get(world))
+        borderFile.parentFile.mkdirs()
+        borderFile.writeText("""{"center_x":4.0,"center_z":-2.0,"shape":"SQUARE","radius":10.0}""")
+        assertEquals(null, repository.get(world))
+
+        repository.unload(world)
+
+        assertEquals(WorldBorder.Square(4.0, -2.0, 10.0), repository.get(world))
+    }
+
+    @Test
     fun `caches rectangular border files without both dimensions as absent`() {
         val world = mock(World::class.java)
         whenever(world.uid).thenReturn(UUID.randomUUID())

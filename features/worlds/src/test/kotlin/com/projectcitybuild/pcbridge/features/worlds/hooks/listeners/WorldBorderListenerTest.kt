@@ -5,20 +5,30 @@ import com.projectcitybuild.pcbridge.features.worlds.domain.data.WorldBorder
 import com.projectcitybuild.pcbridge.features.worlds.domain.repositories.WorldBorderRepository
 import com.projectcitybuild.pcbridge.features.worlds.domain.services.WorldBorderService
 import com.projectcitybuild.pcbridge.runtime.teleportation.SafeYLocationFinder
+import io.papermc.paper.event.entity.EntityMoveEvent
+import kotlinx.coroutines.test.runTest
 import org.bukkit.Location
 import org.bukkit.World
 import org.bukkit.block.Block
+import org.bukkit.block.BlockFace
 import org.bukkit.entity.Creature
 import org.bukkit.entity.Entity
 import org.bukkit.entity.Player
 import org.bukkit.entity.Projectile
 import org.bukkit.entity.Vehicle
+import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.block.BlockExplodeEvent
-import org.bukkit.event.entity.CreatureSpawnEvent
+import org.bukkit.event.block.BlockFromToEvent
+import org.bukkit.event.block.BlockPistonExtendEvent
 import org.bukkit.event.block.BlockPlaceEvent
+import org.bukkit.event.entity.CreatureSpawnEvent
 import org.bukkit.event.entity.EntityExplodeEvent
-import org.bukkit.event.entity.ProjectileLaunchEvent
 import org.bukkit.event.entity.EntityTeleportEvent
+import org.bukkit.event.entity.ProjectileHitEvent
+import org.bukkit.event.entity.ProjectileLaunchEvent
+import org.bukkit.event.player.PlayerBucketEmptyEvent
+import org.bukkit.event.player.PlayerBucketFillEvent
+import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerMoveEvent
 import org.bukkit.event.player.PlayerTeleportEvent
 import org.bukkit.event.vehicle.VehicleMoveEvent
@@ -45,6 +55,17 @@ class WorldBorderListenerTest {
         centerZ = 0.0,
         radius = 10.0,
     )
+
+    @Test
+    fun `join relocation delegates to the shared safe teleport workflow`() = runTest {
+        val player = mock(Player::class.java)
+        val event = mock(PlayerJoinEvent::class.java)
+        whenever(event.player).thenReturn(player)
+
+        listener.onPlayerJoin(event)
+
+        verify(borderService).relocateIfOutside(player)
+    }
 
     @Test
     fun `clamps player movement to the configured border`() {
@@ -192,6 +213,37 @@ class WorldBorderListenerTest {
     }
 
     @Test
+    fun `invalidates a cached safe y when terrain changes in the cached column`() {
+        val playerId = UUID.randomUUID()
+        val player = mock(Player::class.java)
+        whenever(player.uniqueId).thenReturn(playerId)
+        whenever(borderRepository.get(world)).thenReturn(border)
+        whenever(safeYLocationFinder.findY(world, 9, 0)).thenReturn(80, 75)
+        val firstAttempt = PlayerMoveEvent(
+            player,
+            Location(world, 9.0, 64.0, 0.0),
+            Location(world, 12.0, 64.0, 0.0),
+        )
+        listener.onPlayerMove(firstAttempt)
+
+        val changedBlock = mock(Block::class.java)
+        whenever(changedBlock.world).thenReturn(world)
+        whenever(changedBlock.x).thenReturn(9)
+        whenever(changedBlock.z).thenReturn(0)
+        listener.onBlockBreak(BlockBreakEvent(changedBlock, player))
+
+        val repeatedAttempt = PlayerMoveEvent(
+            player,
+            Location(world, 9.0, 64.0, 0.0),
+            Location(world, 12.0, 64.0, 0.0),
+        )
+        listener.onPlayerMove(repeatedAttempt)
+
+        assertEquals(75.0, repeatedAttempt.to?.y)
+        verify(safeYLocationFinder, times(2)).findY(world, 9, 0)
+    }
+
+    @Test
     fun `cancels creature spawns outside the configured border`() {
         whenever(borderRepository.get(world)).thenReturn(border)
         val creature = mock(Creature::class.java)
@@ -210,13 +262,110 @@ class WorldBorderListenerTest {
     fun `cancels block placement outside the configured border`() {
         whenever(borderRepository.get(world)).thenReturn(border)
         val block = mock(Block::class.java)
-        whenever(block.location).thenReturn(Location(world, 11.0, 64.0, 0.0))
+        whenever(block.world).thenReturn(world)
+        whenever(block.x).thenReturn(11)
+        whenever(block.z).thenReturn(0)
         val event = mock(BlockPlaceEvent::class.java)
         whenever(event.blockPlaced).thenReturn(block)
 
         listener.onBlockPlace(event)
 
         verify(event).setCancelled(true)
+    }
+
+    @Test
+    fun `cancels block breaking outside the configured border`() {
+        whenever(borderRepository.get(world)).thenReturn(border)
+        val block = mock(Block::class.java)
+        whenever(block.world).thenReturn(world)
+        whenever(block.x).thenReturn(11)
+        whenever(block.z).thenReturn(0)
+        val event = BlockBreakEvent(block, mock(Player::class.java))
+
+        listener.onBlockBreak(event)
+
+        assertTrue(event.isCancelled)
+    }
+
+    @Test
+    fun `cancels bucket fill and empty outside the configured border`() {
+        whenever(borderRepository.get(world)).thenReturn(border)
+        val block = mock(Block::class.java)
+        whenever(block.world).thenReturn(world)
+        whenever(block.x).thenReturn(11)
+        whenever(block.z).thenReturn(0)
+        val fillEvent = mock(PlayerBucketFillEvent::class.java)
+        val emptyEvent = mock(PlayerBucketEmptyEvent::class.java)
+        whenever(fillEvent.block).thenReturn(block)
+        whenever(emptyEvent.block).thenReturn(block)
+
+        listener.onBucketFill(fillEvent)
+        listener.onBucketEmpty(emptyEvent)
+
+        verify(fillEvent).setCancelled(true)
+        verify(emptyEvent).setCancelled(true)
+    }
+
+    @Test
+    fun `cancels fluid flow only when crossing the configured border`() {
+        whenever(borderRepository.get(world)).thenReturn(border)
+        val source = mock(Block::class.java)
+        val destination = mock(Block::class.java)
+        whenever(source.world).thenReturn(world)
+        whenever(source.x).thenReturn(9)
+        whenever(source.z).thenReturn(0)
+        whenever(destination.world).thenReturn(world)
+        whenever(destination.x).thenReturn(10)
+        whenever(destination.z).thenReturn(0)
+        val event = mock(BlockFromToEvent::class.java)
+        whenever(event.block).thenReturn(source)
+        whenever(event.toBlock).thenReturn(destination)
+
+        listener.onFluidFlow(event)
+
+        verify(event).setCancelled(true)
+    }
+
+    @Test
+    fun `cancels piston extension that would move a block outside the configured border`() {
+        whenever(borderRepository.get(world)).thenReturn(border)
+        val piston = mock(Block::class.java)
+        val moved = mock(Block::class.java)
+        val destination = mock(Block::class.java)
+        whenever(piston.world).thenReturn(world)
+        whenever(piston.x).thenReturn(8)
+        whenever(piston.z).thenReturn(0)
+        whenever(piston.getRelative(BlockFace.EAST)).thenReturn(moved)
+        whenever(moved.world).thenReturn(world)
+        whenever(moved.x).thenReturn(9)
+        whenever(moved.z).thenReturn(0)
+        whenever(moved.getRelative(BlockFace.EAST)).thenReturn(destination)
+        whenever(destination.world).thenReturn(world)
+        whenever(destination.x).thenReturn(10)
+        whenever(destination.z).thenReturn(0)
+        val event = mock(BlockPistonExtendEvent::class.java)
+        whenever(event.block).thenReturn(piston)
+        whenever(event.direction).thenReturn(BlockFace.EAST)
+        whenever(event.blocks).thenReturn(listOf(moved))
+
+        listener.onPistonExtend(event)
+
+        verify(event).setCancelled(true)
+    }
+
+    @Test
+    fun `constrains living entities already outside the configured border when they move`() {
+        whenever(borderRepository.get(world)).thenReturn(border)
+        val creature = mock(Creature::class.java)
+        val event = EntityMoveEvent(
+            creature,
+            Location(world, 11.0, 64.0, 0.0),
+            Location(world, 12.0, 64.0, 0.0),
+        )
+
+        listener.onLivingEntityMove(event)
+
+        assertTrue(border.geometry.contains(event.to.x, event.to.z))
     }
 
     @Test
@@ -263,10 +412,25 @@ class WorldBorderListenerTest {
     }
 
     @Test
+    fun `cancels projectile hits outside the configured border`() {
+        whenever(borderRepository.get(world)).thenReturn(border)
+        val projectile = mock(Projectile::class.java)
+        whenever(projectile.location).thenReturn(Location(world, 11.0, 64.0, 0.0))
+        val event = mock(ProjectileHitEvent::class.java)
+        whenever(event.entity).thenReturn(projectile)
+
+        listener.onProjectileHit(event)
+
+        verify(event).setCancelled(true)
+    }
+
+    @Test
     fun `removes out-of-border blocks from entity explosions`() {
         whenever(borderRepository.get(world)).thenReturn(border)
         val inside = mock(Block::class.java)
         val outside = mock(Block::class.java)
+        whenever(inside.world).thenReturn(world)
+        whenever(outside.world).thenReturn(world)
         whenever(inside.x).thenReturn(0)
         whenever(inside.z).thenReturn(0)
         whenever(outside.x).thenReturn(11)

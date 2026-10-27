@@ -22,10 +22,13 @@ class WorldBorderRepository(
     private val cache = ConcurrentHashMap<UUID, CachedBorder>()
 
     fun get(world: World): WorldBorder? = cache.computeIfAbsent(world.uid) {
+        val borderFile = world.borderMetaFile()
         val border = try {
-            fileStorage.readSync(world.borderMetaFile())?.toWorldBorder()
+            fileStorage.readSync(borderFile)?.toWorldBorder()
         } catch (failure: Exception) {
-            logSync.error(failure) { "Failed to read world border for ${world.name}" }
+            logSync.error(failure) {
+                "Failed to read world border metadata for ${world.name} from ${borderFile.absolutePath}"
+            }
             null
         }
         CachedBorder(border)

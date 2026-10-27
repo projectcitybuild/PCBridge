@@ -21,4 +21,7 @@ dependencies {
     implementation("io.insert-koin:koin-core:3.5.6")
 
     compileOnly("us.dynmap:DynmapCoreAPI:3.7-beta-6")
+
+    testImplementation(project(":core:support:tests"))
+    testImplementation("us.dynmap:DynmapCoreAPI:3.7-beta-6")
 }

@@ -126,7 +126,7 @@ class BorderSetCommand(
             return
         }
 
-        worldBorderService.set(player.world, border)
+        val relocationFailures = worldBorderService.set(player.world, border)
         val message =
             when (border) {
                 is WorldBorder.Rectangle ->
@@ -152,5 +152,8 @@ class BorderSetCommand(
                     )
             }
         player.sendMessage(message)
+        if (relocationFailures.isNotEmpty()) {
+            player.sendMessage(l10n.worlds.borderRelocationFailures(relocationFailures.size))
+        }
     }
 }

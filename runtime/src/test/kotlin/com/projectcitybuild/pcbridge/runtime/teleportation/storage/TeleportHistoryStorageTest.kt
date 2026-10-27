@@ -88,12 +88,13 @@ class TeleportHistoryStorageTest {
         val player = mock<Player>()
         var currentLocation = Location(world, 1.0, 65.0, 1.0)
         whenever(player.uniqueId).thenReturn(playerId)
+        whenever(player.isOnline).thenReturn(true)
         whenever(player.location).thenAnswer { currentLocation }
         whenever(player.teleportAsync(any<Location>(), any<TeleportCause>())).thenAnswer { invocation ->
             currentLocation = invocation.getArgument<Location>(0).clone()
             CompletableFuture.completedFuture(true)
         }
-        val teleporter = PlayerTeleporter(mock(), historyStorage)
+        val teleporter = PlayerTeleporter(mock(), historyStorage, server, Dispatchers.Unconfined)
         val destination = Location(world, 20.25, 70.0, -4.75, 25.0f, 5.0f)
 
         teleporter.move(
@@ -139,10 +140,11 @@ class TeleportHistoryStorageTest {
         val player = mock<Player>()
         whenever(server.pluginManager).thenReturn(pluginManager)
         whenever(player.uniqueId).thenReturn(playerId)
+        whenever(player.isOnline).thenReturn(true)
         whenever(player.location).thenReturn(Location(world, 1.0, 65.0, 1.0))
         whenever(player.teleportAsync(any<Location>(), any<TeleportCause>()))
             .thenReturn(CompletableFuture.completedFuture(false))
-        val teleporter = PlayerTeleporter(mock(), historyStorage)
+        val teleporter = PlayerTeleporter(mock(), historyStorage, server, Dispatchers.Unconfined)
 
         var failed = false
         try {

@@ -76,6 +76,9 @@ sealed class WorldBorder(
 
         private fun validateEdges(minX: Double, maxX: Double, minZ: Double, maxZ: Double) {
             val maxRadius = WorldBorderLimits.MAX_RADIUS
+            require(minX < maxX && minZ < maxZ) {
+                "Border dimensions are too small for the configured center"
+            }
             require(minX >= -maxRadius && maxX <= maxRadius && minZ >= -maxRadius && maxZ <= maxRadius) {
                 "Border edges are outside the supported world range"
             }
