@@ -1,9 +1,9 @@
 package com.projectcitybuild.pcbridge.app.paperplugin
 
-import com.projectcitybuild.pcbridge.app.paperplugin.teleportation.WorldBorderRandomTeleportConstraintProvider
 import com.github.shynixn.mccoroutine.bukkit.minecraftDispatcher
 import com.google.gson.JsonElement
 import com.google.gson.reflect.TypeToken
+import com.projectcitybuild.pcbridge.app.paperplugin.assembly.WorldBorderRandomTeleportConstraintProvider
 import com.projectcitybuild.pcbridge.core.datetime.services.DateTimeFormatter
 import com.projectcitybuild.pcbridge.core.datetime.services.LocalizedTime
 import com.projectcitybuild.pcbridge.core.discord.DiscordSend
@@ -45,10 +45,10 @@ import com.projectcitybuild.pcbridge.features.teleportation.domain.services.Rand
 import com.projectcitybuild.pcbridge.features.teleportation.teleportationModule
 import com.projectcitybuild.pcbridge.features.warnings.warningsModule
 import com.projectcitybuild.pcbridge.features.warps.warpsModule
-import com.projectcitybuild.pcbridge.features.worlds.domain.repositories.WorldBorderRepository
-import com.projectcitybuild.pcbridge.features.worlds.worldsModule
 import com.projectcitybuild.pcbridge.features.watchdog.watchDogModule
 import com.projectcitybuild.pcbridge.features.workstations.workstationsModule
+import com.projectcitybuild.pcbridge.features.worlds.domain.repositories.WorldBorderRepository
+import com.projectcitybuild.pcbridge.features.worlds.worldsModule
 import com.projectcitybuild.pcbridge.integrations.dynmap.dynmapModule
 import com.projectcitybuild.pcbridge.integrations.essentials.essentialsModule
 import com.projectcitybuild.pcbridge.integrations.luckperms.luckPermsModule
@@ -73,12 +73,12 @@ import com.projectcitybuild.pcbridge.runtime.teleportation.SafeYLocationFinder
 import com.projectcitybuild.pcbridge.runtime.teleportation.storage.TeleportHistoryStorage
 import com.projectcitybuild.pcbridge.runtime.webhooks.WebServerDelegate
 import org.bukkit.plugin.java.JavaPlugin
-import org.koin.core.module.Module
-import org.koin.core.module.dsl.factoryOf
-import org.koin.core.module.dsl.singleOf
 import org.koin.core.Koin
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
+import org.koin.core.module.Module
+import org.koin.core.module.dsl.factoryOf
+import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 import java.io.File
 import java.time.Clock

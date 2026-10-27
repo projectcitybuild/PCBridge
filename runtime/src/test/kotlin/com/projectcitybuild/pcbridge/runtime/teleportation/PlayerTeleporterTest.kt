@@ -103,6 +103,37 @@ class PlayerTeleporterTest {
     }
 
     @Test
+    fun `plays teleport sound at the actual safe destination`() = runBlocking {
+        val fixture = fixture()
+        val finalLocation = Location(fixture.world, 16.5, 70.0, -0.5)
+        whenever(fixture.player.location)
+            .thenReturn(Location(fixture.world, 0.0, 64.0, 0.0), finalLocation)
+        whenever(fixture.world.getChunkAtAsyncUrgently(fixture.destination))
+            .thenReturn(CompletableFuture.completedFuture(mock<Chunk>()))
+        whenever(fixture.world.isChunkLoaded(1, -1)).thenReturn(true)
+        whenever(fixture.safeYLocationFinder.findY(fixture.world, 16, -1)).thenReturn(70)
+        whenever(fixture.player.teleportAsync(any<Location>(), eq(TeleportCause.PLUGIN)))
+            .thenReturn(CompletableFuture.completedFuture(true))
+
+        fixture.teleporter.move(
+            fixture.player,
+            fixture.destination,
+            options = PlayerTeleporter.TeleportOptions(
+                adjustYForSafety = true,
+                snapToBlockCenter = true,
+                recordHistory = false,
+            ),
+        )
+
+        verify(fixture.world).playSound(
+            finalLocation,
+            "minecraft:entity.player.teleport",
+            1F,
+            1F,
+        )
+    }
+
+    @Test
     fun `propagates cancellation from the asynchronous teleport operation`() {
         val fixture = fixture()
         whenever(fixture.player.teleportAsync(any<Location>(), any<TeleportCause>()))

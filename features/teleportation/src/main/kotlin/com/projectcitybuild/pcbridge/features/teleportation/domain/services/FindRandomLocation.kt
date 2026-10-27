@@ -14,17 +14,29 @@ class FindRandomLocation(
         player: Player,
         attempts: Int = 5,
     ): List<Location> {
+        require(attempts >= 0) { "Candidate count must not be negative" }
+
         val world = player.location.world
         val constraint = constraintProvider.constraintFor(world.uid)
 
         return buildList {
-            repeat(attempts) {
+            val seenPositions = mutableSetOf<RandomTeleportPosition>()
+            val sampleLimit = minOf(
+                attempts.toLong() * SAMPLE_ATTEMPTS_PER_CANDIDATE,
+                MAX_SAMPLE_ATTEMPTS,
+            ).toInt()
+            var samples = 0
+
+            while (size < attempts && samples < sampleLimit) {
+                samples++
                 val candidate = if (constraint == null) {
                     randomCoordinate2(world)
                 } else {
                     blockCenter(constraint.sample(random))
                 }
-                if (constraint == null || constraint.contains(candidate)) {
+                if (constraint == null) {
+                    add(Location(world, candidate.x, 0.0, candidate.z))
+                } else if (constraint.contains(candidate) && seenPositions.add(candidate)) {
                     add(Location(world, candidate.x, 0.0, candidate.z))
                 }
             }
@@ -63,5 +75,7 @@ class FindRandomLocation(
     private companion object {
         const val BORDER_MAX = 15_000.0
         const val BORDER_MIN = BORDER_MAX * -1
+        const val SAMPLE_ATTEMPTS_PER_CANDIDATE = 10L
+        const val MAX_SAMPLE_ATTEMPTS = 1_000L
     }
 }

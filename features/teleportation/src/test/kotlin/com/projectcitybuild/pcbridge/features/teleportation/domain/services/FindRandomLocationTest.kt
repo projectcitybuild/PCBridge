@@ -23,6 +23,7 @@ class FindRandomLocationTest {
         val samples = mutableListOf(
             RandomTeleportPosition(2.0, -2.0),
             RandomTeleportPosition(-2.0, -2.0),
+            RandomTeleportPosition(-1.0, -2.0),
         )
         val constraint = object : RandomTeleportConstraint {
             override fun sample(random: Random): RandomTeleportPosition = samples.removeAt(0)
@@ -36,10 +37,34 @@ class FindRandomLocationTest {
 
         val candidates = FindRandomLocation(provider, Random(42)).candidates(player, attempts = 2)
 
-        assertEquals(1, candidates.size)
-        assertEquals(-1.5, candidates.single().x)
-        assertEquals(-1.5, candidates.single().z)
-        assertEquals(0.0, candidates.single().y)
+        assertEquals(2, candidates.size)
+        assertEquals(listOf(-1.5, -0.5), candidates.map { it.x })
+        assertTrue(candidates.all { it.z == -1.5 && it.y == 0.0 })
+    }
+
+    @Test
+    fun `bounds retries when no block-centered sample satisfies the constraint`() {
+        val world = mock<World>()
+        val player = mock<Player>()
+        whenever(world.uid).thenReturn(UUID.randomUUID())
+        whenever(player.location).thenReturn(Location(world, 0.0, 64.0, 0.0))
+        var sampleCount = 0
+        val constraint = object : RandomTeleportConstraint {
+            override fun sample(random: Random): RandomTeleportPosition {
+                sampleCount++
+                return RandomTeleportPosition(2.0, 2.0)
+            }
+
+            override fun contains(position: RandomTeleportPosition) = false
+        }
+
+        val candidates = FindRandomLocation(
+            RandomTeleportConstraintProvider { constraint },
+            Random(42),
+        ).candidates(player, attempts = 2)
+
+        assertTrue(candidates.isEmpty())
+        assertEquals(20, sampleCount)
     }
 
     @Test

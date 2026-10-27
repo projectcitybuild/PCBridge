@@ -9,7 +9,6 @@ import kotlinx.coroutines.future.await
 import kotlinx.coroutines.withContext
 import org.bukkit.Location
 import org.bukkit.Server
-import org.bukkit.Sound
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause
 import kotlin.coroutines.CoroutineContext
@@ -88,7 +87,13 @@ class PlayerTeleporter(
             if (options.playSound) {
                 val volume = 1F
                 val pitch = 1F
-                player.world.playSound(destination, Sound.ENTITY_PLAYER_TELEPORT, volume, pitch)
+                val finalLocation = player.location
+                finalLocation.world.playSound(
+                    finalLocation,
+                    "minecraft:entity.player.teleport",
+                    volume,
+                    pitch,
+                )
             }
 
             if (options.recordHistory) {

@@ -1,13 +1,17 @@
 package com.projectcitybuild.pcbridge.features.worlds.hooks.listeners
 
 import com.projectcitybuild.pcbridge.core.l10n.l10n
+import com.projectcitybuild.pcbridge.core.observability.logging.log
 import com.projectcitybuild.pcbridge.features.worlds.domain.geometry.WorldBorderGeometry
 import com.projectcitybuild.pcbridge.features.worlds.domain.repositories.WorldBorderRepository
 import com.projectcitybuild.pcbridge.features.worlds.domain.services.WorldBorderService
 import com.projectcitybuild.pcbridge.runtime.teleportation.SafeYLocationFinder
 import com.projectcitybuild.pcbridge.runtime.teleportation.teleportationTracer
 import io.papermc.paper.event.entity.EntityMoveEvent
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.delay
 import org.bukkit.Location
+import org.bukkit.World
 import org.bukkit.block.Block
 import org.bukkit.entity.Player
 import org.bukkit.event.Cancellable
@@ -39,6 +43,7 @@ import org.bukkit.event.world.WorldLoadEvent
 import org.bukkit.event.world.WorldUnloadEvent
 import java.util.UUID
 import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.nanoseconds
 import kotlin.time.Duration.Companion.seconds
 
@@ -71,6 +76,7 @@ class WorldBorderListener(
     private companion object {
         val BORDER_FEEDBACK_COOLDOWN = 1.seconds
         val SAFE_Y_LOOKUP_COOLDOWN = 1.seconds
+        val RESPAWN_RELOCATION_DELAY: Duration = 50.milliseconds
     }
 
     private val lastBorderFeedback = mutableMapOf<UUID, BorderFeedback>()
@@ -140,13 +146,37 @@ class WorldBorderListener(
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
-    fun onPlayerRespawn(event: PlayerRespawnEvent) {
+    suspend fun onPlayerRespawn(event: PlayerRespawnEvent) {
         val destination = event.respawnLocation
         val border = worldBorderRepository.get(destination.world) ?: return
         val geometry = border.geometry
-        if (!geometry.contains(destination.x, destination.z)) {
-            event.respawnLocation = safeBorderLocation(geometry, event.player.uniqueId, destination)
-                ?: clampedLocation(geometry, destination)
+        if (geometry.contains(destination.x, destination.z)) return
+
+        val safeDestination = safeBorderLocation(geometry, event.player.uniqueId, destination)
+        if (safeDestination != null) {
+            event.respawnLocation = safeDestination
+            return
+        }
+
+        relocateAfterRespawn(event.player, destination.world)
+    }
+
+    private suspend fun relocateAfterRespawn(
+        player: Player,
+        world: World,
+    ) {
+        delay(RESPAWN_RELOCATION_DELAY)
+        if (!player.isOnline) return
+
+        try {
+            worldBorderService.relocateIfOutside(player)
+        } catch (cancelled: CancellationException) {
+            throw cancelled
+        } catch (failure: Exception) {
+            log.error(failure) {
+                "Failed to safely relocate player ${player.uniqueId} after respawn in ${world.name}"
+            }
+            if (player.isOnline) player.sendMessage(l10n.worlds.borderRespawnRelocationFailed)
         }
     }
 

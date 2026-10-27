@@ -1,4 +1,4 @@
-package com.projectcitybuild.pcbridge.app.paperplugin.teleportation
+package com.projectcitybuild.pcbridge.app.paperplugin.assembly
 
 import com.projectcitybuild.pcbridge.features.teleportation.domain.services.RandomTeleportConstraint
 import com.projectcitybuild.pcbridge.features.teleportation.domain.services.RandomTeleportConstraintProvider
@@ -22,8 +22,7 @@ class WorldBorderRandomTeleportConstraintProvider(
                 return RandomTeleportPosition(x, z)
             }
 
-            override fun contains(position: RandomTeleportPosition): Boolean =
-                geometry.contains(position.x, position.z)
+            override fun contains(position: RandomTeleportPosition): Boolean = geometry.contains(position.x, position.z)
         }
     }
 }

@@ -875,6 +875,9 @@ class StringsEn {
             Placeholder.unparsed("count", count.toString()),
         )
 
+        val borderRespawnRelocationFailed =
+            mm("<red>Could not safely relocate your respawn inside the world border. Please contact staff.</red>")
+
         val fillRequiresBorder = mm("<red>Set a world border before filling chunks.</red>")
         fun fillTooLarge(maxChunks: Long) = mm(
             "<red>Fill preview exceeds the limit of <maximum> chunks. Reduce the border size.</red>",

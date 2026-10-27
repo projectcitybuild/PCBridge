@@ -5,7 +5,9 @@ import com.projectcitybuild.pcbridge.features.worlds.domain.data.WorldBorder
 import com.projectcitybuild.pcbridge.features.worlds.domain.repositories.WorldBorderRepository
 import com.projectcitybuild.pcbridge.features.worlds.domain.services.WorldBorderService
 import com.projectcitybuild.pcbridge.runtime.teleportation.SafeYLocationFinder
+import com.projectcitybuild.pcbridge.runtime.teleportation.exceptions.SafeDestinationNotFoundException
 import io.papermc.paper.event.entity.EntityMoveEvent
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.bukkit.Location
 import org.bukkit.World
@@ -30,18 +32,21 @@ import org.bukkit.event.player.PlayerBucketEmptyEvent
 import org.bukkit.event.player.PlayerBucketFillEvent
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerMoveEvent
+import org.bukkit.event.player.PlayerRespawnEvent
 import org.bukkit.event.player.PlayerTeleportEvent
 import org.bukkit.event.vehicle.VehicleMoveEvent
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.mock
+import org.mockito.kotlin.any
 import org.mockito.kotlin.never
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import java.util.UUID
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class WorldBorderListenerTest {
     private val world = mock(World::class.java).also {
         whenever(it.uid).thenReturn(UUID.randomUUID())
@@ -185,6 +190,66 @@ class WorldBorderListenerTest {
         assertEquals(9.0, event.to?.x)
         verify(player).sendMessage(l10n.worlds.borderReached)
         verify(player).playSound(event.from, "minecraft:entity.player.teleport", 1F, 1F)
+    }
+
+    @Test
+    fun `uses a safe in-border respawn location when it is immediately available`() = runTest {
+        whenever(borderRepository.get(world)).thenReturn(border)
+        whenever(safeYLocationFinder.findY(world, 9, 0)).thenReturn(80)
+        val player = mock(Player::class.java)
+        whenever(player.uniqueId).thenReturn(UUID.randomUUID())
+        val event = mock(PlayerRespawnEvent::class.java)
+        whenever(event.player).thenReturn(player)
+        whenever(event.respawnLocation).thenReturn(Location(world, 12.0, 64.0, 0.0))
+
+        listener.onPlayerRespawn(event)
+
+        val destination = org.mockito.kotlin.argumentCaptor<Location>()
+        verify(event).setRespawnLocation(destination.capture())
+        assertEquals(80.0, destination.firstValue.y)
+        assertTrue(border.geometry.contains(destination.firstValue.x, destination.firstValue.z))
+    }
+
+    @Test
+    fun `defers respawn relocation when the destination chunk is unloaded`() = runTest {
+        whenever(borderRepository.get(world)).thenReturn(border)
+        whenever(world.isChunkLoaded(0, 0)).thenReturn(false)
+        val player = mock(Player::class.java)
+        whenever(player.uniqueId).thenReturn(UUID.randomUUID())
+        whenever(player.isOnline).thenReturn(true)
+        val event = mock(PlayerRespawnEvent::class.java)
+        whenever(event.player).thenReturn(player)
+        whenever(event.respawnLocation).thenReturn(Location(world, 12.0, 64.0, 0.0))
+        val listenerWithChunkCheck = WorldBorderListener(
+            borderRepository,
+            borderService,
+            SafeYLocationFinder(),
+        )
+
+        listenerWithChunkCheck.onPlayerRespawn(event)
+
+        verify(event, never()).setRespawnLocation(any())
+        verify(borderService).relocateIfOutside(player)
+    }
+
+    @Test
+    fun `reports deferred relocation failure when no safe respawn landing exists`() = runTest {
+        whenever(borderRepository.get(world)).thenReturn(border)
+        whenever(safeYLocationFinder.findY(world, 9, 0)).thenReturn(null)
+        whenever(borderService.relocateIfOutside(any())).thenAnswer {
+            throw SafeDestinationNotFoundException("No safe destination")
+        }
+        val player = mock(Player::class.java)
+        whenever(player.uniqueId).thenReturn(UUID.randomUUID())
+        whenever(player.isOnline).thenReturn(true)
+        val event = mock(PlayerRespawnEvent::class.java)
+        whenever(event.player).thenReturn(player)
+        whenever(event.respawnLocation).thenReturn(Location(world, 12.0, 64.0, 0.0))
+
+        listener.onPlayerRespawn(event)
+
+        verify(event, never()).setRespawnLocation(any())
+        verify(player).sendMessage(l10n.worlds.borderRespawnRelocationFailed)
     }
 
     @Test
