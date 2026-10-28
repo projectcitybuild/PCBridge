@@ -1,4 +1,4 @@
-package com.projectcitybuild.pcbridge.features.worlds.domain.geometry
+package com.projectcitybuild.pcbridge.features.worlds.domain.services
 
 import com.projectcitybuild.pcbridge.features.worlds.domain.data.WorldBorder
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -7,6 +7,9 @@ import org.junit.jupiter.api.Assertions.assertSame
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import kotlin.math.cos
+import kotlin.math.hypot
+import kotlin.math.sin
 import kotlin.math.sqrt
 import kotlin.random.Random
 
@@ -66,8 +69,8 @@ class WorldBorderGeometryTest {
 
         val (x, z) = circle.geometry.sample(random)
 
-        assertEquals(circle.centerX + radius * kotlin.math.cos(angle), x)
-        assertEquals(circle.centerZ + radius * kotlin.math.sin(angle), z)
+        assertEquals(circle.centerX + radius * cos(angle), x)
+        assertEquals(circle.centerZ + radius * sin(angle), z)
     }
 
     @Test
@@ -119,7 +122,7 @@ class WorldBorderGeometryTest {
             )
         val (x, z) = circle.geometry().clamp(20.0, 20.0)
 
-        assertEquals(10.0 - 0.3 * sqrt(2.0), kotlin.math.hypot(x, z), 1e-9)
+        assertEquals(10.0 - 0.3 * sqrt(2.0), hypot(x, z), 1e-9)
     }
 
     @Test

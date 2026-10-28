@@ -6,9 +6,11 @@ import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.features.worlds.WorldsPermissions
 import com.projectcitybuild.pcbridge.features.worlds.domain.data.WorldBorder
 import com.projectcitybuild.pcbridge.features.worlds.domain.repositories.WorldBorderRepository
+import com.projectcitybuild.pcbridge.features.worlds.domain.services.WorldBorderFillService
 import com.projectcitybuild.pcbridge.features.worlds.domain.services.WorldBorderService
 import com.projectcitybuild.pcbridge.features.worlds.hooks.commands.BorderFillCommand.Companion.DEFAULT_CHUNK_LIMIT
 import com.projectcitybuild.pcbridge.features.worlds.hooks.commands.BorderFillCommand.Companion.HARD_MAX_CHUNKS_PER_FILL
+import com.projectcitybuild.pcbridge.features.worlds.hooks.listeners.WorldBorderFillListener
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.CoroutineScopeCommandTaskExecutor
@@ -27,6 +29,7 @@ import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.event.world.WorldUnloadEvent
 import org.bukkit.plugin.Plugin
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.mockito.Mockito.mock
@@ -315,20 +318,24 @@ class WorldBorderCommandTest {
         whenever(player.hasPermission(WorldsPermissions.MANAGE.node)).thenReturn(true)
         whenever(worldBorderRepository.get(world)).thenReturn(border)
         whenever(world.getChunkAtAsync(any<Int>(), any<Int>(), eq(false))).thenReturn(pendingChunk)
-        val fill = BorderFillCommand(
-            plugin,
-            worldBorderRepository,
-            CoroutineScopeCommandTaskExecutor(this),
-        )
+        val fillService = WorldBorderFillService(worldBorderRepository)
+        val fill = BorderFillCommand(plugin, fillService, CoroutineScopeCommandTaskExecutor(this))
+        val listener = WorldBorderFillListener(fillService)
 
         execute(fill, "fill", source())
         advanceUntilIdle()
         execute(fill, "fill confirm", source())
         runCurrent()
-        whenever(player.isOnline).thenReturn(false)
+        val otherPlayer = mock(Player::class.java)
+        whenever(otherPlayer.uniqueId).thenReturn(UUID.randomUUID())
         val quitEvent = mock(PlayerQuitEvent::class.java)
+        whenever(quitEvent.player).thenReturn(otherPlayer)
+        listener.onPlayerQuit(quitEvent)
+        runCurrent()
+        assertFalse(pendingChunk.isCancelled)
+        whenever(player.isOnline).thenReturn(false)
         whenever(quitEvent.player).thenReturn(player)
-        fill.onPlayerQuit(quitEvent)
+        listener.onPlayerQuit(quitEvent)
         advanceUntilIdle()
 
         whenever(player.isOnline).thenReturn(true)
@@ -351,24 +358,112 @@ class WorldBorderCommandTest {
         whenever(player.hasPermission(WorldsPermissions.MANAGE.node)).thenReturn(true)
         whenever(worldBorderRepository.get(world)).thenReturn(border)
         whenever(world.getChunkAtAsync(any<Int>(), any<Int>(), eq(false))).thenReturn(pendingChunk)
-        val fill = BorderFillCommand(
-            plugin,
-            worldBorderRepository,
-            CoroutineScopeCommandTaskExecutor(this),
-        )
+        val fillService = WorldBorderFillService(worldBorderRepository)
+        val fill = BorderFillCommand(plugin, fillService, CoroutineScopeCommandTaskExecutor(this))
+        val listener = WorldBorderFillListener(fillService)
 
         execute(fill, "fill", source())
         advanceUntilIdle()
         execute(fill, "fill confirm", source())
         runCurrent()
         val unloadEvent = mock(WorldUnloadEvent::class.java)
+        val otherWorld = mock(World::class.java)
+        whenever(otherWorld.uid).thenReturn(UUID.randomUUID())
+        whenever(unloadEvent.world).thenReturn(otherWorld)
+        listener.onWorldUnload(unloadEvent)
+        runCurrent()
+        assertFalse(pendingChunk.isCancelled)
         whenever(unloadEvent.world).thenReturn(world)
-        fill.onWorldUnload(unloadEvent)
+        listener.onWorldUnload(unloadEvent)
         advanceUntilIdle()
 
         execute(fill, "fill status", source())
         advanceUntilIdle()
         verify(player).sendMessage(l10n.worlds.fillNoActiveJob)
+    }
+
+    @Test
+    fun `disconnect removes the player's pending fill`() = runTest {
+        val world = mock(World::class.java)
+        whenever(world.uid).thenReturn(UUID.randomUUID())
+        whenever(world.name).thenReturn("world")
+        whenever(player.world).thenReturn(world)
+        whenever(player.uniqueId).thenReturn(UUID.randomUUID())
+        whenever(player.hasPermission(WorldsPermissions.MANAGE.node)).thenReturn(true)
+        whenever(worldBorderRepository.get(world)).thenReturn(WorldBorder.Square(0.0, 0.0, radius = 8.0))
+        val fillService = WorldBorderFillService(worldBorderRepository)
+        val fill = BorderFillCommand(plugin, fillService, CoroutineScopeCommandTaskExecutor(this))
+        val listener = WorldBorderFillListener(fillService)
+
+        execute(fill, "fill", source())
+        advanceUntilIdle()
+        val quitEvent = mock(PlayerQuitEvent::class.java)
+        whenever(quitEvent.player).thenReturn(player)
+        listener.onPlayerQuit(quitEvent)
+        execute(fill, "fill confirm", source())
+        advanceUntilIdle()
+
+        verify(player).sendMessage(l10n.worlds.fillPreviewMissing)
+        verify(world, never()).getChunkAtAsync(any<Int>(), any<Int>(), eq(false))
+    }
+
+    @Test
+    fun `world unload removes pending fills for that world`() = runTest {
+        val world = mock(World::class.java)
+        whenever(world.uid).thenReturn(UUID.randomUUID())
+        whenever(world.name).thenReturn("world")
+        whenever(player.world).thenReturn(world)
+        whenever(player.uniqueId).thenReturn(UUID.randomUUID())
+        whenever(player.hasPermission(WorldsPermissions.MANAGE.node)).thenReturn(true)
+        whenever(worldBorderRepository.get(world)).thenReturn(WorldBorder.Square(0.0, 0.0, radius = 8.0))
+        val fillService = WorldBorderFillService(worldBorderRepository)
+        val fill = BorderFillCommand(plugin, fillService, CoroutineScopeCommandTaskExecutor(this))
+        val listener = WorldBorderFillListener(fillService)
+
+        execute(fill, "fill", source())
+        advanceUntilIdle()
+        val unloadEvent = mock(WorldUnloadEvent::class.java)
+        whenever(unloadEvent.world).thenReturn(world)
+        listener.onWorldUnload(unloadEvent)
+        execute(fill, "fill confirm", source())
+        advanceUntilIdle()
+
+        verify(player).sendMessage(l10n.worlds.fillPreviewMissing)
+        verify(world, never()).getChunkAtAsync(any<Int>(), any<Int>(), eq(false))
+    }
+
+    @Test
+    fun `unrelated lifecycle events preserve a pending fill`() = runTest {
+        val world = mock(World::class.java)
+        val otherWorld = mock(World::class.java)
+        val otherPlayer = mock(Player::class.java)
+        whenever(world.uid).thenReturn(UUID.randomUUID())
+        whenever(otherWorld.uid).thenReturn(UUID.randomUUID())
+        whenever(world.name).thenReturn("world")
+        whenever(player.world).thenReturn(world)
+        whenever(player.uniqueId).thenReturn(UUID.randomUUID())
+        whenever(otherPlayer.uniqueId).thenReturn(UUID.randomUUID())
+        whenever(player.isOnline).thenReturn(true)
+        whenever(player.hasPermission(WorldsPermissions.MANAGE.node)).thenReturn(true)
+        whenever(worldBorderRepository.get(world)).thenReturn(WorldBorder.Square(0.0, 0.0, radius = 8.0))
+        whenever(world.getChunkAtAsync(any<Int>(), any<Int>(), eq(false)))
+            .thenReturn(CompletableFuture.completedFuture(mock(Chunk::class.java)))
+        val fillService = WorldBorderFillService(worldBorderRepository)
+        val fill = BorderFillCommand(plugin, fillService, CoroutineScopeCommandTaskExecutor(this))
+        val listener = WorldBorderFillListener(fillService)
+
+        execute(fill, "fill", source())
+        advanceUntilIdle()
+        val quitEvent = mock(PlayerQuitEvent::class.java)
+        whenever(quitEvent.player).thenReturn(otherPlayer)
+        listener.onPlayerQuit(quitEvent)
+        val unloadEvent = mock(WorldUnloadEvent::class.java)
+        whenever(unloadEvent.world).thenReturn(otherWorld)
+        listener.onWorldUnload(unloadEvent)
+        execute(fill, "fill confirm", source())
+        advanceUntilIdle()
+
+        verify(player).sendMessage(l10n.worlds.fillComplete(4, 4, 0))
     }
 
     @Test

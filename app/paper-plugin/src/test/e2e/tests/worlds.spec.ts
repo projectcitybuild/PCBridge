@@ -1,15 +1,25 @@
 import { expect, test } from '@plugwright/runner';
+import type { PlayerWrapper } from '@plugwright/runner';
+import { once } from 'node:events';
 import { Vec3 } from 'vec3';
 import { expectPluginCommandDenied, grantPermission, runPluginCommand } from './helpers/helpers.js';
+import type { TestServer } from './helpers/helpers.js';
 import { permissionNodes } from './helpers/permission-nodes.generated.js';
 
 // The rectangle's Z edge is at 8, inside Paper's native square border at 16.
 const rectangleBorderCommand = 'worlds border set rectangle 32 16 0 0';
+const squareRectangleBorderCommand = 'worlds border set rectangle 16 16 0 0';
 // Border clamp leaves 0.3 blocks for the player's half-width.
-const expectedBorderZ = 7.7;
+const clampedBorderEdge = 7.7;
+const commandSettleDelayMs = 250;
+
+async function grantWorldManagement(server: TestServer, player: PlayerWrapper) {
+  await grantPermission(server, player.bot.player.uuid, permissionNodes.worlds.manage);
+  await player.rejoin();
+}
 
 async function runAndExpectMessage(
-  player: Parameters<typeof runPluginCommand>[0],
+  player: PlayerWrapper,
   command: string,
   message: RegExp,
   timeout = 15000,
@@ -17,16 +27,15 @@ async function runAndExpectMessage(
   const since = player.messageBuffer.length;
   runPluginCommand(player, command);
   await expect(player).toHaveReceivedMessage(message, { since, timeout });
-  await new Promise(resolve => setTimeout(resolve, 250));
+  await new Promise(resolve => setTimeout(resolve, commandSettleDelayMs));
 }
 
-async function clearWorldBorder(player: Parameters<typeof runPluginCommand>[0]) {
+async function clearWorldBorder(player: PlayerWrapper) {
   await runAndExpectMessage(player, 'worlds clear', /World border cleared/);
 }
 
 test('world borders block movement, teleports, and ender pearls outside the border', async ({ player, server }) => {
-  await grantPermission(server, player.bot.player.uuid, permissionNodes.worlds.manage);
-  await player.rejoin();
+  await grantWorldManagement(server, player);
 
   // Create a runway so movement and the ender pearl reach the border without falling.
   await server.execute('fill -2 79 -12 2 79 12 stone');
@@ -37,13 +46,13 @@ test('world borders block movement, teleports, and ender pearls outside the bord
     // Try to walk past the border.
     await player.bot.look(Math.PI, 0, true);
     player.bot.setControlState('forward', true);
-    await expect(player).toBeNear(0.5, 80, expectedBorderZ, { tolerance: 0.5, timeout: 10000 });
+    await expect(player).toBeNear(0.5, 80, clampedBorderEdge, { tolerance: 0.5, timeout: 10000 });
     player.bot.setControlState('forward', false);
 
     await player.teleport(0, 80, 0);
     // Vanilla command to trigger a PlayerTeleportEvent.
     await server.execute(`minecraft:tp ${player.username} 0 80 20`);
-    await expect(player).toBeNear(0.5, 80, expectedBorderZ, { tolerance: 0.2, timeout: 15000 });
+    await expect(player).toBeNear(0.5, 80, clampedBorderEdge, { tolerance: 0.2, timeout: 15000 });
 
     // Try to throw an ender pearl past the border.
     await player.teleport(0, 80, 0);
@@ -54,7 +63,7 @@ test('world borders block movement, teleports, and ender pearls outside the bord
     await player.bot.equip(pearl, 'hand');
     await player.bot.look(Math.PI, 0, true);
     player.bot.activateItem();
-    await expect(player).toBeNear(0.5, 80, expectedBorderZ, { tolerance: 0.5, timeout: 15000 });
+    await expect(player).toBeNear(0.5, 80, clampedBorderEdge, { tolerance: 0.5, timeout: 15000 });
   } finally {
     player.bot.setControlState('forward', false);
     await clearWorldBorder(player);
@@ -67,8 +76,7 @@ test('world border commands require permission and support setting, viewing, and
   await expectPluginCommandDenied(player, 'worlds clear');
   await expectPluginCommandDenied(player, 'worlds border fill');
 
-  await grantPermission(server, player.bot.player.uuid, permissionNodes.worlds.manage);
-  await player.rejoin();
+  await grantWorldManagement(server, player);
 
   try {
     await runAndExpectMessage(player, 'worlds border set square 8 0 0', /World border set: square/);
@@ -100,8 +108,7 @@ test('world border commands require permission and support setting, viewing, and
 });
 
 test('circular custom borders reject destinations outside the circle but inside its native square', async ({ player, server }) => {
-  await grantPermission(server, player.bot.player.uuid, permissionNodes.worlds.manage);
-  await player.rejoin();
+  await grantWorldManagement(server, player);
   await server.execute('fill -12 79 -12 12 79 12 stone');
   await player.teleport(0, 80, 0);
   await runAndExpectMessage(player, 'worlds border set circle 10 0 0', /World border set: circle/);
@@ -120,16 +127,15 @@ test('circular custom borders reject destinations outside the circle but inside 
 
 test('setting a border relocates online players who are already outside it', async ({ player, createPlayer, server }) => {
   const target = await createPlayer();
-  await grantPermission(server, player.bot.player.uuid, permissionNodes.worlds.manage);
-  await player.rejoin();
+  await grantWorldManagement(server, player);
 
   await server.execute('fill -2 79 -2 22 79 2 stone');
   await player.teleport(0, 80, 0);
   await target.teleport(20, 80, 0);
-  await runAndExpectMessage(player, 'worlds border set rectangle 16 16 0 0', /World border set: rectangle/);
+  await runAndExpectMessage(player, squareRectangleBorderCommand, /World border set: rectangle/);
 
   try {
-    await expect(target).toBeNear(7.7, 80, 0, { tolerance: 0.5, timeout: 15000 });
+    await expect(target).toBeNear(clampedBorderEdge, 80, 0, { tolerance: 0.5, timeout: 15000 });
     await expect(player).toBeNear(0, 80, 0, { tolerance: 0.5 });
   } finally {
     await clearWorldBorder(player);
@@ -138,8 +144,7 @@ test('setting a border relocates online players who are already outside it', asy
 
 test('players who join or respawn outside a configured border are relocated', async ({ player, createPlayer, server }) => {
   const target = await createPlayer();
-  await grantPermission(server, player.bot.player.uuid, permissionNodes.worlds.manage);
-  await player.rejoin();
+  await grantWorldManagement(server, player);
 
   await server.execute('fill -2 79 -2 22 79 2 stone');
   await player.teleport(0, 80, 0);
@@ -149,24 +154,32 @@ test('players who join or respawn outside a configured border are relocated', as
   await disconnected;
 
   try {
-    await runAndExpectMessage(player, 'worlds border set rectangle 16 16 0 0', /World border set: rectangle/);
+    // Keep the bed inside Paper's border but outside the custom border.
+    await server.execute('minecraft:setblock 10 80 0 minecraft:red_bed[facing=east,part=foot]');
+    await server.execute('minecraft:setblock 11 80 0 minecraft:red_bed[facing=east,part=head]');
+    await runAndExpectMessage(player, 'worlds border set rectangle 16 32 0 0', /World border set: rectangle/);
     await target.rejoin();
-    await expect(target).toBeNear(7.7, 80, 0, { tolerance: 0.5, timeout: 15000 });
+    await expect(target).toBeNear(clampedBorderEdge, 80, 0, { tolerance: 0.5, timeout: 15000 });
 
-    await server.execute(`minecraft:spawnpoint ${target.username} 20 80 0`);
-    await server.execute(`minecraft:kill ${target.username}`);
-    await expect(target).toBeNear(7.7, 80, 0, { tolerance: 0.5, timeout: 15000 });
+    await server.execute(`minecraft:spawnpoint ${target.username} 10 80 0`);
+    await target.teleport(0, 80, 0);
+    await Promise.all([
+      once(target.bot, 'spawn', { signal: AbortSignal.timeout(15000) }),
+      server.execute(`minecraft:kill ${target.username}`),
+    ]);
+    await expect(target).toBeNear(clampedBorderEdge, 80, 0, { tolerance: 0.5, timeout: 15000 });
   } finally {
     await server.execute(`minecraft:spawnpoint ${target.username} 0 80 0`);
     await clearWorldBorder(player);
+    await server.execute('minecraft:setblock 10 80 0 minecraft:air');
+    await server.execute('minecraft:setblock 11 80 0 minecraft:air');
   }
 });
 
 test('world borders are isolated between dimensions', async ({ player, server }) => {
-  await grantPermission(server, player.bot.player.uuid, permissionNodes.worlds.manage);
-  await player.rejoin();
+  await grantWorldManagement(server, player);
   await player.teleport(0, 80, 0);
-  await runAndExpectMessage(player, 'worlds border set rectangle 16 16 0 0', /World border set: rectangle/);
+  await runAndExpectMessage(player, squareRectangleBorderCommand, /World border set: rectangle/);
 
   let inNether = false;
   try {
@@ -195,14 +208,15 @@ test('non-player teleports and random teleport destinations respect the custom b
   await player.rejoin();
   await server.execute('fill -18 79 -10 18 79 10 stone');
   await player.teleport(0, 80, 0);
-  await runAndExpectMessage(player, 'worlds border set rectangle 16 16 0 0', /World border set: rectangle/);
+  await runAndExpectMessage(player, squareRectangleBorderCommand, /World border set: rectangle/);
 
   try {
     await server.execute('minecraft:kill @e[tag=pcbridge_e2e_border]');
     await server.execute('minecraft:summon minecraft:cow 0 80 0 {Tags:["pcbridge_e2e_border"]}');
     await server.execute('minecraft:tp @e[tag=pcbridge_e2e_border,limit=1] 20 80 0');
-    await expect(await server.execute('minecraft:data get entity @e[tag=pcbridge_e2e_border,limit=1] Pos'))
-      .toMatch(/7\.[0-9]+/);
+    expect(
+        await server.execute('minecraft:data get entity @e[tag=pcbridge_e2e_border,limit=1] Pos')
+    ).toMatch(/7\.[0-9]+/);
 
     await server.execute('minecraft:kill @e[tag=pcbridge_e2e_border]');
     await server.execute('minecraft:summon minecraft:cow 20 80 0 {Tags:["pcbridge_e2e_border"]}');
@@ -223,8 +237,7 @@ test('non-player teleports and random teleport destinations respect the custom b
 });
 
 test('world border fill requires a configured border and preview', async ({ player, server }) => {
-  await grantPermission(server, player.bot.player.uuid, permissionNodes.worlds.manage);
-  await player.rejoin();
+  await grantWorldManagement(server, player);
 
   try {
     await clearWorldBorder(player);
@@ -238,11 +251,10 @@ test('world border fill requires a configured border and preview', async ({ play
 });
 
 test('world border fill previews and confirms a small area', async ({ player, server }) => {
-  await grantPermission(server, player.bot.player.uuid, permissionNodes.worlds.manage);
-  await player.rejoin();
+  await grantWorldManagement(server, player);
 
   try {
-    await runAndExpectMessage(player, 'worlds border set rectangle 16 16 0 0', /World border set: rectangle/);
+    await runAndExpectMessage(player, squareRectangleBorderCommand, /World border set: rectangle/);
     await runAndExpectMessage(player, 'worlds border fill', /Fill preview: up to 4 chunks/);
     await runAndExpectMessage(
       player,
@@ -255,11 +267,10 @@ test('world border fill previews and confirms a small area', async ({ player, se
 });
 
 test('world border fill rejects a preview after the border changes', async ({ player, server }) => {
-  await grantPermission(server, player.bot.player.uuid, permissionNodes.worlds.manage);
-  await player.rejoin();
+  await grantWorldManagement(server, player);
 
   try {
-    await runAndExpectMessage(player, 'worlds border set rectangle 16 16 0 0', /World border set: rectangle/);
+    await runAndExpectMessage(player, squareRectangleBorderCommand, /World border set: rectangle/);
     await runAndExpectMessage(player, 'worlds border fill', /Fill preview: up to 4 chunks/);
     await runAndExpectMessage(player, 'worlds border set rectangle 32 16 0 0', /World border set: rectangle/);
     await runAndExpectMessage(player, 'worlds border fill confirm', /world border changed/i);
@@ -269,8 +280,7 @@ test('world border fill rejects a preview after the border changes', async ({ pl
 });
 
 test('world border fill rejects an area above the chunk limit', async ({ player, server }) => {
-  await grantPermission(server, player.bot.player.uuid, permissionNodes.worlds.manage);
-  await player.rejoin();
+  await grantWorldManagement(server, player);
 
   try {
     await runAndExpectMessage(player, 'worlds border set rectangle 8192 8192 0 0', /World border set: rectangle/);
@@ -281,8 +291,7 @@ test('world border fill rejects an area above the chunk limit', async ({ player,
 });
 
 test('world border fills can be monitored and cancelled', async ({ player, server }) => {
-  await grantPermission(server, player.bot.player.uuid, permissionNodes.worlds.manage);
-  await player.rejoin();
+  await grantWorldManagement(server, player);
 
   try {
     await runAndExpectMessage(player, 'worlds border set circle 256 0 0', /World border set: circle/);
@@ -299,13 +308,12 @@ test('world border fills can be monitored and cancelled', async ({ player, serve
 });
 
 test('world border blocks placing and breaking blocks outside the configured shape', async ({ player, server }) => {
-  await grantPermission(server, player.bot.player.uuid, permissionNodes.worlds.manage);
-  await player.rejoin();
+  await grantWorldManagement(server, player);
   await player.setGameMode('creative');
   await server.execute('fill 5 79 -2 10 79 2 stone');
   await player.teleport(6.5, 80, 0);
   await player.bot.waitForChunksToLoad();
-  await runAndExpectMessage(player, 'worlds border set rectangle 16 16 0 0', /World border set: rectangle/);
+  await runAndExpectMessage(player, squareRectangleBorderCommand, /World border set: rectangle/);
 
   try {
     const outsideBlock = new Vec3(8, 79, 0);
@@ -322,11 +330,13 @@ test('world border blocks placing and breaking blocks outside the configured sha
     const stone = player.bot.inventory.items().find(item => item.name === 'stone');
     if (!stone) throw new Error('Expected stone in the player inventory');
     await player.bot.equip(stone, 'hand');
+
     await server.execute('minecraft:setblock 8 80 0 minecraft:air');
     const placementReference = player.bot.blockAt(outsideBlock);
     if (!placementReference) throw new Error('Expected a reference block outside the border');
     await expect(player.bot.placeBlock(placementReference, new Vec3(0, 1, 0)))
       .rejects.toThrow(/Server refused to place/);
+
     const emptyBlock = await server.execute(
       'minecraft:execute if block 8 80 0 minecraft:air run minecraft:time query daytime',
     );

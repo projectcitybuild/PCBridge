@@ -1,6 +1,6 @@
 package com.projectcitybuild.pcbridge.features.worlds.domain.data
 
-import com.projectcitybuild.pcbridge.features.worlds.domain.geometry.WorldBorderGeometry
+import com.projectcitybuild.pcbridge.features.worlds.domain.services.WorldBorderGeometry
 
 sealed class WorldBorder(
     open val centerX: Double,
@@ -70,11 +70,19 @@ sealed class WorldBorder(
     }
 
     companion object {
-        private fun validateCenter(centerX: Double, centerZ: Double) {
+        private fun validateCenter(
+            centerX: Double,
+            centerZ: Double,
+        ) {
             require(centerX.isFinite() && centerZ.isFinite()) { "Border center must be finite" }
         }
 
-        private fun validateEdges(minX: Double, maxX: Double, minZ: Double, maxZ: Double) {
+        private fun validateEdges(
+            minX: Double,
+            maxX: Double,
+            minZ: Double,
+            maxZ: Double,
+        ) {
             val maxRadius = WorldBorderLimits.MAX_RADIUS
             require(minX < maxX && minZ < maxZ) {
                 "Border dimensions are too small for the configured center"

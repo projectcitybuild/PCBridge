@@ -6,12 +6,14 @@ import com.projectcitybuild.pcbridge.core.filestorage.JsonFileStorage
 import com.projectcitybuild.pcbridge.core.localconfig.LocalConfig
 import com.projectcitybuild.pcbridge.features.worlds.domain.data.SerializableWorldBorder
 import com.projectcitybuild.pcbridge.features.worlds.domain.repositories.WorldBorderRepository
+import com.projectcitybuild.pcbridge.features.worlds.domain.services.WorldBorderFillService
 import com.projectcitybuild.pcbridge.features.worlds.domain.services.WorldBorderService
 import com.projectcitybuild.pcbridge.features.worlds.hooks.commands.BorderClearCommand
 import com.projectcitybuild.pcbridge.features.worlds.hooks.commands.BorderFillCommand
 import com.projectcitybuild.pcbridge.features.worlds.hooks.commands.BorderSetCommand
 import com.projectcitybuild.pcbridge.features.worlds.hooks.commands.WorldBorderCommand
 import com.projectcitybuild.pcbridge.features.worlds.hooks.commands.WorldsCommand
+import com.projectcitybuild.pcbridge.features.worlds.hooks.listeners.WorldBorderFillListener
 import com.projectcitybuild.pcbridge.features.worlds.hooks.listeners.WorldBorderListener
 import com.projectcitybuild.pcbridge.runtime.features.paperFeature
 import org.koin.core.module.dsl.factoryOf
@@ -22,21 +24,22 @@ val worldsModule =
     module {
         paperFeature("worlds") {
             commands(get<WorldsCommand>())
-            listeners(get<WorldBorderListener>(), get<BorderFillCommand>())
+            listeners(get<WorldBorderListener>(), get<WorldBorderFillListener>())
         }
 
         factoryOf(::WorldsCommand)
         single {
-            BorderFillCommand(
-                plugin = get(),
+            WorldBorderFillService(
                 worldBorderRepository = get(),
                 configuredChunkLimit = get<LocalConfig>().get().worlds?.borderFillMaxChunks,
             )
         }
+        single { BorderFillCommand(plugin = get(), fillService = get()) }
         factoryOf(::BorderSetCommand)
         factoryOf(::BorderClearCommand)
         factoryOf(::WorldBorderCommand)
         factoryOf(::WorldBorderListener)
+        factoryOf(::WorldBorderFillListener)
         factory {
             WorldBorderService(
                 server = get(),

@@ -4,7 +4,7 @@ import com.mojang.brigadier.arguments.DoubleArgumentType
 import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.features.worlds.WorldsPermissions
 import com.projectcitybuild.pcbridge.features.worlds.domain.data.WorldBorder
-import com.projectcitybuild.pcbridge.features.worlds.domain.geometry.WorldBorderGeometry
+import com.projectcitybuild.pcbridge.features.worlds.domain.services.WorldBorderGeometry
 import com.projectcitybuild.pcbridge.features.worlds.domain.services.WorldBorderService
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandBuilder
@@ -129,27 +129,30 @@ class BorderSetCommand(
         val relocationFailures = worldBorderService.set(player.world, border)
         val message =
             when (border) {
-                is WorldBorder.Rectangle ->
+                is WorldBorder.Rectangle -> {
                     l10n.worlds.rectangleBorderSet(
                         centerX = border.centerX,
                         centerZ = border.centerZ,
                         width = border.width,
                         depth = border.depth,
                     )
-                is WorldBorder.Square ->
+                }
+                is WorldBorder.Square -> {
                     l10n.worlds.borderSet(
                         shape = border.shape.name.lowercase(),
                         centerX = border.centerX,
                         centerZ = border.centerZ,
                         radius = border.radius,
                     )
-                is WorldBorder.Circle ->
+                }
+                is WorldBorder.Circle -> {
                     l10n.worlds.borderSet(
                         shape = border.shape.name.lowercase(),
                         centerX = border.centerX,
                         centerZ = border.centerZ,
                         radius = border.radius,
                     )
+                }
             }
         player.sendMessage(message)
         if (relocationFailures.isNotEmpty()) {

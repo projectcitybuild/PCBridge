@@ -1,17 +1,23 @@
-package com.projectcitybuild.pcbridge.features.worlds.domain.geometry
+package com.projectcitybuild.pcbridge.features.worlds.domain.services
 
 import com.projectcitybuild.pcbridge.features.worlds.domain.data.WorldBorder
 import com.projectcitybuild.pcbridge.features.worlds.domain.data.WorldBorderLimits
 import kotlin.math.abs
+import kotlin.math.cos
 import kotlin.math.floor
+import kotlin.math.hypot
 import kotlin.math.max
+import kotlin.math.sin
 import kotlin.math.sqrt
 import kotlin.random.Random
 
 class WorldBorderGeometry(
     private val border: WorldBorder,
 ) {
-    data class ChunkCoordinate(val x: Int, val z: Int)
+    data class ChunkCoordinate(
+        val x: Int,
+        val z: Int,
+    )
 
     private val halfWidth: Double
         get() = when (border) {
@@ -42,7 +48,10 @@ class WorldBorderGeometry(
     val nativeBorderSize: Double
         get() = max(halfWidth, halfDepth) * 2
 
-    fun contains(x: Double, z: Double): Boolean {
+    fun contains(
+        x: Double,
+        z: Double,
+    ): Boolean {
         if (!x.isFinite() || !z.isFinite()) return false
 
         val deltaX = x - border.centerX
@@ -54,25 +63,27 @@ class WorldBorderGeometry(
             }
             is WorldBorder.Circle -> {
                 val radius = border.radius
-                kotlin.math.hypot(deltaX, deltaZ) <= radius
+                hypot(deltaX, deltaZ) <= radius
             }
         }
     }
 
-    fun sample(random: Random): Pair<Double, Double> =
-        when (border) {
-            is WorldBorder.Square, is WorldBorder.Rectangle -> {
-                random.nextDouble(minX, maxX) to random.nextDouble(minZ, maxZ)
-            }
-            is WorldBorder.Circle -> {
-                val radius = border.radius * sqrt(random.nextDouble())
-                val angle = random.nextDouble(0.0, 2 * Math.PI)
-                (border.centerX + radius * kotlin.math.cos(angle)) to
-                    (border.centerZ + radius * kotlin.math.sin(angle))
-            }
+    fun sample(random: Random): Pair<Double, Double> = when (border) {
+        is WorldBorder.Square, is WorldBorder.Rectangle -> {
+            random.nextDouble(minX, maxX) to random.nextDouble(minZ, maxZ)
         }
+        is WorldBorder.Circle -> {
+            val radius = border.radius * sqrt(random.nextDouble())
+            val angle = random.nextDouble(0.0, 2 * Math.PI)
+            (border.centerX + radius * cos(angle)) to
+                (border.centerZ + radius * sin(angle))
+        }
+    }
 
-    fun clamp(x: Double, z: Double): Pair<Double, Double> {
+    fun clamp(
+        x: Double,
+        z: Double,
+    ): Pair<Double, Double> {
         val safeX = x.takeIf(Double::isFinite) ?: border.centerX
         val safeZ = z.takeIf(Double::isFinite) ?: border.centerZ
 
@@ -85,7 +96,7 @@ class WorldBorderGeometry(
                 val deltaX = safeX - border.centerX
                 val deltaZ = safeZ - border.centerZ
                 val radius = (border.radius - CIRCLE_PLAYER_MARGIN).coerceAtLeast(0.0)
-                val distance = kotlin.math.hypot(deltaX, deltaZ)
+                val distance = hypot(deltaX, deltaZ)
                 if (distance <= radius || distance == 0.0) {
                     safeX to safeZ
                 } else {
@@ -96,7 +107,10 @@ class WorldBorderGeometry(
         }
     }
 
-    fun chunkIntersects(chunkX: Int, chunkZ: Int): Boolean {
+    fun chunkIntersects(
+        chunkX: Int,
+        chunkZ: Int,
+    ): Boolean {
         if (border !is WorldBorder.Circle) return true
 
         val minX = chunkX * CHUNK_SIZE
@@ -106,7 +120,7 @@ class WorldBorderGeometry(
         val deltaX = nearestX - border.centerX
         val deltaZ = nearestZ - border.centerZ
         val radius = border.radius
-        return kotlin.math.hypot(deltaX, deltaZ) <= radius
+        return hypot(deltaX, deltaZ) <= radius
     }
 
     fun chunkXRange(): IntRange = chunkCoordinateRange(minX)..chunkCoordinateRange(maxX)

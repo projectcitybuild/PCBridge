@@ -2,8 +2,8 @@ package com.projectcitybuild.pcbridge.features.worlds.hooks.listeners
 
 import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.core.observability.logging.log
-import com.projectcitybuild.pcbridge.features.worlds.domain.geometry.WorldBorderGeometry
 import com.projectcitybuild.pcbridge.features.worlds.domain.repositories.WorldBorderRepository
+import com.projectcitybuild.pcbridge.features.worlds.domain.services.WorldBorderGeometry
 import com.projectcitybuild.pcbridge.features.worlds.domain.services.WorldBorderService
 import com.projectcitybuild.pcbridge.runtime.teleportation.SafeYLocationFinder
 import com.projectcitybuild.pcbridge.runtime.teleportation.teleportationTracer
