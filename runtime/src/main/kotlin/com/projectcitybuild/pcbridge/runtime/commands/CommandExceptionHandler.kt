@@ -4,6 +4,7 @@ import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.core.http.parsing.ResponseParserError
 import com.projectcitybuild.pcbridge.core.observability.logging.logSync
 import com.projectcitybuild.pcbridge.runtime.cooldowns.CooldownException
+import kotlinx.coroutines.CancellationException
 import org.bukkit.command.CommandSender
 
 class CommandExceptionHandler private constructor() {
@@ -32,5 +33,31 @@ class CommandExceptionHandler private constructor() {
                 logSync.error(e) { "Failed to execute command" }
             }
         }
+    }
+}
+
+suspend fun runCommandSafely(
+    sender: CommandSender,
+    block: suspend () -> Unit,
+) {
+    try {
+        block()
+    } catch (e: CancellationException) {
+        throw e
+    } catch (e: Exception) {
+        CommandExceptionHandler.catch(sender, e)
+    }
+}
+
+fun runCommandSafelySync(
+    sender: CommandSender,
+    block: () -> Unit,
+) {
+    try {
+        block()
+    } catch (e: CancellationException) {
+        throw e
+    } catch (e: Exception) {
+        CommandExceptionHandler.catch(sender, e)
     }
 }

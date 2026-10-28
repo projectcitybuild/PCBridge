@@ -8,8 +8,8 @@ import com.projectcitybuild.pcbridge.core.observability.logging.logSync
 import com.projectcitybuild.pcbridge.core.observability.tracing.TracerFactory
 import com.projectcitybuild.pcbridge.platform.paper.events.SpigotEventBroadcaster
 import com.projectcitybuild.pcbridge.runtime.integrations.PaperIntegration
-import com.projectcitybuild.pcbridge.runtime.listeners.scoped
-import com.projectcitybuild.pcbridge.runtime.listeners.scopedSync
+import com.projectcitybuild.pcbridge.runtime.listeners.traced
+import com.projectcitybuild.pcbridge.runtime.listeners.tracedSync
 import com.projectcitybuild.pcbridge.runtime.state.events.PlayerStateUpdatedEvent
 import com.projectcitybuild.pcbridge.runtime.state.store.SessionStore
 import com.projectcitybuild.pcbridge.runtime.tablist.TabRenderer
@@ -76,10 +76,10 @@ class EssentialsIntegration(
      */
     @EventHandler
     fun onPlayerPreTeleport(event: PlayerPreTeleportEvent) =
-        event.scopedSync(tracer, this::class.java) {
+        event.tracedSync(tracer, this::class.java) {
             if (essentials == null) {
                 logSync.warn { "Essentials integration disabled but it's still listening to events" }
-                return@scopedSync
+                return@tracedSync
             }
             essentials!!
                 .getUser(event.player)
@@ -90,10 +90,10 @@ class EssentialsIntegration(
 
     @EventHandler
     fun onPlayerAFKStatusChange(event: AfkStatusChangeEvent) =
-        event.scopedSync(tracer, this::class.java) {
+        event.tracedSync(tracer, this::class.java) {
             if (essentials == null) {
                 logSync.warn { "Essentials integration disabled but it's still listening to events" }
-                return@scopedSync
+                return@tracedSync
             }
             logSync.info { "Player AFK status changed (${event.value}, ${event.cause})" }
 
@@ -121,7 +121,7 @@ class EssentialsIntegration(
 
     @EventHandler
     suspend fun onPlayerNicknameChange(event: NickChangeEvent) =
-        event.scoped(tracer, this::class.java) {
+        event.traced(tracer, this::class.java) {
             val playerUuid = event.affected.uuid
             log.info { "Player nickname changed (${event.value}, $playerUuid)" }
 

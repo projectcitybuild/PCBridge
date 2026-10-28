@@ -2,7 +2,7 @@ package com.projectcitybuild.pcbridge.features.register.listeners
 
 import com.projectcitybuild.pcbridge.core.pcbridgeapi.pcb.services.RegisterHttpService
 import com.projectcitybuild.pcbridge.core.http.parsing.ResponseParserError
-import com.projectcitybuild.pcbridge.runtime.listeners.scoped
+import com.projectcitybuild.pcbridge.runtime.listeners.traced
 import com.projectcitybuild.pcbridge.core.observability.logging.log
 import com.projectcitybuild.pcbridge.core.observability.logging.logSync
 import com.projectcitybuild.pcbridge.features.register.dialogs.VerifyRegistrationCodeDialog
@@ -27,13 +27,13 @@ class VerifyCodeDialogListener(
     @EventHandler
     suspend fun onPlayerCustomClickEvent(
         event: PlayerCustomClickEvent,
-    ) = event.scoped(registerTracer, this::class.java) {
-        if (event.identifier != VerifyRegistrationCodeDialog.verifyButtonKey) return@scoped
+    ) = event.traced(registerTracer, this::class.java) {
+        if (event.identifier != VerifyRegistrationCodeDialog.verifyButtonKey) return@traced
 
         val view = event.dialogResponseView
         if (view == null) {
             log.error { "DialogResponseView was null for ${event.identifier}" }
-            return@scoped
+            return@traced
         }
 
         val code = view.getText(VerifyRegistrationCodeDialog.codeKey)?.trim()
@@ -41,12 +41,12 @@ class VerifyCodeDialogListener(
         logSync.info("Dialog response received", mapOf("code" to code))
 
         val connection = event.commonConnection as? PlayerGameConnection
-        val player = connection?.player ?: return@scoped
+        val player = connection?.player ?: return@traced
 
         if (code.isNullOrEmpty()) {
             val dialog = errorDialogFactory(l10n.registration.errorNoCodeSpecified)
             player.showDialog(dialog)
-            return@scoped
+            return@traced
         }
 
         try {
@@ -60,7 +60,7 @@ class VerifyCodeDialogListener(
         } catch (_: ResponseParserError.NotFound) {
             val dialog = errorDialogFactory(l10n.registration.errorCodeInvalidOrExpired)
             player.showDialog(dialog)
-            return@scoped
+            return@traced
         }
     }
 }

@@ -4,6 +4,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.CancellationException
 import org.junit.jupiter.api.Assertions.assertSame
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.doThrow
@@ -68,4 +69,21 @@ class ErrorTrackerTest {
             assertTrue(thrown is CancellationException)
             verify(provider, never()).report(cancellation)
         }
+
+    @Test
+    fun `catching propagates fatal errors without reporting`() {
+        val provider = mock<SentryProvider>()
+        val tracker = ErrorTracker(provider)
+        val fatal = AssertionError("fatal")
+
+        val thrown =
+            assertThrows(AssertionError::class.java) {
+                runBlocking {
+                    tracker.catching<String> { throw fatal }
+                }
+            }
+
+        assertSame(fatal, thrown)
+        verify(provider, never()).report(fatal)
+    }
 }

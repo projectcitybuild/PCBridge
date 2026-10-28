@@ -16,7 +16,8 @@ import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executes
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.suggestsSuspending
 import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
-import com.projectcitybuild.pcbridge.runtime.commands.scoped
+import com.projectcitybuild.pcbridge.runtime.commands.runCommandTracedSafely
+import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
 
 class WarpRenameCommand(
@@ -25,6 +26,16 @@ class WarpRenameCommand(
     private val warpRepository: WarpRepository,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
+    internal var showRenameDialog: (Player, Int, String) -> Unit = { player, warpId, warpName ->
+        player.showDialog(
+            WarpRenameDialog.build(
+                warpId = warpId,
+                prevName = warpName,
+                newName = warpName,
+            ),
+        )
+    }
+
     override val builder = command("rename") {
         description = "Renames a warp"
         requiresPermission(WarpsPermissions.MANAGE)
@@ -34,19 +45,13 @@ class WarpRenameCommand(
         }
     }
 
-    private suspend fun execute(context: PaperCommandContext) = context.scoped(warpsTracer) {
+    private suspend fun execute(context: PaperCommandContext) = context.runCommandTracedSafely(warpsTracer) {
         val player = context.source.requirePlayer()
         val name = context.getArgument("name", String::class.java)
 
         val warp = warpRepository.get(name)
         checkNotNull(warp) { l10n.warps.errorWarpNotFound(name) }
 
-        val dialog =
-            WarpRenameDialog.build(
-                warpId = warp.id,
-                prevName = warp.name,
-                newName = warp.name,
-            )
-        player.showDialog(dialog)
+        showRenameDialog(player, warp.id, warp.name)
     }
 }

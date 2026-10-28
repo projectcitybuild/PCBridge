@@ -6,7 +6,7 @@ import com.projectcitybuild.pcbridge.features.warps.domain.repositories.WarpRepo
 import com.projectcitybuild.pcbridge.features.warps.hooks.dialogs.WarpRenameDialog
 import com.projectcitybuild.pcbridge.features.warps.warpsTracer
 import com.projectcitybuild.pcbridge.core.l10n.l10n
-import com.projectcitybuild.pcbridge.runtime.listeners.scoped
+import com.projectcitybuild.pcbridge.runtime.listeners.traced
 import io.papermc.paper.connection.PlayerGameConnection
 import io.papermc.paper.event.player.PlayerCustomClickEvent
 import org.bukkit.event.EventHandler
@@ -17,13 +17,13 @@ class WarpRenameDialogListener(
 ) : Listener {
     @EventHandler
     suspend fun onPlayerCustomClickEvent(event: PlayerCustomClickEvent) =
-        event.scoped(warpsTracer, this::class.java) {
-            if (!event.identifier.equals(WarpRenameDialog.saveButtonKey)) return@scoped
+        event.traced(warpsTracer, this::class.java) {
+            if (!event.identifier.equals(WarpRenameDialog.saveButtonKey)) return@traced
 
             val view = event.dialogResponseView
             if (view == null) {
                 log.error { "DialogResponseView was null for ${event.identifier}" }
-                return@scoped
+                return@traced
             }
 
             val warpId = view.getText(WarpRenameDialog.idKey)
@@ -38,11 +38,11 @@ class WarpRenameDialogListener(
             )
 
             val connection = event.commonConnection as? PlayerGameConnection
-            val player = connection?.player ?: return@scoped
+            val player = connection?.player ?: return@traced
 
             if (newName.isNullOrEmpty()) {
                 player.sendMessage(l10n.errors.errorNewNameCannotBeEmpty)
-                return@scoped
+                return@traced
             }
             if (warpId.isNullOrEmpty()) {
                 player.sendMessage(l10n.warps.errorRenameWarpNotFound)

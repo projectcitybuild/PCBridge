@@ -2,7 +2,7 @@ package com.projectcitybuild.pcbridge.features.onboarding.hooks.listeners
 
 import com.projectcitybuild.pcbridge.core.datetime.services.LocalizedTime
 import com.projectcitybuild.pcbridge.features.onboarding.onboardingTracer
-import com.projectcitybuild.pcbridge.runtime.listeners.scopedSync
+import com.projectcitybuild.pcbridge.runtime.listeners.tracedSync
 import com.projectcitybuild.pcbridge.runtime.remoteconfig.RemoteConfig
 import com.projectcitybuild.pcbridge.runtime.state.store.SessionStore
 import net.kyori.adventure.text.Component
@@ -20,7 +20,7 @@ class AnnounceQuitListener(
 ) : Listener {
     @EventHandler(priority = EventPriority.NORMAL)
     fun onPlayerQuit(event: PlayerQuitEvent) =
-        event.scopedSync(onboardingTracer, this::class.java) {
+        event.tracedSync(onboardingTracer, this::class.java) {
             val playerState = session.state.players[event.player.uniqueId]
             val sessionSeconds = playerState?.sessionSeconds(time) ?: 0
             val timeOnline = sessionTime(sessionSeconds)

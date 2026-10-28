@@ -15,7 +15,7 @@ import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executes
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
 import com.projectcitybuild.pcbridge.platform.paper.events.SpigotEventBroadcaster
-import com.projectcitybuild.pcbridge.runtime.commands.scoped
+import com.projectcitybuild.pcbridge.runtime.commands.runCommandTracedSafely
 import org.bukkit.plugin.Plugin
 
 class WarpCreateCommand(
@@ -32,7 +32,7 @@ class WarpCreateCommand(
         }
     }
 
-    private suspend fun execute(context: PaperCommandContext) = context.scoped(warpsTracer) {
+    private suspend fun execute(context: PaperCommandContext) = context.runCommandTracedSafely(warpsTracer) {
         val player = context.source.requirePlayer()
         val warpName = context.getArgument("name", String::class.java)
 

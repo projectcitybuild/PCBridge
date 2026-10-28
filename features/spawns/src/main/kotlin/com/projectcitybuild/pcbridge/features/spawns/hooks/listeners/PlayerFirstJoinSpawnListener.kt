@@ -3,7 +3,7 @@ package com.projectcitybuild.pcbridge.features.spawns.hooks.listeners
 import com.projectcitybuild.pcbridge.core.observability.logging.log
 import com.projectcitybuild.pcbridge.features.spawns.domain.repositories.SpawnRepository
 import com.projectcitybuild.pcbridge.features.spawns.spawnsTracer
-import com.projectcitybuild.pcbridge.runtime.listeners.scoped
+import com.projectcitybuild.pcbridge.runtime.listeners.traced
 import com.projectcitybuild.pcbridge.runtime.teleportation.PlayerTeleporter
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
@@ -26,7 +26,7 @@ class PlayerFirstJoinSpawnListener(
         // No point changing their location if they have data already.
         if (player.hasPlayedBefore()) return
 
-        return event.scoped(spawnsTracer, this::class.java) {
+        return event.traced(spawnsTracer, this::class.java) {
             val spawn = spawnRepository.get(player.location.world)
 
             log.info { "Moving first time joiner (${player.uniqueId}) to spawn ($spawn)" }

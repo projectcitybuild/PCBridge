@@ -6,7 +6,7 @@ import com.projectcitybuild.pcbridge.features.maintenance.domain.data.Maintenanc
 import com.projectcitybuild.pcbridge.features.maintenance.domain.data.maintenanceStateKey
 import com.projectcitybuild.pcbridge.features.maintenance.maintenanceTracer
 import com.projectcitybuild.pcbridge.platform.paper.scheduling.SpigotTimer
-import com.projectcitybuild.pcbridge.runtime.listeners.scopedSync
+import com.projectcitybuild.pcbridge.runtime.listeners.tracedSync
 import com.projectcitybuild.pcbridge.runtime.state.store.Store
 import org.bukkit.Server
 import org.bukkit.event.EventHandler
@@ -29,7 +29,7 @@ class MaintenanceReminderListener(
     fun onPluginEnable(event: PluginEnableEvent) {
         if (event.plugin != plugin) return
 
-        event.scopedSync(maintenanceTracer, this::class.java) {
+        event.tracedSync(maintenanceTracer, this::class.java) {
             if (store.state(maintenanceStateKey).enabled) {
                 enable()
             }
@@ -40,13 +40,13 @@ class MaintenanceReminderListener(
     fun onPluginDisable(event: PluginDisableEvent) {
         if (event.plugin != plugin) return
 
-        event.scopedSync(maintenanceTracer, this::class.java) {
+        event.tracedSync(maintenanceTracer, this::class.java) {
             disable()
         }
     }
 
     @EventHandler
-    fun onMaintenanceToggled(event: MaintenanceToggledEvent) = event.scopedSync(maintenanceTracer, this::class.java) {
+    fun onMaintenanceToggled(event: MaintenanceToggledEvent) = event.tracedSync(maintenanceTracer, this::class.java) {
         if (event.enabled) {
             enable()
         } else {

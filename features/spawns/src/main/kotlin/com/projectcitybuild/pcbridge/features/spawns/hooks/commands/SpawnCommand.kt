@@ -10,7 +10,7 @@ import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskEx
 import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.requirePlayer
-import com.projectcitybuild.pcbridge.runtime.commands.scoped
+import com.projectcitybuild.pcbridge.runtime.commands.runCommandTracedSafely
 import com.projectcitybuild.pcbridge.runtime.teleportation.PlayerTeleporter
 import org.bukkit.event.player.PlayerTeleportEvent
 import org.bukkit.plugin.Plugin
@@ -26,7 +26,7 @@ class SpawnCommand(
         executesSuspending(commandTaskExecutor, ::execute)
     }
 
-    suspend fun execute(context: PaperCommandContext) = context.scoped(spawnsTracer) {
+    suspend fun execute(context: PaperCommandContext) = context.runCommandTracedSafely(spawnsTracer) {
         val player = context.source.requirePlayer()
 
         val spawn = spawnRepository.get(player.location.world)

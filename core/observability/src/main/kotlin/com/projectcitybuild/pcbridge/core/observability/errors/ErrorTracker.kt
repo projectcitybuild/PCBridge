@@ -21,7 +21,7 @@ class ErrorTracker(
         Result.success(block())
     } catch (e: CancellationException) {
         throw e
-    } catch (e: Throwable) {
+    } catch (e: Exception) {
         reportSafely(e)
         Result.failure(e)
     }

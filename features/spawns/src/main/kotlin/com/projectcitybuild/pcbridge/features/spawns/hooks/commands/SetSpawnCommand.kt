@@ -14,7 +14,7 @@ import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executes
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
 import com.projectcitybuild.pcbridge.platform.paper.events.SpigotEventBroadcaster
-import com.projectcitybuild.pcbridge.runtime.commands.scoped
+import com.projectcitybuild.pcbridge.runtime.commands.runCommandTracedSafely
 import org.bukkit.plugin.Plugin
 
 class SetSpawnCommand(
@@ -29,7 +29,7 @@ class SetSpawnCommand(
         executesSuspending(commandTaskExecutor, ::execute)
     }
 
-    suspend fun execute(context: PaperCommandContext) = context.scoped(spawnsTracer) {
+    suspend fun execute(context: PaperCommandContext) = context.runCommandTracedSafely(spawnsTracer) {
         val player = context.source.requirePlayer()
         val location = player.location
 

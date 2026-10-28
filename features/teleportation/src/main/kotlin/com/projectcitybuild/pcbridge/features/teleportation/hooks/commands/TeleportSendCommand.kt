@@ -7,7 +7,7 @@ import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.argumenttypes.SingleOnlinePlayerArgument
 import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
-import com.projectcitybuild.pcbridge.runtime.commands.scoped
+import com.projectcitybuild.pcbridge.runtime.commands.runCommandTracedSafely
 import com.projectcitybuild.pcbridge.runtime.teleportation.teleportationTracer
 import io.papermc.paper.command.brigadier.Commands
 import org.bukkit.Server
@@ -27,7 +27,7 @@ class TeleportSendCommand(
                 Commands
                     .argument("target", SingleOnlinePlayerArgument(server))
                     .withTeleportFlags(plugin) { context, flags ->
-                        context.scoped(teleportationTracer) {
+                        context.runCommandTracedSafely(teleportationTracer) {
                             application.send(
                                 operator = context.source.sender,
                                 player = context.getArgument("player", Player::class.java),

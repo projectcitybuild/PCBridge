@@ -15,7 +15,7 @@ import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
-import com.projectcitybuild.pcbridge.runtime.commands.scoped
+import com.projectcitybuild.pcbridge.runtime.commands.runCommandTracedSafely
 import net.kyori.adventure.dialog.DialogLike
 import org.bukkit.plugin.Plugin
 
@@ -33,7 +33,7 @@ class OpGrantCommand(
         executesSuspending(commandTaskExecutor, ::execute)
     }
 
-    suspend fun execute(context: PaperCommandContext) = context.scoped(pimTracer) {
+    suspend fun execute(context: PaperCommandContext) = context.runCommandTracedSafely(pimTracer) {
         val player = context.source.requirePlayer()
 
         val elevation = opElevationService.elevation(player.uniqueId)
@@ -41,7 +41,7 @@ class OpGrantCommand(
         val isActive = elevation != null && elevation.isActiveAt(now)
         if (isActive) {
             player.sendMessage(l10n.pim.opElevationAlreadyActive(elevation?.remainingAt(now)?.humanReadable()))
-            return@scoped
+            return@runCommandTracedSafely
         }
 
         val dialog = confirmationDialog()

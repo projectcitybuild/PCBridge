@@ -12,7 +12,7 @@ import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
 import com.projectcitybuild.pcbridge.platform.paper.extensions.onlinePlayer
-import com.projectcitybuild.pcbridge.runtime.commands.scoped
+import com.projectcitybuild.pcbridge.runtime.commands.runCommandTracedSafely
 import net.kyori.adventure.dialog.DialogLike
 import org.bukkit.Server
 import org.bukkit.plugin.Plugin
@@ -31,7 +31,7 @@ class BanCommand(
         }
     }
 
-    private suspend fun execute(context: PaperCommandContext) = context.scoped(bansTracer) {
+    private suspend fun execute(context: PaperCommandContext) = context.runCommandTracedSafely(bansTracer) {
         val inputPlayerName = context.getArgument("player", String::class.java)
 
         val playerName =

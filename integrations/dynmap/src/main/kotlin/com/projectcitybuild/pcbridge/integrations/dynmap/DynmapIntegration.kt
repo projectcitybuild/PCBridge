@@ -12,7 +12,7 @@ import com.projectcitybuild.pcbridge.features.warps.domain.repositories.WarpRepo
 import com.projectcitybuild.pcbridge.features.worlds.domain.data.WorldBorderUpdatedEvent
 import com.projectcitybuild.pcbridge.features.worlds.domain.repositories.WorldBorderRepository
 import com.projectcitybuild.pcbridge.runtime.integrations.PaperIntegration
-import com.projectcitybuild.pcbridge.runtime.listeners.scoped
+import com.projectcitybuild.pcbridge.runtime.listeners.traced
 import com.projectcitybuild.pcbridge.runtime.remoteconfig.RemoteConfig
 import com.projectcitybuild.pcbridge.runtime.remoteconfig.RemoteConfigUpdatedEvent
 import kotlinx.coroutines.CancellationException
@@ -75,29 +75,29 @@ class DynmapIntegration(
     }
 
     @EventHandler
-    suspend fun onWarpCreate(event: WarpCreateEvent) = event.scoped(tracer, this::class.java) { updateWarpMarkers() }
+    suspend fun onWarpCreate(event: WarpCreateEvent) = event.traced(tracer, this::class.java) { updateWarpMarkers() }
 
     @EventHandler
-    suspend fun onWarpDelete(event: WarpDeleteEvent) = event.scoped(tracer, this::class.java) { updateWarpMarkers() }
+    suspend fun onWarpDelete(event: WarpDeleteEvent) = event.traced(tracer, this::class.java) { updateWarpMarkers() }
 
     @EventHandler
-    suspend fun onSpawnUpdate(event: SpawnUpdatedEvent) = event.scoped(tracer, this::class.java) { updateSpawnMarkers() }
+    suspend fun onSpawnUpdate(event: SpawnUpdatedEvent) = event.traced(tracer, this::class.java) { updateSpawnMarkers() }
 
     @EventHandler
     suspend fun onWorldBorderUpdated(event: WorldBorderUpdatedEvent) =
-        event.scoped(tracer, this::class.java) { updateBorderMarkers() }
+        event.traced(tracer, this::class.java) { updateBorderMarkers() }
 
     @EventHandler
     suspend fun onWorldLoad(event: WorldLoadEvent) =
-        event.scoped(tracer, this::class.java) { updateBorderMarkers() }
+        event.traced(tracer, this::class.java) { updateBorderMarkers() }
 
     @EventHandler
     suspend fun onWorldUnload(event: WorldUnloadEvent) =
-        event.scoped(tracer, this::class.java) { removeBorderMarker(event.world.uid) }
+        event.traced(tracer, this::class.java) { removeBorderMarker(event.world.uid) }
 
     @EventHandler
     suspend fun onRemoteConfigUpdated(event: RemoteConfigUpdatedEvent) =
-        event.scoped(tracer, this::class.java) {
+        event.traced(tracer, this::class.java) {
             val prev = event.prev?.config
             val next = event.next.config
 

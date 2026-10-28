@@ -1,7 +1,7 @@
 package com.projectcitybuild.pcbridge.features.pim.hooks.listener
 
 import com.projectcitybuild.pcbridge.features.pim.pimTracer
-import com.projectcitybuild.pcbridge.runtime.listeners.scopedSync
+import com.projectcitybuild.pcbridge.runtime.listeners.tracedSync
 import org.bukkit.Server
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -16,7 +16,7 @@ class OpClearListener(
     fun onPluginEnabled(event: PluginEnableEvent) {
         if (event.plugin != plugin) return
 
-        event.scopedSync(pimTracer, this::class.java) {
+        event.tracedSync(pimTracer, this::class.java) {
             server.operators.forEach { it.isOp = false }
         }
     }

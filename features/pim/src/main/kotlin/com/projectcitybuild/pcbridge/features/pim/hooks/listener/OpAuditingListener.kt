@@ -3,7 +3,7 @@ package com.projectcitybuild.pcbridge.features.pim.hooks.listener
 import com.projectcitybuild.pcbridge.features.pim.domain.repositories.OpAuditRepository
 import com.projectcitybuild.pcbridge.features.pim.pimTracer
 import com.projectcitybuild.pcbridge.platform.paper.serialization.SerializableLocation
-import com.projectcitybuild.pcbridge.runtime.listeners.scoped
+import com.projectcitybuild.pcbridge.runtime.listeners.traced
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer.gson
 import org.bukkit.command.BlockCommandSender
 import org.bukkit.command.CommandSender
@@ -27,9 +27,9 @@ class OpAuditingListener(
         if (!command.startsWith("op ") && !command.startsWith("deop ")) {
             return
         }
-        event.scoped(pimTracer, this::class.java) {
+        event.traced(pimTracer, this::class.java) {
             val args = command.split(" ")
-            if (args.size < 2) return@scoped
+            if (args.size < 2) return@traced
 
             opAuditRepository.auditCommand(
                 command = command,

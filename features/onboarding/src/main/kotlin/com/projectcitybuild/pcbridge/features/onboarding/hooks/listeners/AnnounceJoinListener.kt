@@ -1,7 +1,7 @@
 package com.projectcitybuild.pcbridge.features.onboarding.hooks.listeners
 
 import com.projectcitybuild.pcbridge.features.onboarding.onboardingTracer
-import com.projectcitybuild.pcbridge.runtime.listeners.scopedSync
+import com.projectcitybuild.pcbridge.runtime.listeners.tracedSync
 import com.projectcitybuild.pcbridge.runtime.remoteconfig.RemoteConfig
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.MiniMessage
@@ -16,7 +16,7 @@ class AnnounceJoinListener(
 ) : Listener {
     @EventHandler(priority = EventPriority.NORMAL)
     fun onPlayerJoin(event: PlayerJoinEvent) =
-        event.scopedSync(onboardingTracer, this::class.java) {
+        event.tracedSync(onboardingTracer, this::class.java) {
             val joinMessage = remoteConfig.latest.config.messages.join
 
             event.joinMessage(

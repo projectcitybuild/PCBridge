@@ -3,7 +3,7 @@ package com.projectcitybuild.pcbridge.features.chatformatting.hooks.listeners
 import com.projectcitybuild.pcbridge.core.observability.logging.logSync
 import com.projectcitybuild.pcbridge.features.chatformatting.chatFormattingTracer
 import com.projectcitybuild.pcbridge.features.chatformatting.domain.repositories.EmojiRepository
-import com.projectcitybuild.pcbridge.runtime.listeners.scopedSync
+import com.projectcitybuild.pcbridge.runtime.listeners.tracedSync
 import com.projectcitybuild.pcbridge.runtime.remoteconfig.RemoteConfigUpdatedEvent
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -13,7 +13,7 @@ class EmojiConfigListener(
 ) : Listener {
     @EventHandler
     fun onRemoteConfigUpdated(event: RemoteConfigUpdatedEvent) =
-        event.scopedSync(chatFormattingTracer, this::class.java) {
+        event.tracedSync(chatFormattingTracer, this::class.java) {
             val prev = event.prev?.config
             val next = event.next.config
 

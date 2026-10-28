@@ -10,7 +10,7 @@ import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskEx
 import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.requirePlayer
-import com.projectcitybuild.pcbridge.runtime.commands.scoped
+import com.projectcitybuild.pcbridge.runtime.commands.runCommandTracedSafely
 import org.bukkit.plugin.Plugin
 
 class HomeLimitCommand(
@@ -23,13 +23,13 @@ class HomeLimitCommand(
         executesSuspending(taskExecutor, ::execute)
     }
 
-    private suspend fun execute(context: PaperCommandContext) = context.scoped(homesTracer) {
+    private suspend fun execute(context: PaperCommandContext) = context.runCommandTracedSafely(homesTracer) {
         val player = context.source.requirePlayer()
 
         val limit = homeRepository.limit(player)
         if (limit.max == 0) {
             context.source.sender.sendMessage(l10n.homes.homesCannotCreate)
-            return@scoped
+            return@runCommandTracedSafely
         }
 
         context.source.sender.sendMessage(l10n.homes.homesLimit(limit.current, limit.max))

@@ -12,7 +12,7 @@ import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.platform.paper.namespace.SpigotNamespace
-import com.projectcitybuild.pcbridge.runtime.commands.scopedSync
+import com.projectcitybuild.pcbridge.runtime.commands.runCommandTracedSafelySync
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextDecoration
@@ -50,7 +50,7 @@ class InvisFrameCommand(
     private fun give(
         context: PaperCommandContext,
         glowing: Boolean,
-    ) = context.scopedSync(buildingTracer) {
+    ) = context.runCommandTracedSafelySync(buildingTracer) {
         val player = context.source.requirePlayer()
         val itemStack =
             if (glowing) {

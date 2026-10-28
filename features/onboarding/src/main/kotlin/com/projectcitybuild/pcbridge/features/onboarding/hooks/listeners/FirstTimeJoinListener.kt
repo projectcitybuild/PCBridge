@@ -2,7 +2,7 @@ package com.projectcitybuild.pcbridge.features.onboarding.hooks.listeners
 
 import com.projectcitybuild.pcbridge.core.observability.logging.logSync
 import com.projectcitybuild.pcbridge.features.onboarding.onboardingTracer
-import com.projectcitybuild.pcbridge.runtime.listeners.scopedSync
+import com.projectcitybuild.pcbridge.runtime.listeners.tracedSync
 import com.projectcitybuild.pcbridge.runtime.remoteconfig.RemoteConfig
 import com.projectcitybuild.pcbridge.runtime.state.store.SessionStore
 import net.kyori.adventure.text.Component
@@ -21,30 +21,30 @@ class FirstTimeJoinListener(
 ) : Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     fun onPlayerJoin(event: PlayerJoinEvent) =
-        event.scopedSync(onboardingTracer, this::class.java) {
+        event.tracedSync(onboardingTracer, this::class.java) {
             logSync.debug { "Checking if first time join" }
 
             val playerSession = session.state.players[event.player.uniqueId]
             if (playerSession == null) {
                 logSync.warn { "Failed to find state for player: ${event.player.uniqueId}" }
-                return@scopedSync
+                return@tracedSync
             }
             val synced = playerSession.syncedValue
             if (synced == null) {
                 logSync.warn { "No player data available to check if first-time join" }
-                return@scopedSync
+                return@tracedSync
             }
             val player = synced.player
             if (player?.lastSeenAt != null) {
                 logSync.debug { "Player last seen ${player.lastSeenAt}. Not sending first-time join message" }
-                return@scopedSync
+                return@tracedSync
             }
 
             logSync.info { "Sending first-time welcome message for ${event.player.name}" }
 
             if (server.onlinePlayers.isEmpty()) {
                 logSync.info { "Skipping. No players online" }
-                return@scopedSync
+                return@tracedSync
             }
 
             val config = remoteConfig.latest.config

@@ -14,7 +14,7 @@ import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
-import com.projectcitybuild.pcbridge.runtime.commands.scoped
+import com.projectcitybuild.pcbridge.runtime.commands.runCommandTracedSafely
 import org.bukkit.plugin.Plugin
 
 class OpStatusCommand(
@@ -29,7 +29,7 @@ class OpStatusCommand(
         executesSuspending(commandTaskExecutor, ::execute)
     }
 
-    suspend fun execute(context: PaperCommandContext) = context.scoped(pimTracer) {
+    suspend fun execute(context: PaperCommandContext) = context.runCommandTracedSafely(pimTracer) {
         val player = context.source.requirePlayer()
 
         val elevation = opElevationService.elevation(player.uniqueId)

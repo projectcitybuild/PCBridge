@@ -6,7 +6,7 @@ import com.projectcitybuild.pcbridge.core.observability.logging.logSync
 import com.projectcitybuild.pcbridge.features.pim.domain.services.OpElevationService
 import com.projectcitybuild.pcbridge.features.pim.hooks.dialogs.ConfirmOpElevateDialog
 import com.projectcitybuild.pcbridge.features.pim.pimTracer
-import com.projectcitybuild.pcbridge.runtime.listeners.scoped
+import com.projectcitybuild.pcbridge.runtime.listeners.traced
 import io.papermc.paper.connection.PlayerGameConnection
 import io.papermc.paper.event.player.PlayerCustomClickEvent
 import org.bukkit.event.EventHandler
@@ -17,13 +17,13 @@ class OpDialogListener(
 ) : Listener {
     @EventHandler
     suspend fun onPlayerCustomClickEvent(event: PlayerCustomClickEvent) =
-        event.scoped(pimTracer, this::class.java) {
-            if (event.identifier != ConfirmOpElevateDialog.proceedButtonKey) return@scoped
+        event.traced(pimTracer, this::class.java) {
+            if (event.identifier != ConfirmOpElevateDialog.proceedButtonKey) return@traced
 
             val view = event.dialogResponseView
             if (view == null) {
                 log.error { "DialogResponseView was null for ${event.identifier}" }
-                return@scoped
+                return@traced
             }
 
             val reason = view.getText(ConfirmOpElevateDialog.REASON_KEY)?.trim()
@@ -31,11 +31,11 @@ class OpDialogListener(
             logSync.info("Dialog response received", mapOf("reason" to reason))
 
             val connection = event.commonConnection as? PlayerGameConnection
-            val player = connection?.player ?: return@scoped
+            val player = connection?.player ?: return@traced
 
             if (reason.isNullOrEmpty()) {
                 player.sendMessage(l10n.pim.errorOpElevationReasonRequired)
-                return@scoped
+                return@traced
             }
 
             try {

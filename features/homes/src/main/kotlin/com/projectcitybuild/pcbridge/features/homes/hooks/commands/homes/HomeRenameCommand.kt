@@ -14,7 +14,8 @@ import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.suggestsSuspending
-import com.projectcitybuild.pcbridge.runtime.commands.scoped
+import com.projectcitybuild.pcbridge.runtime.commands.runCommandTracedSafely
+import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
 
 class HomeRenameCommand(
@@ -23,6 +24,16 @@ class HomeRenameCommand(
     private val homeRepository: HomeRepository,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
+    internal var showRenameDialog: (Player, Int, String) -> Unit = { player, homeId, homeName ->
+        player.showDialog(
+            HomeRenameDialog.build(
+                homeId = homeId,
+                prevName = homeName,
+                newName = homeName,
+            ),
+        )
+    }
+
     override val builder = command("rename") {
         description = "Renames a saved home"
         argument("name", StringArgumentType.greedyString()) {
@@ -31,19 +42,13 @@ class HomeRenameCommand(
         }
     }
 
-    private suspend fun execute(context: PaperCommandContext) = context.scoped(homesTracer) {
+    private suspend fun execute(context: PaperCommandContext) = context.runCommandTracedSafely(homesTracer) {
         val player = context.source.requirePlayer()
         val name = context.getArgument("name", String::class.java)
 
         val home = homeRepository.get(player.uniqueId, name)
         checkNotNull(home) { l10n.homes.errorHomeNotFound(name) }
 
-        val dialog =
-            HomeRenameDialog.build(
-                homeId = home.id,
-                prevName = home.name,
-                newName = home.name,
-            )
-        player.showDialog(dialog)
+        showRenameDialog(player, home.id, home.name)
     }
 }
