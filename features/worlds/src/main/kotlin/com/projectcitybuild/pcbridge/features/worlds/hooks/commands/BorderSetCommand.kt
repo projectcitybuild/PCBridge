@@ -127,34 +127,34 @@ class BorderSetCommand(
         }
 
         val relocationFailures = worldBorderService.set(player.world, border)
-        val message =
-            when (border) {
-                is WorldBorder.Rectangle -> {
-                    l10n.worlds.rectangleBorderSet(
-                        centerX = border.centerX,
-                        centerZ = border.centerZ,
-                        width = border.width,
-                        depth = border.depth,
-                    )
-                }
-                is WorldBorder.Square -> {
-                    l10n.worlds.borderSet(
-                        shape = border.shape.name.lowercase(),
-                        centerX = border.centerX,
-                        centerZ = border.centerZ,
-                        radius = border.radius,
-                    )
-                }
-                is WorldBorder.Circle -> {
-                    l10n.worlds.borderSet(
-                        shape = border.shape.name.lowercase(),
-                        centerX = border.centerX,
-                        centerZ = border.centerZ,
-                        radius = border.radius,
-                    )
-                }
+        val message = when (border) {
+            is WorldBorder.Rectangle -> {
+                l10n.worlds.rectangleBorderSet(
+                    centerX = border.centerX,
+                    centerZ = border.centerZ,
+                    width = border.width,
+                    depth = border.depth,
+                )
             }
+            is WorldBorder.Square -> {
+                l10n.worlds.borderSet(
+                    shape = border.shape.name.lowercase(),
+                    centerX = border.centerX,
+                    centerZ = border.centerZ,
+                    radius = border.radius,
+                )
+            }
+            is WorldBorder.Circle -> {
+                l10n.worlds.borderSet(
+                    shape = border.shape.name.lowercase(),
+                    centerX = border.centerX,
+                    centerZ = border.centerZ,
+                    radius = border.radius,
+                )
+            }
+        }
         player.sendMessage(message)
+
         if (relocationFailures.isNotEmpty()) {
             player.sendMessage(l10n.worlds.borderRelocationFailures(relocationFailures.size))
         }

@@ -6,6 +6,7 @@ import com.projectcitybuild.pcbridge.features.worlds.domain.data.WorldBorderLimi
 import com.projectcitybuild.pcbridge.features.worlds.domain.data.WorldBorderUpdatedEvent
 import com.projectcitybuild.pcbridge.features.worlds.domain.repositories.WorldBorderRepository
 import com.projectcitybuild.pcbridge.platform.paper.events.SpigotEventBroadcaster
+import com.projectcitybuild.pcbridge.platform.paper.extensions.onlinePlayersInWorld
 import com.projectcitybuild.pcbridge.runtime.teleportation.PlayerTeleporter
 import com.projectcitybuild.pcbridge.runtime.teleportation.exceptions.TeleportDestinationRejectedException
 import kotlinx.coroutines.CancellationException
@@ -45,8 +46,9 @@ class WorldBorderService(
         border: WorldBorder,
     ): List<UUID> {
         val nativeSize = validatedNativeBorderSize(border)
-        val nativeSnapshot = withContext(minecraftDispatcher) { NativeBorderSnapshot.capture(world) }
-
+        val nativeSnapshot = withContext(minecraftDispatcher) {
+            NativeBorderSnapshot.capture(world)
+        }
         withContext(NonCancellable) {
             try {
                 withContext(minecraftDispatcher) {
@@ -69,9 +71,7 @@ class WorldBorderService(
         var operationFailure: Throwable? = null
         try {
             val affectedPlayers = withContext(minecraftDispatcher) {
-                server.onlinePlayers.filter { player ->
-                    player.world.uid == world.uid
-                }
+                server.onlinePlayersInWorld(world)
             }
             affectedPlayers.forEach { player ->
                 try {
@@ -98,8 +98,9 @@ class WorldBorderService(
     }
 
     suspend fun clear(world: World) {
-        val nativeSnapshot = withContext(minecraftDispatcher) { NativeBorderSnapshot.capture(world) }
-
+        val nativeSnapshot = withContext(minecraftDispatcher) {
+            NativeBorderSnapshot.capture(world)
+        }
         withContext(NonCancellable) {
             try {
                 withContext(minecraftDispatcher) {
@@ -118,7 +119,7 @@ class WorldBorderService(
         }
     }
 
-    private fun validatedNativeBorderSize(border: WorldBorder): Double {
+    private fun validatedNativeBorderSize(border: WorldBorder): Double? {
         val geometry = border.geometry
         val size = geometry.nativeBorderSize
         require(size.isFinite() && size > 0.0 && size <= WorldBorderLimits.MAX_DIMENSION) {
@@ -127,7 +128,11 @@ class WorldBorderService(
         require(geometry.contains(border.centerX, border.centerZ)) {
             "World border center is invalid"
         }
-        return size
+        return when (border) {
+            is WorldBorder.Circle -> null
+            is WorldBorder.Rectangle -> size.takeIf { border.width == border.depth }
+            is WorldBorder.Square -> size
+        }
     }
 
     private suspend fun restoreNativeBorder(
@@ -198,7 +203,7 @@ class WorldBorderService(
                     player = player,
                     destination = destination,
                     options = PlayerTeleporter.TeleportOptions(
-                        adjustYForSafety = true,
+                        adjustYForSafety = false,
                         playSound = false,
                         recordHistory = false,
                     ),
@@ -233,8 +238,12 @@ class WorldBorderService(
 
     private fun World.applyNativeBorder(
         border: WorldBorder,
-        nativeSize: Double,
+        nativeSize: Double?,
     ) {
+        if (nativeSize == null) {
+            restoreDefaultNativeBorder()
+            return
+        }
         worldBorder.setCenter(border.centerX, border.centerZ)
         worldBorder.size = nativeSize
     }
@@ -257,7 +266,12 @@ class WorldBorderService(
             fun capture(world: World): NativeBorderSnapshot {
                 val border = world.worldBorder
                 val center = border.center
-                return NativeBorderSnapshot(center.x, center.z, border.size)
+
+                return NativeBorderSnapshot(
+                    centerX = center.x,
+                    centerZ = center.z,
+                    size = border.size,
+                )
             }
         }
     }

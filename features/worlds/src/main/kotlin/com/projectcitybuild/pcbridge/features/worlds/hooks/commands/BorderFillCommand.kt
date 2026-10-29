@@ -20,8 +20,11 @@ class BorderFillCommand(
         plugin: Plugin,
         worldBorderRepository: WorldBorderRepository,
         taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
-        configuredChunkLimit: Int? = null,
-    ) : this(plugin, WorldBorderFillService(worldBorderRepository, configuredChunkLimit), taskExecutor)
+    ) : this(
+        plugin,
+        WorldBorderFillService(worldBorderRepository),
+        taskExecutor,
+    )
 
     override val builder = command("fill") {
         description = l10n.worlds.borderFillCommandDescription
@@ -36,10 +39,5 @@ class BorderFillCommand(
         literal("cancel") {
             executesSuspending(taskExecutor) { fillService.cancel(it.source.requirePlayer()) }
         }
-    }
-
-    companion object {
-        const val DEFAULT_CHUNK_LIMIT = WorldBorderFillService.DEFAULT_CHUNK_LIMIT
-        const val HARD_MAX_CHUNKS_PER_FILL = WorldBorderFillService.HARD_MAX_CHUNKS_PER_FILL
     }
 }

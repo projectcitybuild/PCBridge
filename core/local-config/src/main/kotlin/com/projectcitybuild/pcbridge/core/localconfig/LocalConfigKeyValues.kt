@@ -15,7 +15,6 @@ data class LocalConfigKeyValues(
     val webServer: WebServer,
     val observability: Observability,
     val discord: Discord,
-    val worlds: Worlds? = null,
 ) {
     @Serializable
     data class Api(
@@ -60,11 +59,6 @@ data class LocalConfigKeyValues(
     data class Discord(
         val contentAlertWebhook: String,
     )
-
-    @Serializable
-    data class Worlds(
-        val borderFillMaxChunks: Int = 4_096,
-    )
 }
 
 fun LocalConfigKeyValues.Companion.default() = LocalConfigKeyValues(
@@ -86,5 +80,4 @@ fun LocalConfigKeyValues.Companion.default() = LocalConfigKeyValues(
     discord = LocalConfigKeyValues.Discord(
         contentAlertWebhook = "",
     ),
-    worlds = LocalConfigKeyValues.Worlds(),
 )

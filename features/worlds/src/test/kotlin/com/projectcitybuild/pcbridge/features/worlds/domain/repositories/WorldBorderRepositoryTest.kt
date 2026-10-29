@@ -42,7 +42,7 @@ class WorldBorderRepositoryTest {
         val repository =
             WorldBorderRepository(
                 server,
-                JsonFileStorage(object : TypeToken<SerializableWorldBorder>() {}),
+                borderFileStorage(),
             )
 
         repository.set(world, border)
@@ -52,7 +52,7 @@ class WorldBorderRepositoryTest {
         val loaded =
             WorldBorderRepository(
                 server,
-                JsonFileStorage(object : TypeToken<SerializableWorldBorder>() {}),
+                borderFileStorage(),
             ).get(world)
         assertEquals(border, loaded)
     }
@@ -64,11 +64,11 @@ class WorldBorderRepositoryTest {
         whenever(world.worldFolder).thenReturn(temporaryDirectory)
         val borderFile = File(temporaryDirectory, "meta/border.json")
         borderFile.parentFile.mkdirs()
-        borderFile.writeText("""{"centerX":0.0,"centerZ":0.0,"radius":10.0}""")
+        borderFile.writeText("""{"center_x":0.0,"center_z":0.0,"radius":10.0}""")
         val repository =
             WorldBorderRepository(
                 mock(Server::class.java),
-                JsonFileStorage(object : TypeToken<SerializableWorldBorder>() {}),
+                borderFileStorage(),
             )
 
         assertEquals(null, repository.get(world))
@@ -84,7 +84,7 @@ class WorldBorderRepositoryTest {
         val repository =
             WorldBorderRepository(
                 mock(Server::class.java),
-                JsonFileStorage(object : TypeToken<SerializableWorldBorder>() {}),
+                borderFileStorage(),
             )
 
         assertEquals(null, repository.get(world))
@@ -104,15 +104,30 @@ class WorldBorderRepositoryTest {
         whenever(world.worldFolder).thenReturn(temporaryDirectory)
         val borderFile = File(temporaryDirectory, "meta/border.json")
         borderFile.parentFile.mkdirs()
-        borderFile.writeText("""{"centerX":0.0,"centerZ":0.0,"shape":"RECTANGLE","width":16.0}""")
+        borderFile.writeText("""{"center_x":0.0,"center_z":0.0,"shape":"RECTANGLE","width":16.0}""")
         val repository =
             WorldBorderRepository(
                 mock(Server::class.java),
-                JsonFileStorage(object : TypeToken<SerializableWorldBorder>() {}),
+                borderFileStorage(),
             )
 
         assertEquals(null, repository.get(world))
         assertEquals(null, repository.get(world))
+    }
+
+    @Test
+    fun `ignores fields that do not belong to the selected border shape`() {
+        val world = mock(World::class.java)
+        whenever(world.uid).thenReturn(UUID.randomUUID())
+        whenever(world.worldFolder).thenReturn(temporaryDirectory)
+        val borderFile = File(temporaryDirectory, "meta/border.json")
+        borderFile.parentFile.mkdirs()
+        borderFile.writeText(
+            """{"center_x":0.0,"center_z":0.0,"shape":"SQUARE","radius":10.0,"width":16.0,"depth":16.0}""",
+        )
+        val repository = WorldBorderRepository(mock(Server::class.java), borderFileStorage())
+
+        assertEquals(WorldBorder.Square(0.0, 0.0, 10.0), repository.get(world))
     }
 
     @Test
@@ -125,7 +140,7 @@ class WorldBorderRepositoryTest {
         borderFile.writeText("""{"center_x":0.0,"center_z":0.0,"shape":"SQUARE","radius":10.0}""")
         val repository = WorldBorderRepository(
             mock(Server::class.java),
-            JsonFileStorage(object : TypeToken<SerializableWorldBorder>() {}),
+            borderFileStorage(),
         )
         assertEquals(WorldBorder.Square(0.0, 0.0, 10.0), repository.get(world))
 
@@ -154,7 +169,7 @@ class WorldBorderRepositoryTest {
         val repository =
             WorldBorderRepository(
                 server,
-                JsonFileStorage(object : TypeToken<SerializableWorldBorder>() {}),
+                borderFileStorage(),
             )
 
         repository.set(world, border)
@@ -162,7 +177,7 @@ class WorldBorderRepositoryTest {
         val loaded =
             WorldBorderRepository(
                 server,
-                JsonFileStorage(object : TypeToken<SerializableWorldBorder>() {}),
+                borderFileStorage(),
             ).get(world)
         assertEquals(border, loaded)
         verify(worldBorder, org.mockito.Mockito.never()).setCenter(0.0, 0.0)
@@ -177,21 +192,22 @@ class WorldBorderRepositoryTest {
         whenever(world.worldFolder).thenReturn(temporaryDirectory)
         whenever(world.worldBorder).thenReturn(worldBorder)
         whenever(server.onlinePlayers).thenReturn(emptyList())
-        val repository =
-            WorldBorderRepository(
-                server,
-                JsonFileStorage(object : TypeToken<SerializableWorldBorder>() {}),
-            )
-
-        repository.set(
-            world,
-            WorldBorder.Circle(
-                centerX = 12.5,
-                centerZ = -8.0,
-                radius = 96.0,
-            ),
+        val border = WorldBorder.Circle(
+            centerX = 12.5,
+            centerZ = -8.0,
+            radius = 96.0,
+        )
+        val repository = WorldBorderRepository(
+            server,
+            borderFileStorage(),
         )
 
+        repository.set(world, border)
+
+        assertEquals(
+            border,
+            WorldBorderRepository(server, borderFileStorage()).get(world),
+        )
         verify(worldBorder, org.mockito.Mockito.never()).setCenter(0.0, 0.0)
     }
 
@@ -207,7 +223,7 @@ class WorldBorderRepositoryTest {
         val repository =
             WorldBorderRepository(
                 server,
-                JsonFileStorage(object : TypeToken<SerializableWorldBorder>() {}),
+                borderFileStorage(),
             )
         repository.set(
             world,
@@ -226,4 +242,6 @@ class WorldBorderRepositoryTest {
         assertEquals(null, repository.get(world))
         verify(worldBorder, org.mockito.Mockito.never()).setCenter(0.0, 0.0)
     }
+
+    private fun borderFileStorage() = JsonFileStorage(object : TypeToken<SerializableWorldBorder>() {})
 }

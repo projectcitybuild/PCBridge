@@ -22,7 +22,6 @@ class LocalConfigKeyValuesTest {
         assertEquals("", config.observability.sentryDsn)
         assertEquals(1.0, config.observability.traceSampleRate)
         assertEquals("", config.discord.contentAlertWebhook)
-        assertEquals(4_096, config.worlds?.borderFillMaxChunks)
     }
 
     @Test

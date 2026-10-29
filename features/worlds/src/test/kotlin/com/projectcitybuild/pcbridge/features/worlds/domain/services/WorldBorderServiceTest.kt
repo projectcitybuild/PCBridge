@@ -62,7 +62,7 @@ class WorldBorderServiceTest {
     }
 
     @Test
-    fun `loading configured border applies it to the native border`() {
+    fun `loading non-square rectangle restores the default native border`() {
         val world = mock(World::class.java)
         val platformBorder = mock(BukkitWorldBorder::class.java)
         val server = mock(Server::class.java)
@@ -80,12 +80,37 @@ class WorldBorderServiceTest {
 
         assertEquals(border, service.load(world))
 
-        verify(platformBorder).setCenter(12.0, -8.0)
-        verify(platformBorder).setSize(64.0)
+        verify(platformBorder).setCenter(0.0, 0.0)
+        verify(platformBorder).setSize(WorldBorderLimits.MAX_DIMENSION)
     }
 
     @Test
-    fun `sets native border to the configured bounding square and broadcasts the update`() = runTest {
+    fun `setting non-square rectangle restores the default native border`() = runTest {
+        val world = mock(World::class.java)
+        val platformBorder = mock(BukkitWorldBorder::class.java)
+        val server = mock(Server::class.java)
+        val repository = mock(WorldBorderRepository::class.java)
+        val border = WorldBorder.Rectangle(12.0, -8.0, width = 64.0, depth = 32.0)
+        stubNativeBorder(world, platformBorder)
+        whenever(world.uid).thenReturn(UUID.randomUUID())
+        whenever(server.onlinePlayers).thenReturn(emptyList())
+        val service = WorldBorderService(
+            server,
+            repository,
+            mock(SpigotEventBroadcaster::class.java),
+            mock(PlayerTeleporter::class.java),
+            Dispatchers.Unconfined,
+        )
+
+        service.set(world, border)
+
+        verify(platformBorder).setCenter(0.0, 0.0)
+        verify(platformBorder).setSize(WorldBorderLimits.MAX_DIMENSION)
+        verify(repository).set(world, border)
+    }
+
+    @Test
+    fun `setting a circle restores the default native border and broadcasts the update`() = runTest {
         val world = mock(World::class.java)
         val platformBorder = mock(BukkitWorldBorder::class.java)
         val server = mock(Server::class.java)
@@ -106,17 +131,42 @@ class WorldBorderServiceTest {
         service.set(world, border)
 
         verify(repository).set(world, border)
-        verify(platformBorder).setCenter(12.5, -8.0)
-        verify(platformBorder).setSize(192.0)
+        verify(platformBorder).setCenter(0.0, 0.0)
+        verify(platformBorder).setSize(WorldBorderLimits.MAX_DIMENSION)
         val eventCaptor = argumentCaptor<WorldBorderUpdatedEvent>()
         verify(broadcaster).broadcast(eventCaptor.capture())
         assertEquals(border, eventCaptor.firstValue.border)
 
         val ordered = inOrder(platformBorder, repository, broadcaster)
-        ordered.verify(platformBorder).setCenter(12.5, -8.0)
-        ordered.verify(platformBorder).setSize(192.0)
+        ordered.verify(platformBorder).setCenter(0.0, 0.0)
+        ordered.verify(platformBorder).setSize(WorldBorderLimits.MAX_DIMENSION)
         ordered.verify(repository).set(world, border)
         ordered.verify(broadcaster).broadcast(any<WorldBorderUpdatedEvent>())
+    }
+
+    @Test
+    fun `setting a square applies its native border`() = runTest {
+        val world = mock(World::class.java)
+        val platformBorder = mock(BukkitWorldBorder::class.java)
+        val server = mock(Server::class.java)
+        val repository = mock(WorldBorderRepository::class.java)
+        val border = WorldBorder.Square(12.5, -8.0, radius = 96.0)
+        stubNativeBorder(world, platformBorder)
+        whenever(world.uid).thenReturn(UUID.randomUUID())
+        whenever(server.onlinePlayers).thenReturn(emptyList())
+        val service = WorldBorderService(
+            server,
+            repository,
+            mock(SpigotEventBroadcaster::class.java),
+            mock(PlayerTeleporter::class.java),
+            Dispatchers.Unconfined,
+        )
+
+        service.set(world, border)
+
+        verify(platformBorder).setCenter(12.5, -8.0)
+        verify(platformBorder).setSize(192.0)
+        verify(repository).set(world, border)
     }
 
     @Test
@@ -146,7 +196,7 @@ class WorldBorderServiceTest {
     }
 
     @Test
-    fun `relocates with safe teleport options and validates the current border`() = runTest {
+    fun `relocates without requiring safe ground and validates the current border`() = runTest {
         val world = mock(World::class.java)
         val platformBorder = mock(BukkitWorldBorder::class.java)
         val server = mock(Server::class.java)
@@ -185,7 +235,7 @@ class WorldBorderServiceTest {
             eq(TeleportCause.PLUGIN),
             eq(
                 PlayerTeleporter.TeleportOptions(
-                    adjustYForSafety = true,
+                    adjustYForSafety = false,
                     playSound = false,
                     recordHistory = false,
                 ),
@@ -193,6 +243,7 @@ class WorldBorderServiceTest {
             validator.capture(),
         )
         assertTrue(border.geometry.contains(destination.firstValue.x, destination.firstValue.z))
+        assertEquals(64.0, destination.firstValue.y)
 
         whenever(repository.get(world)).thenReturn(WorldBorder.Circle(0.0, 0.0, radius = 5.0))
         assertFalse(validator.firstValue(destination.firstValue))
@@ -205,7 +256,7 @@ class WorldBorderServiceTest {
         val server = mock(Server::class.java)
         val repository = mock(WorldBorderRepository::class.java)
         val broadcaster = mock(SpigotEventBroadcaster::class.java)
-        val border = WorldBorder.Circle(12.5, -8.0, radius = 96.0)
+        val border = WorldBorder.Square(12.5, -8.0, radius = 96.0)
         stubNativeBorder(world, platformBorder, Location(world, 7.0, 64.0, -3.0), 128.0)
         whenever(world.uid).thenReturn(UUID.randomUUID())
         whenever(server.onlinePlayers).thenReturn(emptyList())
@@ -241,7 +292,7 @@ class WorldBorderServiceTest {
         val server = mock(Server::class.java)
         val repository = mock(WorldBorderRepository::class.java)
         val broadcaster = mock(SpigotEventBroadcaster::class.java)
-        val border = WorldBorder.Circle(12.5, -8.0, radius = 96.0)
+        val border = WorldBorder.Square(12.5, -8.0, radius = 96.0)
         val nativeFailure = IllegalStateException("native border unavailable")
         stubNativeBorder(world, platformBorder, Location(world, 7.0, 64.0, -3.0), 128.0)
         whenever(world.uid).thenReturn(UUID.randomUUID())
@@ -313,7 +364,6 @@ class WorldBorderServiceTest {
         whenever(world.getChunkAtAsyncUrgently(any<Location>()))
             .thenReturn(CompletableFuture.completedFuture(mock(Chunk::class.java)))
         whenever(world.isChunkLoaded(any(), any())).thenReturn(true)
-        whenever(safeYLocationFinder.findY(world, 9, 0)).thenReturn(65)
         whenever(firstPlayer.teleportAsync(any<Location>(), any<TeleportCause>()))
             .thenReturn(CompletableFuture.completedFuture(false))
         whenever(secondPlayer.teleportAsync(any<Location>(), any<TeleportCause>())).thenAnswer { invocation ->
@@ -332,6 +382,7 @@ class WorldBorderServiceTest {
 
         assertEquals(listOf(firstPlayerId), failures)
         assertTrue(border.geometry.contains(secondLocation.x, secondLocation.z))
+        assertEquals(64.0, secondLocation.y)
         verify(secondPlayer).teleportAsync(any<Location>(), eq(TeleportCause.PLUGIN))
         verify(broadcaster).broadcast(any<WorldBorderUpdatedEvent>())
     }

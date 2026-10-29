@@ -14,7 +14,7 @@ class FindRandomLocation(
         player: Player,
         attempts: Int = 5,
     ): List<Location> {
-        require(attempts >= 0) { "Candidate count must not be negative" }
+        require(attempts > 0) { "Candidate count must be positive" }
 
         val world = player.location.world
         val constraint = constraintProvider.constraintFor(world.uid)
@@ -29,11 +29,9 @@ class FindRandomLocation(
 
             while (size < attempts && samples < sampleLimit) {
                 samples++
-                val candidate = if (constraint == null) {
-                    randomCoordinate2(world)
-                } else {
-                    blockCenter(constraint.sample(random))
-                }
+                val candidate = randomCoordinateWithinConstraint(constraint)
+                    ?: randomCoordinateForPaperBorder(world)
+
                 if (constraint == null) {
                     add(Location(world, candidate.x, 0.0, candidate.z))
                 } else if (constraint.contains(candidate) && seenPositions.add(candidate)) {
@@ -43,34 +41,32 @@ class FindRandomLocation(
         }
     }
 
-    private fun blockCenter(position: RandomTeleportPosition) = RandomTeleportPosition(
-        floor(position.x) + 0.5,
-        floor(position.z) + 0.5,
-    )
+    private fun randomCoordinateWithinConstraint(constraint: RandomTeleportConstraint?): RandomTeleportPosition? =
+        constraint?.sample(random)?.blockCenter()
 
-    private fun randomCoordinate2(world: World): RandomTeleportPosition {
-        val bounds = world.worldBorder
-        val center = bounds.center
-        val size = bounds.size
+    private fun randomCoordinateForPaperBorder(world: World): RandomTeleportPosition {
+        val worldBorder = world.worldBorder
+        val center = worldBorder.center
+        val size = worldBorder.size
 
-        // If a WorldBorder is not set, the API still returns an enormous bounds
+        // If a world border is not set, the API returns enormous bounds
         // (60 mil in both axis) so we need to always clamp this
-        val xRange =
-            IntRange(
-                (center.x - size).coerceAtLeast(BORDER_MIN).toInt(),
-                (center.x + size).coerceAtMost(BORDER_MAX).toInt(),
-            )
-        val zRange =
-            IntRange(
-                (center.z - size).coerceAtLeast(BORDER_MIN).toInt(),
-                (center.z + size).coerceAtMost(BORDER_MAX).toInt(),
-            )
+        val xRange = clampToBounds(center.x, size)
+        val zRange = clampToBounds(center.z, size)
 
         return RandomTeleportPosition(
             x = xRange.random(random).toDouble(),
             z = zRange.random(random).toDouble(),
         )
     }
+
+    private fun clampToBounds(
+        center: Double,
+        size: Double,
+    ) = IntRange(
+        (center - size).coerceAtLeast(BORDER_MIN).toInt(),
+        (center + size).coerceAtMost(BORDER_MAX).toInt(),
+    )
 
     private companion object {
         const val BORDER_MAX = 15_000.0
@@ -79,3 +75,8 @@ class FindRandomLocation(
         const val MAX_SAMPLE_ATTEMPTS = 1_000L
     }
 }
+
+private fun RandomTeleportPosition.blockCenter() = RandomTeleportPosition(
+    x = floor(x) + 0.5,
+    z = floor(z) + 0.5,
+)

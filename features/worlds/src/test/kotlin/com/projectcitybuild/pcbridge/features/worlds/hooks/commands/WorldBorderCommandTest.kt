@@ -8,8 +8,6 @@ import com.projectcitybuild.pcbridge.features.worlds.domain.data.WorldBorder
 import com.projectcitybuild.pcbridge.features.worlds.domain.repositories.WorldBorderRepository
 import com.projectcitybuild.pcbridge.features.worlds.domain.services.WorldBorderFillService
 import com.projectcitybuild.pcbridge.features.worlds.domain.services.WorldBorderService
-import com.projectcitybuild.pcbridge.features.worlds.hooks.commands.BorderFillCommand.Companion.DEFAULT_CHUNK_LIMIT
-import com.projectcitybuild.pcbridge.features.worlds.hooks.commands.BorderFillCommand.Companion.HARD_MAX_CHUNKS_PER_FILL
 import com.projectcitybuild.pcbridge.features.worlds.hooks.listeners.WorldBorderFillListener
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
@@ -139,65 +137,33 @@ class WorldBorderCommandTest {
     }
 
     @Test
-    fun `rejects a fill preview above the chunk limit`() = runTest {
+    fun `allows large fills and warns that they may take a long time`() = runTest {
         val world = mock(World::class.java)
-        whenever(world.uid).thenReturn(java.util.UUID.randomUUID())
-        whenever(world.name).thenReturn("world")
-        whenever(player.world).thenReturn(world)
-        whenever(player.hasPermission(WorldsPermissions.MANAGE.node)).thenReturn(true)
-        whenever(worldBorderRepository.get(world)).thenReturn(WorldBorder.Circle(0.0, 0.0, 2_200.0))
-        val fill = BorderFillCommand(plugin, worldBorderRepository, CoroutineScopeCommandTaskExecutor(this))
-
-        execute(fill, "fill", source())
-        advanceUntilIdle()
-
-        verify(player).sendMessage(l10n.worlds.fillTooLarge(DEFAULT_CHUNK_LIMIT.toLong()))
-    }
-
-    @Test
-    fun `configured fill limit cannot exceed the hard maximum`() = runTest {
-        val world = mock(World::class.java)
+        val border = WorldBorder.Square(0.0, 0.0, radius = 512.0)
         whenever(world.uid).thenReturn(UUID.randomUUID())
         whenever(world.name).thenReturn("world")
         whenever(player.world).thenReturn(world)
+        whenever(player.uniqueId).thenReturn(UUID.randomUUID())
+        whenever(player.isOnline).thenReturn(true)
         whenever(player.hasPermission(WorldsPermissions.MANAGE.node)).thenReturn(true)
-        whenever(worldBorderRepository.get(world)).thenReturn(
-            WorldBorder.Rectangle(0.0, 0.0, width = 4_000.0, depth = 4_000.0),
-        )
+        whenever(worldBorderRepository.get(world)).thenReturn(border)
+        whenever(world.getChunkAtAsync(any<Int>(), any<Int>(), eq(false)))
+            .thenReturn(CompletableFuture.completedFuture(mock(Chunk::class.java)))
         val fill = BorderFillCommand(
             plugin,
             worldBorderRepository,
             CoroutineScopeCommandTaskExecutor(this),
-            configuredChunkLimit = 60_000,
         )
 
         execute(fill, "fill", source())
         advanceUntilIdle()
-
-        verify(player).sendMessage(l10n.worlds.fillTooLarge(HARD_MAX_CHUNKS_PER_FILL))
-    }
-
-    @Test
-    fun `uses the configured fill limit below the hard maximum`() = runTest {
-        val world = mock(World::class.java)
-        whenever(world.uid).thenReturn(UUID.randomUUID())
-        whenever(world.name).thenReturn("world")
-        whenever(player.world).thenReturn(world)
-        whenever(player.hasPermission(WorldsPermissions.MANAGE.node)).thenReturn(true)
-        whenever(worldBorderRepository.get(world)).thenReturn(
-            WorldBorder.Rectangle(0.0, 0.0, width = 512.0, depth = 512.0),
-        )
-        val fill = BorderFillCommand(
-            plugin,
-            worldBorderRepository,
-            CoroutineScopeCommandTaskExecutor(this),
-            configuredChunkLimit = 100,
-        )
-
-        execute(fill, "fill", source())
+        execute(fill, "fill confirm", source())
         advanceUntilIdle()
 
-        verify(player).sendMessage(l10n.worlds.fillTooLarge(100))
+        verify(player).sendMessage(l10n.worlds.fillLargeWarning(4_225))
+        verify(player).sendMessage(l10n.worlds.fillPreview(4_225, "world"))
+        verify(world, times(4_225)).getChunkAtAsync(any<Int>(), any<Int>(), eq(false))
+        verify(player).sendMessage(l10n.worlds.fillComplete(4_225, 4_225, 0))
     }
 
     @Test
@@ -306,7 +272,7 @@ class WorldBorderCommandTest {
     }
 
     @Test
-    fun `disconnect cancels the fill and releases its per-world guard`() = runTest {
+    fun `disconnect does not cancel the fill and it releases its per-world guard when complete`() = runTest {
         val world = mock(World::class.java)
         val border = WorldBorder.Square(0.0, 0.0, radius = 8.0)
         val pendingChunk = CompletableFuture<Chunk>()
@@ -336,8 +302,12 @@ class WorldBorderCommandTest {
         whenever(player.isOnline).thenReturn(false)
         whenever(quitEvent.player).thenReturn(player)
         listener.onPlayerQuit(quitEvent)
+        assertFalse(pendingChunk.isCancelled)
+        pendingChunk.complete(mock(Chunk::class.java))
         advanceUntilIdle()
 
+        verify(world, times(4)).getChunkAtAsync(any<Int>(), any<Int>(), eq(false))
+        verify(player, never()).sendMessage(l10n.worlds.fillComplete(4, 4, 0))
         whenever(player.isOnline).thenReturn(true)
         execute(fill, "fill status", source())
         advanceUntilIdle()
@@ -523,6 +493,11 @@ class WorldBorderCommandTest {
             plugin,
             worldBorderRepository,
             borderSetCommand,
+            BorderClearCommand(
+                plugin,
+                worldBorderService,
+                CoroutineScopeCommandTaskExecutor(scope),
+            ),
             fillCommand,
             CoroutineScopeCommandTaskExecutor(scope),
         )

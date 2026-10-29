@@ -3,7 +3,6 @@ package com.projectcitybuild.pcbridge.features.worlds
 import com.github.shynixn.mccoroutine.bukkit.minecraftDispatcher
 import com.google.gson.reflect.TypeToken
 import com.projectcitybuild.pcbridge.core.filestorage.JsonFileStorage
-import com.projectcitybuild.pcbridge.core.localconfig.LocalConfig
 import com.projectcitybuild.pcbridge.features.worlds.domain.data.SerializableWorldBorder
 import com.projectcitybuild.pcbridge.features.worlds.domain.repositories.WorldBorderRepository
 import com.projectcitybuild.pcbridge.features.worlds.domain.services.WorldBorderFillService
@@ -16,9 +15,9 @@ import com.projectcitybuild.pcbridge.features.worlds.hooks.commands.WorldsComman
 import com.projectcitybuild.pcbridge.features.worlds.hooks.listeners.WorldBorderFillListener
 import com.projectcitybuild.pcbridge.features.worlds.hooks.listeners.WorldBorderListener
 import com.projectcitybuild.pcbridge.runtime.features.paperFeature
+import org.bukkit.plugin.java.JavaPlugin
 import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.module
-import org.bukkit.plugin.java.JavaPlugin
 
 val worldsModule =
     module {
@@ -28,12 +27,7 @@ val worldsModule =
         }
 
         factoryOf(::WorldsCommand)
-        single {
-            WorldBorderFillService(
-                worldBorderRepository = get(),
-                configuredChunkLimit = get<LocalConfig>().get().worlds?.borderFillMaxChunks,
-            )
-        }
+        single { WorldBorderFillService(worldBorderRepository = get()) }
         single { BorderFillCommand(plugin = get(), fillService = get()) }
         factoryOf(::BorderSetCommand)
         factoryOf(::BorderClearCommand)

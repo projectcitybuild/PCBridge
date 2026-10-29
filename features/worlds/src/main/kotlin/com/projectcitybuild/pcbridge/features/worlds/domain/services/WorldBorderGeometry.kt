@@ -125,6 +125,14 @@ class WorldBorderGeometry(
 
     fun chunkXRange(): IntRange = chunkCoordinateRange(minX)..chunkCoordinateRange(maxX)
 
+    fun chunkCountUpperBound(): Long {
+        val xRange = chunkXRange()
+        val zRange = chunkCoordinateRange(minZ)..chunkCoordinateRange(maxZ)
+        val xCount = xRange.last.toLong() - xRange.first + 1
+        val zCount = zRange.last.toLong() - zRange.first + 1
+        return xCount * zCount
+    }
+
     fun chunkCoordinates(): Sequence<ChunkCoordinate> = sequence {
         for (chunkX in chunkXRange()) {
             val chunkZRange = chunkZRange(chunkX) ?: continue

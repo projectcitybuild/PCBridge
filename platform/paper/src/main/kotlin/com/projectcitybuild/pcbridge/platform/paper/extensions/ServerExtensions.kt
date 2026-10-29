@@ -1,12 +1,9 @@
 package com.projectcitybuild.pcbridge.platform.paper.extensions
 
-import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.Server
+import org.bukkit.World
 import org.bukkit.entity.Player
 import java.util.UUID
-
-fun Server.broadcastRich(message: String)
-    = broadcast(MiniMessage.miniMessage().deserialize(message))
 
 fun Server.onlinePlayer(
     name: String,
@@ -15,5 +12,6 @@ fun Server.onlinePlayer(
     it.name.equals(name, ignoreCase = ignoreCase)
 }
 
-fun Server.onlinePlayer(uuid: UUID): Player?
-    = onlinePlayers.firstOrNull { it.uniqueId == uuid }
+fun Server.onlinePlayer(uuid: UUID): Player? = onlinePlayers.firstOrNull { it.uniqueId == uuid }
+
+fun Server.onlinePlayersInWorld(world: World): List<Player> = onlinePlayers.filter { it.world.uid == world.uid }

@@ -1,10 +1,28 @@
 package com.projectcitybuild.pcbridge.features.worlds.domain.data
 
-data class SerializableWorldBorder(
-    val centerX: Double,
-    val centerZ: Double,
-    val shape: WorldBorderShape?,
-    val radius: Double? = null,
-    val width: Double? = null,
-    val depth: Double? = null,
-)
+import com.google.gson.annotations.JsonAdapter
+
+@JsonAdapter(SerializableWorldBorderTypeAdapter::class)
+sealed interface SerializableWorldBorder {
+    val centerX: Double
+    val centerZ: Double
+
+    data class Square(
+        override val centerX: Double,
+        override val centerZ: Double,
+        val radius: Double,
+    ) : SerializableWorldBorder
+
+    data class Circle(
+        override val centerX: Double,
+        override val centerZ: Double,
+        val radius: Double,
+    ) : SerializableWorldBorder
+
+    data class Rectangle(
+        override val centerX: Double,
+        override val centerZ: Double,
+        val width: Double,
+        val depth: Double,
+    ) : SerializableWorldBorder
+}

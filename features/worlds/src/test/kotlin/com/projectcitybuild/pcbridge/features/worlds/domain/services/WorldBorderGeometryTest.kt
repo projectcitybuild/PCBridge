@@ -146,6 +146,7 @@ class WorldBorderGeometryTest {
 
         assertEquals(chunks.size, chunks.distinct().size)
         assertTrue(chunks.all { geometry.chunkIntersects(it.x, it.z) })
+        assertTrue(chunks.size.toLong() <= geometry.chunkCountUpperBound())
     }
 
     @Test
@@ -231,6 +232,10 @@ class WorldBorderGeometryTest {
         assertEquals(
             -1_874_999..1_874_999,
             border.geometry.chunkXRange(),
+        )
+        assertEquals(
+            3_749_999L * 3_749_999L,
+            border.geometry.chunkCountUpperBound(),
         )
         assertTrue(border.geometry.contains(-WorldBorderGeometry.MAX_RADIUS, 0.0))
         assertTrue(border.geometry.contains(WorldBorderGeometry.MAX_RADIUS, 0.0))

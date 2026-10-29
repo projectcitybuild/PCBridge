@@ -16,41 +16,30 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.TimeMark
-import kotlin.time.TimeSource
+import kotlin.time.TimeSource.Monotonic.markNow
 
 class WorldBorderFillService(
     private val worldBorderRepository: WorldBorderRepository,
-    configuredChunkLimit: Int? = null,
 ) {
     private data class PendingFill(
         val worldId: UUID,
         val border: WorldBorder,
-        val totalChunks: Long,
+        val chunkCountUpperBound: Long,
         val expiresAt: TimeMark,
     )
 
     private data class ActiveFill(
-        val ownerId: UUID,
         val job: Job,
-        val totalChunks: Long,
+        val chunkCountUpperBound: Long,
         var checked: Long = 0,
         var generated: Long = 0,
     )
-
-    private val maxChunksPerFill = configuredChunkLimit
-        ?.takeIf { it > 0 }
-        ?.toLong()
-        ?.coerceAtMost(HARD_MAX_CHUNKS_PER_FILL)
-        ?: DEFAULT_CHUNK_LIMIT.toLong()
 
     private val pendingFills = mutableMapOf<UUID, PendingFill>()
     private val activeFills = mutableMapOf<UUID, ActiveFill>()
 
     fun onPlayerQuit(playerId: UUID) {
         pendingFills.remove(playerId)
-        activeFills.values
-            .filter { it.ownerId == playerId }
-            .forEach { it.job.cancel(CancellationException("Fill owner disconnected")) }
     }
 
     fun onWorldUnload(worldId: UUID) {
@@ -62,29 +51,21 @@ class WorldBorderFillService(
         pendingFills.entries.removeIf {
             it.value.expiresAt.hasPassedNow()
         }
-        val border = worldBorderRepository.get(player.world)
-            ?: run {
-                player.sendMessage(l10n.worlds.fillRequiresBorder)
-                return
-            }
-        val geometry = border.geometry
-        val chunkCount = geometry
-            .chunkCoordinates()
-            .take(maxChunksPerFill.toInt() + 1)
-            .count()
-            .toLong()
-        if (chunkCount > maxChunksPerFill) {
-            player.sendMessage(l10n.worlds.fillTooLarge(maxChunksPerFill))
+        val border = worldBorderRepository.get(player.world) ?: run {
+            player.sendMessage(l10n.worlds.fillRequiresBorder)
             return
         }
-
+        val chunkCountUpperBound = border.geometry.chunkCountUpperBound()
+        if (chunkCountUpperBound > LARGE_FILL_WARNING_THRESHOLD) {
+            player.sendMessage(l10n.worlds.fillLargeWarning(chunkCountUpperBound))
+        }
         pendingFills[player.uniqueId] = PendingFill(
             worldId = player.world.uid,
             border = border,
-            totalChunks = chunkCount,
-            expiresAt = TimeSource.Monotonic.markNow() + CONFIRMATION_WINDOW,
+            chunkCountUpperBound = chunkCountUpperBound,
+            expiresAt = markNow() + CONFIRMATION_WINDOW,
         )
-        player.sendMessage(l10n.worlds.fillPreview(chunkCount, player.world.name))
+        player.sendMessage(l10n.worlds.fillPreview(chunkCountUpperBound, player.world.name))
     }
 
     suspend fun confirm(player: Player) {
@@ -104,10 +85,9 @@ class WorldBorderFillService(
 
         val world = player.world
         val activeFill = ActiveFill(
-            ownerId = player.uniqueId,
             job = currentCoroutineContext()[Job]
                 ?: error("Border fill must run inside a coroutine job"),
-            totalChunks = pending.totalChunks,
+            chunkCountUpperBound = pending.chunkCountUpperBound,
         )
         if (activeFills.putIfAbsent(world.uid, activeFill) != null) {
             player.sendMessage(l10n.worlds.fillAlreadyRunning)
@@ -115,47 +95,50 @@ class WorldBorderFillService(
         }
 
         try {
-            player.sendMessage(l10n.worlds.fillStarted)
+            if (player.isOnline) player.sendMessage(l10n.worlds.fillStarted)
 
-            for (chunk in pending.border.geometry.chunkCoordinates()) {
-                if (!player.isOnline) return
-                if (!hasCurrentBorder(world, pending.border)) return fillStopped(player)
-                val existingChunk = world.getChunkAtAsync(chunk.x, chunk.z, false).await()
+            for ((x, z) in pending.border.geometry.chunkCoordinates()) {
+                if (!worldHasBorder(world, pending.border)) return fillStopped(player)
+
+                val existingChunk = world.getChunkAtAsync(x, z, false).await()
                 activeFill.checked++
-                if (!player.isOnline) return
-                if (!hasCurrentBorder(world, pending.border)) return fillStopped(player)
+                if (!worldHasBorder(world, pending.border)) return fillStopped(player)
+
                 if (existingChunk == null) {
-                    if (!hasCurrentBorder(world, pending.border)) return fillStopped(player)
-                    world.getChunkAtAsync(chunk.x, chunk.z, true).await()
+                    world.getChunkAtAsync(x, z, true).await()
                     activeFill.generated++
-                    if (!player.isOnline) return
-                    if (!hasCurrentBorder(world, pending.border)) return fillStopped(player)
+
+                    if (!worldHasBorder(world, pending.border)) return fillStopped(player)
                 }
 
                 if (activeFill.checked % CHUNKS_PER_BATCH == 0L) {
-                    player.sendMessage(
-                        l10n.worlds.fillProgress(
-                            activeFill.checked,
-                            activeFill.totalChunks,
-                            activeFill.generated,
-                        ),
-                    )
+                    if (player.isOnline) {
+                        player.sendMessage(
+                            l10n.worlds.fillProgress(
+                                activeFill.checked,
+                                activeFill.chunkCountUpperBound,
+                                activeFill.generated,
+                            ),
+                        )
+                    }
                     delay(BATCH_DELAY)
                 }
             }
-            player.sendMessage(
-                l10n.worlds.fillComplete(
-                    activeFill.checked,
-                    activeFill.totalChunks,
-                    activeFill.generated,
-                ),
-            )
+            if (player.isOnline) {
+                player.sendMessage(
+                    l10n.worlds.fillComplete(
+                        activeFill.checked,
+                        activeFill.chunkCountUpperBound,
+                        activeFill.generated,
+                    ),
+                )
+            }
         } catch (cancelled: CancellationException) {
             if (player.isOnline) {
                 player.sendMessage(
                     l10n.worlds.fillCancelled(
                         activeFill.checked,
-                        activeFill.totalChunks,
+                        activeFill.chunkCountUpperBound,
                         activeFill.generated,
                     ),
                 )
@@ -166,7 +149,9 @@ class WorldBorderFillService(
             if (player.isOnline) player.sendMessage(l10n.worlds.fillFailed)
             throw failure
         } finally {
-            if (activeFills[world.uid] === activeFill) activeFills.remove(world.uid)
+            if (activeFills[world.uid] === activeFill) {
+                activeFills.remove(world.uid)
+            }
         }
     }
 
@@ -184,7 +169,7 @@ class WorldBorderFillService(
         player.sendMessage(
             l10n.worlds.fillStatus(
                 activeFill.checked,
-                activeFill.totalChunks,
+                activeFill.chunkCountUpperBound,
                 activeFill.generated,
                 state,
             ),
@@ -201,18 +186,19 @@ class WorldBorderFillService(
         player.sendMessage(l10n.worlds.fillCancelRequested)
     }
 
-    private fun hasCurrentBorder(
+    private fun worldHasBorder(
         world: World,
         border: WorldBorder,
     ): Boolean = worldBorderRepository.get(world) == border
 
     private fun fillStopped(player: Player) {
-        if (player.isOnline) player.sendMessage(l10n.worlds.fillStoppedBorderChanged)
+        if (player.isOnline) {
+            player.sendMessage(l10n.worlds.fillStoppedBorderChanged)
+        }
     }
 
     companion object {
-        const val DEFAULT_CHUNK_LIMIT = 4_096
-        const val HARD_MAX_CHUNKS_PER_FILL = 50_000L
+        const val LARGE_FILL_WARNING_THRESHOLD = 4_096L
         private const val CHUNKS_PER_BATCH = 256L
         private val BATCH_DELAY: Duration = 1.milliseconds
         private val CONFIRMATION_WINDOW: Duration = 60.seconds

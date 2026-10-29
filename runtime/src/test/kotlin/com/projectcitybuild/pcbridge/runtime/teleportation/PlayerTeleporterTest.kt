@@ -103,6 +103,29 @@ class PlayerTeleporterTest {
     }
 
     @Test
+    fun `maintains destination y when safety adjustment is disabled`() = runBlocking {
+        val fixture = fixture()
+        whenever(fixture.player.teleportAsync(any<Location>(), eq(TeleportCause.PLUGIN)))
+            .thenReturn(CompletableFuture.completedFuture(true))
+
+        fixture.teleporter.move(
+            fixture.player,
+            fixture.destination,
+            options = PlayerTeleporter.TeleportOptions(
+                preloadDestinationChunk = false,
+                adjustYForSafety = false,
+                playSound = false,
+                recordHistory = false,
+            ),
+        )
+
+        val destination = argumentCaptor<Location>()
+        verify(fixture.player).teleportAsync(destination.capture(), eq(TeleportCause.PLUGIN))
+        assertEquals(fixture.destination.y, destination.firstValue.y)
+        verify(fixture.safeYLocationFinder, never()).findY(any(), any(), any())
+    }
+
+    @Test
     fun `plays teleport sound at the actual safe destination`() = runBlocking {
         val fixture = fixture()
         val finalLocation = Location(fixture.world, 16.5, 70.0, -0.5)

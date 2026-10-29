@@ -67,7 +67,6 @@ class PlayerTeleporter(
                     throw TeleportFailedException("Destination chunk is unavailable")
                 }
             }
-
             adjustedDestination(destination, options).also { safeDestination ->
                 if (!validateDestination(safeDestination)) {
                     throw TeleportDestinationRejectedException("Teleport destination is no longer valid")

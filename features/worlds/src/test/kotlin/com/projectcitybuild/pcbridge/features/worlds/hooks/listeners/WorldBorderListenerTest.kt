@@ -4,15 +4,13 @@ import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.features.worlds.domain.data.WorldBorder
 import com.projectcitybuild.pcbridge.features.worlds.domain.repositories.WorldBorderRepository
 import com.projectcitybuild.pcbridge.features.worlds.domain.services.WorldBorderService
-import com.projectcitybuild.pcbridge.runtime.teleportation.SafeYLocationFinder
-import com.projectcitybuild.pcbridge.runtime.teleportation.exceptions.SafeDestinationNotFoundException
-import io.papermc.paper.event.entity.EntityMoveEvent
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.bukkit.Location
 import org.bukkit.World
 import org.bukkit.block.Block
 import org.bukkit.block.BlockFace
+import org.bukkit.entity.Animals
 import org.bukkit.entity.Creature
 import org.bukkit.entity.Entity
 import org.bukkit.entity.Player
@@ -53,8 +51,7 @@ class WorldBorderListenerTest {
     }
     private val borderRepository = mock(WorldBorderRepository::class.java)
     private val borderService = mock(WorldBorderService::class.java)
-    private val safeYLocationFinder = mock(SafeYLocationFinder::class.java)
-    private val listener = WorldBorderListener(borderRepository, borderService, safeYLocationFinder)
+    private val listener = WorldBorderListener(borderRepository, borderService)
     private val border = WorldBorder.Circle(
         centerX = 0.0,
         centerZ = 0.0,
@@ -75,7 +72,6 @@ class WorldBorderListenerTest {
     @Test
     fun `clamps player movement to the configured border`() {
         whenever(borderRepository.get(world)).thenReturn(border)
-        whenever(safeYLocationFinder.findY(world, 9, 0)).thenReturn(80)
 
         val player = mock(Player::class.java)
         whenever(player.uniqueId).thenReturn(UUID.randomUUID())
@@ -83,13 +79,13 @@ class WorldBorderListenerTest {
         val event = PlayerMoveEvent(
             player,
             Location(world, 9.0, 64.0, 0.0),
-            Location(world, 12.0, 64.0, 0.0),
+            Location(world, 12.0, 73.0, 0.0),
         )
 
         listener.onPlayerMove(event)
 
         assertEquals(10.0 - 0.3 * kotlin.math.sqrt(2.0), requireNotNull(event.to).x, 1e-9)
-        assertEquals(80.0, event.to?.y)
+        assertEquals(73.0, event.to?.y)
         verify(player).sendMessage(l10n.worlds.borderReached)
         verify(player).playSound(event.from, "minecraft:entity.player.teleport", 1F, 1F)
     }
@@ -110,7 +106,6 @@ class WorldBorderListenerTest {
     @Test
     fun `clamps square border movement and notifies the player`() {
         whenever(borderRepository.get(world)).thenReturn(WorldBorder.Square(0.0, 0.0, 10.0))
-        whenever(safeYLocationFinder.findY(world, 9, 0)).thenReturn(80)
 
         val player = mock(Player::class.java)
         whenever(player.uniqueId).thenReturn(UUID.randomUUID())
@@ -124,6 +119,7 @@ class WorldBorderListenerTest {
         listener.onPlayerMove(event)
 
         assertEquals(9.7, event.to?.x)
+        assertEquals(64.0, event.to?.y)
         verify(player).sendMessage(l10n.worlds.borderReached)
         verify(player).playSound(event.from, "minecraft:entity.player.teleport", 1F, 1F)
     }
@@ -138,7 +134,6 @@ class WorldBorderListenerTest {
                 depth = 16.0,
             ),
         )
-        whenever(safeYLocationFinder.findY(world, 15, 7)).thenReturn(80)
         val player = mock(Player::class.java)
         whenever(player.uniqueId).thenReturn(UUID.randomUUID())
         val event = PlayerMoveEvent(
@@ -151,13 +146,12 @@ class WorldBorderListenerTest {
 
         assertEquals(15.7, event.to?.x)
         assertEquals(7.7, event.to?.z)
-        assertEquals(80.0, event.to?.y)
+        assertEquals(64.0, event.to?.y)
     }
 
     @Test
     fun `clamps teleport events against a square border`() {
         whenever(borderRepository.get(world)).thenReturn(WorldBorder.Square(0.0, 0.0, 10.0))
-        whenever(safeYLocationFinder.findY(world, 9, 0)).thenReturn(80)
         val player = mock(Player::class.java)
         whenever(player.uniqueId).thenReturn(UUID.randomUUID())
         val event = PlayerTeleportEvent(
@@ -168,15 +162,13 @@ class WorldBorderListenerTest {
         )
 
         listener.onPlayerTeleport(event)
-
         assertEquals(9.7, event.to?.x)
-        assertEquals(80.0, event.to?.y)
+        assertEquals(64.0, event.to?.y)
     }
 
     @Test
-    fun `pushes back a border crossing when no safe destination exists`() {
+    fun `maintains y while clamping a border crossing`() {
         whenever(borderRepository.get(world)).thenReturn(border)
-        whenever(safeYLocationFinder.findY(world, 9, 0)).thenReturn(null)
         val player = mock(Player::class.java)
         whenever(player.uniqueId).thenReturn(UUID.randomUUID())
         val event = PlayerMoveEvent(
@@ -187,69 +179,24 @@ class WorldBorderListenerTest {
 
         listener.onPlayerMove(event)
 
-        assertEquals(9.0, event.to?.x)
+        assertEquals(10.0 - 0.3 * kotlin.math.sqrt(2.0), requireNotNull(event.to).x, 1e-9)
+        assertEquals(64.0, event.to?.y)
         verify(player).sendMessage(l10n.worlds.borderReached)
         verify(player).playSound(event.from, "minecraft:entity.player.teleport", 1F, 1F)
     }
 
     @Test
-    fun `uses a safe in-border respawn location when it is immediately available`() = runTest {
+    fun `clamps respawn location without changing y`() {
         whenever(borderRepository.get(world)).thenReturn(border)
-        whenever(safeYLocationFinder.findY(world, 9, 0)).thenReturn(80)
-        val player = mock(Player::class.java)
-        whenever(player.uniqueId).thenReturn(UUID.randomUUID())
         val event = mock(PlayerRespawnEvent::class.java)
-        whenever(event.player).thenReturn(player)
         whenever(event.respawnLocation).thenReturn(Location(world, 12.0, 64.0, 0.0))
 
         listener.onPlayerRespawn(event)
 
         val destination = org.mockito.kotlin.argumentCaptor<Location>()
         verify(event).setRespawnLocation(destination.capture())
-        assertEquals(80.0, destination.firstValue.y)
+        assertEquals(64.0, destination.firstValue.y)
         assertTrue(border.geometry.contains(destination.firstValue.x, destination.firstValue.z))
-    }
-
-    @Test
-    fun `defers respawn relocation when the destination chunk is unloaded`() = runTest {
-        whenever(borderRepository.get(world)).thenReturn(border)
-        whenever(world.isChunkLoaded(0, 0)).thenReturn(false)
-        val player = mock(Player::class.java)
-        whenever(player.uniqueId).thenReturn(UUID.randomUUID())
-        whenever(player.isOnline).thenReturn(true)
-        val event = mock(PlayerRespawnEvent::class.java)
-        whenever(event.player).thenReturn(player)
-        whenever(event.respawnLocation).thenReturn(Location(world, 12.0, 64.0, 0.0))
-        val listenerWithChunkCheck = WorldBorderListener(
-            borderRepository,
-            borderService,
-            SafeYLocationFinder(),
-        )
-
-        listenerWithChunkCheck.onPlayerRespawn(event)
-
-        verify(event, never()).setRespawnLocation(any())
-        verify(borderService).relocateIfOutside(player)
-    }
-
-    @Test
-    fun `reports deferred relocation failure when no safe respawn landing exists`() = runTest {
-        whenever(borderRepository.get(world)).thenReturn(border)
-        whenever(safeYLocationFinder.findY(world, 9, 0)).thenReturn(null)
-        whenever(borderService.relocateIfOutside(any())).thenAnswer {
-            throw SafeDestinationNotFoundException("No safe destination")
-        }
-        val player = mock(Player::class.java)
-        whenever(player.uniqueId).thenReturn(UUID.randomUUID())
-        whenever(player.isOnline).thenReturn(true)
-        val event = mock(PlayerRespawnEvent::class.java)
-        whenever(event.player).thenReturn(player)
-        whenever(event.respawnLocation).thenReturn(Location(world, 12.0, 64.0, 0.0))
-
-        listener.onPlayerRespawn(event)
-
-        verify(event, never()).setRespawnLocation(any())
-        verify(player).sendMessage(l10n.worlds.borderRespawnRelocationFailed)
     }
 
     @Test
@@ -257,7 +204,6 @@ class WorldBorderListenerTest {
         val player = mock(Player::class.java)
         whenever(player.uniqueId).thenReturn(UUID.randomUUID())
         whenever(borderRepository.get(world)).thenReturn(border)
-        whenever(safeYLocationFinder.findY(world, 9, 0)).thenReturn(80)
         val firstAttempt = PlayerMoveEvent(
             player,
             Location(world, 9.0, 64.0, 0.0),
@@ -274,38 +220,6 @@ class WorldBorderListenerTest {
 
         verify(player, times(1)).sendMessage(l10n.worlds.borderReached)
         verify(player, times(1)).playSound(firstAttempt.from, "minecraft:entity.player.teleport", 1F, 1F)
-        verify(safeYLocationFinder, times(1)).findY(world, 9, 0)
-    }
-
-    @Test
-    fun `invalidates a cached safe y when terrain changes in the cached column`() {
-        val playerId = UUID.randomUUID()
-        val player = mock(Player::class.java)
-        whenever(player.uniqueId).thenReturn(playerId)
-        whenever(borderRepository.get(world)).thenReturn(border)
-        whenever(safeYLocationFinder.findY(world, 9, 0)).thenReturn(80, 75)
-        val firstAttempt = PlayerMoveEvent(
-            player,
-            Location(world, 9.0, 64.0, 0.0),
-            Location(world, 12.0, 64.0, 0.0),
-        )
-        listener.onPlayerMove(firstAttempt)
-
-        val changedBlock = mock(Block::class.java)
-        whenever(changedBlock.world).thenReturn(world)
-        whenever(changedBlock.x).thenReturn(9)
-        whenever(changedBlock.z).thenReturn(0)
-        listener.onBlockBreak(BlockBreakEvent(changedBlock, player))
-
-        val repeatedAttempt = PlayerMoveEvent(
-            player,
-            Location(world, 9.0, 64.0, 0.0),
-            Location(world, 12.0, 64.0, 0.0),
-        )
-        listener.onPlayerMove(repeatedAttempt)
-
-        assertEquals(75.0, repeatedAttempt.to?.y)
-        verify(safeYLocationFinder, times(2)).findY(world, 9, 0)
     }
 
     @Test
@@ -419,21 +333,6 @@ class WorldBorderListenerTest {
     }
 
     @Test
-    fun `constrains living entities already outside the configured border when they move`() {
-        whenever(borderRepository.get(world)).thenReturn(border)
-        val creature = mock(Creature::class.java)
-        val event = EntityMoveEvent(
-            creature,
-            Location(world, 11.0, 64.0, 0.0),
-            Location(world, 12.0, 64.0, 0.0),
-        )
-
-        listener.onLivingEntityMove(event)
-
-        assertTrue(border.geometry.contains(event.to.x, event.to.z))
-    }
-
-    @Test
     fun `clamps non-player entity teleports to the configured border`() {
         whenever(borderRepository.get(world)).thenReturn(border)
         val entity = mock(Entity::class.java)
@@ -446,6 +345,19 @@ class WorldBorderListenerTest {
 
         verify(event).setTo(destinationCaptor.capture())
         assertEquals(10.0 - 0.3 * kotlin.math.sqrt(2.0), destinationCaptor.firstValue.x, 1e-9)
+    }
+
+    @Test
+    fun `does not constrain animal teleports at the border`() {
+        whenever(borderRepository.get(world)).thenReturn(border)
+        val animal = mock(Animals::class.java)
+        val event = mock(EntityTeleportEvent::class.java)
+        whenever(event.entity).thenReturn(animal)
+        whenever(event.to).thenReturn(Location(world, 12.0, 64.0, 0.0))
+
+        listener.onEntityTeleport(event)
+
+        verify(event, never()).setTo(any())
     }
 
     @Test

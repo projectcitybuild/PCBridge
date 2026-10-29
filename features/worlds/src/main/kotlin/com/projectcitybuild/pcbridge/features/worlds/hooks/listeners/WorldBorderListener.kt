@@ -1,18 +1,13 @@
 package com.projectcitybuild.pcbridge.features.worlds.hooks.listeners
 
 import com.projectcitybuild.pcbridge.core.l10n.l10n
-import com.projectcitybuild.pcbridge.core.observability.logging.log
 import com.projectcitybuild.pcbridge.features.worlds.domain.repositories.WorldBorderRepository
 import com.projectcitybuild.pcbridge.features.worlds.domain.services.WorldBorderGeometry
 import com.projectcitybuild.pcbridge.features.worlds.domain.services.WorldBorderService
-import com.projectcitybuild.pcbridge.runtime.teleportation.SafeYLocationFinder
-import com.projectcitybuild.pcbridge.runtime.teleportation.teleportationTracer
-import io.papermc.paper.event.entity.EntityMoveEvent
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.delay
 import org.bukkit.Location
 import org.bukkit.World
 import org.bukkit.block.Block
+import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
 import org.bukkit.event.Cancellable
 import org.bukkit.event.EventHandler
@@ -42,46 +37,23 @@ import org.bukkit.event.vehicle.VehicleMoveEvent
 import org.bukkit.event.world.WorldLoadEvent
 import org.bukkit.event.world.WorldUnloadEvent
 import java.util.UUID
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.nanoseconds
 import kotlin.time.Duration.Companion.seconds
 
 class WorldBorderListener(
     private val worldBorderRepository: WorldBorderRepository,
     private val worldBorderService: WorldBorderService,
-    private val safeYLocationFinder: SafeYLocationFinder,
 ) : Listener {
     private data class BorderFeedback(
         val worldId: UUID,
         val sentAtNanos: Long,
     )
 
-    private data class SafeYLookup(
-        val worldId: UUID,
-        val x: Int,
-        val z: Int,
-        val y: Int?,
-        val lookedUpAtNanos: Long,
-    ) {
-        val position get() = SafeYLookupPosition(worldId, x, z)
-    }
-
-    private data class SafeYLookupPosition(
-        val worldId: UUID,
-        val x: Int,
-        val z: Int,
-    )
-
     private companion object {
         val BORDER_FEEDBACK_COOLDOWN = 1.seconds
-        val SAFE_Y_LOOKUP_COOLDOWN = 1.seconds
-        val RESPAWN_RELOCATION_DELAY: Duration = 50.milliseconds
     }
 
     private val lastBorderFeedback = mutableMapOf<UUID, BorderFeedback>()
-    private val safeYLookups = mutableMapOf<UUID, SafeYLookup>()
-    private val safeYLookupPlayersByPosition = mutableMapOf<SafeYLookupPosition, MutableSet<UUID>>()
 
     init {
         worldBorderService.loadAllLoaded()
@@ -95,7 +67,6 @@ class WorldBorderListener(
     @EventHandler
     fun onWorldUnload(event: WorldUnloadEvent) {
         worldBorderRepository.unload(event.world)
-        invalidateSafeYLookups(event.world.uid)
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -104,7 +75,6 @@ class WorldBorderListener(
     @EventHandler
     fun onPlayerQuit(event: PlayerQuitEvent) {
         lastBorderFeedback.remove(event.player.uniqueId)
-        removeSafeYLookup(event.player.uniqueId)
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -119,65 +89,14 @@ class WorldBorderListener(
         enforceBorder(event)
     }
 
-    private fun enforceBorder(event: PlayerMoveEvent) {
-        val from = event.from
-        val destination = event.to ?: return
-
-        if (event !is PlayerTeleportEvent &&
-            from.world === destination.world &&
-            from.x == destination.x &&
-            from.z == destination.z
-        ) {
-            return
-        }
-
-        val border = worldBorderRepository.get(destination.world) ?: return
-        val geometry = border.geometry
-
-        if (!geometry.contains(destination.x, destination.z)) {
-            sendBorderFeedback(event.player, from)
-            val safeDestination = safeBorderLocation(geometry, event.player.uniqueId, destination)
-            if (safeDestination == null) {
-                event.to = clampedLocation(geometry, from)
-            } else {
-                event.to = safeDestination
-            }
-        }
-    }
-
     @EventHandler(priority = EventPriority.HIGHEST)
-    suspend fun onPlayerRespawn(event: PlayerRespawnEvent) {
+    fun onPlayerRespawn(event: PlayerRespawnEvent) {
         val destination = event.respawnLocation
         val border = worldBorderRepository.get(destination.world) ?: return
         val geometry = border.geometry
         if (geometry.contains(destination.x, destination.z)) return
 
-        val safeDestination = safeBorderLocation(geometry, event.player.uniqueId, destination)
-        if (safeDestination != null) {
-            event.respawnLocation = safeDestination
-            return
-        }
-
-        relocateAfterRespawn(event.player, destination.world)
-    }
-
-    private suspend fun relocateAfterRespawn(
-        player: Player,
-        world: World,
-    ) {
-        delay(RESPAWN_RELOCATION_DELAY)
-        if (!player.isOnline) return
-
-        try {
-            worldBorderService.relocateIfOutside(player)
-        } catch (cancelled: CancellationException) {
-            throw cancelled
-        } catch (failure: Exception) {
-            log.error(failure) {
-                "Failed to safely relocate player ${player.uniqueId} after respawn in ${world.name}"
-            }
-            if (player.isOnline) player.sendMessage(l10n.worlds.borderRespawnRelocationFailed)
-        }
+        event.respawnLocation = clampedLocation(geometry, destination)
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -189,25 +108,8 @@ class WorldBorderListener(
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    fun onLivingEntityMove(event: EntityMoveEvent) {
-        val from = event.from
-        val destination = event.to
-        if (from.x == destination.x && from.z == destination.z) return
-
-        val border = worldBorderRepository.get(destination.world) ?: return
-        val geometry = border.geometry
-        if (geometry.contains(destination.x, destination.z)) return
-
-        val (x, z) = geometry.clamp(destination.x, destination.z)
-        event.to = destination.clone().apply {
-            this.x = x
-            this.z = z
-        }
-    }
-
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     fun onEntityTeleport(event: EntityTeleportEvent) {
-        if (event.entity is Player) return
+        if (event.entity is LivingEntity) return
         val destination = event.to ?: return
         val border = worldBorderRepository.get(destination.world) ?: return
         val geometry = border.geometry
@@ -246,17 +148,18 @@ class WorldBorderListener(
         } else {
             listOf(event.blockPlaced)
         }
-        invalidateSafeYLookup(event.blockPlaced)
-        invalidateSafeYLookups(placedBlocks)
         val border = worldBorderRepository.get(event.blockPlaced.world) ?: return
-        if (placedBlocks.any { !border.geometry.containsBlock(it) }) event.isCancelled = true
+        if (placedBlocks.any { !border.geometry.containsBlock(it) }) {
+            event.isCancelled = true
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     fun onBlockBreak(event: BlockBreakEvent) {
-        invalidateSafeYLookup(event.block)
         val border = worldBorderRepository.get(event.block.world) ?: return
-        if (!border.geometry.containsBlock(event.block)) event.isCancelled = true
+        if (!border.geometry.containsBlock(event.block)) {
+            event.isCancelled = true
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -271,8 +174,6 @@ class WorldBorderListener(
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     fun onFluidFlow(event: BlockFromToEvent) {
-        invalidateSafeYLookup(event.block)
-        invalidateSafeYLookup(event.toBlock)
         val geometry = worldBorderRepository.get(event.block.world)?.geometry ?: return
         val sourceInside = geometry.containsBlock(event.block)
         val destinationInside = geometry.containsBlock(event.toBlock)
@@ -293,19 +194,22 @@ class WorldBorderListener(
     fun onProjectileLaunch(event: ProjectileLaunchEvent) {
         val location = event.entity.location
         val border = worldBorderRepository.get(location.world) ?: return
-        if (!border.geometry.contains(location.x, location.z)) event.isCancelled = true
+        if (!border.geometry.contains(location.x, location.z)) {
+            event.isCancelled = true
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     fun onProjectileHit(event: ProjectileHitEvent) {
         val location = event.entity.location
         val border = worldBorderRepository.get(location.world) ?: return
-        if (!border.geometry.contains(location.x, location.z)) event.isCancelled = true
+        if (!border.geometry.contains(location.x, location.z)) {
+            event.isCancelled = true
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     fun onEntityExplode(event: EntityExplodeEvent) {
-        invalidateSafeYLookups(event.blockList())
         val border = worldBorderRepository.get(event.location.world) ?: return
         val geometry = border.geometry
         if (!geometry.contains(event.location.x, event.location.z)) {
@@ -317,8 +221,6 @@ class WorldBorderListener(
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     fun onBlockExplode(event: BlockExplodeEvent) {
-        invalidateSafeYLookup(event.block)
-        invalidateSafeYLookups(event.blockList())
         val border = worldBorderRepository.get(event.block.world) ?: return
         val geometry = border.geometry
         if (!geometry.containsBlock(event.block)) {
@@ -326,6 +228,27 @@ class WorldBorderListener(
             return
         }
         event.blockList().removeIf { !geometry.containsBlock(it) }
+    }
+
+    private fun enforceBorder(event: PlayerMoveEvent) {
+        val from = event.from
+        val destination = event.to ?: return
+
+        if (event !is PlayerTeleportEvent &&
+            from.world === destination.world &&
+            from.x == destination.x &&
+            from.z == destination.z
+        ) {
+            return
+        }
+
+        val border = worldBorderRepository.get(destination.world) ?: return
+        val geometry = border.geometry
+
+        if (!geometry.contains(destination.x, destination.z)) {
+            sendBorderFeedback(event.player, from)
+            event.to = clampedLocation(geometry, destination)
+        }
     }
 
     private fun sendBorderFeedback(
@@ -351,9 +274,10 @@ class WorldBorderListener(
         event: Cancellable,
         block: Block,
     ) {
-        invalidateSafeYLookup(block)
         val border = worldBorderRepository.get(block.world) ?: return
-        if (!border.geometry.containsBlock(block)) event.isCancelled = true
+        if (!border.geometry.containsBlock(block)) {
+            event.isCancelled = true
+        }
     }
 
     private fun enforcePistonBorder(
@@ -366,11 +290,9 @@ class WorldBorderListener(
             is BlockPistonRetractEvent -> event.blocks
             else -> emptyList()
         }
-        invalidateSafeYLookup(event.block)
-        invalidateSafeYLookup(event.block.getRelative(movement))
-        invalidateSafeYLookups(movedBlocks)
-        invalidateSafeYLookups(movedBlocks.map { it.getRelative(movement) })
-        val geometry = worldBorderRepository.get(event.block.world)?.geometry ?: return
+        val geometry = worldBorderRepository.get(event.block.world)?.geometry
+            ?: return
+
         val headOutside = extending && !geometry.containsBlock(event.block.getRelative(event.direction))
         val movedBlockOutside = movedBlocks.any { block ->
             !geometry.containsBlock(block) || !geometry.containsBlock(block.getRelative(movement))
@@ -378,74 +300,6 @@ class WorldBorderListener(
         if (!geometry.containsBlock(event.block) || headOutside || movedBlockOutside) {
             event.isCancelled = true
         }
-    }
-
-    private fun safeBorderLocation(
-        geometry: WorldBorderGeometry,
-        playerId: UUID,
-        location: Location,
-    ): Location? = teleportationTracer.traceSync("WorldBorderListener.safeYCache") { span ->
-        val clamped = clampedLocation(geometry, location)
-        val now = System.nanoTime()
-        val lookup = safeYLookups[playerId]?.takeIf {
-            it.worldId == clamped.world.uid &&
-                it.x == clamped.blockX &&
-                it.z == clamped.blockZ &&
-                (now - it.lookedUpAtNanos).nanoseconds < SAFE_Y_LOOKUP_COOLDOWN
-        }
-        span.setAttribute("safe_y.cache_hit", lookup != null)
-        span.setAttribute("safe_y.cached_result_available", lookup?.y != null)
-        val safeY = if (lookup != null) {
-            lookup.y
-        } else {
-            safeYLocationFinder.findY(clamped.world, clamped.blockX, clamped.blockZ)
-        }
-        storeSafeYLookup(
-            playerId,
-            SafeYLookup(
-                worldId = clamped.world.uid,
-                x = clamped.blockX,
-                z = clamped.blockZ,
-                y = safeY,
-                lookedUpAtNanos = now,
-            ),
-        )
-        safeY ?: return@traceSync null
-        clamped.apply { y = safeY.toDouble() }
-    }
-
-    private fun storeSafeYLookup(
-        playerId: UUID,
-        lookup: SafeYLookup,
-    ) {
-        removeSafeYLookup(playerId)
-        safeYLookups[playerId] = lookup
-        safeYLookupPlayersByPosition.getOrPut(lookup.position) { mutableSetOf() }.add(playerId)
-    }
-
-    private fun removeSafeYLookup(playerId: UUID) {
-        val lookup = safeYLookups.remove(playerId) ?: return
-        val players = safeYLookupPlayersByPosition[lookup.position] ?: return
-        players.remove(playerId)
-        if (players.isEmpty()) safeYLookupPlayersByPosition.remove(lookup.position)
-    }
-
-    private fun invalidateSafeYLookup(block: Block) {
-        invalidateSafeYLookup(SafeYLookupPosition(block.world.uid, block.x, block.z))
-    }
-
-    private fun invalidateSafeYLookups(blocks: Iterable<Block>) {
-        blocks.forEach(::invalidateSafeYLookup)
-    }
-
-    private fun invalidateSafeYLookups(worldId: UUID) {
-        safeYLookupPlayersByPosition.keys
-            .filter { it.worldId == worldId }
-            .forEach(::invalidateSafeYLookup)
-    }
-
-    private fun invalidateSafeYLookup(position: SafeYLookupPosition) {
-        safeYLookupPlayersByPosition.remove(position)?.forEach { safeYLookups.remove(it) }
     }
 
     private fun clampedLocation(
