@@ -9,7 +9,7 @@ import com.projectcitybuild.pcbridge.features.bans.domain.actions.CreateUuidBan
 import com.projectcitybuild.pcbridge.features.bans.domain.utilities.toMiniMessage
 import com.projectcitybuild.pcbridge.features.bans.hooks.dialogs.CreateBanDialog
 import com.projectcitybuild.pcbridge.platform.paper.extensions.onlinePlayer
-import com.projectcitybuild.pcbridge.runtime.listeners.scoped
+import com.projectcitybuild.pcbridge.runtime.listeners.traced
 import io.papermc.paper.connection.PlayerGameConnection
 import io.papermc.paper.event.player.PlayerCustomClickEvent
 import org.bukkit.Server
@@ -23,13 +23,13 @@ class BanDialogListener(
 ) : Listener {
     @EventHandler
     suspend fun onPlayerCustomClickEvent(event: PlayerCustomClickEvent) =
-        event.scoped(bansTracer, this::class.java) {
-            if (!event.identifier.equals(CreateBanDialog.submitBanButtonKey)) return@scoped
+        event.traced(bansTracer, this::class.java) {
+            if (!event.identifier.equals(CreateBanDialog.submitBanButtonKey)) return@traced
 
             val view = event.dialogResponseView
             if (view == null) {
                 log.error { "DialogResponseView was null for ${event.identifier}" }
-                return@scoped
+                return@traced
             }
 
             val playerName = view.getText(CreateBanDialog.playerNameKey)?.trim()
@@ -64,7 +64,7 @@ class BanDialogListener(
                             },
                     )
                 bannerPlayer?.showDialog(dialog)
-                return@scoped
+                return@traced
             }
 
             val result =
@@ -78,13 +78,13 @@ class BanDialogListener(
                     )
                 } catch (_: CreateUuidBan.PlayerNotFound) {
                     bannerPlayer?.sendMessageRich("<red>Error: Player not found</red>")
-                    return@scoped
+                    return@traced
                 } catch (_: CreateUuidBan.PlayerAlreadyBanned) {
                     bannerPlayer?.sendMessageRich("<red>Error: $playerName is already banned</red>")
-                    return@scoped
+                    return@traced
                 } catch (e: CreateUuidBan.InvalidBanInput) {
                     bannerPlayer?.sendMessageRich("<red>Error: ${e.message}</red>")
-                    return@scoped
+                    return@traced
                 }
 
             server.broadcast(l10n.bans.playerHasBeenBanned(playerName))

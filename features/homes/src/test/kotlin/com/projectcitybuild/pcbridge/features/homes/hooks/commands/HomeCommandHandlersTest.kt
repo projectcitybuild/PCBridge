@@ -128,10 +128,20 @@ class HomeCommandHandlersTest {
         runTest {
             val executor = CoroutineScopeCommandTaskExecutor(this)
             whenever(repository.get(playerId, "Cabin")).thenReturn(home(name = "Cabin"))
+            val renameCommand = HomeRenameCommand(plugin, mock(), repository, executor)
+            var dialogBuiltFor: Pair<Int, String>? = null
+            renameCommand.showRenameDialog = { _, homeId, homeName ->
+                dialogBuiltFor = homeId to homeName
+            }
 
-            runCommand(this, homesCommand(executor), "homes rename Cabin")
+            runCommand(
+                this,
+                homesCommand(executor, renameCommand = renameCommand),
+                "homes rename Cabin",
+            )
 
             verify(repository).get(playerId, "Cabin")
+            assertEquals(1 to "Cabin", dialogBuiltFor)
         }
 
     @Test
@@ -196,13 +206,14 @@ class HomeCommandHandlersTest {
     private fun homesCommand(
         executor: CoroutineScopeCommandTaskExecutor,
         remoteConfig: RemoteConfig = remoteConfig(),
+        renameCommand: HomeRenameCommand = HomeRenameCommand(plugin, mock(), repository, executor),
     ) = HomesCommand(
         HomeCreateCommand(plugin, repository, executor),
         HomeDeleteCommand(plugin, mock(), repository, executor),
         HomeListCommand(plugin, repository, remoteConfig, executor),
         HomeMoveCommand(plugin, mock(), repository, executor),
         HomeLimitCommand(plugin, repository, executor),
-        HomeRenameCommand(plugin, mock(), repository, executor),
+        renameCommand,
     )
 
     private fun remoteConfig(): RemoteConfig {

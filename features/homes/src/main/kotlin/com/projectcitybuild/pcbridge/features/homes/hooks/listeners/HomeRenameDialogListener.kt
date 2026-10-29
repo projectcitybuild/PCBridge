@@ -6,7 +6,7 @@ import com.projectcitybuild.pcbridge.features.homes.domain.repositories.HomeRepo
 import com.projectcitybuild.pcbridge.features.homes.homesTracer
 import com.projectcitybuild.pcbridge.features.homes.hooks.dialogs.HomeRenameDialog
 import com.projectcitybuild.pcbridge.core.l10n.l10n
-import com.projectcitybuild.pcbridge.runtime.listeners.scoped
+import com.projectcitybuild.pcbridge.runtime.listeners.traced
 import io.papermc.paper.connection.PlayerGameConnection
 import io.papermc.paper.event.player.PlayerCustomClickEvent
 import org.bukkit.event.EventHandler
@@ -17,13 +17,13 @@ class HomeRenameDialogListener(
 ) : Listener {
     @EventHandler
     suspend fun onPlayerCustomClickEvent(event: PlayerCustomClickEvent) =
-        event.scoped(homesTracer, this::class.java) {
-            if (!event.identifier.equals(HomeRenameDialog.saveButtonKey)) return@scoped
+        event.traced(homesTracer, this::class.java) {
+            if (!event.identifier.equals(HomeRenameDialog.saveButtonKey)) return@traced
 
             val view = event.dialogResponseView
             if (view == null) {
                 log.error { "DialogResponseView was null for ${event.identifier}" }
-                return@scoped
+                return@traced
             }
 
             val homeId = view.getText(HomeRenameDialog.idKey)
@@ -38,11 +38,11 @@ class HomeRenameDialogListener(
             )
 
             val connection = event.commonConnection as? PlayerGameConnection
-            val player = connection?.player ?: return@scoped
+            val player = connection?.player ?: return@traced
 
             if (newName.isNullOrEmpty()) {
                 player.sendMessage(l10n.errors.errorNewNameCannotBeEmpty)
-                return@scoped
+                return@traced
             }
             if (homeId.isNullOrEmpty()) {
                 player.sendMessage(l10n.homes.errorRenameHomeNotFound)

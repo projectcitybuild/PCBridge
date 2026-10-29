@@ -15,7 +15,7 @@ import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
 import com.projectcitybuild.pcbridge.platform.paper.events.SpigotEventBroadcaster
-import com.projectcitybuild.pcbridge.runtime.commands.scoped
+import com.projectcitybuild.pcbridge.runtime.commands.runCommandTracedSafely
 import com.projectcitybuild.pcbridge.runtime.state.store.Store
 import org.bukkit.Server
 import org.bukkit.plugin.Plugin
@@ -36,7 +36,7 @@ class MaintenanceCommand(
         executesSuspending(taskExecutor, ::status)
     }
 
-    private suspend fun toggle(context: PaperCommandContext) = context.scoped(maintenanceTracer) {
+    private suspend fun toggle(context: PaperCommandContext) = context.runCommandTracedSafely(maintenanceTracer) {
         val sender = context.source.sender
 
         val desiredState = context.getArgument("enabled", Boolean::class.java)
@@ -44,7 +44,7 @@ class MaintenanceCommand(
 
         if (currentState == desiredState) {
             sender.sendMessage(l10n.maintenance.maintenanceAlreadyInState(desiredState))
-            return@scoped
+            return@runCommandTracedSafely
         }
 
         store.mutate(maintenanceStateKey) {
@@ -56,7 +56,7 @@ class MaintenanceCommand(
         server.broadcast(l10n.maintenance.maintenanceModeChanged(desiredState))
     }
 
-    private suspend fun status(context: PaperCommandContext) = context.scoped(maintenanceTracer) {
+    private suspend fun status(context: PaperCommandContext) = context.runCommandTracedSafely(maintenanceTracer) {
         val sender = context.source.sender
 
         val state = store.state(maintenanceStateKey).enabled

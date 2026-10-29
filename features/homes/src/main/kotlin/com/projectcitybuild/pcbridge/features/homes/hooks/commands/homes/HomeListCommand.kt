@@ -13,7 +13,7 @@ import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.getOptionalArgument
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.requirePlayer
-import com.projectcitybuild.pcbridge.runtime.commands.scoped
+import com.projectcitybuild.pcbridge.runtime.commands.runCommandTracedSafely
 import com.projectcitybuild.pcbridge.runtime.remoteconfig.RemoteConfig
 import org.bukkit.plugin.Plugin
 
@@ -31,7 +31,7 @@ class HomeListCommand(
         executesSuspending(taskExecutor, ::execute)
     }
 
-    private suspend fun execute(context: PaperCommandContext) = context.scoped(homesTracer) {
+    private suspend fun execute(context: PaperCommandContext) = context.runCommandTracedSafely(homesTracer) {
         val player = context.source.requirePlayer()
         val pageNumber = context.getOptionalArgument("page", Int::class.java) ?: 1
 
@@ -50,7 +50,7 @@ class HomeListCommand(
                     l10n.pagination.errorPageNotFound
                 },
             )
-            return@scoped
+            return@runCommandTracedSafely
         }
         val message =
             PageComponentBuilder().buildWithComponents(

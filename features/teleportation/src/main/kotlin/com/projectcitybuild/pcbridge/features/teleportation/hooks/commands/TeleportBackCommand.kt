@@ -8,7 +8,7 @@ import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
-import com.projectcitybuild.pcbridge.runtime.commands.scoped
+import com.projectcitybuild.pcbridge.runtime.commands.runCommandTracedSafely
 import com.projectcitybuild.pcbridge.runtime.teleportation.teleportationTracer
 import org.bukkit.Server
 import org.bukkit.entity.Player
@@ -24,7 +24,7 @@ class TeleportBackCommand(
         argument("player", SingleOnlinePlayerArgument(server)) {
             requiresPermission(TeleportationPermissions.BACK_OTHERS)
             executesSuspending(plugin) { context ->
-                context.scoped(teleportationTracer) {
+                context.runCommandTracedSafely(teleportationTracer) {
                     application.back(
                         operator = context.source.sender,
                         target = context.getArgument("player", Player::class.java),
@@ -33,7 +33,7 @@ class TeleportBackCommand(
             }
         }
         executesSuspending(plugin) { context ->
-            context.scoped(teleportationTracer) {
+            context.runCommandTracedSafely(teleportationTracer) {
                 val player = context.source.requirePlayer()
                 application.back(player, player)
             }

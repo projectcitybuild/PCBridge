@@ -1,14 +1,12 @@
 package com.projectcitybuild.pcbridge.runtime.listeners
 
-import com.projectcitybuild.pcbridge.core.observability.logging.log
-import com.projectcitybuild.pcbridge.core.observability.logging.logSync
 import com.projectcitybuild.pcbridge.core.observability.tracing.Tracer
 import io.opentelemetry.api.common.Attributes
 import io.opentelemetry.api.trace.SpanKind
 import org.bukkit.event.Event
 import org.bukkit.event.Listener
 
-suspend fun <T : Listener> Event.scoped(
+suspend fun <T : Listener> Event.traced(
     tracer: Tracer,
     listener: Class<T>,
     block: suspend () -> Unit,
@@ -22,19 +20,11 @@ suspend fun <T : Listener> Event.scoped(
         spanKind = SpanKind.SERVER,
         attributes = attributes.build(),
     ) {
-        runCatching { block() }.onFailure { e ->
-            log.error(
-                e,
-                "Listener failed to handle event: $eventName",
-                mapOf(
-                    "event" to this,
-                ),
-            )
-        }
+        block()
     }
 }
 
-fun <T : Listener> Event.scopedSync(
+fun <T : Listener> Event.tracedSync(
     tracer: Tracer,
     listener: Class<T>,
     block: () -> Unit,
@@ -48,14 +38,6 @@ fun <T : Listener> Event.scopedSync(
         spanKind = SpanKind.SERVER,
         attributes = attributes.build(),
     ) {
-        runCatching { block() }.onFailure { e ->
-            logSync.error(
-                e,
-                "Listener failed to handle event: $eventName",
-                mapOf(
-                    "event" to this,
-                ),
-            )
-        }
+        block()
     }
 }

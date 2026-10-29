@@ -6,7 +6,7 @@ import com.projectcitybuild.pcbridge.core.observability.logging.log
 import com.projectcitybuild.pcbridge.platform.paper.events.SpigotEventBroadcaster
 import com.projectcitybuild.pcbridge.runtime.connection.connectionTracer
 import com.projectcitybuild.pcbridge.runtime.connection.events.ConnectionPermittedEvent
-import com.projectcitybuild.pcbridge.runtime.listeners.scoped
+import com.projectcitybuild.pcbridge.runtime.listeners.traced
 import com.projectcitybuild.pcbridge.runtime.state.data.PlayerSession
 import com.projectcitybuild.pcbridge.runtime.state.events.PlayerStateCreatedEvent
 import com.projectcitybuild.pcbridge.runtime.state.events.PlayerStateDestroyedEvent
@@ -29,7 +29,7 @@ class PlayerStateListener(
         ignoreCancelled = true,
     )
     suspend fun onConnectionPermitted(event: ConnectionPermittedEvent) =
-        event.scoped(connectionTracer, this::class.java) {
+        event.traced(connectionTracer, this::class.java) {
             log.info { "Creating player state for ${event.playerUUID}" }
 
             if (event.playerData == null) {
@@ -57,7 +57,7 @@ class PlayerStateListener(
      */
     @EventHandler(ignoreCancelled = true)
     suspend fun onPlayerJoin(event: PlayerJoinEvent) =
-        event.scoped(stateTracer, this::class.java) {
+        event.traced(stateTracer, this::class.java) {
             // TODO: warn the user if their data was unable to be fetched
 
             val playerState = session.state.players[event.player.uniqueId]
@@ -74,13 +74,13 @@ class PlayerStateListener(
      */
     @EventHandler(priority = EventPriority.HIGHEST)
     suspend fun onPlayerQuit(event: PlayerQuitEvent) =
-        event.scoped(stateTracer, this::class.java) {
+        event.traced(stateTracer, this::class.java) {
             val uuid = event.player.uniqueId
             log.info { "Destroying player state for $uuid" }
             val prevState = session.state.players[uuid]
             if (prevState == null) {
                 log.debug { "Player state did not exist - no clean up needed" }
-                return@scoped
+                return@traced
             }
             session.mutate { state ->
                 state.copy(players = state.players.filter { it.key != uuid })

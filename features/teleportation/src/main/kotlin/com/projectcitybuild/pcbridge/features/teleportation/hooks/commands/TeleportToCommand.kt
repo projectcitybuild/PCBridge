@@ -10,7 +10,7 @@ import com.projectcitybuild.pcbridge.platform.paper.commands.argumenttypes.Singl
 import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
-import com.projectcitybuild.pcbridge.runtime.commands.scoped
+import com.projectcitybuild.pcbridge.runtime.commands.runCommandTracedSafely
 import com.projectcitybuild.pcbridge.runtime.teleportation.teleportationTracer
 import org.bukkit.Server
 import org.bukkit.entity.Player
@@ -34,7 +34,7 @@ class TeleportToCommand(
     private suspend fun execute(
         context: PaperCommandContext,
         flags: TeleportFlags,
-    ) = context.scoped(teleportationTracer) {
+    ) = context.runCommandTracedSafely(teleportationTracer) {
         application.to(
             requester = context.source.requirePlayer(),
             target = context.getArgument("player", Player::class.java),

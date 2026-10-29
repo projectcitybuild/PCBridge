@@ -2,6 +2,7 @@ package com.projectcitybuild.pcbridge.runtime.exceptions.listeners
 
 import com.github.shynixn.mccoroutine.bukkit.MCCoroutineExceptionEvent
 import com.projectcitybuild.pcbridge.core.observability.errors.ErrorTracker
+import kotlinx.coroutines.CancellationException
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.plugin.java.JavaPlugin
@@ -21,6 +22,7 @@ class CoroutineExceptionListener(
         // MCCoroutine, so we need to check it actually originated from us
         // https://shynixn.github.io/MCCoroutine/wiki/site/exception/
         if (event.plugin.name != plugin.name) return
+        if (event.exception is CancellationException) return
 
         errorTracker.reportSafely(event.exception)
     }

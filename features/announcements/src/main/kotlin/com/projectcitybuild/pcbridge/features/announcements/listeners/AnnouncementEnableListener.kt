@@ -3,7 +3,7 @@ package com.projectcitybuild.pcbridge.features.announcements.listeners
 import com.projectcitybuild.pcbridge.core.observability.logging.logSync
 import com.projectcitybuild.pcbridge.features.announcements.actions.StartAnnouncementTimer
 import com.projectcitybuild.pcbridge.features.announcements.announcementsTracer
-import com.projectcitybuild.pcbridge.runtime.listeners.scopedSync
+import com.projectcitybuild.pcbridge.runtime.listeners.tracedSync
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
@@ -20,7 +20,7 @@ class AnnouncementEnableListener(
     fun onPluginEnable(event: PluginEnableEvent) {
         if (event.plugin != plugin) return
 
-        event.scopedSync(announcementsTracer, this::class.java) {
+        event.tracedSync(announcementsTracer, this::class.java) {
             announcementTimer.start()
             logSync.debug { "Announcement timer started" }
         }
@@ -30,7 +30,7 @@ class AnnouncementEnableListener(
     fun onPluginDisable(event: PluginDisableEvent) {
         if (event.plugin != plugin) return
 
-        event.scopedSync(announcementsTracer, this::class.java) {
+        event.tracedSync(announcementsTracer, this::class.java) {
             announcementTimer.stop()
             logSync.debug { "Announcement timer stopped" }
         }

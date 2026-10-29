@@ -13,7 +13,7 @@ import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
-import com.projectcitybuild.pcbridge.runtime.commands.scoped
+import com.projectcitybuild.pcbridge.runtime.commands.runCommandTracedSafely
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
 
@@ -31,20 +31,20 @@ class SyncCommand(
         executesSuspending(taskExecutor, ::syncSelf)
     }
 
-    private suspend fun syncSelf(context: PaperCommandContext) = context.scoped(syncTracer) {
+    private suspend fun syncSelf(context: PaperCommandContext) = context.runCommandTracedSafely(syncTracer) {
         val player = context.source.requirePlayer()
 
         player.sendMessage(l10n.sync.syncFetchingPlayerData)
         syncPlayer.execute(playerUUID = player.uniqueId)
     }
 
-    private suspend fun syncOther(context: PaperCommandContext) = context.scoped(syncTracer) {
+    private suspend fun syncOther(context: PaperCommandContext) = context.runCommandTracedSafely(syncTracer) {
         val sender = context.source.sender
         val player = context.getArgument("player", Player::class.java)
 
         if (sender is Player && sender == player) {
             syncSelf(context)
-            return@scoped
+            return@runCommandTracedSafely
         }
         sender.sendMessage(l10n.sync.syncFetchingPlayerDataFor(player.name))
         syncPlayer.execute(playerUUID = player.uniqueId)

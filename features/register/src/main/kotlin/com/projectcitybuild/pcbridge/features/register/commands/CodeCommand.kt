@@ -9,7 +9,7 @@ import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskEx
 import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.requirePlayer
-import com.projectcitybuild.pcbridge.runtime.commands.scoped
+import com.projectcitybuild.pcbridge.runtime.commands.runCommandTracedSafely
 import net.kyori.adventure.dialog.DialogLike
 import org.bukkit.plugin.Plugin
 
@@ -24,7 +24,7 @@ class CodeCommand(
         executesSuspending(commandTaskExecutor, ::execute)
     }
 
-    private suspend fun execute(context: PaperCommandContext) = context.scoped(registerTracer) {
+    private suspend fun execute(context: PaperCommandContext) = context.runCommandTracedSafely(registerTracer) {
         val player = context.source.requirePlayer()
 
         val dialog = dialogFactory()

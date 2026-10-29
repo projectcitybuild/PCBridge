@@ -6,7 +6,7 @@ import com.projectcitybuild.pcbridge.platform.paper.commands.argumenttypes.Singl
 import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.requirePlayer
-import com.projectcitybuild.pcbridge.runtime.commands.scoped
+import com.projectcitybuild.pcbridge.runtime.commands.runCommandTracedSafely
 import com.projectcitybuild.pcbridge.runtime.teleportation.teleportationTracer
 import org.bukkit.Server
 import org.bukkit.entity.Player
@@ -21,7 +21,7 @@ class TeleportDenyCommand(
         description = "Declines a pending teleport request"
         argument("requester", SingleOnlinePlayerArgument(server)) {
             executesSuspending(plugin) { context ->
-                context.scoped(teleportationTracer) {
+                context.runCommandTracedSafely(teleportationTracer) {
                     application.deny(
                         context.source.requirePlayer(),
                         context.getArgument("requester", Player::class.java).uniqueId,
@@ -30,7 +30,7 @@ class TeleportDenyCommand(
             }
         }
         executesSuspending(plugin) { context ->
-            context.scoped(teleportationTracer) {
+            context.runCommandTracedSafely(teleportationTracer) {
                 application.deny(context.source.requirePlayer(), requesterId = null)
             }
         }

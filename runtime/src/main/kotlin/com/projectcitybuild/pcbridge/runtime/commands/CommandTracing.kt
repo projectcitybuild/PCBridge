@@ -9,7 +9,7 @@ import io.papermc.paper.command.brigadier.CommandSourceStack
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
-suspend fun <S : CommandSourceStack> CommandContext<S>.scoped(
+suspend fun <S : CommandSourceStack> CommandContext<S>.traced(
     tracer: Tracer,
     block: suspend (CommandContext<S>) -> Unit,
 ) {
@@ -24,13 +24,11 @@ suspend fun <S : CommandSourceStack> CommandContext<S>.scoped(
         spanKind = SpanKind.SERVER,
         attributes = attributes.build(),
     ) {
-        runCatching { block(this) }.onFailure { e ->
-            CommandExceptionHandler.catch(source.sender, e)
-        }
+        block(this)
     }
 }
 
-fun <S : CommandSourceStack> CommandContext<S>.scopedSync(
+fun <S : CommandSourceStack> CommandContext<S>.tracedSync(
     tracer: Tracer,
     block: (CommandContext<S>) -> Unit,
 ) {
@@ -45,9 +43,7 @@ fun <S : CommandSourceStack> CommandContext<S>.scopedSync(
         spanKind = SpanKind.SERVER,
         attributes = attributes.build(),
     ) {
-        runCatching { block(this) }.onFailure { e ->
-            CommandExceptionHandler.catch(source.sender, e)
-        }
+        block(this)
     }
 }
 

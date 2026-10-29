@@ -16,7 +16,7 @@ import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.getOptionalArgument
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.requirePlayer
-import com.projectcitybuild.pcbridge.runtime.commands.scoped
+import com.projectcitybuild.pcbridge.runtime.commands.runCommandTracedSafely
 import org.bukkit.plugin.Plugin
 
 class BuildSetCommand(
@@ -37,7 +37,7 @@ class BuildSetCommand(
         }
     }
 
-    private suspend fun execute(context: PaperCommandContext) = context.scoped(buildsTracer) {
+    private suspend fun execute(context: PaperCommandContext) = context.runCommandTracedSafely(buildsTracer) {
         val player = context.source.requirePlayer()
         val field = context.getArgument("field", EditableBuildField::class.java)
         val id = context.getArgument("id", Int::class.java)

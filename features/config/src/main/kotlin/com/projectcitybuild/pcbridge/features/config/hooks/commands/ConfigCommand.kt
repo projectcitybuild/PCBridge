@@ -9,7 +9,7 @@ import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
 import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
-import com.projectcitybuild.pcbridge.runtime.commands.scoped
+import com.projectcitybuild.pcbridge.runtime.commands.runCommandTracedSafely
 import com.projectcitybuild.pcbridge.runtime.remoteconfig.RemoteConfig
 import org.bukkit.plugin.Plugin
 
@@ -27,7 +27,7 @@ class ConfigCommand(
         }
     }
 
-    private suspend fun execute(context: PaperCommandContext) = context.scoped(configTracer) {
+    private suspend fun execute(context: PaperCommandContext) = context.runCommandTracedSafely(configTracer) {
         val sender = context.source.sender
 
         sender.sendMessage(l10n.config.configFetching)

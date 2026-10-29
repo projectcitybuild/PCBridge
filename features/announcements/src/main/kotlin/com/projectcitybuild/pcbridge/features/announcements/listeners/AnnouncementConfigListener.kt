@@ -3,7 +3,7 @@ package com.projectcitybuild.pcbridge.features.announcements.listeners
 import com.projectcitybuild.pcbridge.core.observability.logging.logSync
 import com.projectcitybuild.pcbridge.features.announcements.actions.StartAnnouncementTimer
 import com.projectcitybuild.pcbridge.features.announcements.announcementsTracer
-import com.projectcitybuild.pcbridge.runtime.listeners.scopedSync
+import com.projectcitybuild.pcbridge.runtime.listeners.tracedSync
 import com.projectcitybuild.pcbridge.runtime.remoteconfig.RemoteConfigUpdatedEvent
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
@@ -14,12 +14,12 @@ class AnnouncementConfigListener(
 ) : Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     fun onRemoteConfigUpdated(event: RemoteConfigUpdatedEvent) =
-        event.scopedSync(announcementsTracer, this::class.java) {
+        event.tracedSync(announcementsTracer, this::class.java) {
             val prev = event.prev?.config
             val next = event.next.config
 
             if (prev?.announcements == next.announcements) {
-                return@scopedSync
+                return@tracedSync
             }
 
             logSync.info { "Announcement config updated. Restarting announcements" }

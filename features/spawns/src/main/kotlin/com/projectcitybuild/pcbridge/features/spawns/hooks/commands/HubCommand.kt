@@ -10,7 +10,7 @@ import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskEx
 import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.requirePlayer
-import com.projectcitybuild.pcbridge.runtime.commands.scoped
+import com.projectcitybuild.pcbridge.runtime.commands.runCommandTracedSafely
 import com.projectcitybuild.pcbridge.runtime.remoteconfig.RemoteConfig
 import com.projectcitybuild.pcbridge.runtime.teleportation.PlayerTeleporter
 import org.bukkit.Location
@@ -31,14 +31,14 @@ class HubCommand(
         executesSuspending(commandTaskExecutor, ::execute)
     }
 
-    suspend fun execute(context: PaperCommandContext) = context.scoped(spawnsTracer) {
+    suspend fun execute(context: PaperCommandContext) = context.runCommandTracedSafely(spawnsTracer) {
         val player = context.source.requirePlayer()
 
         val hub = remoteConfig.latest.config.hub
         if (hub == null) {
             log.error { "Hub not set" }
             player.sendMessage(l10n.spawns.errorHubNotSet)
-            return@scoped
+            return@runCommandTracedSafely
         }
 
         val worldId = UUID.fromString(hub.worldId)
@@ -46,7 +46,7 @@ class HubCommand(
         if (world == null) {
             log.error { "Hub world (${hub.worldId}) not found" }
             player.sendMessage(l10n.spawns.errorHubWorldNotFound)
-            return@scoped
+            return@runCommandTracedSafely
         }
         val location = Location(world, hub.x, hub.y, hub.z, hub.yaw, hub.pitch)
 

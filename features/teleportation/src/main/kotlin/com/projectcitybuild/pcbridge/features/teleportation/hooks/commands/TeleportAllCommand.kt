@@ -9,7 +9,7 @@ import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
 import com.projectcitybuild.pcbridge.platform.paper.commands.argumenttypes.SingleOnlinePlayerArgument
 import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
-import com.projectcitybuild.pcbridge.runtime.commands.scoped
+import com.projectcitybuild.pcbridge.runtime.commands.runCommandTracedSafely
 import com.projectcitybuild.pcbridge.runtime.teleportation.teleportationTracer
 import org.bukkit.Server
 import org.bukkit.entity.Player
@@ -39,7 +39,7 @@ class TeleportAllCommand(
         context: PaperCommandContext,
         targetArgument: String?,
         flags: TeleportFlags,
-    ) = context.scoped(teleportationTracer) {
+    ) = context.runCommandTracedSafely(teleportationTracer) {
         val target = targetArgument?.let {
             context.getArgument(it, Player::class.java)
         }

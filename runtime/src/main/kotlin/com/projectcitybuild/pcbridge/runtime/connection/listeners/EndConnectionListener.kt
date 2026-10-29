@@ -2,12 +2,11 @@ package com.projectcitybuild.pcbridge.runtime.connection.listeners
 
 import com.projectcitybuild.pcbridge.core.datetime.services.LocalizedTime
 import com.projectcitybuild.pcbridge.core.observability.errors.ErrorTracker
-import com.projectcitybuild.pcbridge.core.observability.logging.log
 import com.projectcitybuild.pcbridge.runtime.connection.ConnectionRepository
 import com.projectcitybuild.pcbridge.runtime.connection.connectionTracer
-import com.projectcitybuild.pcbridge.runtime.listeners.scoped
+import com.projectcitybuild.pcbridge.runtime.listeners.runListenerSafely
+import com.projectcitybuild.pcbridge.runtime.listeners.traced
 import com.projectcitybuild.pcbridge.runtime.state.store.SessionStore
-import io.papermc.paper.command.brigadier.argument.ArgumentTypes.uuid
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
@@ -24,8 +23,11 @@ class EndConnectionListener(
         ignoreCancelled = true,
     )
     suspend fun onPlayerQuit(event: PlayerQuitEvent) =
-        event.scoped(connectionTracer, this::class.java) {
-            runCatching {
+        event.runListenerSafely(
+            errorTracker,
+            "An error occurred while ending a connection",
+        ) {
+            event.traced(connectionTracer, this::class.java) {
                 val uuid = event.player.uniqueId
                 val state =
                     session.state.players[uuid]
@@ -35,9 +37,6 @@ class EndConnectionListener(
                     uuid = uuid,
                     sessionSeconds = state.sessionSeconds(time),
                 )
-            }.onFailure {
-                log.error(it) { "An error occurred while authorizing a connection" }
-                errorTracker.reportSafely(it)
             }
         }
 }

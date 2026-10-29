@@ -1,6 +1,6 @@
 package com.projectcitybuild.pcbridge.features.sync.hooks.listener
 
-import com.projectcitybuild.pcbridge.runtime.listeners.scoped
+import com.projectcitybuild.pcbridge.runtime.listeners.traced
 import com.projectcitybuild.pcbridge.runtime.webhooks.events.WebhookReceivedEvent
 import com.projectcitybuild.pcbridge.features.sync.domain.actions.SyncPlayer
 import com.projectcitybuild.pcbridge.features.sync.syncTracer
@@ -14,9 +14,9 @@ class PlayerSyncRequestListener(
     @EventHandler
     suspend fun onWebhookReceived(
         event: WebhookReceivedEvent,
-    ) = event.scoped(syncTracer, this::class.java) {
+    ) = event.traced(syncTracer, this::class.java) {
         val webhook = event.webhook
-        if (webhook !is WebhookEvent.PlayerSyncRequested) return@scoped
+        if (webhook !is WebhookEvent.PlayerSyncRequested) return@traced
 
         syncPlayer.execute(
             playerUUID = webhook.playerUUID,

@@ -12,7 +12,7 @@ import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executes
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.runtime.chat.decorators.ChatDecoratorChain
 import com.projectcitybuild.pcbridge.runtime.chat.decorators.ChatMessage
-import com.projectcitybuild.pcbridge.runtime.commands.scoped
+import com.projectcitybuild.pcbridge.runtime.commands.runCommandTracedSafely
 import com.projectcitybuild.pcbridge.runtime.remoteconfig.RemoteConfig
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.MiniMessage
@@ -35,7 +35,7 @@ class StaffChatCommand(
         }
     }
 
-    suspend fun execute(context: PaperCommandContext) = context.scoped(staffChatTracer) {
+    suspend fun execute(context: PaperCommandContext) = context.runCommandTracedSafely(staffChatTracer) {
         val player = context.source.requirePlayer()
         val rawMessage = context.getArgument("message", String::class.java)
 

@@ -105,10 +105,20 @@ class WarpCommandHandlersTest {
         runTest {
             val executor = CoroutineScopeCommandTaskExecutor(this)
             whenever(repository.get("Market")).thenReturn(warp(name = "Market"))
+            val renameCommand = WarpRenameCommand(plugin, WarpNameSuggester(repository), repository, executor)
+            var dialogBuiltFor: Pair<Int, String>? = null
+            renameCommand.showRenameDialog = { _, warpId, warpName ->
+                dialogBuiltFor = warpId to warpName
+            }
 
-            runCommand(this, warpsCommand(executor), "warps rename Market")
+            runCommand(
+                this,
+                warpsCommand(executor, renameCommand = renameCommand),
+                "warps rename Market",
+            )
 
             verify(repository).get("Market")
+            assertEquals(17 to "Market", dialogBuiltFor)
         }
 
     @Test
@@ -174,12 +184,14 @@ class WarpCommandHandlersTest {
         executor: CoroutineScopeCommandTaskExecutor,
         broadcaster: SpigotEventBroadcaster = mock(),
         remoteConfig: RemoteConfig = remoteConfig(),
+        renameCommand: WarpRenameCommand =
+            WarpRenameCommand(plugin, WarpNameSuggester(repository), repository, executor),
     ) = WarpsCommand(
         WarpCreateCommand(plugin, repository, broadcaster, executor),
         WarpDeleteCommand(plugin, WarpNameSuggester(repository), repository, broadcaster, executor),
         WarpListCommand(plugin, repository, remoteConfig, executor),
         WarpMoveCommand(plugin, WarpNameSuggester(repository), repository, executor),
-        WarpRenameCommand(plugin, WarpNameSuggester(repository), repository, executor),
+        renameCommand,
     )
 
     private fun remoteConfig(): RemoteConfig {

@@ -5,6 +5,7 @@ import io.opentelemetry.api.trace.Span
 import io.opentelemetry.api.trace.SpanKind
 import io.opentelemetry.context.Context
 import io.opentelemetry.extension.kotlin.asContextElement
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.withContext
 
 class Tracer(
@@ -29,11 +30,15 @@ class Tracer(
 
         try {
             return withContext(otelContext.asContextElement()) {
-                block()
+                try {
+                    block()
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (e: Exception) {
+                    span.recordException(e)
+                    throw e
+                }
             }
-        } catch (e: Exception) {
-            span.recordException(e)
-            throw e
         } finally {
             span.end()
         }
@@ -55,6 +60,8 @@ class Tracer(
 
         try {
             return block(span)
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             span.recordException(e)
             throw e

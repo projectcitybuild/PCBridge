@@ -15,7 +15,7 @@ import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executes
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.suggestsSuspending
 import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
-import com.projectcitybuild.pcbridge.runtime.commands.scoped
+import com.projectcitybuild.pcbridge.runtime.commands.runCommandTracedSafely
 import org.bukkit.plugin.Plugin
 
 class BuildUnvoteCommand(
@@ -33,7 +33,7 @@ class BuildUnvoteCommand(
         }
     }
 
-    private suspend fun execute(context: PaperCommandContext) = context.scoped(buildsTracer) {
+    private suspend fun execute(context: PaperCommandContext) = context.runCommandTracedSafely(buildsTracer) {
         val player = context.source.requirePlayer()
         val name = context.getArgument("name", String::class.java)
 

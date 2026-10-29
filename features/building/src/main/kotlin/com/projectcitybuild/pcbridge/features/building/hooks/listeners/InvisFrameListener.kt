@@ -3,7 +3,7 @@ package com.projectcitybuild.pcbridge.features.building.hooks.listeners
 import com.projectcitybuild.pcbridge.features.building.buildingTracer
 import com.projectcitybuild.pcbridge.features.building.domain.data.InvisFrameKey
 import com.projectcitybuild.pcbridge.platform.paper.namespace.SpigotNamespace
-import com.projectcitybuild.pcbridge.runtime.listeners.scopedSync
+import com.projectcitybuild.pcbridge.runtime.listeners.tracedSync
 import io.papermc.paper.event.player.PlayerItemFrameChangeEvent
 import io.papermc.paper.persistence.PersistentDataViewHolder
 import org.bukkit.block.Container
@@ -20,9 +20,9 @@ class InvisFrameListener(
 
     @EventHandler(ignoreCancelled = true)
     fun onPlayerItemFrameChangeEvent(event: PlayerItemFrameChangeEvent) =
-        event.scopedSync(buildingTracer, this::class.java) {
+        event.tracedSync(buildingTracer, this::class.java) {
             val frame = event.itemFrame
-            if (!isInvisFrame(frame)) return@scopedSync
+            if (!isInvisFrame(frame)) return@tracedSync
 
             when (event.action) {
                 PlayerItemFrameChangeEvent.ItemFrameChangeAction.PLACE -> {
@@ -37,7 +37,7 @@ class InvisFrameListener(
                     val player = event.player
 
                     // Allow rotation
-                    if (player.isSneaking) return@scopedSync
+                    if (player.isSneaking) return@tracedSync
 
                     // Allow interacting with containers behind frames
                     val attachedFace = frame.attachedFace
@@ -53,10 +53,10 @@ class InvisFrameListener(
 
     @EventHandler(ignoreCancelled = true)
     fun onHangingPlaceEvent(event: HangingPlaceEvent) =
-        event.scopedSync(buildingTracer, this::class.java) {
+        event.tracedSync(buildingTracer, this::class.java) {
             val itemStack =
                 event.itemStack
-                    ?: return@scopedSync
+                    ?: return@tracedSync
 
             if (isInvisFrame(itemStack)) {
                 event.entity.persistentDataContainer.set(

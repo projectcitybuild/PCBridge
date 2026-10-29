@@ -11,7 +11,7 @@ import com.projectcitybuild.pcbridge.platform.paper.commands.argumenttypes.Singl
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
-import com.projectcitybuild.pcbridge.runtime.commands.scoped
+import com.projectcitybuild.pcbridge.runtime.commands.runCommandTracedSafely
 import com.projectcitybuild.pcbridge.runtime.teleportation.teleportationTracer
 import org.bukkit.Server
 import org.bukkit.entity.Player
@@ -44,7 +44,7 @@ class TeleportLegacyCommands(
         argument("player", SingleOnlinePlayerArgument(server)) {
             requiresPermission("essentials.tpa")
             executesSuspending(plugin) { context ->
-                context.scoped(teleportationTracer) {
+                context.runCommandTracedSafely(teleportationTracer) {
                     val player = context.source.requirePlayer()
                     val target = context.getArgument("player", Player::class.java)
                     teleportService.to(player, target)
@@ -58,7 +58,7 @@ class TeleportLegacyCommands(
         argument("player", SingleOnlinePlayerArgument(server)) {
             requiresPermission("essentials.tpahere")
             executesSuspending(plugin) { context ->
-                context.scoped(teleportationTracer) {
+                context.runCommandTracedSafely(teleportationTracer) {
                     val player = context.source.requirePlayer()
                     val target = context.getArgument("player", Player::class.java)
                     teleportService.requestHere(player, target)
@@ -72,7 +72,7 @@ class TeleportLegacyCommands(
         argument("player", SingleOnlinePlayerArgument(server)) {
             requiresPermission("essentials.tpo")
             executesSuspending(plugin) { context ->
-                context.scoped(teleportationTracer) {
+                context.runCommandTracedSafely(teleportationTracer) {
                     val target = context.getArgument("player", Player::class.java)
                     teleportService.to(
                         requester = context.source.requirePlayer(),
@@ -89,7 +89,7 @@ class TeleportLegacyCommands(
         argument("player", SingleOnlinePlayerArgument(server)) {
             requiresPermission("essentials.tpohere")
             executesSuspending(plugin) { context ->
-                context.scoped(teleportationTracer) {
+                context.runCommandTracedSafely(teleportationTracer) {
                     teleportService.here(
                         operator = context.source.requirePlayer(),
                         target = context.getArgument("player", Player::class.java),
@@ -105,7 +105,7 @@ class TeleportLegacyCommands(
         argument("player", SingleOnlinePlayerArgument(server)) {
             requiresPermission("essentials.tphere")
             executesSuspending(plugin) { context ->
-                context.scoped(teleportationTracer) {
+                context.runCommandTracedSafely(teleportationTracer) {
                     teleportService.here(
                         operator = context.source.requirePlayer(),
                         target = context.getArgument("player", Player::class.java),
@@ -121,14 +121,14 @@ class TeleportLegacyCommands(
             description = "Cancels a pending teleport request"
             requiresPermission("essentials.tpcancel")
             executesSuspending(plugin) { context ->
-                context.scoped(teleportationTracer) {
+                context.runCommandTracedSafely(teleportationTracer) {
                     teleportService.cancel(context.source.requirePlayer(), targetId = null)
                 }
             }
             argument("player", SingleOnlinePlayerArgument(server)) {
                 requiresPermission("essentials.tpcancel")
                 executesSuspending(plugin) { context ->
-                    context.scoped(teleportationTracer) {
+                    context.runCommandTracedSafely(teleportationTracer) {
                         teleportService.cancel(
                             context.source.requirePlayer(),
                             context.getArgument("player", Player::class.java).uniqueId,
@@ -143,7 +143,7 @@ class TeleportLegacyCommands(
         description = "Returns you to your previous location"
         requiresPermission(TeleportationPermissions.BACK)
         executesSuspending(plugin) { context ->
-            context.scoped(teleportationTracer) {
+            context.runCommandTracedSafely(teleportationTracer) {
                 val player = context.source.requirePlayer()
                 teleportService.back(player, player)
             }
@@ -151,7 +151,7 @@ class TeleportLegacyCommands(
         argument("player", SingleOnlinePlayerArgument(server)) {
             requiresPermission(TeleportationPermissions.BACK_OTHERS)
             executesSuspending(plugin) { context ->
-                context.scoped(teleportationTracer) {
+                context.runCommandTracedSafely(teleportationTracer) {
                     teleportService.back(
                         operator = context.source.sender,
                         target = context.getArgument("player", Player::class.java),
@@ -165,7 +165,7 @@ class TeleportLegacyCommands(
         description = "Teleports you to a random location"
         requiresPermission(TeleportationPermissions.RANDOM)
         executesSuspending(plugin) { context ->
-            context.scoped(teleportationTracer) {
+            context.runCommandTracedSafely(teleportationTracer) {
                 teleportService.random(context.source.requirePlayer())
             }
         }
@@ -214,14 +214,14 @@ class TeleportLegacyCommands(
             description = "Accepts a pending teleport request"
             requiresPermission("essentials.tpaccept")
             executesSuspending(plugin) { context ->
-                context.scoped(teleportationTracer) {
+                context.runCommandTracedSafely(teleportationTracer) {
                     teleportService.accept(context.source.requirePlayer(), requesterId = null)
                 }
             }
             argument("requester", SingleOnlinePlayerArgument(server)) {
                 requiresPermission("essentials.tpaccept")
                 executesSuspending(plugin) { context ->
-                    context.scoped(teleportationTracer) {
+                    context.runCommandTracedSafely(teleportationTracer) {
                         teleportService.accept(
                             context.source.requirePlayer(),
                             context.getArgument("requester", Player::class.java).uniqueId,
@@ -237,13 +237,13 @@ class TeleportLegacyCommands(
             description = "Declines a pending teleport request"
             requiresPermission("essentials.tpdeny")
             executesSuspending(plugin) { context ->
-                context.scoped(teleportationTracer) {
+                context.runCommandTracedSafely(teleportationTracer) {
                     teleportService.deny(context.source.requirePlayer(), requesterId = null)
                 }
             }
             argument("requester", SingleOnlinePlayerArgument(server)) {
                 executesSuspending(plugin) { context ->
-                    context.scoped(teleportationTracer) {
+                    context.runCommandTracedSafely(teleportationTracer) {
                         teleportService.deny(
                             context.source.requirePlayer(),
                             context.getArgument("requester", Player::class.java).uniqueId,

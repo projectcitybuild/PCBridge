@@ -6,7 +6,7 @@ import com.projectcitybuild.pcbridge.platform.paper.commands.argumenttypes.Singl
 import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.requirePlayer
-import com.projectcitybuild.pcbridge.runtime.commands.scoped
+import com.projectcitybuild.pcbridge.runtime.commands.runCommandTracedSafely
 import com.projectcitybuild.pcbridge.runtime.teleportation.teleportationTracer
 import org.bukkit.Server
 import org.bukkit.entity.Player
@@ -21,7 +21,7 @@ class TeleportAcceptCommand(
         description = "Accepts a pending teleport request"
         argument("requester", SingleOnlinePlayerArgument(server)) {
             executesSuspending(plugin) { context ->
-                context.scoped(teleportationTracer) {
+                context.runCommandTracedSafely(teleportationTracer) {
                     application.accept(
                         target = context.source.requirePlayer(),
                         requesterId = context.getArgument("requester", Player::class.java).uniqueId,
@@ -30,7 +30,7 @@ class TeleportAcceptCommand(
             }
         }
         executesSuspending(plugin) { context ->
-            context.scoped(teleportationTracer) {
+            context.runCommandTracedSafely(teleportationTracer) {
                 application.accept(
                     target = context.source.requirePlayer(),
                     requesterId = null,

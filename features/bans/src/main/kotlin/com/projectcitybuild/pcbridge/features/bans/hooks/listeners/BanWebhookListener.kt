@@ -7,7 +7,7 @@ import com.projectcitybuild.pcbridge.features.bans.bansTracer
 import com.projectcitybuild.pcbridge.features.bans.domain.utilities.toMiniMessage
 import com.projectcitybuild.pcbridge.platform.paper.extensions.onlinePlayer
 import com.projectcitybuild.pcbridge.platform.paper.utilities.SpigotSanitizer
-import com.projectcitybuild.pcbridge.runtime.listeners.scopedSync
+import com.projectcitybuild.pcbridge.runtime.listeners.tracedSync
 import com.projectcitybuild.pcbridge.runtime.webhooks.events.WebhookReceivedEvent
 import com.projectcitybuild.pcbridge.platform.webserver.data.WebhookEvent
 import org.bukkit.Server
@@ -24,9 +24,9 @@ class BanWebhookListener(
 ) : Listener {
     @EventHandler
     fun onIpBanned(event: WebhookReceivedEvent) =
-        event.scopedSync(bansTracer, this::class.java) {
+        event.tracedSync(bansTracer, this::class.java) {
             val webhook = event.webhook
-            if (webhook !is WebhookEvent.IPBanRequested) return@scopedSync
+            if (webhook !is WebhookEvent.IPBanRequested) return@tracedSync
 
             val ban = webhook.ban
             val matchingPlayer =
@@ -35,7 +35,7 @@ class BanWebhookListener(
                 }
             if (matchingPlayer == null) {
                 logSync.info { "Skipping ban fulfillment, ip address (${ban.ipAddress}) not found" }
-                return@scopedSync
+                return@tracedSync
             }
 
             logSync.info { "Player found matching ip address (${ban.ipAddress}), banning ${matchingPlayer.name}" }
@@ -49,21 +49,21 @@ class BanWebhookListener(
 
     @EventHandler
     fun onUuidBanned(event: WebhookReceivedEvent) =
-        event.scopedSync(bansTracer, this::class.java) {
+        event.tracedSync(bansTracer, this::class.java) {
             val webhook = event.webhook
-            if (webhook !is WebhookEvent.UUIDBanRequested) return@scopedSync
+            if (webhook !is WebhookEvent.UUIDBanRequested) return@tracedSync
 
             val ban = webhook.ban
             val bannedPlayer = ban.bannedPlayer
             if (bannedPlayer == null) {
                 logSync.info { "Skipping ban fulfillment, ban had no player data" }
-                return@scopedSync
+                return@tracedSync
             }
             val bannedUuid = uuidFromUnsanitizedString(bannedPlayer.uuid)
             val matchingPlayer = server.onlinePlayer(uuid = bannedUuid)
             if (matchingPlayer == null) {
                 logSync.info { "Skipping ban fulfillment, player (${bannedPlayer.uuid}) not found" }
-                return@scopedSync
+                return@tracedSync
             }
 
             logSync.info { "Player found, banning ${matchingPlayer.uniqueId}" }
