@@ -42,6 +42,6 @@ private fun Event.reportListenerFailure(
     failureMessage: String,
     exception: Exception,
 ) {
-    logSync.debug { "$failureMessage (event=$eventName)" }
+    logSync.warn(exception) { "$failureMessage (event=$eventName)" }
     errorTracker.reportSafely(exception)
 }

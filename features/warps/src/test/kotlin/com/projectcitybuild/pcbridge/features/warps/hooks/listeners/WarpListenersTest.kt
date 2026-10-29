@@ -12,7 +12,6 @@ import io.papermc.paper.event.player.PlayerCustomClickEvent
 import kotlinx.coroutines.test.runTest
 import org.bukkit.entity.Player
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.never
@@ -75,23 +74,23 @@ class WarpRenameDialogListenerTest {
         }
 
     @Test
-    fun `reports a missing warp identifier and propagates the failure`() {
-        val thrown =
-            assertThrows(Exception::class.java) {
-                runTest {
-                    val view = mock(DialogResponseView::class.java)
-                    whenever(view.getText(WarpRenameDialog.idKey)).thenReturn(null)
-                    whenever(view.getText(WarpRenameDialog.newNameKey)).thenReturn("Market")
-                    val event = eventWithResponse(view)
+    fun `reports a missing warp identifier and propagates the failure`() = runTest {
+        val view = mock(DialogResponseView::class.java)
+        whenever(view.getText(WarpRenameDialog.idKey)).thenReturn(null)
+        whenever(view.getText(WarpRenameDialog.newNameKey)).thenReturn("Market")
+        val event = eventWithResponse(view)
+        var thrown: Exception? = null
 
-                    listener.onPlayerCustomClickEvent(event)
+        try {
+            listener.onPlayerCustomClickEvent(event)
+        } catch (failure: Exception) {
+            thrown = failure
+        } finally {
+            verify(repository, never()).rename(any(), any())
+            verify(player).sendMessage(l10n.warps.errorRenameWarpNotFound)
+        }
 
-                    verify(repository, never()).rename(any(), any())
-                    verify(player).sendMessage(l10n.warps.errorRenameWarpNotFound)
-                }
-            }
-
-        assertEquals("Rename failed: warp id was null", thrown.message)
+        assertEquals("Rename failed: warp id was null", thrown?.message)
     }
 
     private fun eventWithResponse(view: DialogResponseView?): PlayerCustomClickEvent {

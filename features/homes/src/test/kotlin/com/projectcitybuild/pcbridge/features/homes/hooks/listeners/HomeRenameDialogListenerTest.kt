@@ -10,7 +10,6 @@ import kotlinx.coroutines.test.runTest
 import net.kyori.adventure.key.Key
 import org.bukkit.entity.Player
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.never
@@ -69,21 +68,23 @@ class HomeRenameDialogListenerTest {
     }
 
     @Test
-    fun `reports a missing home identifier and propagates the failure`() {
-        val thrown = assertThrows(Exception::class.java) {
-            runTest {
-                val view = mock(DialogResponseView::class.java)
-                whenever(view.getText(HomeRenameDialog.idKey)).thenReturn(null)
-                whenever(view.getText(HomeRenameDialog.newNameKey)).thenReturn("Workshop")
-                val event = eventWithResponse(view)
+    fun `reports a missing home identifier and propagates the failure`() = runTest {
+        val view = mock(DialogResponseView::class.java)
+        whenever(view.getText(HomeRenameDialog.idKey)).thenReturn(null)
+        whenever(view.getText(HomeRenameDialog.newNameKey)).thenReturn("Workshop")
+        val event = eventWithResponse(view)
+        var thrown: Exception? = null
 
-                listener.onPlayerCustomClickEvent(event)
-
-                verify(repository, never()).rename(any(), any(), any())
-                verify(player).sendMessage(l10n.homes.errorRenameHomeNotFound)
-            }
+        try {
+            listener.onPlayerCustomClickEvent(event)
+        } catch (failure: Exception) {
+            thrown = failure
+        } finally {
+            verify(repository, never()).rename(any(), any(), any())
+            verify(player).sendMessage(l10n.homes.errorRenameHomeNotFound)
         }
-        assertEquals("Rename failed: home id was null", thrown.message)
+
+        assertEquals("Rename failed: home id was null", thrown?.message)
     }
 
     @Test

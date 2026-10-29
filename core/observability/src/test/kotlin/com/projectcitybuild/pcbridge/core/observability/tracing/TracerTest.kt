@@ -24,45 +24,48 @@ import java.util.concurrent.CopyOnWriteArrayList
 
 class TracerTest {
     @Test
-    fun `suspending trace ends span and preserves context across suspension`() =
-        runBlocking {
-            val fixture = createFixture()
-            val attributes = Attributes.builder().put("event", "join").build()
+    fun `suspending trace ends span and preserves context across suspension`() = runBlocking {
+        val fixture = createFixture()
+        val attributes = Attributes.builder().put("event", "join").build()
 
-            fixture.tracer.trace(
-                operation = "listener.PlayerJoin",
-                spanKind = SpanKind.SERVER,
-                attributes = attributes,
-            ) {
-                assertTrue(Span.current().spanContext.isValid)
-                yield()
-                assertTrue(Span.current().spanContext.isValid)
-            }
-
-            val span = fixture.exporter.spans.single()
-            assertEquals("listener.PlayerJoin", span.name)
-            assertEquals(SpanKind.SERVER, span.kind)
-            assertEquals("join", span.attributes.get(AttributeKey.stringKey("event")))
-            assertTrue(span.endEpochNanos > 0)
+        fixture.tracer.trace(
+            operation = "listener.PlayerJoin",
+            spanKind = SpanKind.SERVER,
+            attributes = attributes,
+        ) {
+            assertTrue(Span.current().spanContext.isValid)
+            yield()
+            assertTrue(Span.current().spanContext.isValid)
         }
+
+        val span = fixture.exporter.spans.single()
+        assertEquals("listener.PlayerJoin", span.name)
+        assertEquals(SpanKind.SERVER, span.kind)
+        assertEquals("join", span.attributes.get(AttributeKey.stringKey("event")))
+        assertTrue(span.endEpochNanos > 0)
+    }
 
     @Test
     fun `suspending trace records and rethrows ordinary exceptions`() {
         val fixture = createFixture()
         val failure = IllegalStateException("failure")
 
-        val thrown =
-            assertThrows<IllegalStateException> {
-                runBlocking {
-                    fixture.tracer.trace("command.test") {
-                        throw failure
-                    }
+        val thrown = assertThrows<IllegalStateException> {
+            runBlocking {
+                fixture.tracer.trace("command.test") {
+                    throw failure
                 }
             }
+        }
 
         assertEquals(failure::class, thrown::class)
         assertEquals(failure.message, thrown.message)
-        assertTrue(fixture.exporter.spans.single().events.any { it.name == "exception" })
+        assertTrue(
+            fixture.exporter.spans
+                .single()
+                .events
+                .any { it.name == "exception" },
+        )
     }
 
     @Test
@@ -70,18 +73,22 @@ class TracerTest {
         val fixture = createFixture()
         val cancellation = CancellationException("cancelled")
 
-        val thrown =
-            assertThrows<CancellationException> {
-                runBlocking {
-                    fixture.tracer.trace("command.test") {
-                        throw cancellation
-                    }
+        val thrown = assertThrows<CancellationException> {
+            runBlocking {
+                fixture.tracer.trace("command.test") {
+                    throw cancellation
                 }
             }
+        }
 
         assertEquals(cancellation::class, thrown::class)
         assertEquals(cancellation.message, thrown.message)
-        assertTrue(fixture.exporter.spans.single().events.none { it.name == "exception" })
+        assertTrue(
+            fixture.exporter.spans
+                .single()
+                .events
+                .none { it.name == "exception" },
+        )
     }
 
     @Test
@@ -89,15 +96,19 @@ class TracerTest {
         val fixture = createFixture()
         val failure = IllegalArgumentException("failure")
 
-        val thrown =
-            assertThrows<IllegalArgumentException> {
-                fixture.tracer.traceSync("listener.Test") {
-                    throw failure
-                }
+        val thrown = assertThrows<IllegalArgumentException> {
+            fixture.tracer.traceSync("listener.Test") {
+                throw failure
             }
+        }
 
         assertSame(failure, thrown)
-        assertTrue(fixture.exporter.spans.single().events.any { it.name == "exception" })
+        assertTrue(
+            fixture.exporter.spans
+                .single()
+                .events
+                .any { it.name == "exception" },
+        )
     }
 
     @Test
@@ -105,15 +116,19 @@ class TracerTest {
         val fixture = createFixture()
         val cancellation = CancellationException("cancelled")
 
-        val thrown =
-            assertThrows<CancellationException> {
-                fixture.tracer.traceSync("listener.Test") {
-                    throw cancellation
-                }
+        val thrown = assertThrows<CancellationException> {
+            fixture.tracer.traceSync("listener.Test") {
+                throw cancellation
             }
+        }
 
         assertSame(cancellation, thrown)
-        assertTrue(fixture.exporter.spans.single().events.none { it.name == "exception" })
+        assertTrue(
+            fixture.exporter.spans
+                .single()
+                .events
+                .none { it.name == "exception" },
+        )
     }
 
     @Test
@@ -127,19 +142,26 @@ class TracerTest {
             }
 
         assertEquals("complete", result)
-        assertEquals("listener.Test", fixture.exporter.spans.single().name)
+        assertEquals(
+            "listener.Test",
+            fixture.exporter.spans
+                .single()
+                .name,
+        )
     }
 
     private fun createFixture(): Fixture {
         val exporter = CapturingSpanExporter()
-        val sdk =
-            OpenTelemetrySdk.builder()
-                .setTracerProvider(
-                    SdkTracerProvider.builder()
-                        .addSpanProcessor(SimpleSpanProcessor.create(exporter))
-                        .build(),
-                )
-                .build()
+        val tracerProvider = SdkTracerProvider
+            .builder()
+            .addSpanProcessor(SimpleSpanProcessor.create(exporter))
+            .build()
+
+        val sdk = OpenTelemetrySdk
+            .builder()
+            .setTracerProvider(tracerProvider)
+            .build()
+
         val provider = mock<OpenTelemetryProvider>()
         whenever(provider.sdk).thenReturn(sdk)
 

@@ -10,6 +10,7 @@ import com.projectcitybuild.pcbridge.runtime.connection.middleware.ConnectionMid
 import com.projectcitybuild.pcbridge.runtime.connection.middleware.ConnectionResult
 import com.projectcitybuild.pcbridge.runtime.listeners.runListenerSafelySync
 import com.projectcitybuild.pcbridge.runtime.listeners.tracedSync
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.runBlocking
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
@@ -26,56 +27,53 @@ class AuthorizeConnectionListener(
         priority = EventPriority.HIGHEST,
         ignoreCancelled = true,
     )
-    fun handle(event: AsyncPlayerPreLoginEvent) =
+    fun handle(event: AsyncPlayerPreLoginEvent) = try {
         event.runListenerSafelySync(
             errorTracker,
             "An error occurred while authorizing a connection",
-            onFailure = {
-                event.disallow(
-                    AsyncPlayerPreLoginEvent.Result.KICK_OTHER,
-                    l10n.connection.errorUnableToAuthConnection,
-                )
-            },
+            onFailure = { disallowLogin(event) },
         ) {
             event.tracedSync(connectionTracer, this::class.java) {
-                /**
-                 * To call `event.disallow()` the handler must block until player data
-                 * is fetched, because it mutates a flag on the Event instance that Paper
-                 * reads after all handlers run.
-                 *
-                 * MCCoroutine returns the event immediately and continues suspending
-                 * functions in the background, so mutating the event in a coroutine
-                 * would occur too late (i.e. after it's already read).
-                 *
+                /*
+                 * Block until authorization finishes. Paper reads the event result
+                 * after handlers return, so a coroutine continuation would be too late.
+                 * This Paper event is asynchronous, so we can block here safely.
                  * See https://github.com/Shynixn/MCCoroutine/issues/43
                  */
                 runBlocking {
-                    val authorization =
-                        connectionRepository.auth(
-                            uuid = event.uniqueId,
-                            ip = event.address,
-                        )
-                    val result =
-                        middlewareChain.pipe(
-                            uuid = event.uniqueId,
-                            ip = event.address,
-                            authorization = authorization,
-                        )
+                    val authorization = connectionRepository.auth(
+                        uuid = event.uniqueId,
+                        ip = event.address,
+                    )
+                    val result = middlewareChain.pipe(
+                        uuid = event.uniqueId,
+                        ip = event.address,
+                        authorization = authorization,
+                    )
                     when (result) {
-                        is ConnectionResult.Denied ->
-                            event.disallow(
-                                AsyncPlayerPreLoginEvent.Result.KICK_BANNED,
-                                result.reason,
-                            )
-                        is ConnectionResult.Allowed ->
-                            eventBroadcaster.broadcast(
-                                ConnectionPermittedEvent(
-                                    playerData = authorization.player,
-                                    playerUUID = event.uniqueId,
-                                ),
-                            )
+                        is ConnectionResult.Denied -> event.disallow(
+                            AsyncPlayerPreLoginEvent.Result.KICK_BANNED,
+                            result.reason,
+                        )
+                        is ConnectionResult.Allowed -> eventBroadcaster.broadcast(
+                            ConnectionPermittedEvent(
+                                playerData = authorization.player,
+                                playerUUID = event.uniqueId,
+                            ),
+                        )
                     }
                 }
             }
         }
+    } catch (cancellation: CancellationException) {
+        disallowLogin(event)
+        throw cancellation
+    }
+
+    private fun disallowLogin(event: AsyncPlayerPreLoginEvent) {
+        event.disallow(
+            AsyncPlayerPreLoginEvent.Result.KICK_OTHER,
+            l10n.connection.errorUnableToAuthConnection,
+        )
+    }
 }
