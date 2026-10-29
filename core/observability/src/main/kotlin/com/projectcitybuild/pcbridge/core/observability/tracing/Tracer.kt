@@ -1,6 +1,7 @@
 package com.projectcitybuild.pcbridge.core.observability.tracing
 
 import io.opentelemetry.api.common.Attributes
+import io.opentelemetry.api.trace.Span
 import io.opentelemetry.api.trace.SpanKind
 import io.opentelemetry.context.Context
 import io.opentelemetry.extension.kotlin.asContextElement
@@ -18,11 +19,11 @@ class Tracer(
     ): T {
         val tracer = otel.sdk.getTracer(name)
 
-        val span =
-            tracer.spanBuilder(operation)
-                .setSpanKind(spanKind)
-                .apply { if (attributes != null) setAllAttributes(attributes) }
-                .startSpan()
+        val span = tracer
+            .spanBuilder(operation)
+            .setSpanKind(spanKind)
+            .apply { if (attributes != null) setAllAttributes(attributes) }
+            .startSpan()
 
         val otelContext = Context.current().with(span)
 
@@ -42,18 +43,18 @@ class Tracer(
         operation: String,
         spanKind: SpanKind = SpanKind.INTERNAL,
         attributes: Attributes? = null,
-        block: () -> T,
+        block: (Span) -> T,
     ): T {
         val tracer = otel.sdk.getTracer(name)
 
-        val span =
-            tracer.spanBuilder(operation)
-                .setSpanKind(spanKind)
-                .apply { if (attributes != null) setAllAttributes(attributes) }
-                .startSpan()
+        val span = tracer
+            .spanBuilder(operation)
+            .setSpanKind(spanKind)
+            .apply { if (attributes != null) setAllAttributes(attributes) }
+            .startSpan()
 
         try {
-            return block()
+            return block(span)
         } catch (e: Exception) {
             span.recordException(e)
             throw e

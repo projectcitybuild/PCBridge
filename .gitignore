@@ -5,3 +5,4 @@ out
 .env
 .kotlin
 local.properties
+.DS_Store

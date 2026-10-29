@@ -49,6 +49,7 @@ class StringsEn {
     val serverList = ServerList()
     val tablist = Tablist()
     val maintenance = Maintenance()
+    val worlds = Worlds()
 
     inner class Pagination {
         val pagePrevButton = mm("<white>[← Prev]</white>")
@@ -799,5 +800,169 @@ class StringsEn {
             "Maintenance mode is currently <state>",
             Placeholder.unparsed("state", enabled.onOff()),
         )
+    }
+
+    inner class Worlds {
+        val worldsCommandDescription = "Manages world settings"
+        val borderCommandDescription = "Sets and enforces a world's border"
+        val borderSetCommandDescription = "Sets a square, circle, or rectangle border with an optional center"
+        val borderFillCommandDescription = "Generates missing chunks inside the world border"
+        val borderClearCommandDescription = "Clears the world's border"
+
+        val borderNotConfigured = mm("<red>No world border is configured for this world.</red>")
+        val borderCleared = mm("<green>World border cleared.</green>")
+        val borderReached = mm("<red>You have reached the world border.</red>")
+
+        fun borderStatus(
+            shape: String,
+            centerX: Double,
+            centerZ: Double,
+            radius: Double,
+        ) = mm(
+            "<gray>World border: <shape>, center <x>, <z>; radius <radius> blocks.</gray>",
+            Placeholder.unparsed("shape", shape),
+            Placeholder.unparsed("x", centerX.toString()),
+            Placeholder.unparsed("z", centerZ.toString()),
+            Placeholder.unparsed("radius", radius.toString()),
+        )
+
+        fun rectangleBorderStatus(
+            centerX: Double,
+            centerZ: Double,
+            width: Double,
+            depth: Double,
+        ) = mm(
+            "<gray>World border: rectangle, center <x>, <z>; width <width>, depth <depth> blocks.</gray>",
+            Placeholder.unparsed("x", centerX.toString()),
+            Placeholder.unparsed("z", centerZ.toString()),
+            Placeholder.unparsed("width", width.toString()),
+            Placeholder.unparsed("depth", depth.toString()),
+        )
+
+        fun invalidBorder(reason: String?) = mm(
+            "<red>Invalid world border: <reason></red>",
+            Placeholder.unparsed("reason", reason ?: "unknown reason"),
+        )
+
+        fun borderSet(
+            shape: String,
+            centerX: Double,
+            centerZ: Double,
+            radius: Double,
+        ) = mm(
+            "<green>World border set: <shape>, center <x>, <z>; radius <radius> blocks.</green>",
+            Placeholder.unparsed("shape", shape),
+            Placeholder.unparsed("x", centerX.toString()),
+            Placeholder.unparsed("z", centerZ.toString()),
+            Placeholder.unparsed("radius", radius.toString()),
+        )
+
+        fun rectangleBorderSet(
+            centerX: Double,
+            centerZ: Double,
+            width: Double,
+            depth: Double,
+        ) = mm(
+            "<green>World border set: rectangle, center <x>, <z>; width <width>, depth <depth> blocks.</green>",
+            Placeholder.unparsed("x", centerX.toString()),
+            Placeholder.unparsed("z", centerZ.toString()),
+            Placeholder.unparsed("width", width.toString()),
+            Placeholder.unparsed("depth", depth.toString()),
+        )
+
+        fun borderRelocationFailures(count: Int) = mm(
+            "<yellow>World border was committed, but relocation failed for <count> player(s). See server logs.</yellow>",
+            Placeholder.unparsed("count", count.toString()),
+        )
+
+        val borderRespawnRelocationFailed =
+            mm("<red>Could not safely relocate your respawn inside the world border. Please contact staff.</red>")
+
+        val fillRequiresBorder = mm("<red>Set a world border before filling chunks.</red>")
+
+        fun fillLargeWarning(chunkCountUpperBound: Long) = mm(
+            "<yellow>This is a large fill (up to <count> chunks) and may take a long time. " +
+                "Click <click:run_command:'/worlds border fill confirm'>" +
+                "<hover:show_text:'Click to confirm the fill'><aqua><underlined>" +
+                "/worlds border fill confirm</underlined></aqua></hover></click> to continue.</yellow>",
+            Placeholder.unparsed("count", chunkCountUpperBound.toString()),
+        )
+
+        fun fillPreview(
+            chunkCountUpperBound: Long,
+            worldName: String,
+        ) = mm(
+            "<green>Fill preview: up to <count> chunks may be checked in <world>. " +
+                "Only missing chunks will be generated. Click " +
+                "<click:run_command:'/worlds border fill confirm'>" +
+                "<hover:show_text:'Click to confirm the fill'><aqua><underlined>" +
+                "/worlds border fill confirm</underlined></aqua></hover></click> within 60 seconds to continue.</green>",
+            Placeholder.unparsed("count", chunkCountUpperBound.toString()),
+            Placeholder.unparsed("world", worldName),
+        )
+
+        val fillPreviewMissing = mm("<red>There is no active fill preview. Run /worlds border fill first.</red>")
+
+        val fillWrongWorld = mm("<red>You must confirm the fill in the world where it was previewed.</red>")
+
+        val fillBorderChanged = mm(
+            "<red>The world border changed. Run /worlds border fill again to preview the updated area.</red>",
+        )
+
+        val fillAlreadyRunning = mm("<red>A world border fill is already running for this world.</red>")
+
+        val fillStarted = mm("<yellow>Starting world border fill...</yellow>")
+
+        val fillStoppedBorderChanged = mm("<red>World border changed during fill; the operation was stopped.</red>")
+
+        fun fillProgress(
+            checked: Long,
+            chunkCountUpperBound: Long,
+            generated: Long,
+        ) = mm(
+            "<yellow>World border fill progress: checked <checked> of up to <total> chunks; generated <generated>.</yellow>",
+            Placeholder.unparsed("checked", checked.toString()),
+            Placeholder.unparsed("total", chunkCountUpperBound.toString()),
+            Placeholder.unparsed("generated", generated.toString()),
+        )
+
+        fun fillComplete(
+            checked: Long,
+            chunkCountUpperBound: Long,
+            generated: Long,
+        ) = mm(
+            "<green>World border fill complete: checked <checked> chunks (up to <total> in the border); generated <generated>.</green>",
+            Placeholder.unparsed("checked", checked.toString()),
+            Placeholder.unparsed("total", chunkCountUpperBound.toString()),
+            Placeholder.unparsed("generated", generated.toString()),
+        )
+
+        fun fillStatus(
+            checked: Long,
+            chunkCountUpperBound: Long,
+            generated: Long,
+            status: String,
+        ) = mm(
+            "<yellow>World border fill <status>: checked <checked> of up to <total> chunks; generated <generated>.</yellow>",
+            Placeholder.unparsed("status", status),
+            Placeholder.unparsed("checked", checked.toString()),
+            Placeholder.unparsed("total", chunkCountUpperBound.toString()),
+            Placeholder.unparsed("generated", generated.toString()),
+        )
+
+        fun fillCancelled(
+            checked: Long,
+            chunkCountUpperBound: Long,
+            generated: Long,
+        ) = mm(
+            "<yellow>World border fill cancelled: checked <checked> of up to <total> chunks; generated <generated>.</yellow>",
+            Placeholder.unparsed("checked", checked.toString()),
+            Placeholder.unparsed("total", chunkCountUpperBound.toString()),
+            Placeholder.unparsed("generated", generated.toString()),
+        )
+
+        val fillFailed = mm("<red>World border fill failed. See the server log for details.</red>")
+        val fillNoActiveJob = mm("<red>There is no world border fill running in this world.</red>")
+        val fillCancelRequested = mm("<yellow>World border fill cancellation requested.</yellow>")
     }
 }

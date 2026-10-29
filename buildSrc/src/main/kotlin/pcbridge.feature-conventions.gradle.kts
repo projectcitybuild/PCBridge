@@ -17,8 +17,9 @@ repositories {
 }
 
 dependencies {
-    add("implementation", project(":core:pcbridge-api"))
+    add("implementation", project(":core:l10n"))
     add("implementation", project(":core:observability"))
+    add("implementation", project(":core:pcbridge-api"))
     add("implementation", "com.github.shynixn.mccoroutine:mccoroutine-bukkit-api:2.15.0")
     add("implementation", "io.insert-koin:koin-core:3.5.6")
     add("implementation", "io.github.reactivecircus.cache4k:cache4k:0.13.0")

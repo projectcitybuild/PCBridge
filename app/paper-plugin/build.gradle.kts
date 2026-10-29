@@ -76,6 +76,7 @@ dependencies {
     implementation(project(":features:teleportation"))
     implementation(project(":features:warnings"))
     implementation(project(":features:warps"))
+    implementation(project(":features:worlds"))
     implementation(project(":features:watchdog"))
     implementation(project(":features:workstations"))
 

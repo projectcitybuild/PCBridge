@@ -22,7 +22,7 @@ class CommandBuilder internal constructor(
     var description: String = ""
 
     /**
-     * Applies a permission-node checks to this command.
+     * Applies a permission-node check to this command.
      */
     fun requiresPermission(vararg permissions: PermissionNode) {
         builder.requires { context ->

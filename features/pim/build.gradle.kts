@@ -4,7 +4,6 @@ plugins {
 
 dependencies {
     implementation(project(":core:date-time"))
-    implementation(project(":core:l10n"))
     implementation(project(":core:permissions"))
     implementation(project(":core:support:java"))
     implementation(project(":core:utils"))
