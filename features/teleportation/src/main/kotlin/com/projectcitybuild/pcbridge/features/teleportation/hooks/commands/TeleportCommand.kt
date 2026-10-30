@@ -1,10 +1,9 @@
 package com.projectcitybuild.pcbridge.features.teleportation.hooks.commands
 
-import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.features.teleportation.TeleportationPermissions
 import com.projectcitybuild.pcbridge.features.teleportation.domain.services.TeleportService
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
-import com.projectcitybuild.pcbridge.platform.paper.commands.argumenttypes.SingleOnlinePlayerArgument
+import com.projectcitybuild.pcbridge.platform.paper.commands.argumenttypes.OnlinePlayerArgument
 import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.requirePlayer
@@ -31,7 +30,7 @@ class TeleportCommand(
 ) : BrigadierCommand {
     override val builder = command("tp") {
         description = "Teleports a player to a target"
-        argument("player", SingleOnlinePlayerArgument(server)) {
+        argument("player", OnlinePlayerArgument(server)) {
             requires { context ->
                 context.sender.hasPermission(TeleportationPermissions.REQUEST.node) ||
                     context.sender.hasPermission("essentials.tp")

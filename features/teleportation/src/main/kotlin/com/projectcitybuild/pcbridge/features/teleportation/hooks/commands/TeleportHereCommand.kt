@@ -6,10 +6,9 @@ import com.projectcitybuild.pcbridge.features.teleportation.domain.services.Tele
 import com.projectcitybuild.pcbridge.features.teleportation.hooks.commands.args.withTeleportFlags
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
-import com.projectcitybuild.pcbridge.platform.paper.commands.argumenttypes.SingleOnlinePlayerArgument
+import com.projectcitybuild.pcbridge.platform.paper.commands.argumenttypes.OnlinePlayerArgument
 import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.requirePlayer
-import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
 import com.projectcitybuild.pcbridge.runtime.commands.runCommandTracedSafely
 import com.projectcitybuild.pcbridge.runtime.teleportation.teleportationTracer
 import org.bukkit.Server
@@ -24,7 +23,7 @@ class TeleportHereCommand(
     override val builder = command("here") {
         description = "Teleports a target player to you"
         requiresPermission(TeleportationPermissions.OTHERS)
-        argument("player", SingleOnlinePlayerArgument(server)) {
+        argument("player", OnlinePlayerArgument(server)) {
             withTeleportFlags(plugin) { context, flags -> execute(context, flags) }
         }
     }

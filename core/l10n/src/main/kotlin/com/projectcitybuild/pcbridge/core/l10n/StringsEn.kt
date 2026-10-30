@@ -42,6 +42,7 @@ class StringsEn {
     val dialogs = Dialogs()
     val registration = Registration()
     val building = Building()
+    val gameplay = Gameplay()
     val teleportation = Teleportation()
     val spawns = Spawns()
     val moderation = Moderation()
@@ -564,6 +565,138 @@ class StringsEn {
             "<gray>Renamed item in hand to <name></gray>",
             Placeholder.component("name", newName),
         )
+    }
+
+    inner class Gameplay {
+        val burnCommandDescription = "Sets a player's fire duration"
+        val extinguishCommandDescription = "Extinguishes a player"
+        val feedCommandDescription = "Restores a player's hunger"
+        val gameModeCommandDescription = "Changes a player's game mode"
+        val healCommandDescription = "Restores a player's health"
+        val freezeCommandDescription = "Freezes a player for a duration"
+        val killCommandDescription = "Kills a player"
+        val purgeCommandDescription = "Removes a player's active potion effects"
+        val suicideCommandDescription = "Kills a player"
+        val xpCommandDescription = "Changes a player's experience points"
+        val timeCommandDescription = "Views or changes world time"
+        val playerTimeCommandDescription = "Views or changes a player's personal time"
+        val weatherCommandDescription = "Changes the weather in a world"
+        val playerWeatherCommandDescription = "Views or changes a player's personal weather"
+
+        fun playerSetOnFire(name: String) = mm("Set $name on fire")
+
+        fun playerExtinguished(name: String) = mm("Extinguished $name")
+
+        fun playerNotOnFire(name: String) = mm("$name is not on fire")
+
+        fun playerFed(name: String) = mm("Fed $name")
+
+        fun playerGameModeChanged(
+            name: String,
+            gameMode: String,
+        ) = mm("Changed $name's game mode to $gameMode")
+
+        fun playerHealed(name: String) = mm("Healed $name")
+
+        fun playerFrozen(
+            name: String,
+            seconds: Int,
+        ) = mm("Froze $name for $seconds seconds")
+
+        fun playerKilled(name: String) = mm("Killed $name")
+
+        fun killedBy(name: String) = mm("You were killed by $name")
+
+        val noActivePotionEffects = mm("No active potion effects to purge")
+
+        fun playerEffectsPurged(
+            num: Int,
+            name: String,
+        ) = mm("Removed $num active potion effects from $name")
+
+        val playerDied = mm("You died.")
+
+        fun playerExperienceSet(
+            name: String,
+            experience: Int,
+        ) = mm("Set $name's experience points to $experience.")
+
+        fun playerExperienceAdded(
+            name: String,
+            amount: Long,
+            currentExperience: Int,
+        ) = mm("Added $amount experience points to $name. They now have $currentExperience experience points.")
+
+        fun playerExperienceSubtracted(
+            name: String,
+            amount: Long,
+            currentExperience: Int,
+        ) = mm("Subtracted $amount experience points from $name. They now have $currentExperience experience points.")
+
+        fun playerExperienceReset(name: String) = mm("Reset $name's experience points to 0.")
+
+        fun worldTimeCurrent(
+            world: String,
+            time: String,
+        ) = mm("The time in $world is $time")
+
+        fun worldTimeSet(
+            world: String,
+            time: String,
+        ) = mm("Set the time in $world to $time")
+
+        fun worldTimeAdded(
+            world: String,
+            time: String,
+        ) = mm("Added $time to the time in $world")
+
+        fun playerTimeNormal(name: String) = mm("$name uses the world's time")
+
+        fun playerTimeCurrent(
+            name: String,
+            time: String,
+            relative: Boolean,
+        ) = mm("$name's personal time is $time (${if (relative) "relative" else "fixed"})")
+
+        fun playerTimeSet(
+            name: String,
+            time: String,
+            relative: Boolean,
+        ) = mm("Set $name's personal time to $time (${if (relative) "relative" else "fixed"})")
+
+        fun playerTimeReset(name: String) = mm("Reset $name's personal time to the world's time")
+
+        fun weatherSet(
+            world: String,
+            weather: String,
+            durationSeconds: Int?,
+        ) = if (durationSeconds == null) {
+            mm("Set the weather in $world to $weather")
+        } else {
+            mm("Set the weather in $world to $weather for $durationSeconds seconds")
+        }
+
+        fun playerWeatherNormal(name: String) = mm("$name uses the world's weather")
+
+        fun playerWeatherCurrent(
+            name: String,
+            weather: String,
+        ) = mm("$name's personal weather is $weather")
+
+        fun playerWeatherSet(
+            name: String,
+            weather: String,
+        ) = mm("Set $name's personal weather to $weather")
+
+        fun playerWeatherReset(name: String) = mm("Reset $name's personal weather to the world's weather")
+
+        fun errorInvalidTime(time: String) = mm("Invalid time: $time")
+
+        fun errorWorldNotFound(world: String) = mm("World $world was not found")
+
+        val errorWeatherWorldRequired = mm("Specify a world when using this command from the console")
+
+        fun errorPlayerMaxHealthUnavailable(name: String) = "Player $name has no maximum-health attribute"
     }
 
     inner class Teleportation {

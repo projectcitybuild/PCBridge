@@ -2,7 +2,7 @@ package com.projectcitybuild.pcbridge.features.teleportation.hooks.commands
 
 import com.projectcitybuild.pcbridge.features.teleportation.domain.services.TeleportService
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
-import com.projectcitybuild.pcbridge.platform.paper.commands.argumenttypes.SingleOnlinePlayerArgument
+import com.projectcitybuild.pcbridge.platform.paper.commands.argumenttypes.OnlinePlayerArgument
 import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.requirePlayer
@@ -19,7 +19,7 @@ class TeleportAcceptCommand(
 ) : BrigadierCommand {
     override val builder = command("accept") {
         description = "Accepts a pending teleport request"
-        argument("requester", SingleOnlinePlayerArgument(server)) {
+        argument("requester", OnlinePlayerArgument(server)) {
             executesSuspending(plugin) { context ->
                 context.runCommandTracedSafely(teleportationTracer) {
                     application.accept(

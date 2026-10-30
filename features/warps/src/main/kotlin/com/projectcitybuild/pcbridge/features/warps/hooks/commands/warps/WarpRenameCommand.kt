@@ -26,16 +26,6 @@ class WarpRenameCommand(
     private val warpRepository: WarpRepository,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    internal var showRenameDialog: (Player, Int, String) -> Unit = { player, warpId, warpName ->
-        player.showDialog(
-            WarpRenameDialog.build(
-                warpId = warpId,
-                prevName = warpName,
-                newName = warpName,
-            ),
-        )
-    }
-
     override val builder = command("rename") {
         description = "Renames a warp"
         requiresPermission(WarpsPermissions.MANAGE)
@@ -53,5 +43,15 @@ class WarpRenameCommand(
         checkNotNull(warp) { l10n.warps.errorWarpNotFound(name) }
 
         showRenameDialog(player, warp.id, warp.name)
+    }
+
+    internal var showRenameDialog: (Player, Int, String) -> Unit = { player, warpId, warpName ->
+        player.showDialog(
+            WarpRenameDialog.build(
+                warpId = warpId,
+                prevName = warpName,
+                newName = warpName,
+            ),
+        )
     }
 }
