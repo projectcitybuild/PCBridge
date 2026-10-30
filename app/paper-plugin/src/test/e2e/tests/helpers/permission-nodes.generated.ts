@@ -16,6 +16,22 @@ export const permissionNodes = {
   config: {
     reload: 'pcbridge.config.reload',
   },
+  gameplay: {
+    burn: 'pcbridge.gameplay.burn',
+    extinguish: 'pcbridge.gameplay.extinguish',
+    feed: 'pcbridge.gameplay.feed',
+    freeze: 'pcbridge.gameplay.freeze',
+    gamemode: 'pcbridge.gameplay.gamemode',
+    heal: 'pcbridge.gameplay.heal',
+    kill: 'pcbridge.gameplay.kill',
+    playerTime: 'pcbridge.gameplay.ptime',
+    playerWeather: 'pcbridge.gameplay.pweather',
+    purge: 'pcbridge.gameplay.purge',
+    suicide: 'pcbridge.gameplay.suicide',
+    time: 'pcbridge.gameplay.time',
+    weather: 'pcbridge.gameplay.weather',
+    xp: 'pcbridge.gameplay.xp',
+  },
   homes: {
     use: 'pcbridge.homes.use',
   },

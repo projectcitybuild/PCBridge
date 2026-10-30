@@ -3,9 +3,11 @@ package com.projectcitybuild.pcbridge.platform.paper.commands.arguments
 import com.mojang.brigadier.arguments.IntegerArgumentType
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandArgument
 import com.projectcitybuild.pcbridge.platform.paper.commands.argumenttypes.EnumArgument
+import com.projectcitybuild.pcbridge.platform.paper.commands.argumenttypes.GameTimeArgument
 import com.projectcitybuild.pcbridge.platform.paper.commands.argumenttypes.OnlinePlayerArgument
 import org.bukkit.Server
 import org.bukkit.entity.Player
+import com.projectcitybuild.pcbridge.platform.paper.data.GameTime as GameTimeValue
 
 class Argument private constructor() {
     class Integer(
@@ -33,5 +35,19 @@ class Argument private constructor() {
             name = name,
             type = EnumArgument(org.bukkit.GameMode::class.java),
             valueClass = org.bukkit.GameMode::class.java,
+        )
+
+    class GameTime(
+        name: String,
+        allowFixedTime: Boolean = true,
+        suggestionsAfterTime: () -> Collection<String> = { emptyList() },
+    ) : CommandArgument<GameTimeValue>(
+            name = name,
+            type =
+                GameTimeArgument(
+                    allowFixedTime = allowFixedTime,
+                    suggestionsAfterTime = suggestionsAfterTime,
+                ),
+            valueClass = GameTimeValue::class.java,
         )
 }

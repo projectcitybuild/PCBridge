@@ -13,4 +13,8 @@ object GameplayPermissions {
     val PURGE = PermissionNode("pcbridge.gameplay.purge")
     val SUICIDE = PermissionNode("pcbridge.gameplay.suicide")
     val XP = PermissionNode("pcbridge.gameplay.xp")
+    val TIME = PermissionNode("pcbridge.gameplay.time")
+    val PLAYER_TIME = PermissionNode("pcbridge.gameplay.ptime")
+    val WEATHER = PermissionNode("pcbridge.gameplay.weather")
+    val PLAYER_WEATHER = PermissionNode("pcbridge.gameplay.pweather")
 }
