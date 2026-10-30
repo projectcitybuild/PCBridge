@@ -6,9 +6,8 @@ import com.projectcitybuild.pcbridge.features.teleportation.domain.services.Tele
 import com.projectcitybuild.pcbridge.features.teleportation.hooks.commands.args.withTeleportFlags
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
-import com.projectcitybuild.pcbridge.platform.paper.commands.argumenttypes.SingleOnlinePlayerArgument
+import com.projectcitybuild.pcbridge.platform.paper.commands.argumenttypes.OnlinePlayerArgument
 import com.projectcitybuild.pcbridge.platform.paper.commands.command
-import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
 import com.projectcitybuild.pcbridge.runtime.commands.runCommandTracedSafely
 import com.projectcitybuild.pcbridge.runtime.teleportation.teleportationTracer
 import org.bukkit.Server
@@ -28,7 +27,7 @@ class TeleportAllCommand(
                 execute(context, targetArgument = null, flags = flags)
             }
         }
-        argument("target", SingleOnlinePlayerArgument(server)) {
+        argument("target", OnlinePlayerArgument(server)) {
             withTeleportFlags(plugin) { context, flags ->
                 execute(context, "target", flags)
             }

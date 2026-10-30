@@ -61,6 +61,7 @@ dependencies {
     implementation(project(":features:chat-badge"))
     implementation(project(":features:chat-formatting"))
     implementation(project(":features:config"))
+    implementation(project(":features:gameplay"))
     implementation(project(":features:homes"))
     implementation(project(":features:maintenance"))
     implementation(project(":features:moderate"))

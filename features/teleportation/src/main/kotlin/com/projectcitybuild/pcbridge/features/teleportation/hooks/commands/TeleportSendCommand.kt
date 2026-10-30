@@ -4,9 +4,8 @@ import com.projectcitybuild.pcbridge.features.teleportation.TeleportationPermiss
 import com.projectcitybuild.pcbridge.features.teleportation.domain.services.TeleportService
 import com.projectcitybuild.pcbridge.features.teleportation.hooks.commands.args.withTeleportFlags
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
-import com.projectcitybuild.pcbridge.platform.paper.commands.argumenttypes.SingleOnlinePlayerArgument
+import com.projectcitybuild.pcbridge.platform.paper.commands.argumenttypes.OnlinePlayerArgument
 import com.projectcitybuild.pcbridge.platform.paper.commands.command
-import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
 import com.projectcitybuild.pcbridge.runtime.commands.runCommandTracedSafely
 import com.projectcitybuild.pcbridge.runtime.teleportation.teleportationTracer
 import io.papermc.paper.command.brigadier.Commands
@@ -22,10 +21,10 @@ class TeleportSendCommand(
     override val builder = command("send") {
         description = "Sends a teleport request to a player"
         requiresPermission(TeleportationPermissions.OTHERS)
-        argument("player", SingleOnlinePlayerArgument(server)) {
+        argument("player", OnlinePlayerArgument(server)) {
             then(
                 Commands
-                    .argument("target", SingleOnlinePlayerArgument(server))
+                    .argument("target", OnlinePlayerArgument(server))
                     .withTeleportFlags(plugin) { context, flags ->
                         context.runCommandTracedSafely(teleportationTracer) {
                             application.send(

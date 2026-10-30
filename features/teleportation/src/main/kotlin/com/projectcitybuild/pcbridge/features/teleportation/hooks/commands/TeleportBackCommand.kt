@@ -3,7 +3,7 @@ package com.projectcitybuild.pcbridge.features.teleportation.hooks.commands
 import com.projectcitybuild.pcbridge.features.teleportation.TeleportationPermissions
 import com.projectcitybuild.pcbridge.features.teleportation.domain.services.TeleportService
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
-import com.projectcitybuild.pcbridge.platform.paper.commands.argumenttypes.SingleOnlinePlayerArgument
+import com.projectcitybuild.pcbridge.platform.paper.commands.argumenttypes.OnlinePlayerArgument
 import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.requirePlayer
@@ -21,7 +21,7 @@ class TeleportBackCommand(
 ) : BrigadierCommand {
     override val builder = command("back") {
         description = "Returns you to your previous location"
-        argument("player", SingleOnlinePlayerArgument(server)) {
+        argument("player", OnlinePlayerArgument(server)) {
             requiresPermission(TeleportationPermissions.BACK_OTHERS)
             executesSuspending(plugin) { context ->
                 context.runCommandTracedSafely(teleportationTracer) {

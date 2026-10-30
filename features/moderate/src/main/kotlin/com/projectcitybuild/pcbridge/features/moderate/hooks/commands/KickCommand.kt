@@ -8,11 +8,10 @@ import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
 import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
-import com.projectcitybuild.pcbridge.platform.paper.commands.argumenttypes.SingleOnlinePlayerArgument
+import com.projectcitybuild.pcbridge.platform.paper.commands.argumenttypes.OnlinePlayerArgument
 import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.getOptionalArgument
-import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
 import com.projectcitybuild.pcbridge.runtime.commands.runCommandTracedSafely
 import io.papermc.paper.command.brigadier.Commands
 import net.kyori.adventure.text.Component
@@ -30,7 +29,7 @@ class KickCommand(
     override val builder = command("kick") {
         description = "Kicks a player from the server"
         requiresPermission(ModeratePermissions.MODERATE)
-        argument("player", SingleOnlinePlayerArgument(plugin.server)) {
+        argument("player", OnlinePlayerArgument(plugin.server)) {
             then(
                 Commands
                     .argument("reason", StringArgumentType.greedyString())
