@@ -4,6 +4,7 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextComponent
 import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.format.NamedTextColor
+import net.kyori.adventure.text.format.TextColor
 import net.kyori.adventure.text.format.TextDecoration
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -20,8 +21,8 @@ class StringsEnTest {
         val message = strings.builds.buildCreated("Archer's Tower")
 
         assertEquals("Archer's Tower created", plainText.serialize(message))
-        assertEquals(NamedTextColor.AQUA, textNode(message, "Archer's Tower").style().color())
-        assertEquals(NamedTextColor.GREEN, message.style().color())
+        assertEquals(TextColor.color(0x64D8FF), textNode(message, "Archer's Tower").style().color())
+        assertEquals(TextColor.color(0x6BFF95), message.style().color())
     }
 
     @Test
@@ -30,8 +31,8 @@ class StringsEnTest {
         val message = strings.errors.errorWorldNotFound(untrustedName)
 
         assertEquals("Could not find world $untrustedName", plainText.serialize(message))
-        assertEquals(NamedTextColor.AQUA, textNode(message, untrustedName).style().color())
-        assertEquals(NamedTextColor.RED, textNode(message, "Could not find world ").style().color())
+        assertEquals(TextColor.color(0x64D8FF), textNode(message, untrustedName).style().color())
+        assertEquals(TextColor.color(0xFF6B6B), textNode(message, "Could not find world ").style().color())
     }
 
     @Test
@@ -40,7 +41,7 @@ class StringsEnTest {
 
         assertEquals("Beach house (world_nether: 12, 64, -8)", plainText.serialize(message))
         listOf("Beach house", "world_nether", "12", "64", "-8").forEach { value ->
-            assertEquals(NamedTextColor.AQUA, textNode(message, value).style().color(), value)
+            assertEquals(TextColor.color(0x64D8FF), textNode(message, value).style().color(), value)
         }
     }
 
@@ -49,7 +50,7 @@ class StringsEnTest {
         val message = strings.tablist.playerPing(42)
 
         assertEquals(" 42", plainText.serialize(message))
-        assertEquals(NamedTextColor.AQUA, textNode(message, "42").style().color())
+        assertEquals(TextColor.color(0x64D8FF), textNode(message, "42").style().color())
     }
 
     @Test
@@ -72,7 +73,7 @@ class StringsEnTest {
             textNode(experienceAdded, "3000"),
             textNode(experienceSubtracted, "3000"),
         ).forEach { parameter ->
-            assertEquals(NamedTextColor.AQUA, parameter.style().color())
+            assertEquals(TextColor.color(0x64D8FF), parameter.style().color())
         }
     }
 
@@ -94,12 +95,14 @@ class StringsEnTest {
         val link = textNode(message, "here")
 
         assertEquals("Click here to edit the ban or add additional information", plainText.serialize(message))
-        assertEquals(NamedTextColor.AQUA, link.style().color())
+        assertEquals(TextColor.color(0xA78BFA), link.style().color())
         assertTrue(link.style().hasDecoration(TextDecoration.UNDERLINED))
         assertEquals(ClickEvent.Action.OPEN_URL, link.clickEvent()?.action())
         assertEquals(url, (link.clickEvent()?.payload() as? ClickEvent.Payload.Text)?.value())
         assertNotNull(link.hoverEvent())
-        assertEquals(url, plainText.serialize(link.hoverEvent()!!.value() as Component))
+        val hover = link.hoverEvent()!!.value() as Component
+        assertEquals(url, plainText.serialize(hover))
+        assertEquals(TextColor.color(0x64D8FF), textNode(hover, url).style().color())
     }
 
     @Test
@@ -107,10 +110,11 @@ class StringsEnTest {
         val buildName = textNode(strings.builds.buildCreatedAnnouncement("Player", "Sky Castle"), "Sky Castle")
         val acceptCommand = textNode(strings.teleportation.teleportRequestReceived("Player"), "/tp accept")
 
-        assertEquals(NamedTextColor.AQUA, buildName.style().color())
+        assertEquals(TextColor.color(0x64D8FF), buildName.style().color())
         assertTrue(buildName.style().hasDecoration(TextDecoration.UNDERLINED))
         assertEquals("/build Sky Castle", textClickPayload(buildName))
         assertEquals("/tp accept", textClickPayload(acceptCommand))
+        assertEquals(TextColor.color(0xA78BFA), acceptCommand.style().color())
         assertTrue(acceptCommand.style().hasDecoration(TextDecoration.UNDERLINED))
     }
 

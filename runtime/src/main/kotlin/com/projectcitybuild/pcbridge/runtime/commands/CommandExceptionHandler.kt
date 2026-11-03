@@ -1,7 +1,8 @@
 package com.projectcitybuild.pcbridge.runtime.commands
 
-import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.core.http.parsing.ResponseParserError
+import com.projectcitybuild.pcbridge.core.l10n.LocalizedComponentException
+import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.core.observability.logging.logSync
 import com.projectcitybuild.pcbridge.runtime.cooldowns.CooldownException
 import kotlinx.coroutines.CancellationException
@@ -13,6 +14,7 @@ class CommandExceptionHandler private constructor() {
             sender: CommandSender,
             e: Throwable,
         ) = when (e) {
+            is LocalizedComponentException -> sender.sendMessage(l10n.errors.commandErrorWithPrefix(e.component))
             is IllegalStateException -> sender.sendMessage(l10n.errors.commandErrorWithPrefix(e.message ?: "null"))
             is ResponseParserError ->
                 when (e) {

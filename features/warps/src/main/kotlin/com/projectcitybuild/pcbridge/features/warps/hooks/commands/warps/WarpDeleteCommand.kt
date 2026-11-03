@@ -31,7 +31,7 @@ class WarpDeleteCommand(
         requiresPermission(WarpsPermissions.MANAGE)
         argument(Argument.string("name")) {
             suggestsSuspending(plugin, warpNameSuggester::suggest)
-                .executesSuspending(taskExecutor, ::execute)
+            executesSuspending(taskExecutor, ::execute)
         }
     }
 

@@ -1,5 +1,6 @@
 package com.projectcitybuild.pcbridge.features.homes.hooks.commands.homes
 
+import com.projectcitybuild.pcbridge.core.l10n.checkNotNullLocalized
 import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.features.homes.domain.repositories.HomeRepository
 import com.projectcitybuild.pcbridge.features.homes.homesTracer
@@ -47,7 +48,9 @@ class HomeRenameCommand(
         val name = Argument.greedyString("name").get(context)
 
         val home = homeRepository.get(player.uniqueId, name)
-        checkNotNull(home) { l10n.homes.errorHomeNotFound(name) }
+        checkNotNullLocalized(home) {
+            l10n.homes.errorHomeNotFound(name)
+        }
 
         showRenameDialog(player, home.id, home.name)
     }

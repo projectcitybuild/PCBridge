@@ -1,5 +1,6 @@
 package com.projectcitybuild.pcbridge.features.homes.hooks.commands
 
+import com.projectcitybuild.pcbridge.core.l10n.checkNotNullLocalized
 import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.core.pcbridgeapi.pcb.models.Home
 import com.projectcitybuild.pcbridge.features.homes.HomesPermissions
@@ -45,10 +46,14 @@ class HomeCommand(
         val name = Argument.greedyString("name").get(context)
 
         val home = homeRepository.get(player.uniqueId, name)
-        checkNotNull(home) { l10n.homes.errorHomeNotFound(name) }
+        checkNotNullLocalized(home) {
+            l10n.homes.errorHomeNotFound(name)
+        }
 
         val world = server.getWorld(home.world)
-        checkNotNull(world) { l10n.errors.errorWorldNotFound(home.world) }
+        checkNotNullLocalized(world) {
+            l10n.errors.errorWorldNotFound(home.world)
+        }
 
         playerTeleporter.move(
             player,

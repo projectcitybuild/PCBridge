@@ -4,6 +4,7 @@ import com.projectcitybuild.pcbridge.core.pcbridgeapi.pcb.models.PaginatedList
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.event.HoverEvent
+import net.kyori.adventure.text.format.TextColor
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -37,6 +38,11 @@ class PageComponentBuilderTest {
         val clickCommands = descendants.mapNotNull { component ->
             (component.clickEvent()?.payload() as? ClickEvent.Payload.Text)?.value()
         }
+        val pageButtons = descendants.filter { component ->
+            (component.clickEvent()?.payload() as? ClickEvent.Payload.Text)
+                ?.value()
+                ?.startsWith("/warps list ") == true
+        }
 
         assertTrue(rendered.contains("--- Warp List - Page 2/3 ---"))
         assertTrue(rendered.contains("alpha"))
@@ -45,6 +51,8 @@ class PageComponentBuilderTest {
         assertTrue(rendered.contains("[Next →]"))
         assertEquals(listOf(1, 3), requestedPages)
         assertTrue(clickCommands.containsAll(listOf("/warp alpha", "/warp beta", "/warps list 1", "/warps list 3")))
+        assertEquals(2, pageButtons.size)
+        assertTrue(pageButtons.all { it.style().color() == TextColor.color(0xA78BFA) })
         assertEquals(4, descendants.count { it.hoverEvent()?.action() == HoverEvent.Action.SHOW_TEXT })
     }
 

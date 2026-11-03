@@ -1,6 +1,7 @@
 package com.projectcitybuild.pcbridge.features.building.hooks.commands
 
 import com.projectcitybuild.pcbridge.core.l10n.l10n
+import com.projectcitybuild.pcbridge.core.l10n.checkLocalized
 import com.projectcitybuild.pcbridge.features.building.BuildingPermissions
 import com.projectcitybuild.pcbridge.features.building.buildingTracer
 import com.projectcitybuild.pcbridge.features.building.domain.data.ItemRenamedEvent
@@ -36,7 +37,7 @@ class ItemNameCommand(
         val player = context.source.requirePlayer()
 
         val itemStack = player.inventory.itemInMainHand
-        check(itemStack.type != Material.AIR) { l10n.building.errorNoItemToRename }
+        checkLocalized(itemStack.type != Material.AIR) { l10n.building.errorNoItemToRename }
 
         val rawName = Argument.greedyString("name").get(context)
         val name = LegacyComponentSerializer.legacyAmpersand().deserialize(rawName)

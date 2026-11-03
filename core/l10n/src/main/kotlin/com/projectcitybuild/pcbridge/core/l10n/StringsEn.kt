@@ -4,7 +4,7 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextComponent
 import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.event.HoverEvent
-import net.kyori.adventure.text.format.NamedTextColor
+import net.kyori.adventure.text.format.TextColor
 import net.kyori.adventure.text.format.TextDecoration
 import net.kyori.adventure.text.minimessage.MiniMessage
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
@@ -12,10 +12,32 @@ import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import org.bukkit.Location
 import kotlin.time.Duration
 
+private object Hex {
+    const val ERROR = "#FF6B6B"
+    const val SUCCESS = "#6BFF95"
+    const val WARNING = "#FFD166"
+    const val SECONDARY = "#B0B8C4"
+    const val DYNAMIC = "#64D8FF"
+    const val LINK = "#A78BFA"
+
+    val ERROR_COLOR = color(ERROR)
+    val WARNING_COLOR = color(WARNING)
+    val SECONDARY_COLOR = color(SECONDARY)
+    val DYNAMIC_COLOR = color(DYNAMIC)
+    val LINK_COLOR = color(LINK)
+
+    private fun color(hex: String) = TextColor.color(hex.removePrefix("#").toInt(16))
+}
+
 val l10n = StringsEn()
 
 class StringsEn {
     private val miniMessage = MiniMessage.miniMessage()
+    private val errorColor = Hex.ERROR_COLOR
+    private val warningColor = Hex.WARNING_COLOR
+    private val secondaryColor = Hex.SECONDARY_COLOR
+    private val dynamicColor = Hex.DYNAMIC_COLOR
+    private val linkColor = Hex.LINK_COLOR
 
     private fun mm(
         template: String,
@@ -24,7 +46,7 @@ class StringsEn {
 
     private fun Boolean.onOff(): String = if (this) "ON" else "OFF"
 
-    private fun requiredField(label: String) = Component.text(label).append(Component.text("*", NamedTextColor.RED))
+    private fun requiredField(label: String) = Component.text(label).append(Component.text("*", errorColor))
 
     val pagination = Pagination()
     val errors = Errors()
@@ -53,9 +75,9 @@ class StringsEn {
     val worlds = Worlds()
 
     inner class Pagination {
-        val pagePrevButton = mm("<white>[← Prev]</white>")
+        val pagePrevButton = mm("<${Hex.LINK}>[← Prev]</${Hex.LINK}>")
 
-        val pageNextButton = mm("<white>[Next →]</white>")
+        val pageNextButton = mm("<${Hex.LINK}>[Next →]</${Hex.LINK}>")
 
         val pagePrevButtonHover = Component.text("Click for previous page")
 
@@ -63,37 +85,42 @@ class StringsEn {
 
         val pageLabel = "Page"
 
-        val errorPageNotFound = mm("<red>Page not found</red>")
+        val errorPageNotFound = mm("<${Hex.ERROR}>Page not found</${Hex.ERROR}>")
     }
 
     inner class Errors {
-        val errorOnlyPlayersCanUseThisCommand = mm("<red>Only players can use this command</red>")
+        val errorOnlyPlayersCanUseThisCommand = mm("<${Hex.ERROR}>Only players can use this command</${Hex.ERROR}>")
 
-        val errorNewNameCannotBeEmpty = mm("<red>Error: New name cannot be empty</red>")
+        val errorNewNameCannotBeEmpty = mm("<${Hex.ERROR}>Error: New name cannot be empty</${Hex.ERROR}>")
 
         fun errorWithMessage(message: String?) = mm(
-            "<red>Error: <aqua><message></aqua></red>",
+            "<${Hex.ERROR}>Error: <${Hex.DYNAMIC}><message></${Hex.DYNAMIC}></${Hex.ERROR}>",
             Placeholder.unparsed("message", message ?: "Unknown error"),
         )
 
         fun invalidArgumentValue(value: String) = mm(
-            "<red>Invalid value: <aqua><value></aqua></red>",
+            "<${Hex.ERROR}>Invalid value: <${Hex.DYNAMIC}><value></${Hex.DYNAMIC}></${Hex.ERROR}>",
             Placeholder.unparsed("value", value),
         )
 
         fun errorPlayerNotFound(name: String) = mm(
-            "<red>Player <aqua><name></aqua> not found</red>",
+            "<${Hex.ERROR}>Player <${Hex.DYNAMIC}><name></${Hex.DYNAMIC}> not found</${Hex.ERROR}>",
             Placeholder.unparsed("name", name),
         )
 
         fun commandError(message: String?) = mm(
-            "<red><aqua><message></aqua></red>",
+            "<${Hex.ERROR}><${Hex.DYNAMIC}><message></${Hex.DYNAMIC}></${Hex.ERROR}>",
             Placeholder.unparsed("message", message ?: "Unknown error"),
         )
 
         fun commandErrorWithPrefix(message: String) = mm(
-            "<red>Error: <aqua><message></aqua></red>",
+            "<${Hex.ERROR}>Error: <${Hex.DYNAMIC}><message></${Hex.DYNAMIC}></${Hex.ERROR}>",
             Placeholder.unparsed("message", message),
+        )
+
+        fun commandErrorWithPrefix(message: Component) = mm(
+            "<${Hex.ERROR}>Error: <message></${Hex.ERROR}>",
+            Placeholder.component("message", message),
         )
 
         val commandErrorValidationFailed = commandErrorWithPrefix("Validation failed")
@@ -105,52 +132,52 @@ class StringsEn {
         val commandErrorConflict = commandErrorWithPrefix("Conflict")
 
         fun commandErrorCooldown(seconds: Long) = mm(
-            "<red>Error: Please wait <aqua><seconds></aqua> seconds before trying again</red>",
+            "<${Hex.ERROR}>Error: Please wait <${Hex.DYNAMIC}><seconds></${Hex.DYNAMIC}> seconds before trying again</${Hex.ERROR}>",
             Placeholder.unparsed("seconds", seconds.toString()),
         )
 
         val commandUnexpectedError = commandError("An unexpected error occurred")
 
         fun errorWorldNotFound(name: String) = mm(
-            "<red>Could not find world <aqua><name></aqua></red>",
+            "<${Hex.ERROR}>Could not find world <${Hex.DYNAMIC}><name></${Hex.DYNAMIC}></${Hex.ERROR}>",
             Placeholder.unparsed("name", name),
         )
     }
 
     inner class Lists {
         fun teleportTo(name: String) = mm(
-            "Teleport to <aqua><name></aqua>",
+            "Teleport to <${Hex.DYNAMIC}><name></${Hex.DYNAMIC}>",
             Placeholder.unparsed("name", name),
         )
     }
 
     inner class Builds {
-        val errorNoBuildsFound = mm("<gray>No builds found</gray>")
+        val errorNoBuildsFound = mm("<${Hex.SECONDARY}>No builds found</${Hex.SECONDARY}>")
 
         fun buildCreated(name: String) = mm(
-            "<green><aqua><name></aqua> created</green>",
+            "<${Hex.SUCCESS}><${Hex.DYNAMIC}><name></${Hex.DYNAMIC}> created</${Hex.SUCCESS}>",
             Placeholder.unparsed("name", name),
         )
 
         fun buildDeleted(name: String) = mm(
-            "<green><aqua><name></aqua> deleted</green>",
+            "<${Hex.SUCCESS}><${Hex.DYNAMIC}><name></${Hex.DYNAMIC}> deleted</${Hex.SUCCESS}>",
             Placeholder.unparsed("name", name),
         )
 
         fun buildMoved(name: String) = mm(
-            "<green><aqua><name></aqua> moved to your location</green>",
+            "<${Hex.SUCCESS}><${Hex.DYNAMIC}><name></${Hex.DYNAMIC}> moved to your location</${Hex.SUCCESS}>",
             Placeholder.unparsed("name", name),
         )
 
-        val buildUpdated = mm("<green>Build updated</green>")
+        val buildUpdated = mm("<${Hex.SUCCESS}>Build updated</${Hex.SUCCESS}>")
 
         fun buildVoteRecorded(name: String) = mm(
-            "<green>You voted for <aqua><name></aqua></green>",
+            "<${Hex.SUCCESS}>You voted for <${Hex.DYNAMIC}><name></${Hex.DYNAMIC}></${Hex.SUCCESS}>",
             Placeholder.unparsed("name", name),
         )
 
         fun buildVoteRemoved(name: String) = mm(
-            "<gray>You removed your vote for <aqua><name></aqua></gray>",
+            "<${Hex.SECONDARY}>You removed your vote for <${Hex.DYNAMIC}><name></${Hex.DYNAMIC}></${Hex.SECONDARY}>",
             Placeholder.unparsed("name", name),
         )
 
@@ -158,7 +185,8 @@ class StringsEn {
             playerName: String,
             buildName: String,
         ) = mm(
-            "<gray>[<red>✎</red>] <aqua><player></aqua> created build \"<build>\"</gray>",
+            "<${Hex.SECONDARY}>[<${Hex.LINK}>✎</${Hex.LINK}>] " +
+                "<${Hex.DYNAMIC}><player></${Hex.DYNAMIC}> created build \"<build>\"</${Hex.SECONDARY}>",
             Placeholder.unparsed("player", playerName),
             Placeholder.component("build", clickableBuildName(buildName)),
         )
@@ -167,7 +195,8 @@ class StringsEn {
             playerName: String,
             buildName: String,
         ) = mm(
-            "<gray>[<red>❤</red>] <aqua><player></aqua> voted for build \"<build>\"</gray>",
+            "<${Hex.SECONDARY}>[<${Hex.LINK}>❤</${Hex.LINK}>] " +
+                "<${Hex.DYNAMIC}><player></${Hex.DYNAMIC}> voted for build \"<build>\"</${Hex.SECONDARY}>",
             Placeholder.unparsed("player", playerName),
             Placeholder.component("build", clickableBuildName(buildName)),
         )
@@ -179,49 +208,51 @@ class StringsEn {
             name: String,
             votes: Int,
         ) = mm(
-            "<gray>#<aqua><id></aqua> \"<aqua><name></aqua>\" (<aqua><votes></aqua> votes)</gray>",
+            "<${Hex.SECONDARY}>#<${Hex.DYNAMIC}><id></${Hex.DYNAMIC}> " +
+                "\"<${Hex.DYNAMIC}><name></${Hex.DYNAMIC}>\" (<${Hex.DYNAMIC}><votes></${Hex.DYNAMIC}> " +
+                "votes)</${Hex.SECONDARY}>",
             Placeholder.unparsed("id", id.toString()),
             Placeholder.unparsed("name", name),
             Placeholder.unparsed("votes", votes.toString()),
         )
 
-        val clickBuildFieldToEdit = Component.text("Click a field to edit:", NamedTextColor.GRAY)
+        val clickBuildFieldToEdit = Component.text("Click a field to edit:", secondaryColor)
 
         fun buildCreatedBy(owner: String) = mm(
-            "<gray>Created by <aqua><owner></aqua></gray>",
+            "<${Hex.SECONDARY}>Created by <${Hex.DYNAMIC}><owner></${Hex.DYNAMIC}></${Hex.SECONDARY}>",
             Placeholder.unparsed("owner", owner),
         )
 
         fun buildTeleportedTo(name: String) = mm(
-            "<gray>Teleported to <aqua><name></aqua></gray>",
+            "<${Hex.SECONDARY}>Teleported to <${Hex.DYNAMIC}><name></${Hex.DYNAMIC}></${Hex.SECONDARY}>",
             Placeholder.unparsed("name", name),
         )
 
         fun buildDescription(description: Component) = mm(
-            "<gray>---<newline><description></gray>",
+            "<${Hex.SECONDARY}>---<newline><description></${Hex.SECONDARY}>",
             Placeholder.component("description", description),
         )
 
         fun buildLore(lore: Component) = mm(
-            "<gray>---<newline><italic><lore></italic></gray>",
+            "<${Hex.SECONDARY}>---<newline><italic><lore></italic></${Hex.SECONDARY}>",
             Placeholder.component("lore", lore),
         )
 
         private fun clickableBuildName(name: String) = Component
-            .text(name, NamedTextColor.AQUA)
+            .text(name, dynamicColor)
             .decorate(TextDecoration.UNDERLINED)
             .clickEvent(ClickEvent.runCommand("/build $name"))
             .hoverEvent(HoverEvent.showText(Component.text("Click to teleport")))
     }
 
     inner class Homes {
-        val homesCannotCreate = mm("<red>You cannot create a home</red>")
+        val homesCannotCreate = mm("<${Hex.ERROR}>You cannot create a home</${Hex.ERROR}>")
 
         fun homesLimit(
             current: Int,
             max: Int,
         ) = mm(
-            "You currently have <aqua><current></aqua> of <aqua><max></aqua> homes",
+            "You currently have <${Hex.DYNAMIC}><current></${Hex.DYNAMIC}> of <${Hex.DYNAMIC}><max></${Hex.DYNAMIC}> homes",
             Placeholder.unparsed("current", current.toString()),
             Placeholder.unparsed("max", max.toString()),
         )
@@ -233,19 +264,20 @@ class StringsEn {
                 roleLines =
                     roleLines.append(
                         mm(
-                            "<newline><gray><aqua><role></aqua>: <aqua>+<homes></aqua> homes</gray>",
+                            "<newline><${Hex.SECONDARY}><${Hex.DYNAMIC}><role></${Hex.DYNAMIC}>: " +
+                                "<${Hex.DYNAMIC}>+<homes></${Hex.DYNAMIC}> homes</${Hex.SECONDARY}>",
                             Placeholder.unparsed("role", role),
                             Placeholder.unparsed("homes", homes.toString()),
                         ),
                     )
             }
             return mm(
-                "<gray>The following roles grant you homes:</gray> <roles>",
+                "<${Hex.SECONDARY}>The following roles grant you homes:</${Hex.SECONDARY}> <roles>",
                 Placeholder.component("roles", roleLines),
             )
         }
 
-        val homesLimitDivider = mm("<gray>---</gray>")
+        val homesLimitDivider = mm("<${Hex.SECONDARY}>---</${Hex.SECONDARY}>")
 
         val homesListTitle = "Your Homes"
 
@@ -256,7 +288,9 @@ class StringsEn {
             y: Int,
             z: Int,
         ) = mm(
-            "<aqua><name></aqua> <gray>(<aqua><world></aqua>: <aqua><x></aqua>, <aqua><y></aqua>, <aqua><z></aqua>)</gray>",
+            "<${Hex.DYNAMIC}><name></${Hex.DYNAMIC}> <${Hex.SECONDARY}>(<${Hex.DYNAMIC}><world></${Hex.DYNAMIC}>: " +
+                "<${Hex.DYNAMIC}><x></${Hex.DYNAMIC}>, <${Hex.DYNAMIC}><y></${Hex.DYNAMIC}>, " +
+                "<${Hex.DYNAMIC}><z></${Hex.DYNAMIC}>)</${Hex.SECONDARY}>",
             Placeholder.unparsed("name", name),
             Placeholder.unparsed("world", world),
             Placeholder.unparsed("x", x.toString()),
@@ -264,7 +298,7 @@ class StringsEn {
             Placeholder.unparsed("z", z.toString()),
         )
 
-        val errorRenameHomeNotFound = mm("<red>Error: Home not found</red>")
+        val errorRenameHomeNotFound = mm("<${Hex.ERROR}>Error: Home not found</${Hex.ERROR}>")
 
         val renameHomeDialogTitle = Component.text("Rename Home")
 
@@ -273,31 +307,31 @@ class StringsEn {
         val renameHomeButtonHover = Component.text("Click to rename the home")
 
         fun errorHomeNotFound(name: String) = mm(
-            "<red>Could not find home <aqua><name></aqua></red>",
+            "<${Hex.ERROR}>Could not find home <${Hex.DYNAMIC}><name></${Hex.DYNAMIC}></${Hex.ERROR}>",
             Placeholder.unparsed("name", name),
         )
 
         fun homeCreated(name: String) = mm(
-            "<green><aqua><name></aqua> created</green>",
+            "<${Hex.SUCCESS}><${Hex.DYNAMIC}><name></${Hex.DYNAMIC}> created</${Hex.SUCCESS}>",
             Placeholder.unparsed("name", name),
         )
 
         fun homeDeleted(name: String) = mm(
-            "<green><aqua><name></aqua> deleted</green>",
+            "<${Hex.SUCCESS}><${Hex.DYNAMIC}><name></${Hex.DYNAMIC}> deleted</${Hex.SUCCESS}>",
             Placeholder.unparsed("name", name),
         )
 
         fun homeMoved(name: String) = mm(
-            "<green><aqua><name></aqua> moved to your location</green>",
+            "<${Hex.SUCCESS}><${Hex.DYNAMIC}><name></${Hex.DYNAMIC}> moved to your location</${Hex.SUCCESS}>",
             Placeholder.unparsed("name", name),
         )
 
         fun homeRenamed(newName: String) = mm(
-            "<green>Home renamed to <aqua><name></aqua></green>",
+            "<${Hex.SUCCESS}>Home renamed to <${Hex.DYNAMIC}><name></${Hex.DYNAMIC}></${Hex.SUCCESS}>",
             Placeholder.unparsed("name", newName),
         )
 
-        val noHomesFound = mm("<gray>No homes found</gray>")
+        val noHomesFound = mm("<${Hex.SECONDARY}>No homes found</${Hex.SECONDARY}>")
     }
 
     inner class Warps {
@@ -307,12 +341,13 @@ class StringsEn {
             name: String,
             world: String,
         ) = mm(
-            "<gray>\"<aqua><u><name></u></aqua>\" (<aqua><world></aqua>)</gray>",
+            "<${Hex.SECONDARY}>\"<${Hex.DYNAMIC}><u><name></u></${Hex.DYNAMIC}>\" " +
+                "(<${Hex.DYNAMIC}><world></${Hex.DYNAMIC}>)</${Hex.SECONDARY}>",
             Placeholder.unparsed("name", name),
             Placeholder.unparsed("world", world),
         )
 
-        val errorRenameWarpNotFound = mm("<red>Error: Warp not found</red>")
+        val errorRenameWarpNotFound = mm("<${Hex.ERROR}>Error: Warp not found</${Hex.ERROR}>")
 
         val renameWarpDialogTitle = Component.text("Rename Warp")
 
@@ -321,36 +356,36 @@ class StringsEn {
         val renameWarpButtonHover = Component.text("Click to rename the warp")
 
         fun errorWarpNotFound(name: String) = mm(
-            "<red>Could not find warp <aqua><name></aqua></red>",
+            "<${Hex.ERROR}>Could not find warp <${Hex.DYNAMIC}><name></${Hex.DYNAMIC}></${Hex.ERROR}>",
             Placeholder.unparsed("name", name),
         )
 
         fun warpCreated(name: String) = mm(
-            "<green><aqua><name></aqua> created</green>",
+            "<${Hex.SUCCESS}><${Hex.DYNAMIC}><name></${Hex.DYNAMIC}> created</${Hex.SUCCESS}>",
             Placeholder.unparsed("name", name),
         )
 
         fun warpDeleted(name: String) = mm(
-            "<green><aqua><name></aqua> deleted</green>",
+            "<${Hex.SUCCESS}><${Hex.DYNAMIC}><name></${Hex.DYNAMIC}> deleted</${Hex.SUCCESS}>",
             Placeholder.unparsed("name", name),
         )
 
         fun warpMoved(name: String) = mm(
-            "<green><aqua><name></aqua> moved to your location</green>",
+            "<${Hex.SUCCESS}><${Hex.DYNAMIC}><name></${Hex.DYNAMIC}> moved to your location</${Hex.SUCCESS}>",
             Placeholder.unparsed("name", name),
         )
 
         fun warpRenamed(newName: String) = mm(
-            "<green>Warp renamed to <aqua><name></aqua></green>",
+            "<${Hex.SUCCESS}>Warp renamed to <${Hex.DYNAMIC}><name></${Hex.DYNAMIC}></${Hex.SUCCESS}>",
             Placeholder.unparsed("name", newName),
         )
 
-        val noWarpsFound = mm("<gray>No warps found</gray>")
+        val noWarpsFound = mm("<${Hex.SECONDARY}>No warps found</${Hex.SECONDARY}>")
     }
 
     inner class Bans {
         fun playerBannedAnnouncement(name: String) = mm(
-            "<gray><aqua><name></aqua> has been banned</gray>",
+            "<${Hex.SECONDARY}><${Hex.DYNAMIC}><name></${Hex.DYNAMIC}> has been banned</${Hex.SECONDARY}>",
             Placeholder.unparsed("name", name),
         )
 
@@ -359,12 +394,12 @@ class StringsEn {
             expiresAt: String?,
         ) = mm(
             """
-            <color:red><b>This account is banned.</b></color>
+            <${Hex.ERROR}><b>This account is banned.</b></${Hex.ERROR}>
 
-            <color:gray>Reason:</color> <reason>
-            <color:gray>Expires:</color> <aqua><expires></aqua>
+            <${Hex.SECONDARY}>Reason:</${Hex.SECONDARY}> <reason>
+            <${Hex.SECONDARY}>Expires:</${Hex.SECONDARY}> <${Hex.DYNAMIC}><expires></${Hex.DYNAMIC}>
 
-            <color:aqua>Appeal @ https://projectcitybuild.com</color>
+            <${Hex.LINK}>Appeal @ https://projectcitybuild.com</${Hex.LINK}>
             """.trimIndent(),
             Placeholder.component("reason", reason ?: Component.text("No reason provided")),
             Placeholder.unparsed("expires", expiresAt ?: "Never"),
@@ -372,11 +407,11 @@ class StringsEn {
 
         fun ipBanMessage(reason: Component?) = mm(
             """
-            <color:red><b>This IP address is banned.</b></color>
+            <${Hex.ERROR}><b>This IP address is banned.</b></${Hex.ERROR}>
 
-            <color:gray>Reason:</color> <reason>
+            <${Hex.SECONDARY}>Reason:</${Hex.SECONDARY}> <reason>
 
-            <color:aqua>Appeal @ https://projectcitybuild.com</color>
+            <${Hex.LINK}>Appeal @ https://projectcitybuild.com</${Hex.LINK}>
             """.trimIndent(),
             Placeholder.component("reason", reason ?: Component.text("No reason provided")),
         )
@@ -391,77 +426,81 @@ class StringsEn {
 
         val banAdditionalInfoInputLabel = Component.text("Additional Info/Context")
 
-        val confirmBanButton = Component.text("Ban Player", NamedTextColor.RED)
+        val confirmBanButton = Component.text("Ban Player", errorColor)
 
         val confirmBanButtonHover = Component.text("Click to ban the player")
 
         fun playerHasBeenBanned(name: String) = mm(
-            "<green><aqua><name></aqua> has been banned</green>",
+            "<${Hex.SUCCESS}><${Hex.DYNAMIC}><name></${Hex.DYNAMIC}> has been banned</${Hex.SUCCESS}>",
             Placeholder.unparsed("name", name),
         )
 
         fun clickToEditBan(url: String): Component {
             val link = Component
-                .text("here", NamedTextColor.AQUA)
+                .text("here", linkColor)
                 .decorate(TextDecoration.UNDERLINED)
                 .clickEvent(ClickEvent.openUrl(url))
                 .hoverEvent(
                     HoverEvent.showText(
-                        Component.text(url, NamedTextColor.AQUA).decorate(TextDecoration.UNDERLINED),
+                        Component.text(url, dynamicColor).decorate(TextDecoration.UNDERLINED),
                     ),
                 )
             return mm(
-                "<gray>Click <link> to edit the ban or add additional information</gray>",
+                "<${Hex.SECONDARY}>Click <link> to edit the ban or add additional information</${Hex.SECONDARY}>",
                 Placeholder.component("link", link),
             )
         }
     }
 
     inner class Sync {
-        val syncFetchingPlayerData = mm("<gray>Fetching player data...</gray>")
+        val syncFetchingPlayerData = mm("<${Hex.SECONDARY}>Fetching player data...</${Hex.SECONDARY}>")
 
         fun syncFetchingPlayerDataFor(name: String) = mm(
-            "<gray>Fetching player data for <aqua><name></aqua>...</gray>",
+            "<${Hex.SECONDARY}>Fetching player data for <${Hex.DYNAMIC}><name></${Hex.DYNAMIC}>...</${Hex.SECONDARY}>",
             Placeholder.unparsed("name", name),
         )
 
-        val syncPlayerDataSynced = mm("<green>Player data synced</green>")
+        val syncPlayerDataSynced = mm("<${Hex.SUCCESS}>Player data synced</${Hex.SUCCESS}>")
 
-        val syncAccountSynced = mm("<green>Your account has been synced</green>")
+        val syncAccountSynced = mm("<${Hex.SUCCESS}>Your account has been synced</${Hex.SUCCESS}>")
     }
 
     inner class Config {
-        val configFetching = mm("<gray>Fetching config...</gray>")
+        val configFetching = mm("<${Hex.SECONDARY}>Fetching config...</${Hex.SECONDARY}>")
 
-        val configReloaded = mm("<green>Remote config reloaded</green>")
+        val configReloaded = mm("<${Hex.SUCCESS}>Remote config reloaded</${Hex.SUCCESS}>")
     }
 
     inner class Warnings {
-        val warningCreationInstructions = mm("<gray>Click the link below to create a warning for this player</gray>")
+        val warningCreationInstructions =
+            mm(
+                "<${Hex.SECONDARY}>Click the link below to create a warning for this player</${Hex.SECONDARY}>",
+            )
 
         fun warningCreationLink(url: String) = Component
-            .text(url, NamedTextColor.AQUA)
+            .text(url, dynamicColor)
             .decorate(TextDecoration.UNDERLINED)
             .clickEvent(ClickEvent.openUrl(url))
     }
 
     inner class Pim {
         fun opElevationAlreadyActive(remaining: String?) = mm(
-            "<red>Error: You are already OP elevated (remaining: <aqua><remaining></aqua>)</red>",
+            "<${Hex.ERROR}>Error: You are already OP elevated (remaining: <${Hex.DYNAMIC}><remaining></${Hex.DYNAMIC}>)</${Hex.ERROR}>",
             Placeholder.unparsed("remaining", remaining ?: "unknown"),
         )
 
-        val opElevationNotActive = mm("<gray>You are not currently OP elevated</gray>")
+        val opElevationNotActive = mm("<${Hex.SECONDARY}>You are not currently OP elevated</${Hex.SECONDARY}>")
 
         fun opElevationActive(remaining: String?) = mm(
-            "<gray>You are OP elevated (remaining: <aqua><remaining></aqua>)</gray>",
+            "<${Hex.SECONDARY}>You are OP elevated (remaining: <${Hex.DYNAMIC}><remaining></${Hex.DYNAMIC}>)</${Hex.SECONDARY}>",
             Placeholder.unparsed("remaining", remaining ?: "unknown"),
         )
 
-        val errorOpElevationReasonRequired = mm("<red>Error: elevation reason is required</red>")
+        val errorOpElevationReasonRequired = mm("<${Hex.ERROR}>Error: elevation reason is required</${Hex.ERROR}>")
 
         fun rolesSet(roles: String) = mm(
-            "<green>Your roles have been set to <aqua><roles></aqua></green><newline><gray>Use /sync or reconnect to revert this</gray>",
+            "<${Hex.SUCCESS}>Your roles have been set to <${Hex.DYNAMIC}><roles></${Hex.DYNAMIC}></${Hex.SUCCESS}>" +
+                "<newline><${Hex.SECONDARY}>Use /sync or reconnect to revert this</${Hex.SECONDARY}>",
             Placeholder.unparsed("roles", roles),
         )
 
@@ -469,13 +508,13 @@ class StringsEn {
 
         val opElevationWarning = mm(
             """
-            #<yellow><b>You are about to receive temporary Operator (OP) privileges.</b></yellow>
+            #<${Hex.WARNING}><b>You are about to receive temporary Operator (OP) privileges.</b></${Hex.WARNING}>
             #
-            #• <aqua>Full administrative permissions</aqua> will be granted.
-            #• Your OP status will be <aqua>automatically revoked</aqua> after the set duration.
-            #• You may revoke it early at any time with: <aqua><b>/pim op revoke</b></aqua>
+            #• <${Hex.LINK}>Full administrative permissions</${Hex.LINK}> will be granted.
+            #• Your OP status will be <${Hex.LINK}>automatically revoked</${Hex.LINK}> after the set duration.
+            #• You may revoke it early at any time with: <${Hex.LINK}><b>/pim op revoke</b></${Hex.LINK}>
             #
-            #<dark_red><b>⚠ IMPORTANT</b></dark_red>
+            #<${Hex.WARNING}><b>⚠ IMPORTANT</b></${Hex.WARNING}>
             #<i>
             #OP privileges bypass the normal permission system. They may override protections or cause unintended behavior.
             #
@@ -488,20 +527,20 @@ class StringsEn {
 
         val opElevationConfirmButton = Component.text("I understand.")
 
-        val opElevationRevoked = mm("<green><i>OP elevation was revoked</i></green>")
+        val opElevationRevoked = mm("<${Hex.SUCCESS}><i>OP elevation was revoked</i></${Hex.SUCCESS}>")
 
-        val opElevationExpired = mm("<gray><i>OP elevation expired</i></gray>")
+        val opElevationExpired = mm("<${Hex.SECONDARY}><i>OP elevation expired</i></${Hex.SECONDARY}>")
 
         fun opElevationGranted(remainingTime: String) = mm(
-            "<green>OP status granted (remaining: <aqua><remaining></aqua>)</green>",
+            "<${Hex.SUCCESS}>OP status granted (remaining: <${Hex.DYNAMIC}><remaining></${Hex.DYNAMIC}>)</${Hex.SUCCESS}>",
             Placeholder.unparsed("remaining", remainingTime),
         )
     }
 
     inner class ChatBadge {
-        val chatBadgeHeader = Component.text("Badges", NamedTextColor.YELLOW)
+        val chatBadgeHeader = Component.text("Badges", linkColor)
 
-        val chatBadgeDivider = Component.text("---", NamedTextColor.GRAY)
+        val chatBadgeDivider = Component.text("---", secondaryColor)
     }
 
     inner class Discord {
@@ -531,7 +570,7 @@ class StringsEn {
 
     inner class Dialogs {
         fun currentResourceName(name: String) = mm(
-            "Current name: <aqua><name></aqua>",
+            "Current name: <${Hex.DYNAMIC}><name></${Hex.DYNAMIC}>",
             Placeholder.unparsed("name", name),
         )
 
@@ -541,7 +580,7 @@ class StringsEn {
 
         val dialogCancelButton = Component.text("Cancel")
 
-        val dialogCancelButtonGray = Component.text("Cancel", NamedTextColor.GRAY)
+        val dialogCancelButtonGray = Component.text("Cancel", secondaryColor)
 
         val discardDialogInputHover = Component.text("Click to discard your input")
     }
@@ -555,37 +594,38 @@ class StringsEn {
 
         val errorNoRegisterEmailSpecified =
             mm(
-                "<red>Please specify an email address to receive your registration code</red>" +
-                    "<newline><gray>Example usage: <bold>/register your@email.com</bold></gray>",
+                "<${Hex.ERROR}>Please specify an email address to receive your registration code</${Hex.ERROR}>" +
+                    "<newline><${Hex.SECONDARY}>Example usage: <bold>/register your@email.com</bold></${Hex.SECONDARY}>",
             )
 
-        val errorNoCodeSpecified = mm("<red>You did not specify a code</red>")
+        val errorNoCodeSpecified = mm("<${Hex.ERROR}>You did not specify a code</${Hex.ERROR}>")
 
-        val errorCodeInvalidOrExpired = mm("<red>Code is invalid or expired</red>")
+        val errorCodeInvalidOrExpired = mm("<${Hex.ERROR}>Code is invalid or expired</${Hex.ERROR}>")
 
         fun codeHasBeenEmailedTo(email: String) = mm(
-            "A code has been emailed to <aqua><email></aqua>.<newline>Please type the code below to finish registration.",
+            "A code has been emailed to <${Hex.DYNAMIC}><email></${Hex.DYNAMIC}>.<newline>Please type " +
+                "the code below to finish registration.",
             Placeholder.unparsed("email", email),
         )
 
         val codeHasBeenEmailed = mm("Please type in the code emailed to you to finish registration.")
 
-        val registrationComplete = mm("<green>Registration complete! Your account will be synced momentarily...</green>")
+        val registrationComplete = mm("<${Hex.SUCCESS}>Registration complete! Your account will be synced momentarily...</${Hex.SUCCESS}>")
     }
 
     inner class Building {
-        val errorNoItemToRename = mm("<red>No item in hand to rename</red>")
+        val errorNoItemToRename = mm("<${Hex.ERROR}>No item in hand to rename</${Hex.ERROR}>")
 
-        val nightVisionToggledOn = mm("<green><i>Night vision toggled on</i></green>")
+        val nightVisionToggledOn = mm("<${Hex.SUCCESS}><i>Night vision toggled on</i></${Hex.SUCCESS}>")
 
-        val nightVisionToggledOff = mm("<green><i>Night vision toggled off</i></green>")
+        val nightVisionToggledOff = mm("<${Hex.SUCCESS}><i>Night vision toggled off</i></${Hex.SUCCESS}>")
 
-        val receivedInvisFrame = mm("<green><i>You received an invisible item frame</i></green>")
+        val receivedInvisFrame = mm("<${Hex.SUCCESS}><i>You received an invisible item frame</i></${Hex.SUCCESS}>")
 
-        val receivedInvisFrameGlowing = mm("<green><i>You received an invisible glowing frame</i></green>")
+        val receivedInvisFrameGlowing = mm("<${Hex.SUCCESS}><i>You received an invisible glowing frame</i></${Hex.SUCCESS}>")
 
         fun renamedItem(newName: TextComponent) = mm(
-            "<gray>Renamed item in hand to <name></gray>",
+            "<${Hex.SECONDARY}>Renamed item in hand to <name></${Hex.SECONDARY}>",
             Placeholder.component("name", newName),
         )
     }
@@ -607,22 +647,22 @@ class StringsEn {
         val playerWeatherCommandDescription = "Views or changes a player's personal weather"
 
         fun playerSetOnFire(name: String) = mm(
-            "<green>Set <aqua><name></aqua> on fire</green>",
+            "<${Hex.SUCCESS}>Set <${Hex.DYNAMIC}><name></${Hex.DYNAMIC}> on fire</${Hex.SUCCESS}>",
             Placeholder.unparsed("name", name),
         )
 
         fun playerExtinguished(name: String) = mm(
-            "<green>Extinguished <aqua><name></aqua></green>",
+            "<${Hex.SUCCESS}>Extinguished <${Hex.DYNAMIC}><name></${Hex.DYNAMIC}></${Hex.SUCCESS}>",
             Placeholder.unparsed("name", name),
         )
 
         fun playerNotOnFire(name: String) = mm(
-            "<gray><aqua><name></aqua> is not on fire</gray>",
+            "<${Hex.SECONDARY}><${Hex.DYNAMIC}><name></${Hex.DYNAMIC}> is not on fire</${Hex.SECONDARY}>",
             Placeholder.unparsed("name", name),
         )
 
         fun playerFed(name: String) = mm(
-            "<green>Fed <aqua><name></aqua></green>",
+            "<${Hex.SUCCESS}>Fed <${Hex.DYNAMIC}><name></${Hex.DYNAMIC}></${Hex.SUCCESS}>",
             Placeholder.unparsed("name", name),
         )
 
@@ -630,13 +670,14 @@ class StringsEn {
             name: String,
             gameMode: String,
         ) = mm(
-            "<green>Changed <aqua><name></aqua>'s game mode to <aqua><game-mode></aqua></green>",
+            "<${Hex.SUCCESS}>Changed <${Hex.DYNAMIC}><name></${Hex.DYNAMIC}>'s game mode to " +
+                "<${Hex.DYNAMIC}><game-mode></${Hex.DYNAMIC}></${Hex.SUCCESS}>",
             Placeholder.unparsed("name", name),
             Placeholder.unparsed("game-mode", gameMode),
         )
 
         fun playerHealed(name: String) = mm(
-            "<green>Healed <aqua><name></aqua></green>",
+            "<${Hex.SUCCESS}>Healed <${Hex.DYNAMIC}><name></${Hex.DYNAMIC}></${Hex.SUCCESS}>",
             Placeholder.unparsed("name", name),
         )
 
@@ -644,39 +685,42 @@ class StringsEn {
             name: String,
             seconds: Int,
         ) = mm(
-            "<green>Iced <aqua><name></aqua> for <aqua><seconds></aqua> seconds</green>",
+            "<${Hex.SUCCESS}>Iced <${Hex.DYNAMIC}><name></${Hex.DYNAMIC}> for " +
+                "<${Hex.DYNAMIC}><seconds></${Hex.DYNAMIC}> seconds</${Hex.SUCCESS}>",
             Placeholder.unparsed("name", name),
             Placeholder.unparsed("seconds", seconds.toString()),
         )
 
         fun playerKilled(name: String) = mm(
-            "<green>Killed <aqua><name></aqua></green>",
+            "<${Hex.SUCCESS}>Killed <${Hex.DYNAMIC}><name></${Hex.DYNAMIC}></${Hex.SUCCESS}>",
             Placeholder.unparsed("name", name),
         )
 
         fun killedBy(name: String) = mm(
-            "<gray>You were killed by <aqua><name></aqua></gray>",
+            "<${Hex.SECONDARY}>You were killed by <${Hex.DYNAMIC}><name></${Hex.DYNAMIC}></${Hex.SECONDARY}>",
             Placeholder.unparsed("name", name),
         )
 
-        val noActivePotionEffects = mm("<gray>No active potion effects to purge</gray>")
+        val noActivePotionEffects = mm("<${Hex.SECONDARY}>No active potion effects to purge</${Hex.SECONDARY}>")
 
         fun playerEffectsPurged(
             num: Int,
             name: String,
         ) = mm(
-            "<green>Removed <aqua><num></aqua> active potion effects from <aqua><name></aqua></green>",
+            "<${Hex.SUCCESS}>Removed <${Hex.DYNAMIC}><num></${Hex.DYNAMIC}> active potion effects " +
+                "from <${Hex.DYNAMIC}><name></${Hex.DYNAMIC}></${Hex.SUCCESS}>",
             Placeholder.unparsed("num", num.toString()),
             Placeholder.unparsed("name", name),
         )
 
-        val playerDied = mm("<red>You died.</red>")
+        val playerDied = mm("<${Hex.ERROR}>You died.</${Hex.ERROR}>")
 
         fun playerExperienceSet(
             name: String,
             experience: Int,
         ) = mm(
-            "<green>Set <aqua><name></aqua>'s experience points to <aqua><experience></aqua>.</green>",
+            "<${Hex.SUCCESS}>Set <${Hex.DYNAMIC}><name></${Hex.DYNAMIC}>'s experience points to " +
+                "<${Hex.DYNAMIC}><experience></${Hex.DYNAMIC}>.</${Hex.SUCCESS}>",
             Placeholder.unparsed("name", name),
             Placeholder.unparsed("experience", experience.toString()),
         )
@@ -686,8 +730,9 @@ class StringsEn {
             amount: Long,
             currentExperience: Int,
         ) = mm(
-            "<green>Added <aqua><amount></aqua> experience points to <aqua><name></aqua>. " +
-                "They now have <aqua><current-experience></aqua> experience points.</green>",
+            "<${Hex.SUCCESS}>Added <${Hex.DYNAMIC}><amount></${Hex.DYNAMIC}> experience points to " +
+                "<${Hex.DYNAMIC}><name></${Hex.DYNAMIC}>. " +
+                "They now have <${Hex.DYNAMIC}><current-experience></${Hex.DYNAMIC}> experience points.</${Hex.SUCCESS}>",
             Placeholder.unparsed("name", name),
             Placeholder.unparsed("amount", amount.toString()),
             Placeholder.unparsed("current-experience", currentExperience.toString()),
@@ -698,15 +743,16 @@ class StringsEn {
             amount: Long,
             currentExperience: Int,
         ) = mm(
-            "<green>Subtracted <aqua><amount></aqua> experience points from <aqua><name></aqua>. " +
-                "They now have <aqua><current-experience></aqua> experience points.</green>",
+            "<${Hex.SUCCESS}>Subtracted <${Hex.DYNAMIC}><amount></${Hex.DYNAMIC}> experience points " +
+                "from <${Hex.DYNAMIC}><name></${Hex.DYNAMIC}>. " +
+                "They now have <${Hex.DYNAMIC}><current-experience></${Hex.DYNAMIC}> experience points.</${Hex.SUCCESS}>",
             Placeholder.unparsed("name", name),
             Placeholder.unparsed("amount", amount.toString()),
             Placeholder.unparsed("current-experience", currentExperience.toString()),
         )
 
         fun playerExperienceReset(name: String) = mm(
-            "<green>Reset <aqua><name></aqua>'s experience points to 0.</green>",
+            "<${Hex.SUCCESS}>Reset <${Hex.DYNAMIC}><name></${Hex.DYNAMIC}>'s experience points to 0.</${Hex.SUCCESS}>",
             Placeholder.unparsed("name", name),
         )
 
@@ -714,7 +760,8 @@ class StringsEn {
             world: String,
             time: String,
         ) = mm(
-            "<gray>The time in <aqua><world></aqua> is <aqua><time></aqua></gray>",
+            "<${Hex.SECONDARY}>The time in <${Hex.DYNAMIC}><world></${Hex.DYNAMIC}> is " +
+                "<${Hex.DYNAMIC}><time></${Hex.DYNAMIC}></${Hex.SECONDARY}>",
             Placeholder.unparsed("world", world),
             Placeholder.unparsed("time", time),
         )
@@ -723,24 +770,26 @@ class StringsEn {
             world: String,
             time: String,
         ) = mm(
-            "<green>Set the time in <aqua><world></aqua> to <aqua><time></aqua></green>",
+            "<${Hex.SUCCESS}>Set the time in <${Hex.DYNAMIC}><world></${Hex.DYNAMIC}> to " +
+                "<${Hex.DYNAMIC}><time></${Hex.DYNAMIC}></${Hex.SUCCESS}>",
             Placeholder.unparsed("world", world),
             Placeholder.unparsed("time", time),
         )
 
-        val errorTimeWorldRequired = mm("<red>Specify a world when using this command from the console</red>")
+        val errorTimeWorldRequired = mm("<${Hex.ERROR}>Specify a world when using this command from the console</${Hex.ERROR}>")
 
         fun worldTimeAdded(
             world: String,
             time: String,
         ) = mm(
-            "<green>Added <aqua><time></aqua> to the time in <aqua><world></aqua></green>",
+            "<${Hex.SUCCESS}>Added <${Hex.DYNAMIC}><time></${Hex.DYNAMIC}> to the time in " +
+                "<${Hex.DYNAMIC}><world></${Hex.DYNAMIC}></${Hex.SUCCESS}>",
             Placeholder.unparsed("time", time),
             Placeholder.unparsed("world", world),
         )
 
         fun playerTimeNormal(name: String) = mm(
-            "<gray><aqua><name></aqua> uses the world's time</gray>",
+            "<${Hex.SECONDARY}><${Hex.DYNAMIC}><name></${Hex.DYNAMIC}> uses the world's time</${Hex.SECONDARY}>",
             Placeholder.unparsed("name", name),
         )
 
@@ -749,7 +798,9 @@ class StringsEn {
             time: String,
             relative: Boolean,
         ) = mm(
-            "<gray><aqua><name></aqua>'s personal time is <aqua><time></aqua> (<aqua><mode></aqua>)</gray>",
+            "<${Hex.SECONDARY}><${Hex.DYNAMIC}><name></${Hex.DYNAMIC}>'s personal time is " +
+                "<${Hex.DYNAMIC}><time></${Hex.DYNAMIC}> " +
+                "(<${Hex.DYNAMIC}><mode></${Hex.DYNAMIC}>)</${Hex.SECONDARY}>",
             Placeholder.unparsed("name", name),
             Placeholder.unparsed("time", time),
             Placeholder.unparsed("mode", if (relative) "relative" else "fixed"),
@@ -760,14 +811,16 @@ class StringsEn {
             time: String,
             relative: Boolean,
         ) = mm(
-            "<green>Set <aqua><name></aqua>'s personal time to <aqua><time></aqua> (<aqua><mode></aqua>)</green>",
+            "<${Hex.SUCCESS}>Set <${Hex.DYNAMIC}><name></${Hex.DYNAMIC}>'s personal time to " +
+                "<${Hex.DYNAMIC}><time></${Hex.DYNAMIC}> " +
+                "(<${Hex.DYNAMIC}><mode></${Hex.DYNAMIC}>)</${Hex.SUCCESS}>",
             Placeholder.unparsed("name", name),
             Placeholder.unparsed("time", time),
             Placeholder.unparsed("mode", if (relative) "relative" else "fixed"),
         )
 
         fun playerTimeReset(name: String) = mm(
-            "<green>Reset <aqua><name></aqua>'s personal time to the world's time</green>",
+            "<${Hex.SUCCESS}>Reset <${Hex.DYNAMIC}><name></${Hex.DYNAMIC}>'s personal time to the world's time</${Hex.SUCCESS}>",
             Placeholder.unparsed("name", name),
         )
 
@@ -777,14 +830,16 @@ class StringsEn {
             durationSeconds: Int?,
         ) = if (durationSeconds == null) {
             mm(
-                "<green>Set the weather in <aqua><world></aqua> to <aqua><weather></aqua></green>",
+                "<${Hex.SUCCESS}>Set the weather in <${Hex.DYNAMIC}><world></${Hex.DYNAMIC}> to " +
+                    "<${Hex.DYNAMIC}><weather></${Hex.DYNAMIC}></${Hex.SUCCESS}>",
                 Placeholder.unparsed("world", world),
                 Placeholder.unparsed("weather", weather),
             )
         } else {
             mm(
-                "<green>Set the weather in <aqua><world></aqua> to <aqua><weather></aqua> " +
-                    "for <aqua><duration></aqua> seconds</green>",
+                "<${Hex.SUCCESS}>Set the weather in <${Hex.DYNAMIC}><world></${Hex.DYNAMIC}> to " +
+                    "<${Hex.DYNAMIC}><weather></${Hex.DYNAMIC}> " +
+                    "for <${Hex.DYNAMIC}><duration></${Hex.DYNAMIC}> seconds</${Hex.SUCCESS}>",
                 Placeholder.unparsed("world", world),
                 Placeholder.unparsed("weather", weather),
                 Placeholder.unparsed("duration", durationSeconds.toString()),
@@ -792,7 +847,7 @@ class StringsEn {
         }
 
         fun playerWeatherNormal(name: String) = mm(
-            "<gray><aqua><name></aqua> uses the world's weather</gray>",
+            "<${Hex.SECONDARY}><${Hex.DYNAMIC}><name></${Hex.DYNAMIC}> uses the world's weather</${Hex.SECONDARY}>",
             Placeholder.unparsed("name", name),
         )
 
@@ -800,7 +855,8 @@ class StringsEn {
             name: String,
             weather: String,
         ) = mm(
-            "<gray><aqua><name></aqua>'s personal weather is <aqua><weather></aqua></gray>",
+            "<${Hex.SECONDARY}><${Hex.DYNAMIC}><name></${Hex.DYNAMIC}>'s personal weather is " +
+                "<${Hex.DYNAMIC}><weather></${Hex.DYNAMIC}></${Hex.SECONDARY}>",
             Placeholder.unparsed("name", name),
             Placeholder.unparsed("weather", weather),
         )
@@ -809,118 +865,120 @@ class StringsEn {
             name: String,
             weather: String,
         ) = mm(
-            "<green>Set <aqua><name></aqua>'s personal weather to <aqua><weather></aqua></green>",
+            "<${Hex.SUCCESS}>Set <${Hex.DYNAMIC}><name></${Hex.DYNAMIC}>'s personal weather to " +
+                "<${Hex.DYNAMIC}><weather></${Hex.DYNAMIC}></${Hex.SUCCESS}>",
             Placeholder.unparsed("name", name),
             Placeholder.unparsed("weather", weather),
         )
 
         fun playerWeatherReset(name: String) = mm(
-            "<green>Reset <aqua><name></aqua>'s personal weather to the world's weather</green>",
+            "<${Hex.SUCCESS}>Reset <${Hex.DYNAMIC}><name></${Hex.DYNAMIC}>'s personal weather to the world's weather</${Hex.SUCCESS}>",
             Placeholder.unparsed("name", name),
         )
 
         fun errorInvalidTime(time: String) = mm(
-            "<red>Invalid time: <aqua><time></aqua></red>",
+            "<${Hex.ERROR}>Invalid time: <${Hex.DYNAMIC}><time></${Hex.DYNAMIC}></${Hex.ERROR}>",
             Placeholder.unparsed("time", time),
         )
 
         fun errorWorldNotFound(world: String) = mm(
-            "<red>World <aqua><world></aqua> was not found</red>",
+            "<${Hex.ERROR}>World <${Hex.DYNAMIC}><world></${Hex.DYNAMIC}> was not found</${Hex.ERROR}>",
             Placeholder.unparsed("world", world),
         )
 
-        val errorWeatherWorldRequired = mm("<red>Specify a world when using this command from the console</red>")
+        val errorWeatherWorldRequired = mm("<${Hex.ERROR}>Specify a world when using this command from the console</${Hex.ERROR}>")
 
         fun errorPlayerMaxHealthUnavailable(name: String) = mm(
-            "<red>Player <aqua><name></aqua> has no maximum-health attribute</red>",
+            "<${Hex.ERROR}>Player <${Hex.DYNAMIC}><name></${Hex.DYNAMIC}> has no maximum-health attribute</${Hex.ERROR}>",
             Placeholder.unparsed("name", name),
         )
     }
 
     inner class Teleportation {
-        val errorCouldNotFindSafeLocation = mm("<red>Failed to find a safe location</red>")
+        val errorCouldNotFindSafeLocation = mm("<${Hex.ERROR}>Failed to find a safe location</${Hex.ERROR}>")
 
-        val errorTeleportPermission = mm("<red>You do not have permission to use this teleport option</red>")
+        val errorTeleportPermission = mm("<${Hex.ERROR}>You do not have permission to use this teleport option</${Hex.ERROR}>")
 
-        val errorTeleportSelf = mm("<red>You cannot teleport to yourself</red>")
+        val errorTeleportSelf = mm("<${Hex.ERROR}>You cannot teleport to yourself</${Hex.ERROR}>")
 
-        val errorTeleportRequestPending = mm("<red>You already have an outgoing teleport request</red>")
+        val errorTeleportRequestPending = mm("<${Hex.ERROR}>You already have an outgoing teleport request</${Hex.ERROR}>")
 
-        val errorTeleportRequestMissing = mm("<red>No matching teleport request was found</red>")
+        val errorTeleportRequestMissing = mm("<${Hex.ERROR}>No matching teleport request was found</${Hex.ERROR}>")
 
-        val errorTeleportRequestAmbiguous = mm("<red>You have multiple incoming requests; specify a player</red>")
+        val errorTeleportRequestAmbiguous = mm("<${Hex.ERROR}>You have multiple incoming requests; specify a player</${Hex.ERROR}>")
 
-        val errorTeleportRequestExpired = mm("<red>That teleport request has expired</red>")
+        val errorTeleportRequestExpired = mm("<${Hex.ERROR}>That teleport request has expired</${Hex.ERROR}>")
 
-        val errorTeleportHistoryMissing = mm("<red>No previous location is available</red>")
+        val errorTeleportHistoryMissing = mm("<${Hex.ERROR}>No previous location is available</${Hex.ERROR}>")
 
-        val errorTeleportHistoryWorldUnavailable = mm("<red>The world for your previous location is unavailable</red>")
+        val errorTeleportHistoryWorldUnavailable = mm("<${Hex.ERROR}>The world for your previous location is unavailable</${Hex.ERROR}>")
 
-        val errorTeleportFailed = mm("<red>The teleport failed</red>")
+        val errorTeleportFailed = mm("<${Hex.ERROR}>The teleport failed</${Hex.ERROR}>")
 
-        val errorTeleportTargetOffline = mm("<red>That player is no longer online</red>")
+        val errorTeleportTargetOffline = mm("<${Hex.ERROR}>That player is no longer online</${Hex.ERROR}>")
 
-        val errorTeleportCoordinatesInvalid = mm("<red>Coordinates must be finite numbers</red>")
+        val errorTeleportCoordinatesInvalid = mm("<${Hex.ERROR}>Coordinates must be finite numbers</${Hex.ERROR}>")
 
-        val errorTeleportExplicitTargetRequired = mm("<red>Specify an online destination player</red>")
+        val errorTeleportExplicitTargetRequired = mm("<${Hex.ERROR}>Specify an online destination player</${Hex.ERROR}>")
 
-        val searchingForSafeLocation = mm("<gray><i>Searching for a safe location...</i></gray>")
+        val searchingForSafeLocation = mm("<${Hex.SECONDARY}><i>Searching for a safe location...</i></${Hex.SECONDARY}>")
 
         fun teleportRequestReceived(name: String) = mm(
-            "<yellow><aqua><name></aqua> wants to teleport to you. Use " +
+            "<${Hex.WARNING}><${Hex.DYNAMIC}><name></${Hex.DYNAMIC}> wants to teleport to you. Use " +
                 "<click:run_command:'/tp accept'><hover:show_text:'Click to accept'>" +
-                "<aqua><underlined>/tp accept</underlined></aqua></hover></click> or " +
+                "<${Hex.LINK}><underlined>/tp accept</underlined></${Hex.LINK}></hover></click> or " +
                 "<click:run_command:'/tp deny'><hover:show_text:'Click to deny'>" +
-                "<aqua><underlined>/tp deny</underlined></aqua></hover></click>.</yellow>",
+                "<${Hex.LINK}><underlined>/tp deny</underlined></${Hex.LINK}></hover></click>.</${Hex.WARNING}>",
             Placeholder.unparsed("name", name),
         )
 
         fun teleportHereRequestReceived(name: String) = mm(
-            "<yellow><aqua><name></aqua> wants you to teleport to them. Use " +
+            "<${Hex.WARNING}><${Hex.DYNAMIC}><name></${Hex.DYNAMIC}> wants you to teleport to them. Use " +
                 "<click:run_command:'/tp accept'><hover:show_text:'Click to accept'>" +
-                "<aqua><underlined>/tp accept</underlined></aqua></hover></click> or " +
+                "<${Hex.LINK}><underlined>/tp accept</underlined></${Hex.LINK}></hover></click> or " +
                 "<click:run_command:'/tp deny'><hover:show_text:'Click to deny'>" +
-                "<aqua><underlined>/tp deny</underlined></aqua></hover></click>.</yellow>",
+                "<${Hex.LINK}><underlined>/tp deny</underlined></${Hex.LINK}></hover></click>.</${Hex.WARNING}>",
             Placeholder.unparsed("name", name),
         )
 
         fun teleportRequestAccepted(name: String) = mm(
-            "<green>Teleport request from <aqua><name></aqua> accepted</green>",
+            "<${Hex.SUCCESS}>Teleport request from <${Hex.DYNAMIC}><name></${Hex.DYNAMIC}> accepted</${Hex.SUCCESS}>",
             Placeholder.unparsed("name", name),
         )
 
         fun teleportRequestDenied(name: String) = mm(
-            "<red>Teleport request from <aqua><name></aqua> denied</red>",
+            "<${Hex.ERROR}>Teleport request from <${Hex.DYNAMIC}><name></${Hex.DYNAMIC}> denied</${Hex.ERROR}>",
             Placeholder.unparsed("name", name),
         )
 
         fun teleportRequestWasDenied(name: String) = mm(
-            "<red><aqua><name></aqua> denied your teleport request</red>",
+            "<${Hex.ERROR}><${Hex.DYNAMIC}><name></${Hex.DYNAMIC}> denied your teleport request</${Hex.ERROR}>",
             Placeholder.unparsed("name", name),
         )
 
         fun teleportRequestCancelled(name: String) = mm(
-            "<yellow>Teleport request to <aqua><name></aqua> cancelled</yellow>",
+            "<${Hex.WARNING}>Teleport request to <${Hex.DYNAMIC}><name></${Hex.DYNAMIC}> cancelled</${Hex.WARNING}>",
             Placeholder.unparsed("name", name),
         )
 
         fun teleportRequestWasCancelled(name: String) = mm(
-            "<yellow><aqua><name></aqua> cancelled their teleport request</yellow>",
+            "<${Hex.WARNING}><${Hex.DYNAMIC}><name></${Hex.DYNAMIC}> cancelled their teleport request</${Hex.WARNING}>",
             Placeholder.unparsed("name", name),
         )
 
         fun teleportRequestExpired(name: String) = mm(
-            "<yellow>Teleport request from <aqua><name></aqua> expired</yellow>",
+            "<${Hex.WARNING}>Teleport request from <${Hex.DYNAMIC}><name></${Hex.DYNAMIC}> expired</${Hex.WARNING}>",
             Placeholder.unparsed("name", name),
         )
 
         fun teleportRequestSentExpired(name: String) = mm(
-            "<yellow>Your teleport request to <aqua><name></aqua> expired</yellow>",
+            "<${Hex.WARNING}>Your teleport request to <${Hex.DYNAMIC}><name></${Hex.DYNAMIC}> expired</${Hex.WARNING}>",
             Placeholder.unparsed("name", name),
         )
 
         fun teleportRequestDisconnected(name: String) = mm(
-            "<yellow>Teleport request involving <aqua><name></aqua> was removed because a player disconnected</yellow>",
+            "<${Hex.WARNING}>Teleport request involving <${Hex.DYNAMIC}><name></${Hex.DYNAMIC}> was " +
+                "removed because a player disconnected</${Hex.WARNING}>",
             Placeholder.unparsed("name", name),
         )
 
@@ -928,13 +986,14 @@ class StringsEn {
             name: String,
             ttl: Duration,
         ) = mm(
-            "<green>Teleport request to <aqua><name></aqua> created (expires in <aqua><seconds></aqua> seconds)</green>",
+            "<${Hex.SUCCESS}>Teleport request to <${Hex.DYNAMIC}><name></${Hex.DYNAMIC}> created " +
+                "(expires in <${Hex.DYNAMIC}><seconds></${Hex.DYNAMIC}> seconds)</${Hex.SUCCESS}>",
             Placeholder.unparsed("name", name),
             Placeholder.unparsed("seconds", ttl.inWholeSeconds.toString()),
         )
 
         fun teleportCompleted(name: String) = mm(
-            "<green>Teleported to <aqua><name></aqua></green>",
+            "<${Hex.SUCCESS}>Teleported to <${Hex.DYNAMIC}><name></${Hex.DYNAMIC}></${Hex.SUCCESS}>",
             Placeholder.unparsed("name", name),
         )
 
@@ -942,18 +1001,19 @@ class StringsEn {
             player: String,
             target: String,
         ) = mm(
-            "<green>Teleported <aqua><player></aqua> to <aqua><target></aqua></green>",
+            "<${Hex.SUCCESS}>Teleported <${Hex.DYNAMIC}><player></${Hex.DYNAMIC}> to " +
+                "<${Hex.DYNAMIC}><target></${Hex.DYNAMIC}></${Hex.SUCCESS}>",
             Placeholder.unparsed("player", player),
             Placeholder.unparsed("target", target),
         )
 
         fun teleportReceived(name: String) = mm(
-            "<gray><aqua><name></aqua> teleported to you</gray>",
+            "<${Hex.SECONDARY}><${Hex.DYNAMIC}><name></${Hex.DYNAMIC}> teleported to you</${Hex.SECONDARY}>",
             Placeholder.unparsed("name", name),
         )
 
         fun teleportBackCompleted(name: String) = mm(
-            "<green><aqua><name></aqua> returned to their previous location</green>",
+            "<${Hex.SUCCESS}><${Hex.DYNAMIC}><name></${Hex.DYNAMIC}> returned to their previous location</${Hex.SUCCESS}>",
             Placeholder.unparsed("name", name),
         )
 
@@ -961,13 +1021,15 @@ class StringsEn {
             succeeded: Int,
             failed: Int,
         ) = mm(
-            "<green>Teleported <aqua><succeeded></aqua> player(s)</green><gray>; <aqua><failed></aqua> failed</gray>",
+            "<${Hex.SUCCESS}>Teleported <${Hex.DYNAMIC}><succeeded></${Hex.DYNAMIC}> " +
+                "player(s)</${Hex.SUCCESS}><${Hex.SECONDARY}>; <${Hex.DYNAMIC}><failed></${Hex.DYNAMIC}> " +
+                "failed</${Hex.SECONDARY}>",
             Placeholder.unparsed("succeeded", succeeded.toString()),
             Placeholder.unparsed("failed", failed.toString()),
         )
 
         fun teleportRequestsCreated(count: Int) = mm(
-            "<green>Teleport requests sent to <aqua><count></aqua> player(s)</green>",
+            "<${Hex.SUCCESS}>Teleport requests sent to <${Hex.DYNAMIC}><count></${Hex.DYNAMIC}> player(s)</${Hex.SUCCESS}>",
             Placeholder.unparsed("count", count.toString()),
         )
 
@@ -976,14 +1038,16 @@ class StringsEn {
             y: Double,
             z: Double,
         ) = mm(
-            "<gray><i>⚡ Teleported to <b>{<aqua><x></aqua>, <aqua><y></aqua>, <aqua><z></aqua>}</b></i></gray>",
+            "<${Hex.SECONDARY}><i>⚡ Teleported to <b>{<${Hex.DYNAMIC}><x></${Hex.DYNAMIC}>, " +
+                "<${Hex.DYNAMIC}><y></${Hex.DYNAMIC}>, " +
+                "<${Hex.DYNAMIC}><z></${Hex.DYNAMIC}>}</b></i></${Hex.SECONDARY}>",
             Placeholder.unparsed("x", x.toString()),
             Placeholder.unparsed("y", y.toString()),
             Placeholder.unparsed("z", z.toString()),
         )
 
         fun teleportedToName(name: String) = mm(
-            "<gray><i>⚡ Teleported to <b><aqua><name></aqua></b></i></gray>",
+            "<${Hex.SECONDARY}><i>⚡ Teleported to <b><${Hex.DYNAMIC}><name></${Hex.DYNAMIC}></b></i></${Hex.SECONDARY}>",
             Placeholder.unparsed("name", name),
         )
 
@@ -992,7 +1056,9 @@ class StringsEn {
             y: Int,
             z: Int,
         ) = mm(
-            "<gray><i>⚡ Teleported to <b>{<aqua><x></aqua>, <aqua><y></aqua>, <aqua><z></aqua>}</b></i></gray>",
+            "<${Hex.SECONDARY}><i>⚡ Teleported to <b>{<${Hex.DYNAMIC}><x></${Hex.DYNAMIC}>, " +
+                "<${Hex.DYNAMIC}><y></${Hex.DYNAMIC}>, " +
+                "<${Hex.DYNAMIC}><z></${Hex.DYNAMIC}>}</b></i></${Hex.SECONDARY}>",
             Placeholder.unparsed("x", x.toString()),
             Placeholder.unparsed("y", y.toString()),
             Placeholder.unparsed("z", z.toString()),
@@ -1000,14 +1066,15 @@ class StringsEn {
     }
 
     inner class Spawns {
-        val errorHubWorldNotFound = mm("<red>Could not find hub world</red>")
+        val errorHubWorldNotFound = mm("<${Hex.ERROR}>Could not find hub world</${Hex.ERROR}>")
 
-        val errorHubNotSet = mm("<red>Hub world not set</red>")
+        val errorHubNotSet = mm("<${Hex.ERROR}>Hub world not set</${Hex.ERROR}>")
 
         fun spawnSet(location: Location) = mm(
-            "<green>World spawn set to <gray>" +
-                "{<aqua><x></aqua>, <aqua><y></aqua>, <aqua><z></aqua>} pitch=<aqua><pitch></aqua> yaw=<aqua><yaw></aqua>" +
-                "</gray></green>",
+            "<${Hex.SUCCESS}>World spawn set to <${Hex.SECONDARY}>" +
+                "{<${Hex.DYNAMIC}><x></${Hex.DYNAMIC}>, <${Hex.DYNAMIC}><y></${Hex.DYNAMIC}>, <${Hex.DYNAMIC}><z></${Hex.DYNAMIC}>} " +
+                "pitch=<${Hex.DYNAMIC}><pitch></${Hex.DYNAMIC}> yaw=<${Hex.DYNAMIC}><yaw></${Hex.DYNAMIC}>" +
+                "</${Hex.SECONDARY}></${Hex.SUCCESS}>",
             Placeholder.unparsed("x", location.x.toString()),
             Placeholder.unparsed("y", location.y.toString()),
             Placeholder.unparsed("z", location.z.toString()),
@@ -1015,9 +1082,9 @@ class StringsEn {
             Placeholder.unparsed("yaw", location.yaw.toString()),
         )
 
-        val teleportedToSpawn = mm("<gray><i>⚡ Teleported to spawn</i></gray>")
+        val teleportedToSpawn = mm("<${Hex.SECONDARY}><i>⚡ Teleported to spawn</i></${Hex.SECONDARY}>")
 
-        val teleportedToHub = mm("<gray><i>⚡ Teleported to hub</i></gray>")
+        val teleportedToHub = mm("<${Hex.SECONDARY}><i>⚡ Teleported to hub</i></${Hex.SECONDARY}>")
     }
 
     inner class Moderation {
@@ -1027,26 +1094,27 @@ class StringsEn {
             name: String,
             reason: String,
         ) = mm(
-            "<i><gray><aqua><name></aqua> was kicked: <aqua><reason></aqua></gray></i>",
+            "<i><${Hex.SECONDARY}><${Hex.DYNAMIC}><name></${Hex.DYNAMIC}> was kicked: " +
+                "<${Hex.DYNAMIC}><reason></${Hex.DYNAMIC}></${Hex.SECONDARY}></i>",
             Placeholder.unparsed("name", name),
             Placeholder.unparsed("reason", reason),
         )
 
         fun playerWasKicked(name: String) = mm(
-            "<i><gray><aqua><name></aqua> was kicked</gray></i>",
+            "<i><${Hex.SECONDARY}><${Hex.DYNAMIC}><name></${Hex.DYNAMIC}> was kicked</${Hex.SECONDARY}></i>",
             Placeholder.unparsed("name", name),
         )
     }
 
     inner class Connection {
         val errorUnableToAuthConnection =
-            Component.text("Unable to authorize your connection. Please try again later.", NamedTextColor.RED)
+            Component.text("Unable to authorize your connection. Please try again later.", errorColor)
 
         val playerStateUnavailableWarning =
             Component.text(
                 "Warning: Unable to retrieve player data. Your permissions, rank, and other data may be missing. " +
                     "Please type /sync or try reconnecting in a moment.",
-                NamedTextColor.YELLOW,
+                warningColor,
             )
     }
 
@@ -1056,31 +1124,31 @@ class StringsEn {
 
     inner class Tablist {
         fun playerPing(ping: Int) = mm(
-            " <gray><aqua><ping></aqua></gray>",
+            " <${Hex.SECONDARY}><${Hex.DYNAMIC}><ping></${Hex.DYNAMIC}></${Hex.SECONDARY}>",
             Placeholder.unparsed("ping", ping.toString()),
         )
     }
 
     inner class Maintenance {
         val maintenanceConnectionDenied =
-            mm("<bold>Server Maintenance</bold><newline><newline><gray>Please try again later</gray>")
+            mm("<bold>Server Maintenance</bold><newline><newline><${Hex.SECONDARY}>Please try again later</${Hex.SECONDARY}>")
 
-        val maintenanceMotd = mm("<yellow>Server maintenance - be right back!</yellow>")
+        val maintenanceMotd = mm("<${Hex.WARNING}>Server maintenance - be right back!</${Hex.WARNING}>")
 
-        val maintenanceReminder = mm("<italic><yellow>[Reminder] Maintenance mode is currently ON</yellow></italic>")
+        val maintenanceReminder = mm("<italic><${Hex.WARNING}>[Reminder] Maintenance mode is currently ON</${Hex.WARNING}></italic>")
 
         fun maintenanceAlreadyInState(enabled: Boolean) = mm(
-            "<red>Maintenance mode is already <aqua><state></aqua></red>",
+            "<${Hex.ERROR}>Maintenance mode is already <${Hex.DYNAMIC}><state></${Hex.DYNAMIC}></${Hex.ERROR}>",
             Placeholder.unparsed("state", enabled.onOff()),
         )
 
         fun maintenanceModeChanged(enabled: Boolean) = mm(
-            "<green>Maintenance mode is now <aqua><state></aqua></green>",
+            "<${Hex.SUCCESS}>Maintenance mode is now <${Hex.DYNAMIC}><state></${Hex.DYNAMIC}></${Hex.SUCCESS}>",
             Placeholder.unparsed("state", enabled.onOff()),
         )
 
         fun maintenanceStatus(enabled: Boolean) = mm(
-            "<gray>Maintenance mode is currently <aqua><state></aqua></gray>",
+            "<${Hex.SECONDARY}>Maintenance mode is currently <${Hex.DYNAMIC}><state></${Hex.DYNAMIC}></${Hex.SECONDARY}>",
             Placeholder.unparsed("state", enabled.onOff()),
         )
     }
@@ -1092,9 +1160,9 @@ class StringsEn {
         val borderFillCommandDescription = "Generates missing chunks inside the world border"
         val borderClearCommandDescription = "Clears the world's border"
 
-        val borderNotConfigured = mm("<red>No world border is configured for this world.</red>")
-        val borderCleared = mm("<green>World border cleared.</green>")
-        val borderReached = mm("<red>You have reached the world border.</red>")
+        val borderNotConfigured = mm("<${Hex.ERROR}>No world border is configured for this world.</${Hex.ERROR}>")
+        val borderCleared = mm("<${Hex.SUCCESS}>World border cleared.</${Hex.SUCCESS}>")
+        val borderReached = mm("<${Hex.ERROR}>You have reached the world border.</${Hex.ERROR}>")
 
         fun borderStatus(
             shape: String,
@@ -1102,8 +1170,9 @@ class StringsEn {
             centerZ: Double,
             radius: Double,
         ) = mm(
-            "<gray>World border: <aqua><shape></aqua>, center <aqua><x></aqua>, <aqua><z></aqua>; " +
-                "radius <aqua><radius></aqua> blocks.</gray>",
+            "<${Hex.SECONDARY}>World border: <${Hex.DYNAMIC}><shape></${Hex.DYNAMIC}>, center " +
+                "<${Hex.DYNAMIC}><x></${Hex.DYNAMIC}>, <${Hex.DYNAMIC}><z></${Hex.DYNAMIC}>; " +
+                "radius <${Hex.DYNAMIC}><radius></${Hex.DYNAMIC}> blocks.</${Hex.SECONDARY}>",
             Placeholder.unparsed("shape", shape),
             Placeholder.unparsed("x", centerX.toString()),
             Placeholder.unparsed("z", centerZ.toString()),
@@ -1116,8 +1185,9 @@ class StringsEn {
             width: Double,
             depth: Double,
         ) = mm(
-            "<gray>World border: rectangle, center <aqua><x></aqua>, <aqua><z></aqua>; " +
-                "width <aqua><width></aqua>, depth <aqua><depth></aqua> blocks.</gray>",
+            "<${Hex.SECONDARY}>World border: rectangle, center <${Hex.DYNAMIC}><x></${Hex.DYNAMIC}>, " +
+                "<${Hex.DYNAMIC}><z></${Hex.DYNAMIC}>; " +
+                "width <${Hex.DYNAMIC}><width></${Hex.DYNAMIC}>, depth <${Hex.DYNAMIC}><depth></${Hex.DYNAMIC}> blocks.</${Hex.SECONDARY}>",
             Placeholder.unparsed("x", centerX.toString()),
             Placeholder.unparsed("z", centerZ.toString()),
             Placeholder.unparsed("width", width.toString()),
@@ -1125,7 +1195,7 @@ class StringsEn {
         )
 
         fun invalidBorder(reason: String?) = mm(
-            "<red>Invalid world border: <aqua><reason></aqua></red>",
+            "<${Hex.ERROR}>Invalid world border: <${Hex.DYNAMIC}><reason></${Hex.DYNAMIC}></${Hex.ERROR}>",
             Placeholder.unparsed("reason", reason ?: "unknown reason"),
         )
 
@@ -1135,8 +1205,9 @@ class StringsEn {
             centerZ: Double,
             radius: Double,
         ) = mm(
-            "<green>World border set: <aqua><shape></aqua>, center <aqua><x></aqua>, <aqua><z></aqua>; " +
-                "radius <aqua><radius></aqua> blocks.</green>",
+            "<${Hex.SUCCESS}>World border set: <${Hex.DYNAMIC}><shape></${Hex.DYNAMIC}>, center " +
+                "<${Hex.DYNAMIC}><x></${Hex.DYNAMIC}>, <${Hex.DYNAMIC}><z></${Hex.DYNAMIC}>; " +
+                "radius <${Hex.DYNAMIC}><radius></${Hex.DYNAMIC}> blocks.</${Hex.SUCCESS}>",
             Placeholder.unparsed("shape", shape),
             Placeholder.unparsed("x", centerX.toString()),
             Placeholder.unparsed("z", centerZ.toString()),
@@ -1149,8 +1220,9 @@ class StringsEn {
             width: Double,
             depth: Double,
         ) = mm(
-            "<green>World border set: rectangle, center <aqua><x></aqua>, <aqua><z></aqua>; " +
-                "width <aqua><width></aqua>, depth <aqua><depth></aqua> blocks.</green>",
+            "<${Hex.SUCCESS}>World border set: rectangle, center " +
+                "<${Hex.DYNAMIC}><x></${Hex.DYNAMIC}>, <${Hex.DYNAMIC}><z></${Hex.DYNAMIC}>; " +
+                "width <${Hex.DYNAMIC}><width></${Hex.DYNAMIC}>, depth <${Hex.DYNAMIC}><depth></${Hex.DYNAMIC}> blocks.</${Hex.SUCCESS}>",
             Placeholder.unparsed("x", centerX.toString()),
             Placeholder.unparsed("z", centerZ.toString()),
             Placeholder.unparsed("width", width.toString()),
@@ -1158,20 +1230,21 @@ class StringsEn {
         )
 
         fun borderRelocationFailures(count: Int) = mm(
-            "<yellow>World border was committed, but relocation failed for <aqua><count></aqua> player(s). See server logs.</yellow>",
+            "<${Hex.WARNING}>World border was committed, but relocation failed for " +
+                "<${Hex.DYNAMIC}><count></${Hex.DYNAMIC}> player(s). See server logs.</${Hex.WARNING}>",
             Placeholder.unparsed("count", count.toString()),
         )
 
         val borderRespawnRelocationFailed =
-            mm("<red>Could not safely relocate your respawn inside the world border. Please contact staff.</red>")
+            mm("<${Hex.ERROR}>Could not safely relocate your respawn inside the world border. Please contact staff.</${Hex.ERROR}>")
 
-        val fillRequiresBorder = mm("<red>Set a world border before filling chunks.</red>")
+        val fillRequiresBorder = mm("<${Hex.ERROR}>Set a world border before filling chunks.</${Hex.ERROR}>")
 
         fun fillLargeWarning(chunkCountUpperBound: Long) = mm(
-            "<yellow>This is a large fill (up to <aqua><count></aqua> chunks) and may take a long time. " +
+            "<${Hex.WARNING}>This is a large fill (up to <${Hex.DYNAMIC}><count></${Hex.DYNAMIC}> chunks) and may take a long time. " +
                 "Click <click:run_command:'/worlds border fill confirm'>" +
-                "<hover:show_text:'Click to confirm the fill'><aqua><underlined>" +
-                "/worlds border fill confirm</underlined></aqua></hover></click> to continue.</yellow>",
+                "<hover:show_text:'Click to confirm the fill'><${Hex.LINK}><underlined>" +
+                "/worlds border fill confirm</underlined></${Hex.LINK}></hover></click> to continue.</${Hex.WARNING}>",
             Placeholder.unparsed("count", chunkCountUpperBound.toString()),
         )
 
@@ -1179,36 +1252,39 @@ class StringsEn {
             chunkCountUpperBound: Long,
             worldName: String,
         ) = mm(
-            "<yellow>Fill preview: up to <aqua><count></aqua> chunks may be checked in <aqua><world></aqua>. " +
+            "<${Hex.WARNING}>Fill preview: up to <${Hex.DYNAMIC}><count></${Hex.DYNAMIC}> chunks may " +
+                "be checked in <${Hex.DYNAMIC}><world></${Hex.DYNAMIC}>. " +
                 "Only missing chunks will be generated. Click " +
                 "<click:run_command:'/worlds border fill confirm'>" +
-                "<hover:show_text:'Click to confirm the fill'><aqua><underlined>" +
-                "/worlds border fill confirm</underlined></aqua></hover></click> within 60 seconds to continue.</yellow>",
+                "<hover:show_text:'Click to confirm the fill'><${Hex.LINK}><underlined>" +
+                "/worlds border fill confirm</underlined></${Hex.LINK}></hover></click> within 60 seconds to continue.</${Hex.WARNING}>",
             Placeholder.unparsed("count", chunkCountUpperBound.toString()),
             Placeholder.unparsed("world", worldName),
         )
 
-        val fillPreviewMissing = mm("<red>There is no active fill preview. Run /worlds border fill first.</red>")
+        val fillPreviewMissing = mm("<${Hex.ERROR}>There is no active fill preview. Run /worlds border fill first.</${Hex.ERROR}>")
 
-        val fillWrongWorld = mm("<red>You must confirm the fill in the world where it was previewed.</red>")
+        val fillWrongWorld = mm("<${Hex.ERROR}>You must confirm the fill in the world where it was previewed.</${Hex.ERROR}>")
 
         val fillBorderChanged = mm(
-            "<red>The world border changed. Run /worlds border fill again to preview the updated area.</red>",
+            "<${Hex.ERROR}>The world border changed. Run /worlds border fill again to preview the updated area.</${Hex.ERROR}>",
         )
 
-        val fillAlreadyRunning = mm("<red>A world border fill is already running for this world.</red>")
+        val fillAlreadyRunning = mm("<${Hex.ERROR}>A world border fill is already running for this world.</${Hex.ERROR}>")
 
-        val fillStarted = mm("<yellow>Starting world border fill...</yellow>")
+        val fillStarted = mm("<${Hex.WARNING}>Starting world border fill...</${Hex.WARNING}>")
 
-        val fillStoppedBorderChanged = mm("<red>World border changed during fill; the operation was stopped.</red>")
+        val fillStoppedBorderChanged = mm("<${Hex.ERROR}>World border changed during fill; the operation was stopped.</${Hex.ERROR}>")
 
         fun fillProgress(
             checked: Long,
             chunkCountUpperBound: Long,
             generated: Long,
         ) = mm(
-            "<yellow>World border fill progress: checked <aqua><checked></aqua> of up to <aqua><total></aqua> chunks; " +
-                "generated <aqua><generated></aqua>.</yellow>",
+            "<${Hex.WARNING}>World border fill progress: checked " +
+                "<${Hex.DYNAMIC}><checked></${Hex.DYNAMIC}> of up to " +
+                "<${Hex.DYNAMIC}><total></${Hex.DYNAMIC}> chunks; " +
+                "generated <${Hex.DYNAMIC}><generated></${Hex.DYNAMIC}>.</${Hex.WARNING}>",
             Placeholder.unparsed("checked", checked.toString()),
             Placeholder.unparsed("total", chunkCountUpperBound.toString()),
             Placeholder.unparsed("generated", generated.toString()),
@@ -1219,8 +1295,9 @@ class StringsEn {
             chunkCountUpperBound: Long,
             generated: Long,
         ) = mm(
-            "<green>World border fill complete: checked <aqua><checked></aqua> chunks " +
-                "(up to <aqua><total></aqua> in the border); generated <aqua><generated></aqua>.</green>",
+            "<${Hex.SUCCESS}>World border fill complete: checked <${Hex.DYNAMIC}><checked></${Hex.DYNAMIC}> chunks " +
+                "(up to <${Hex.DYNAMIC}><total></${Hex.DYNAMIC}> in the border); generated " +
+                "<${Hex.DYNAMIC}><generated></${Hex.DYNAMIC}>.</${Hex.SUCCESS}>",
             Placeholder.unparsed("checked", checked.toString()),
             Placeholder.unparsed("total", chunkCountUpperBound.toString()),
             Placeholder.unparsed("generated", generated.toString()),
@@ -1232,8 +1309,9 @@ class StringsEn {
             generated: Long,
             status: String,
         ) = mm(
-            "<yellow>World border fill <aqua><status></aqua>: checked <aqua><checked></aqua> of up to " +
-                "<aqua><total></aqua> chunks; generated <aqua><generated></aqua>.</yellow>",
+            "<${Hex.WARNING}>World border fill <${Hex.DYNAMIC}><status></${Hex.DYNAMIC}>: checked " +
+                "<${Hex.DYNAMIC}><checked></${Hex.DYNAMIC}> of up to " +
+                "<${Hex.DYNAMIC}><total></${Hex.DYNAMIC}> chunks; generated <${Hex.DYNAMIC}><generated></${Hex.DYNAMIC}>.</${Hex.WARNING}>",
             Placeholder.unparsed("status", status),
             Placeholder.unparsed("checked", checked.toString()),
             Placeholder.unparsed("total", chunkCountUpperBound.toString()),
@@ -1245,15 +1323,15 @@ class StringsEn {
             chunkCountUpperBound: Long,
             generated: Long,
         ) = mm(
-            "<yellow>World border fill cancelled: checked <aqua><checked></aqua> of up to " +
-                "<aqua><total></aqua> chunks; generated <aqua><generated></aqua>.</yellow>",
+            "<${Hex.WARNING}>World border fill cancelled: checked <${Hex.DYNAMIC}><checked></${Hex.DYNAMIC}> of up to " +
+                "<${Hex.DYNAMIC}><total></${Hex.DYNAMIC}> chunks; generated <${Hex.DYNAMIC}><generated></${Hex.DYNAMIC}>.</${Hex.WARNING}>",
             Placeholder.unparsed("checked", checked.toString()),
             Placeholder.unparsed("total", chunkCountUpperBound.toString()),
             Placeholder.unparsed("generated", generated.toString()),
         )
 
-        val fillFailed = mm("<red>World border fill failed. See the server log for details.</red>")
-        val fillNoActiveJob = mm("<red>There is no world border fill running in this world.</red>")
-        val fillCancelRequested = mm("<yellow>World border fill cancellation requested.</yellow>")
+        val fillFailed = mm("<${Hex.ERROR}>World border fill failed. See the server log for details.</${Hex.ERROR}>")
+        val fillNoActiveJob = mm("<${Hex.ERROR}>There is no world border fill running in this world.</${Hex.ERROR}>")
+        val fillCancelRequested = mm("<${Hex.WARNING}>World border fill cancellation requested.</${Hex.WARNING}>")
     }
 }

@@ -1,5 +1,6 @@
 package com.projectcitybuild.pcbridge.features.warps.hooks.commands.warps
 
+import com.projectcitybuild.pcbridge.core.l10n.checkNotNullLocalized
 import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.features.warps.WarpsPermissions
 import com.projectcitybuild.pcbridge.features.warps.domain.repositories.WarpRepository
@@ -15,7 +16,6 @@ import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.suggestsSuspending
-import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
 import com.projectcitybuild.pcbridge.runtime.commands.runCommandTracedSafely
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
@@ -31,7 +31,7 @@ class WarpRenameCommand(
         requiresPermission(WarpsPermissions.MANAGE)
         argument(Argument.string("name")) {
             suggestsSuspending(plugin, warpNameSuggester::suggest)
-                .executesSuspending(taskExecutor, ::execute)
+            executesSuspending(taskExecutor, ::execute)
         }
     }
 
@@ -40,7 +40,9 @@ class WarpRenameCommand(
         val name = Argument.string("name").get(context)
 
         val warp = warpRepository.get(name)
-        checkNotNull(warp) { l10n.warps.errorWarpNotFound(name) }
+        checkNotNullLocalized(warp) {
+            l10n.warps.errorWarpNotFound(name)
+        }
 
         showRenameDialog(player, warp.id, warp.name)
     }
