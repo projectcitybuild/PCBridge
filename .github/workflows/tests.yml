@@ -19,6 +19,9 @@ jobs:
       - name: Install Java
         uses: ./.github/actions/setup-java
 
+      - name: Audit localization consistency
+        run: ./gradlew :core:l10n:auditL10n
+
       - name: Run tests
         run: ./gradlew test --parallel
 
