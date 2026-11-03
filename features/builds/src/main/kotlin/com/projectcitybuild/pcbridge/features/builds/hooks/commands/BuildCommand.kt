@@ -37,7 +37,7 @@ class BuildCommand(
     override val builder = command("build") {
         description = "Teleports to a build"
         requiresPermission(BuildsPermissions.TELEPORT)
-        argument(Argument.GreedyString("name")) {
+        argument(Argument.greedyString("name")) {
             suggestsSuspending(plugin, buildNameSuggester::suggest)
             executesSuspending(taskExecutor, ::execute)
         }
@@ -45,7 +45,7 @@ class BuildCommand(
 
     private suspend fun execute(context: PaperCommandContext) = context.runCommandTracedSafely(buildsTracer) {
         val player = context.source.requirePlayer()
-        val name = Argument.GreedyString("name").get(context)
+        val name = Argument.greedyString("name").get(context)
 
         val build = buildRepository.get(name = name)
         checkNotNull(build) { "Build not found" }

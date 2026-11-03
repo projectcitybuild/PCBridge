@@ -34,7 +34,7 @@ class BuildEditCommand(
     override val builder = command("edit") {
         description = "Edits a build description"
         requiresPermission(BuildsPermissions.MANAGE)
-        argument(Argument.GreedyString("name")) {
+        argument(Argument.greedyString("name")) {
             suggestsSuspending(plugin, buildNameSuggester::suggest)
             executesSuspending(taskExecutor, ::execute)
         }
@@ -42,7 +42,7 @@ class BuildEditCommand(
 
     private suspend fun execute(context: PaperCommandContext) = context.runCommandTracedSafely(buildsTracer) {
         val player = context.source.requirePlayer()
-        val name = Argument.GreedyString("name").get(context)
+        val name = Argument.greedyString("name").get(context)
 
         val build = buildRepository.get(name)
         checkNotNull(build) { "Build not found" }

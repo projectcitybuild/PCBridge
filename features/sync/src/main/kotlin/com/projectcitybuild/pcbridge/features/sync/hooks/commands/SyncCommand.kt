@@ -24,7 +24,7 @@ class SyncCommand(
 ) : BrigadierCommand {
     override val builder = command("sync") {
         description = "Synchronizes server data"
-        argument(Argument.OnlinePlayer("player", plugin.server)) {
+        argument(Argument.onlinePlayer("player", plugin.server)) {
             requiresPermission(SyncPermissions.OTHER)
                 .executesSuspending(taskExecutor, ::syncOther)
         }
@@ -40,7 +40,7 @@ class SyncCommand(
 
     private suspend fun syncOther(context: PaperCommandContext) = context.runCommandTracedSafely(syncTracer) {
         val sender = context.source.sender
-        val player = Argument.OnlinePlayer("player", plugin.server).get(context)
+        val player = Argument.onlinePlayer("player", plugin.server).get(context)
 
         if (sender is Player && sender == player) {
             syncSelf(context)

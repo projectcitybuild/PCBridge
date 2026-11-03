@@ -19,14 +19,14 @@ class TeleportSendCommand(
     override val builder = command("send") {
         description = "Sends a teleport request to a player"
         requiresPermission(TeleportationPermissions.OTHERS)
-        argument(Argument.OnlinePlayer("player", server)) {
-            argument(Argument.OnlinePlayer("target", server)) {
+        argument(Argument.onlinePlayer("player", server)) {
+            argument(Argument.onlinePlayer("target", server)) {
                 withTeleportFlags(plugin) { context, flags ->
                     context.runCommandTracedSafely(teleportationTracer) {
                         application.send(
                             operator = context.source.sender,
-                            player = Argument.OnlinePlayer("player", server).get(context),
-                            target = Argument.OnlinePlayer("target", server).get(context),
+                            player = Argument.onlinePlayer("player", server).get(context),
+                            target = Argument.onlinePlayer("target", server).get(context),
                             flags = flags,
                         )
                     }

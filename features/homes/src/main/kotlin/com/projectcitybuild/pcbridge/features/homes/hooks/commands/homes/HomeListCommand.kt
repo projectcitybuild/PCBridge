@@ -24,7 +24,7 @@ class HomeListCommand(
 ) : BrigadierCommand {
     override val builder = command("list") {
         description = "Lists your saved homes"
-        argument(Argument.Integer("page")) {
+        argument(Argument.integer("page")) {
             executesSuspending(taskExecutor, ::execute)
         }
         executesSuspending(taskExecutor, ::execute)
@@ -32,7 +32,7 @@ class HomeListCommand(
 
     private suspend fun execute(context: PaperCommandContext) = context.runCommandTracedSafely(homesTracer) {
         val player = context.source.requirePlayer()
-        val pageNumber = Argument.Integer("page").getOptional(context) ?: 1
+        val pageNumber = Argument.integer("page").getOptional(context) ?: 1
 
         val homes =
             homeRepository.all(

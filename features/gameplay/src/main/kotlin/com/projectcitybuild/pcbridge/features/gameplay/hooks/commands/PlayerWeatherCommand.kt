@@ -26,7 +26,7 @@ class PlayerWeatherCommand(
     private val playerWeatherService: PlayerWeatherService,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    private val playerArg = Argument.OnlinePlayer("player", server)
+    private val playerArg = Argument.onlinePlayer("player", server)
 
     override val builder = command("pweather") {
         description = l10n.gameplay.playerWeatherCommandDescription

@@ -2,9 +2,9 @@ package com.projectcitybuild.pcbridge.features.gameplay.domain.services
 
 import org.bukkit.entity.Player
 
-class PlayerTimeService(
-    private val timeInputParser: WorldTimeInputParser = WorldTimeInputParser(),
-) {
+class PlayerTimeService {
+    private val timeInputParser = WorldTimeInputParser()
+
     sealed interface SetResult {
         data class InvalidTime(
             val input: String,

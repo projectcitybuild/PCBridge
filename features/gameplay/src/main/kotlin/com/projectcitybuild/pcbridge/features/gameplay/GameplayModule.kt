@@ -5,16 +5,16 @@ import com.projectcitybuild.pcbridge.features.gameplay.domain.services.PlayerWea
 import com.projectcitybuild.pcbridge.features.gameplay.domain.services.WorldTimeService
 import com.projectcitybuild.pcbridge.features.gameplay.domain.services.WorldWeatherService
 import com.projectcitybuild.pcbridge.features.gameplay.hooks.commands.BurnCommand
+import com.projectcitybuild.pcbridge.features.gameplay.hooks.commands.DieCommand
 import com.projectcitybuild.pcbridge.features.gameplay.hooks.commands.ExtinguishCommand
 import com.projectcitybuild.pcbridge.features.gameplay.hooks.commands.FeedCommand
-import com.projectcitybuild.pcbridge.features.gameplay.hooks.commands.FreezeCommand
 import com.projectcitybuild.pcbridge.features.gameplay.hooks.commands.GameModeCommand
 import com.projectcitybuild.pcbridge.features.gameplay.hooks.commands.HealCommand
+import com.projectcitybuild.pcbridge.features.gameplay.hooks.commands.IceCommand
 import com.projectcitybuild.pcbridge.features.gameplay.hooks.commands.KillCommand
 import com.projectcitybuild.pcbridge.features.gameplay.hooks.commands.PlayerTimeCommand
 import com.projectcitybuild.pcbridge.features.gameplay.hooks.commands.PlayerWeatherCommand
 import com.projectcitybuild.pcbridge.features.gameplay.hooks.commands.PurgeCommand
-import com.projectcitybuild.pcbridge.features.gameplay.hooks.commands.SuicideCommand
 import com.projectcitybuild.pcbridge.features.gameplay.hooks.commands.TimeCommand
 import com.projectcitybuild.pcbridge.features.gameplay.hooks.commands.WeatherCommand
 import com.projectcitybuild.pcbridge.features.gameplay.hooks.commands.XpCommand
@@ -31,10 +31,10 @@ val gameplayModule =
                 get<FeedCommand>(),
                 get<GameModeCommand>(),
                 get<HealCommand>(),
-                get<FreezeCommand>(),
+                get<IceCommand>(),
                 get<KillCommand>(),
                 get<PurgeCommand>(),
-                get<SuicideCommand>(),
+                get<DieCommand>(),
                 get<XpCommand>(),
                 get<TimeCommand>(),
                 get<PlayerTimeCommand>(),
@@ -48,10 +48,10 @@ val gameplayModule =
         factoryOf(::FeedCommand)
         factoryOf(::GameModeCommand)
         factoryOf(::HealCommand)
-        factoryOf(::FreezeCommand)
+        factoryOf(::IceCommand)
         factoryOf(::KillCommand)
         factoryOf(::PurgeCommand)
-        factoryOf(::SuicideCommand)
+        factoryOf(::DieCommand)
         factoryOf(::XpCommand)
         factoryOf(::PlayerTimeService)
         factoryOf(::PlayerWeatherService)

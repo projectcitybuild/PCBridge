@@ -1,4 +1,4 @@
-package com.projectcitybuild.pcbridge.platform.paper.data
+package com.projectcitybuild.pcbridge.features.gameplay.domain.data
 
 enum class GameTimeAlias(
     val argument: String,

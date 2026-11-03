@@ -573,10 +573,10 @@ class StringsEn {
         val feedCommandDescription = "Restores a player's hunger"
         val gameModeCommandDescription = "Changes a player's game mode"
         val healCommandDescription = "Restores a player's health"
-        val freezeCommandDescription = "Freezes a player for a duration"
+        val iceCommandDescription = "Freezes a player for a duration"
         val killCommandDescription = "Kills a player"
         val purgeCommandDescription = "Removes a player's active potion effects"
-        val suicideCommandDescription = "Kills a player"
+        val dieCommandDescription = "Kills a player"
         val xpCommandDescription = "Changes a player's experience points"
         val timeCommandDescription = "Views or changes world time"
         val playerTimeCommandDescription = "Views or changes a player's personal time"
@@ -598,10 +598,10 @@ class StringsEn {
 
         fun playerHealed(name: String) = mm("Healed $name")
 
-        fun playerFrozen(
+        fun playerIced(
             name: String,
             seconds: Int,
-        ) = mm("Froze $name for $seconds seconds")
+        ) = mm("Iced $name for $seconds seconds")
 
         fun playerKilled(name: String) = mm("Killed $name")
 

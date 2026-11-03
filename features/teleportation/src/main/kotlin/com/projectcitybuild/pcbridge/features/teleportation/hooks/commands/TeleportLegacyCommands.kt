@@ -39,12 +39,12 @@ class TeleportLegacyCommands(
     // TODO: support tptoggle
     private fun tpa() = command("tpa") {
         description = "Sends a teleport request to a player"
-        argument(Argument.OnlinePlayer("player", server)) {
+        argument(Argument.onlinePlayer("player", server)) {
             requiresPermission("essentials.tpa")
             executesSuspending(plugin) { context ->
                 context.runCommandTracedSafely(teleportationTracer) {
                     val player = context.source.requirePlayer()
-                    val target = Argument.OnlinePlayer("player", server).get(context)
+                    val target = Argument.onlinePlayer("player", server).get(context)
                     teleportService.to(player, target)
                 }
             }
@@ -53,12 +53,12 @@ class TeleportLegacyCommands(
 
     private fun tpahere() = command("tpahere") {
         description = "Requests that a player teleport to you"
-        argument(Argument.OnlinePlayer("player", server)) {
+        argument(Argument.onlinePlayer("player", server)) {
             requiresPermission("essentials.tpahere")
             executesSuspending(plugin) { context ->
                 context.runCommandTracedSafely(teleportationTracer) {
                     val player = context.source.requirePlayer()
-                    val target = Argument.OnlinePlayer("player", server).get(context)
+                    val target = Argument.onlinePlayer("player", server).get(context)
                     teleportService.requestHere(player, target)
                 }
             }
@@ -67,11 +67,11 @@ class TeleportLegacyCommands(
 
     private fun tpo() = command("tpo") {
         description = "Teleports you to a player, bypassing teleport requests"
-        argument(Argument.OnlinePlayer("player", server)) {
+        argument(Argument.onlinePlayer("player", server)) {
             requiresPermission("essentials.tpo")
             executesSuspending(plugin) { context ->
                 context.runCommandTracedSafely(teleportationTracer) {
-                    val target = Argument.OnlinePlayer("player", server).get(context)
+                    val target = Argument.onlinePlayer("player", server).get(context)
                     teleportService.to(
                         requester = context.source.requirePlayer(),
                         target = target,
@@ -84,13 +84,13 @@ class TeleportLegacyCommands(
 
     private fun tpohere() = command("tpohere") {
         description = "Teleports a player to you, bypassing teleport requests"
-        argument(Argument.OnlinePlayer("player", server)) {
+        argument(Argument.onlinePlayer("player", server)) {
             requiresPermission("essentials.tpohere")
             executesSuspending(plugin) { context ->
                 context.runCommandTracedSafely(teleportationTracer) {
                     teleportService.here(
                         operator = context.source.requirePlayer(),
-                        target = Argument.OnlinePlayer("player", server).get(context),
+                        target = Argument.onlinePlayer("player", server).get(context),
                         flags = TeleportFlags(force = true),
                     )
                 }
@@ -100,13 +100,13 @@ class TeleportLegacyCommands(
 
     private fun tphere() = command("tphere") {
         description = "Teleports a player to you"
-        argument(Argument.OnlinePlayer("player", server)) {
+        argument(Argument.onlinePlayer("player", server)) {
             requiresPermission("essentials.tphere")
             executesSuspending(plugin) { context ->
                 context.runCommandTracedSafely(teleportationTracer) {
                     teleportService.here(
                         operator = context.source.requirePlayer(),
-                        target = Argument.OnlinePlayer("player", server).get(context),
+                        target = Argument.onlinePlayer("player", server).get(context),
                         flags = TeleportFlags(force = true),
                     )
                 }
@@ -123,13 +123,13 @@ class TeleportLegacyCommands(
                     teleportService.cancel(context.source.requirePlayer(), targetId = null)
                 }
             }
-            argument(Argument.OnlinePlayer("player", server)) {
+            argument(Argument.onlinePlayer("player", server)) {
                 requiresPermission("essentials.tpcancel")
                 executesSuspending(plugin) { context ->
                     context.runCommandTracedSafely(teleportationTracer) {
                         teleportService.cancel(
                             context.source.requirePlayer(),
-                            Argument.OnlinePlayer("player", server).get(context).uniqueId,
+                            Argument.onlinePlayer("player", server).get(context).uniqueId,
                         )
                     }
                 }
@@ -146,13 +146,13 @@ class TeleportLegacyCommands(
                 teleportService.back(player, player)
             }
         }
-        argument(Argument.OnlinePlayer("player", server)) {
+        argument(Argument.onlinePlayer("player", server)) {
             requiresPermission(TeleportationPermissions.BACK_OTHERS)
             executesSuspending(plugin) { context ->
                 context.runCommandTracedSafely(teleportationTracer) {
                     teleportService.back(
                         operator = context.source.sender,
-                        target = Argument.OnlinePlayer("player", server).get(context),
+                        target = Argument.onlinePlayer("player", server).get(context),
                     )
                 }
             }
@@ -194,11 +194,11 @@ class TeleportLegacyCommands(
                 flags = TeleportFlags(force = true),
             )
         }
-        argument(Argument.OnlinePlayer("target", server)) {
+        argument(Argument.onlinePlayer("target", server)) {
             executesSuspending(plugin) { context ->
                 teleportService.all(
                     operator = context.source.sender,
-                    requestedTarget = Argument.OnlinePlayer("target", server).get(context),
+                    requestedTarget = Argument.onlinePlayer("target", server).get(context),
                     flags = TeleportFlags(force = true),
                 )
             }
@@ -214,13 +214,13 @@ class TeleportLegacyCommands(
                     teleportService.accept(context.source.requirePlayer(), requesterId = null)
                 }
             }
-            argument(Argument.OnlinePlayer("requester", server)) {
+            argument(Argument.onlinePlayer("requester", server)) {
                 requiresPermission("essentials.tpaccept")
                 executesSuspending(plugin) { context ->
                     context.runCommandTracedSafely(teleportationTracer) {
                         teleportService.accept(
                             context.source.requirePlayer(),
-                            Argument.OnlinePlayer("requester", server).get(context).uniqueId,
+                            Argument.onlinePlayer("requester", server).get(context).uniqueId,
                         )
                     }
                 }
@@ -237,12 +237,12 @@ class TeleportLegacyCommands(
                     teleportService.deny(context.source.requirePlayer(), requesterId = null)
                 }
             }
-            argument(Argument.OnlinePlayer("requester", server)) {
+            argument(Argument.onlinePlayer("requester", server)) {
                 executesSuspending(plugin) { context ->
                     context.runCommandTracedSafely(teleportationTracer) {
                         teleportService.deny(
                             context.source.requirePlayer(),
-                            Argument.OnlinePlayer("requester", server).get(context).uniqueId,
+                            Argument.onlinePlayer("requester", server).get(context).uniqueId,
                         )
                     }
                 }

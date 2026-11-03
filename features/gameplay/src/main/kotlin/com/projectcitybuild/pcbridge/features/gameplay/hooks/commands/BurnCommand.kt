@@ -20,8 +20,8 @@ class BurnCommand(
     server: Server,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    private val playerArg = Argument.OnlinePlayer("player", server)
-    private val secondsArg = Argument.Integer("seconds", min = 1, max = MAX_DURATION_SECONDS)
+    private val playerArg = Argument.onlinePlayer("player", server)
+    private val secondsArg = Argument.integer("seconds", min = 1, max = MAX_DURATION_SECONDS)
 
     override val builder = command("burn") {
         description = l10n.gameplay.burnCommandDescription

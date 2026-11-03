@@ -21,11 +21,11 @@ class BorderSetCommand(
     private val worldBorderService: WorldBorderService,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    private val radiusArg = Argument.Double("radius", min = 1.0, max = WorldBorderGeometry.MAX_RADIUS)
-    private val xArg = Argument.Double("x")
-    private val zArg = Argument.Double("z")
-    private val widthArg = Argument.Double("width", min = 1.0, max = WorldBorderGeometry.MAX_DIMENSION)
-    private val depthArg = Argument.Double("depth", min = 1.0, max = WorldBorderGeometry.MAX_DIMENSION)
+    private val radiusArg = Argument.double("radius", min = 1.0, max = WorldBorderGeometry.MAX_RADIUS)
+    private val xArg = Argument.double("x")
+    private val zArg = Argument.double("z")
+    private val widthArg = Argument.double("width", min = 1.0, max = WorldBorderGeometry.MAX_DIMENSION)
+    private val depthArg = Argument.double("depth", min = 1.0, max = WorldBorderGeometry.MAX_DIMENSION)
 
     override val builder = command("set") {
         description = l10n.worlds.borderSetCommandDescription

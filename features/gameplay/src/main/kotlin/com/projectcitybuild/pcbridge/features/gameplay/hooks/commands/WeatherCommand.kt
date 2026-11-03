@@ -6,6 +6,7 @@ import com.projectcitybuild.pcbridge.features.gameplay.domain.data.WeatherMode
 import com.projectcitybuild.pcbridge.features.gameplay.domain.services.WorldWeatherResolution
 import com.projectcitybuild.pcbridge.features.gameplay.domain.services.WorldWeatherService
 import com.projectcitybuild.pcbridge.features.gameplay.gameplayTracer
+import com.projectcitybuild.pcbridge.features.gameplay.hooks.arguments.weather
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandDefinition
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
@@ -23,9 +24,9 @@ class WeatherCommand(
     private val weatherService: WorldWeatherService,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    private val worldArg = Argument.Word("world")
-    private val weatherArg = Argument.Enum("weather", WeatherMode::class.java)
-    private val durationArg = Argument.Integer("seconds", min = 0, max = MAX_DURATION_SECONDS)
+    private val worldArg = Argument.word("world")
+    private val weatherArg = Argument.weather("weather")
+    private val durationArg = Argument.integer("seconds", min = 0, max = MAX_DURATION_SECONDS)
 
     override val builder: CommandDefinition = command("weather") {
         description = l10n.gameplay.weatherCommandDescription
@@ -68,7 +69,7 @@ class WeatherCommand(
             }
         val weather = weatherArg.get(commandContext)
         val seconds = durationArg.getOptional(commandContext)
-        weatherService.set(world, weather == WeatherMode.STORM, seconds)
+        weatherService.set(world, weather == WeatherMode.THUNDER, seconds)
 
         commandContext.source.sender.sendMessage(
             l10n.gameplay.weatherSet(world.name, weather.name.lowercase(), seconds),

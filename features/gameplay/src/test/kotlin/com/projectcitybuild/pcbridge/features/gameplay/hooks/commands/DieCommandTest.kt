@@ -5,11 +5,11 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.verify
 
-class SuicideCommandTest {
+class DieCommandTest {
     @Test
     fun `kills the sender and reports their death`() = runTest {
         val harness = GameplayCommandTestHarness(this)
-        val command = SuicideCommand(harness.plugin, harness.executor)
+        val command = DieCommand(harness.plugin, harness.executor)
 
         harness.execute(command, "suicide")
 

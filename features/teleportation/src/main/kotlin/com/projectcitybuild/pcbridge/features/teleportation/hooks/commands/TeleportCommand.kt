@@ -29,7 +29,7 @@ class TeleportCommand(
 ) : BrigadierCommand {
     override val builder = command("tp") {
         description = "Teleports a player to a target"
-        argument(Argument.OnlinePlayer("player", server)) {
+        argument(Argument.onlinePlayer("player", server)) {
             requires { context ->
                 context.sender.hasPermission(TeleportationPermissions.REQUEST.node) ||
                     context.sender.hasPermission("essentials.tp")
@@ -38,7 +38,7 @@ class TeleportCommand(
                 context.runCommandTracedSafely(teleportationTracer) {
                     application.to(
                         requester = context.source.requirePlayer(),
-                        target = Argument.OnlinePlayer("player", server).get(context),
+                        target = Argument.onlinePlayer("player", server).get(context),
                     )
                 }
             }

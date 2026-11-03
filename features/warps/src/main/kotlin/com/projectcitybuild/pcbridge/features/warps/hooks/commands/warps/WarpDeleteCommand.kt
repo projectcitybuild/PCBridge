@@ -29,14 +29,14 @@ class WarpDeleteCommand(
     override val builder = command("delete") {
         description = "Deletes a warp"
         requiresPermission(WarpsPermissions.MANAGE)
-        argument(Argument.String("name")) {
+        argument(Argument.string("name")) {
             suggestsSuspending(plugin, warpNameSuggester::suggest)
                 .executesSuspending(taskExecutor, ::execute)
         }
     }
 
     private suspend fun execute(context: PaperCommandContext) = context.runCommandTracedSafely(warpsTracer) {
-        val warpName = Argument.String("name").get(context)
+        val warpName = Argument.string("name").get(context)
 
         warpRepository.delete(name = warpName)
 

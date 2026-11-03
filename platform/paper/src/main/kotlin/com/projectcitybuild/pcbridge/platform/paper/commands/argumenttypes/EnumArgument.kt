@@ -14,9 +14,10 @@ import java.util.concurrent.CompletableFuture
 
 class EnumArgument<T : Enum<T>>(
     private val enumClass: Class<T>,
+    private val map: (T) -> String = { it.name },
 ) : CustomArgumentType.Converted<T, String> {
     override fun convert(nativeType: String): T = try {
-        enumClass.enumConstants?.firstOrNull { it.name.equals(nativeType, ignoreCase = true) }
+        enumClass.enumConstants?.firstOrNull { map(it).equals(nativeType, ignoreCase = true) }
             ?: throw IllegalArgumentException("Invalid value: $nativeType")
     } catch (e: IllegalArgumentException) {
         val message =
@@ -34,7 +35,10 @@ class EnumArgument<T : Enum<T>>(
         builder: SuggestionsBuilder,
     ): CompletableFuture<Suggestions> {
         enumClass.enumConstants?.forEach { value ->
-            builder.suggest(value.name)
+            val suggestion = map(value)
+            if (suggestion.startsWith(builder.remaining, ignoreCase = true)) {
+                builder.suggest(suggestion)
+            }
         }
         return builder.buildFuture()
     }

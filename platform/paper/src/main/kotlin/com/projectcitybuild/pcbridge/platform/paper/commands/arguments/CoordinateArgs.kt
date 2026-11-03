@@ -9,11 +9,11 @@ fun CommandBuilder.withCoordinateArgs(
     plugin: Plugin,
     execute: suspend (PaperCommandContext, Double, Double, Double, Float?, Float?) -> Unit,
 ) {
-    val xArg = Argument.Double("x")
-    val yArg = Argument.Double("y")
-    val zArg = Argument.Double("z")
-    val yawArg = Argument.Float("yaw")
-    val pitchArg = Argument.Float("pitch")
+    val xArg = Argument.double("x")
+    val yArg = Argument.double("y")
+    val zArg = Argument.double("z")
+    val yawArg = Argument.float("yaw")
+    val pitchArg = Argument.float("pitch")
 
     argument(xArg) {
         argument(yArg) {

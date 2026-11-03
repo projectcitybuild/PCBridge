@@ -24,10 +24,10 @@ class BuildSetCommand(
     override val builder = command("set") {
         description = "Updates a field on a build"
         requiresPermission(BuildsPermissions.MANAGE)
-        argument(Argument.Integer("id")) {
-            this.argument(Argument.Enum("field", EditableBuildField::class.java)) {
+        argument(Argument.integer("id")) {
+            this.argument(Argument.enumValue("field", EditableBuildField::class.java)) {
                 executesSuspending(taskExecutor, ::execute)
-                this.argument(Argument.GreedyString("value")) {
+                this.argument(Argument.greedyString("value")) {
                     executesSuspending(taskExecutor, ::execute)
                 }
             }
@@ -36,9 +36,9 @@ class BuildSetCommand(
 
     private suspend fun execute(context: PaperCommandContext) = context.runCommandTracedSafely(buildsTracer) {
         val player = context.source.requirePlayer()
-        val field = Argument.Enum("field", EditableBuildField::class.java).get(context)
-        val id = Argument.Integer("id").get(context)
-        val value = Argument.GreedyString("value").getOptional(context) ?: ""
+        val field = Argument.enumValue("field", EditableBuildField::class.java).get(context)
+        val id = Argument.integer("id").get(context)
+        val value = Argument.greedyString("value").getOptional(context) ?: ""
 
         buildRepository.set(
             id = id,

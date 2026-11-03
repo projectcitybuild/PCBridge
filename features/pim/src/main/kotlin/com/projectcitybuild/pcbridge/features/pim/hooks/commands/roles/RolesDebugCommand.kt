@@ -24,7 +24,7 @@ class RolesDebugCommand(
     override val builder = command("debug") {
         description = "Displays role debugging information"
         requiresPermission(PimPermissions.ROLES)
-        argument(Argument.GreedyString("roles")) {
+        argument(Argument.greedyString("roles")) {
             executesSuspending(commandTaskExecutor, ::execute)
         }
     }
@@ -32,7 +32,7 @@ class RolesDebugCommand(
     private suspend fun execute(context: PaperCommandContext) = context.runCommandTracedSafely(pimTracer) {
         val player = context.source.requirePlayer()
 
-        val rolesArg = Argument.GreedyString("roles").get(context)
+        val rolesArg = Argument.greedyString("roles").get(context)
         val roles = rolesArg.split(" ").toSet()
         check(roles.isNotEmpty()) { "No roles specified" }
 

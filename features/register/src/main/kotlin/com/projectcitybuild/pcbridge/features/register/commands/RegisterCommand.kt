@@ -26,7 +26,7 @@ class RegisterCommand(
 
     override val builder = command("register") {
         description = "Creates a new Project City Build account"
-        argument(Argument.GreedyString("email")) {
+        argument(Argument.greedyString("email")) {
             executesSuspending(commandTaskExecutor, ::execute)
         }
         executes { context ->
@@ -37,7 +37,7 @@ class RegisterCommand(
 
     private suspend fun execute(context: PaperCommandContext) = context.runCommandTracedSafely(registerTracer) {
         val player = context.source.requirePlayer()
-        val email = Argument.GreedyString("email").get(context)
+        val email = Argument.greedyString("email").get(context)
 
         registerHttpService.sendCode(
             email = email,

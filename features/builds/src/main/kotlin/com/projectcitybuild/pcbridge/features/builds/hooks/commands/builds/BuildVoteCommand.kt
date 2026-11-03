@@ -27,7 +27,7 @@ class BuildVoteCommand(
     override val builder = command("vote") {
         description = "Votes for a build"
         requiresPermission(BuildsPermissions.VOTE)
-        argument(Argument.GreedyString("name")) {
+        argument(Argument.greedyString("name")) {
             suggestsSuspending(plugin, buildNameSuggester::suggest)
             executesSuspending(taskExecutor, ::execute)
         }
@@ -35,7 +35,7 @@ class BuildVoteCommand(
 
     private suspend fun execute(context: PaperCommandContext) = context.runCommandTracedSafely(buildsTracer) {
         val player = context.source.requirePlayer()
-        val name = Argument.GreedyString("name").get(context)
+        val name = Argument.greedyString("name").get(context)
 
         val build = buildRepository.vote(name = name, player = player)
 

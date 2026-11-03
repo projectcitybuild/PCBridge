@@ -31,9 +31,6 @@ class WorldTimeService(
         ) : SetResult
     }
 
-    fun worldNames(): List<String> = server.worlds
-        .map { it.name } + ALL_WORLDS_SELECTOR
-
     fun set(
         input: String,
         selector: WorldSelector,

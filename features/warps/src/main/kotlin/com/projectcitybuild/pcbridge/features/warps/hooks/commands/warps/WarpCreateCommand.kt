@@ -27,14 +27,14 @@ class WarpCreateCommand(
     override val builder = command("create") {
         description = "Creates a warp at your current location"
         requiresPermission(WarpsPermissions.MANAGE)
-        argument(Argument.String("name")) {
+        argument(Argument.string("name")) {
             executesSuspending(taskExecutor, ::execute)
         }
     }
 
     private suspend fun execute(context: PaperCommandContext) = context.runCommandTracedSafely(warpsTracer) {
         val player = context.source.requirePlayer()
-        val warpName = Argument.String("name").get(context)
+        val warpName = Argument.string("name").get(context)
 
         val warp =
             warpRepository.create(

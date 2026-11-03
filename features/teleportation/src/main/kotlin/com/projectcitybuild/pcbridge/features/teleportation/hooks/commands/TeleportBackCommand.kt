@@ -20,13 +20,13 @@ class TeleportBackCommand(
 ) : BrigadierCommand {
     override val builder = command("back") {
         description = "Returns you to your previous location"
-        argument(Argument.OnlinePlayer("player", server)) {
+        argument(Argument.onlinePlayer("player", server)) {
             requiresPermission(TeleportationPermissions.BACK_OTHERS)
             executesSuspending(plugin) { context ->
                 context.runCommandTracedSafely(teleportationTracer) {
                     application.back(
                         operator = context.source.sender,
-                        target = Argument.OnlinePlayer("player", server).get(context),
+                        target = Argument.onlinePlayer("player", server).get(context),
                     )
                 }
             }

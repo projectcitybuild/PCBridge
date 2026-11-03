@@ -12,13 +12,13 @@ import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.requireP
 import com.projectcitybuild.pcbridge.runtime.commands.runCommandTracedSafely
 import org.bukkit.plugin.Plugin
 
-class SuicideCommand(
+class DieCommand(
     plugin: Plugin,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
     override val builder = command("suicide") {
-        description = l10n.gameplay.suicideCommandDescription
-        requiresPermission(GameplayPermissions.SUICIDE)
+        description = l10n.gameplay.dieCommandDescription
+        requiresPermission(GameplayPermissions.DIE)
         executesSuspending(taskExecutor, ::execute)
     }
 

@@ -26,13 +26,13 @@ class WarnCommand(
     override val builder = command("warn") {
         description = "Issues a warning to a player"
         requiresPermission(WarningsPermissions.MANAGE)
-        argument(Argument.OnlinePlayerName("player", server)) {
+        argument(Argument.onlinePlayerName("player", server)) {
             executesSuspending(taskExecutor, ::execute)
         }
     }
 
     private suspend fun execute(context: PaperCommandContext) = context.runCommandTracedSafely(warningsTracer) {
-        val playerName = Argument.OnlinePlayerName("player", server).get(context)
+        val playerName = Argument.onlinePlayerName("player", server).get(context)
 
         val player = server.onlinePlayer(name = playerName)
         val lookup = player?.uniqueId?.toString() ?: playerName

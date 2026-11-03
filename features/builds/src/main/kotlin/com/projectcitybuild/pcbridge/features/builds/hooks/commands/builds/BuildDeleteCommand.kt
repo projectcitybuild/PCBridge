@@ -27,7 +27,7 @@ class BuildDeleteCommand(
     override val builder = command("delete") {
         description = "Deletes a build"
         requiresPermission(BuildsPermissions.MANAGE)
-        argument(Argument.GreedyString("name")) {
+        argument(Argument.greedyString("name")) {
             suggestsSuspending(plugin, buildNameSuggester::suggest)
             executesSuspending(taskExecutor, ::execute)
         }
@@ -35,7 +35,7 @@ class BuildDeleteCommand(
 
     private suspend fun execute(context: PaperCommandContext) = context.runCommandTracedSafely(buildsTracer) {
         val player = context.source.requirePlayer()
-        val name = Argument.GreedyString("name").get(context)
+        val name = Argument.greedyString("name").get(context)
 
         buildRepository.delete(
             name = name,

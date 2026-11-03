@@ -27,7 +27,7 @@ class BuildMoveCommand(
     override val builder = command("move") {
         description = "Moves a build to a new location"
         requiresPermission(BuildsPermissions.MANAGE)
-        argument(Argument.GreedyString("name")) {
+        argument(Argument.greedyString("name")) {
             suggestsSuspending(plugin, buildNameSuggester::suggest)
             executesSuspending(taskExecutor, ::execute)
         }
@@ -35,7 +35,7 @@ class BuildMoveCommand(
 
     private suspend fun execute(context: PaperCommandContext) = context.runCommandTracedSafely(buildsTracer) {
         val player = context.source.requirePlayer()
-        val name = Argument.GreedyString("name").get(context)
+        val name = Argument.greedyString("name").get(context)
 
         val location = player.location
         val build =

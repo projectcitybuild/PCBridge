@@ -26,13 +26,13 @@ class BanCommand(
     override val builder = command("ban") {
         description = "Bans a player from the server"
         requiresPermission(BansPermissions.MANAGE)
-        argument(Argument.OnlinePlayerName("player", server)) {
+        argument(Argument.onlinePlayerName("player", server)) {
             executesSuspending(taskExecutor, ::execute)
         }
     }
 
     private suspend fun execute(context: PaperCommandContext) = context.runCommandTracedSafely(bansTracer) {
-        val inputPlayerName = Argument.OnlinePlayerName("player", server).get(context)
+        val inputPlayerName = Argument.onlinePlayerName("player", server).get(context)
 
         val playerName =
             inputPlayerName

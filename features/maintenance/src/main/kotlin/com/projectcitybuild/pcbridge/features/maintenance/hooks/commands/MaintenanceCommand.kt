@@ -30,7 +30,7 @@ class MaintenanceCommand(
     override val builder = command("maintenance") {
         description = "Enables or disables server maintenance mode"
         requiresPermission(MaintenancePermissions.MANAGE)
-        argument(Argument.OnOff("enabled")) {
+        argument(Argument.onOff("enabled")) {
             executesSuspending(taskExecutor, ::toggle)
         }
         executesSuspending(taskExecutor, ::status)
@@ -39,7 +39,7 @@ class MaintenanceCommand(
     private suspend fun toggle(context: PaperCommandContext) = context.runCommandTracedSafely(maintenanceTracer) {
         val sender = context.source.sender
 
-        val desiredState = Argument.OnOff("enabled").get(context)
+        val desiredState = Argument.onOff("enabled").get(context)
         val currentState = store.state(maintenanceStateKey).enabled
 
         if (currentState == desiredState) {

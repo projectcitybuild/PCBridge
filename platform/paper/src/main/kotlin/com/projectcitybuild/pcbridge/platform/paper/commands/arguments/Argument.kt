@@ -12,111 +12,97 @@ import com.projectcitybuild.pcbridge.platform.paper.commands.argumenttypes.Onlin
 import io.papermc.paper.command.brigadier.argument.ArgumentTypes
 import org.bukkit.GameMode
 import org.bukkit.Server
+import org.bukkit.World
 import org.bukkit.entity.Player
 
 class Argument private constructor() {
-    class String(
-        name: kotlin.String,
-    ) : CommandArgument<kotlin.String>(
+    companion object {
+        fun string(name: String) = CommandArgument(
             name = name,
             type = StringArgumentType.string(),
-            valueClass = kotlin.String::class.java,
+            valueClass = String::class.java,
         )
 
-    class Word(
-        name: kotlin.String,
-    ) : CommandArgument<kotlin.String>(
+        fun word(name: String) = CommandArgument(
             name = name,
             type = StringArgumentType.word(),
-            valueClass = kotlin.String::class.java,
+            valueClass = String::class.java,
         )
 
-    class GreedyString(
-        name: kotlin.String,
-    ) : CommandArgument<kotlin.String>(
+        fun greedyString(name: String) = CommandArgument(
             name = name,
             type = StringArgumentType.greedyString(),
-            valueClass = kotlin.String::class.java,
+            valueClass = String::class.java,
         )
 
-    class Integer(
-        name: kotlin.String,
-        min: Int = Int.MIN_VALUE,
-        max: Int = Int.MAX_VALUE,
-    ) : CommandArgument<Int>(
+        fun integer(
+            name: String,
+            min: Int = Int.MIN_VALUE,
+            max: Int = Int.MAX_VALUE,
+        ) = CommandArgument(
             name = name,
             type = IntegerArgumentType.integer(min, max),
             valueClass = Int::class.javaObjectType,
         )
 
-    class Float(
-        name: kotlin.String,
-        min: kotlin.Float = -kotlin.Float.MAX_VALUE,
-        max: kotlin.Float = kotlin.Float.MAX_VALUE,
-    ) : CommandArgument<kotlin.Float>(
+        fun float(
+            name: String,
+            min: Float = -Float.MAX_VALUE,
+            max: Float = Float.MAX_VALUE,
+        ) = CommandArgument(
             name = name,
             type = FloatArgumentType.floatArg(min, max),
-            valueClass = kotlin.Float::class.javaObjectType,
+            valueClass = Float::class.javaObjectType,
         )
 
-    class Double(
-        name: kotlin.String,
-        min: kotlin.Double = -kotlin.Double.MAX_VALUE,
-        max: kotlin.Double = kotlin.Double.MAX_VALUE,
-    ) : CommandArgument<kotlin.Double>(
+        fun double(
+            name: String,
+            min: Double = -Double.MAX_VALUE,
+            max: Double = Double.MAX_VALUE,
+        ) = CommandArgument(
             name = name,
             type = DoubleArgumentType.doubleArg(min, max),
-            valueClass = kotlin.Double::class.javaObjectType,
+            valueClass = Double::class.javaObjectType,
         )
 
-    class OnOff(
-        name: kotlin.String,
-    ) : CommandArgument<Boolean>(
+        fun onOff(name: String) = CommandArgument(
             name = name,
             type = OnOffArgument(),
             valueClass = Boolean::class.javaObjectType,
         )
 
-    class OnlinePlayerName(
-        name: kotlin.String,
-        server: Server,
-    ) : CommandArgument<kotlin.String>(
+        fun onlinePlayerName(
+            name: String,
+            server: Server,
+        ) = CommandArgument(
             name = name,
             type = OnlinePlayerNameArgument(server),
-            valueClass = kotlin.String::class.java,
+            valueClass = String::class.java,
         )
 
-    class OnlinePlayer(
-        name: kotlin.String,
-        server: Server,
-    ) : CommandArgument<Player>(
+        fun onlinePlayer(
+            name: String,
+            server: Server,
+        ) = CommandArgument(
             name = name,
             type = OnlinePlayerArgument(server),
             valueClass = Player::class.java,
         )
 
-    class Enum<T : kotlin.Enum<T>>(
-        name: kotlin.String,
-        enumClass: Class<T>,
-    ) : CommandArgument<T>(
+        fun <T : Enum<T>> enumValue(
+            name: String,
+            enumClass: Class<T>,
+            map: (T) -> String = { it.name },
+        ) = CommandArgument(
             name = name,
-            type = EnumArgument(enumClass),
+            type = EnumArgument(enumClass, map),
             valueClass = enumClass,
         )
 
-    class World(
-        name: kotlin.String,
-    ) : CommandArgument<org.bukkit.World>(
+        fun world(name: String) = CommandArgument(
             name = name,
             type = ArgumentTypes.world(),
-            valueClass = org.bukkit.World::class.java,
+            valueClass = World::class.java,
         )
-
-    class GameMode(
-        name: kotlin.String,
-    ) : CommandArgument<org.bukkit.GameMode>(
-            name = name,
-            type = EnumArgument(org.bukkit.GameMode::class.java),
-            valueClass = org.bukkit.GameMode::class.java,
-        )
+    }
 }

@@ -27,7 +27,7 @@ class WarpMoveCommand(
     override val builder = command("move") {
         description = "Moves a warp to your current location"
         requiresPermission(WarpsPermissions.MANAGE)
-        argument(Argument.String("name")) {
+        argument(Argument.string("name")) {
             suggestsSuspending(plugin, warpNameSuggester::suggest)
                 .executesSuspending(taskExecutor, ::execute)
         }
@@ -35,7 +35,7 @@ class WarpMoveCommand(
 
     private suspend fun execute(context: PaperCommandContext) = context.runCommandTracedSafely(warpsTracer) {
         val player = context.source.requirePlayer()
-        val warpName = Argument.String("name").get(context)
+        val warpName = Argument.string("name").get(context)
 
         warpRepository.move(
             name = warpName,

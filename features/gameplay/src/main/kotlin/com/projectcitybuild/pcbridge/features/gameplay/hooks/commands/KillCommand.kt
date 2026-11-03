@@ -20,7 +20,7 @@ class KillCommand(
     server: Server,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    private val playerArg = Argument.OnlinePlayer("player", server)
+    private val playerArg = Argument.onlinePlayer("player", server)
 
     override val builder = command("kill") {
         description = l10n.gameplay.killCommandDescription

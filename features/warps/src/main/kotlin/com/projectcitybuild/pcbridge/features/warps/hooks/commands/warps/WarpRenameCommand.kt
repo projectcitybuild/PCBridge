@@ -29,7 +29,7 @@ class WarpRenameCommand(
     override val builder = command("rename") {
         description = "Renames a warp"
         requiresPermission(WarpsPermissions.MANAGE)
-        argument(Argument.String("name")) {
+        argument(Argument.string("name")) {
             suggestsSuspending(plugin, warpNameSuggester::suggest)
                 .executesSuspending(taskExecutor, ::execute)
         }
@@ -37,7 +37,7 @@ class WarpRenameCommand(
 
     private suspend fun execute(context: PaperCommandContext) = context.runCommandTracedSafely(warpsTracer) {
         val player = context.source.requirePlayer()
-        val name = Argument.String("name").get(context)
+        val name = Argument.string("name").get(context)
 
         val warp = warpRepository.get(name)
         checkNotNull(warp) { l10n.warps.errorWarpNotFound(name) }

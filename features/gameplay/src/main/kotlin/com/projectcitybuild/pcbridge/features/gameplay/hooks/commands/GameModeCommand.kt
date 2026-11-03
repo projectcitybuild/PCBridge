@@ -3,6 +3,7 @@ package com.projectcitybuild.pcbridge.features.gameplay.hooks.commands
 import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.features.gameplay.GameplayPermissions
 import com.projectcitybuild.pcbridge.features.gameplay.gameplayTracer
+import com.projectcitybuild.pcbridge.features.gameplay.hooks.arguments.gameMode
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
@@ -20,8 +21,8 @@ class GameModeCommand(
     server: Server,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    private val playerArg = Argument.OnlinePlayer("player", server)
-    private val modeArg = Argument.GameMode("mode")
+    private val playerArg = Argument.onlinePlayer("player", server)
+    private val modeArg = Argument.gameMode("mode", map = { it.name.lowercase() })
 
     override val builder = command("gamemode") {
         description = l10n.gameplay.gameModeCommandDescription

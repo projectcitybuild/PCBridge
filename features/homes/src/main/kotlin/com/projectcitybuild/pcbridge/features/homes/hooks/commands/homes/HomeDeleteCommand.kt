@@ -24,7 +24,7 @@ class HomeDeleteCommand(
 ) : BrigadierCommand {
     override val builder = command("delete") {
         description = "Deletes a saved home"
-        argument(Argument.GreedyString("name")) {
+        argument(Argument.greedyString("name")) {
             suggestsSuspending(plugin, homeNameSuggester::suggest)
             executesSuspending(taskExecutor, ::execute)
         }
@@ -32,7 +32,7 @@ class HomeDeleteCommand(
 
     private suspend fun execute(context: PaperCommandContext) = context.runCommandTracedSafely(homesTracer) {
         val player = context.source.requirePlayer()
-        val name = Argument.GreedyString("name").get(context)
+        val name = Argument.greedyString("name").get(context)
 
         homeRepository.delete(
             player = player,

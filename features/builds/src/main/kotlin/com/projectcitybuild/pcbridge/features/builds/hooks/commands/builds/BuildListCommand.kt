@@ -25,14 +25,14 @@ class BuildListCommand(
     override val builder = command("list") {
         description = "Lists available builds"
         requiresPermission(BuildsPermissions.TELEPORT)
-        argument(Argument.Integer("page")) {
+        argument(Argument.integer("page")) {
             executesSuspending(taskExecutor, ::execute)
         }
         executesSuspending(taskExecutor, ::execute)
     }
 
     private suspend fun execute(context: PaperCommandContext) = context.runCommandTracedSafely(buildsTracer) {
-        val pageNumber = Argument.Integer("page").getOptional(context) ?: 1
+        val pageNumber = Argument.integer("page").getOptional(context) ?: 1
         val builds = buildRepository.all(pageNumber)
         val totalPages = ceil(builds.total.toDouble() / builds.perPage.toDouble()).toInt()
         val sender = context.source.sender

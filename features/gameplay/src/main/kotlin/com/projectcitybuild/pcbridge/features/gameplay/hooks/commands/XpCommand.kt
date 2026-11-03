@@ -4,6 +4,7 @@ import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.features.gameplay.GameplayPermissions
 import com.projectcitybuild.pcbridge.features.gameplay.gameplayTracer
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
+import com.projectcitybuild.pcbridge.platform.paper.commands.CommandArgument
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandBuilder
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandDefinition
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
@@ -23,9 +24,9 @@ class XpCommand(
     server: Server,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    private val playerArg = Argument.OnlinePlayer("player", server)
-    private val amountArg = Argument.Integer("amount", min = 0)
-    private val legacyAmountArg = Argument.Integer("amount")
+    private val playerArg = Argument.onlinePlayer("player", server)
+    private val amountArg = Argument.integer("amount", min = 0)
+    private val legacyAmountArg = Argument.integer("amount")
 
     override val builder: CommandDefinition = command("xp") {
         description = l10n.gameplay.xpCommandDescription
@@ -65,7 +66,7 @@ class XpCommand(
 
     private suspend fun execute(
         context: PaperCommandContext,
-        amount: Argument.Integer?,
+        amount: CommandArgument<Int>?,
         operation: Operation,
     ) = context.runCommandTracedSafely(gameplayTracer) { commandContext ->
         val target = playerArg.getOptional(commandContext) ?: commandContext.source.requirePlayer()

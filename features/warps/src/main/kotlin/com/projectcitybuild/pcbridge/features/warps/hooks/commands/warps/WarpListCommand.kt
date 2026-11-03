@@ -26,14 +26,14 @@ class WarpListCommand(
     override val builder = command("list") {
         description = "Lists available warps"
         requiresPermission(WarpsPermissions.TELEPORT)
-        argument(Argument.Integer("page", min = 1)) {
+        argument(Argument.integer("page", min = 1)) {
             executesSuspending(taskExecutor, ::execute)
         }
         executesSuspending(taskExecutor, ::execute)
     }
 
     private suspend fun execute(context: PaperCommandContext) = context.runCommandTracedSafely(warpsTracer) {
-        val pageNumber = Argument.Integer("page", min = 1).getOptional(context) ?: 1
+        val pageNumber = Argument.integer("page", min = 1).getOptional(context) ?: 1
         val sender = context.source.sender
 
         val warps =

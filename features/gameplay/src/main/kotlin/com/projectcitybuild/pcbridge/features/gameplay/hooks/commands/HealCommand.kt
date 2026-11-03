@@ -21,7 +21,7 @@ class HealCommand(
     server: Server,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    private val playerArg = Argument.OnlinePlayer("player", server)
+    private val playerArg = Argument.onlinePlayer("player", server)
 
     override val builder = command("heal") {
         description = l10n.gameplay.healCommandDescription

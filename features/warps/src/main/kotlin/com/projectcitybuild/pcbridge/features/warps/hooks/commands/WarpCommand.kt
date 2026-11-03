@@ -34,7 +34,7 @@ class WarpCommand(
     override val builder = command("warp") {
         description = "Teleports to a warp"
         requiresPermission(WarpsPermissions.TELEPORT)
-        argument(Argument.String("name")) {
+        argument(Argument.string("name")) {
             suggestsSuspending(plugin, warpNameSuggester::suggest)
                 .executesSuspending(taskExecutor, ::execute)
         }
@@ -42,7 +42,7 @@ class WarpCommand(
 
     private suspend fun execute(context: PaperCommandContext) = context.runCommandTracedSafely(warpsTracer) {
         val player = context.source.requirePlayer()
-        val warpName = Argument.String("name").get(context)
+        val warpName = Argument.string("name").get(context)
 
         val warp = warpRepository.get(name = warpName)
         checkNotNull(warp) { l10n.warps.errorWarpNotFound(warpName) }

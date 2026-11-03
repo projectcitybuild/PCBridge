@@ -22,7 +22,7 @@ class TeleportHereCommand(
     override val builder = command("here") {
         description = "Teleports a target player to you"
         requiresPermission(TeleportationPermissions.OTHERS)
-        argument(Argument.OnlinePlayer("player", server)) {
+        argument(Argument.onlinePlayer("player", server)) {
             withTeleportFlags(plugin) { context, flags -> execute(context, flags) }
         }
     }
@@ -33,7 +33,7 @@ class TeleportHereCommand(
     ) = context.runCommandTracedSafely(teleportationTracer) {
         application.here(
             operator = context.source.requirePlayer(),
-            target = Argument.OnlinePlayer("player", server).get(context),
+            target = Argument.onlinePlayer("player", server).get(context),
             flags = flags,
         )
     }

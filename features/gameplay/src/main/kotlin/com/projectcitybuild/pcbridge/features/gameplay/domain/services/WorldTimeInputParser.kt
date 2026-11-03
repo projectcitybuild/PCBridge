@@ -1,6 +1,6 @@
 package com.projectcitybuild.pcbridge.features.gameplay.domain.services
 
-import com.projectcitybuild.pcbridge.platform.paper.data.GameTimeAlias
+import com.projectcitybuild.pcbridge.features.gameplay.domain.data.GameTimeAlias
 import java.util.Locale
 
 class WorldTimeInputParser {

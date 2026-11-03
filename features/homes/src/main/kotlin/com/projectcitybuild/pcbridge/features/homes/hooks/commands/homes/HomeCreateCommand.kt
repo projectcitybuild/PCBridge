@@ -21,14 +21,14 @@ class HomeCreateCommand(
 ) : BrigadierCommand {
     override val builder = command("create") {
         description = "Creates a home at your current location"
-        argument(Argument.GreedyString("name")) {
+        argument(Argument.greedyString("name")) {
             executesSuspending(taskExecutor, ::execute)
         }
     }
 
     private suspend fun execute(context: PaperCommandContext) = context.runCommandTracedSafely(homesTracer) {
         val player = context.source.requirePlayer()
-        val name = Argument.GreedyString("name").get(context)
+        val name = Argument.greedyString("name").get(context)
 
         val home =
             homeRepository.create(

@@ -24,14 +24,14 @@ class BuildCreateCommand(
     override val builder = command("create") {
         description = "Creates a new build"
         requiresPermission(BuildsPermissions.MANAGE)
-        argument(Argument.GreedyString("name")) {
+        argument(Argument.greedyString("name")) {
             executesSuspending(taskExecutor, ::execute)
         }
     }
 
     private suspend fun execute(context: PaperCommandContext) = context.runCommandTracedSafely(buildsTracer) {
         val player = context.source.requirePlayer()
-        val name = Argument.GreedyString("name").get(context)
+        val name = Argument.greedyString("name").get(context)
 
         val location = player.location
         val build =

@@ -37,8 +37,8 @@ class CommandDslTest {
 
     @Test
     fun `argument descriptor declares and retrieves a typed argument`() {
-        val target = Argument.Integer("target")
-        val value = Argument.Integer("value", min = 1, max = 20)
+        val target = Argument.integer("target")
+        val value = Argument.integer("value", min = 1, max = 20)
         var actualValue: Int? = null
         val definition = command("test") {
             argument(target) {
@@ -61,7 +61,7 @@ class CommandDslTest {
 
     @Test
     fun `argument descriptor returns null when optional argument is absent`() {
-        val value = Argument.Integer("value")
+        val value = Argument.integer("value")
         val actualValues = mutableListOf<Int?>()
         val definition = command("test") {
             executes { context ->

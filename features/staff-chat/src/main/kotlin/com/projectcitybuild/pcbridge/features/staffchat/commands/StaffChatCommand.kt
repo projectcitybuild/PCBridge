@@ -30,14 +30,14 @@ class StaffChatCommand(
     override val builder = command("a") {
         description = "Sends a message to staff chat"
         requiresPermission(StaffChatPermissions.CHANNEL)
-        argument(Argument.GreedyString("message")) {
+        argument(Argument.greedyString("message")) {
             executesSuspending(commandTaskExecutor, ::execute)
         }
     }
 
     suspend fun execute(context: PaperCommandContext) = context.runCommandTracedSafely(staffChatTracer) {
         val player = context.source.requirePlayer()
-        val rawMessage = Argument.GreedyString("message").get(context)
+        val rawMessage = Argument.greedyString("message").get(context)
 
         val format = remoteConfig.latest.config.chat.staffChannel
         val decoratedMessage = decorators.pipe(

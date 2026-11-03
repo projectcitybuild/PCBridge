@@ -18,12 +18,12 @@ class TeleportAcceptCommand(
 ) : BrigadierCommand {
     override val builder = command("accept") {
         description = "Accepts a pending teleport request"
-        argument(Argument.OnlinePlayer("requester", server)) {
+        argument(Argument.onlinePlayer("requester", server)) {
             executesSuspending(plugin) { context ->
                 context.runCommandTracedSafely(teleportationTracer) {
                     application.accept(
                         target = context.source.requirePlayer(),
-                        requesterId = Argument.OnlinePlayer("requester", server).get(context).uniqueId,
+                        requesterId = Argument.onlinePlayer("requester", server).get(context).uniqueId,
                     )
                 }
             }

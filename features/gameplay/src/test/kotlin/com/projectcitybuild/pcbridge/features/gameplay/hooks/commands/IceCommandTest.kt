@@ -5,15 +5,15 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.verify
 
-class FreezeCommandTest {
+class IceCommandTest {
     @Test
     fun `freezes the target for the requested duration`() = runTest {
         val harness = GameplayCommandTestHarness(this)
-        val command = FreezeCommand(harness.plugin, harness.server, harness.executor)
+        val command = IceCommand(harness.plugin, harness.server, harness.executor)
 
         harness.execute(command, "freeze Alex 7")
 
         verify(harness.target).freezeTicks = 140
-        verify(harness.sender).sendMessage(l10n.gameplay.playerFrozen("Alex", 7))
+        verify(harness.sender).sendMessage(l10n.gameplay.playerIced("Alex", 7))
     }
 }

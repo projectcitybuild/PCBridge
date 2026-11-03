@@ -24,8 +24,8 @@ class KickCommand(
     override val builder = command("kick") {
         description = "Kicks a player from the server"
         requiresPermission(ModeratePermissions.MODERATE)
-        argument(Argument.OnlinePlayer("player", plugin.server)) {
-            argument(Argument.GreedyString("reason")) {
+        argument(Argument.onlinePlayer("player", plugin.server)) {
+            argument(Argument.greedyString("reason")) {
                 executesSuspending(taskExecutor, ::execute)
             }
             executesSuspending(taskExecutor, ::execute)
@@ -33,8 +33,8 @@ class KickCommand(
     }
 
     private suspend fun execute(context: PaperCommandContext) = context.runCommandTracedSafely(moderateTracer) {
-        val player = Argument.OnlinePlayer("player", plugin.server).get(context)
-        val reason = Argument.GreedyString("reason").getOptional(context)
+        val player = Argument.onlinePlayer("player", plugin.server).get(context)
+        val reason = Argument.greedyString("reason").getOptional(context)
 
         val message = reason?.let { Component.text(it) }
             ?: l10n.moderation.kickedFromServer

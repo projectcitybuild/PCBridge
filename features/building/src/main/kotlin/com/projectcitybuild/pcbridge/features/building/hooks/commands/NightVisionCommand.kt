@@ -35,7 +35,7 @@ class NightVisionCommand(
     override val builder = command("nv") {
         description = "Toggles night-vision mode"
         requiresPermission(BuildingPermissions.NIGHT_VISION)
-        argument(Argument.OnOff("enabled")) {
+        argument(Argument.onOff("enabled")) {
             executesSuspending(commandTaskExecutor, ::execute)
         }
         executesSuspending(commandTaskExecutor, ::execute)
@@ -46,7 +46,7 @@ class NightVisionCommand(
 
         val desiredState =
             runCatching {
-                Argument.OnOff("enabled").get(context)
+                Argument.onOff("enabled").get(context)
             }.getOrNull()
 
         val toggleOn =

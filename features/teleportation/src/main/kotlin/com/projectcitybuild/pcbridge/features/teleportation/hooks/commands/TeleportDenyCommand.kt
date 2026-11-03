@@ -18,12 +18,12 @@ class TeleportDenyCommand(
 ) : BrigadierCommand {
     override val builder = command("deny") {
         description = "Declines a pending teleport request"
-        argument(Argument.OnlinePlayer("requester", server)) {
+        argument(Argument.onlinePlayer("requester", server)) {
             executesSuspending(plugin) { context ->
                 context.runCommandTracedSafely(teleportationTracer) {
                     application.deny(
                         context.source.requirePlayer(),
-                        Argument.OnlinePlayer("requester", server).get(context).uniqueId,
+                        Argument.onlinePlayer("requester", server).get(context).uniqueId,
                     )
                 }
             }

@@ -26,7 +26,7 @@ class TeleportAllCommand(
                 execute(context, targetArgument = null, flags = flags)
             }
         }
-        argument(Argument.OnlinePlayer("target", server)) {
+        argument(Argument.onlinePlayer("target", server)) {
             withTeleportFlags(plugin) { context, flags ->
                 execute(context, "target", flags)
             }
@@ -39,7 +39,7 @@ class TeleportAllCommand(
         flags: TeleportFlags,
     ) = context.runCommandTracedSafely(teleportationTracer) {
         val target = targetArgument?.let {
-            Argument.OnlinePlayer(it, server).get(context)
+            Argument.onlinePlayer(it, server).get(context)
         }
         application.all(
             operator = context.source.sender,

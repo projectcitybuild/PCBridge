@@ -6,9 +6,20 @@ import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.suggestion.Suggestions
 import com.mojang.brigadier.suggestion.SuggestionsBuilder
 import com.projectcitybuild.pcbridge.features.gameplay.domain.data.WorldSelector
+import com.projectcitybuild.pcbridge.platform.paper.commands.CommandArgument
+import com.projectcitybuild.pcbridge.platform.paper.commands.arguments.Argument
 import io.papermc.paper.command.brigadier.argument.CustomArgumentType
 import org.bukkit.Server
 import java.util.concurrent.CompletableFuture
+
+fun Argument.Companion.worldSelector(
+    name: String,
+    server: Server,
+): CommandArgument<WorldSelector> = CommandArgument(
+    name = name,
+    type = WorldSelectorArgumentParser(server),
+    valueClass = WorldSelector::class.java,
+)
 
 class WorldSelectorArgumentParser(
     private val server: Server,

@@ -5,8 +5,8 @@ import com.projectcitybuild.pcbridge.features.gameplay.GameplayPermissions
 import com.projectcitybuild.pcbridge.features.gameplay.domain.data.WorldSelector
 import com.projectcitybuild.pcbridge.features.gameplay.domain.services.WorldTimeService
 import com.projectcitybuild.pcbridge.features.gameplay.gameplayTracer
-import com.projectcitybuild.pcbridge.features.gameplay.hooks.arguments.GameTimeArgument
-import com.projectcitybuild.pcbridge.features.gameplay.hooks.arguments.WorldSelectorArgument
+import com.projectcitybuild.pcbridge.features.gameplay.hooks.arguments.gameTime
+import com.projectcitybuild.pcbridge.features.gameplay.hooks.arguments.worldSelector
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
@@ -22,20 +22,18 @@ class TimeCommand(
     private val timeService: WorldTimeService,
     private val taskExecutor: CommandTaskExecutor,
 ) : BrigadierCommand {
-    private val timeArg = GameTimeArgument(
-        "time",
-        allowFixedTime = false,
-        suggestionsAfterTime = timeService::worldNames,
-    )
-    private val worldArg = Argument.World(name = "world")
-    private val worldSelectorArg = WorldSelectorArgument(name = "world", server)
+    private val timeArg = Argument.gameTime("time")
+    private val worldArg = Argument.world(name = "world")
+    private val worldSelectorArg = Argument.worldSelector(name = "world", server)
 
     override val builder = command("time") {
         description = l10n.gameplay.timeCommandDescription
         requiresPermission(GameplayPermissions.TIME)
         executesSuspending(taskExecutor, ::getTime)
-        argument(worldArg) {
-            executesSuspending(taskExecutor, ::getTime)
+        literal("get") {
+            argument(worldArg) {
+                executesSuspending(taskExecutor, ::getTime)
+            }
         }
         argument(timeArg) {
             executesSuspending(taskExecutor, ::setTime)

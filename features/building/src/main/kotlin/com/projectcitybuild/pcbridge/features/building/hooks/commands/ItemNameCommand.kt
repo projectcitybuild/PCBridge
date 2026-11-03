@@ -27,7 +27,7 @@ class ItemNameCommand(
     override val builder = command("itemname") {
         description = "Renames the item in your primary hand"
         requiresPermission(BuildingPermissions.ITEM_RENAME)
-        argument(Argument.GreedyString("name")) {
+        argument(Argument.greedyString("name")) {
             executesSuspending(commandTaskExecutor, ::execute)
         }
     }
@@ -38,7 +38,7 @@ class ItemNameCommand(
         val itemStack = player.inventory.itemInMainHand
         check(itemStack.type != Material.AIR) { l10n.building.errorNoItemToRename }
 
-        val rawName = Argument.GreedyString("name").get(context)
+        val rawName = Argument.greedyString("name").get(context)
         val name = LegacyComponentSerializer.legacyAmpersand().deserialize(rawName)
         val itemMeta = itemStack.itemMeta
         itemMeta.displayName(name)

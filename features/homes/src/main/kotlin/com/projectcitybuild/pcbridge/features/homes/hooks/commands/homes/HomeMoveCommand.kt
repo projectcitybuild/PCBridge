@@ -24,7 +24,7 @@ class HomeMoveCommand(
 ) : BrigadierCommand {
     override val builder = command("move") {
         description = "Moves a saved home to your current location"
-        argument(Argument.GreedyString("name")) {
+        argument(Argument.greedyString("name")) {
             suggestsSuspending(plugin, homeNameSuggester::suggest)
             executesSuspending(taskExecutor, ::execute)
         }
@@ -32,7 +32,7 @@ class HomeMoveCommand(
 
     private suspend fun execute(context: PaperCommandContext) = context.runCommandTracedSafely(homesTracer) {
         val player = context.source.requirePlayer()
-        val name = Argument.GreedyString("name").get(context)
+        val name = Argument.greedyString("name").get(context)
 
         val home =
             homeRepository.move(
