@@ -1,0 +1,22 @@
+{
+  "SURVIVAL": {
+    "enderChestContents": {
+      "0": "AAECAwQ="
+    },
+    "stats": {
+      "minecraft:jump": 12,
+      "unknown_stat": 999
+    }
+  },
+  "ADVENTURE": {
+    "inventoryContents": {
+      "1": {
+        "==": "org.bukkit.inventory.ItemStack",
+        "v": 4189,
+        "type": "COMPASS",
+        "amount": 1
+      }
+    }
+  },
+  "newerVersionField": ["keep", "all", "values"]
+}

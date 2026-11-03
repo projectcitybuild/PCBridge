@@ -1,0 +1,32 @@
+{
+  "SURVIVAL": {
+    "inventoryContents": {
+      "0": "AAECAwQ=",
+      "40": "AQIDBA=="
+    },
+    "armorContents": {
+      "0": {
+        "==": "org.bukkit.inventory.ItemStack",
+        "v": 4189,
+        "type": "DIAMOND_HELMET",
+        "amount": 1
+      }
+    },
+    "offHandItem": "AQIDBA==",
+    "stats": {
+      "minecraft:custom": 9,
+      "pcbridge_future_stat": 17
+    },
+    "futureShare": {
+      "kept": true
+    }
+  },
+  "CREATIVE": {
+    "inventoryContents": {
+      "0": "AQID"
+    }
+  },
+  "futureProfileType": {
+    "retained": "yes"
+  }
+}
