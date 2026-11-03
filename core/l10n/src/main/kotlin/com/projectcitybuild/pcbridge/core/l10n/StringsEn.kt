@@ -73,6 +73,8 @@ class StringsEn {
     val tablist = Tablist()
     val maintenance = Maintenance()
     val worlds = Worlds()
+    val portals = Portals()
+    val inventories = Inventories()
 
     inner class Pagination {
         val pagePrevButton = mm("<${Hex.LINK}>[← Prev]</${Hex.LINK}>")
@@ -1155,6 +1157,8 @@ class StringsEn {
 
     inner class Worlds {
         val worldsCommandDescription = "Manages world settings"
+        val worldLifecycleCommandDescription = "Manages registered worlds"
+        val worldDeleteCommandDescription = "Deletes a world after explicit confirmation"
         val borderCommandDescription = "Sets and enforces a world's border"
         val borderSetCommandDescription = "Sets a square, circle, or rectangle border with an optional center"
         val borderFillCommandDescription = "Generates missing chunks inside the world border"
@@ -1163,6 +1167,25 @@ class StringsEn {
         val borderNotConfigured = mm("<${Hex.ERROR}>No world border is configured for this world.</${Hex.ERROR}>")
         val borderCleared = mm("<${Hex.SUCCESS}>World border cleared.</${Hex.SUCCESS}>")
         val borderReached = mm("<${Hex.ERROR}>You have reached the world border.</${Hex.ERROR}>")
+
+        fun worldList(names: String) = mm(
+            "<${Hex.SECONDARY}>Registered worlds: <${Hex.DYNAMIC}><names></${Hex.DYNAMIC}></${Hex.SECONDARY}>",
+            Placeholder.unparsed("names", names),
+        )
+
+        fun worldOperationSucceeded(
+            operation: String,
+            world: String,
+        ) = mm(
+            "<${Hex.SUCCESS}><operation> world <${Hex.DYNAMIC}><world></${Hex.DYNAMIC}>.</${Hex.SUCCESS}>",
+            Placeholder.unparsed("operation", operation),
+            Placeholder.unparsed("world", world),
+        )
+
+        fun worldOperationFailed(reason: String) = mm(
+            "<${Hex.ERROR}>World operation failed: <${Hex.DYNAMIC}><reason></${Hex.DYNAMIC}></${Hex.ERROR}>",
+            Placeholder.unparsed("reason", reason),
+        )
 
         fun borderStatus(
             shape: String,
@@ -1333,5 +1356,85 @@ class StringsEn {
         val fillFailed = mm("<${Hex.ERROR}>World border fill failed. See the server log for details.</${Hex.ERROR}>")
         val fillNoActiveJob = mm("<${Hex.ERROR}>There is no world border fill running in this world.</${Hex.ERROR}>")
         val fillCancelRequested = mm("<${Hex.WARNING}>World border fill cancellation requested.</${Hex.WARNING}>")
+    }
+
+    inner class Portals {
+        val commandDescription = "Manages Nether and End portal links"
+
+        fun linkCreated(
+            source: String,
+            type: String,
+            destination: String,
+            bidirectional: Boolean,
+        ) = mm(
+            "<${Hex.SUCCESS}>Linked <${Hex.DYNAMIC}><source></${Hex.DYNAMIC}> " +
+                "<${Hex.DYNAMIC}><type></${Hex.DYNAMIC}> portals to " +
+                "<${Hex.DYNAMIC}><destination></${Hex.DYNAMIC}>" +
+                if (bidirectional) " in both directions.</${Hex.SUCCESS}>" else ".</${Hex.SUCCESS}>",
+            Placeholder.unparsed("source", source),
+            Placeholder.unparsed("type", type),
+            Placeholder.unparsed("destination", destination),
+        )
+
+        fun linkRemoved(source: String, type: String) = mm(
+            "<${Hex.SUCCESS}>Removed the <${Hex.DYNAMIC}><type></${Hex.DYNAMIC}> portal link for " +
+                "<${Hex.DYNAMIC}><source></${Hex.DYNAMIC}>.</${Hex.SUCCESS}>",
+            Placeholder.unparsed("source", source),
+            Placeholder.unparsed("type", type),
+        )
+
+        fun noLink(source: String, type: String) = mm(
+            "<${Hex.SECONDARY}>No <${Hex.DYNAMIC}><type></${Hex.DYNAMIC}> portal link is configured for " +
+                "<${Hex.DYNAMIC}><source></${Hex.DYNAMIC}>.</${Hex.SECONDARY}>",
+            Placeholder.unparsed("source", source),
+            Placeholder.unparsed("type", type),
+        )
+
+        fun links(list: String) = mm(
+            "<${Hex.SECONDARY}>Portal links: <${Hex.DYNAMIC}><links></${Hex.DYNAMIC}></${Hex.SECONDARY}>",
+            Placeholder.unparsed("links", list),
+        )
+
+        fun destinationUnavailable(world: String) = mm(
+            "<${Hex.ERROR}>Portal destination <${Hex.DYNAMIC}><world></${Hex.DYNAMIC}> is unavailable.</${Hex.ERROR}>",
+            Placeholder.unparsed("world", world),
+        )
+
+        fun noDestination(world: String) = mm(
+            "<${Hex.WARNING}>No portal destination is configured for <${Hex.DYNAMIC}><world></${Hex.DYNAMIC}>.</${Hex.WARNING}>",
+            Placeholder.unparsed("world", world),
+        )
+
+        val disabled = mm("<${Hex.WARNING}>Portals are disabled for this destination.</${Hex.WARNING}>")
+    }
+
+    inner class Inventories {
+        val commandDescription = "Inspects Multiverse-Inventories compatibility data"
+
+        fun compatibilityReport(
+            worlds: Int,
+            groups: Int,
+            global: Int,
+            malformed: Int,
+        ) = mm(
+            "<${Hex.SECONDARY}>Multiverse-Inventories files: <${Hex.DYNAMIC}><worlds></${Hex.DYNAMIC}> " +
+                "world profiles, <${Hex.DYNAMIC}><groups></${Hex.DYNAMIC}> group profiles, " +
+                "<${Hex.DYNAMIC}><global></${Hex.DYNAMIC}> global profiles; " +
+                "<${Hex.DYNAMIC}><malformed></${Hex.DYNAMIC}> malformed JSON/YAML files.</${Hex.SECONDARY}>",
+            Placeholder.unparsed("worlds", worlds.toString()),
+            Placeholder.unparsed("groups", groups.toString()),
+            Placeholder.unparsed("global", global.toString()),
+            Placeholder.unparsed("malformed", malformed.toString()),
+        )
+
+        fun inventoryGroups(groups: String) = mm(
+            "<${Hex.SECONDARY}>Inventory groups: <${Hex.DYNAMIC}><groups></${Hex.DYNAMIC}></${Hex.SECONDARY}>",
+            Placeholder.unparsed("groups", groups),
+        )
+
+        fun inventoryConflicts(conflicts: String) = mm(
+            "<${Hex.SECONDARY}>Overlapping group shares: <${Hex.DYNAMIC}><conflicts></${Hex.DYNAMIC}></${Hex.SECONDARY}>",
+            Placeholder.unparsed("conflicts", conflicts),
+        )
     }
 }

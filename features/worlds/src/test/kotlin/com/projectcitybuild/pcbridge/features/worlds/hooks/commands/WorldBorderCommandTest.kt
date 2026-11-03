@@ -8,6 +8,7 @@ import com.projectcitybuild.pcbridge.features.worlds.domain.data.WorldBorder
 import com.projectcitybuild.pcbridge.features.worlds.domain.repositories.WorldBorderRepository
 import com.projectcitybuild.pcbridge.features.worlds.domain.services.WorldBorderFillService
 import com.projectcitybuild.pcbridge.features.worlds.domain.services.WorldBorderService
+import com.projectcitybuild.pcbridge.features.worlds.domain.services.WorldLifecycleService
 import com.projectcitybuild.pcbridge.features.worlds.hooks.listeners.WorldBorderFillListener
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
@@ -78,11 +79,13 @@ class WorldBorderCommandTest {
 
         verify(worldBorderService).set(
             eq(world),
-            eq(WorldBorder.Circle(
-                -10.0,
-                15.0,
-                radius = 48.0,
-            )),
+            eq(
+                WorldBorder.Circle(
+                    -10.0,
+                    15.0,
+                    radius = 48.0,
+                ),
+            ),
         )
     }
 
@@ -99,12 +102,14 @@ class WorldBorderCommandTest {
 
         verify(worldBorderService).set(
             eq(world),
-            eq(WorldBorder.Rectangle(
-                -10.0,
-                15.0,
-                width = 80.0,
-                depth = 40.0,
-            )),
+            eq(
+                WorldBorder.Rectangle(
+                    -10.0,
+                    15.0,
+                    width = 80.0,
+                    depth = 40.0,
+                ),
+            ),
         )
         verify(player).sendMessage(l10n.worlds.borderRelocationFailures(1))
     }
@@ -128,6 +133,7 @@ class WorldBorderCommandTest {
             WorldsCommand(
                 command(this),
                 BorderClearCommand(plugin, worldBorderService, CoroutineScopeCommandTaskExecutor(this)),
+                WorldLifecycleCommand(plugin, mock(WorldLifecycleService::class.java)),
             )
 
         execute(command, "worlds clear", source())

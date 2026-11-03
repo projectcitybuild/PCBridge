@@ -1,0 +1,11 @@
+{
+  "playerData": {
+    "lastWorld": "event_world",
+    "lastKnownName": "Alice",
+    "loadOnLogin": true,
+    "futureGlobalValue": {
+      "preserve": 1
+    }
+  },
+  "futureMetadata": "keep"
+}

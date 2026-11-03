@@ -31,10 +31,12 @@ import com.projectcitybuild.pcbridge.features.chatformatting.chatFormattingModul
 import com.projectcitybuild.pcbridge.features.config.configModule
 import com.projectcitybuild.pcbridge.features.gameplay.gameplayModule
 import com.projectcitybuild.pcbridge.features.homes.homesModule
+import com.projectcitybuild.pcbridge.features.inventories.inventoriesModule
 import com.projectcitybuild.pcbridge.features.maintenance.maintenanceModule
 import com.projectcitybuild.pcbridge.features.moderate.moderateModule
 import com.projectcitybuild.pcbridge.features.onboarding.onboardingModule
 import com.projectcitybuild.pcbridge.features.pim.pimModule
+import com.projectcitybuild.pcbridge.features.portals.portalsModule
 import com.projectcitybuild.pcbridge.features.register.registerModule
 import com.projectcitybuild.pcbridge.features.roles.rolesModule
 import com.projectcitybuild.pcbridge.features.serverlinks.serverLinksModule
@@ -147,10 +149,12 @@ private val featureModules =
         configModule,
         gameplayModule,
         homesModule,
+        inventoriesModule,
         maintenanceModule,
         moderateModule,
         onboardingModule,
         pimModule,
+        portalsModule,
         registerModule,
         rolesModule,
         serverLinksModule,

@@ -1,0 +1,27 @@
+groups:
+  survival:
+    worlds:
+      - world
+      - world_nether
+    shares:
+      - inventory
+      - armor
+      - offhand
+      - stats
+    disabled-shares:
+      - health
+    spawn:
+      world: world
+      priority: 2
+  events:
+    worlds:
+      - world
+      - event_world
+    shares:
+      - ender-chest
+      - experience
+    disabled-shares:
+      - last-location
+    spawn:
+      world: event_world
+      priority: 1
