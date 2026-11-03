@@ -1,6 +1,5 @@
 package com.projectcitybuild.pcbridge.features.homes.hooks.commands.homes
 
-import com.mojang.brigadier.arguments.IntegerArgumentType
 import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.core.pagination.PageComponentBuilder
 import com.projectcitybuild.pcbridge.features.homes.domain.repositories.HomeRepository
@@ -9,9 +8,9 @@ import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
 import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
+import com.projectcitybuild.pcbridge.platform.paper.commands.arguments.Argument
 import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
-import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.getOptionalArgument
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.runtime.commands.runCommandTracedSafely
 import com.projectcitybuild.pcbridge.runtime.remoteconfig.RemoteConfig
@@ -25,7 +24,7 @@ class HomeListCommand(
 ) : BrigadierCommand {
     override val builder = command("list") {
         description = "Lists your saved homes"
-        argument("page", IntegerArgumentType.integer()) {
+        argument(Argument.Integer("page")) {
             executesSuspending(taskExecutor, ::execute)
         }
         executesSuspending(taskExecutor, ::execute)
@@ -33,7 +32,7 @@ class HomeListCommand(
 
     private suspend fun execute(context: PaperCommandContext) = context.runCommandTracedSafely(homesTracer) {
         val player = context.source.requirePlayer()
-        val pageNumber = context.getOptionalArgument("page", Int::class.java) ?: 1
+        val pageNumber = Argument.Integer("page").getOptional(context) ?: 1
 
         val homes =
             homeRepository.all(

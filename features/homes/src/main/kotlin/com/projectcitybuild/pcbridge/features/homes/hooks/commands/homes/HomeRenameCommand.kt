@@ -1,6 +1,5 @@
 package com.projectcitybuild.pcbridge.features.homes.hooks.commands.homes
 
-import com.mojang.brigadier.arguments.StringArgumentType
 import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.features.homes.domain.repositories.HomeRepository
 import com.projectcitybuild.pcbridge.features.homes.homesTracer
@@ -10,6 +9,7 @@ import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
 import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
+import com.projectcitybuild.pcbridge.platform.paper.commands.arguments.Argument
 import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.requirePlayer
@@ -36,7 +36,7 @@ class HomeRenameCommand(
 
     override val builder = command("rename") {
         description = "Renames a saved home"
-        argument("name", StringArgumentType.greedyString()) {
+        argument(Argument.GreedyString("name")) {
             suggestsSuspending(plugin, homeNameSuggester::suggest)
             executesSuspending(taskExecutor, ::execute)
         }
@@ -44,7 +44,7 @@ class HomeRenameCommand(
 
     private suspend fun execute(context: PaperCommandContext) = context.runCommandTracedSafely(homesTracer) {
         val player = context.source.requirePlayer()
-        val name = context.getArgument("name", String::class.java)
+        val name = Argument.GreedyString("name").get(context)
 
         val home = homeRepository.get(player.uniqueId, name)
         checkNotNull(home) { l10n.homes.errorHomeNotFound(name) }

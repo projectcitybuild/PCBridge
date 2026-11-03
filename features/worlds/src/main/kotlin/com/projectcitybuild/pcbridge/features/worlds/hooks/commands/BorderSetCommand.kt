@@ -1,6 +1,5 @@
 package com.projectcitybuild.pcbridge.features.worlds.hooks.commands
 
-import com.mojang.brigadier.arguments.DoubleArgumentType
 import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.features.worlds.WorldsPermissions
 import com.projectcitybuild.pcbridge.features.worlds.domain.data.WorldBorder
@@ -11,6 +10,7 @@ import com.projectcitybuild.pcbridge.platform.paper.commands.CommandBuilder
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
 import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
+import com.projectcitybuild.pcbridge.platform.paper.commands.arguments.Argument
 import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.requirePlayer
@@ -21,6 +21,12 @@ class BorderSetCommand(
     private val worldBorderService: WorldBorderService,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
+    private val radiusArg = Argument.Double("radius", min = 1.0, max = WorldBorderGeometry.MAX_RADIUS)
+    private val xArg = Argument.Double("x")
+    private val zArg = Argument.Double("z")
+    private val widthArg = Argument.Double("width", min = 1.0, max = WorldBorderGeometry.MAX_DIMENSION)
+    private val depthArg = Argument.Double("depth", min = 1.0, max = WorldBorderGeometry.MAX_DIMENSION)
+
     override val builder = command("set") {
         description = l10n.worlds.borderSetCommandDescription
         requiresPermission(WorldsPermissions.MANAGE)
@@ -36,7 +42,7 @@ class BorderSetCommand(
     }
 
     private fun CommandBuilder.radiusArguments(createBorder: (Double, Double, Double) -> WorldBorder) {
-        argument("radius", DoubleArgumentType.doubleArg(1.0, WorldBorderGeometry.MAX_RADIUS)) {
+        argument(radiusArg) {
             executesSuspending(taskExecutor) { context ->
                 set(
                     context = context,
@@ -44,23 +50,23 @@ class BorderSetCommand(
                         createBorder(
                             centerX,
                             centerZ,
-                            DoubleArgumentType.getDouble(context, "radius"),
+                            radiusArg.get(context),
                         )
                     },
                 )
             }
-            argument("x", DoubleArgumentType.doubleArg()) {
-                argument("z", DoubleArgumentType.doubleArg()) {
+            argument(xArg) {
+                argument(zArg) {
                     executesSuspending(taskExecutor) { context ->
                         set(
                             context = context,
-                            centerX = DoubleArgumentType.getDouble(context, "x"),
-                            centerZ = DoubleArgumentType.getDouble(context, "z"),
+                            centerX = xArg.get(context),
+                            centerZ = zArg.get(context),
                             createBorder = { x, z ->
                                 createBorder(
                                     x,
                                     z,
-                                    DoubleArgumentType.getDouble(context, "radius"),
+                                    radiusArg.get(context),
                                 )
                             },
                         )
@@ -71,8 +77,8 @@ class BorderSetCommand(
     }
 
     private fun CommandBuilder.rectangleArguments() {
-        argument("width", DoubleArgumentType.doubleArg(1.0, WorldBorderGeometry.MAX_DIMENSION)) {
-            argument("depth", DoubleArgumentType.doubleArg(1.0, WorldBorderGeometry.MAX_DIMENSION)) {
+        argument(widthArg) {
+            argument(depthArg) {
                 executesSuspending(taskExecutor) { context ->
                     set(
                         context = context,
@@ -80,25 +86,25 @@ class BorderSetCommand(
                             WorldBorder.Rectangle(
                                 centerX,
                                 centerZ,
-                                DoubleArgumentType.getDouble(context, "width"),
-                                DoubleArgumentType.getDouble(context, "depth"),
+                                widthArg.get(context),
+                                depthArg.get(context),
                             )
                         },
                     )
                 }
-                argument("x", DoubleArgumentType.doubleArg()) {
-                    argument("z", DoubleArgumentType.doubleArg()) {
+                argument(xArg) {
+                    argument(zArg) {
                         executesSuspending(taskExecutor) { context ->
                             set(
                                 context = context,
-                                centerX = DoubleArgumentType.getDouble(context, "x"),
-                                centerZ = DoubleArgumentType.getDouble(context, "z"),
+                                centerX = xArg.get(context),
+                                centerZ = zArg.get(context),
                                 createBorder = { x, z ->
                                     WorldBorder.Rectangle(
                                         x,
                                         z,
-                                        DoubleArgumentType.getDouble(context, "width"),
-                                        DoubleArgumentType.getDouble(context, "depth"),
+                                        widthArg.get(context),
+                                        depthArg.get(context),
                                     )
                                 },
                             )

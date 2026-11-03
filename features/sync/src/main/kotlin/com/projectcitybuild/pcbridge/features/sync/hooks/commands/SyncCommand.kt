@@ -8,7 +8,7 @@ import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
 import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
-import com.projectcitybuild.pcbridge.platform.paper.commands.argumenttypes.OnlinePlayerArgument
+import com.projectcitybuild.pcbridge.platform.paper.commands.arguments.Argument
 import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.requirePlayer
@@ -24,7 +24,7 @@ class SyncCommand(
 ) : BrigadierCommand {
     override val builder = command("sync") {
         description = "Synchronizes server data"
-        argument("player", OnlinePlayerArgument(plugin.server)) {
+        argument(Argument.OnlinePlayer("player", plugin.server)) {
             requiresPermission(SyncPermissions.OTHER)
                 .executesSuspending(taskExecutor, ::syncOther)
         }
@@ -40,7 +40,7 @@ class SyncCommand(
 
     private suspend fun syncOther(context: PaperCommandContext) = context.runCommandTracedSafely(syncTracer) {
         val sender = context.source.sender
-        val player = context.getArgument("player", Player::class.java)
+        val player = Argument.OnlinePlayer("player", plugin.server).get(context)
 
         if (sender is Player && sender == player) {
             syncSelf(context)

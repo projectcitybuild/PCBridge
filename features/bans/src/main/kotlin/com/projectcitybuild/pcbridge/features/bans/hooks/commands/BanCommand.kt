@@ -7,7 +7,7 @@ import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
 import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
-import com.projectcitybuild.pcbridge.platform.paper.commands.argumenttypes.OnlinePlayerNameArgument
+import com.projectcitybuild.pcbridge.platform.paper.commands.arguments.Argument
 import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
@@ -26,13 +26,13 @@ class BanCommand(
     override val builder = command("ban") {
         description = "Bans a player from the server"
         requiresPermission(BansPermissions.MANAGE)
-        argument("player", OnlinePlayerNameArgument(server)) {
+        argument(Argument.OnlinePlayerName("player", server)) {
             executesSuspending(taskExecutor, ::execute)
         }
     }
 
     private suspend fun execute(context: PaperCommandContext) = context.runCommandTracedSafely(bansTracer) {
-        val inputPlayerName = context.getArgument("player", String::class.java)
+        val inputPlayerName = Argument.OnlinePlayerName("player", server).get(context)
 
         val playerName =
             inputPlayerName

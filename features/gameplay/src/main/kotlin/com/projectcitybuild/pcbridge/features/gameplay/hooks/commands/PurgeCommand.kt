@@ -23,7 +23,7 @@ class PurgeCommand(
 ) : BrigadierCommand {
     private val playerArg = Argument.OnlinePlayer("player", server)
 
-    override val builder: CommandDefinition = command("purge") {
+    override val builder = command("purge") {
         description = l10n.gameplay.purgeCommandDescription
         requiresPermission(GameplayPermissions.PURGE)
         argument(playerArg) {

@@ -17,9 +17,9 @@ class TimeCommandTest {
     fun `requires the time permission before execution`() = runTest {
         val harness = GameplayCommandTestHarness(this)
         whenever(harness.sender.hasPermission(GameplayPermissions.TIME.node)).thenReturn(false)
-        val command = TimeCommand(harness.plugin, harness.worldTimeService, harness.executor)
+        val command = TimeCommand(harness.server, harness.worldTimeService, harness.executor)
 
-        val failure = runCatching { harness.execute(command, "time set noon") }.exceptionOrNull()
+        val failure = runCatching { harness.execute(command, "time noon") }.exceptionOrNull()
 
         assertTrue(failure is CommandSyntaxException)
     }
@@ -31,7 +31,7 @@ class TimeCommandTest {
         whenever(world.name).thenReturn("world")
         whenever(world.time).thenReturn(6_000L)
         whenever(harness.sender.world).thenReturn(world)
-        val command = TimeCommand(harness.plugin, harness.worldTimeService, harness.executor)
+        val command = TimeCommand(harness.server, harness.worldTimeService, harness.executor)
 
         harness.execute(command, "time")
 
@@ -45,9 +45,9 @@ class TimeCommandTest {
         whenever(world.name).thenReturn("world")
         whenever(world.fullTime).thenReturn(100L)
         whenever(harness.sender.world).thenReturn(world)
-        val command = TimeCommand(harness.plugin, harness.worldTimeService, harness.executor)
+        val command = TimeCommand(harness.server, harness.worldTimeService, harness.executor)
 
-        harness.execute(command, "time set noon")
+        harness.execute(command, "time noon")
 
         verify(world).fullTime = 30_000L
         verify(harness.sender).sendMessage(l10n.gameplay.worldTimeSet("world", "6000 ticks"))
@@ -60,9 +60,9 @@ class TimeCommandTest {
         whenever(world.name).thenReturn("world")
         whenever(world.fullTime).thenReturn(100L)
         whenever(harness.sender.world).thenReturn(world)
-        val command = TimeCommand(harness.plugin, harness.worldTimeService, harness.executor)
+        val command = TimeCommand(harness.server, harness.worldTimeService, harness.executor)
 
-        harness.execute(command, "time set 06:30")
+        harness.execute(command, "time 06:30")
 
         verify(world).fullTime = 24_500L
         verify(harness.sender).sendMessage(l10n.gameplay.worldTimeSet("world", "500 ticks"))
@@ -75,9 +75,9 @@ class TimeCommandTest {
         whenever(world.name).thenReturn("world")
         whenever(world.fullTime).thenReturn(100L)
         whenever(harness.sender.world).thenReturn(world)
-        val command = TimeCommand(harness.plugin, harness.worldTimeService, harness.executor)
+        val command = TimeCommand(harness.server, harness.worldTimeService, harness.executor)
 
-        harness.execute(command, "time add 50")
+        harness.execute(command, "time +50")
 
         verify(world).fullTime = 150L
         verify(harness.sender).sendMessage(l10n.gameplay.worldTimeAdded("world", "50 ticks"))
@@ -90,12 +90,39 @@ class TimeCommandTest {
         whenever(world.name).thenReturn("world")
         whenever(world.fullTime).thenReturn(100L)
         whenever(harness.sender.world).thenReturn(world)
-        val command = TimeCommand(harness.plugin, harness.worldTimeService, harness.executor)
+        val command = TimeCommand(harness.server, harness.worldTimeService, harness.executor)
 
-        harness.execute(command, "time add 24000")
+        harness.execute(command, "time +24000")
 
         verify(world).fullTime = 24_100L
         verify(harness.sender).sendMessage(l10n.gameplay.worldTimeAdded("world", "24000 ticks"))
+    }
+
+    @Test
+    fun `supports unit-based relative time adjustments`() = runTest {
+        val harness = GameplayCommandTestHarness(this)
+        val world = mock(World::class.java)
+        whenever(world.name).thenReturn("world")
+        whenever(world.fullTime).thenReturn(100L, 1_100L, 1_000L, 25_000L, 25_020L)
+        whenever(harness.sender.world).thenReturn(world)
+        val command = TimeCommand(harness.server, harness.worldTimeService, harness.executor)
+
+        harness.execute(command, "time +1h")
+        harness.execute(command, "time -100")
+        harness.execute(command, "time +1d")
+        harness.execute(command, "time +1s")
+        harness.execute(command, "time +1m")
+
+        verify(world).fullTime = 1_100L
+        verify(world).fullTime = 1_000L
+        verify(world).fullTime = 25_000L
+        verify(world).fullTime = 25_020L
+        verify(world).fullTime = 26_220L
+        verify(harness.sender).sendMessage(l10n.gameplay.worldTimeAdded("world", "1000 ticks"))
+        verify(harness.sender).sendMessage(l10n.gameplay.worldTimeAdded("world", "-100 ticks"))
+        verify(harness.sender).sendMessage(l10n.gameplay.worldTimeAdded("world", "24000 ticks"))
+        verify(harness.sender).sendMessage(l10n.gameplay.worldTimeAdded("world", "20 ticks"))
+        verify(harness.sender).sendMessage(l10n.gameplay.worldTimeAdded("world", "1200 ticks"))
     }
 
     @Test
@@ -108,9 +135,9 @@ class TimeCommandTest {
         whenever(firstWorld.fullTime).thenReturn(100L)
         whenever(secondWorld.fullTime).thenReturn(200L)
         whenever(harness.server.worlds).thenReturn(listOf(firstWorld, secondWorld))
-        val command = TimeCommand(harness.plugin, harness.worldTimeService, harness.executor)
+        val command = TimeCommand(harness.server, harness.worldTimeService, harness.executor)
 
-        harness.execute(command, "time set noon *")
+        harness.execute(command, "time noon @all")
 
         verify(firstWorld).fullTime = 30_000L
         verify(secondWorld).fullTime = 30_000L
@@ -119,22 +146,39 @@ class TimeCommandTest {
     }
 
     @Test
-    fun `console time query reports all worlds`() = runTest {
+    fun `named selector sets time in one world`() = runTest {
         val harness = GameplayCommandTestHarness(this)
-        val firstWorld = mock(World::class.java)
-        val secondWorld = mock(World::class.java)
+        val world = mock(World::class.java)
+        whenever(world.name).thenReturn("nether")
+        whenever(world.fullTime).thenReturn(100L)
+        whenever(harness.server.getWorld("nether")).thenReturn(world)
+        val command = TimeCommand(harness.server, harness.worldTimeService, harness.executor)
+
+        harness.execute(command, "time noon nether")
+
+        verify(world).fullTime = 30_000L
+        verify(harness.sender).sendMessage(l10n.gameplay.worldTimeSet("nether", "6000 ticks"))
+    }
+
+    @Test
+    fun `reports invalid input without treating its final word as a world`() = runTest {
+        val harness = GameplayCommandTestHarness(this)
+        val command = TimeCommand(harness.server, harness.worldTimeService, harness.executor)
+
+        harness.execute(command, "time invalid")
+
+        verify(harness.sender).sendMessage(l10n.gameplay.errorInvalidTime("invalid"))
+    }
+
+    @Test
+    fun `console time query requires a world`() = runTest {
+        val harness = GameplayCommandTestHarness(this)
         val console = mock(CommandSender::class.java)
         whenever(console.hasPermission(GameplayPermissions.TIME.node)).thenReturn(true)
-        whenever(firstWorld.name).thenReturn("world")
-        whenever(secondWorld.name).thenReturn("nether")
-        whenever(firstWorld.time).thenReturn(100L)
-        whenever(secondWorld.time).thenReturn(200L)
-        whenever(harness.server.worlds).thenReturn(listOf(firstWorld, secondWorld))
-        val command = TimeCommand(harness.plugin, harness.worldTimeService, harness.executor)
+        val command = TimeCommand(harness.server, harness.worldTimeService, harness.executor)
 
         harness.execute(command, "time", console)
 
-        verify(console).sendMessage(l10n.gameplay.worldTimeCurrent("world", "100 ticks"))
-        verify(console).sendMessage(l10n.gameplay.worldTimeCurrent("nether", "200 ticks"))
+        verify(console).sendMessage(l10n.gameplay.errorTimeWorldRequired)
     }
 }

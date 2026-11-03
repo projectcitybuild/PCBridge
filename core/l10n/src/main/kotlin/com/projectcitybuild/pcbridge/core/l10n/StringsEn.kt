@@ -645,6 +645,8 @@ class StringsEn {
             time: String,
         ) = mm("Set the time in $world to $time")
 
+        val errorTimeWorldRequired = mm("Specify a world when using this command from the console")
+
         fun worldTimeAdded(
             world: String,
             time: String,

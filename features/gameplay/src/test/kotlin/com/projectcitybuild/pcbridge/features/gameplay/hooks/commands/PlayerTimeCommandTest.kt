@@ -98,6 +98,16 @@ class PlayerTimeCommandTest {
     }
 
     @Test
+    fun `reports invalid personal time input unchanged`() = runTest {
+        val harness = GameplayCommandTestHarness(this)
+        val command = PlayerTimeCommand(harness.plugin, harness.server, harness.playerTimeService, harness.executor)
+
+        harness.execute(command, "ptime invalid input")
+
+        verify(harness.sender).sendMessage(l10n.gameplay.errorInvalidTime("invalid input"))
+    }
+
+    @Test
     fun `resets a target's personal time`() = runTest {
         val harness = GameplayCommandTestHarness(this)
         val command = PlayerTimeCommand(harness.plugin, harness.server, harness.playerTimeService, harness.executor)

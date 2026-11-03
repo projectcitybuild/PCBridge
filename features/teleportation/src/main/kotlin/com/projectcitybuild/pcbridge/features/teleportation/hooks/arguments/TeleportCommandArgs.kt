@@ -1,4 +1,4 @@
-package com.projectcitybuild.pcbridge.features.teleportation.hooks.commands.args
+package com.projectcitybuild.pcbridge.features.teleportation.hooks.arguments
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import com.mojang.brigadier.builder.RequiredArgumentBuilder

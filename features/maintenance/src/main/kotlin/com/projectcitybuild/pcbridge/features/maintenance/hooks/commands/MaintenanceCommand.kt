@@ -10,7 +10,7 @@ import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
 import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
-import com.projectcitybuild.pcbridge.platform.paper.commands.argumenttypes.OnOffArgument
+import com.projectcitybuild.pcbridge.platform.paper.commands.arguments.Argument
 import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
@@ -30,7 +30,7 @@ class MaintenanceCommand(
     override val builder = command("maintenance") {
         description = "Enables or disables server maintenance mode"
         requiresPermission(MaintenancePermissions.MANAGE)
-        argument("enabled", OnOffArgument()) {
+        argument(Argument.OnOff("enabled")) {
             executesSuspending(taskExecutor, ::toggle)
         }
         executesSuspending(taskExecutor, ::status)
@@ -39,7 +39,7 @@ class MaintenanceCommand(
     private suspend fun toggle(context: PaperCommandContext) = context.runCommandTracedSafely(maintenanceTracer) {
         val sender = context.source.sender
 
-        val desiredState = context.getArgument("enabled", Boolean::class.java)
+        val desiredState = Argument.OnOff("enabled").get(context)
         val currentState = store.state(maintenanceStateKey).enabled
 
         if (currentState == desiredState) {

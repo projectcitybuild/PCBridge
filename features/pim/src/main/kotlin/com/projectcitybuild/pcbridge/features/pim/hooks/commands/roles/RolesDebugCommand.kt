@@ -1,6 +1,5 @@
 package com.projectcitybuild.pcbridge.features.pim.hooks.commands.roles
 
-import com.mojang.brigadier.arguments.StringArgumentType
 import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.features.pim.PimPermissions
 import com.projectcitybuild.pcbridge.features.pim.pimTracer
@@ -8,6 +7,7 @@ import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
 import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
+import com.projectcitybuild.pcbridge.platform.paper.commands.arguments.Argument
 import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.requirePlayer
@@ -24,7 +24,7 @@ class RolesDebugCommand(
     override val builder = command("debug") {
         description = "Displays role debugging information"
         requiresPermission(PimPermissions.ROLES)
-        argument("roles", StringArgumentType.greedyString()) {
+        argument(Argument.GreedyString("roles")) {
             executesSuspending(commandTaskExecutor, ::execute)
         }
     }
@@ -32,7 +32,7 @@ class RolesDebugCommand(
     private suspend fun execute(context: PaperCommandContext) = context.runCommandTracedSafely(pimTracer) {
         val player = context.source.requirePlayer()
 
-        val rolesArg = context.getArgument("roles", String::class.java)
+        val rolesArg = Argument.GreedyString("roles").get(context)
         val roles = rolesArg.split(" ").toSet()
         check(roles.isNotEmpty()) { "No roles specified" }
 

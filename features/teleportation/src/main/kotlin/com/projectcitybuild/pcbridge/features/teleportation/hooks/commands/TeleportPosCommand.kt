@@ -1,6 +1,5 @@
 package com.projectcitybuild.pcbridge.features.teleportation.hooks.commands
 
-import com.mojang.brigadier.arguments.DoubleArgumentType
 import com.projectcitybuild.pcbridge.features.teleportation.TeleportationPermissions
 import com.projectcitybuild.pcbridge.features.teleportation.domain.services.TeleportService
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
@@ -20,26 +19,24 @@ class TeleportPosCommand(
     override val builder = command("pos") {
         description = "Teleports you to coordinates"
         requiresPermission(TeleportationPermissions.POSITION)
-        brigadier {
-            this
-                .then(
-                    withCoordinateArgs(plugin) { context, yaw, pitch ->
-                        execute(context, yaw, pitch)
-                    },
-                )
+        withCoordinateArgs(plugin) { context, x, y, z, yaw, pitch ->
+            execute(context, x, y, z, yaw, pitch)
         }
     }
 
     private suspend fun execute(
         context: PaperCommandContext,
+        x: Double,
+        y: Double,
+        z: Double,
         yaw: Float?,
         pitch: Float?,
     ) = context.runCommandTracedSafely(teleportationTracer) {
         application.position(
             player = context.source.requirePlayer(),
-            x = DoubleArgumentType.getDouble(context, "x"),
-            y = DoubleArgumentType.getDouble(context, "y"),
-            z = DoubleArgumentType.getDouble(context, "z"),
+            x = x,
+            y = y,
+            z = z,
             yaw = yaw,
             pitch = pitch,
         )

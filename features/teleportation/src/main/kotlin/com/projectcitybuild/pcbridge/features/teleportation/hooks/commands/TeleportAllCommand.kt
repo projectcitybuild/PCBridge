@@ -3,15 +3,14 @@ package com.projectcitybuild.pcbridge.features.teleportation.hooks.commands
 import com.projectcitybuild.pcbridge.features.teleportation.TeleportationPermissions
 import com.projectcitybuild.pcbridge.features.teleportation.domain.data.TeleportFlags
 import com.projectcitybuild.pcbridge.features.teleportation.domain.services.TeleportService
-import com.projectcitybuild.pcbridge.features.teleportation.hooks.commands.args.withTeleportFlags
+import com.projectcitybuild.pcbridge.features.teleportation.hooks.arguments.withTeleportFlags
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
-import com.projectcitybuild.pcbridge.platform.paper.commands.argumenttypes.OnlinePlayerArgument
+import com.projectcitybuild.pcbridge.platform.paper.commands.arguments.Argument
 import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.runtime.commands.runCommandTracedSafely
 import com.projectcitybuild.pcbridge.runtime.teleportation.teleportationTracer
 import org.bukkit.Server
-import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
 
 class TeleportAllCommand(
@@ -27,7 +26,7 @@ class TeleportAllCommand(
                 execute(context, targetArgument = null, flags = flags)
             }
         }
-        argument("target", OnlinePlayerArgument(server)) {
+        argument(Argument.OnlinePlayer("target", server)) {
             withTeleportFlags(plugin) { context, flags ->
                 execute(context, "target", flags)
             }
@@ -40,7 +39,7 @@ class TeleportAllCommand(
         flags: TeleportFlags,
     ) = context.runCommandTracedSafely(teleportationTracer) {
         val target = targetArgument?.let {
-            context.getArgument(it, Player::class.java)
+            Argument.OnlinePlayer(it, server).get(context)
         }
         application.all(
             operator = context.source.sender,

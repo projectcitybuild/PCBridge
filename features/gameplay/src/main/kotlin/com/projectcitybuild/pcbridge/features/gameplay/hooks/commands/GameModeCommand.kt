@@ -35,10 +35,13 @@ class GameModeCommand(
     }
 
     private suspend fun execute(context: PaperCommandContext) = context.runCommandTracedSafely(gameplayTracer) { commandContext ->
-        val target = playerArg.getOptional(commandContext) ?: commandContext.source.requirePlayer()
+        val target = playerArg.getOptional(commandContext)
+            ?: commandContext.source.requirePlayer()
+
         val gameMode = modeArg.get(commandContext)
 
         target.gameMode = gameMode
+
         commandContext.source.sender.sendMessage(
             l10n.gameplay.playerGameModeChanged(target.name, gameMode.name.lowercase()),
         )

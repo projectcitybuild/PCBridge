@@ -1,6 +1,5 @@
 package com.projectcitybuild.pcbridge.features.warps.hooks.commands.warps
 
-import com.mojang.brigadier.arguments.StringArgumentType
 import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.features.warps.WarpsPermissions
 import com.projectcitybuild.pcbridge.features.warps.domain.events.WarpDeleteEvent
@@ -11,6 +10,7 @@ import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
 import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
+import com.projectcitybuild.pcbridge.platform.paper.commands.arguments.Argument
 import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.suggestsSuspending
@@ -29,14 +29,14 @@ class WarpDeleteCommand(
     override val builder = command("delete") {
         description = "Deletes a warp"
         requiresPermission(WarpsPermissions.MANAGE)
-        argument("name", StringArgumentType.string()) {
+        argument(Argument.String("name")) {
             suggestsSuspending(plugin, warpNameSuggester::suggest)
                 .executesSuspending(taskExecutor, ::execute)
         }
     }
 
     private suspend fun execute(context: PaperCommandContext) = context.runCommandTracedSafely(warpsTracer) {
-        val warpName = context.getArgument("name", String::class.java)
+        val warpName = Argument.String("name").get(context)
 
         warpRepository.delete(name = warpName)
 

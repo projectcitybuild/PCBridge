@@ -2,40 +2,57 @@ package com.projectcitybuild.pcbridge.features.gameplay.domain.services
 
 import org.bukkit.entity.Player
 
-class PlayerTimeService {
-    fun current(player: Player): PlayerTimeState? = if (player.isPlayerTimeRelative && player.playerTimeOffset == 0L) {
-        null
-    } else {
-        PlayerTimeState(
-            ticks = player.playerTime,
-            relative = player.isPlayerTimeRelative,
-        )
+class PlayerTimeService(
+    private val timeInputParser: WorldTimeInputParser = WorldTimeInputParser(),
+) {
+    sealed interface SetResult {
+        data class InvalidTime(
+            val input: String,
+        ) : SetResult
+
+        data class Updated(
+            val ticks: Long,
+            val relative: Boolean,
+        ) : SetResult
     }
+
+    fun isValid(input: String): Boolean = parse(input) != null
 
     fun set(
         player: Player,
-        ticks: Long,
-        relative: Boolean,
-    ) {
-        var playerTime = player.playerTime
-        playerTime -= playerTime % TICKS_PER_DAY
-        playerTime += TICKS_PER_DAY + ticks
-        if (relative) {
-            playerTime -= player.world.time
+        input: String,
+    ): SetResult {
+        val parsedTime = parse(input) ?: return SetResult.InvalidTime(input)
+
+        val playerTime = try {
+            val dayStart = player.playerTime - player.playerTime.mod(WorldTimeInputParser.TICKS_PER_DAY)
+            val time = Math.addExact(
+                Math.addExact(dayStart, WorldTimeInputParser.TICKS_PER_DAY),
+                parsedTime.ticks,
+            )
+            if (parsedTime.relative) Math.subtractExact(time, player.world.time) else time
+        } catch (_: ArithmeticException) {
+            return SetResult.InvalidTime(input)
         }
-        player.setPlayerTime(playerTime, relative)
+
+        player.setPlayerTime(playerTime, parsedTime.relative)
+        return SetResult.Updated(parsedTime.ticks, parsedTime.relative)
     }
 
-    fun reset(player: Player) {
-        player.resetPlayerTime()
+    private fun parse(input: String): ParsedPlayerTime? {
+        val fixed = input.startsWith('@')
+        val timeInput = if (fixed) input.drop(1) else input
+        val parsedTime = timeInputParser.parse(timeInput) ?: return null
+        val ticks = if (parsedTime.relative) {
+            parsedTime.ticks
+        } else {
+            parsedTime.ticks.mod(WorldTimeInputParser.TICKS_PER_DAY)
+        }
+        return ParsedPlayerTime(ticks, relative = !fixed)
     }
 
-    private companion object {
-        const val TICKS_PER_DAY = 24_000L
-    }
+    private data class ParsedPlayerTime(
+        val ticks: Long,
+        val relative: Boolean,
+    )
 }
-
-data class PlayerTimeState(
-    val ticks: Long,
-    val relative: Boolean,
-)

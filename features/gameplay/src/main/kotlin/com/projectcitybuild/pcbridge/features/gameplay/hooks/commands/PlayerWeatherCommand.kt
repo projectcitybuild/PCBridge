@@ -28,7 +28,7 @@ class PlayerWeatherCommand(
 ) : BrigadierCommand {
     private val playerArg = Argument.OnlinePlayer("player", server)
 
-    override val builder: CommandDefinition = command("pweather") {
+    override val builder = command("pweather") {
         description = l10n.gameplay.playerWeatherCommandDescription
         requiresPermission(GameplayPermissions.PLAYER_WEATHER)
         executesSuspending(taskExecutor, ::showWeather)

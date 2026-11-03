@@ -1,12 +1,12 @@
 package com.projectcitybuild.pcbridge.features.staffchat.commands
 
-import com.mojang.brigadier.arguments.StringArgumentType
 import com.projectcitybuild.pcbridge.features.staffchat.StaffChatPermissions
 import com.projectcitybuild.pcbridge.features.staffchat.staffChatTracer
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
 import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
+import com.projectcitybuild.pcbridge.platform.paper.commands.arguments.Argument
 import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.requirePlayer
@@ -30,14 +30,14 @@ class StaffChatCommand(
     override val builder = command("a") {
         description = "Sends a message to staff chat"
         requiresPermission(StaffChatPermissions.CHANNEL)
-        argument("message", StringArgumentType.greedyString()) {
+        argument(Argument.GreedyString("message")) {
             executesSuspending(commandTaskExecutor, ::execute)
         }
     }
 
     suspend fun execute(context: PaperCommandContext) = context.runCommandTracedSafely(staffChatTracer) {
         val player = context.source.requirePlayer()
-        val rawMessage = context.getArgument("message", String::class.java)
+        val rawMessage = Argument.GreedyString("message").get(context)
 
         val format = remoteConfig.latest.config.chat.staffChannel
         val decoratedMessage = decorators.pipe(

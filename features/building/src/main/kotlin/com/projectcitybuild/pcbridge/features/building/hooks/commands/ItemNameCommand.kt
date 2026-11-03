@@ -1,6 +1,5 @@
 package com.projectcitybuild.pcbridge.features.building.hooks.commands
 
-import com.mojang.brigadier.arguments.StringArgumentType
 import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.features.building.BuildingPermissions
 import com.projectcitybuild.pcbridge.features.building.buildingTracer
@@ -9,6 +8,7 @@ import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
 import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
+import com.projectcitybuild.pcbridge.platform.paper.commands.arguments.Argument
 import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.requirePlayer
@@ -27,7 +27,7 @@ class ItemNameCommand(
     override val builder = command("itemname") {
         description = "Renames the item in your primary hand"
         requiresPermission(BuildingPermissions.ITEM_RENAME)
-        argument("name", StringArgumentType.greedyString()) {
+        argument(Argument.GreedyString("name")) {
             executesSuspending(commandTaskExecutor, ::execute)
         }
     }
@@ -38,7 +38,7 @@ class ItemNameCommand(
         val itemStack = player.inventory.itemInMainHand
         check(itemStack.type != Material.AIR) { l10n.building.errorNoItemToRename }
 
-        val rawName = context.getArgument("name", String::class.java)
+        val rawName = Argument.GreedyString("name").get(context)
         val name = LegacyComponentSerializer.legacyAmpersand().deserialize(rawName)
         val itemMeta = itemStack.itemMeta
         itemMeta.displayName(name)

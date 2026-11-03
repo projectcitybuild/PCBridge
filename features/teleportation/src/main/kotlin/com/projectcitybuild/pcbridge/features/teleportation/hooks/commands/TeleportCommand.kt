@@ -3,14 +3,13 @@ package com.projectcitybuild.pcbridge.features.teleportation.hooks.commands
 import com.projectcitybuild.pcbridge.features.teleportation.TeleportationPermissions
 import com.projectcitybuild.pcbridge.features.teleportation.domain.services.TeleportService
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
-import com.projectcitybuild.pcbridge.platform.paper.commands.argumenttypes.OnlinePlayerArgument
+import com.projectcitybuild.pcbridge.platform.paper.commands.arguments.Argument
 import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.runtime.commands.runCommandTracedSafely
 import com.projectcitybuild.pcbridge.runtime.teleportation.teleportationTracer
 import org.bukkit.Server
-import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
 
 class TeleportCommand(
@@ -30,7 +29,7 @@ class TeleportCommand(
 ) : BrigadierCommand {
     override val builder = command("tp") {
         description = "Teleports a player to a target"
-        argument("player", OnlinePlayerArgument(server)) {
+        argument(Argument.OnlinePlayer("player", server)) {
             requires { context ->
                 context.sender.hasPermission(TeleportationPermissions.REQUEST.node) ||
                     context.sender.hasPermission("essentials.tp")
@@ -39,7 +38,7 @@ class TeleportCommand(
                 context.runCommandTracedSafely(teleportationTracer) {
                     application.to(
                         requester = context.source.requirePlayer(),
-                        target = context.getArgument("player", Player::class.java),
+                        target = Argument.OnlinePlayer("player", server).get(context),
                     )
                 }
             }

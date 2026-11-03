@@ -1,6 +1,5 @@
 package com.projectcitybuild.pcbridge.features.moderate.hooks.commands
 
-import com.mojang.brigadier.arguments.StringArgumentType
 import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.features.moderate.ModeratePermissions
 import com.projectcitybuild.pcbridge.features.moderate.moderateTracer
@@ -8,18 +7,14 @@ import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
 import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
-import com.projectcitybuild.pcbridge.platform.paper.commands.argumenttypes.OnlinePlayerArgument
+import com.projectcitybuild.pcbridge.platform.paper.commands.arguments.Argument
 import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
-import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.getOptionalArgument
 import com.projectcitybuild.pcbridge.runtime.commands.runCommandTracedSafely
-import io.papermc.paper.command.brigadier.Commands
 import net.kyori.adventure.text.Component
 import org.bukkit.Server
-import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerKickEvent
 import org.bukkit.plugin.java.JavaPlugin
-import kotlin.jvm.java
 
 class KickCommand(
     private val plugin: JavaPlugin,
@@ -29,18 +24,17 @@ class KickCommand(
     override val builder = command("kick") {
         description = "Kicks a player from the server"
         requiresPermission(ModeratePermissions.MODERATE)
-        argument("player", OnlinePlayerArgument(plugin.server)) {
-            then(
-                Commands
-                    .argument("reason", StringArgumentType.greedyString())
-                    .executesSuspending(taskExecutor, ::execute),
-            ).executesSuspending(taskExecutor, ::execute)
+        argument(Argument.OnlinePlayer("player", plugin.server)) {
+            argument(Argument.GreedyString("reason")) {
+                executesSuspending(taskExecutor, ::execute)
+            }
+            executesSuspending(taskExecutor, ::execute)
         }
     }
 
     private suspend fun execute(context: PaperCommandContext) = context.runCommandTracedSafely(moderateTracer) {
-        val player = context.getArgument("player", Player::class.java)
-        val reason = context.getOptionalArgument("reason", String::class.java)
+        val player = Argument.OnlinePlayer("player", plugin.server).get(context)
+        val reason = Argument.GreedyString("reason").getOptional(context)
 
         val message = reason?.let { Component.text(it) }
             ?: l10n.moderation.kickedFromServer

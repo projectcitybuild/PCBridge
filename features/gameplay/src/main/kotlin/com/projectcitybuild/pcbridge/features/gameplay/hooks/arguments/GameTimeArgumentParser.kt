@@ -1,20 +1,20 @@
-package com.projectcitybuild.pcbridge.platform.paper.commands.argumenttypes
+package com.projectcitybuild.pcbridge.features.gameplay.hooks.arguments
 
 import com.mojang.brigadier.arguments.ArgumentType
 import com.mojang.brigadier.arguments.StringArgumentType
 import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.suggestion.Suggestions
 import com.mojang.brigadier.suggestion.SuggestionsBuilder
-import com.projectcitybuild.pcbridge.platform.paper.data.GameTime
+import com.projectcitybuild.pcbridge.features.gameplay.domain.data.GameTime
 import com.projectcitybuild.pcbridge.platform.paper.data.GameTimeAlias
 import io.papermc.paper.command.brigadier.argument.CustomArgumentType
 import java.util.concurrent.CompletableFuture
 
-class GameTimeArgument(
+class GameTimeArgumentParser(
     private val allowFixedTime: Boolean = false,
     private val suggestionsAfterTime: () -> Collection<String> = { emptyList() },
 ) : CustomArgumentType.Converted<GameTime, String> {
-    override fun getNativeType(): ArgumentType<String> = StringArgumentType.greedyString()
+    override fun getNativeType(): ArgumentType<String> = StringArgumentType.word()
 
     override fun convert(nativeType: String) = GameTime(nativeType)
 

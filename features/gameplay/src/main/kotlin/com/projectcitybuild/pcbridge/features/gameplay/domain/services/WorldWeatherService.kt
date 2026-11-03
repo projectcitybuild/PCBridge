@@ -9,13 +9,11 @@ class WorldWeatherService(
     fun resolveWorld(
         selector: String?,
         defaultWorld: World?,
-    ): WorldWeatherResolution {
-        return when {
-            selector != null -> server.getWorld(selector)?.let(WorldWeatherResolution::Found)
-                ?: WorldWeatherResolution.Missing(selector)
-            defaultWorld != null -> WorldWeatherResolution.Found(defaultWorld)
-            else -> WorldWeatherResolution.RequiresWorld
-        }
+    ): WorldWeatherResolution = when {
+        selector != null -> server.getWorld(selector)?.let(WorldWeatherResolution::Found)
+            ?: WorldWeatherResolution.Missing(selector)
+        defaultWorld != null -> WorldWeatherResolution.Found(defaultWorld)
+        else -> WorldWeatherResolution.RequiresWorld
     }
 
     fun set(
