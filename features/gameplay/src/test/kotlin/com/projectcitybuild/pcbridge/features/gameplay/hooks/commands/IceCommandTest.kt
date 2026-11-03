@@ -11,7 +11,7 @@ class IceCommandTest {
         val harness = GameplayCommandTestHarness(this)
         val command = IceCommand(harness.plugin, harness.server, harness.executor)
 
-        harness.execute(command, "freeze Alex 7")
+        harness.execute(command, "ice Alex 7")
 
         verify(harness.target).freezeTicks = 140
         verify(harness.sender).sendMessage(l10n.gameplay.playerIced("Alex", 7))

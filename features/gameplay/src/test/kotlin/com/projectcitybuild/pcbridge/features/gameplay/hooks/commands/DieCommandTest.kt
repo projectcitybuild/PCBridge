@@ -11,7 +11,7 @@ class DieCommandTest {
         val harness = GameplayCommandTestHarness(this)
         val command = DieCommand(harness.plugin, harness.executor)
 
-        harness.execute(command, "suicide")
+        harness.execute(command, "die")
 
         verify(harness.sender).health = 0.0
         verify(harness.sender).sendMessage(l10n.gameplay.playerDied)

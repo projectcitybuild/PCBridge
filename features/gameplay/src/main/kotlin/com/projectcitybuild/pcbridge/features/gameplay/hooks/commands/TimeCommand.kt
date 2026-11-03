@@ -2,11 +2,10 @@ package com.projectcitybuild.pcbridge.features.gameplay.hooks.commands
 
 import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.features.gameplay.GameplayPermissions
-import com.projectcitybuild.pcbridge.features.gameplay.domain.data.WorldSelector
 import com.projectcitybuild.pcbridge.features.gameplay.domain.services.WorldTimeService
 import com.projectcitybuild.pcbridge.features.gameplay.gameplayTracer
-import com.projectcitybuild.pcbridge.features.gameplay.hooks.arguments.gameTime
-import com.projectcitybuild.pcbridge.features.gameplay.hooks.arguments.worldSelector
+import com.projectcitybuild.pcbridge.features.gameplay.hooks.arguments.worldName
+import com.projectcitybuild.pcbridge.features.gameplay.hooks.arguments.worldTimeInput
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
@@ -18,13 +17,12 @@ import org.bukkit.Server
 import org.bukkit.entity.Player
 
 class TimeCommand(
-    server: Server,
+    private val server: Server,
     private val timeService: WorldTimeService,
     private val taskExecutor: CommandTaskExecutor,
 ) : BrigadierCommand {
-    private val timeArg = Argument.gameTime("time")
-    private val worldArg = Argument.world(name = "world")
-    private val worldSelectorArg = Argument.worldSelector(name = "world", server)
+    private val timeInputArg = Argument.worldTimeInput("input", server)
+    private val worldArg = Argument.worldName("world", server)
 
     override val builder = command("time") {
         description = l10n.gameplay.timeCommandDescription
@@ -35,18 +33,20 @@ class TimeCommand(
                 executesSuspending(taskExecutor, ::getTime)
             }
         }
-        argument(timeArg) {
+        argument(timeInputArg) {
             executesSuspending(taskExecutor, ::setTime)
-            argument(worldSelectorArg) {
-                executesSuspending(taskExecutor, ::setTime)
-            }
         }
     }
 
     private suspend fun getTime(context: PaperCommandContext) = context.runCommandTracedSafely(gameplayTracer) { commandContext ->
         val sender = commandContext.source.sender
-        val world = worldArg.getOptional(context)
-            ?: (sender as? Player)?.world
+        val worldName = worldArg.getOptional(commandContext)
+        val world = worldName?.let { name ->
+            server.getWorld(name) ?: run {
+                sender.sendMessage(l10n.gameplay.errorWorldNotFound(name))
+                return@runCommandTracedSafely
+            }
+        } ?: (sender as? Player)?.world
 
         if (world == null) {
             sender.sendMessage(l10n.gameplay.errorTimeWorldRequired)
@@ -59,14 +59,12 @@ class TimeCommand(
 
     private suspend fun setTime(context: PaperCommandContext) = context.runCommandTracedSafely(gameplayTracer) { commandContext ->
         val sender = commandContext.source.sender
-        val input = timeArg.get(commandContext).input
-        val worldSelector = worldSelectorArg.getOptional(context)
-            ?: WorldSelector.Current
+        val input = timeInputArg.get(commandContext)
 
         when (
             val result = timeService.set(
-                input = input,
-                selector = worldSelector,
+                input = input.time,
+                selector = input.selector,
                 defaultWorld = (sender as? Player)?.world,
             )
         ) {

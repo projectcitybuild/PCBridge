@@ -10,7 +10,6 @@ import com.projectcitybuild.pcbridge.platform.paper.commands.argumenttypes.OnOff
 import com.projectcitybuild.pcbridge.platform.paper.commands.argumenttypes.OnlinePlayerArgument
 import com.projectcitybuild.pcbridge.platform.paper.commands.argumenttypes.OnlinePlayerNameArgument
 import io.papermc.paper.command.brigadier.argument.ArgumentTypes
-import org.bukkit.GameMode
 import org.bukkit.Server
 import org.bukkit.World
 import org.bukkit.entity.Player

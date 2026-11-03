@@ -18,6 +18,7 @@ export const permissionNodes = {
   },
   gameplay: {
     burn: 'pcbridge.gameplay.burn',
+    die: 'pcbridge.gameplay.die',
     extinguish: 'pcbridge.gameplay.extinguish',
     feed: 'pcbridge.gameplay.feed',
     freeze: 'pcbridge.gameplay.freeze',
@@ -27,7 +28,6 @@ export const permissionNodes = {
     playerTime: 'pcbridge.gameplay.ptime',
     playerWeather: 'pcbridge.gameplay.pweather',
     purge: 'pcbridge.gameplay.purge',
-    suicide: 'pcbridge.gameplay.suicide',
     time: 'pcbridge.gameplay.time',
     weather: 'pcbridge.gameplay.weather',
     xp: 'pcbridge.gameplay.xp',

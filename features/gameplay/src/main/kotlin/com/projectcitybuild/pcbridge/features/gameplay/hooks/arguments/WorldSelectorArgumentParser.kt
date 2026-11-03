@@ -21,10 +21,37 @@ fun Argument.Companion.worldSelector(
     valueClass = WorldSelector::class.java,
 )
 
+fun Argument.Companion.worldName(
+    name: String,
+    server: Server,
+): CommandArgument<String> = CommandArgument(
+    name = name,
+    type = WorldNameArgumentParser(server),
+    valueClass = String::class.java,
+)
+
+class WorldNameArgumentParser(
+    private val server: Server,
+) : CustomArgumentType.Converted<String, String> {
+    override fun getNativeType(): ArgumentType<String> = StringArgumentType.word()
+
+    override fun convert(nativeType: String): String = nativeType
+
+    override fun <S : Any> listSuggestions(
+        context: CommandContext<S>,
+        builder: SuggestionsBuilder,
+    ): CompletableFuture<Suggestions> {
+        server.worlds
+            .filter { it.name.startsWith(builder.remaining, ignoreCase = true) }
+            .forEach { builder.suggest(it.name) }
+        return builder.buildFuture()
+    }
+}
+
 class WorldSelectorArgumentParser(
     private val server: Server,
 ) : CustomArgumentType.Converted<WorldSelector, String> {
-    override fun getNativeType(): ArgumentType<String> = StringArgumentType.word()
+    override fun getNativeType(): ArgumentType<String> = StringArgumentType.greedyString()
 
     override fun convert(nativeType: String): WorldSelector {
         if (nativeType.isEmpty()) {

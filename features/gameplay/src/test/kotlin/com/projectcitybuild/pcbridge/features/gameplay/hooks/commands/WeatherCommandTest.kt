@@ -19,11 +19,11 @@ class WeatherCommandTest {
         whenever(harness.sender.world).thenReturn(world)
         val command = WeatherCommand(harness.plugin, harness.worldWeatherService, harness.executor)
 
-        harness.execute(command, "weather storm 30")
+        harness.execute(command, "weather thunder 30")
 
         verify(world).setStorm(true)
         verify(world).weatherDuration = 600
-        verify(harness.sender).sendMessage(l10n.gameplay.weatherSet("world", "storm", 30))
+        verify(harness.sender).sendMessage(l10n.gameplay.weatherSet("world", "thunder", 30))
     }
 
     @Test
@@ -34,10 +34,10 @@ class WeatherCommandTest {
         whenever(harness.server.getWorld("world")).thenReturn(world)
         val command = WeatherCommand(harness.plugin, harness.worldWeatherService, harness.executor)
 
-        harness.execute(command, "weather world sun")
+        harness.execute(command, "weather world clear")
 
         verify(world).setStorm(false)
-        verify(harness.sender).sendMessage(l10n.gameplay.weatherSet("world", "sun", null))
+        verify(harness.sender).sendMessage(l10n.gameplay.weatherSet("world", "clear", null))
     }
 
     @Test
@@ -46,7 +46,7 @@ class WeatherCommandTest {
         val console = mock(CommandSender::class.java)
         whenever(console.hasPermission(GameplayPermissions.WEATHER.node)).thenReturn(true)
         val command = WeatherCommand(harness.plugin, harness.worldWeatherService, harness.executor)
-        harness.execute(command, "weather storm", console)
+        harness.execute(command, "weather thunder", console)
         verify(console).sendMessage(l10n.gameplay.errorWeatherWorldRequired)
     }
 }

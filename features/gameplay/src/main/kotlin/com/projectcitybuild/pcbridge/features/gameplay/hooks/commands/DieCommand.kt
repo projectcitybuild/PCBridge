@@ -16,7 +16,7 @@ class DieCommand(
     plugin: Plugin,
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
-    override val builder = command("suicide") {
+    override val builder = command("die") {
         description = l10n.gameplay.dieCommandDescription
         requiresPermission(GameplayPermissions.DIE)
         executesSuspending(taskExecutor, ::execute)

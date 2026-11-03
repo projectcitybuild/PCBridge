@@ -22,7 +22,7 @@ class GameModeCommand(
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
     private val playerArg = Argument.onlinePlayer("player", server)
-    private val modeArg = Argument.gameMode("mode", map = { it.name.lowercase() })
+    private val modeArg = Argument.gameMode("mode")
 
     override val builder = command("gamemode") {
         description = l10n.gameplay.gameModeCommandDescription

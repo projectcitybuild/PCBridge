@@ -5,7 +5,7 @@ import com.projectcitybuild.pcbridge.features.gameplay.GameplayPermissions
 import com.projectcitybuild.pcbridge.features.gameplay.domain.services.PlayerTimeService
 import com.projectcitybuild.pcbridge.features.gameplay.domain.services.WorldTimeInputParser.Companion.TICKS_PER_DAY
 import com.projectcitybuild.pcbridge.features.gameplay.gameplayTracer
-import com.projectcitybuild.pcbridge.features.gameplay.hooks.arguments.gameTime
+import com.projectcitybuild.pcbridge.features.gameplay.hooks.arguments.playerTimeInput
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
@@ -18,7 +18,6 @@ import com.projectcitybuild.pcbridge.platform.paper.extensions.onlinePlayer
 import com.projectcitybuild.pcbridge.runtime.commands.runCommandTracedSafely
 import org.bukkit.Server
 import org.bukkit.plugin.Plugin
-import sun.awt.util.PerformanceLogger.setTime
 
 class PlayerTimeCommand(
     plugin: Plugin,
@@ -27,8 +26,7 @@ class PlayerTimeCommand(
     private val taskExecutor: CommandTaskExecutor = PluginCommandTaskExecutor(plugin),
 ) : BrigadierCommand {
     private val playerArg = Argument.onlinePlayer("player", server)
-    private val playerNameArg = Argument.onlinePlayerName("player", server)
-    private val timeArg = Argument.gameTime("time")
+    private val timeInputArg = Argument.playerTimeInput("input", server)
 
     override val builder = command("ptime") {
         description = l10n.gameplay.playerTimeCommandDescription
@@ -46,11 +44,8 @@ class PlayerTimeCommand(
             }
             executesSuspending(taskExecutor, ::resetTime)
         }
-        argument(timeArg) {
+        argument(timeInputArg) {
             executesSuspending(taskExecutor, ::setTime)
-            argument(playerNameArg) {
-                executesSuspending(taskExecutor, ::setTime)
-            }
         }
     }
 
@@ -72,8 +67,9 @@ class PlayerTimeCommand(
     }
 
     private suspend fun setTime(context: PaperCommandContext) = context.runCommandTracedSafely(gameplayTracer) { commandContext ->
-        val playerName = playerNameArg.getOptional(commandContext)
-        val timeInput = timeArg.get(commandContext).input
+        val input = timeInputArg.get(commandContext)
+        val playerName = input.playerName
+        val timeInput = input.time
         val rawInput = playerName?.let { "$timeInput $it" } ?: timeInput
         val target = playerName?.let { name ->
             server.onlinePlayer(name, ignoreCase = false) ?: run {
