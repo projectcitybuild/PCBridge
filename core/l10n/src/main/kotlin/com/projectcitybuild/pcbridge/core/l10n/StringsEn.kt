@@ -72,21 +72,27 @@ class StringsEn {
         val errorNewNameCannotBeEmpty = mm("<red>Error: New name cannot be empty</red>")
 
         fun errorWithMessage(message: String?) = mm(
-            "<red>Error: <message></red>",
-            Placeholder.unparsed("message", message ?: "null"),
+            "<red>Error: <aqua><message></aqua></red>",
+            Placeholder.unparsed("message", message ?: "Unknown error"),
         )
 
-        fun invalidArgumentValue(value: String) = Component.text("Invalid value: $value", NamedTextColor.RED)
+        fun invalidArgumentValue(value: String) = mm(
+            "<red>Invalid value: <aqua><value></aqua></red>",
+            Placeholder.unparsed("value", value),
+        )
 
-        fun errorPlayerNotFound(name: String) = Component.text("Player $name not found", NamedTextColor.RED)
+        fun errorPlayerNotFound(name: String) = mm(
+            "<red>Player <aqua><name></aqua> not found</red>",
+            Placeholder.unparsed("name", name),
+        )
 
         fun commandError(message: String?) = mm(
-            "<red><message></red>",
-            Placeholder.unparsed("message", message ?: "null"),
+            "<red><aqua><message></aqua></red>",
+            Placeholder.unparsed("message", message ?: "Unknown error"),
         )
 
         fun commandErrorWithPrefix(message: String) = mm(
-            "<red>Error: <message></red>",
+            "<red>Error: <aqua><message></aqua></red>",
             Placeholder.unparsed("message", message),
         )
 
@@ -98,47 +104,53 @@ class StringsEn {
 
         val commandErrorConflict = commandErrorWithPrefix("Conflict")
 
-        fun commandErrorCooldown(seconds: Long) = commandErrorWithPrefix("Please wait $seconds seconds before trying again")
+        fun commandErrorCooldown(seconds: Long) = mm(
+            "<red>Error: Please wait <aqua><seconds></aqua> seconds before trying again</red>",
+            Placeholder.unparsed("seconds", seconds.toString()),
+        )
 
         val commandUnexpectedError = commandError("An unexpected error occurred")
 
         fun errorWorldNotFound(name: String) = mm(
-            "<red>Could not find world <name></red>",
+            "<red>Could not find world <aqua><name></aqua></red>",
             Placeholder.unparsed("name", name),
         )
     }
 
     inner class Lists {
-        fun teleportTo(name: String) = Component.text("Teleport to $name")
+        fun teleportTo(name: String) = mm(
+            "Teleport to <aqua><name></aqua>",
+            Placeholder.unparsed("name", name),
+        )
     }
 
     inner class Builds {
         val errorNoBuildsFound = mm("<gray>No builds found</gray>")
 
         fun buildCreated(name: String) = mm(
-            "<green><name> created</green>",
+            "<green><aqua><name></aqua> created</green>",
             Placeholder.unparsed("name", name),
         )
 
         fun buildDeleted(name: String) = mm(
-            "<green><name> deleted</green>",
+            "<green><aqua><name></aqua> deleted</green>",
             Placeholder.unparsed("name", name),
         )
 
         fun buildMoved(name: String) = mm(
-            "<green><name> moved to your location</green>",
+            "<green><aqua><name></aqua> moved to your location</green>",
             Placeholder.unparsed("name", name),
         )
 
         val buildUpdated = mm("<green>Build updated</green>")
 
         fun buildVoteRecorded(name: String) = mm(
-            "<green>You voted for <name></green>",
+            "<green>You voted for <aqua><name></aqua></green>",
             Placeholder.unparsed("name", name),
         )
 
         fun buildVoteRemoved(name: String) = mm(
-            "<gray>You removed your vote for <name></gray>",
+            "<gray>You removed your vote for <aqua><name></aqua></gray>",
             Placeholder.unparsed("name", name),
         )
 
@@ -146,7 +158,7 @@ class StringsEn {
             playerName: String,
             buildName: String,
         ) = mm(
-            "<gray>[<red>✎</red>] <player> created build \"<build>\"</gray>",
+            "<gray>[<red>✎</red>] <aqua><player></aqua> created build \"<build>\"</gray>",
             Placeholder.unparsed("player", playerName),
             Placeholder.component("build", clickableBuildName(buildName)),
         )
@@ -155,7 +167,7 @@ class StringsEn {
             playerName: String,
             buildName: String,
         ) = mm(
-            "<gray>[<red>❤</red>] <player> voted for build \"<build>\"</gray>",
+            "<gray>[<red>❤</red>] <aqua><player></aqua> voted for build \"<build>\"</gray>",
             Placeholder.unparsed("player", playerName),
             Placeholder.component("build", clickableBuildName(buildName)),
         )
@@ -167,7 +179,7 @@ class StringsEn {
             name: String,
             votes: Int,
         ) = mm(
-            "<gray>#<id> \"<aqua><name></aqua>\" (<white><votes></white> votes)</gray>",
+            "<gray>#<aqua><id></aqua> \"<aqua><name></aqua>\" (<aqua><votes></aqua> votes)</gray>",
             Placeholder.unparsed("id", id.toString()),
             Placeholder.unparsed("name", name),
             Placeholder.unparsed("votes", votes.toString()),
@@ -176,7 +188,7 @@ class StringsEn {
         val clickBuildFieldToEdit = Component.text("Click a field to edit:", NamedTextColor.GRAY)
 
         fun buildCreatedBy(owner: String) = mm(
-            "<gray>Created by <owner></gray>",
+            "<gray>Created by <aqua><owner></aqua></gray>",
             Placeholder.unparsed("owner", owner),
         )
 
@@ -196,13 +208,14 @@ class StringsEn {
         )
 
         private fun clickableBuildName(name: String) = Component
-            .text(name, NamedTextColor.WHITE)
+            .text(name, NamedTextColor.AQUA)
+            .decorate(TextDecoration.UNDERLINED)
             .clickEvent(ClickEvent.runCommand("/build $name"))
             .hoverEvent(HoverEvent.showText(Component.text("Click to teleport")))
     }
 
     inner class Homes {
-        val homesCannotCreate = mm("<gray>You cannot create a home</gray>")
+        val homesCannotCreate = mm("<red>You cannot create a home</red>")
 
         fun homesLimit(
             current: Int,
@@ -220,7 +233,7 @@ class StringsEn {
                 roleLines =
                     roleLines.append(
                         mm(
-                            "<newline><gray><role>: <aqua>+<homes></aqua> homes</gray>",
+                            "<newline><gray><aqua><role></aqua>: <aqua>+<homes></aqua> homes</gray>",
                             Placeholder.unparsed("role", role),
                             Placeholder.unparsed("homes", homes.toString()),
                         ),
@@ -243,7 +256,7 @@ class StringsEn {
             y: Int,
             z: Int,
         ) = mm(
-            "<aqua><name></aqua> <gray>(<world>: <x>, <y>, <z>)</gray>",
+            "<aqua><name></aqua> <gray>(<aqua><world></aqua>: <aqua><x></aqua>, <aqua><y></aqua>, <aqua><z></aqua>)</gray>",
             Placeholder.unparsed("name", name),
             Placeholder.unparsed("world", world),
             Placeholder.unparsed("x", x.toString()),
@@ -255,27 +268,27 @@ class StringsEn {
 
         val renameHomeDialogTitle = Component.text("Rename Home")
 
-        val homeIdInputLabel = Component.text("Home Id")
+        val homeIdInputLabel = Component.text("Home ID")
 
         val renameHomeButtonHover = Component.text("Click to rename the home")
 
         fun errorHomeNotFound(name: String) = mm(
-            "<red>Could not find home <name></red>",
+            "<red>Could not find home <aqua><name></aqua></red>",
             Placeholder.unparsed("name", name),
         )
 
         fun homeCreated(name: String) = mm(
-            "<green><name> created</green>",
+            "<green><aqua><name></aqua> created</green>",
             Placeholder.unparsed("name", name),
         )
 
         fun homeDeleted(name: String) = mm(
-            "<green><name> deleted</green>",
+            "<green><aqua><name></aqua> deleted</green>",
             Placeholder.unparsed("name", name),
         )
 
         fun homeMoved(name: String) = mm(
-            "<green><name> moved to your location</green>",
+            "<green><aqua><name></aqua> moved to your location</green>",
             Placeholder.unparsed("name", name),
         )
 
@@ -294,7 +307,7 @@ class StringsEn {
             name: String,
             world: String,
         ) = mm(
-            "<gray>\"<aqua><u><name></u></aqua>\" (<world>)</gray>",
+            "<gray>\"<aqua><u><name></u></aqua>\" (<aqua><world></aqua>)</gray>",
             Placeholder.unparsed("name", name),
             Placeholder.unparsed("world", world),
         )
@@ -303,27 +316,27 @@ class StringsEn {
 
         val renameWarpDialogTitle = Component.text("Rename Warp")
 
-        val warpIdInputLabel = Component.text("Warp Id")
+        val warpIdInputLabel = Component.text("Warp ID")
 
         val renameWarpButtonHover = Component.text("Click to rename the warp")
 
         fun errorWarpNotFound(name: String) = mm(
-            "<red>Could not find warp <name></red>",
+            "<red>Could not find warp <aqua><name></aqua></red>",
             Placeholder.unparsed("name", name),
         )
 
         fun warpCreated(name: String) = mm(
-            "<green><name> created</green>",
+            "<green><aqua><name></aqua> created</green>",
             Placeholder.unparsed("name", name),
         )
 
         fun warpDeleted(name: String) = mm(
-            "<green><name> deleted</green>",
+            "<green><aqua><name></aqua> deleted</green>",
             Placeholder.unparsed("name", name),
         )
 
         fun warpMoved(name: String) = mm(
-            "<green><name> moved to your location</green>",
+            "<green><aqua><name></aqua> moved to your location</green>",
             Placeholder.unparsed("name", name),
         )
 
@@ -337,7 +350,7 @@ class StringsEn {
 
     inner class Bans {
         fun playerBannedAnnouncement(name: String) = mm(
-            "<gray><name> has been banned</gray>",
+            "<gray><aqua><name></aqua> has been banned</gray>",
             Placeholder.unparsed("name", name),
         )
 
@@ -349,9 +362,9 @@ class StringsEn {
             <color:red><b>This account is banned.</b></color>
 
             <color:gray>Reason:</color> <reason>
-            <color:gray>Expires:</color> <expires>
+            <color:gray>Expires:</color> <aqua><expires></aqua>
 
-            <color:aqua>Appeal @ https://projectcitybuild.com"</color>
+            <color:aqua>Appeal @ https://projectcitybuild.com</color>
             """.trimIndent(),
             Placeholder.component("reason", reason ?: Component.text("No reason provided")),
             Placeholder.unparsed("expires", expiresAt ?: "Never"),
@@ -383,21 +396,32 @@ class StringsEn {
         val confirmBanButtonHover = Component.text("Click to ban the player")
 
         fun playerHasBeenBanned(name: String) = mm(
-            "<name> has been banned",
+            "<green><aqua><name></aqua> has been banned</green>",
             Placeholder.unparsed("name", name),
         )
 
-        fun clickToEditBan(url: String) = mm(
-            "<gray>Click <click:OPEN_URL:'<url>'><hover:show_text:'<url>'><aqua><underlined>here</underlined></aqua></hover></click> to edit the ban or add additional information</gray>",
-            Placeholder.unparsed("url", url),
-        )
+        fun clickToEditBan(url: String): Component {
+            val link = Component
+                .text("here", NamedTextColor.AQUA)
+                .decorate(TextDecoration.UNDERLINED)
+                .clickEvent(ClickEvent.openUrl(url))
+                .hoverEvent(
+                    HoverEvent.showText(
+                        Component.text(url, NamedTextColor.AQUA).decorate(TextDecoration.UNDERLINED),
+                    ),
+                )
+            return mm(
+                "<gray>Click <link> to edit the ban or add additional information</gray>",
+                Placeholder.component("link", link),
+            )
+        }
     }
 
     inner class Sync {
         val syncFetchingPlayerData = mm("<gray>Fetching player data...</gray>")
 
         fun syncFetchingPlayerDataFor(name: String) = mm(
-            "<gray>Fetching player data for <name>...</gray>",
+            "<gray>Fetching player data for <aqua><name></aqua>...</gray>",
             Placeholder.unparsed("name", name),
         )
 
@@ -422,24 +446,22 @@ class StringsEn {
     }
 
     inner class Pim {
-        private val opElevationAlreadyActivePrefix = "<red>Error: You are already OP elevated (remaining: <remaining>)</red>"
-
         fun opElevationAlreadyActive(remaining: String?) = mm(
-            opElevationAlreadyActivePrefix,
-            Placeholder.unparsed("remaining", remaining ?: "null"),
+            "<red>Error: You are already OP elevated (remaining: <aqua><remaining></aqua>)</red>",
+            Placeholder.unparsed("remaining", remaining ?: "unknown"),
         )
 
         val opElevationNotActive = mm("<gray>You are not currently OP elevated</gray>")
 
         fun opElevationActive(remaining: String?) = mm(
-            "<gray>You are OP elevated (remaining: <remaining>)</gray>",
-            Placeholder.unparsed("remaining", remaining ?: "null"),
+            "<gray>You are OP elevated (remaining: <aqua><remaining></aqua>)</gray>",
+            Placeholder.unparsed("remaining", remaining ?: "unknown"),
         )
 
         val errorOpElevationReasonRequired = mm("<red>Error: elevation reason is required</red>")
 
         fun rolesSet(roles: String) = mm(
-            "<red>Your roles have been set to <roles></red><newline><gray>Use /sync or reconnect to revert this</gray>",
+            "<green>Your roles have been set to <aqua><roles></aqua></green><newline><gray>Use /sync or reconnect to revert this</gray>",
             Placeholder.unparsed("roles", roles),
         )
 
@@ -466,12 +488,12 @@ class StringsEn {
 
         val opElevationConfirmButton = Component.text("I understand.")
 
-        val opElevationRevoked = mm("<gray><i>OP elevation was revoked</i></gray>")
+        val opElevationRevoked = mm("<green><i>OP elevation was revoked</i></green>")
 
         val opElevationExpired = mm("<gray><i>OP elevation expired</i></gray>")
 
         fun opElevationGranted(remainingTime: String) = mm(
-            "<gray>OP status granted (remaining: <remaining>)</gray>",
+            "<green>OP status granted (remaining: <aqua><remaining></aqua>)</green>",
             Placeholder.unparsed("remaining", remainingTime),
         )
     }
@@ -533,7 +555,8 @@ class StringsEn {
 
         val errorNoRegisterEmailSpecified =
             mm(
-                "<red>Please specify an email address to receive your registration code</red><newline><gray>Example Usage: <bold>/register your@email.com</bold></gray>",
+                "<red>Please specify an email address to receive your registration code</red>" +
+                    "<newline><gray>Example usage: <bold>/register your@email.com</bold></gray>",
             )
 
         val errorNoCodeSpecified = mm("<red>You did not specify a code</red>")
@@ -553,13 +576,13 @@ class StringsEn {
     inner class Building {
         val errorNoItemToRename = mm("<red>No item in hand to rename</red>")
 
-        val nightVisionToggledOn = mm("<gray><i>NightVision toggled on</i></gray>")
+        val nightVisionToggledOn = mm("<green><i>Night vision toggled on</i></green>")
 
-        val nightVisionToggledOff = mm("<gray><i>NightVision toggled off</i></gray>")
+        val nightVisionToggledOff = mm("<green><i>Night vision toggled off</i></green>")
 
-        val receivedInvisFrame = mm("<gray><i>You received an invisible item frame</i></gray>")
+        val receivedInvisFrame = mm("<green><i>You received an invisible item frame</i></green>")
 
-        val receivedInvisFrameGlowing = mm("<gray><i>You received an invisible glowing frame</i></gray>")
+        val receivedInvisFrameGlowing = mm("<green><i>You received an invisible glowing frame</i></green>")
 
         fun renamedItem(newName: TextComponent) = mm(
             "<gray>Renamed item in hand to <name></gray>",
@@ -583,122 +606,235 @@ class StringsEn {
         val weatherCommandDescription = "Changes the weather in a world"
         val playerWeatherCommandDescription = "Views or changes a player's personal weather"
 
-        fun playerSetOnFire(name: String) = mm("Set $name on fire")
+        fun playerSetOnFire(name: String) = mm(
+            "<green>Set <aqua><name></aqua> on fire</green>",
+            Placeholder.unparsed("name", name),
+        )
 
-        fun playerExtinguished(name: String) = mm("Extinguished $name")
+        fun playerExtinguished(name: String) = mm(
+            "<green>Extinguished <aqua><name></aqua></green>",
+            Placeholder.unparsed("name", name),
+        )
 
-        fun playerNotOnFire(name: String) = mm("$name is not on fire")
+        fun playerNotOnFire(name: String) = mm(
+            "<gray><aqua><name></aqua> is not on fire</gray>",
+            Placeholder.unparsed("name", name),
+        )
 
-        fun playerFed(name: String) = mm("Fed $name")
+        fun playerFed(name: String) = mm(
+            "<green>Fed <aqua><name></aqua></green>",
+            Placeholder.unparsed("name", name),
+        )
 
         fun playerGameModeChanged(
             name: String,
             gameMode: String,
-        ) = mm("Changed $name's game mode to $gameMode")
+        ) = mm(
+            "<green>Changed <aqua><name></aqua>'s game mode to <aqua><gameMode></aqua></green>",
+            Placeholder.unparsed("name", name),
+            Placeholder.unparsed("gameMode", gameMode),
+        )
 
-        fun playerHealed(name: String) = mm("Healed $name")
+        fun playerHealed(name: String) = mm(
+            "<green>Healed <aqua><name></aqua></green>",
+            Placeholder.unparsed("name", name),
+        )
 
         fun playerIced(
             name: String,
             seconds: Int,
-        ) = mm("Iced $name for $seconds seconds")
+        ) = mm(
+            "<green>Iced <aqua><name></aqua> for <aqua><seconds></aqua> seconds</green>",
+            Placeholder.unparsed("name", name),
+            Placeholder.unparsed("seconds", seconds.toString()),
+        )
 
-        fun playerKilled(name: String) = mm("Killed $name")
+        fun playerKilled(name: String) = mm(
+            "<green>Killed <aqua><name></aqua></green>",
+            Placeholder.unparsed("name", name),
+        )
 
-        fun killedBy(name: String) = mm("You were killed by $name")
+        fun killedBy(name: String) = mm(
+            "<gray>You were killed by <aqua><name></aqua></gray>",
+            Placeholder.unparsed("name", name),
+        )
 
-        val noActivePotionEffects = mm("No active potion effects to purge")
+        val noActivePotionEffects = mm("<gray>No active potion effects to purge</gray>")
 
         fun playerEffectsPurged(
             num: Int,
             name: String,
-        ) = mm("Removed $num active potion effects from $name")
+        ) = mm(
+            "<green>Removed <aqua><num></aqua> active potion effects from <aqua><name></aqua></green>",
+            Placeholder.unparsed("num", num.toString()),
+            Placeholder.unparsed("name", name),
+        )
 
-        val playerDied = mm("You died.")
+        val playerDied = mm("<red>You died.</red>")
 
         fun playerExperienceSet(
             name: String,
             experience: Int,
-        ) = mm("Set $name's experience points to $experience.")
+        ) = mm(
+            "<green>Set <aqua><name></aqua>'s experience points to <aqua><experience></aqua>.</green>",
+            Placeholder.unparsed("name", name),
+            Placeholder.unparsed("experience", experience.toString()),
+        )
 
         fun playerExperienceAdded(
             name: String,
             amount: Long,
             currentExperience: Int,
-        ) = mm("Added $amount experience points to $name. They now have $currentExperience experience points.")
+        ) = mm(
+            "<green>Added <aqua><amount></aqua> experience points to <aqua><name></aqua>. " +
+                "They now have <aqua><currentExperience></aqua> experience points.</green>",
+            Placeholder.unparsed("name", name),
+            Placeholder.unparsed("amount", amount.toString()),
+            Placeholder.unparsed("currentExperience", currentExperience.toString()),
+        )
 
         fun playerExperienceSubtracted(
             name: String,
             amount: Long,
             currentExperience: Int,
-        ) = mm("Subtracted $amount experience points from $name. They now have $currentExperience experience points.")
+        ) = mm(
+            "<green>Subtracted <aqua><amount></aqua> experience points from <aqua><name></aqua>. " +
+                "They now have <aqua><currentExperience></aqua> experience points.</green>",
+            Placeholder.unparsed("name", name),
+            Placeholder.unparsed("amount", amount.toString()),
+            Placeholder.unparsed("currentExperience", currentExperience.toString()),
+        )
 
-        fun playerExperienceReset(name: String) = mm("Reset $name's experience points to 0.")
+        fun playerExperienceReset(name: String) = mm(
+            "<green>Reset <aqua><name></aqua>'s experience points to 0.</green>",
+            Placeholder.unparsed("name", name),
+        )
 
         fun worldTimeCurrent(
             world: String,
             time: String,
-        ) = mm("The time in $world is $time")
+        ) = mm(
+            "<gray>The time in <aqua><world></aqua> is <aqua><time></aqua></gray>",
+            Placeholder.unparsed("world", world),
+            Placeholder.unparsed("time", time),
+        )
 
         fun worldTimeSet(
             world: String,
             time: String,
-        ) = mm("Set the time in $world to $time")
+        ) = mm(
+            "<green>Set the time in <aqua><world></aqua> to <aqua><time></aqua></green>",
+            Placeholder.unparsed("world", world),
+            Placeholder.unparsed("time", time),
+        )
 
-        val errorTimeWorldRequired = mm("Specify a world when using this command from the console")
+        val errorTimeWorldRequired = mm("<red>Specify a world when using this command from the console</red>")
 
         fun worldTimeAdded(
             world: String,
             time: String,
-        ) = mm("Added $time to the time in $world")
+        ) = mm(
+            "<green>Added <aqua><time></aqua> to the time in <aqua><world></aqua></green>",
+            Placeholder.unparsed("time", time),
+            Placeholder.unparsed("world", world),
+        )
 
-        fun playerTimeNormal(name: String) = mm("$name uses the world's time")
+        fun playerTimeNormal(name: String) = mm(
+            "<gray><aqua><name></aqua> uses the world's time</gray>",
+            Placeholder.unparsed("name", name),
+        )
 
         fun playerTimeCurrent(
             name: String,
             time: String,
             relative: Boolean,
-        ) = mm("$name's personal time is $time (${if (relative) "relative" else "fixed"})")
+        ) = mm(
+            "<gray><aqua><name></aqua>'s personal time is <aqua><time></aqua> (<aqua><mode></aqua>)</gray>",
+            Placeholder.unparsed("name", name),
+            Placeholder.unparsed("time", time),
+            Placeholder.unparsed("mode", if (relative) "relative" else "fixed"),
+        )
 
         fun playerTimeSet(
             name: String,
             time: String,
             relative: Boolean,
-        ) = mm("Set $name's personal time to $time (${if (relative) "relative" else "fixed"})")
+        ) = mm(
+            "<green>Set <aqua><name></aqua>'s personal time to <aqua><time></aqua> (<aqua><mode></aqua>)</green>",
+            Placeholder.unparsed("name", name),
+            Placeholder.unparsed("time", time),
+            Placeholder.unparsed("mode", if (relative) "relative" else "fixed"),
+        )
 
-        fun playerTimeReset(name: String) = mm("Reset $name's personal time to the world's time")
+        fun playerTimeReset(name: String) = mm(
+            "<green>Reset <aqua><name></aqua>'s personal time to the world's time</green>",
+            Placeholder.unparsed("name", name),
+        )
 
         fun weatherSet(
             world: String,
             weather: String,
             durationSeconds: Int?,
         ) = if (durationSeconds == null) {
-            mm("Set the weather in $world to $weather")
+            mm(
+                "<green>Set the weather in <aqua><world></aqua> to <aqua><weather></aqua></green>",
+                Placeholder.unparsed("world", world),
+                Placeholder.unparsed("weather", weather),
+            )
         } else {
-            mm("Set the weather in $world to $weather for $durationSeconds seconds")
+            mm(
+                "<green>Set the weather in <aqua><world></aqua> to <aqua><weather></aqua> " +
+                    "for <aqua><duration></aqua> seconds</green>",
+                Placeholder.unparsed("world", world),
+                Placeholder.unparsed("weather", weather),
+                Placeholder.unparsed("duration", durationSeconds.toString()),
+            )
         }
 
-        fun playerWeatherNormal(name: String) = mm("$name uses the world's weather")
+        fun playerWeatherNormal(name: String) = mm(
+            "<gray><aqua><name></aqua> uses the world's weather</gray>",
+            Placeholder.unparsed("name", name),
+        )
 
         fun playerWeatherCurrent(
             name: String,
             weather: String,
-        ) = mm("$name's personal weather is $weather")
+        ) = mm(
+            "<gray><aqua><name></aqua>'s personal weather is <aqua><weather></aqua></gray>",
+            Placeholder.unparsed("name", name),
+            Placeholder.unparsed("weather", weather),
+        )
 
         fun playerWeatherSet(
             name: String,
             weather: String,
-        ) = mm("Set $name's personal weather to $weather")
+        ) = mm(
+            "<green>Set <aqua><name></aqua>'s personal weather to <aqua><weather></aqua></green>",
+            Placeholder.unparsed("name", name),
+            Placeholder.unparsed("weather", weather),
+        )
 
-        fun playerWeatherReset(name: String) = mm("Reset $name's personal weather to the world's weather")
+        fun playerWeatherReset(name: String) = mm(
+            "<green>Reset <aqua><name></aqua>'s personal weather to the world's weather</green>",
+            Placeholder.unparsed("name", name),
+        )
 
-        fun errorInvalidTime(time: String) = mm("Invalid time: $time")
+        fun errorInvalidTime(time: String) = mm(
+            "<red>Invalid time: <aqua><time></aqua></red>",
+            Placeholder.unparsed("time", time),
+        )
 
-        fun errorWorldNotFound(world: String) = mm("World $world was not found")
+        fun errorWorldNotFound(world: String) = mm(
+            "<red>World <aqua><world></aqua> was not found</red>",
+            Placeholder.unparsed("world", world),
+        )
 
-        val errorWeatherWorldRequired = mm("Specify a world when using this command from the console")
+        val errorWeatherWorldRequired = mm("<red>Specify a world when using this command from the console</red>")
 
-        fun errorPlayerMaxHealthUnavailable(name: String) = "Player $name has no maximum-health attribute"
+        fun errorPlayerMaxHealthUnavailable(name: String) = mm(
+            "<red>Player <aqua><name></aqua> has no maximum-health attribute</red>",
+            Placeholder.unparsed("name", name),
+        )
     }
 
     inner class Teleportation {
@@ -731,52 +867,60 @@ class StringsEn {
         val searchingForSafeLocation = mm("<gray><i>Searching for a safe location...</i></gray>")
 
         fun teleportRequestReceived(name: String) = mm(
-            "<yellow><name> wants to teleport to you. Use <click:run_command:'/tp accept'><hover:show_text:'Click to accept'>/tp accept</hover></click> or <click:run_command:'/tp deny'><hover:show_text:'Click to deny'>/tp deny</hover></click>.</yellow>",
+            "<yellow><aqua><name></aqua> wants to teleport to you. Use " +
+                "<click:run_command:'/tp accept'><hover:show_text:'Click to accept'>" +
+                "<aqua><underlined>/tp accept</underlined></aqua></hover></click> or " +
+                "<click:run_command:'/tp deny'><hover:show_text:'Click to deny'>" +
+                "<aqua><underlined>/tp deny</underlined></aqua></hover></click>.</yellow>",
             Placeholder.unparsed("name", name),
         )
 
         fun teleportHereRequestReceived(name: String) = mm(
-            "<yellow><name> wants you to teleport to them. Use <click:run_command:'/tp accept'><hover:show_text:'Click to accept'>/tp accept</hover></click> or <click:run_command:'/tp deny'><hover:show_text:'Click to deny'>/tp deny</hover></click>.</yellow>",
+            "<yellow><aqua><name></aqua> wants you to teleport to them. Use " +
+                "<click:run_command:'/tp accept'><hover:show_text:'Click to accept'>" +
+                "<aqua><underlined>/tp accept</underlined></aqua></hover></click> or " +
+                "<click:run_command:'/tp deny'><hover:show_text:'Click to deny'>" +
+                "<aqua><underlined>/tp deny</underlined></aqua></hover></click>.</yellow>",
             Placeholder.unparsed("name", name),
         )
 
         fun teleportRequestAccepted(name: String) = mm(
-            "<green>Teleport request from <name> accepted</green>",
+            "<green>Teleport request from <aqua><name></aqua> accepted</green>",
             Placeholder.unparsed("name", name),
         )
 
         fun teleportRequestDenied(name: String) = mm(
-            "<red>Teleport request from <name> denied</red>",
+            "<red>Teleport request from <aqua><name></aqua> denied</red>",
             Placeholder.unparsed("name", name),
         )
 
         fun teleportRequestWasDenied(name: String) = mm(
-            "<red><name> denied your teleport request</red>",
+            "<red><aqua><name></aqua> denied your teleport request</red>",
             Placeholder.unparsed("name", name),
         )
 
         fun teleportRequestCancelled(name: String) = mm(
-            "<yellow>Teleport request to <name> cancelled</yellow>",
+            "<yellow>Teleport request to <aqua><name></aqua> cancelled</yellow>",
             Placeholder.unparsed("name", name),
         )
 
         fun teleportRequestWasCancelled(name: String) = mm(
-            "<yellow><name> cancelled their teleport request</yellow>",
+            "<yellow><aqua><name></aqua> cancelled their teleport request</yellow>",
             Placeholder.unparsed("name", name),
         )
 
         fun teleportRequestExpired(name: String) = mm(
-            "<yellow>Teleport request from <name> expired</yellow>",
+            "<yellow>Teleport request from <aqua><name></aqua> expired</yellow>",
             Placeholder.unparsed("name", name),
         )
 
         fun teleportRequestSentExpired(name: String) = mm(
-            "<yellow>Your teleport request to <name> expired</yellow>",
+            "<yellow>Your teleport request to <aqua><name></aqua> expired</yellow>",
             Placeholder.unparsed("name", name),
         )
 
         fun teleportRequestDisconnected(name: String) = mm(
-            "<yellow>Teleport request involving <name> was removed because a player disconnected</yellow>",
+            "<yellow>Teleport request involving <aqua><name></aqua> was removed because a player disconnected</yellow>",
             Placeholder.unparsed("name", name),
         )
 
@@ -784,12 +928,13 @@ class StringsEn {
             name: String,
             ttl: Duration,
         ) = mm(
-            "<green>Teleport request to <name> created (expires in ${ttl.inWholeSeconds} seconds)</green>",
+            "<green>Teleport request to <aqua><name></aqua> created (expires in <aqua><seconds></aqua> seconds)</green>",
             Placeholder.unparsed("name", name),
+            Placeholder.unparsed("seconds", ttl.inWholeSeconds.toString()),
         )
 
         fun teleportCompleted(name: String) = mm(
-            "<green>Teleported to <name></green>",
+            "<green>Teleported to <aqua><name></aqua></green>",
             Placeholder.unparsed("name", name),
         )
 
@@ -797,18 +942,18 @@ class StringsEn {
             player: String,
             target: String,
         ) = mm(
-            "<green>Teleported <player> to <target></green>",
+            "<green>Teleported <aqua><player></aqua> to <aqua><target></aqua></green>",
             Placeholder.unparsed("player", player),
             Placeholder.unparsed("target", target),
         )
 
         fun teleportReceived(name: String) = mm(
-            "<gray><name> teleported to you</gray>",
+            "<gray><aqua><name></aqua> teleported to you</gray>",
             Placeholder.unparsed("name", name),
         )
 
         fun teleportBackCompleted(name: String) = mm(
-            "<green><name> returned to their previous location</green>",
+            "<green><aqua><name></aqua> returned to their previous location</green>",
             Placeholder.unparsed("name", name),
         )
 
@@ -816,13 +961,13 @@ class StringsEn {
             succeeded: Int,
             failed: Int,
         ) = mm(
-            "<green>Teleported <succeeded> player(s)</green><gray>; <failed> failed</gray>",
+            "<green>Teleported <aqua><succeeded></aqua> player(s)</green><gray>; <aqua><failed></aqua> failed</gray>",
             Placeholder.unparsed("succeeded", succeeded.toString()),
             Placeholder.unparsed("failed", failed.toString()),
         )
 
         fun teleportRequestsCreated(count: Int) = mm(
-            "<green>Teleport requests sent to <count> player(s)</green>",
+            "<green>Teleport requests sent to <aqua><count></aqua> player(s)</green>",
             Placeholder.unparsed("count", count.toString()),
         )
 
@@ -831,14 +976,14 @@ class StringsEn {
             y: Double,
             z: Double,
         ) = mm(
-            "<gray><i>⚡ Teleported to <b>{<x>, <y>, <z>}</b></i></gray>",
+            "<gray><i>⚡ Teleported to <b>{<aqua><x></aqua>, <aqua><y></aqua>, <aqua><z></aqua>}</b></i></gray>",
             Placeholder.unparsed("x", x.toString()),
             Placeholder.unparsed("y", y.toString()),
             Placeholder.unparsed("z", z.toString()),
         )
 
         fun teleportedToName(name: String) = mm(
-            "<gray><i>⚡ Teleported to <b><name></b></i></gray>",
+            "<gray><i>⚡ Teleported to <b><aqua><name></aqua></b></i></gray>",
             Placeholder.unparsed("name", name),
         )
 
@@ -847,7 +992,7 @@ class StringsEn {
             y: Int,
             z: Int,
         ) = mm(
-            "<gray><i>⚡ Teleported to <b>{<x>, <y>, <z>}</b></i></gray>",
+            "<gray><i>⚡ Teleported to <b>{<aqua><x></aqua>, <aqua><y></aqua>, <aqua><z></aqua>}</b></i></gray>",
             Placeholder.unparsed("x", x.toString()),
             Placeholder.unparsed("y", y.toString()),
             Placeholder.unparsed("z", z.toString()),
@@ -861,7 +1006,7 @@ class StringsEn {
 
         fun spawnSet(location: Location) = mm(
             "<green>World spawn set to <gray>" +
-                "{<x>, <y>, <z>} pitch=<pitch> yaw=<yaw>" +
+                "{<aqua><x></aqua>, <aqua><y></aqua>, <aqua><z></aqua>} pitch=<aqua><pitch></aqua> yaw=<aqua><yaw></aqua>" +
                 "</gray></green>",
             Placeholder.unparsed("x", location.x.toString()),
             Placeholder.unparsed("y", location.y.toString()),
@@ -882,23 +1027,26 @@ class StringsEn {
             name: String,
             reason: String,
         ) = mm(
-            "<i><gray><name> was kicked: <reason></gray></i>",
+            "<i><gray><aqua><name></aqua> was kicked: <aqua><reason></aqua></gray></i>",
             Placeholder.unparsed("name", name),
             Placeholder.unparsed("reason", reason),
         )
 
         fun playerWasKicked(name: String) = mm(
-            "<i><gray><name> was kicked</gray></i>",
+            "<i><gray><aqua><name></aqua> was kicked</gray></i>",
             Placeholder.unparsed("name", name),
         )
     }
 
     inner class Connection {
-        val errorUnableToAuthConnection = Component.text("Unable to authorize your connection. Please try again later.")
+        val errorUnableToAuthConnection =
+            Component.text("Unable to authorize your connection. Please try again later.", NamedTextColor.RED)
 
         val playerStateUnavailableWarning =
             Component.text(
-                "Warning: Unable to retrieve player data. Your permissions, rank and other data may be missing. Please type /sync or try reconnect in a moment",
+                "Warning: Unable to retrieve player data. Your permissions, rank, and other data may be missing. " +
+                    "Please type /sync or try reconnecting in a moment.",
+                NamedTextColor.YELLOW,
             )
     }
 
@@ -908,7 +1056,7 @@ class StringsEn {
 
     inner class Tablist {
         fun playerPing(ping: Int) = mm(
-            " <gray><ping></gray>",
+            " <gray><aqua><ping></aqua></gray>",
             Placeholder.unparsed("ping", ping.toString()),
         )
     }
@@ -917,22 +1065,22 @@ class StringsEn {
         val maintenanceConnectionDenied =
             mm("<bold>Server Maintenance</bold><newline><newline><gray>Please try again later</gray>")
 
-        val maintenanceMotd = mm("<red>Server maintenance - be right back!</red>")
+        val maintenanceMotd = mm("<yellow>Server maintenance - be right back!</yellow>")
 
-        val maintenanceReminder = mm("<italic><yellow>[Reminder] Maintenance mode is currently ON")
+        val maintenanceReminder = mm("<italic><yellow>[Reminder] Maintenance mode is currently ON</yellow></italic>")
 
         fun maintenanceAlreadyInState(enabled: Boolean) = mm(
-            "<red>Maintenance mode is already <state></red>",
+            "<red>Maintenance mode is already <aqua><state></aqua></red>",
             Placeholder.unparsed("state", enabled.onOff()),
         )
 
         fun maintenanceModeChanged(enabled: Boolean) = mm(
-            "<yellow>Maintenance mode is now <state></yellow>",
+            "<green>Maintenance mode is now <aqua><state></aqua></green>",
             Placeholder.unparsed("state", enabled.onOff()),
         )
 
         fun maintenanceStatus(enabled: Boolean) = mm(
-            "Maintenance mode is currently <state>",
+            "<gray>Maintenance mode is currently <aqua><state></aqua></gray>",
             Placeholder.unparsed("state", enabled.onOff()),
         )
     }
@@ -954,7 +1102,8 @@ class StringsEn {
             centerZ: Double,
             radius: Double,
         ) = mm(
-            "<gray>World border: <shape>, center <x>, <z>; radius <radius> blocks.</gray>",
+            "<gray>World border: <aqua><shape></aqua>, center <aqua><x></aqua>, <aqua><z></aqua>; " +
+                "radius <aqua><radius></aqua> blocks.</gray>",
             Placeholder.unparsed("shape", shape),
             Placeholder.unparsed("x", centerX.toString()),
             Placeholder.unparsed("z", centerZ.toString()),
@@ -967,7 +1116,8 @@ class StringsEn {
             width: Double,
             depth: Double,
         ) = mm(
-            "<gray>World border: rectangle, center <x>, <z>; width <width>, depth <depth> blocks.</gray>",
+            "<gray>World border: rectangle, center <aqua><x></aqua>, <aqua><z></aqua>; " +
+                "width <aqua><width></aqua>, depth <aqua><depth></aqua> blocks.</gray>",
             Placeholder.unparsed("x", centerX.toString()),
             Placeholder.unparsed("z", centerZ.toString()),
             Placeholder.unparsed("width", width.toString()),
@@ -975,7 +1125,7 @@ class StringsEn {
         )
 
         fun invalidBorder(reason: String?) = mm(
-            "<red>Invalid world border: <reason></red>",
+            "<red>Invalid world border: <aqua><reason></aqua></red>",
             Placeholder.unparsed("reason", reason ?: "unknown reason"),
         )
 
@@ -985,7 +1135,8 @@ class StringsEn {
             centerZ: Double,
             radius: Double,
         ) = mm(
-            "<green>World border set: <shape>, center <x>, <z>; radius <radius> blocks.</green>",
+            "<green>World border set: <aqua><shape></aqua>, center <aqua><x></aqua>, <aqua><z></aqua>; " +
+                "radius <aqua><radius></aqua> blocks.</green>",
             Placeholder.unparsed("shape", shape),
             Placeholder.unparsed("x", centerX.toString()),
             Placeholder.unparsed("z", centerZ.toString()),
@@ -998,7 +1149,8 @@ class StringsEn {
             width: Double,
             depth: Double,
         ) = mm(
-            "<green>World border set: rectangle, center <x>, <z>; width <width>, depth <depth> blocks.</green>",
+            "<green>World border set: rectangle, center <aqua><x></aqua>, <aqua><z></aqua>; " +
+                "width <aqua><width></aqua>, depth <aqua><depth></aqua> blocks.</green>",
             Placeholder.unparsed("x", centerX.toString()),
             Placeholder.unparsed("z", centerZ.toString()),
             Placeholder.unparsed("width", width.toString()),
@@ -1006,7 +1158,7 @@ class StringsEn {
         )
 
         fun borderRelocationFailures(count: Int) = mm(
-            "<yellow>World border was committed, but relocation failed for <count> player(s). See server logs.</yellow>",
+            "<yellow>World border was committed, but relocation failed for <aqua><count></aqua> player(s). See server logs.</yellow>",
             Placeholder.unparsed("count", count.toString()),
         )
 
@@ -1016,7 +1168,7 @@ class StringsEn {
         val fillRequiresBorder = mm("<red>Set a world border before filling chunks.</red>")
 
         fun fillLargeWarning(chunkCountUpperBound: Long) = mm(
-            "<yellow>This is a large fill (up to <count> chunks) and may take a long time. " +
+            "<yellow>This is a large fill (up to <aqua><count></aqua> chunks) and may take a long time. " +
                 "Click <click:run_command:'/worlds border fill confirm'>" +
                 "<hover:show_text:'Click to confirm the fill'><aqua><underlined>" +
                 "/worlds border fill confirm</underlined></aqua></hover></click> to continue.</yellow>",
@@ -1027,11 +1179,11 @@ class StringsEn {
             chunkCountUpperBound: Long,
             worldName: String,
         ) = mm(
-            "<green>Fill preview: up to <count> chunks may be checked in <world>. " +
+            "<yellow>Fill preview: up to <aqua><count></aqua> chunks may be checked in <aqua><world></aqua>. " +
                 "Only missing chunks will be generated. Click " +
                 "<click:run_command:'/worlds border fill confirm'>" +
                 "<hover:show_text:'Click to confirm the fill'><aqua><underlined>" +
-                "/worlds border fill confirm</underlined></aqua></hover></click> within 60 seconds to continue.</green>",
+                "/worlds border fill confirm</underlined></aqua></hover></click> within 60 seconds to continue.</yellow>",
             Placeholder.unparsed("count", chunkCountUpperBound.toString()),
             Placeholder.unparsed("world", worldName),
         )
@@ -1055,7 +1207,8 @@ class StringsEn {
             chunkCountUpperBound: Long,
             generated: Long,
         ) = mm(
-            "<yellow>World border fill progress: checked <checked> of up to <total> chunks; generated <generated>.</yellow>",
+            "<yellow>World border fill progress: checked <aqua><checked></aqua> of up to <aqua><total></aqua> chunks; " +
+                "generated <aqua><generated></aqua>.</yellow>",
             Placeholder.unparsed("checked", checked.toString()),
             Placeholder.unparsed("total", chunkCountUpperBound.toString()),
             Placeholder.unparsed("generated", generated.toString()),
@@ -1066,7 +1219,8 @@ class StringsEn {
             chunkCountUpperBound: Long,
             generated: Long,
         ) = mm(
-            "<green>World border fill complete: checked <checked> chunks (up to <total> in the border); generated <generated>.</green>",
+            "<green>World border fill complete: checked <aqua><checked></aqua> chunks " +
+                "(up to <aqua><total></aqua> in the border); generated <aqua><generated></aqua>.</green>",
             Placeholder.unparsed("checked", checked.toString()),
             Placeholder.unparsed("total", chunkCountUpperBound.toString()),
             Placeholder.unparsed("generated", generated.toString()),
@@ -1078,7 +1232,8 @@ class StringsEn {
             generated: Long,
             status: String,
         ) = mm(
-            "<yellow>World border fill <status>: checked <checked> of up to <total> chunks; generated <generated>.</yellow>",
+            "<yellow>World border fill <aqua><status></aqua>: checked <aqua><checked></aqua> of up to " +
+                "<aqua><total></aqua> chunks; generated <aqua><generated></aqua>.</yellow>",
             Placeholder.unparsed("status", status),
             Placeholder.unparsed("checked", checked.toString()),
             Placeholder.unparsed("total", chunkCountUpperBound.toString()),
@@ -1090,7 +1245,8 @@ class StringsEn {
             chunkCountUpperBound: Long,
             generated: Long,
         ) = mm(
-            "<yellow>World border fill cancelled: checked <checked> of up to <total> chunks; generated <generated>.</yellow>",
+            "<yellow>World border fill cancelled: checked <aqua><checked></aqua> of up to " +
+                "<aqua><total></aqua> chunks; generated <aqua><generated></aqua>.</yellow>",
             Placeholder.unparsed("checked", checked.toString()),
             Placeholder.unparsed("total", chunkCountUpperBound.toString()),
             Placeholder.unparsed("generated", generated.toString()),
