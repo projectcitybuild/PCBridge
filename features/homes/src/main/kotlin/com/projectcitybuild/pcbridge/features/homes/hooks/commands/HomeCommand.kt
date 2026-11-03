@@ -1,6 +1,5 @@
 package com.projectcitybuild.pcbridge.features.homes.hooks.commands
 
-import com.mojang.brigadier.arguments.StringArgumentType
 import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.core.pcbridgeapi.pcb.models.Home
 import com.projectcitybuild.pcbridge.features.homes.HomesPermissions
@@ -10,6 +9,7 @@ import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
 import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
+import com.projectcitybuild.pcbridge.platform.paper.commands.arguments.Argument
 import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.requirePlayer
@@ -34,7 +34,7 @@ class HomeCommand(
     override val builder = command("home") {
         description = "Teleports to one of your homes"
         requiresPermission(HomesPermissions.USE)
-        argument("name", StringArgumentType.greedyString()) {
+        argument(Argument.greedyString("name")) {
             suggestsSuspending(plugin, homeNameSuggester::suggest)
             executesSuspending(taskExecutor, ::execute)
         }
@@ -42,7 +42,7 @@ class HomeCommand(
 
     private suspend fun execute(context: PaperCommandContext) = context.runCommandTracedSafely(homesTracer) {
         val player = context.source.requirePlayer()
-        val name = context.getArgument("name", String::class.java)
+        val name = Argument.greedyString("name").get(context)
 
         val home = homeRepository.get(player.uniqueId, name)
         checkNotNull(home) { l10n.homes.errorHomeNotFound(name) }

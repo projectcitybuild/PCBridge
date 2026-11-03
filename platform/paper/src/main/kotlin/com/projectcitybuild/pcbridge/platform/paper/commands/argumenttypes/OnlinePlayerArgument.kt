@@ -15,7 +15,7 @@ import org.bukkit.Server
 import org.bukkit.entity.Player
 import java.util.concurrent.CompletableFuture
 
-class SingleOnlinePlayerArgument(
+class OnlinePlayerArgument(
     private val server: Server,
 ) : CustomArgumentType.Converted<Player, String> {
     override fun getNativeType(): ArgumentType<String> = StringArgumentType.word()

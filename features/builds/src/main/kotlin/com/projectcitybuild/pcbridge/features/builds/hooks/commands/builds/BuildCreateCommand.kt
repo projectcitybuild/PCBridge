@@ -1,6 +1,5 @@
 package com.projectcitybuild.pcbridge.features.builds.hooks.commands.builds
 
-import com.mojang.brigadier.arguments.StringArgumentType
 import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.features.builds.BuildsPermissions
 import com.projectcitybuild.pcbridge.features.builds.buildsTracer
@@ -9,6 +8,7 @@ import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
 import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
+import com.projectcitybuild.pcbridge.platform.paper.commands.arguments.Argument
 import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.requirePlayer
@@ -24,14 +24,14 @@ class BuildCreateCommand(
     override val builder = command("create") {
         description = "Creates a new build"
         requiresPermission(BuildsPermissions.MANAGE)
-        argument("name", StringArgumentType.greedyString()) {
+        argument(Argument.greedyString("name")) {
             executesSuspending(taskExecutor, ::execute)
         }
     }
 
     private suspend fun execute(context: PaperCommandContext) = context.runCommandTracedSafely(buildsTracer) {
         val player = context.source.requirePlayer()
-        val name = context.getArgument("name", String::class.java)
+        val name = Argument.greedyString("name").get(context)
 
         val location = player.location
         val build =

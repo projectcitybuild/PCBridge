@@ -7,7 +7,7 @@ import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
 import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
-import com.projectcitybuild.pcbridge.platform.paper.commands.argumenttypes.OnlinePlayerNameArgument
+import com.projectcitybuild.pcbridge.platform.paper.commands.arguments.Argument
 import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
@@ -26,13 +26,13 @@ class WarnCommand(
     override val builder = command("warn") {
         description = "Issues a warning to a player"
         requiresPermission(WarningsPermissions.MANAGE)
-        argument("player", OnlinePlayerNameArgument(server)) {
+        argument(Argument.onlinePlayerName("player", server)) {
             executesSuspending(taskExecutor, ::execute)
         }
     }
 
     private suspend fun execute(context: PaperCommandContext) = context.runCommandTracedSafely(warningsTracer) {
-        val playerName = context.getArgument("player", String::class.java)
+        val playerName = Argument.onlinePlayerName("player", server).get(context)
 
         val player = server.onlinePlayer(name = playerName)
         val lookup = player?.uniqueId?.toString() ?: playerName

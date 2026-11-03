@@ -1,44 +1,58 @@
 package com.projectcitybuild.pcbridge.platform.paper.commands.arguments
 
-import com.mojang.brigadier.arguments.DoubleArgumentType
-import com.mojang.brigadier.arguments.FloatArgumentType
-import com.mojang.brigadier.builder.RequiredArgumentBuilder
+import com.projectcitybuild.pcbridge.platform.paper.commands.CommandBuilder
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
-import io.papermc.paper.command.brigadier.CommandSourceStack
-import io.papermc.paper.command.brigadier.Commands
 import org.bukkit.plugin.Plugin
 
-fun withCoordinateArgs(
+fun CommandBuilder.withCoordinateArgs(
     plugin: Plugin,
-    execute: suspend (PaperCommandContext, Float?, Float?) -> Unit,
-): RequiredArgumentBuilder<CommandSourceStack, Double> {
-    val yawPitch = Commands
-        .argument("yaw", FloatArgumentType.floatArg())
-        .executesSuspending(plugin) { context ->
-            execute(context, FloatArgumentType.getFloat(context, "yaw"), null)
-        }.then(
-            Commands
-                .argument("pitch", FloatArgumentType.floatArg())
-                .executesSuspending(plugin) { context ->
+    execute: suspend (PaperCommandContext, Double, Double, Double, Float?, Float?) -> Unit,
+) {
+    val xArg = Argument.double("x")
+    val yArg = Argument.double("y")
+    val zArg = Argument.double("z")
+    val yawArg = Argument.float("yaw")
+    val pitchArg = Argument.float("pitch")
+
+    argument(xArg) {
+        argument(yArg) {
+            argument(zArg) {
+                executesSuspending(plugin) { context ->
                     execute(
                         context,
-                        FloatArgumentType.getFloat(context, "yaw"),
-                        FloatArgumentType.getFloat(context, "pitch"),
+                        xArg.get(context),
+                        yArg.get(context),
+                        zArg.get(context),
+                        null,
+                        null,
                     )
-                },
-        )
-
-    return Commands
-        .argument("x", DoubleArgumentType.doubleArg())
-        .then(
-            Commands
-                .argument("y", DoubleArgumentType.doubleArg())
-                .then(
-                    Commands
-                        .argument("z", DoubleArgumentType.doubleArg())
-                        .executesSuspending(plugin) { execute(it, null, null) }
-                        .then(yawPitch),
-                ),
-        )
+                }
+                argument(yawArg) {
+                    executesSuspending(plugin) { context ->
+                        execute(
+                            context,
+                            xArg.get(context),
+                            yArg.get(context),
+                            zArg.get(context),
+                            yawArg.get(context),
+                            null,
+                        )
+                    }
+                    argument(pitchArg) {
+                        executesSuspending(plugin) { context ->
+                            execute(
+                                context,
+                                xArg.get(context),
+                                yArg.get(context),
+                                zArg.get(context),
+                                yawArg.get(context),
+                                pitchArg.get(context),
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

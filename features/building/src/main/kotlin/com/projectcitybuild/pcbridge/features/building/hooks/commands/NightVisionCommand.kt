@@ -7,7 +7,7 @@ import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
 import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
-import com.projectcitybuild.pcbridge.platform.paper.commands.argumenttypes.OnOffArgument
+import com.projectcitybuild.pcbridge.platform.paper.commands.arguments.Argument
 import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.requirePlayer
@@ -35,7 +35,7 @@ class NightVisionCommand(
     override val builder = command("nv") {
         description = "Toggles night-vision mode"
         requiresPermission(BuildingPermissions.NIGHT_VISION)
-        argument("enabled", OnOffArgument()) {
+        argument(Argument.onOff("enabled")) {
             executesSuspending(commandTaskExecutor, ::execute)
         }
         executesSuspending(commandTaskExecutor, ::execute)
@@ -46,7 +46,7 @@ class NightVisionCommand(
 
         val desiredState =
             runCatching {
-                context.getArgument("enabled", Boolean::class.java)
+                Argument.onOff("enabled").get(context)
             }.getOrNull()
 
         val toggleOn =

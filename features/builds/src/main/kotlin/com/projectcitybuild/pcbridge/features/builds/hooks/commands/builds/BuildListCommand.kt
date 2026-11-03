@@ -1,6 +1,5 @@
 package com.projectcitybuild.pcbridge.features.builds.hooks.commands.builds
 
-import com.mojang.brigadier.arguments.IntegerArgumentType
 import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.core.pagination.PageComponentBuilder
 import com.projectcitybuild.pcbridge.features.builds.BuildsPermissions
@@ -10,9 +9,9 @@ import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
 import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
+import com.projectcitybuild.pcbridge.platform.paper.commands.arguments.Argument
 import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
-import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.getOptionalArgument
 import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
 import com.projectcitybuild.pcbridge.runtime.commands.runCommandTracedSafely
 import org.bukkit.plugin.Plugin
@@ -26,14 +25,14 @@ class BuildListCommand(
     override val builder = command("list") {
         description = "Lists available builds"
         requiresPermission(BuildsPermissions.TELEPORT)
-        argument("page", IntegerArgumentType.integer()) {
+        argument(Argument.integer("page")) {
             executesSuspending(taskExecutor, ::execute)
         }
         executesSuspending(taskExecutor, ::execute)
     }
 
     private suspend fun execute(context: PaperCommandContext) = context.runCommandTracedSafely(buildsTracer) {
-        val pageNumber = context.getOptionalArgument("page", Int::class.java) ?: 1
+        val pageNumber = Argument.integer("page").getOptional(context) ?: 1
         val builds = buildRepository.all(pageNumber)
         val totalPages = ceil(builds.total.toDouble() / builds.perPage.toDouble()).toInt()
         val sender = context.source.sender

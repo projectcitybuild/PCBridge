@@ -1,7 +1,5 @@
 package com.projectcitybuild.pcbridge.features.builds.hooks.commands.builds
 
-import com.mojang.brigadier.arguments.IntegerArgumentType
-import com.mojang.brigadier.arguments.StringArgumentType
 import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.features.builds.BuildsPermissions
 import com.projectcitybuild.pcbridge.features.builds.buildsTracer
@@ -11,10 +9,9 @@ import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
 import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
-import com.projectcitybuild.pcbridge.platform.paper.commands.argumenttypes.EnumArgument
+import com.projectcitybuild.pcbridge.platform.paper.commands.arguments.Argument
 import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
-import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.getOptionalArgument
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.runtime.commands.runCommandTracedSafely
 import org.bukkit.plugin.Plugin
@@ -27,10 +24,10 @@ class BuildSetCommand(
     override val builder = command("set") {
         description = "Updates a field on a build"
         requiresPermission(BuildsPermissions.MANAGE)
-        argument("id", IntegerArgumentType.integer()) {
-            this.argument("field", EnumArgument(EditableBuildField::class.java)) {
+        argument(Argument.integer("id")) {
+            this.argument(Argument.enumValue("field", EditableBuildField::class.java)) {
                 executesSuspending(taskExecutor, ::execute)
-                this.argument("value", StringArgumentType.greedyString()) {
+                this.argument(Argument.greedyString("value")) {
                     executesSuspending(taskExecutor, ::execute)
                 }
             }
@@ -39,9 +36,9 @@ class BuildSetCommand(
 
     private suspend fun execute(context: PaperCommandContext) = context.runCommandTracedSafely(buildsTracer) {
         val player = context.source.requirePlayer()
-        val field = context.getArgument("field", EditableBuildField::class.java)
-        val id = context.getArgument("id", Int::class.java)
-        val value = context.getOptionalArgument("value", String::class.java) ?: ""
+        val field = Argument.enumValue("field", EditableBuildField::class.java).get(context)
+        val id = Argument.integer("id").get(context)
+        val value = Argument.greedyString("value").getOptional(context) ?: ""
 
         buildRepository.set(
             id = id,

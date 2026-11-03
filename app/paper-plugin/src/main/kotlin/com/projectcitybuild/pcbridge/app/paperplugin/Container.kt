@@ -29,6 +29,7 @@ import com.projectcitybuild.pcbridge.features.builds.buildsModule
 import com.projectcitybuild.pcbridge.features.chatbadge.chatBadgeModule
 import com.projectcitybuild.pcbridge.features.chatformatting.chatFormattingModule
 import com.projectcitybuild.pcbridge.features.config.configModule
+import com.projectcitybuild.pcbridge.features.gameplay.gameplayModule
 import com.projectcitybuild.pcbridge.features.homes.homesModule
 import com.projectcitybuild.pcbridge.features.maintenance.maintenanceModule
 import com.projectcitybuild.pcbridge.features.moderate.moderateModule
@@ -144,6 +145,7 @@ private val featureModules =
         chatBadgeModule,
         chatFormattingModule,
         configModule,
+        gameplayModule,
         homesModule,
         maintenanceModule,
         moderateModule,

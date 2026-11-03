@@ -41,6 +41,7 @@ include(
     "features:chat-badge",
     "features:chat-formatting",
     "features:config",
+    "features:gameplay",
     "features:homes",
     "features:maintenance",
     "features:moderate",

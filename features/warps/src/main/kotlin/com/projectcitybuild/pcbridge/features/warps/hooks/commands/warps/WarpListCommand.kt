@@ -1,6 +1,5 @@
 package com.projectcitybuild.pcbridge.features.warps.hooks.commands.warps
 
-import com.mojang.brigadier.arguments.IntegerArgumentType
 import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.core.pagination.PageComponentBuilder
 import com.projectcitybuild.pcbridge.features.warps.WarpsPermissions
@@ -10,9 +9,9 @@ import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
 import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
+import com.projectcitybuild.pcbridge.platform.paper.commands.arguments.Argument
 import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
-import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.getOptionalArgument
 import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
 import com.projectcitybuild.pcbridge.runtime.commands.runCommandTracedSafely
 import com.projectcitybuild.pcbridge.runtime.remoteconfig.RemoteConfig
@@ -27,14 +26,14 @@ class WarpListCommand(
     override val builder = command("list") {
         description = "Lists available warps"
         requiresPermission(WarpsPermissions.TELEPORT)
-        argument("page", IntegerArgumentType.integer(1)) {
+        argument(Argument.integer("page", min = 1)) {
             executesSuspending(taskExecutor, ::execute)
         }
         executesSuspending(taskExecutor, ::execute)
     }
 
     private suspend fun execute(context: PaperCommandContext) = context.runCommandTracedSafely(warpsTracer) {
-        val pageNumber = context.getOptionalArgument("page", Int::class.java) ?: 1
+        val pageNumber = Argument.integer("page", min = 1).getOptional(context) ?: 1
         val sender = context.source.sender
 
         val warps =

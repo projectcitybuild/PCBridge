@@ -111,6 +111,16 @@ class CommandBuilder internal constructor(
     }
 
     /**
+     * Declares a typed command argument.
+     */
+    fun <T : Any> argument(
+        argument: CommandArgument<T>,
+        block: RequiredArgumentBuilder<CommandSourceStack, T>.() -> Unit,
+    ) {
+        argument(argument.name, argument.type, block)
+    }
+
+    /**
      * Declares a nested typed Brigadier argument.
      */
     fun <T : Any, U : Any> RequiredArgumentBuilder<CommandSourceStack, T>.argument(
@@ -122,6 +132,16 @@ class CommandBuilder internal constructor(
         argument.block()
 
         this.then(argument)
+    }
+
+    /**
+     * Declares a nested typed command argument.
+     */
+    fun <T : Any, U : Any> RequiredArgumentBuilder<CommandSourceStack, T>.argument(
+        argument: CommandArgument<U>,
+        block: RequiredArgumentBuilder<CommandSourceStack, U>.() -> Unit,
+    ) {
+        argument(argument.name, argument.type, block)
     }
 
     /**
