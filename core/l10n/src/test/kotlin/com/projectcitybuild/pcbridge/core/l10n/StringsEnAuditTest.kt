@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
+import org.jetbrains.kotlin.psi.KtEscapeStringTemplateEntry
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedFunction
@@ -23,6 +24,8 @@ import org.junit.jupiter.api.Test
 import java.io.File
 
 private val PLACEHOLDER_NAME_PATTERN = Regex("[a-z][a-z0-9]*(?:-[a-z0-9]+)*")
+
+private val SUPPORTED_PLACEHOLDER_CONSTRUCTORS = setOf("unparsed", "component", "parsed", "styling", "resolver")
 
 private val MINIMESSAGE_TAG_NAMES = setOf(
     "black",
@@ -42,6 +45,7 @@ private val MINIMESSAGE_TAG_NAMES = setOf(
     "yellow",
     "white",
     "reset",
+    "escape",
     "newline",
     "br",
     "bold",
@@ -211,14 +215,19 @@ private class StringsEnAuditor(
                 return@forEach
             }
 
-            if (resolver.type == "unparsed" && uses.none { it.dynamicDepth > 0 }) {
-                findings += finding(
-                    file,
-                    resolver.call,
-                    FindingKind.VIOLATION,
-                    "SCALAR_NOT_DYNAMIC",
-                    "Scalar placeholder '${resolver.name}' must be explicitly wrapped in Hex.DYNAMIC.",
-                )
+            if (resolver.type == "unparsed") {
+                uses
+                    .withIndex()
+                    .filter { (_, use) -> use.dynamicDepth == 0 }
+                    .forEach { (index, _) ->
+                        findings += finding(
+                            file,
+                            resolver.call,
+                            FindingKind.VIOLATION,
+                            "SCALAR_NOT_DYNAMIC",
+                            "Scalar placeholder '${resolver.name}' usage ${index + 1} must be explicitly wrapped in Hex.DYNAMIC.",
+                        )
+                    }
             }
 
             if (resolver.type == "component" && uses.any { it.dynamicDepth > 0 }) {
@@ -228,6 +237,26 @@ private class StringsEnAuditor(
                     FindingKind.REVIEW,
                     "DYNAMIC_COMPONENT_STYLE",
                     "Component placeholder '${resolver.name}' is inside Hex.DYNAMIC; verify that its own formatting is preserved.",
+                )
+            }
+
+            if (resolver.type == "parsed") {
+                findings += finding(
+                    file,
+                    resolver.call,
+                    FindingKind.VIOLATION,
+                    "PARSED_PLACEHOLDER",
+                    "Placeholder.parsed can interpret runtime data as MiniMessage; use Placeholder.unparsed or Placeholder.component.",
+                )
+            }
+
+            if (resolver.type !in SUPPORTED_PLACEHOLDER_CONSTRUCTORS) {
+                findings += finding(
+                    file,
+                    resolver.call,
+                    FindingKind.REVIEW,
+                    "UNSUPPORTED_PLACEHOLDER_CONSTRUCTOR",
+                    "Resolver constructor '${resolver.type}' is not recognized by this audit; review its parsing and formatting behavior.",
                 )
             }
         }
@@ -252,16 +281,32 @@ private class StringsEnAuditor(
             if (!Regex("Hex\\.[A-Z][A-Z_0-9]*").matches(expression)) {
                 val tag = tags.firstOrNull { index > it.start && end < it.end }
                 val isTagArgument = tag?.body?.contains(':') == true
+                val isTagName = tag != null && !isTagArgument && tag.body.contains(INTERPOLATION_MARKER)
+                val isEscapedContent = isInsideEscape(index, tags)
                 findings += finding(
                     file,
                     mmCall,
-                    FindingKind.VIOLATION,
-                    if (isTagArgument) "DYNAMIC_TAG_ARGUMENT" else "UNTRUSTED_MINIMESSAGE_INTERPOLATION",
-                    if (isTagArgument) {
-                        "Runtime value '$expression' is interpolated into a MiniMessage tag argument."
-                    } else {
-                        "Runtime value '$expression' is parsed as part of a MiniMessage template; " +
-                            "use Placeholder.unparsed or Placeholder.component."
+                    if (isEscapedContent) FindingKind.REVIEW else FindingKind.VIOLATION,
+                    when {
+                        isEscapedContent -> "ESCAPED_INTERPOLATION_REVIEW"
+                        isTagName -> "DYNAMIC_TAG_NAME"
+                        isTagArgument -> "DYNAMIC_TAG_ARGUMENT"
+                        else -> "UNTRUSTED_MINIMESSAGE_INTERPOLATION"
+                    },
+                    when {
+                        isEscapedContent -> {
+                            "Runtime value '$expression' is inside an <escape> section; confirm it cannot terminate the escaped region."
+                        }
+                        isTagName -> {
+                            "Runtime value '$expression' is interpolated into a MiniMessage tag name."
+                        }
+                        isTagArgument -> {
+                            "Runtime value '$expression' is interpolated into a MiniMessage tag argument."
+                        }
+                        else -> {
+                            "Runtime value '$expression' is parsed as part of a MiniMessage template; " +
+                                "use Placeholder.unparsed or Placeholder.component."
+                        }
                     },
                 )
             }
@@ -324,6 +369,9 @@ private class StringsEnAuditor(
             buildString {
                 expression.entries.forEach { entry ->
                     when (entry) {
+                        is KtEscapeStringTemplateEntry -> {
+                            append(entry.unescapedValue)
+                        }
                         is KtStringTemplateEntryWithExpression -> {
                             append(INTERPOLATION_MARKER)
                             append(entry.expression?.text ?: return null)
@@ -371,6 +419,10 @@ private class StringsEnAuditor(
         while (cursor < template.length) {
             val start = template.indexOf('<', cursor)
             if (start < 0) break
+            if (isEscaped(template, start)) {
+                cursor = start + 1
+                continue
+            }
             val end = template.indexOf('>', start + 1)
             if (end < 0) break
             val body = template.substring(start + 1, end)
@@ -385,9 +437,40 @@ private class StringsEnAuditor(
         return tags
     }
 
+    private fun isInsideEscape(
+        index: Int,
+        tags: List<MiniMessageTag>,
+    ): Boolean = tags
+        .asSequence()
+        .filter { it.end < index }
+        .fold(0) { depth, tag ->
+            when (tag.body) {
+                "escape" -> depth + 1
+                "/escape" -> (depth - 1).coerceAtLeast(0)
+                else -> depth
+            }
+        } > 0
+
+    private fun isEscaped(
+        text: String,
+        index: Int,
+    ): Boolean {
+        var slashCount = 0
+        var cursor = index - 1
+        while (cursor >= 0 && text[cursor] == '\\') {
+            slashCount++
+            cursor--
+        }
+        return slashCount % 2 == 1
+    }
+
     private fun resolverType(call: KtCallExpression): String? {
-        if (call.receiverText() != "Placeholder") return null
-        return call.calleeExpression?.text?.takeIf { it == "unparsed" || it == "component" }
+        val constructor = call.calleeExpression?.text ?: return null
+        return when (call.receiverText()) {
+            "Placeholder" -> constructor
+            "TagResolver" -> constructor
+            else -> null
+        }
     }
 
     private fun enclosingMiniMessageCall(call: KtCallExpression): KtCallExpression? = generateSequence(call.parent) { it.parent }
@@ -494,6 +577,202 @@ class StringsEnAuditTest {
         assertTrue("DYNAMIC_TAG_ARGUMENT" in rules, report.violations.toString())
         assertTrue("UNTRUSTED_MINIMESSAGE_INTERPOLATION" in rules, report.violations.toString())
         assertTrue("HARDCODED_PALETTE_COLOR" in rules, report.violations.toString())
+    }
+
+    @Test
+    fun `every scalar placeholder occurrence must be highlighted`() {
+        val bothHighlighted = audit(
+            """
+                fun message(value: String) = mm(
+                    "<${'$'}{Hex.DYNAMIC}><value></${'$'}{Hex.DYNAMIC}> " +
+                        "<${'$'}{Hex.DYNAMIC}><value></${'$'}{Hex.DYNAMIC}>",
+                    Placeholder.unparsed("value", value),
+                )
+            """.trimIndent(),
+        )
+        val oneHighlighted = audit(
+            """
+                fun message(value: String) = mm(
+                    "<${'$'}{Hex.DYNAMIC}><value></${'$'}{Hex.DYNAMIC}> <value>",
+                    Placeholder.unparsed("value", value),
+                )
+            """.trimIndent(),
+        )
+        val noneHighlighted = audit(
+            """
+                fun message(value: String) = mm(
+                    "<value> <value>",
+                    Placeholder.unparsed("value", value),
+                )
+            """.trimIndent(),
+        )
+
+        assertTrue(bothHighlighted.violations.none { it.rule == "SCALAR_NOT_DYNAMIC" })
+        assertEquals(1, oneHighlighted.violations.count { it.rule == "SCALAR_NOT_DYNAMIC" })
+        assertEquals(2, noneHighlighted.violations.count { it.rule == "SCALAR_NOT_DYNAMIC" })
+    }
+
+    @Test
+    fun `nested multiline and chained formatting supports multiple placeholders`() {
+        val source = """
+            fun message(first: String, second: String) = mm(
+                '''
+                <${'$'}{Hex.SUCCESS}><bold><${'$'}{Hex.DYNAMIC}><first></${'$'}{Hex.DYNAMIC}></bold>
+                <${'$'}{Hex.DYNAMIC}><underlined><second></underlined></${'$'}{Hex.DYNAMIC}></${'$'}{Hex.SUCCESS}>
+                '''.trimIndent(),
+                Placeholder.unparsed("first", first),
+                Placeholder.unparsed("second", second),
+            )
+        """.trimIndent().replace("'''", "\"\"\"")
+
+        val report = audit(source)
+
+        assertTrue(report.violations.isEmpty(), report.violations.toString())
+    }
+
+    @Test
+    fun `escaped tags do not establish dynamic highlighting`() {
+        val escapedLiteral = audit("""fun message() = mm("\\<red>literal\\</red>")""")
+        val escapedDynamicTag = audit(
+            """
+                fun message(value: String) = mm(
+                    "\\<${'$'}{Hex.DYNAMIC}><value></${'$'}{Hex.DYNAMIC}>",
+                    Placeholder.unparsed("value", value),
+                )
+            """.trimIndent(),
+        )
+
+        assertTrue(escapedLiteral.violations.isEmpty(), escapedLiteral.violations.toString())
+        assertEquals(
+            1,
+            escapedDynamicTag.violations.count { it.rule == "SCALAR_NOT_DYNAMIC" },
+            escapedDynamicTag.violations.toString(),
+        )
+    }
+
+    @Test
+    fun `interpolation in tag names commands and hover attributes is reported`() {
+        val report = audit(
+            """
+                fun message(name: String, command: String, hover: String) = mm(
+                    "<${'$'}name>Text</${'$'}name>" +
+                        "<click:run_command:'${'$'}{command}'>" +
+                        "<hover:show_text:'${'$'}{hover}'>" +
+                        "<insertion:'${'$'}{hover}'>Run</insertion></hover></click>",
+                )
+            """.trimIndent(),
+        )
+
+        val rules = report.violations.map { it.rule }
+        assertTrue("DYNAMIC_TAG_NAME" in rules, report.violations.toString())
+        assertEquals(3, rules.count { it == "DYNAMIC_TAG_ARGUMENT" }, report.violations.toString())
+    }
+
+    @Test
+    fun `static Hex interpolation and ordinary Kotlin strings are accepted`() {
+        val report = audit(
+            """
+                fun message(value: String) = mm(
+                    "<${'$'}{Hex.SUCCESS}><${'$'}{Hex.DYNAMIC}><value></${'$'}{Hex.DYNAMIC}></${'$'}{Hex.SUCCESS}>",
+                    Placeholder.unparsed("value", value),
+                )
+                fun unrelated(value: String) = "Hello ${'$'}value"
+            """.trimIndent(),
+        )
+
+        assertTrue(report.violations.isEmpty(), report.violations.toString())
+        assertTrue(report.reviewWarnings.isEmpty(), report.reviewWarnings.toString())
+    }
+
+    @Test
+    fun `dynamic and unsupported placeholder constructors are reviewed`() {
+        val dynamicName = audit(
+            """
+                fun message(name: String, value: String) = mm(
+                    "<value>",
+                    Placeholder.unparsed(name, value),
+                )
+            """.trimIndent(),
+        )
+        val unsupportedConstructor = audit(
+            """
+                fun message(value: String) = mm(
+                    "<value>",
+                    Placeholder.custom("value", value),
+                )
+            """.trimIndent(),
+        )
+
+        assertTrue(dynamicName.reviewWarnings.any { it.rule == "DYNAMIC_PLACEHOLDER_NAME" })
+        assertTrue(unsupportedConstructor.reviewWarnings.any { it.rule == "UNSUPPORTED_PLACEHOLDER_CONSTRUCTOR" })
+    }
+
+    @Test
+    fun `component styling and TagResolver constructors remain supported`() {
+        val report = audit(
+            """
+                fun message(component: Component, style: StyleBuilderApplicable) = mm(
+                    "<component><style><value>",
+                    Placeholder.component("component", component),
+                    Placeholder.styling("style", style),
+                    TagResolver.resolver("value") { },
+                )
+            """.trimIndent(),
+        )
+
+        assertTrue(report.violations.isEmpty(), report.violations.toString())
+        assertTrue(report.reviewWarnings.isEmpty(), report.reviewWarnings.toString())
+    }
+
+    @Test
+    fun `dynamic MiniMessage templates and interpolation in escaped sections are reviewed`() {
+        val dynamicTemplate = audit(
+            """
+                fun message(template: String) = MiniMessage.miniMessage().deserialize(template)
+            """.trimIndent(),
+        )
+        val escapedInterpolation = audit(
+            """
+                fun message(value: String) = mm("<escape>${'$'}value</escape>")
+            """.trimIndent(),
+        )
+
+        assertTrue(dynamicTemplate.reviewWarnings.any { it.rule == "DYNAMIC_TEMPLATE" })
+        assertTrue(escapedInterpolation.reviewWarnings.any { it.rule == "ESCAPED_INTERPOLATION_REVIEW" })
+        assertTrue(escapedInterpolation.violations.isEmpty(), escapedInterpolation.violations.toString())
+    }
+
+    @Test
+    fun `parsed placeholders are definite violations and duplicates are detected`() {
+        val parsed = audit(
+            """
+                fun message(value: String) = mm(
+                    "<${'$'}{Hex.DYNAMIC}><value></${'$'}{Hex.DYNAMIC}>",
+                    Placeholder.parsed("value", value),
+                )
+            """.trimIndent(),
+        )
+        val duplicate = audit(
+            """
+                fun message(value: String) = mm(
+                    "<value>",
+                    Placeholder.unparsed("value", value),
+                    Placeholder.component("value", Component.text(value)),
+                )
+            """.trimIndent(),
+        )
+        val unused = audit(
+            """
+                fun message(value: String) = mm(
+                    "<other>",
+                    Placeholder.unparsed("value", value),
+                )
+            """.trimIndent(),
+        )
+
+        assertTrue(parsed.violations.any { it.rule == "PARSED_PLACEHOLDER" })
+        assertTrue(duplicate.violations.any { it.rule == "DUPLICATE_PLACEHOLDER" })
+        assertTrue(unused.violations.any { it.rule == "PLACEHOLDER_NOT_IN_TEMPLATE" })
     }
 
     @Test
