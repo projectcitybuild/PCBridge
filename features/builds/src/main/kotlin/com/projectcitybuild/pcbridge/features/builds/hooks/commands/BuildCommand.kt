@@ -1,5 +1,6 @@
 package com.projectcitybuild.pcbridge.features.builds.hooks.commands
 
+import com.projectcitybuild.pcbridge.core.l10n.checkNotNullLocalized
 import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.core.pcbridgeapi.pcb.models.Build
 import com.projectcitybuild.pcbridge.features.builds.BuildsPermissions
@@ -14,7 +15,6 @@ import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.requirePlayer
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.suggestsSuspending
-import com.projectcitybuild.pcbridge.platform.paper.commands.requiresPermission
 import com.projectcitybuild.pcbridge.runtime.commands.runCommandTracedSafely
 import com.projectcitybuild.pcbridge.runtime.teleportation.PlayerTeleporter
 import net.kyori.adventure.text.Component
@@ -51,7 +51,9 @@ class BuildCommand(
         checkNotNull(build) { "Build not found" }
 
         val world = server.getWorld(build.world)
-        checkNotNull(world) { l10n.errors.errorWorldNotFound(build.world) }
+        checkNotNullLocalized(world) {
+            l10n.errors.errorWorldNotFound(build.world)
+        }
 
         playerTeleporter.move(
             player,

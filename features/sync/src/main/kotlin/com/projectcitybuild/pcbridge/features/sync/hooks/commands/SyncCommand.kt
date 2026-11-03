@@ -26,7 +26,7 @@ class SyncCommand(
         description = "Synchronizes server data"
         argument(Argument.onlinePlayer("player", plugin.server)) {
             requiresPermission(SyncPermissions.OTHER)
-                .executesSuspending(taskExecutor, ::syncOther)
+            executesSuspending(taskExecutor, ::syncOther)
         }
         executesSuspending(taskExecutor, ::syncSelf)
     }

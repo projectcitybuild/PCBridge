@@ -1,5 +1,6 @@
 package com.projectcitybuild.pcbridge.features.warps.hooks.commands
 
+import com.projectcitybuild.pcbridge.core.l10n.checkNotNullLocalized
 import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.core.pcbridgeapi.pcb.models.Warp
 import com.projectcitybuild.pcbridge.features.warps.WarpsPermissions
@@ -36,7 +37,7 @@ class WarpCommand(
         requiresPermission(WarpsPermissions.TELEPORT)
         argument(Argument.string("name")) {
             suggestsSuspending(plugin, warpNameSuggester::suggest)
-                .executesSuspending(taskExecutor, ::execute)
+            executesSuspending(taskExecutor, ::execute)
         }
     }
 
@@ -45,10 +46,14 @@ class WarpCommand(
         val warpName = Argument.string("name").get(context)
 
         val warp = warpRepository.get(name = warpName)
-        checkNotNull(warp) { l10n.warps.errorWarpNotFound(warpName) }
+        checkNotNullLocalized(warp) {
+            l10n.warps.errorWarpNotFound(warpName)
+        }
 
         val world = server.getWorld(warp.world)
-        checkNotNull(world) { l10n.errors.errorWorldNotFound(warp.world) }
+        checkNotNullLocalized(world) {
+            l10n.errors.errorWorldNotFound(warp.world)
+        }
 
         playerTeleporter.move(
             player,

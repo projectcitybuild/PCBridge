@@ -152,13 +152,15 @@ class PageComponentBuilder {
     }
 
     private fun prevButton(command: String): Component {
-        return MiniMessage.miniMessage().deserialize("${l10n.pagination.pagePrevButton} ")
+        return l10n.pagination.pagePrevButton
+            .append(Component.text(" "))
             .clickEvent(ClickEvent.runCommand(command))
             .hoverEvent(HoverEvent.showText(l10n.pagination.pagePrevButtonHover))
     }
 
     private fun nextButton(command: String): Component {
-        return MiniMessage.miniMessage().deserialize("${l10n.pagination.pageNextButton} ")
+        return l10n.pagination.pageNextButton
+            .append(Component.text(" "))
             .clickEvent(ClickEvent.runCommand(command))
             .hoverEvent(HoverEvent.showText(l10n.pagination.pageNextButtonHover))
     }
