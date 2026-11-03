@@ -15,24 +15,20 @@ val stringsEnSource = layout.projectDirectory
     .file("src/main/kotlin/com/projectcitybuild/pcbridge/core/l10n/StringsEn.kt")
     .asFile
 
-tasks.withType<Test>().configureEach {
+tasks.named<Test>("test") {
     systemProperty("stringsEnSource", stringsEnSource.absolutePath)
 }
 
 val testSourceSet = sourceSets.named("test")
+val auditReport = layout.buildDirectory.file("reports/l10n-audit/StringsEn-audit.txt")
 
-tasks.register<Test>("auditL10n") {
+tasks.register<JavaExec>("auditL10n") {
     description = "Audits localization placeholders and MiniMessage usage."
     group = "verification"
-    testClassesDirs = testSourceSet.get().output.classesDirs
+    dependsOn(tasks.named("testClasses"))
     classpath = testSourceSet.get().runtimeClasspath
-    useJUnitPlatform()
-    testLogging {
-        showStandardStreams = true
-    }
-    filter {
-        includeTestsMatching("com.projectcitybuild.pcbridge.core.l10n.StringsEnAuditTest")
-    }
-    reports.junitXml.outputLocation.set(layout.buildDirectory.dir("test-results/auditL10n"))
-    reports.html.outputLocation.set(layout.buildDirectory.dir("reports/tests/auditL10n"))
+    mainClass.set("com.projectcitybuild.pcbridge.core.l10n.StringsEnAuditCli")
+    args(stringsEnSource.absolutePath, auditReport.get().asFile.absolutePath)
+    inputs.file(stringsEnSource)
+    outputs.file(auditReport)
 }
