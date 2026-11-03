@@ -24,61 +24,60 @@ import java.io.File
 
 private val PLACEHOLDER_NAME_PATTERN = Regex("[a-z][a-z0-9]*(?:-[a-z0-9]+)*")
 
-private val MINIMESSAGE_TAG_NAMES =
-    setOf(
-        "black",
-        "dark_blue",
-        "dark_green",
-        "dark_aqua",
-        "dark_red",
-        "dark_purple",
-        "gold",
-        "gray",
-        "dark_gray",
-        "blue",
-        "green",
-        "aqua",
-        "red",
-        "light_purple",
-        "yellow",
-        "white",
-        "reset",
-        "newline",
-        "br",
-        "bold",
-        "b",
-        "italic",
-        "i",
-        "underlined",
-        "u",
-        "strikethrough",
-        "st",
-        "obfuscated",
-        "obf",
-        "rainbow",
-        "gradient",
-        "transition",
-        "font",
-        "key",
-        "lang",
-        "translate",
-        "selector",
-        "score",
-        "nbt",
-        "insertion",
-        "click",
-        "hover",
-        "pride",
-        "shadow_color",
-        "shift",
-        "space",
-        "sprite",
-        "head",
-        "entity",
-        "block",
-        "item",
-        "rel",
-    )
+private val MINIMESSAGE_TAG_NAMES = setOf(
+    "black",
+    "dark_blue",
+    "dark_green",
+    "dark_aqua",
+    "dark_red",
+    "dark_purple",
+    "gold",
+    "gray",
+    "dark_gray",
+    "blue",
+    "green",
+    "aqua",
+    "red",
+    "light_purple",
+    "yellow",
+    "white",
+    "reset",
+    "newline",
+    "br",
+    "bold",
+    "b",
+    "italic",
+    "i",
+    "underlined",
+    "u",
+    "strikethrough",
+    "st",
+    "obfuscated",
+    "obf",
+    "rainbow",
+    "gradient",
+    "transition",
+    "font",
+    "key",
+    "lang",
+    "translate",
+    "selector",
+    "score",
+    "nbt",
+    "insertion",
+    "click",
+    "hover",
+    "pride",
+    "shadow_color",
+    "shift",
+    "space",
+    "sprite",
+    "head",
+    "entity",
+    "block",
+    "item",
+    "rel",
+)
 
 private const val INTERPOLATION_MARKER = '\u0001'
 
@@ -127,54 +126,49 @@ private class StringsEnAuditor(
         val templateExpression = mmCall.valueArguments.firstOrNull()?.getArgumentExpression()
         val template = templateExpression?.let(::templateText)
         if (template == null) {
-            findings +=
-                finding(
-                    file,
-                    mmCall,
-                    FindingKind.REVIEW,
-                    "DYNAMIC_TEMPLATE",
-                    "The MiniMessage template is not a statically readable string; review it manually.",
-                )
+            findings += finding(
+                file,
+                mmCall,
+                FindingKind.REVIEW,
+                "DYNAMIC_TEMPLATE",
+                "The MiniMessage template is not a statically readable string; review it manually.",
+            )
             return
         }
 
         val tags = parseTags(template)
         auditInterpolations(file, mmCall, template, tags, findings)
 
-        val resolvers =
-            calls
-                .filter { it !== mmCall && enclosingMiniMessageCall(it) === mmCall }
-                .mapNotNull { resolverCall ->
-                    val resolverType = resolverType(resolverCall) ?: return@mapNotNull null
-                    val name =
-                        resolverCall.valueArguments
-                            .firstOrNull()
-                            ?.getArgumentExpression()
-                            ?.let(::literalString)
-                    if (name == null) {
-                        findings +=
-                            finding(
-                                file,
-                                resolverCall,
-                                FindingKind.REVIEW,
-                                "DYNAMIC_PLACEHOLDER_NAME",
-                                "The placeholder name is not a string literal; review it manually.",
-                            )
-                        return@mapNotNull null
-                    }
-                    Resolver(resolverCall, resolverType, name)
+        val resolvers = calls
+            .filter { it !== mmCall && enclosingMiniMessageCall(it) === mmCall }
+            .mapNotNull { resolverCall ->
+                val resolverType = resolverType(resolverCall) ?: return@mapNotNull null
+                val name = resolverCall.valueArguments
+                    .firstOrNull()
+                    ?.getArgumentExpression()
+                    ?.let(::literalString)
+                if (name == null) {
+                    findings += finding(
+                        file,
+                        resolverCall,
+                        FindingKind.REVIEW,
+                        "DYNAMIC_PLACEHOLDER_NAME",
+                        "The placeholder name is not a string literal; review it manually.",
+                    )
+                    return@mapNotNull null
                 }
+                Resolver(resolverCall, resolverType, name)
+            }
 
         resolvers.groupBy { it.name }.filterValues { it.size > 1 }.forEach { (name, duplicates) ->
             duplicates.drop(1).forEach { duplicate ->
-                findings +=
-                    finding(
-                        file,
-                        duplicate.call,
-                        FindingKind.VIOLATION,
-                        "DUPLICATE_PLACEHOLDER",
-                        "Placeholder '$name' is declared more than once for this template.",
-                    )
+                findings += finding(
+                    file,
+                    duplicate.call,
+                    FindingKind.VIOLATION,
+                    "DUPLICATE_PLACEHOLDER",
+                    "Placeholder '$name' is declared more than once for this template.",
+                )
             }
         }
 
@@ -185,61 +179,56 @@ private class StringsEnAuditor(
                     it.body !in resolverNames &&
                     it.body !in MINIMESSAGE_TAG_NAMES
             }.forEach { tag ->
-                findings +=
-                    finding(
-                        file,
-                        mmCall,
-                        FindingKind.REVIEW,
-                        "UNDECLARED_TAG",
-                        "Tag '${tag.body}' has no Placeholder resolver; confirm that it is an intentional MiniMessage extension.",
-                    )
+                findings += finding(
+                    file,
+                    mmCall,
+                    FindingKind.REVIEW,
+                    "UNDECLARED_TAG",
+                    "Tag '${tag.body}' has no Placeholder resolver; confirm that it is an intentional MiniMessage extension.",
+                )
             }
 
         resolvers.forEach { resolver ->
             if (!PLACEHOLDER_NAME_PATTERN.matches(resolver.name)) {
-                findings +=
-                    finding(
-                        file,
-                        resolver.call,
-                        FindingKind.VIOLATION,
-                        "INVALID_PLACEHOLDER_NAME",
-                        "Placeholder '${resolver.name}' must use lowercase words separated by single hyphens.",
-                    )
+                findings += finding(
+                    file,
+                    resolver.call,
+                    FindingKind.VIOLATION,
+                    "INVALID_PLACEHOLDER_NAME",
+                    "Placeholder '${resolver.name}' must use lowercase words separated by single hyphens.",
+                )
             }
 
             val uses = tags.filter { it.body == resolver.name }
             if (uses.isEmpty()) {
-                findings +=
-                    finding(
-                        file,
-                        resolver.call,
-                        FindingKind.VIOLATION,
-                        "PLACEHOLDER_NOT_IN_TEMPLATE",
-                        "Placeholder '${resolver.name}' is not used by its MiniMessage template.",
-                    )
+                findings += finding(
+                    file,
+                    resolver.call,
+                    FindingKind.VIOLATION,
+                    "PLACEHOLDER_NOT_IN_TEMPLATE",
+                    "Placeholder '${resolver.name}' is not used by its MiniMessage template.",
+                )
                 return@forEach
             }
 
             if (resolver.type == "unparsed" && uses.none { it.dynamicDepth > 0 }) {
-                findings +=
-                    finding(
-                        file,
-                        resolver.call,
-                        FindingKind.VIOLATION,
-                        "SCALAR_NOT_DYNAMIC",
-                        "Scalar placeholder '${resolver.name}' must be explicitly wrapped in Hex.DYNAMIC.",
-                    )
+                findings += finding(
+                    file,
+                    resolver.call,
+                    FindingKind.VIOLATION,
+                    "SCALAR_NOT_DYNAMIC",
+                    "Scalar placeholder '${resolver.name}' must be explicitly wrapped in Hex.DYNAMIC.",
+                )
             }
 
             if (resolver.type == "component" && uses.any { it.dynamicDepth > 0 }) {
-                findings +=
-                    finding(
-                        file,
-                        resolver.call,
-                        FindingKind.REVIEW,
-                        "DYNAMIC_COMPONENT_STYLE",
-                        "Component placeholder '${resolver.name}' is inside Hex.DYNAMIC; verify that its own formatting is preserved.",
-                    )
+                findings += finding(
+                    file,
+                    resolver.call,
+                    FindingKind.REVIEW,
+                    "DYNAMIC_COMPONENT_STYLE",
+                    "Component placeholder '${resolver.name}' is inside Hex.DYNAMIC; verify that its own formatting is preserved.",
+                )
             }
         }
     }
@@ -263,19 +252,18 @@ private class StringsEnAuditor(
             if (!Regex("Hex\\.[A-Z][A-Z_0-9]*").matches(expression)) {
                 val tag = tags.firstOrNull { index > it.start && end < it.end }
                 val isTagArgument = tag?.body?.contains(':') == true
-                findings +=
-                    finding(
-                        file,
-                        mmCall,
-                        FindingKind.VIOLATION,
-                        if (isTagArgument) "DYNAMIC_TAG_ARGUMENT" else "UNTRUSTED_MINIMESSAGE_INTERPOLATION",
-                        if (isTagArgument) {
-                            "Runtime value '$expression' is interpolated into a MiniMessage tag argument."
-                        } else {
-                            "Runtime value '$expression' is parsed as part of a MiniMessage template; " +
-                                "use Placeholder.unparsed or Placeholder.component."
-                        },
-                    )
+                findings += finding(
+                    file,
+                    mmCall,
+                    FindingKind.VIOLATION,
+                    if (isTagArgument) "DYNAMIC_TAG_ARGUMENT" else "UNTRUSTED_MINIMESSAGE_INTERPOLATION",
+                    if (isTagArgument) {
+                        "Runtime value '$expression' is interpolated into a MiniMessage tag argument."
+                    } else {
+                        "Runtime value '$expression' is parsed as part of a MiniMessage template; " +
+                            "use Placeholder.unparsed or Placeholder.component."
+                    },
+                )
             }
             index = end + 1
         }
@@ -287,14 +275,13 @@ private class StringsEnAuditor(
     ) {
         file.collectDescendantsOfType<KtStringTemplateExpression>().forEach { string ->
             if (!string.isInsideHexObject() && containsHexColor(string.text)) {
-                findings +=
-                    finding(
-                        file,
-                        string,
-                        FindingKind.VIOLATION,
-                        "HARDCODED_PALETTE_COLOR",
-                        "Use a Hex palette constant instead of a hardcoded color literal.",
-                    )
+                findings += finding(
+                    file,
+                    string,
+                    FindingKind.VIOLATION,
+                    "HARDCODED_PALETTE_COLOR",
+                    "Use a Hex palette constant instead of a hardcoded color literal.",
+                )
             }
         }
 
@@ -305,14 +292,13 @@ private class StringsEnAuditor(
                 ?.getArgumentExpression()
                 ?.text ?: return@forEach
             if (literal.startsWith("0x", ignoreCase = true) && literal.drop(2).all { it.isDigit() || it.lowercaseChar() in 'a'..'f' }) {
-                findings +=
-                    finding(
-                        file,
-                        call,
-                        FindingKind.VIOLATION,
-                        "HARDCODED_PALETTE_COLOR",
-                        "Use a Hex palette constant instead of a hardcoded color literal.",
-                    )
+                findings += finding(
+                    file,
+                    call,
+                    FindingKind.VIOLATION,
+                    "HARDCODED_PALETTE_COLOR",
+                    "Use a Hex palette constant instead of a hardcoded color literal.",
+                )
             }
         }
     }
