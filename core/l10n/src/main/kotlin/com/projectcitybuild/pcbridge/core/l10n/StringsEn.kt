@@ -630,9 +630,9 @@ class StringsEn {
             name: String,
             gameMode: String,
         ) = mm(
-            "<green>Changed <aqua><name></aqua>'s game mode to <aqua><gameMode></aqua></green>",
+            "<green>Changed <aqua><name></aqua>'s game mode to <aqua><game-mode></aqua></green>",
             Placeholder.unparsed("name", name),
-            Placeholder.unparsed("gameMode", gameMode),
+            Placeholder.unparsed("game-mode", gameMode),
         )
 
         fun playerHealed(name: String) = mm(
@@ -687,10 +687,10 @@ class StringsEn {
             currentExperience: Int,
         ) = mm(
             "<green>Added <aqua><amount></aqua> experience points to <aqua><name></aqua>. " +
-                "They now have <aqua><currentExperience></aqua> experience points.</green>",
+                "They now have <aqua><current-experience></aqua> experience points.</green>",
             Placeholder.unparsed("name", name),
             Placeholder.unparsed("amount", amount.toString()),
-            Placeholder.unparsed("currentExperience", currentExperience.toString()),
+            Placeholder.unparsed("current-experience", currentExperience.toString()),
         )
 
         fun playerExperienceSubtracted(
@@ -699,10 +699,10 @@ class StringsEn {
             currentExperience: Int,
         ) = mm(
             "<green>Subtracted <aqua><amount></aqua> experience points from <aqua><name></aqua>. " +
-                "They now have <aqua><currentExperience></aqua> experience points.</green>",
+                "They now have <aqua><current-experience></aqua> experience points.</green>",
             Placeholder.unparsed("name", name),
             Placeholder.unparsed("amount", amount.toString()),
-            Placeholder.unparsed("currentExperience", currentExperience.toString()),
+            Placeholder.unparsed("current-experience", currentExperience.toString()),
         )
 
         fun playerExperienceReset(name: String) = mm(

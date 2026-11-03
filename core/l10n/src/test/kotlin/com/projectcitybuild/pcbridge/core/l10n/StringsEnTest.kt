@@ -53,6 +53,30 @@ class StringsEnTest {
     }
 
     @Test
+    fun `gameplay messages accept hyphenated parameter names`() {
+        val gameMode = strings.gameplay.playerGameModeChanged("Andy", "survival")
+        val experienceAdded = strings.gameplay.playerExperienceAdded("Andy", 1000, 3000)
+        val experienceSubtracted = strings.gameplay.playerExperienceSubtracted("Andy", 1000, 3000)
+
+        assertEquals("Changed Andy's game mode to survival", plainText.serialize(gameMode))
+        assertEquals(
+            "Added 1000 experience points to Andy. They now have 3000 experience points.",
+            plainText.serialize(experienceAdded),
+        )
+        assertEquals(
+            "Subtracted 1000 experience points from Andy. They now have 3000 experience points.",
+            plainText.serialize(experienceSubtracted),
+        )
+        listOf(
+            textNode(gameMode, "survival"),
+            textNode(experienceAdded, "3000"),
+            textNode(experienceSubtracted, "3000"),
+        ).forEach { parameter ->
+            assertEquals(NamedTextColor.AQUA, parameter.style().color())
+        }
+    }
+
+    @Test
     fun `component placeholder preserves its existing formatting`() {
         val formattedName = Component.text("Custom name", NamedTextColor.BLUE).decorate(TextDecoration.BOLD)
         val message = strings.building.renamedItem(formattedName)
