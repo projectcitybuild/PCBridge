@@ -111,6 +111,7 @@ class PortalListenerTest {
         val destinationWorld = mock(World::class.java)
         val from = mock(Location::class.java)
         val currentTo = mock(Location::class.java)
+        val border = mock(WorldBorder::class.java)
         whenever(from.world).thenReturn(sourceWorld)
         whenever(from.x).thenReturn(-8.2)
         whenever(from.z).thenReturn(-17.9)
@@ -118,6 +119,8 @@ class PortalListenerTest {
         whenever(destinationWorld.coordinateScale).thenReturn(8.0)
         whenever(destinationWorld.minHeight).thenReturn(0)
         whenever(destinationWorld.maxHeight).thenReturn(256)
+        whenever(destinationWorld.worldBorder).thenReturn(border)
+        whenever(border.isInside(any<Location>())).thenReturn(true)
         whenever(currentTo.y).thenReturn(70.0)
         whenever(currentTo.yaw).thenReturn(45f)
         whenever(currentTo.pitch).thenReturn(15f)
@@ -143,5 +146,76 @@ class PortalListenerTest {
         assertEquals(70.0, destination.y)
         assertEquals(45f, destination.yaw)
         assertEquals(15f, destination.pitch)
+    }
+
+    @Test
+    fun `rejects scaled coordinates outside the supported block range`() {
+        val sourceWorld = mock(World::class.java)
+        val destinationWorld = mock(World::class.java)
+        val from = mock(Location::class.java)
+        whenever(from.world).thenReturn(sourceWorld)
+        whenever(from.x).thenReturn(Int.MAX_VALUE.toDouble() * 2)
+        whenever(from.z).thenReturn(0.0)
+        whenever(sourceWorld.coordinateScale).thenReturn(1.0)
+        whenever(destinationWorld.coordinateScale).thenReturn(1.0)
+        whenever(destinationWorld.minHeight).thenReturn(0)
+        whenever(destinationWorld.maxHeight).thenReturn(256)
+
+        val listener = PortalListener(
+            plugin = mock(Plugin::class.java),
+            server = mock(Server::class.java),
+            portalLinksRepository = mock(PortalLinksRepository::class.java),
+            worldLifecycleService = mock(WorldLifecycleService::class.java),
+            settings = PortalSettings(),
+        )
+
+        val failure = org.junit.jupiter.api.Assertions.assertThrows(IllegalArgumentException::class.java) {
+            listener.destinationLocation(
+                entity = mock(Player::class.java),
+                from = from,
+                currentTo = null,
+                destinationWorld = destinationWorld,
+                type = PortalLinkType.NETHER,
+            )
+        }
+
+        assertEquals("Portal destination coordinates exceed the supported range", failure.message)
+    }
+
+    @Test
+    fun `rejects destinations outside the target world border`() {
+        val sourceWorld = mock(World::class.java)
+        val destinationWorld = mock(World::class.java)
+        val from = mock(Location::class.java)
+        val border = mock(WorldBorder::class.java)
+        whenever(from.world).thenReturn(sourceWorld)
+        whenever(from.x).thenReturn(1.0)
+        whenever(from.z).thenReturn(1.0)
+        whenever(sourceWorld.coordinateScale).thenReturn(1.0)
+        whenever(destinationWorld.coordinateScale).thenReturn(1.0)
+        whenever(destinationWorld.minHeight).thenReturn(0)
+        whenever(destinationWorld.maxHeight).thenReturn(256)
+        whenever(destinationWorld.worldBorder).thenReturn(border)
+        whenever(border.isInside(any<Location>())).thenReturn(false)
+
+        val listener = PortalListener(
+            plugin = mock(Plugin::class.java),
+            server = mock(Server::class.java),
+            portalLinksRepository = mock(PortalLinksRepository::class.java),
+            worldLifecycleService = mock(WorldLifecycleService::class.java),
+            settings = PortalSettings(),
+        )
+
+        val failure = org.junit.jupiter.api.Assertions.assertThrows(IllegalArgumentException::class.java) {
+            listener.destinationLocation(
+                entity = mock(Player::class.java),
+                from = from,
+                currentTo = null,
+                destinationWorld = destinationWorld,
+                type = PortalLinkType.NETHER,
+            )
+        }
+
+        assertEquals("Portal destination is outside the world border", failure.message)
     }
 }

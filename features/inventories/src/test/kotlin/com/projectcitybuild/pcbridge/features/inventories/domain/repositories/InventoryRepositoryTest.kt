@@ -207,13 +207,20 @@ class InventoryRepositoryTest {
     fun `inspection reports malformed profile data without rewriting it`() {
         val dataDirectory = copyFixture()
         val malformed = dataDirectory.resolve("worlds/world/broken.json")
+        val emptyWorldProfile = dataDirectory.resolve("worlds/world/empty.json")
+        val emptyGlobalProfile = dataDirectory.resolve("players/00000000-0000-0000-0000-000000000001.json")
         Files.writeString(malformed, "{broken")
+        Files.writeString(emptyWorldProfile, "")
+        Files.writeString(emptyGlobalProfile, "")
         val repository = repository(dataDirectory)
 
         val report = repository.inspect()
 
-        assertEquals(listOf(malformed.toFile()), report.malformedJsonFiles)
+        assertEquals(3, report.malformedJsonFiles.size)
+        assertTrue(report.malformedJsonFiles.containsAll(listOf(malformed, emptyWorldProfile, emptyGlobalProfile).map(Path::toFile)))
         assertEquals("{broken", Files.readString(malformed))
+        assertEquals("", Files.readString(emptyWorldProfile))
+        assertEquals("", Files.readString(emptyGlobalProfile))
     }
 
     @Test
@@ -239,19 +246,23 @@ class InventoryRepositoryTest {
     @Test
     fun `updates do not replace malformed existing profile files`() {
         val dataDirectory = copyFixture()
-        val path = dataDirectory.resolve("groups/survival/Broken.json")
-        Files.writeString(path, "{broken")
         val repository = repository(dataDirectory)
 
-        assertThrows(RuntimeException::class.java) {
-            repository.updateProfile(
-                InventoryProfileLocation("groups", "survival", "Broken"),
-                InventoryProfileType.SURVIVAL,
-                mapOf("inventoryContents" to JsonObject()),
-            )
-        }
+        listOf("{broken", "").forEachIndexed { index, contents ->
+            val name = "Broken$index"
+            val path = dataDirectory.resolve("groups/survival/$name.json")
+            Files.writeString(path, contents)
 
-        assertEquals("{broken", Files.readString(path))
+            assertThrows(RuntimeException::class.java) {
+                repository.updateProfile(
+                    InventoryProfileLocation("groups", "survival", name),
+                    InventoryProfileType.SURVIVAL,
+                    mapOf("inventoryContents" to JsonObject()),
+                )
+            }
+
+            assertEquals(contents, Files.readString(path))
+        }
     }
 
     @Test

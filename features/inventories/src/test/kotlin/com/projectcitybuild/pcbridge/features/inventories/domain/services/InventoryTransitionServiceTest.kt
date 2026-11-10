@@ -1,6 +1,8 @@
 package com.projectcitybuild.pcbridge.features.inventories.domain.services
 
+import com.google.gson.GsonBuilder
 import com.google.gson.JsonElement
+import com.google.gson.JsonNull
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import com.google.gson.JsonPrimitive
@@ -16,9 +18,13 @@ import org.bukkit.GameMode
 import org.bukkit.Location
 import org.bukkit.UnsafeValues
 import org.bukkit.World
+import org.bukkit.configuration.serialization.ConfigurationSerializable
+import org.bukkit.configuration.serialization.ConfigurationSerialization
 import org.bukkit.entity.Player
+import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.PlayerInventory
+import org.bukkit.potion.PotionEffect
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertSame
@@ -122,6 +128,304 @@ class InventoryTransitionServiceTest {
             assertSame(firstSlot, contents[0])
             assertNull(contents[1])
             assertSame(fortiethSlot, contents[40])
+        }
+    }
+
+    @Test
+    fun `applies representative copied inventory formats without shifting slots or losing serialized fields`() {
+        val repository = mock<InventoryRepository>()
+        whenever(repository.profileName(any(), any())).thenReturn("Tester")
+        whenever(repository.readWorldGroups()).thenReturn(
+            listOf(
+                inventoryGroup(
+                    "survival",
+                    setOf("world"),
+                    MultiverseInventoryShares.standard - setOf("max_hit_points", "hit_points"),
+                    disabledShares = setOf("max_hit_points", "hit_points"),
+                ),
+            ),
+        )
+        val profile = compatibilityProfile()
+        whenever(repository.readProfileResult(any())).thenReturn(InventoryProfileReadResult.Present(profile))
+
+        val world = mock<World>()
+        whenever(world.name).thenReturn("world")
+        val inventory = mock<PlayerInventory>()
+        whenever(inventory.contents).thenReturn(arrayOfNulls(41))
+        whenever(inventory.armorContents).thenReturn(arrayOfNulls(4))
+        val enderChest = mock<Inventory>()
+        whenever(enderChest.contents).thenReturn(arrayOfNulls(27))
+        val player = mock<Player>()
+        whenever(player.uniqueId).thenReturn(UUID.fromString("123e4567-e89b-12d3-a456-426614174000"))
+        whenever(player.name).thenReturn("Tester")
+        whenever(player.world).thenReturn(world)
+        whenever(player.gameMode).thenReturn(GameMode.SURVIVAL)
+        whenever(player.inventory).thenReturn(inventory)
+        whenever(player.enderChest).thenReturn(enderChest)
+
+        val itemNames = listOf(
+            "STONE",
+            "DIRT",
+            "DIAMOND_SWORD",
+            "SHIELD",
+            "DIAMOND",
+            "BOOK",
+            "EMERALD",
+            "GOLD_INGOT",
+            "LEATHER_BOOTS",
+            "LEATHER_LEGGINGS",
+            "DIAMOND_CHESTPLATE",
+            "DIAMOND_HELMET",
+            "ENDER_PEARL",
+            "TOTEM_OF_UNDYING",
+        )
+        val decodedItems = itemNames.associateWith { mock<ItemStack>() }
+        val serializedMaps = mutableListOf<Map<String, Any?>>()
+        val serializedPotions = mutableListOf<Map<String, Any?>>()
+        val potionEffect = mock<PotionEffect>()
+        val gson = GsonBuilder().serializeNulls().create()
+        val service = InventoryTransitionService(repository, MultiverseInventoryConfig(applyPlayerDataOnJoin = true))
+
+        mockStatic(ConfigurationSerialization::class.java).use { configuration ->
+            configuration.`when`<ConfigurationSerializable?> {
+                ConfigurationSerialization.deserializeObject(any())
+            }.thenAnswer { invocation ->
+                serializedPotions += invocation.getArgument<Map<String, Any?>>(0)
+                potionEffect
+            }
+            mockStatic(ItemStack::class.java).use { itemStacks ->
+                itemStacks.`when`<ItemStack> { ItemStack.deserialize(any()) }.thenAnswer { invocation ->
+                    val serialized = invocation.getArgument<Map<String, Any?>>(0)
+                    serializedMaps += serialized
+                    val type = serialized["type"] as? String
+                        ?: (serialized["id"] as String).substringAfter(':').uppercase()
+                    decodedItems.getValue(type)
+                }
+                mockStatic(Bukkit::class.java).use { bukkit ->
+                    bukkit.`when`<Boolean> { Bukkit.isPrimaryThread() }.thenReturn(true)
+
+                    service.onPlayerJoined(player)
+                }
+            }
+        }
+
+        val modeProfile = profile.getAsJsonObject("SURVIVAL")
+        val expectedSerializedItems = buildList {
+            listOf(
+                "inventoryContents" to listOf("0", "1", "2", "3", "4", "5", "6", "40"),
+                "armorContents" to listOf("100", "101", "102", "103"),
+                "enderChestContents" to listOf("26"),
+            ).forEach { (field, slots) ->
+                val slotMap = modeProfile.getAsJsonObject(field)
+                slots.forEach { slot -> add(slotMap.get(slot)) }
+            }
+            add(modeProfile.get("offHandItem"))
+        }
+        assertEquals(expectedSerializedItems, serializedMaps.map(gson::toJsonTree))
+        assertEquals(2, serializedPotions.size)
+        assertTrue(
+            serializedPotions.all {
+                it.keys == setOf("==", "effect", "duration", "amplifier", "ambient", "has-particles", "has-icon")
+            },
+        )
+
+        val contents = argumentCaptor<Array<ItemStack?>>()
+        verify(inventory).setContents(contents.capture())
+        assertEquals(41, contents.firstValue.size)
+        assertSame(decodedItems.getValue("STONE"), contents.firstValue[0])
+        assertSame(decodedItems.getValue("DIRT"), contents.firstValue[1])
+        assertSame(decodedItems.getValue("DIAMOND_SWORD"), contents.firstValue[2])
+        assertSame(decodedItems.getValue("SHIELD"), contents.firstValue[3])
+        assertSame(decodedItems.getValue("DIAMOND"), contents.firstValue[4])
+        assertSame(decodedItems.getValue("BOOK"), contents.firstValue[5])
+        assertSame(decodedItems.getValue("EMERALD"), contents.firstValue[6])
+        assertTrue((7..39).all { contents.firstValue[it] == null })
+        assertSame(decodedItems.getValue("GOLD_INGOT"), contents.firstValue[40])
+
+        val armor = argumentCaptor<Array<ItemStack?>>()
+        verify(inventory).setArmorContents(armor.capture())
+        assertEquals(4, armor.firstValue.size)
+        assertSame(decodedItems.getValue("LEATHER_BOOTS"), armor.firstValue[0])
+        assertSame(decodedItems.getValue("LEATHER_LEGGINGS"), armor.firstValue[1])
+        assertSame(decodedItems.getValue("DIAMOND_CHESTPLATE"), armor.firstValue[2])
+        assertSame(decodedItems.getValue("DIAMOND_HELMET"), armor.firstValue[3])
+
+        val enderContents = argumentCaptor<Array<ItemStack?>>()
+        verify(enderChest).setContents(enderContents.capture())
+        assertEquals(27, enderContents.firstValue.size)
+        assertSame(decodedItems.getValue("ENDER_PEARL"), enderContents.firstValue[26])
+        verify(inventory).setItemInOffHand(decodedItems.getValue("TOTEM_OF_UNDYING"))
+        verify(player).setRemainingAir(120)
+        verify(player).setMaximumAir(300)
+        verify(player).setFallDistance(3.5f)
+        verify(player).setFireTicks(10)
+        verify(player).setExp(0.75f)
+        verify(player).setTotalExperience(345)
+        verify(player).setLevel(22)
+        verify(player).setFoodLevel(16)
+        verify(player).setExhaustion(0.2f)
+        verify(player).setSaturation(3.0f)
+        verify(player).addPotionEffect(potionEffect)
+    }
+
+    @Test
+    fun `preserves every observed nested item metadata structure during Bukkit map conversion`() {
+        val fixture = requireNotNull(
+            javaClass.getResource(
+                "/multiverse-inventories/compatibility/sanitized-item-meta-variants.json",
+            ),
+        )
+        val variants = JsonParser.parseString(fixture.readText())
+            .asJsonObject
+            .getAsJsonArray("metaVariants")
+        val expectedItems = variants.map { metadata ->
+            JsonObject().apply {
+                addProperty("==", "org.bukkit.inventory.ItemStack")
+                addProperty("v", 4189)
+                addProperty("type", "STONE")
+                add("meta", metadata.deepCopy())
+            }
+        }
+        val convertedItems = mutableListOf<Map<String, Any?>>()
+        val service = InventoryTransitionService(
+            repository = mock(),
+            config = MultiverseInventoryConfig(),
+        )
+        val gson = GsonBuilder().serializeNulls().create()
+
+        mockStatic(ItemStack::class.java).use { itemStacks ->
+            itemStacks.`when`<ItemStack> { ItemStack.deserialize(any()) }.thenAnswer { invocation ->
+                convertedItems += invocation.getArgument<Map<String, Any?>>(0)
+                mock<ItemStack>()
+            }
+
+            expectedItems.forEach(service::decodeItem)
+        }
+
+        assertEquals(884, expectedItems.size)
+        assertEquals(expectedItems, convertedItems.map(gson::toJsonTree))
+    }
+
+    @Test
+    fun `saves armor in Multiverse slot numbers and removes stale legacy aliases`() {
+        val repository = mock<InventoryRepository>()
+        whenever(repository.profileName(any(), any())).thenReturn("Tester")
+        whenever(repository.readWorldGroups()).thenReturn(
+            listOf(
+                inventoryGroup(
+                    "survival",
+                    setOf("world"),
+                    setOf("armor"),
+                    MultiverseInventoryShares.standard - "armor_contents",
+                ),
+            ),
+        )
+        val originalArmor = JsonObject().apply {
+            addProperty("0", "legacy-low-slot")
+            addProperty("100", "stale-boot")
+            addProperty("101", "stale-leg")
+            addProperty("102", "stale-chest")
+            addProperty("103", "stale-helmet")
+            add("future-slot", JsonObject().apply { addProperty("preserve", true) })
+        }
+        val originalProfile = JsonObject().apply {
+            add(
+                "SURVIVAL",
+                JsonObject().apply {
+                    add("armorContents", originalArmor)
+                    add("futureShare", JsonObject().apply { addProperty("preserve", true) })
+                },
+            )
+            add(
+                "CREATIVE",
+                JsonObject().apply { addProperty("futureMode", true) },
+            )
+        }
+        whenever(repository.readProfileResult(any())).thenReturn(
+            InventoryProfileReadResult.Present(originalProfile),
+        )
+        val armorItems = arrayOfNulls<ItemStack>(4)
+        val inventory = mock<PlayerInventory>()
+        whenever(inventory.armorContents).thenReturn(armorItems)
+        val world = mock<World>()
+        whenever(world.name).thenReturn("world")
+        val player = mock<Player>()
+        whenever(player.uniqueId).thenReturn(UUID.fromString("123e4567-e89b-12d3-a456-426614174000"))
+        whenever(player.name).thenReturn("Tester")
+        whenever(player.world).thenReturn(world)
+        whenever(player.gameMode).thenReturn(GameMode.SURVIVAL)
+        whenever(player.inventory).thenReturn(inventory)
+        val service = InventoryTransitionService(repository, MultiverseInventoryConfig())
+
+        mockStatic(Bukkit::class.java).use { bukkit ->
+            bukkit.`when`<Boolean> { Bukkit.isPrimaryThread() }.thenReturn(true)
+
+            service.onPlayerQuit(player)
+        }
+
+        val fields = argumentCaptor<Map<String, JsonElement>>()
+        verify(repository).updateProfile(
+            eq(InventoryProfileLocation("groups", "survival", "Tester")),
+            eq(InventoryProfileType.SURVIVAL),
+            fields.capture(),
+            any(),
+        )
+        val savedArmor = fields.firstValue.getValue("armorContents").asJsonObject
+        assertEquals(setOf("future-slot"), savedArmor.keySet())
+        assertTrue(savedArmor.getAsJsonObject("future-slot").get("preserve").asBoolean)
+        assertEquals("stale-boot", originalArmor.get("100").asString)
+    }
+
+    @Test
+    fun `encodes nonempty armor slots at Multiverse offsets and replaces stale aliases`() {
+        val existing =
+            JsonParser.parseString(
+                """
+                {
+                  "0": {"type": "OLD_BOOTS"},
+                  "1": {"type": "OLD_LEGS"},
+                  "100": {"type": "OLD_OFFSET_BOOTS"},
+                  "101": {"type": "OLD_OFFSET_LEGS"},
+                  "future": "preserve"
+                }
+                """.trimIndent(),
+            )
+        val encoded =
+            service.mergeEncodedItems(
+                items = listOf(
+                    JsonParser.parseString("""{"type":"LEATHER_BOOTS"}"""),
+                    JsonNull.INSTANCE,
+                    JsonParser.parseString("""{"type":"DIAMOND_CHESTPLATE"}"""),
+                    JsonParser.parseString("""{"type":"DIAMOND_HELMET"}"""),
+                ),
+                existing = existing,
+                slotOffset = 100,
+                alternateSlotOffset = 0,
+            )
+
+        assertEquals(setOf("100", "102", "103", "future"), encoded.keySet())
+        assertEquals("LEATHER_BOOTS", encoded.getAsJsonObject("100").get("type").asString)
+        assertEquals("DIAMOND_CHESTPLATE", encoded.getAsJsonObject("102").get("type").asString)
+        assertEquals("DIAMOND_HELMET", encoded.getAsJsonObject("103").get("type").asString)
+        assertEquals("preserve", encoded.get("future").asString)
+        assertEquals("OLD_OFFSET_BOOTS", existing.asJsonObject.getAsJsonObject("100").get("type").asString)
+    }
+
+    @Test
+    fun `rejects colliding armor slot aliases and invalid item slots`() {
+        val collision = JsonParser.parseString("""{"0":null,"100":null}""")
+        assertThrows(IllegalArgumentException::class.java) {
+            service.decodeItems(collision, size = 4, slotOffset = 100)
+        }
+
+        assertThrows(IllegalArgumentException::class.java) {
+            service.decodeItems(JsonParser.parseString("""{"not-a-slot":null}"""), size = 41)
+        }
+        assertThrows(IllegalArgumentException::class.java) {
+            service.decodeItems(JsonParser.parseString("""{"41":null}"""), size = 41)
+        }
+        assertThrows(IllegalArgumentException::class.java) {
+            service.decodeItem(JsonPrimitive("not-valid-base64!!!"))
         }
     }
 
@@ -298,6 +602,76 @@ class InventoryTransitionServiceTest {
 
         verify(player, never()).inventory
         verify(player, never()).enderChest
+    }
+
+    @Test
+    fun `failed profile read does not block unrelated destination shares`() {
+        val repository = mock<InventoryRepository>()
+        whenever(repository.profileName(any(), any())).thenReturn("Tester")
+        val disabledShares = MultiverseInventoryShares.standard - setOf("bed_spawn", "inventory_contents")
+        whenever(repository.readWorldGroups()).thenReturn(
+            listOf(
+                inventoryGroup("broken", setOf("world"), setOf("bed_spawn"), disabledShares),
+                inventoryGroup("valid", setOf("world"), setOf("inventory_contents"), disabledShares),
+            ),
+        )
+        val profile = JsonObject().apply {
+            add(
+                "SURVIVAL",
+                JsonObject().apply {
+                    add(
+                        "inventoryContents",
+                        JsonObject().apply {
+                            add(
+                                "0",
+                                JsonObject().apply {
+                                    addProperty("==", "org.bukkit.inventory.ItemStack")
+                                    addProperty("type", "STONE")
+                                },
+                            )
+                        },
+                    )
+                },
+            )
+        }
+        whenever(repository.readProfileResult(any())).thenAnswer { invocation ->
+            val location = invocation.getArgument<InventoryProfileLocation>(0)
+            if (location.key == "broken") {
+                InventoryProfileReadResult.Malformed(IllegalArgumentException("Invalid stored profile"))
+            } else {
+                InventoryProfileReadResult.Present(profile)
+            }
+        }
+        val world = mock<World>()
+        whenever(world.name).thenReturn("world")
+        val inventory = mock<PlayerInventory>()
+        whenever(inventory.contents).thenReturn(arrayOfNulls(41))
+        val player = mock<Player>()
+        whenever(player.uniqueId).thenReturn(UUID.fromString("123e4567-e89b-12d3-a456-426614174000"))
+        whenever(player.name).thenReturn("Tester")
+        whenever(player.world).thenReturn(world)
+        whenever(player.gameMode).thenReturn(GameMode.SURVIVAL)
+        whenever(player.inventory).thenReturn(inventory)
+        val service = InventoryTransitionService(
+            repository,
+            MultiverseInventoryConfig(applyPlayerDataOnJoin = true),
+        )
+        val expectedItem = mock<ItemStack>()
+
+        mockStatic(Bukkit::class.java).use { bukkit ->
+            bukkit.`when`<Boolean> { Bukkit.isPrimaryThread() }.thenReturn(true)
+            mockStatic(ItemStack::class.java).use { itemStacks ->
+                itemStacks.`when`<ItemStack> { ItemStack.deserialize(any()) }.thenReturn(expectedItem)
+
+                assertThrows(IllegalStateException::class.java) {
+                    service.onPlayerJoined(player)
+                }
+            }
+        }
+
+        val contents = argumentCaptor<Array<ItemStack?>>()
+        verify(inventory).setContents(contents.capture())
+        assertSame(expectedItem, contents.firstValue[0])
     }
 
     @Test
@@ -483,6 +857,55 @@ class InventoryTransitionServiceTest {
         ).forEach { (fromGameMode, toGameMode) ->
             assertGameModeTransition(fromGameMode, toGameMode)
         }
+    }
+
+    @Test
+    fun `rapid game-mode changes do not apply stale destination profiles`() {
+        val repository = mock<InventoryRepository>()
+        whenever(repository.profileName(any(), any())).thenReturn("Tester")
+        whenever(repository.readWorldGroups()).thenReturn(
+            listOf(
+                inventoryGroup(
+                    "survival",
+                    setOf("world"),
+                    setOf("inventory_contents"),
+                    MultiverseInventoryShares.standard - "inventory_contents",
+                ),
+            ),
+        )
+        whenever(repository.readProfileResult(any())).thenReturn(InventoryProfileReadResult.Missing)
+        val world = mock<World>()
+        whenever(world.name).thenReturn("world")
+        val inventory = mock<PlayerInventory>()
+        whenever(inventory.contents).thenReturn(arrayOfNulls(41))
+        val player = mock<Player>()
+        whenever(player.uniqueId).thenReturn(UUID.fromString("123e4567-e89b-12d3-a456-426614174000"))
+        whenever(player.name).thenReturn("Tester")
+        whenever(player.world).thenReturn(world)
+        whenever(player.inventory).thenReturn(inventory)
+        whenever(player.isOnline).thenReturn(true)
+        whenever(player.gameMode).thenReturn(GameMode.ADVENTURE)
+        val service = InventoryTransitionService(
+            repository,
+            MultiverseInventoryConfig(enableGamemodeShareHandling = true),
+        )
+
+        mockStatic(Bukkit::class.java).use { bukkit ->
+            bukkit.`when`<Boolean> { Bukkit.isPrimaryThread() }.thenReturn(true)
+
+            val firstTransition = checkNotNull(
+                service.onGameModeChanged(player, GameMode.SURVIVAL, GameMode.CREATIVE),
+            )
+            val secondTransition = checkNotNull(
+                service.onGameModeChanged(player, GameMode.CREATIVE, GameMode.ADVENTURE),
+            )
+
+            firstTransition()
+            secondTransition()
+        }
+
+        verify(repository, times(3)).readProfileResult(any())
+        verify(inventory, never()).setContents(any())
     }
 
     private fun assertGameModeTransition(
@@ -798,6 +1221,52 @@ class InventoryTransitionServiceTest {
         verify(repository, never()).updateGlobalPlayerData(any(), any())
     }
 
+    @Test
+    fun `failed source profile write does not prevent independent profile writes`() {
+        val repository = mock<InventoryRepository>()
+        whenever(repository.profileName(any(), any())).thenReturn("Tester")
+        val shares = setOf("inventory_contents", "bed_spawn")
+        val disabledShares = MultiverseInventoryShares.standard - shares
+        whenever(repository.readWorldGroups()).thenReturn(
+            listOf(
+                inventoryGroup("first", setOf("source"), setOf("inventory_contents"), disabledShares),
+                inventoryGroup("second", setOf("source"), setOf("bed_spawn"), disabledShares),
+            ),
+        )
+        whenever(repository.readProfileResult(any())).thenReturn(InventoryProfileReadResult.Missing)
+        val failedLocation = InventoryProfileLocation("groups", "first", "Tester")
+        doThrow(IllegalStateException("profile write failed"))
+            .whenever(repository)
+            .updateProfile(eq(failedLocation), any(), any(), any())
+        val inventory = mock<PlayerInventory>()
+        whenever(inventory.contents).thenReturn(arrayOfNulls(41))
+        val world = mock<World>()
+        whenever(world.name).thenReturn("destination")
+        val player = mock<Player>()
+        whenever(player.uniqueId).thenReturn(UUID.fromString("123e4567-e89b-12d3-a456-426614174000"))
+        whenever(player.name).thenReturn("Tester")
+        whenever(player.world).thenReturn(world)
+        whenever(player.gameMode).thenReturn(GameMode.SURVIVAL)
+        whenever(player.inventory).thenReturn(inventory)
+        val service = InventoryTransitionService(repository, MultiverseInventoryConfig())
+
+        mockStatic(Bukkit::class.java).use { bukkit ->
+            bukkit.`when`<Boolean> { Bukkit.isPrimaryThread() }.thenReturn(true)
+
+            assertThrows(IllegalStateException::class.java) {
+                service.onWorldChanged(player, "source", "destination")
+            }
+        }
+
+        verify(repository).updateProfile(
+            eq(InventoryProfileLocation("groups", "second", "Tester")),
+            eq(InventoryProfileType.SURVIVAL),
+            any(),
+            any(),
+        )
+        verify(repository, never()).updateGlobalPlayerData(any(), any())
+    }
+
     private fun inventoryGroup(
         name: String,
         worlds: Set<String>,
@@ -811,4 +1280,9 @@ class InventoryTransitionServiceTest {
         spawnWorld = null,
         spawnPriority = null,
     )
+
+    private fun compatibilityProfile(): JsonObject {
+        val fixture = requireNotNull(javaClass.getResource("/multiverse-inventories/compatibility/representative-profile.json"))
+        return JsonParser.parseString(fixture.readText()).asJsonObject
+    }
 }

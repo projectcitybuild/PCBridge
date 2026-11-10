@@ -68,7 +68,19 @@ class PortalListener(
             return
         }
 
-        val destination = endDestination ?: destinationLocation(event.player, event.from, event.to, target.world, type)
+        val destination = endDestination ?: try {
+            destinationLocation(event.player, event.from, event.to, target.world, type)
+        } catch (failure: IllegalArgumentException) {
+            event.isCancelled = true
+            plugin.logger.warning(
+                "Invalid ${type.configKey} portal destination from ${event.from.world.name} " +
+                    "to ${target.world.name}: ${failure.message}",
+            )
+            if (settings.sendNoDestinationMessage) {
+                event.player.sendMessage(unavailableMessage(target.world.name))
+            }
+            return
+        }
         if (type == PortalLinkType.END && event.from.world.environment == World.Environment.THE_END) {
             event.canCreatePortal = false
         }
@@ -125,7 +137,16 @@ class PortalListener(
             plugin.logger.warning("Could not find a safe End platform in ${target.world.name}; entity portal travel was cancelled")
             return
         }
-        val destination = endDestination ?: destinationLocation(event.entity, event.from, event.to, target.world, type)
+        val destination = endDestination ?: try {
+            destinationLocation(event.entity, event.from, event.to, target.world, type)
+        } catch (failure: IllegalArgumentException) {
+            event.isCancelled = true
+            plugin.logger.warning(
+                "Invalid ${type.configKey} portal destination from ${event.from.world.name} " +
+                    "to ${target.world.name}: ${failure.message}",
+            )
+            return
+        }
         event.to = destination
     }
 
@@ -185,20 +206,45 @@ class PortalListener(
             return destinationWorld.spawnLocation
         }
 
-        val scale = from.world.coordinateScale / destinationWorld.coordinateScale
+        val sourceScale = from.world.coordinateScale
+        val destinationScale = destinationWorld.coordinateScale
+        require(sourceScale.isFinite() && sourceScale > 0.0 && destinationScale.isFinite() && destinationScale > 0.0) {
+            "Portal worlds must have finite, positive coordinate scales"
+        }
+        val scale = sourceScale / destinationScale
+        require(scale.isFinite() && scale > 0.0) {
+            "Portal coordinate scale is outside the supported range"
+        }
         val current = currentTo ?: from
         val y = current.y.coerceIn(
             (destinationWorld.minHeight + 1).toDouble(),
             (destinationWorld.maxHeight - 1).toDouble(),
         )
-        return Location(
+        require(y.isFinite()) { "Portal destination has an invalid Y coordinate" }
+        val x = floor(from.x * scale)
+        val z = floor(from.z * scale)
+        require(
+            x.isFinite() &&
+                z.isFinite() &&
+                x >= Int.MIN_VALUE.toDouble() &&
+                x <= Int.MAX_VALUE.toDouble() &&
+                z >= Int.MIN_VALUE.toDouble() &&
+                z <= Int.MAX_VALUE.toDouble(),
+        ) {
+            "Portal destination coordinates exceed the supported range"
+        }
+        val destination = Location(
             destinationWorld,
-            floor(from.x * scale),
+            x,
             y,
-            floor(from.z * scale),
+            z,
             current.yaw,
             current.pitch,
         )
+        require(destinationWorld.worldBorder.isInside(destination)) {
+            "Portal destination is outside the world border"
+        }
+        return destination
     }
 
     private fun handleUnavailable(

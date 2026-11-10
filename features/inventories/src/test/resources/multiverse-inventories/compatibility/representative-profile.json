@@ -1,0 +1,152 @@
+{
+  "SURVIVAL": {
+    "inventoryContents": {
+      "0": {
+        "==": "org.bukkit.inventory.ItemStack",
+        "v": 4189,
+        "type": "STONE"
+      },
+      "1": {
+        "==": "org.bukkit.inventory.ItemStack",
+        "v": 4189,
+        "type": "DIRT",
+        "amount": 12
+      },
+      "2": {
+        "==": "org.bukkit.inventory.ItemStack",
+        "v": 4189,
+        "type": "DIAMOND_SWORD",
+        "meta": {
+          "==": "ItemMeta",
+          "meta-type": "UNSPECIFIC",
+          "attribute-modifiers": {
+            "GENERIC_ATTACK_DAMAGE": [
+              {
+                "amount": null,
+                "operation": "ADD_NUMBER"
+              }
+            ]
+          }
+        }
+      },
+      "3": {
+        "==": "org.bukkit.inventory.ItemStack",
+        "v": 4189,
+        "type": "SHIELD",
+        "amount": 1,
+        "meta": {
+          "==": "ItemMeta",
+          "meta-type": "UNSPECIFIC",
+          "Damage": 3
+        }
+      },
+      "4": {
+        "==": "org.bukkit.inventory.ItemStack",
+        "DataVersion": 4556,
+        "id": "minecraft:diamond",
+        "count": 1,
+        "schema_version": 1
+      },
+      "5": {
+        "==": "org.bukkit.inventory.ItemStack",
+        "DataVersion": 4556,
+        "id": "minecraft:book",
+        "count": 1,
+        "schema_version": 1,
+        "components": {
+          "minecraft:custom_name": "{\"text\":\"fixture item\"}",
+          "minecraft:damage": 2
+        }
+      },
+      "6": {
+        "DataVersion": 4556,
+        "id": "minecraft:emerald",
+        "count": 3,
+        "schema_version": 1
+      },
+      "40": {
+        "==": "org.bukkit.inventory.ItemStack",
+        "v": 4189,
+        "type": "GOLD_INGOT",
+        "amount": 5
+      }
+    },
+    "armorContents": {
+      "100": {
+        "==": "org.bukkit.inventory.ItemStack",
+        "v": 4189,
+        "type": "LEATHER_BOOTS",
+        "amount": 1
+      },
+      "101": {
+        "==": "org.bukkit.inventory.ItemStack",
+        "v": 4189,
+        "type": "LEATHER_LEGGINGS",
+        "amount": 1
+      },
+      "102": {
+        "==": "org.bukkit.inventory.ItemStack",
+        "v": 4189,
+        "type": "DIAMOND_CHESTPLATE",
+        "amount": 1
+      },
+      "103": {
+        "==": "org.bukkit.inventory.ItemStack",
+        "DataVersion": 4556,
+        "id": "minecraft:diamond_helmet",
+        "count": 1,
+        "schema_version": 1
+      }
+    },
+    "enderChestContents": {
+      "26": {
+        "==": "org.bukkit.inventory.ItemStack",
+        "v": 4189,
+        "type": "ENDER_PEARL",
+        "amount": 4
+      }
+    },
+    "offHandItem": {
+      "==": "org.bukkit.inventory.ItemStack",
+      "v": 4189,
+      "type": "TOTEM_OF_UNDYING",
+      "amount": 1
+    },
+    "stats": {
+      "mhp": "40.0",
+      "hp": "17.5",
+      "ra": "120",
+      "ma": "300",
+      "fd": "3.5",
+      "ft": "10",
+      "xp": "0.75",
+      "txp": "345",
+      "el": "22",
+      "fl": "16",
+      "ex": "0.2",
+      "sa": "3.0"
+    },
+    "potions": [
+      {
+        "==": "org.bukkit.potion.PotionEffect",
+        "effect": "SPEED",
+        "duration": 1200,
+        "amplifier": 1,
+        "ambient": false,
+        "has-particles": true,
+        "has-icon": true
+      }
+    ],
+    "futureShare": {
+      "preserve": true
+    }
+  },
+  "CREATIVE": {
+    "inventoryContents": {
+      "0": "AQID"
+    }
+  },
+  "futureProfileType": {
+    "preserve": true
+  }
+}

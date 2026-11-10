@@ -305,67 +305,73 @@ class InventoryTransitionService(
         player: Player,
         writes: List<ProfileWrite>,
     ) {
+        val failures = mutableListOf<Exception>()
         writes
             .filter { it.shares.isNotEmpty() }
             .groupBy { it.location to it.profileType }
             .forEach { (key, profileWrites) ->
-                val lastLocations = profileWrites.mapNotNull { it.lastLocation }.distinct()
-                require(lastLocations.size <= 1) {
-                    "Conflicting last locations were planned for ${key.first.directory}/${key.first.key}"
-                }
-                val write = ProfileWrite(
-                    location = key.first,
-                    profileType = key.second,
-                    shares = profileWrites.flatMap { it.shares }.toSet(),
-                    lastLocation = lastLocations.singleOrNull(),
-                )
-                val previous =
-                    readProfileForTransition(
-                        write.location,
-                        write.profileType,
-                        player,
-                        write.shares,
-                        "saving",
-                    )?.get(write.profileType.name)
-                        ?.asJsonObjectOrNull()
-                val fields = linkedMapOf<String, JsonElement>()
-                val stats = linkedMapOf<String, JsonElement>()
-                write.shares.forEach { share ->
-                    try {
-                        captureShare(player, share, previous, write.lastLocation)?.let { captured ->
-                            if (captured.first == "stats") {
-                                stats[captured.second] = captured.third
-                            } else {
-                                fields[captured.first] = captured.third
+                try {
+                    val lastLocations = profileWrites.mapNotNull { it.lastLocation }.distinct()
+                    require(lastLocations.size <= 1) {
+                        "Conflicting last locations were planned for ${key.first.directory}/${key.first.key}"
+                    }
+                    val write = ProfileWrite(
+                        location = key.first,
+                        profileType = key.second,
+                        shares = profileWrites.flatMap { it.shares }.toSet(),
+                        lastLocation = lastLocations.singleOrNull(),
+                    )
+                    val previous =
+                        readProfileForTransition(
+                            write.location,
+                            write.profileType,
+                            player,
+                            write.shares,
+                            "saving",
+                        )?.get(write.profileType.name)
+                            ?.asJsonObjectOrNull()
+                    val fields = linkedMapOf<String, JsonElement>()
+                    val stats = linkedMapOf<String, JsonElement>()
+                    write.shares.forEach { share ->
+                        try {
+                            captureShare(player, share, previous, write.lastLocation)?.let { captured ->
+                                if (captured.first == "stats") {
+                                    stats[captured.second] = captured.third
+                                } else {
+                                    fields[captured.first] = captured.third
+                                }
                             }
+                        } catch (failure: Exception) {
+                            logger.log(
+                                Level.SEVERE,
+                                "Could not capture Multiverse-Inventories share '$share' for " +
+                                    "${write.location.directory}/${write.location.key}/" +
+                                    "${write.location.playerName}.json (${write.profileType}) for player ${player.name}",
+                                failure,
+                            )
+                            throw failure
                         }
-                    } catch (failure: Exception) {
-                        logger.log(
-                            Level.SEVERE,
-                            "Could not capture Multiverse-Inventories share '$share' for " +
-                                "${write.location.directory}/${write.location.key}/" +
-                                "${write.location.playerName}.json (${write.profileType}) for player ${player.name}",
-                            failure,
-                        )
-                        throw failure
                     }
-                }
-                if (fields.isNotEmpty() || stats.isNotEmpty()) {
-                    try {
-                        repository.updateProfile(write.location, write.profileType, fields, stats)
-                    } catch (failure: Exception) {
-                        logger.log(
-                            Level.SEVERE,
-                            "Could not write Multiverse-Inventories profile " +
-                                "${write.location.directory}/${write.location.key}/" +
-                                "${write.location.playerName}.json (${write.profileType}) with shares " +
-                                "${write.shares.sorted().joinToString()} for player ${player.name}",
-                            failure,
-                        )
-                        throw failure
+                    if (fields.isNotEmpty() || stats.isNotEmpty()) {
+                        try {
+                            repository.updateProfile(write.location, write.profileType, fields, stats)
+                        } catch (failure: Exception) {
+                            logger.log(
+                                Level.SEVERE,
+                                "Could not write Multiverse-Inventories profile " +
+                                    "${write.location.directory}/${write.location.key}/" +
+                                    "${write.location.playerName}.json (${write.profileType}) with shares " +
+                                    "${write.shares.sorted().joinToString()} for player ${player.name}",
+                                failure,
+                            )
+                            throw failure
+                        }
                     }
+                } catch (failure: Exception) {
+                    failures += failure
                 }
             }
+        throwIfFailures("One or more Multiverse-Inventories profiles could not be saved", failures)
     }
 
     private fun captureShare(
@@ -384,7 +390,16 @@ class InventoryTransitionService(
                 )
             }
             "armor_contents" -> {
-                Triple("armorContents", "", encodeItems(inventory.armorContents, previous?.get("armorContents")))
+                Triple(
+                    "armorContents",
+                    "",
+                    encodeItems(
+                        inventory.armorContents,
+                        previous?.get("armorContents"),
+                        slotOffset = ARMOR_SLOT_OFFSET,
+                        alternateSlotOffset = 0,
+                    ),
+                )
             }
             "ender_chest" -> {
                 Triple("enderChestContents", "", encodeItems(player.enderChest.contents, previous?.get("enderChestContents")))
@@ -472,71 +487,86 @@ class InventoryTransitionService(
         player: Player,
         reads: List<ProfileRead>,
     ) {
+        val failures = mutableListOf<Exception>()
         reads
             .filter { it.shares.isNotEmpty() }
             .groupBy { it.location to it.profileType }
             .forEach { (key, profileReads) ->
-                val requestedShares = profileReads.flatMap { it.shares }.toSet()
-                val document = readProfileForTransition(
-                    key.first,
-                    key.second,
-                    player,
-                    requestedShares,
-                    "applying",
-                )
-                if (document == null) {
-                    return@forEach
-                }
-                val modeProfile = document.get(key.second.name)
-                if (modeProfile == null || modeProfile.isJsonNull) {
-                    logger.fine(
-                        "Inventory profile ${key.first.directory}/${key.first.key}/" +
-                            "${key.first.playerName}.json has no ${key.second} section; preserving current shares",
+                try {
+                    val requestedShares = profileReads.flatMap { it.shares }.toSet()
+                    val document = readProfileForTransition(
+                        key.first,
+                        key.second,
+                        player,
+                        requestedShares,
+                        "applying",
                     )
-                    return@forEach
-                }
-                val profile = try {
-                    modeProfile.asJsonObjectOrNull()
-                } catch (failure: Exception) {
-                    logger.log(
-                        Level.SEVERE,
-                        "Malformed ${key.second} section in inventory profile " +
-                            "${key.first.directory}/${key.first.key}/${key.first.playerName}.json " +
-                            "while applying shares ${requestedShares.sorted().joinToString()} to player ${player.name}",
-                        failure,
-                    )
-                    throw failure
-                } ?: return@forEach
-                val failure = mutableListOf<Exception>()
-                requestedShares
-                    .sortedBy { applyOrder.indexOf(it).let { index -> if (index < 0) Int.MAX_VALUE else index } }
-                    .forEach { share ->
-                        try {
-                            if (hasShareData(profile, share)) {
-                                applyShare(player, share, profile)
-                            } else {
-                                logger.fine(
-                                    "Inventory profile ${key.first.directory}/${key.first.key}/" +
-                                        "${key.first.playerName}.json has no ${key.second} data for '$share'; " +
-                                        "preserving the current share",
-                                )
-                            }
-                        } catch (shareFailure: Exception) {
-                            logger.log(
-                                Level.SEVERE,
-                                "Could not apply Multiverse-Inventories share '$share' from " +
-                                    "${key.first.directory}/${key.first.key}/${key.first.playerName}.json " +
-                                    "for ${key.second} to player ${player.name}",
-                                shareFailure,
-                            )
-                            failure += shareFailure
-                        }
+                    if (document == null) {
+                        return@forEach
                     }
-                failure.firstOrNull()?.let { first ->
-                    failure.drop(1).forEach(first::addSuppressed)
-                    throw IllegalStateException("One or more inventory shares could not be applied", first)
+                    val modeProfile = document.get(key.second.name)
+                    if (modeProfile == null || modeProfile.isJsonNull) {
+                        logger.fine(
+                            "Inventory profile ${key.first.directory}/${key.first.key}/" +
+                                "${key.first.playerName}.json has no ${key.second} section; preserving current shares",
+                        )
+                        return@forEach
+                    }
+                    val profile = try {
+                        modeProfile.asJsonObjectOrNull()
+                    } catch (failure: Exception) {
+                        logger.log(
+                            Level.SEVERE,
+                            "Malformed ${key.second} section in inventory profile " +
+                                "${key.first.directory}/${key.first.key}/${key.first.playerName}.json " +
+                                "while applying shares ${requestedShares.sorted().joinToString()} to player ${player.name}",
+                            failure,
+                        )
+                        throw failure
+                    } ?: return@forEach
+                    val shareFailures = mutableListOf<Exception>()
+                    requestedShares
+                        .sortedBy { applyOrder.indexOf(it).let { index -> if (index < 0) Int.MAX_VALUE else index } }
+                        .forEach { share ->
+                            try {
+                                if (hasShareData(profile, share)) {
+                                    applyShare(player, share, profile)
+                                } else {
+                                    logger.fine(
+                                        "Inventory profile ${key.first.directory}/${key.first.key}/" +
+                                            "${key.first.playerName}.json has no ${key.second} data for '$share'; " +
+                                            "preserving the current share",
+                                    )
+                                }
+                            } catch (shareFailure: Exception) {
+                                logger.log(
+                                    Level.SEVERE,
+                                    "Could not apply Multiverse-Inventories share '$share' from " +
+                                        "${key.first.directory}/${key.first.key}/${key.first.playerName}.json " +
+                                        "for ${key.second} to player ${player.name}",
+                                    shareFailure,
+                                )
+                                shareFailures += shareFailure
+                            }
+                        }
+                    shareFailures.firstOrNull()?.let { first ->
+                        shareFailures.drop(1).forEach(first::addSuppressed)
+                        throw IllegalStateException("One or more inventory shares could not be applied", first)
+                    }
+                } catch (failure: Exception) {
+                    failures += failure
                 }
             }
+        throwIfFailures("One or more Multiverse-Inventories profiles could not be applied", failures)
+    }
+
+    private fun throwIfFailures(
+        message: String,
+        failures: List<Exception>,
+    ) {
+        val firstFailure = failures.firstOrNull() ?: return
+        failures.drop(1).forEach(firstFailure::addSuppressed)
+        throw IllegalStateException(message, firstFailure)
     }
 
     private fun hasShareData(
@@ -607,7 +637,7 @@ class InventoryTransitionService(
         }
         val stats = profile.get("stats")?.asJsonObjectOrNull() ?: return false
         val value = stats.get(stat) ?: return false
-        require(value.isJsonPrimitive && value.asJsonPrimitive.isNumber) {
+        require(value.numberOrNull() != null) {
             "Expected numeric '$stat' data for '$share' in Multiverse-Inventories profile"
         }
         return true
@@ -630,6 +660,7 @@ class InventoryTransitionService(
                 player.inventory.armorContents = decodeItems(
                     field = profile?.get("armorContents"),
                     size = player.inventory.armorContents.size,
+                    slotOffset = ARMOR_SLOT_OFFSET,
                 )
             }
             "ender_chest" -> {
@@ -716,15 +747,28 @@ class InventoryTransitionService(
     private fun encodeItems(
         items: Array<out ItemStack?>,
         existing: JsonElement?,
+        slotOffset: Int = 0,
+        alternateSlotOffset: Int? = null,
+    ): JsonObject = mergeEncodedItems(
+        items = items.map(::encodeItem),
+        existing = existing,
+        slotOffset = slotOffset,
+        alternateSlotOffset = alternateSlotOffset,
+    )
+
+    internal fun mergeEncodedItems(
+        items: List<JsonElement>,
+        existing: JsonElement?,
+        slotOffset: Int = 0,
+        alternateSlotOffset: Int? = null,
     ): JsonObject {
         val result = existing?.asJsonObjectOrNull()?.deepCopy()
             ?: JsonObject()
         items.forEachIndexed { index, item ->
-            val key = index.toString()
-            result.remove(key)
-            val serialized = encodeItem(item)
-            if (!serialized.isJsonNull) {
-                result.add(key, serialized)
+            result.remove((index + slotOffset).toString())
+            alternateSlotOffset?.let { result.remove((index + it).toString()) }
+            if (!item.isJsonNull) {
+                result.add((index + slotOffset).toString(), item.deepCopy())
             }
         }
         return result
@@ -742,6 +786,7 @@ class InventoryTransitionService(
     internal fun decodeItems(
         field: JsonElement?,
         size: Int,
+        slotOffset: Int = 0,
     ): Array<ItemStack?> {
         val result = arrayOfNulls<ItemStack>(size)
         val values = field?.takeUnless { it.isJsonNull } ?: return result
@@ -749,11 +794,20 @@ class InventoryTransitionService(
         require(values.isJsonObject) {
             "Expected a slot map in Multiverse-Inventories profile"
         }
+        val assignedSlots = mutableSetOf<Int>()
         values.asJsonObject.entrySet().forEach { (slot, value) ->
-            val index = slot.toIntOrNull()
+            val storedIndex = slot.toIntOrNull()
                 ?: throw IllegalArgumentException("Invalid ItemStack slot '$slot' in Multiverse-Inventories profile")
+            val index = if (slotOffset > 0 && storedIndex in slotOffset until slotOffset + size) {
+                storedIndex - slotOffset
+            } else {
+                storedIndex
+            }
             require(index in result.indices) {
                 "ItemStack slot '$slot' exceeds the supported inventory size ${result.size}"
+            }
+            require(assignedSlots.add(index)) {
+                "Multiple ItemStack slots map to index '$index' in Multiverse-Inventories profile"
             }
             result[index] = decodeItem(value)
         }
@@ -1361,12 +1415,14 @@ class InventoryTransitionService(
         return this.asJsonObject
     }
 
-    private fun JsonElement.numberOrNull(): Number? {
-        if (!isJsonPrimitive || !asJsonPrimitive.isNumber) return null
-        return asNumber
+    private fun JsonElement.numberOrNull(): Number? = when {
+        !isJsonPrimitive -> null
+        asJsonPrimitive.isNumber -> asNumber
+        asJsonPrimitive.isString -> asString.toBigDecimalOrNull()
+        else -> null
     }
 
-    private fun JsonObject.toJavaMap(): Map<String, Any> = entrySet().associate { (key, value) -> key to value.toJavaValue() as Any }
+    private fun JsonObject.toJavaMap(): Map<String, Any?> = entrySet().associate { (key, value) -> key to value.toJavaValue() }
 
     private fun JsonElement.toJavaValue(): Any? = when {
         isJsonNull -> null
@@ -1392,6 +1448,7 @@ class InventoryTransitionService(
 
     private companion object {
         val GSON = Gson()
+        const val ARMOR_SLOT_OFFSET = 100
         val supportedShares = MultiverseInventoryShares.all - "economy"
         val applyOrder = listOf(
             "max_hit_points",

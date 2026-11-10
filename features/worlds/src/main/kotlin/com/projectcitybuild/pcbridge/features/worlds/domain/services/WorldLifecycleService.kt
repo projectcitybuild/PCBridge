@@ -200,15 +200,15 @@ class WorldLifecycleService(
             "World folder for ${definition.name} does not exist"
         }
         loadedWorld?.save()
-        if (loadedWorld != null) {
-            check(server.unloadWorld(loadedWorld, false)) {
-                "Paper refused to unload world ${definition.name}"
-            }
-            worldBorderRepository.unload(loadedWorld)
-        }
         val backup = backupWorldFolder(folder, definition.name)
 
         return try {
+            if (loadedWorld != null) {
+                check(server.unloadWorld(loadedWorld, false)) {
+                    "Paper refused to unload world ${definition.name}"
+                }
+                worldBorderRepository.unload(loadedWorld)
+            }
             deleteDirectory(folder)
             createWorld(definition)
         } catch (failure: Throwable) {

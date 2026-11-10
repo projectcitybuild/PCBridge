@@ -21,11 +21,11 @@ class InventoryTransitionListener(
     private val plugin: JavaPlugin,
     private val transitionService: InventoryTransitionService,
 ) : Listener {
-    private val pendingJoinReconciliation = ConcurrentHashMap.newKeySet<UUID>()
+    private val pendingJoinReconciliation = ConcurrentHashMap<UUID, Any>()
 
     @EventHandler(priority = EventPriority.MONITOR)
     fun onPlayerChangedWorld(event: PlayerChangedWorldEvent) {
-        if (transitionService.applyPlayerDataOnJoin && event.player.uniqueId in pendingJoinReconciliation) return
+        if (transitionService.applyPlayerDataOnJoin && pendingJoinReconciliation.containsKey(event.player.uniqueId)) return
         safely("world change", event.player) {
             transitionService.onWorldChanged(event.player, event.from.name, event.player.world.name)
         }
@@ -54,11 +54,12 @@ class InventoryTransitionListener(
         if (!transitionService.applyPlayerDataOnJoin) return
         val player = event.player
         val playerId = player.uniqueId
-        pendingJoinReconciliation += playerId
+        val reconciliation = Any()
+        pendingJoinReconciliation[playerId] = reconciliation
         plugin.server.scheduler.runTask(
             plugin,
             Runnable {
-                if (!pendingJoinReconciliation.remove(playerId) || !player.isOnline) return@Runnable
+                if (!pendingJoinReconciliation.remove(playerId, reconciliation) || !player.isOnline) return@Runnable
                 safely("join", player) {
                     transitionService.onPlayerJoined(player)
                 }
@@ -83,7 +84,6 @@ class InventoryTransitionListener(
             plugin.server.scheduler.runTask(
                 plugin,
                 Runnable {
-                    if (!player.isOnline) return@Runnable
                     safely("respawn", player) {
                         transitionService.onPlayerRespawned(player, destinationWorld)
                     }
