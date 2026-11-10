@@ -7,6 +7,12 @@ data class ResolvedInventoryGroup(
     val disabledShares: Set<String>,
 )
 
+data class InventoryShareOwnership(
+    val groupOwners: Map<String, ResolvedInventoryGroup>,
+    val disabledShares: Set<String>,
+    val conflictingShares: Map<String, Set<String>>,
+)
+
 object MultiverseInventoryShares {
     val standard = setOf(
         "inventory_contents",
@@ -166,6 +172,30 @@ object MultiverseInventoryShares {
         } else {
             emptyList()
         }
+    }
+
+    fun resolveShareOwnership(groups: List<ResolvedInventoryGroup>): InventoryShareOwnership {
+        val disabledShares = groups.flatMap { it.disabledShares }.toSet()
+        val candidates = groups
+            .flatMap { group -> group.shares.map { share -> share to group } }
+            .filterNot { (share, _) -> share in disabledShares }
+            .groupBy({ it.first }, { it.second })
+        val groupOwners = mutableMapOf<String, ResolvedInventoryGroup>()
+        val conflictingShares = mutableMapOf<String, Set<String>>()
+
+        candidates.forEach { (share, owners) ->
+            val distinctOwners = owners.distinctBy { it.name }
+            when (distinctOwners.size) {
+                1 -> groupOwners[share] = distinctOwners.single()
+                else -> conflictingShares[share] = distinctOwners.map { it.name }.toSet()
+            }
+        }
+
+        return InventoryShareOwnership(
+            groupOwners = groupOwners,
+            disabledShares = disabledShares,
+            conflictingShares = conflictingShares,
+        )
     }
 
     private fun worldMatches(

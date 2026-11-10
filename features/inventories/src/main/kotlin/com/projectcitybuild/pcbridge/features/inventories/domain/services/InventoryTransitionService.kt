@@ -8,7 +8,9 @@ import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import com.google.gson.JsonPrimitive
 import com.projectcitybuild.pcbridge.features.inventories.domain.data.InventoryProfileLocation
+import com.projectcitybuild.pcbridge.features.inventories.domain.data.InventoryProfileReadResult
 import com.projectcitybuild.pcbridge.features.inventories.domain.data.InventoryProfileType
+import com.projectcitybuild.pcbridge.features.inventories.domain.data.InventoryShareOwnership
 import com.projectcitybuild.pcbridge.features.inventories.domain.data.MultiverseInventoryConfig
 import com.projectcitybuild.pcbridge.features.inventories.domain.data.MultiverseInventoryShares
 import com.projectcitybuild.pcbridge.features.inventories.domain.data.ResolvedInventoryGroup
@@ -27,15 +29,25 @@ import org.bukkit.entity.EntityType
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.potion.PotionEffect
+import org.bukkit.potion.PotionEffectType
 import java.util.Base64
 import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
+import java.util.logging.Level
+import java.util.logging.Logger
 
 class InventoryTransitionService(
     private val repository: InventoryRepository,
     private val config: MultiverseInventoryConfig,
+    private val logger: Logger = Logger.getLogger("PCBridge.Multiverse-Inventories"),
 ) {
+    val applyPlayerDataOnJoin: Boolean
+        get() = config.applyPlayerDataOnJoin
+
     private val applyingStoredLocation = ConcurrentHashMap.newKeySet<UUID>()
+    private val pendingRespawnWorlds = ConcurrentHashMap<UUID, String>()
+    private val reportedUnsupportedShares = ConcurrentHashMap.newKeySet<String>()
+    private val reportedShareConflicts = ConcurrentHashMap.newKeySet<String>()
 
     fun onWorldChanged(
         player: Player,
@@ -44,110 +56,124 @@ class InventoryTransitionService(
     ) {
         if (player.uniqueId in applyingStoredLocation) return
         requirePrimaryThread()
+        if (pendingRespawnWorlds[player.uniqueId] == toWorld) return
         if (fromWorld == toWorld) return
 
         val profileType = profileType(player.gameMode)
         val sourceGroups = groupsFor(fromWorld)
         val destinationGroups = groupsFor(toWorld)
+        val sourceOwnership = shareOwnership(sourceGroups, fromWorld)
+        val destinationOwnership = shareOwnership(destinationGroups, toWorld)
         val playerName = repository.profileName(player.uniqueId, player.name)
         val writes = mutableListOf<ProfileWrite>()
         val reads = mutableListOf<ProfileRead>()
 
-        val handledSource = linkedSetOf<String>()
-        sourceGroups.forEach { group ->
-            if (destinationGroups.none { it.name == group.name }) {
-                writes += ProfileWrite(
-                    groupProfile(group, playerName),
-                    profileType,
-                    group.shares,
-                )
+        sourceOwnership.groupOwners.forEach { (share, group) ->
+            if (destinationOwnership.groupOwners[share]?.name != group.name) {
+                writes += ProfileWrite(groupProfile(group, playerName), profileType, setOf(share))
             }
-            handledSource += group.shares
-            handledSource += group.disabledShares
         }
-        val sourceWorldShares = activeShares()
-        val worldWrites = if (config.alwaysWriteWorldProfile) {
-            sourceWorldShares
-        } else {
-            sourceWorldShares - handledSource
-        }
+        val worldWrites = worldOwnedShares(sourceGroups, sourceOwnership)
         if (worldWrites.isNotEmpty()) {
             writes += ProfileWrite(worldProfile(fromWorld, playerName), profileType, worldWrites)
         }
 
-        val handledDestination = linkedSetOf<String>()
-        destinationGroups.forEach { group ->
-            if (sourceGroups.none { it.name == group.name }) {
+        destinationOwnership.groupOwners.forEach { (share, group) ->
+            if (sourceOwnership.groupOwners[share]?.name != group.name) {
                 reads += ProfileRead(
                     groupProfile(group, playerName),
                     profileType,
-                    sharesForRead(group.shares),
+                    sharesForRead(setOf(share)),
                 )
             }
-            handledDestination += group.shares
-            handledDestination += group.disabledShares
         }
-        val destinationWorldShares = worldReadShares(destinationGroups) - handledDestination
-        val worldReads = sharesForRead(destinationWorldShares)
+        val worldReads = sharesForRead(worldOwnedShares(destinationGroups, destinationOwnership))
         if (worldReads.isNotEmpty()) {
             reads += ProfileRead(worldProfile(toWorld, playerName), profileType, worldReads)
         }
 
-        rejectUnsupported(writes.flatMap { it.shares } + reads.flatMap { it.shares })
         persistWrites(player, writes)
         applyReads(player, reads)
-        repository.updateGlobalPlayerData(
-            player.uniqueId,
-            mapOf("lastWorld" to JsonPrimitive(toWorld)),
-        )
+        updateLastWorldMetadata(player, toWorld)
+    }
+
+    fun onPlayerRespawnScheduled(
+        player: Player,
+        destinationWorld: String,
+    ) {
+        requirePrimaryThread()
+        pendingRespawnWorlds[player.uniqueId] = destinationWorld
+    }
+
+    fun onPlayerRespawned(
+        player: Player,
+        destinationWorld: String,
+    ) {
+        requirePrimaryThread()
+        val pendingWorld = pendingRespawnWorlds.remove(player.uniqueId)
+        if (pendingWorld != destinationWorld || !player.isOnline || player.world.name != destinationWorld) return
+
+        val groups = groupsFor(destinationWorld)
+        val ownership = shareOwnership(groups, destinationWorld)
+        val playerName = repository.profileName(player.uniqueId, player.name)
+        val profileType = profileType(player.gameMode)
+        val reads = ownership.groupOwners.entries
+            .groupBy({ it.value }, { it.key })
+            .map { (group, shares) ->
+                ProfileRead(
+                    groupProfile(group, playerName),
+                    profileType,
+                    sharesForRead(shares.toSet()),
+                )
+            }.toMutableList()
+        val worldShares = sharesForRead(worldOwnedShares(groups, ownership))
+        if (worldShares.isNotEmpty()) {
+            reads += ProfileRead(worldProfile(destinationWorld, playerName), profileType, worldShares)
+        }
+
+        applyReads(player, reads)
+        updateLastWorldMetadata(player, destinationWorld)
     }
 
     fun onGameModeChanged(
         player: Player,
         fromGameMode: GameMode,
         toGameMode: GameMode,
-    ) {
-        if (!config.enableGamemodeShareHandling) return
+    ): (() -> Unit)? {
+        if (!config.enableGamemodeShareHandling) return null
         requirePrimaryThread()
         val fromType = profileType(fromGameMode)
         val toType = profileType(toGameMode)
-        if (fromType == toType) return
+        if (fromType == toType) return null
 
         val world = player.world.name
         val groups = groupsFor(world)
+        val ownership = shareOwnership(groups, world)
         val playerName = repository.profileName(player.uniqueId, player.name)
-        val worldShares = worldReadShares(groups)
         val reads = mutableListOf<ProfileRead>()
         val writes = mutableListOf<ProfileWrite>()
-        val handled = linkedSetOf<String>()
 
-        groups.forEach { group ->
-            writes += ProfileWrite(groupProfile(group, playerName), fromType, group.shares)
-            reads += ProfileRead(groupProfile(group, playerName), toType, group.shares)
-            handled += group.shares
-            handled += group.disabledShares
-        }
-        val unhandled = worldShares - handled
-        if (unhandled.isNotEmpty()) {
-            reads += ProfileRead(worldProfile(world, playerName), toType, sharesForRead(unhandled))
-        }
-        val worldWrites =
-            if (config.alwaysWriteWorldProfile) {
-                if (config.useOptionalsForUngroupedWorlds) {
-                    activeShares()
-                } else {
-                    activeShares().intersect(MultiverseInventoryShares.standard)
-                }
-            } else {
-                unhandled
+        ownership.groupOwners.entries
+            .groupBy({ it.value }, { it.key })
+            .forEach { (group, shares) ->
+                writes += ProfileWrite(groupProfile(group, playerName), fromType, shares.toSet())
+                reads += ProfileRead(groupProfile(group, playerName), toType, sharesForRead(shares.toSet()))
             }
-        if (worldWrites.isNotEmpty()) {
-            writes += ProfileWrite(worldProfile(world, playerName), fromType, worldWrites)
+        val worldShares = worldOwnedShares(groups, ownership)
+        if (worldShares.isNotEmpty()) {
+            reads += ProfileRead(worldProfile(world, playerName), toType, sharesForRead(worldShares))
+        }
+        if (worldShares.isNotEmpty()) {
+            writes += ProfileWrite(worldProfile(world, playerName), fromType, worldShares)
         }
 
-        rejectUnsupported(writes.flatMap { it.shares } + reads.flatMap { it.shares })
         persistWrites(player, writes)
-        applyReads(player, reads)
+        return {
+            requirePrimaryThread()
+            if (player.isOnline && player.gameMode == toGameMode && player.world.name == world) {
+                applyReads(player, reads)
+            }
+        }
     }
 
     fun onPlayerJoined(player: Player) {
@@ -156,31 +182,30 @@ class InventoryTransitionService(
 
         val world = player.world.name
         val groups = groupsFor(world)
+        val ownership = shareOwnership(groups, world)
         val profileType = profileType(player.gameMode)
         val playerName = repository.profileName(player.uniqueId, player.name)
-        val handled = linkedSetOf<String>()
         val reads = mutableListOf<ProfileRead>()
-        groups.forEach { group ->
-            reads += ProfileRead(
-                groupProfile(group, playerName),
-                profileType,
-                sharesForRead(group.shares),
-            )
-            handled += group.shares
-            handled += group.disabledShares
-        }
-        val worldShares = worldReadShares(groups) - handled
-        val worldReads = sharesForRead(worldShares)
+        ownership.groupOwners.entries
+            .groupBy({ it.value }, { it.key })
+            .forEach { (group, shares) ->
+                reads += ProfileRead(
+                    groupProfile(group, playerName),
+                    profileType,
+                    sharesForRead(shares.toSet()),
+                )
+            }
+        val worldReads = sharesForRead(worldOwnedShares(groups, ownership))
         if (worldReads.isNotEmpty()) {
             reads += ProfileRead(worldProfile(world, playerName), profileType, worldReads)
         }
 
-        rejectUnsupported(reads.flatMap { it.shares })
         applyReads(player, reads)
     }
 
     fun onPlayerQuit(player: Player) {
         requirePrimaryThread()
+        pendingRespawnWorlds.remove(player.uniqueId)
         saveCurrentWorld(player)
     }
 
@@ -213,25 +238,19 @@ class InventoryTransitionService(
 
         val world = location.world?.name ?: return
         val groups = groupsFor(world)
+        val ownership = shareOwnership(groups, world)
         val profileType = profileType(player.gameMode)
         val playerName = repository.profileName(player.uniqueId, player.name)
         val writes = mutableListOf<ProfileWrite>()
-        groups.forEach { group ->
-            if ("last_location" in group.shares) {
-                writes += ProfileWrite(
-                    groupProfile(group, playerName),
-                    profileType,
-                    setOf("last_location"),
-                    lastLocation = location,
-                )
-            }
+        ownership.groupOwners["last_location"]?.let { group ->
+            writes += ProfileWrite(
+                groupProfile(group, playerName),
+                profileType,
+                setOf("last_location"),
+                lastLocation = location,
+            )
         }
-        val handled = groups.flatMap { it.shares + it.disabledShares }.toSet()
-        val worldShares =
-            activeShares().let {
-                if (config.alwaysWriteWorldProfile) it else it - handled
-            }
-        if ("last_location" in worldShares) {
+        if ("last_location" in worldOwnedShares(groups, ownership)) {
             writes += ProfileWrite(
                 worldProfile(world, playerName),
                 profileType,
@@ -239,59 +258,114 @@ class InventoryTransitionService(
                 lastLocation = location,
             )
         }
-        rejectUnsupported(writes.flatMap { it.shares })
         persistWrites(player, writes)
     }
 
     private fun saveCurrentWorld(player: Player) {
         val world = player.world.name
         val groups = groupsFor(world)
+        val ownership = shareOwnership(groups, world)
         val profileType = profileType(player.gameMode)
         val playerName = repository.profileName(player.uniqueId, player.name)
         val writes = mutableListOf<ProfileWrite>()
-        val handled = linkedSetOf<String>()
-        groups.forEach { group ->
-            writes += ProfileWrite(groupProfile(group, playerName), profileType, group.shares)
-            handled += group.shares
-            handled += group.disabledShares
-        }
-        val worldShares = activeShares().let { if (config.alwaysWriteWorldProfile) it else it - handled }
+        ownership.groupOwners.entries
+            .groupBy({ it.value }, { it.key })
+            .forEach { (group, shares) ->
+                writes += ProfileWrite(groupProfile(group, playerName), profileType, shares.toSet())
+            }
+        val worldShares = worldOwnedShares(groups, ownership)
         if (worldShares.isNotEmpty()) {
             writes += ProfileWrite(worldProfile(world, playerName), profileType, worldShares)
         }
-        rejectUnsupported(writes.flatMap { it.shares })
         persistWrites(player, writes)
-        repository.updateGlobalPlayerData(
-            player.uniqueId,
-            mapOf("lastWorld" to JsonPrimitive(world)),
-        )
+        updateLastWorldMetadata(player, world)
+    }
+
+    private fun updateLastWorldMetadata(
+        player: Player,
+        worldName: String,
+    ) {
+        try {
+            repository.updateGlobalPlayerData(
+                player.uniqueId,
+                mapOf("lastWorld" to JsonPrimitive(worldName)),
+            )
+        } catch (failure: Exception) {
+            logger.log(
+                Level.SEVERE,
+                "Could not update global inventory metadata players/${player.uniqueId}.json " +
+                    "after transition to world '$worldName' for player ${player.name}",
+                failure,
+            )
+            throw failure
+        }
     }
 
     private fun persistWrites(
         player: Player,
         writes: List<ProfileWrite>,
     ) {
-        writes.filter { it.shares.isNotEmpty() }.forEach { write ->
-            val previous =
-                repository
-                    .readProfile(write.location)
-                    ?.get(write.profileType.name)
-                    ?.asJsonObjectOrNull()
-            val fields = linkedMapOf<String, JsonElement>()
-            val stats = linkedMapOf<String, JsonElement>()
-            write.shares.forEach { share ->
-                captureShare(player, share, previous, write.lastLocation)?.let { captured ->
-                    if (captured.first == "stats") {
-                        stats[captured.second] = captured.third
-                    } else {
-                        fields[captured.first] = captured.third
+        writes
+            .filter { it.shares.isNotEmpty() }
+            .groupBy { it.location to it.profileType }
+            .forEach { (key, profileWrites) ->
+                val lastLocations = profileWrites.mapNotNull { it.lastLocation }.distinct()
+                require(lastLocations.size <= 1) {
+                    "Conflicting last locations were planned for ${key.first.directory}/${key.first.key}"
+                }
+                val write = ProfileWrite(
+                    location = key.first,
+                    profileType = key.second,
+                    shares = profileWrites.flatMap { it.shares }.toSet(),
+                    lastLocation = lastLocations.singleOrNull(),
+                )
+                val previous =
+                    readProfileForTransition(
+                        write.location,
+                        write.profileType,
+                        player,
+                        write.shares,
+                        "saving",
+                    )?.get(write.profileType.name)
+                        ?.asJsonObjectOrNull()
+                val fields = linkedMapOf<String, JsonElement>()
+                val stats = linkedMapOf<String, JsonElement>()
+                write.shares.forEach { share ->
+                    try {
+                        captureShare(player, share, previous, write.lastLocation)?.let { captured ->
+                            if (captured.first == "stats") {
+                                stats[captured.second] = captured.third
+                            } else {
+                                fields[captured.first] = captured.third
+                            }
+                        }
+                    } catch (failure: Exception) {
+                        logger.log(
+                            Level.SEVERE,
+                            "Could not capture Multiverse-Inventories share '$share' for " +
+                                "${write.location.directory}/${write.location.key}/" +
+                                "${write.location.playerName}.json (${write.profileType}) for player ${player.name}",
+                            failure,
+                        )
+                        throw failure
+                    }
+                }
+                if (fields.isNotEmpty() || stats.isNotEmpty()) {
+                    try {
+                        repository.updateProfile(write.location, write.profileType, fields, stats)
+                    } catch (failure: Exception) {
+                        logger.log(
+                            Level.SEVERE,
+                            "Could not write Multiverse-Inventories profile " +
+                                "${write.location.directory}/${write.location.key}/" +
+                                "${write.location.playerName}.json (${write.profileType}) with shares " +
+                                "${write.shares.sorted().joinToString()} for player ${player.name}",
+                            failure,
+                        )
+                        throw failure
                     }
                 }
             }
-            if (fields.isNotEmpty() || stats.isNotEmpty()) {
-                repository.updateProfile(write.location, write.profileType, fields, stats)
-            }
-        }
     }
 
     private fun captureShare(
@@ -306,7 +380,7 @@ class InventoryTransitionService(
                 Triple(
                     "inventoryContents",
                     "",
-                    encodeItems(inventory.storageContents, previous?.get("inventoryContents")),
+                    encodeItems(inventory.contents, previous?.get("inventoryContents")),
                 )
             }
             "armor_contents" -> {
@@ -398,15 +472,145 @@ class InventoryTransitionService(
         player: Player,
         reads: List<ProfileRead>,
     ) {
-        reads.filter { it.shares.isNotEmpty() }.forEach { read ->
-            val profile =
-                repository
-                    .readProfile(read.location)
-                    ?.get(read.profileType.name)
-                    ?.asJsonObjectOrNull()
-            val shares = read.shares.sortedBy { applyOrder.indexOf(it).let { index -> if (index < 0) Int.MAX_VALUE else index } }
-            shares.forEach { share -> applyShare(player, share, profile) }
+        reads
+            .filter { it.shares.isNotEmpty() }
+            .groupBy { it.location to it.profileType }
+            .forEach { (key, profileReads) ->
+                val requestedShares = profileReads.flatMap { it.shares }.toSet()
+                val document = readProfileForTransition(
+                    key.first,
+                    key.second,
+                    player,
+                    requestedShares,
+                    "applying",
+                )
+                if (document == null) {
+                    return@forEach
+                }
+                val modeProfile = document.get(key.second.name)
+                if (modeProfile == null || modeProfile.isJsonNull) {
+                    logger.fine(
+                        "Inventory profile ${key.first.directory}/${key.first.key}/" +
+                            "${key.first.playerName}.json has no ${key.second} section; preserving current shares",
+                    )
+                    return@forEach
+                }
+                val profile = try {
+                    modeProfile.asJsonObjectOrNull()
+                } catch (failure: Exception) {
+                    logger.log(
+                        Level.SEVERE,
+                        "Malformed ${key.second} section in inventory profile " +
+                            "${key.first.directory}/${key.first.key}/${key.first.playerName}.json " +
+                            "while applying shares ${requestedShares.sorted().joinToString()} to player ${player.name}",
+                        failure,
+                    )
+                    throw failure
+                } ?: return@forEach
+                val failure = mutableListOf<Exception>()
+                requestedShares
+                    .sortedBy { applyOrder.indexOf(it).let { index -> if (index < 0) Int.MAX_VALUE else index } }
+                    .forEach { share ->
+                        try {
+                            if (hasShareData(profile, share)) {
+                                applyShare(player, share, profile)
+                            } else {
+                                logger.fine(
+                                    "Inventory profile ${key.first.directory}/${key.first.key}/" +
+                                        "${key.first.playerName}.json has no ${key.second} data for '$share'; " +
+                                        "preserving the current share",
+                                )
+                            }
+                        } catch (shareFailure: Exception) {
+                            logger.log(
+                                Level.SEVERE,
+                                "Could not apply Multiverse-Inventories share '$share' from " +
+                                    "${key.first.directory}/${key.first.key}/${key.first.playerName}.json " +
+                                    "for ${key.second} to player ${player.name}",
+                                shareFailure,
+                            )
+                            failure += shareFailure
+                        }
+                    }
+                failure.firstOrNull()?.let { first ->
+                    failure.drop(1).forEach(first::addSuppressed)
+                    throw IllegalStateException("One or more inventory shares could not be applied", first)
+                }
+            }
+    }
+
+    private fun hasShareData(
+        profile: JsonObject,
+        share: String,
+    ): Boolean {
+        val field = when (share) {
+            "inventory_contents" -> "inventoryContents"
+            "armor_contents" -> "armorContents"
+            "ender_chest" -> "enderChestContents"
+            "off_hand" -> "offHandItem"
+            "bed_spawn" -> "bedSpawnLocation"
+            "last_location" -> "lastLocation"
+            "potion_effects" -> "potions"
+            "game_statistics" -> "game_statistics"
+            "advancements" -> "advancements"
+            "recipes" -> "recipes"
+            else -> null
         }
+        if (field != null) {
+            val value = profile.get(field) ?: return false
+            if (value.isJsonNull) return false
+            when (share) {
+                "inventory_contents", "armor_contents", "ender_chest" -> {
+                    require(value.isJsonObject) {
+                        "Expected a slot map for '$share' in Multiverse-Inventories profile"
+                    }
+                }
+                "bed_spawn", "last_location" -> {
+                    locationObject(value)
+                }
+                "potion_effects" -> {
+                    potionEntries(value).first.forEach { effect ->
+                        require(effect.isJsonObject && decodePotionEffect(effect.asJsonObject) != null) {
+                            "Could not deserialize potion effect from Multiverse-Inventories profile"
+                        }
+                    }
+                }
+                "game_statistics" -> {
+                    validateStatistics(value)
+                }
+                "advancements", "recipes" -> {
+                    require(
+                        value.isJsonArray &&
+                            value.asJsonArray.all { it.isJsonPrimitive && it.asJsonPrimitive.isString },
+                    ) {
+                        "Expected string entries for '$share' in Multiverse-Inventories profile"
+                    }
+                }
+            }
+            return true
+        }
+
+        val stat = when (share) {
+            "max_hit_points" -> "mhp"
+            "hit_points" -> "hp"
+            "remaining_air" -> "ra"
+            "maximum_air" -> "ma"
+            "fall_distance" -> "fd"
+            "fire_ticks" -> "ft"
+            "xp" -> "xp"
+            "total_xp" -> "txp"
+            "lvl" -> "el"
+            "food_level" -> "fl"
+            "exhaustion" -> "ex"
+            "saturation" -> "sa"
+            else -> error("Unsupported Multiverse-Inventories share: $share")
+        }
+        val stats = profile.get("stats")?.asJsonObjectOrNull() ?: return false
+        val value = stats.get(stat) ?: return false
+        require(value.isJsonPrimitive && value.asJsonPrimitive.isNumber) {
+            "Expected numeric '$stat' data for '$share' in Multiverse-Inventories profile"
+        }
+        return true
     }
 
     private fun applyShare(
@@ -417,9 +621,9 @@ class InventoryTransitionService(
         val stats = profile?.get("stats")?.asJsonObjectOrNull()
         when (share) {
             "inventory_contents" -> {
-                player.inventory.storageContents = decodeItems(
+                player.inventory.contents = decodeItems(
                     field = profile?.get("inventoryContents"),
-                    size = player.inventory.storageContents.size,
+                    size = player.inventory.contents.size,
                 )
             }
             "armor_contents" -> {
@@ -535,7 +739,7 @@ class InventoryTransitionService(
         }
     }
 
-    private fun decodeItems(
+    internal fun decodeItems(
         field: JsonElement?,
         size: Int,
     ): Array<ItemStack?> {
@@ -546,8 +750,12 @@ class InventoryTransitionService(
             "Expected a slot map in Multiverse-Inventories profile"
         }
         values.asJsonObject.entrySet().forEach { (slot, value) ->
-            val index = slot.toIntOrNull() ?: return@forEach
-            if (index in result.indices) result[index] = decodeItem(value)
+            val index = slot.toIntOrNull()
+                ?: throw IllegalArgumentException("Invalid ItemStack slot '$slot' in Multiverse-Inventories profile")
+            require(index in result.indices) {
+                "ItemStack slot '$slot' exceeds the supported inventory size ${result.size}"
+            }
+            result[index] = decodeItem(value)
         }
         return result
     }
@@ -611,12 +819,12 @@ class InventoryTransitionService(
         player: Player,
         value: JsonElement?,
     ) {
-        val data = value?.takeUnless { it.isJsonNull }?.asJsonObjectOrNull() ?: JsonObject()
+        val data = validateStatistics(value ?: JsonNull.INSTANCE)
         Statistic.entries.forEach { statistic ->
             val stored = data.get(statistic.name)
             when (statistic.type) {
                 Statistic.Type.UNTYPED -> {
-                    player.setStatistic(statistic, stored?.numberOrNull()?.toInt() ?: 0)
+                    stored?.numberOrNull()?.let { player.setStatistic(statistic, it.toInt()) }
                 }
                 Statistic.Type.ITEM, Statistic.Type.BLOCK -> {
                     val itemData = stored?.asJsonObjectOrNull()
@@ -624,30 +832,81 @@ class InventoryTransitionService(
                         .filter { material ->
                             if (statistic.type == Statistic.Type.ITEM) material.isItem else material.isBlock
                         }.forEach { material ->
-                            val count = itemData?.get(material.key.toString())?.numberOrNull()?.toInt() ?: 0
-                            player.setStatistic(statistic, material, count)
+                            itemData?.get(material.key.toString())?.numberOrNull()?.let { count ->
+                                player.setStatistic(statistic, material, count.toInt())
+                            }
                         }
                 }
                 Statistic.Type.ENTITY -> {
                     val entityData = stored?.asJsonObjectOrNull()
                     EntityType.entries.filter { it != EntityType.UNKNOWN }.forEach { entityType ->
-                        val count = entityData?.get(entityType.key.toString())?.numberOrNull()?.toInt() ?: 0
-                        player.setStatistic(statistic, entityType, count)
+                        entityData?.get(entityType.key.toString())?.numberOrNull()?.let { count ->
+                            player.setStatistic(statistic, entityType, count.toInt())
+                        }
                     }
                 }
             }
         }
     }
 
+    private fun validateStatistics(value: JsonElement): JsonObject {
+        require(value.isJsonObject) {
+            "Expected a statistics object in Multiverse-Inventories profile"
+        }
+        val data = value.asJsonObject
+        Statistic.entries.forEach { statistic ->
+            val stored = data.get(statistic.name) ?: return@forEach
+            when (statistic.type) {
+                Statistic.Type.UNTYPED -> {
+                    require(stored.isJsonPrimitive && stored.asJsonPrimitive.isNumber) {
+                        "Expected a numeric value for statistic '${statistic.name}'"
+                    }
+                }
+                Statistic.Type.ITEM, Statistic.Type.BLOCK, Statistic.Type.ENTITY -> {
+                    require(stored.isJsonObject) {
+                        "Expected an object for statistic '${statistic.name}'"
+                    }
+                    val knownKeys = when (statistic.type) {
+                        Statistic.Type.ITEM -> {
+                            Material.entries.filter { it.isItem }.map { it.key.toString() }
+                        }
+                        Statistic.Type.BLOCK -> {
+                            Material.entries.filter { it.isBlock }.map { it.key.toString() }
+                        }
+                        Statistic.Type.ENTITY -> {
+                            EntityType.entries
+                                .filter { it != EntityType.UNKNOWN }
+                                .map { it.key.toString() }
+                        }
+                        Statistic.Type.UNTYPED -> {
+                            emptyList()
+                        }
+                    }.toSet()
+                    stored.asJsonObject.entrySet().forEach { (key, statisticValue) ->
+                        if (key in knownKeys) {
+                            require(
+                                statisticValue.isJsonPrimitive &&
+                                    statisticValue.asJsonPrimitive.isNumber,
+                            ) {
+                                "Expected a numeric value for statistic '${statistic.name}' entry '$key'"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return data
+    }
+
     private fun encodePotionEffects(
         player: Player,
         previous: JsonElement?,
-    ): JsonArray {
-        val effects = previous
-            ?.takeIf { it.isJsonArray }
-            ?.asJsonArray
-            ?.mapNotNull { element ->
-                val serialized = element.asJsonObjectOrNull() ?: return@mapNotNull element.deepCopy()
+    ): JsonElement {
+        val (previousEffects, useLegacyStringFormat) = potionEntries(previous)
+        val effects = previousEffects
+            .mapNotNull { element ->
+                val serialized = element.takeIf(JsonElement::isJsonObject)?.asJsonObject
+                    ?: return@mapNotNull element.deepCopy()
                 if (decodePotionEffect(serialized) == null) {
                     element.deepCopy()
                 } else {
@@ -656,36 +915,72 @@ class InventoryTransitionService(
             }?.toMutableList() ?: mutableListOf()
 
         player.activePotionEffects.forEach { effect ->
-            effects += GSON.toJsonTree(effect.serialize())
+            if (useLegacyStringFormat) {
+                val typeId = effect.type.id
+                require(typeId >= 0) {
+                    "Potion effect '${effect.type.key}' cannot be represented in the legacy Multiverse-Inventories format"
+                }
+                effects += JsonObject().apply {
+                    addProperty("type", typeId)
+                    addProperty("duration", effect.duration)
+                    addProperty("amplifier", effect.amplifier)
+                }
+            } else {
+                effects += GSON.toJsonTree(effect.serialize())
+            }
         }
-        return JsonArray().apply { effects.forEach(::add) }
+        val result = JsonArray().apply { effects.forEach(::add) }
+        return if (useLegacyStringFormat) JsonPrimitive(result.toString()) else result
     }
 
     private fun applyPotionEffects(
         player: Player,
         value: JsonElement?,
     ) {
-        player.activePotionEffects.forEach {
-            player.removePotionEffect(it.type)
-        }
         val effects = value?.takeUnless { it.isJsonNull } ?: return
-        require(effects.isJsonArray) {
-            "Expected a potion list in Multiverse-Inventories profile"
-        }
-        effects.asJsonArray.forEach { element ->
+        val decodedEffects = potionEntries(effects).first.map { element ->
             require(element.isJsonObject) {
                 "Expected a serialized potion effect in Multiverse-Inventories profile"
             }
-            val effect = decodePotionEffect(element.asJsonObject)
+            decodePotionEffect(element.asJsonObject)
                 ?: throw IllegalArgumentException("Could not deserialize potion effect from Multiverse-Inventories profile")
-            player.addPotionEffect(effect)
         }
+        player.activePotionEffects.forEach {
+            player.removePotionEffect(it.type)
+        }
+        decodedEffects.forEach(player::addPotionEffect)
     }
 
     private fun decodePotionEffect(value: JsonObject): PotionEffect? {
+        val legacyTypeId = value.get("type")?.numberOrNull()?.toInt()
+        if (legacyTypeId != null) {
+            val type = PotionEffectType.getById(legacyTypeId) ?: return null
+            val duration = value.get("duration")?.numberOrNull()?.toInt() ?: return null
+            val amplifier = value.get("amplifier")?.numberOrNull()?.toInt() ?: return null
+            return PotionEffect(type, duration, amplifier)
+        }
         val decoded = ConfigurationSerialization.deserializeObject(value.toJavaMap())
             ?: return null
         return decoded as? PotionEffect
+    }
+
+    private fun potionEntries(value: JsonElement?): Pair<List<JsonElement>, Boolean> {
+        if (value == null || value.isJsonNull) return emptyList<JsonElement>() to false
+        if (value.isJsonArray) {
+            return value.asJsonArray.map(JsonElement::deepCopy) to false
+        }
+        require(value.isJsonPrimitive && value.asJsonPrimitive.isString) {
+            "Expected a potion list in Multiverse-Inventories profile"
+        }
+        val parsed = try {
+            JsonParser.parseString(value.asString)
+        } catch (failure: RuntimeException) {
+            throw IllegalArgumentException("Invalid legacy potion list in Multiverse-Inventories profile", failure)
+        }
+        require(parsed.isJsonArray) {
+            "Expected a potion list in Multiverse-Inventories profile"
+        }
+        return parsed.asJsonArray.map(JsonElement::deepCopy) to true
     }
 
     private fun encodeAdvancements(
@@ -825,22 +1120,18 @@ class InventoryTransitionService(
         player: Player,
         value: JsonElement?,
     ) {
-        val map = locationObject(value)
-        val worldName = map?.get("world")?.takeIf { it.isJsonPrimitive }?.asString
-            ?: map?.get("wo")?.takeIf { it.isJsonPrimitive }?.asString
-        val world = worldName?.let(Bukkit::getWorld)
-        if (world == null || map == null) {
-            player.setBedSpawnLocation(player.world.spawnLocation, true)
+        val map = value?.takeUnless { it.isJsonNull }?.let(::locationObject) ?: return
+        val worldName = map.get("world")?.takeIf { it.isJsonPrimitive }?.asString
+            ?: map.get("wo")?.takeIf { it.isJsonPrimitive }?.asString
+        if (worldName == null) {
+            logger.warning("Stored Multiverse-Inventories respawn location has no world")
             return
         }
-        val location = Location(
-            world,
-            map.get("x")?.numberOrNull()?.toDouble() ?: 0.0,
-            map.get("y")?.numberOrNull()?.toDouble() ?: 0.0,
-            map.get("z")?.numberOrNull()?.toDouble() ?: 0.0,
-            (map.get("yaw") ?: map.get("ya"))?.numberOrNull()?.toFloat() ?: 0.0f,
-            (map.get("pitch") ?: map.get("pi"))?.numberOrNull()?.toFloat() ?: 0.0f,
-        )
+        val world = Bukkit.getWorld(worldName) ?: run {
+            logger.warning("Cannot apply Multiverse-Inventories respawn location: world '$worldName' is unavailable")
+            return
+        }
+        val location = locationFromMap(world, map)
         if (config.validateBedAnchorRespawnLocation) {
             val type = map
                 .get("respawnType")
@@ -851,10 +1142,10 @@ class InventoryTransitionService(
             val valid = when (type) {
                 "BED" -> block.blockData is Bed
                 "ANCHOR" -> block.type == Material.RESPAWN_ANCHOR
-                else -> true
+                null, "UNKNOWN" -> true
+                else -> false
             }
             if (!valid) {
-                player.setBedSpawnLocation(player.world.spawnLocation, true)
                 return
             }
         }
@@ -866,12 +1157,28 @@ class InventoryTransitionService(
         val worldName = map.get("world")?.takeIf { it.isJsonPrimitive }?.asString
             ?: map.get("wo")?.takeIf { it.isJsonPrimitive }?.asString
             ?: return null
-        val world = Bukkit.getWorld(worldName) ?: return null
+        val world = Bukkit.getWorld(worldName) ?: run {
+            logger.warning("Cannot apply Multiverse-Inventories last location: world '$worldName' is unavailable")
+            return null
+        }
+        return locationFromMap(world, map)
+    }
+
+    private fun locationFromMap(
+        world: org.bukkit.World,
+        map: JsonObject,
+    ): Location {
+        val x = map.get("x")?.numberOrNull()
+            ?: throw IllegalArgumentException("Stored Multiverse-Inventories location has no numeric x coordinate")
+        val y = map.get("y")?.numberOrNull()
+            ?: throw IllegalArgumentException("Stored Multiverse-Inventories location has no numeric y coordinate")
+        val z = map.get("z")?.numberOrNull()
+            ?: throw IllegalArgumentException("Stored Multiverse-Inventories location has no numeric z coordinate")
         return Location(
             world,
-            map.get("x")?.numberOrNull()?.toDouble() ?: 0.0,
-            map.get("y")?.numberOrNull()?.toDouble() ?: 0.0,
-            map.get("z")?.numberOrNull()?.toDouble() ?: 0.0,
+            x.toDouble(),
+            y.toDouble(),
+            z.toDouble(),
             (map.get("yaw") ?: map.get("ya"))?.numberOrNull()?.toFloat() ?: 0.0f,
             (map.get("pitch") ?: map.get("pi"))?.numberOrNull()?.toFloat() ?: 0.0f,
         )
@@ -896,10 +1203,84 @@ class InventoryTransitionService(
         value: Number,
     ) = Triple("stats", key, GSON.toJsonTree(value))
 
-    private fun groupsFor(worldName: String): List<ResolvedInventoryGroup> =
-        MultiverseInventoryShares.resolveGroups(config, repository.readWorldGroups(), worldName)
+    private fun groupsFor(worldName: String): List<ResolvedInventoryGroup> {
+        val configuredGroups = repository.readWorldGroups()
+        val unsupported = (
+            configuredGroups.flatMap { it.shares + it.disabledShares } +
+                config.activeOptionalShares
+        ).flatMap(MultiverseInventoryShares::expand)
+            .filterNot { it in supportedShares }
+            .toSet()
+        warnUnsupportedShares(unsupported)
 
-    private fun activeShares(): Set<String> = MultiverseInventoryShares.active(config)
+        return MultiverseInventoryShares
+            .resolveGroups(config, configuredGroups, worldName)
+            .map { group ->
+                group.copy(
+                    shares = group.shares intersect supportedShares,
+                    disabledShares = group.disabledShares intersect supportedShares,
+                )
+            }
+    }
+
+    private fun readProfileForTransition(
+        location: InventoryProfileLocation,
+        profileType: InventoryProfileType,
+        player: Player,
+        shares: Set<String>,
+        operation: String,
+    ): JsonObject? {
+        val result = try {
+            repository.readProfileResult(location)
+        } catch (failure: Exception) {
+            logger.log(
+                Level.SEVERE,
+                "Could not read inventory profile ${location.directory}/${location.key}/" +
+                    "${location.playerName}.json for $profileType while $operation shares " +
+                    "${shares.sorted().joinToString()} for player ${player.name}",
+                failure,
+            )
+            throw failure
+        }
+        return when (result) {
+            InventoryProfileReadResult.Missing -> {
+                logger.fine(
+                    "Inventory profile ${location.directory}/${location.key}/${location.playerName}.json " +
+                        "does not exist; preserving current player shares during $operation",
+                )
+                null
+            }
+            is InventoryProfileReadResult.Present -> {
+                result.profile
+            }
+            is InventoryProfileReadResult.Malformed -> {
+                logger.log(
+                    Level.SEVERE,
+                    "Malformed inventory profile ${location.directory}/${location.key}/" +
+                        "${location.playerName}.json for $profileType while $operation shares " +
+                        "${shares.sorted().joinToString()} for player ${player.name}",
+                    result.failure,
+                )
+                throw result.failure
+            }
+            is InventoryProfileReadResult.Unreadable -> {
+                logger.log(
+                    Level.SEVERE,
+                    "Unreadable inventory profile ${location.directory}/${location.key}/" +
+                        "${location.playerName}.json for $profileType while $operation shares " +
+                        "${shares.sorted().joinToString()} for player ${player.name}",
+                    result.failure,
+                )
+                throw result.failure
+            }
+        }
+    }
+
+    private fun activeShares(): Set<String> {
+        val active = MultiverseInventoryShares.active(config)
+        warnUnsupportedShares(active - supportedShares)
+        return active intersect supportedShares
+    }
 
     private fun worldReadShares(groups: List<ResolvedInventoryGroup>): Set<String> =
         if (groups.isEmpty() && !config.useOptionalsForUngroupedWorlds) {
@@ -908,16 +1289,45 @@ class InventoryTransitionService(
             activeShares()
         }
 
+    private fun shareOwnership(
+        groups: List<ResolvedInventoryGroup>,
+        worldName: String,
+    ): InventoryShareOwnership {
+        val ownership = MultiverseInventoryShares.resolveShareOwnership(groups)
+        ownership.conflictingShares.forEach { (share, groupNames) ->
+            val key = "$worldName:$share:${groupNames.sorted().joinToString(",")}"
+            if (reportedShareConflicts.add(key)) {
+                logger.warning(
+                    "Skipping Multiverse-Inventories share '$share' in world '$worldName': " +
+                        "multiple groups claim it (${groupNames.sorted().joinToString()})",
+                )
+            }
+        }
+        return ownership
+    }
+
+    private fun worldOwnedShares(
+        groups: List<ResolvedInventoryGroup>,
+        ownership: InventoryShareOwnership,
+    ): Set<String> = worldReadShares(groups) -
+        ownership.groupOwners.keys -
+        ownership.disabledShares -
+        ownership.conflictingShares.keys
+
     private fun sharesForRead(shares: Set<String>): Set<String> = if (config.applyLastLocationForAllTeleports) {
         shares
     } else {
         shares - "last_location"
     }
 
-    private fun rejectUnsupported(shares: Collection<String>) {
-        val unsupported = shares.filter { it == "economy" }.toSet()
-        check(unsupported.isEmpty()) {
-            "PCBridge cannot apply configured Multiverse-Inventories shares: ${unsupported.sorted().joinToString()}"
+    private fun warnUnsupportedShares(shares: Collection<String>) {
+        shares.forEach { share ->
+            if (reportedUnsupportedShares.add(share)) {
+                logger.warning(
+                    "Multiverse-Inventories share '$share' is configured but unsupported by PCBridge; " +
+                        "other inventory shares remain enabled",
+                )
+            }
         }
     }
 
@@ -939,13 +1349,15 @@ class InventoryTransitionService(
 
     private fun requirePrimaryThread() {
         check(Bukkit.isPrimaryThread()) {
-            "Multiverse-Inventories transitions must run on the server thread"
+            "Inventory transitions must run on the main server thread"
         }
     }
 
     private fun JsonElement?.asJsonObjectOrNull(): JsonObject? {
         if (this == null || this.isJsonNull) return null
-        require(this.isJsonObject) { "Expected an object in Multiverse-Inventories profile" }
+        require(this.isJsonObject) {
+            "Expected an object in Multiverse-Inventories profile"
+        }
         return this.asJsonObject
     }
 
@@ -980,6 +1392,7 @@ class InventoryTransitionService(
 
     private companion object {
         val GSON = Gson()
+        val supportedShares = MultiverseInventoryShares.all - "economy"
         val applyOrder = listOf(
             "max_hit_points",
             "inventory_contents",

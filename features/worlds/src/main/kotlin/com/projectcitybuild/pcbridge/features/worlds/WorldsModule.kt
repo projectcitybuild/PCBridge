@@ -9,12 +9,12 @@ import com.projectcitybuild.pcbridge.features.worlds.domain.repositories.WorldDe
 import com.projectcitybuild.pcbridge.features.worlds.domain.services.WorldBorderFillService
 import com.projectcitybuild.pcbridge.features.worlds.domain.services.WorldBorderService
 import com.projectcitybuild.pcbridge.features.worlds.domain.services.WorldLifecycleService
-import com.projectcitybuild.pcbridge.features.worlds.hooks.commands.BorderClearCommand
-import com.projectcitybuild.pcbridge.features.worlds.hooks.commands.BorderFillCommand
-import com.projectcitybuild.pcbridge.features.worlds.hooks.commands.BorderSetCommand
 import com.projectcitybuild.pcbridge.features.worlds.hooks.commands.WorldBorderCommand
 import com.projectcitybuild.pcbridge.features.worlds.hooks.commands.WorldLifecycleCommand
 import com.projectcitybuild.pcbridge.features.worlds.hooks.commands.WorldsCommand
+import com.projectcitybuild.pcbridge.features.worlds.hooks.commands.border.BorderClearCommand
+import com.projectcitybuild.pcbridge.features.worlds.hooks.commands.border.BorderFillCommand
+import com.projectcitybuild.pcbridge.features.worlds.hooks.commands.border.BorderSetCommand
 import com.projectcitybuild.pcbridge.features.worlds.hooks.listeners.WorldBorderFillListener
 import com.projectcitybuild.pcbridge.features.worlds.hooks.listeners.WorldBorderListener
 import com.projectcitybuild.pcbridge.features.worlds.hooks.listeners.WorldStartupListener
@@ -66,7 +66,9 @@ val worldsModule =
         single {
             val plugin = get<JavaPlugin>()
             WorldDefinitionRepository(
-                worldsFile = plugin.dataFolder.parentFile.toPath().resolve("Multiverse-Core/worlds.yml"),
+                worldsFile = plugin.dataFolder.parentFile
+                    .toPath()
+                    .resolve("Multiverse-Core/worlds.yml"),
                 isWorldLoaded = { worldName -> plugin.server.getWorld(worldName) != null },
             )
         }

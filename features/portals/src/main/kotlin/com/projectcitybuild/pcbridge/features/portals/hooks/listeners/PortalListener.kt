@@ -10,6 +10,7 @@ import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.Server
 import org.bukkit.World
+import org.bukkit.block.Block
 import org.bukkit.entity.Entity
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -40,6 +41,7 @@ class PortalListener(
             resolve(event.from.world, type)
                 ?: run {
                     event.isCancelled = true
+                    plugin.logger.warning("No ${type.configKey} portal destination is registered for ${event.from.world.name}")
                     if (settings.sendNoDestinationMessage) {
                         event.player.sendMessage(l10n.portals.noDestination(event.from.world.name))
                     }
@@ -47,7 +49,7 @@ class PortalListener(
                 }
         if (target.world == null) {
             handleUnavailable(event.player, target.target)
-            if (settings.bounceBack) event.isCancelled = true
+            event.isCancelled = true
             return
         }
         if (target.target.worldName == event.from.world.name) {
@@ -56,12 +58,19 @@ class PortalListener(
             return
         }
 
-        val destination = destinationLocation(event.player, event.from, event.to, target.world, type)
+        val endDestination = endPlatformDestination(target.world, type)
+        if (type == PortalLinkType.END && target.world.environment == World.Environment.THE_END && endDestination == null) {
+            event.isCancelled = true
+            plugin.logger.warning("Could not find a safe End platform in ${target.world.name}; portal travel was cancelled")
+            if (settings.sendNoDestinationMessage) {
+                event.player.sendMessage(unavailableMessage(target.world.name))
+            }
+            return
+        }
+
+        val destination = endDestination ?: destinationLocation(event.player, event.from, event.to, target.world, type)
         if (type == PortalLinkType.END && event.from.world.environment == World.Environment.THE_END) {
             event.canCreatePortal = false
-        }
-        if (type == PortalLinkType.END && target.world.environment == World.Environment.THE_END) {
-            prepareEndPlatform(target.world)
         }
         event.to = destination
     }
@@ -96,9 +105,13 @@ class PortalListener(
     fun onEntityPortal(event: EntityPortalEvent) {
         if (!settings.teleportEntities) return
         val type = portalType(event.from, event.to) ?: return
-        val target = resolve(event.from.world, type) ?: return
+        val target = resolve(event.from.world, type) ?: run {
+            event.isCancelled = true
+            plugin.logger.warning("No ${type.configKey} portal destination is registered for ${event.from.world.name}")
+            return
+        }
         if (target.world == null) {
-            if (settings.bounceBack) event.isCancelled = true
+            event.isCancelled = true
             return
         }
         if (target.target.worldName == event.from.world.name) {
@@ -106,10 +119,13 @@ class PortalListener(
             return
         }
 
-        val destination = destinationLocation(event.entity, event.from, event.to, target.world, type)
-        if (type == PortalLinkType.END && target.world.environment == World.Environment.THE_END) {
-            prepareEndPlatform(target.world)
+        val endDestination = endPlatformDestination(target.world, type)
+        if (type == PortalLinkType.END && target.world.environment == World.Environment.THE_END && endDestination == null) {
+            event.isCancelled = true
+            plugin.logger.warning("Could not find a safe End platform in ${target.world.name}; entity portal travel was cancelled")
+            return
         }
+        val destination = endDestination ?: destinationLocation(event.entity, event.from, event.to, target.world, type)
         event.to = destination
     }
 
@@ -131,11 +147,26 @@ class PortalListener(
             } catch (failure: IllegalStateException) {
                 plugin.logger.severe("Could not load portal destination ${target.worldName}: ${failure.message}")
                 null
+            } catch (failure: Exception) {
+                plugin.logger.log(
+                    java.util.logging.Level.SEVERE,
+                    "Could not resolve portal destination ${target.worldName}",
+                    failure,
+                )
+                null
             }
         return DestinationResolution(target, world)
     }
 
-    private fun destinationLocation(
+    private fun endPlatformDestination(
+        destinationWorld: World,
+        type: PortalLinkType,
+    ): Location? {
+        if (type != PortalLinkType.END || destinationWorld.environment != World.Environment.THE_END) return null
+        return prepareEndPlatform(destinationWorld)
+    }
+
+    internal fun destinationLocation(
         entity: Entity,
         from: Location,
         currentTo: Location?,
@@ -174,7 +205,7 @@ class PortalListener(
         player: Player,
         target: PortalTarget,
     ) {
-        if (target.explicit && settings.sendNoDestinationMessage) {
+        if (settings.sendNoDestinationMessage) {
             player.sendMessage(unavailableMessage(target.worldName))
         }
     }
@@ -200,29 +231,71 @@ class PortalListener(
         }
     }
 
-    private fun prepareEndPlatform(world: World) {
+    internal fun prepareEndPlatform(world: World): Location? {
         val spawn = world.spawnLocation
-        val x = spawn.blockX
-        val y = spawn.blockY - 1
-        val z = spawn.blockZ
-        if (y < world.minHeight) return
+        val platformY = spawn.blockY - 1
+        if (platformY < world.minHeight || platformY + 3 >= world.maxHeight) return null
 
-        for (offsetX in -2..2) {
-            for (offsetZ in -2..2) {
-                val platformBlock = world.getBlockAt(x + offsetX, y, z + offsetZ)
-                if (platformBlock.type != Material.OBSIDIAN) {
-                    if (settings.endPlatformDropBlocks && platformBlock.type != Material.AIR) {
-                        platformBlock.breakNaturally()
+        for ((offsetX, offsetZ) in platformOffsets()) {
+            val x = spawn.blockX + offsetX
+            val z = spawn.blockZ + offsetZ
+            val baseBlocks = mutableListOf<Block>()
+            var safe = true
+
+            for (dx in -2..2) {
+                for (dz in -2..2) {
+                    val blockX = x + dx
+                    val blockZ = z + dz
+                    if (!world.isChunkLoaded(blockX shr 4, blockZ shr 4) ||
+                        !world.worldBorder.isInside(Location(world, blockX + 0.5, platformY.toDouble(), blockZ + 0.5))
+                    ) {
+                        safe = false
+                        break
                     }
-                    platformBlock.type = Material.OBSIDIAN
-                }
-                for (offsetY in 1..3) {
-                    val block = world.getBlockAt(x + offsetX, y + offsetY, z + offsetZ)
-                    if (block.type != Material.AIR) {
-                        if (settings.endPlatformDropBlocks) block.breakNaturally()
-                        block.type = Material.AIR
+
+                    val base = world.getBlockAt(blockX, platformY, blockZ)
+                    if (!base.type.isAirMaterial() && base.type != Material.OBSIDIAN) {
+                        safe = false
+                        break
                     }
+                    if ((1..3).any { offsetY ->
+                            !world.getBlockAt(blockX, platformY + offsetY, blockZ).type.isAirMaterial()
+                        }
+                    ) {
+                        safe = false
+                        break
+                    }
+                    baseBlocks += base
                 }
+                if (!safe) break
+            }
+
+            if (!safe) continue
+            baseBlocks.filter { it.type.isAirMaterial() }.forEach { it.setType(Material.OBSIDIAN, false) }
+            return Location(
+                world,
+                x + 0.5,
+                platformY + 1.0,
+                z + 0.5,
+                spawn.yaw,
+                spawn.pitch,
+            )
+        }
+        return null
+    }
+
+    private fun Material.isAirMaterial(): Boolean = this == Material.AIR || this == Material.CAVE_AIR || this == Material.VOID_AIR
+
+    private fun platformOffsets(): Sequence<Pair<Int, Int>> = sequence {
+        yield(0 to 0)
+        for (radius in 1..MAX_END_PLATFORM_SEARCH_RADIUS) {
+            for (x in -radius..radius) {
+                yield(x to -radius)
+                yield(x to radius)
+            }
+            for (z in -radius + 1 until radius) {
+                yield(-radius to z)
+                yield(radius to z)
             }
         }
     }
@@ -233,4 +306,8 @@ class PortalListener(
         val target: PortalTarget,
         val world: World?,
     )
+
+    private companion object {
+        const val MAX_END_PLATFORM_SEARCH_RADIUS = 16
+    }
 }

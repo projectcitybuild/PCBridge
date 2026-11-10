@@ -85,14 +85,14 @@ class CommandBuilder internal constructor(
     /**
      * Adds an existing command.
      */
-    fun then(command: BrigadierCommand) {
+    fun subcommand(command: BrigadierCommand) {
         builder.then(command.literal())
     }
 
     /**
      * Adds a preconfigured Brigadier argument.
      */
-    fun <T> then(argument: RequiredArgumentBuilder<CommandSourceStack, T>) {
+    fun <T> subcommand(argument: RequiredArgumentBuilder<CommandSourceStack, T>) {
         builder.then(argument)
     }
 

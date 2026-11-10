@@ -4,9 +4,9 @@ import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import com.google.gson.JsonPrimitive
 import com.projectcitybuild.pcbridge.features.inventories.domain.data.InventoryProfileLocation
+import com.projectcitybuild.pcbridge.features.inventories.domain.data.InventoryProfileReadResult
 import com.projectcitybuild.pcbridge.features.inventories.domain.data.InventoryProfileType
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -214,6 +214,44 @@ class InventoryRepositoryTest {
 
         assertEquals(listOf(malformed.toFile()), report.malformedJsonFiles)
         assertEquals("{broken", Files.readString(malformed))
+    }
+
+    @Test
+    fun `profile reads distinguish missing valid malformed and unreadable profiles`() {
+        val dataDirectory = copyFixture()
+        val repository = repository(dataDirectory)
+        val valid = InventoryProfileLocation("groups", "survival", "Alice")
+        val malformed = InventoryProfileLocation("groups", "survival", "Broken")
+        val unreadable = InventoryProfileLocation("worlds", "blocked", "Player")
+        Files.writeString(dataDirectory.resolve("groups/survival/Broken.json"), "{broken")
+        Files.createDirectories(dataDirectory.resolve("worlds/blocked/Player.json"))
+
+        assertTrue(
+            repository.readProfileResult(
+                InventoryProfileLocation("groups", "survival", "Missing"),
+            ) is InventoryProfileReadResult.Missing,
+        )
+        assertTrue(repository.readProfileResult(valid) is InventoryProfileReadResult.Present)
+        assertTrue(repository.readProfileResult(malformed) is InventoryProfileReadResult.Malformed)
+        assertTrue(repository.readProfileResult(unreadable) is InventoryProfileReadResult.Unreadable)
+    }
+
+    @Test
+    fun `updates do not replace malformed existing profile files`() {
+        val dataDirectory = copyFixture()
+        val path = dataDirectory.resolve("groups/survival/Broken.json")
+        Files.writeString(path, "{broken")
+        val repository = repository(dataDirectory)
+
+        assertThrows(RuntimeException::class.java) {
+            repository.updateProfile(
+                InventoryProfileLocation("groups", "survival", "Broken"),
+                InventoryProfileType.SURVIVAL,
+                mapOf("inventoryContents" to JsonObject()),
+            )
+        }
+
+        assertEquals("{broken", Files.readString(path))
     }
 
     @Test

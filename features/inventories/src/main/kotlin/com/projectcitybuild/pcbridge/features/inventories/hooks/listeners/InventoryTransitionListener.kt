@@ -10,16 +10,22 @@ import org.bukkit.event.player.PlayerChangedWorldEvent
 import org.bukkit.event.player.PlayerGameModeChangeEvent
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
+import org.bukkit.event.player.PlayerRespawnEvent
 import org.bukkit.event.player.PlayerTeleportEvent
 import org.bukkit.plugin.java.JavaPlugin
+import java.util.UUID
+import java.util.concurrent.ConcurrentHashMap
 import java.util.logging.Level
 
 class InventoryTransitionListener(
     private val plugin: JavaPlugin,
     private val transitionService: InventoryTransitionService,
 ) : Listener {
+    private val pendingJoinReconciliation = ConcurrentHashMap.newKeySet<UUID>()
+
     @EventHandler(priority = EventPriority.MONITOR)
     fun onPlayerChangedWorld(event: PlayerChangedWorldEvent) {
+        if (transitionService.applyPlayerDataOnJoin && event.player.uniqueId in pendingJoinReconciliation) return
         safely("world change", event.player) {
             transitionService.onWorldChanged(event.player, event.from.name, event.player.world.name)
         }
@@ -30,17 +36,29 @@ class InventoryTransitionListener(
         if (event.isCancelled) return
         val player = event.player
         safely("game-mode change", player) {
-            transitionService.onGameModeChanged(player, player.gameMode, event.newGameMode)
+            val applyTransition =
+                transitionService.onGameModeChanged(player, player.gameMode, event.newGameMode)
+                    ?: return@safely
+            plugin.server.scheduler.runTask(
+                plugin,
+                Runnable {
+                    if (!player.isOnline) return@Runnable
+                    safely("game-mode change", player, applyTransition)
+                },
+            )
         }
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
     fun onPlayerJoin(event: PlayerJoinEvent) {
+        if (!transitionService.applyPlayerDataOnJoin) return
         val player = event.player
+        val playerId = player.uniqueId
+        pendingJoinReconciliation += playerId
         plugin.server.scheduler.runTask(
             plugin,
             Runnable {
-                if (!player.isOnline) return@Runnable
+                if (!pendingJoinReconciliation.remove(playerId) || !player.isOnline) return@Runnable
                 safely("join", player) {
                     transitionService.onPlayerJoined(player)
                 }
@@ -50,8 +68,27 @@ class InventoryTransitionListener(
 
     @EventHandler(priority = EventPriority.MONITOR)
     fun onPlayerQuit(event: PlayerQuitEvent) {
+        pendingJoinReconciliation.remove(event.player.uniqueId)
         safely("quit", event.player) {
             transitionService.onPlayerQuit(event.player)
+        }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    fun onPlayerRespawn(event: PlayerRespawnEvent) {
+        val player = event.player
+        val destinationWorld = event.respawnLocation.world?.name ?: return
+        safely("respawn", player) {
+            transitionService.onPlayerRespawnScheduled(player, destinationWorld)
+            plugin.server.scheduler.runTask(
+                plugin,
+                Runnable {
+                    if (!player.isOnline) return@Runnable
+                    safely("respawn", player) {
+                        transitionService.onPlayerRespawned(player, destinationWorld)
+                    }
+                },
+            )
         }
     }
 

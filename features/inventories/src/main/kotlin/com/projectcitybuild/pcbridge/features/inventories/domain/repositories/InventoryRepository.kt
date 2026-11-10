@@ -5,6 +5,7 @@ import com.google.gson.JsonParser
 import com.projectcitybuild.pcbridge.features.inventories.domain.data.InventoryCompatibilityReport
 import com.projectcitybuild.pcbridge.features.inventories.domain.data.InventoryGroupConflict
 import com.projectcitybuild.pcbridge.features.inventories.domain.data.InventoryProfileLocation
+import com.projectcitybuild.pcbridge.features.inventories.domain.data.InventoryProfileReadResult
 import com.projectcitybuild.pcbridge.features.inventories.domain.data.InventoryProfileType
 import com.projectcitybuild.pcbridge.features.inventories.domain.data.InventoryWorldGroup
 import com.projectcitybuild.pcbridge.features.inventories.domain.data.MultiverseInventoryConfig
@@ -13,6 +14,7 @@ import com.projectcitybuild.pcbridge.features.inventories.domain.data.requireSaf
 import org.bukkit.configuration.InvalidConfigurationException
 import org.bukkit.configuration.file.YamlConfiguration
 import java.io.File
+import java.io.IOException
 import java.nio.charset.StandardCharsets.UTF_8
 import java.nio.file.AtomicMoveNotSupportedException
 import java.nio.file.Files
@@ -60,8 +62,41 @@ class InventoryRepository(
         )
     }
 
-    fun readProfile(location: InventoryProfileLocation): JsonObject? = synchronized(lockFor(profilePath(location))) {
-        readJsonObject(profilePath(location))
+    fun readProfile(location: InventoryProfileLocation): JsonObject? = when (val result = readProfileResult(location)) {
+        InventoryProfileReadResult.Missing -> null
+        is InventoryProfileReadResult.Present -> result.profile
+        is InventoryProfileReadResult.Malformed -> throw result.failure
+        is InventoryProfileReadResult.Unreadable -> throw result.failure
+    }
+
+    fun readProfileResult(location: InventoryProfileLocation): InventoryProfileReadResult {
+        val path = profilePath(location)
+        return synchronized(lockFor(path)) {
+            if (Files.notExists(path)) {
+                return@synchronized InventoryProfileReadResult.Missing
+            }
+            if (!Files.isRegularFile(path)) {
+                return@synchronized InventoryProfileReadResult.Unreadable(
+                    IllegalStateException("Inventory profile is not a regular file: $path"),
+                )
+            }
+            val json = try {
+                parseJson(path)
+            } catch (failure: IOException) {
+                return@synchronized InventoryProfileReadResult.Unreadable(failure)
+            } catch (failure: SecurityException) {
+                return@synchronized InventoryProfileReadResult.Unreadable(failure)
+            } catch (failure: RuntimeException) {
+                return@synchronized InventoryProfileReadResult.Malformed(failure)
+            }
+            if (!json.isJsonObject) {
+                InventoryProfileReadResult.Malformed(
+                    IllegalArgumentException("Expected a JSON object in $path"),
+                )
+            } else {
+                InventoryProfileReadResult.Present(json.asJsonObject)
+            }
+        }
     }
 
     fun updateProfile(

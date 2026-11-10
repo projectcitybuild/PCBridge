@@ -2,9 +2,6 @@ package com.projectcitybuild.pcbridge.features.worlds.domain.repositories
 
 import com.projectcitybuild.pcbridge.features.worlds.domain.data.WorldDefinition
 import org.bukkit.configuration.file.YamlConfiguration
-import org.yaml.snakeyaml.LoaderOptions
-import org.yaml.snakeyaml.Yaml
-import org.yaml.snakeyaml.constructor.SafeConstructor
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNull
@@ -12,8 +9,14 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.io.TempDir
+import org.mockito.Mockito.mock
+import org.mockito.kotlin.verify
+import org.yaml.snakeyaml.LoaderOptions
+import org.yaml.snakeyaml.Yaml
+import org.yaml.snakeyaml.constructor.SafeConstructor
 import java.nio.file.Files
 import java.nio.file.Path
+import java.util.logging.Logger
 
 class WorldDefinitionRepositoryTest {
     @TempDir
@@ -166,6 +169,35 @@ class WorldDefinitionRepositoryTest {
         assertEquals("broken: [", Files.readString(file))
     }
 
+    @Test
+    fun `logs and skips an invalid entry while retaining valid registrations`() {
+        val file = tempDir.resolve("worlds.yml")
+        Files.writeString(
+            file,
+            """
+            worlds:
+              valid:
+                alias: Valid
+              invalid: not-a-mapping
+            """.trimIndent(),
+        )
+        val logger = mock(Logger::class.java)
+        val repository = WorldDefinitionRepository(
+            worldsFile = file,
+            isWorldLoaded = { false },
+            logger = logger,
+        )
+
+        val registrations = repository.all()
+
+        assertEquals(listOf("valid"), registrations.map { it.definition.name })
+        verify(logger).log(
+            org.mockito.kotlin.eq(java.util.logging.Level.WARNING),
+            org.mockito.kotlin.eq("Skipping invalid world registry entry 'invalid' in $file"),
+            org.mockito.kotlin.any<Exception>(),
+        )
+    }
+
     private fun repository(file: Path) = WorldDefinitionRepository(
         worldsFile = file,
         isWorldLoaded = { it == "world" },
@@ -179,8 +211,7 @@ class WorldDefinitionRepositoryTest {
         return target
     }
 
-    private fun rawYaml(file: Path): Map<*, *> =
-        Yaml(SafeConstructor(LoaderOptions())).load<Any?>(Files.readString(file)) as Map<*, *>
+    private fun rawYaml(file: Path): Map<*, *> = Yaml(SafeConstructor(LoaderOptions())).load<Any?>(Files.readString(file)) as Map<*, *>
 
     private fun Map<*, *>.nestedMap(key: String): Map<*, *> = get(key) as Map<*, *>
 }

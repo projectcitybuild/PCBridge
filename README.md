@@ -20,11 +20,19 @@ PCBridge reads Multiverse data from the existing plugin folders. It does not mov
 
 Start by reviewing the existing files with `/inventories inspect`, `/inventories groups`, `/portals list`, and `/worlds manage list`. Keep an independent backup of the server before changing plugin ownership. PCBridge creates a backup before its first active inventory write, but that backup is not a substitute for a server backup.
 
-PCBridge assumes all Multiverse plugins are disabled and will not run alongside them; it does not check whether they are enabled. Inventory transitions are always active, and PCBridge creates a backup before its first inventory write. Legacy portal links in `Multiverse-NetherPortals/config.yml` are read without changing that file.
+PCBridge assumes all Multiverse plugins are disabled and will not run alongside them; it does not check whether they are enabled. Inventory transitions are always active, and PCBridge creates a backup before its first inventory write. It keeps the existing Multiverse-Inventories folders and JSON fields. A missing profile, game-mode section, or share field leaves the player's current share unchanged. A malformed or unreadable profile is reported and is not treated as an empty profile.
+
+If multiple groups for one world claim the same share, PCBridge skips that share for the transition and logs the conflicting group names. Other shares continue to use their resolved group or world profiles. The Economy share is unsupported: PCBridge logs a warning and skips Economy without disabling other configured shares.
+
+World lifecycle operations preserve unknown fields in `plugins/Multiverse-Core/worlds.yml`. Startup reports invalid entries and continues with valid worlds. A registered world is not recreated when its folder is missing or it has neither `level.dat` nor `level.dat_old`. Regenerate and delete require confirmation and keep a backup under `plugins/PCBridge/world-backups`; worlds with players cannot be unloaded or regenerated. End platforms are placed only in a safe area within 16 blocks of the spawn and in already loaded chunks; travel is cancelled if no such area exists.
+
+Portal travel is cancelled and logged when an explicit or automatic destination is missing or unavailable. This safety behavior applies even if Multiverse-NetherPortals has `bounceback: false`.
+
+Potion effects accept the current Bukkit serialized format and the legacy JSON-string format. When saving a legacy string field, PCBridge keeps that field format and preserves unknown entries.
 
 Custom portals read and update `plugins/Multiverse-Portals/portals.yml` in place. Use `/mvp wand` to select two corners, then `/mvp create <name> [destination]`. Destinations support `w:<world>[:<direction>]`, `e:<world>:<x,y,z>`, and `p:<portal>`; `/mvp destination <name> <destination>` updates an existing portal. Other action types and portals with entry fees are reported as unsupported and are not activated.
 
-Do not remove the Multiverse plugins until the installed versions and configuration have been tested on a server copy. The economy inventory share needs a Vault-compatible economy provider and is not supported by PCBridge yet; PCBridge reports an error rather than silently dropping that share.
+Do not remove the Multiverse plugins until the installed versions and configuration have been tested on a server copy.
 
 ### How to Install
 

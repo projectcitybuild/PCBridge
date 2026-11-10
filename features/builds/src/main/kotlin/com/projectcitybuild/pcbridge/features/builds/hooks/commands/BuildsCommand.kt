@@ -24,14 +24,14 @@ class BuildsCommand(
 ) : BrigadierCommand {
     override val builder = command("builds") {
         description = "Lists available builds"
-        then(buildCreateCommand)
-        then(buildDeleteCommand)
-        then(buildEditCommand)
-        then(buildListCommand)
-        then(buildMoveCommand)
-        then(buildSetCommand)
-        then(buildUnvoteCommand)
-        then(buildVoteCommand)
+        subcommand(buildCreateCommand)
+        subcommand(buildDeleteCommand)
+        subcommand(buildEditCommand)
+        subcommand(buildListCommand)
+        subcommand(buildMoveCommand)
+        subcommand(buildSetCommand)
+        subcommand(buildUnvoteCommand)
+        subcommand(buildVoteCommand)
         // TODO: can we use a Redirect here? Would be good to allow a page arg
         requiresPermission(BuildsPermissions.TELEPORT)
         executes(buildListCommand.literal().command)

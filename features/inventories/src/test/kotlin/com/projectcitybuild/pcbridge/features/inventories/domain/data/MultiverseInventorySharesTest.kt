@@ -52,6 +52,35 @@ class MultiverseInventorySharesTest {
     }
 
     @Test
+    fun `share ownership is independent of group order and excludes conflicting shares`() {
+        val first = resolvedGroup("first", setOf("inventory_contents", "xp"))
+        val second = resolvedGroup("second", setOf("inventory_contents", "ender_chest"))
+
+        val forward = MultiverseInventoryShares.resolveShareOwnership(listOf(first, second))
+        val reverse = MultiverseInventoryShares.resolveShareOwnership(listOf(second, first))
+
+        assertEquals(
+            mapOf("xp" to first, "ender_chest" to second),
+            forward.groupOwners,
+        )
+        assertEquals(setOf("inventory_contents"), forward.conflictingShares.keys)
+        assertEquals(setOf("first", "second"), forward.conflictingShares.getValue("inventory_contents"))
+        assertEquals(forward, reverse)
+    }
+
+    @Test
+    fun `disabled share in a matching group cannot be re-enabled by another group`() {
+        val enabled = resolvedGroup("enabled", setOf("inventory_contents"))
+        val disabled = resolvedGroup("disabled", emptySet(), disabledShares = setOf("inventory_contents"))
+
+        val ownership = MultiverseInventoryShares.resolveShareOwnership(listOf(enabled, disabled))
+
+        assertFalse("inventory_contents" in ownership.groupOwners)
+        assertTrue("inventory_contents" in ownership.disabledShares)
+        assertFalse("inventory_contents" in ownership.conflictingShares)
+    }
+
+    @Test
     fun `ungrouped worlds use the default Multiverse group only when configured`() {
         val groups =
             MultiverseInventoryShares.resolveGroups(
@@ -90,4 +119,15 @@ class MultiverseInventorySharesTest {
         assertEquals(true, MultiverseInventoryConfig().applyLastLocationForAllTeleports)
         assertEquals(true, MultiverseInventoryConfig().validateBedAnchorRespawnLocation)
     }
+
+    private fun resolvedGroup(
+        name: String,
+        shares: Set<String>,
+        disabledShares: Set<String> = emptySet(),
+    ) = ResolvedInventoryGroup(
+        name = name,
+        worlds = setOf("world"),
+        shares = shares,
+        disabledShares = disabledShares,
+    )
 }

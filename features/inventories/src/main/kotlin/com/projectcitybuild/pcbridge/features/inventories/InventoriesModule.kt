@@ -41,6 +41,7 @@ val inventoriesModule =
             InventoryTransitionService(
                 repository = get(),
                 config = get<MultiverseInventoryConfig>(),
+                logger = plugin.logger,
             )
         }
         factoryOf(::InventoryTransitionListener)

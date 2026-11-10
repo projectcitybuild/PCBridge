@@ -13,7 +13,14 @@ class WorldStartupListener(
 ) : Listener {
     @EventHandler
     fun onServerLoad(event: ServerLoadEvent) {
-        lifecycleService.list()
+        val registrations = try {
+            lifecycleService.list()
+        } catch (failure: Exception) {
+            plugin.logger.log(Level.SEVERE, "Could not read registered world definitions; skipping startup reconciliation", failure)
+            return
+        }
+
+        registrations
             .filterNot { it.isLoaded }
             .forEach { registration ->
                 val name = registration.definition.name

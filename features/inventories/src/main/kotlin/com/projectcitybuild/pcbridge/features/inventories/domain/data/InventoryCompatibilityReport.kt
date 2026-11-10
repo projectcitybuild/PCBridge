@@ -28,6 +28,16 @@ data class InventoryProfileLocation(
     }
 }
 
+sealed interface InventoryProfileReadResult {
+    data object Missing : InventoryProfileReadResult
+
+    data class Present(val profile: JsonObject) : InventoryProfileReadResult
+
+    data class Malformed(val failure: RuntimeException) : InventoryProfileReadResult
+
+    data class Unreadable(val failure: Exception) : InventoryProfileReadResult
+}
+
 enum class InventoryProfileType {
     SURVIVAL,
     CREATIVE,

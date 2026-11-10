@@ -8,7 +8,10 @@ import org.bukkit.plugin.java.JavaPlugin
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.verify
+import org.mockito.kotlin.any
+import org.mockito.kotlin.eq
 import org.mockito.kotlin.whenever
+import java.util.logging.Level
 import java.util.logging.Logger
 
 class WorldStartupListenerTest {
@@ -31,6 +34,21 @@ class WorldStartupListenerTest {
         listener.onServerLoad(event)
 
         verify(lifecycleService).load("needs-loading")
+    }
+
+    @Test
+    fun `logs registry failures without aborting server load handling`() {
+        whenever(plugin.logger).thenReturn(logger)
+        whenever(lifecycleService.list()).thenThrow(IllegalArgumentException("invalid registry"))
+        val listener = WorldStartupListener(plugin, lifecycleService)
+
+        listener.onServerLoad(event)
+
+        verify(logger).log(
+            eq(Level.SEVERE),
+            eq("Could not read registered world definitions; skipping startup reconciliation"),
+            any<Exception>(),
+        )
     }
 
     private fun registration(

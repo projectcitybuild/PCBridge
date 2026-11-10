@@ -4,6 +4,9 @@ import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.features.worlds.WorldsPermissions
 import com.projectcitybuild.pcbridge.features.worlds.domain.data.WorldBorder
 import com.projectcitybuild.pcbridge.features.worlds.domain.repositories.WorldBorderRepository
+import com.projectcitybuild.pcbridge.features.worlds.hooks.commands.border.BorderClearCommand
+import com.projectcitybuild.pcbridge.features.worlds.hooks.commands.border.BorderFillCommand
+import com.projectcitybuild.pcbridge.features.worlds.hooks.commands.border.BorderSetCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.PaperCommandContext
@@ -25,9 +28,9 @@ class WorldBorderCommand(
             description = l10n.worlds.borderCommandDescription
             requiresPermission(WorldsPermissions.MANAGE)
             executesSuspending(taskExecutor, ::show)
-            then(borderSetCommand)
-            then(borderClearCommand)
-            then(borderFillCommand)
+            subcommand(borderSetCommand)
+            subcommand(borderClearCommand)
+            subcommand(borderFillCommand)
         }
 
     private suspend fun show(context: PaperCommandContext) {
@@ -37,33 +40,32 @@ class WorldBorderCommand(
             player.sendMessage(l10n.worlds.borderNotConfigured)
             return
         }
-        val message =
-            when (border) {
-                is WorldBorder.Rectangle -> {
-                    l10n.worlds.rectangleBorderStatus(
-                        centerX = border.centerX,
-                        centerZ = border.centerZ,
-                        width = border.width,
-                        depth = border.depth,
-                    )
-                }
-                is WorldBorder.Square -> {
-                    l10n.worlds.borderStatus(
-                        shape = border.shape.name.lowercase(),
-                        centerX = border.centerX,
-                        centerZ = border.centerZ,
-                        radius = border.radius,
-                    )
-                }
-                is WorldBorder.Circle -> {
-                    l10n.worlds.borderStatus(
-                        shape = border.shape.name.lowercase(),
-                        centerX = border.centerX,
-                        centerZ = border.centerZ,
-                        radius = border.radius,
-                    )
-                }
+        val message = when (border) {
+            is WorldBorder.Rectangle -> {
+                l10n.worlds.rectangleBorderStatus(
+                    centerX = border.centerX,
+                    centerZ = border.centerZ,
+                    width = border.width,
+                    depth = border.depth,
+                )
             }
+            is WorldBorder.Square -> {
+                l10n.worlds.borderStatus(
+                    shape = border.shape.name.lowercase(),
+                    centerX = border.centerX,
+                    centerZ = border.centerZ,
+                    radius = border.radius,
+                )
+            }
+            is WorldBorder.Circle -> {
+                l10n.worlds.borderStatus(
+                    shape = border.shape.name.lowercase(),
+                    centerX = border.centerX,
+                    centerZ = border.centerZ,
+                    radius = border.radius,
+                )
+            }
+        }
         player.sendMessage(message)
     }
 }

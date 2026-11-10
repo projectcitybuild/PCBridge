@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Files
 import java.nio.file.Path
@@ -31,16 +32,17 @@ class PortalLinksRepositoryTest {
         )
         val worlds = worldRepository()
         worlds.save(world("alpha.world", "NORMAL"))
-        worlds.save(world("beta_world", "NETHER"))
+        worlds.save(world("beta.world", "NETHER"))
         val repository = repository(linksFile, worlds)
 
-        repository.link("alpha.world", "beta_world", PortalLinkType.NETHER, bidirectional = false)
+        repository.link("alpha.world", "beta.world", PortalLinkType.NETHER, bidirectional = false)
 
         val saved = YamlTestConfig.load(linksFile)
-        assertEquals("beta_world", saved.getString("alpha[dot]world.nether"))
+        assertEquals("beta.world", saved.getString("alpha[dot]world.nether"))
         assertEquals("retain", saved.getString("alpha[dot]world.custom-option"))
         assertEquals("keep", saved.getString("untouched.value"))
         assertEquals("alpha.world", repository.all().single().sourceWorld)
+        assertEquals("beta.world", repository.get("alpha.world", PortalLinkType.NETHER))
     }
 
     @Test
@@ -59,6 +61,8 @@ class PortalLinksRepositoryTest {
         val repository = repository(linksFile, worlds)
         repository.link("alpha.world", "beta_world", PortalLinkType.END, bidirectional = true)
 
+        assertEquals("beta_world", repository.get("alpha.world", PortalLinkType.END))
+        assertEquals("alpha.world", repository.get("beta_world", PortalLinkType.END))
         assertTrue(repository.unlink("alpha.world", PortalLinkType.END, bidirectional = true))
         assertNull(repository.get("alpha.world", PortalLinkType.END))
         assertNull(repository.get("beta_world", PortalLinkType.END))
@@ -91,6 +95,39 @@ class PortalLinksRepositoryTest {
         assertEquals("city_nether", repository.resolve("city", "NORMAL", PortalLinkType.NETHER)?.worldName)
         assertEquals("city", repository.resolve("city_nether", "NETHER", PortalLinkType.NETHER)?.worldName)
         assertNull(repository.resolve("unknown", "NORMAL", PortalLinkType.NETHER))
+    }
+
+    @Test
+    fun `explicit link overrides automatic routing`() {
+        val worlds = worldRepository()
+        worlds.save(world("city", "NORMAL"))
+        worlds.save(world("city_nether", "NETHER"))
+        worlds.save(world("other_nether", "NETHER"))
+        val repository = repository(tempDir.resolve("links.yml"), worlds)
+        repository.link("city", "other_nether", PortalLinkType.NETHER, bidirectional = false)
+
+        val target = repository.resolve("city", "NORMAL", PortalLinkType.NETHER)
+
+        assertEquals("other_nether", target?.worldName)
+        assertTrue(target!!.explicit)
+    }
+
+    @Test
+    fun `link refuses to replace an existing destination without unlinking first`() {
+        val linksFile = tempDir.resolve("links.yml")
+        val worlds = worldRepository()
+        listOf("alpha", "beta", "gamma").forEach { worlds.save(world(it, "NORMAL")) }
+        val repository = repository(linksFile, worlds)
+        repository.link("alpha", "beta", PortalLinkType.NETHER, bidirectional = false)
+        val original = Files.readString(linksFile)
+
+        val failure = assertThrows<IllegalArgumentException> {
+            repository.link("alpha", "gamma", PortalLinkType.NETHER, bidirectional = false)
+        }
+
+        assertTrue(failure.message!!.contains("unlink it before changing"))
+        assertEquals(original, Files.readString(linksFile))
+        assertEquals("beta", repository.get("alpha", PortalLinkType.NETHER))
     }
 
     @Test
@@ -150,6 +187,35 @@ class PortalLinksRepositoryTest {
         assertEquals("beta_end", repository.get("alpha", PortalLinkType.END))
         assertEquals(original, Files.readString(configFile))
         assertEquals("alpha", YamlTestConfig.load(linksFile).getString("alpha.nether"))
+    }
+
+    @Test
+    fun `link can replace a legacy destination after it has been explicitly unlinked`() {
+        val linksFile = tempDir.resolve("links.yml")
+        val configFile = tempDir.resolve("config.yml")
+        Files.writeString(
+            configFile,
+            """
+            worlds:
+              alpha:
+                portalgoesto:
+                  NETHER: beta
+            """.trimIndent(),
+        )
+        val worlds = worldRepository()
+        listOf("alpha", "beta", "gamma").forEach { worlds.save(world(it, "NORMAL")) }
+        val repository = PortalLinksRepository(
+            linksFile = linksFile,
+            legacyConfigFile = configFile,
+            settings = PortalSettings(),
+            worldDefinitionRepository = worlds,
+        )
+
+        assertTrue(repository.unlink("alpha", PortalLinkType.NETHER, bidirectional = false))
+        repository.link("alpha", "gamma", PortalLinkType.NETHER, bidirectional = false)
+
+        assertEquals("gamma", repository.get("alpha", PortalLinkType.NETHER))
+        assertEquals("beta", YamlTestConfig.load(configFile).getString("worlds.alpha.portalgoesto.NETHER"))
     }
 
     private fun repository(

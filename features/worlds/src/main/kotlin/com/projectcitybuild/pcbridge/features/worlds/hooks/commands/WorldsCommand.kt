@@ -1,6 +1,7 @@
 package com.projectcitybuild.pcbridge.features.worlds.hooks.commands
 
 import com.projectcitybuild.pcbridge.core.l10n.l10n
+import com.projectcitybuild.pcbridge.features.worlds.hooks.commands.border.BorderClearCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.command
 
@@ -13,8 +14,8 @@ class WorldsCommand(
         command("worlds") {
             description = l10n.worlds.worldsCommandDescription
 
-            then(worldBorderCommand)
-            then(worldBorderClearCommand)
-            then(worldLifecycleCommand)
+            subcommand(worldBorderCommand)
+            subcommand(worldBorderClearCommand)
+            subcommand(worldLifecycleCommand)
         }
 }

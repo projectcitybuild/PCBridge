@@ -13,23 +13,35 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.StandardCopyOption
 import java.util.concurrent.locks.ReentrantLock
+import java.util.logging.Level
+import java.util.logging.Logger
 import kotlin.concurrent.withLock
 
 class WorldDefinitionRepository(
     private val worldsFile: Path,
     private val isWorldLoaded: (String) -> Boolean,
+    private val logger: Logger = Logger.getLogger(WorldDefinitionRepository::class.java.name),
 ) {
     private val lock = ReentrantLock()
 
     fun all(): List<WorldRegistration> = lock.withLock {
         load().worldEntries().mapNotNull { (encodedKey, raw) ->
-            if (raw == null) return@mapNotNull null
-            val properties = raw.asStringMap() ?: return@mapNotNull null
-            val definition = properties.toDefinition(encodedKey)
-            WorldRegistration(
-                definition = definition,
-                isLoaded = isWorldLoaded(definition.name),
-            )
+            try {
+                val properties = raw.asStringMap()
+                    ?: throw IllegalArgumentException("Registry entry must be a YAML mapping")
+                val definition = properties.toDefinition(encodedKey)
+                WorldRegistration(
+                    definition = definition,
+                    isLoaded = isWorldLoaded(definition.name),
+                )
+            } catch (failure: Exception) {
+                logger.log(
+                    Level.WARNING,
+                    "Skipping invalid world registry entry '$encodedKey' in $worldsFile",
+                    failure,
+                )
+                null
+            }
         }
     }
 
@@ -71,15 +83,20 @@ class WorldDefinitionRepository(
     }
 
     private fun load(): Map<String, Any?> {
-        if (!Files.exists(worldsFile)) return emptyMap()
+        if (!Files.exists(worldsFile)) {
+            return emptyMap()
+        }
         val yaml = Yaml(SafeConstructor(LoaderOptions()))
-        val loaded = yaml.load<Any?>(Files.readString(worldsFile)) ?: return emptyMap()
+        val loaded = yaml.load<Any?>(Files.readString(worldsFile))
+            ?: return emptyMap()
+
         return loaded.asStringMap()
             ?: throw IllegalArgumentException("World registry root must be a YAML mapping: $worldsFile")
     }
 
     private fun Map<String, Any?>.worldEntries(): Map<String, Any?> {
         if (!containsKey("worlds")) return emptyMap()
+
         return this["worlds"].asStringMap()
             ?: throw IllegalArgumentException("World registry 'worlds' section must be a YAML mapping: $worldsFile")
     }
@@ -87,6 +104,7 @@ class WorldDefinitionRepository(
     private fun write(rootValues: Map<String, Any?>) {
         val configuration = YamlConfiguration()
         rootValues.forEach { (key, value) -> configuration.set(key, value) }
+
         val parent = worldsFile.toAbsolutePath().parent
         Files.createDirectories(parent)
         val temporary = Files.createTempFile(parent, "${worldsFile.fileName}.", ".tmp")
@@ -254,20 +272,20 @@ class WorldDefinitionRepository(
     private fun equivalent(
         existing: Any?,
         updated: Any?,
-    ): Boolean = when (existing) {
-        is Number if updated is Number -> {
+    ): Boolean = when {
+        existing is Number && updated is Number -> {
             existing.toDouble() == updated.toDouble()
         }
-        is String if updated is Number -> {
+        existing is String && updated is Number -> {
             existing.toDoubleOrNull()?.let { it == updated.toDouble() } ?: false
         }
-        is Number if updated is String -> {
+        existing is Number && updated is String -> {
             updated.toDoubleOrNull()?.let { existing.toDouble() == it } ?: false
         }
-        is String if updated is Boolean -> {
+        existing is String && updated is Boolean -> {
             existing.toBooleanStrictOrNull() == updated
         }
-        is Boolean if updated is String -> {
+        existing is Boolean && updated is String -> {
             updated.toBooleanStrictOrNull() == existing
         }
         else -> {

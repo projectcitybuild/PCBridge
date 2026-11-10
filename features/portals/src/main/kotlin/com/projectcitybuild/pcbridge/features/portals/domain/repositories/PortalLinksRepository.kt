@@ -60,6 +60,11 @@ class PortalLinksRepository(
         requireRegistered(destinationWorld)
         lock.withLock {
             val configuration = load()
+            val legacyLinks = readLegacyLinks()
+            requireLinkAvailable(configuration, legacyLinks, sourceWorld, destinationWorld, type)
+            if (bidirectional && destinationWorld != sourceWorld) {
+                requireLinkAvailable(configuration, legacyLinks, destinationWorld, sourceWorld, type)
+            }
             setLink(configuration, sourceWorld, destinationWorld, type)
             if (bidirectional) setLink(configuration, destinationWorld, sourceWorld, type)
             save(configuration)
@@ -142,6 +147,24 @@ class PortalLinksRepository(
         val key = encodeKey(source)
         val section = configuration.getConfigurationSection(key) ?: configuration.createSection(key)
         section.set(type.configKey, destination)
+    }
+
+    private fun requireLinkAvailable(
+        configuration: YamlConfiguration,
+        legacyLinks: Map<String, Map<PortalLinkType, String>>,
+        source: String,
+        destination: String,
+        type: PortalLinkType,
+    ) {
+        val explicit = configuration
+            .getConfigurationSection(encodeKey(source))
+            ?.getString(type.configKey)
+        val legacy = legacyLinks[source]?.get(type)
+        val existing = explicit ?: legacy
+        val suppressesLegacyLink = explicit == source && legacy != null
+        require(existing == null || existing == destination || suppressesLegacyLink) {
+            "World $source already links ${type.configKey} portals to $existing; unlink it before changing the destination"
+        }
     }
 
     private fun removeLink(

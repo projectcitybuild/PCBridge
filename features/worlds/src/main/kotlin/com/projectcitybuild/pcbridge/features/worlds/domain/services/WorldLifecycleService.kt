@@ -35,7 +35,9 @@ class WorldLifecycleService(
     fun importLoadedWorld(name: String): WorldDefinition {
         requireMainThread()
 
-        val world = server.getWorld(name) ?: throw IllegalArgumentException("World $name is not loaded")
+        val world = server.getWorld(name)
+            ?: throw IllegalArgumentException("World $name is not loaded")
+
         val existing = worldDefinitionRepository.get(world.name)?.definition
         val definition = existing ?: WorldDefinition(
             registryKey = world.key.toString(),
@@ -66,6 +68,9 @@ class WorldLifecycleService(
 
         val definition = worldDefinitionRepository.get(name)?.definition
             ?: throw IllegalArgumentException("World $name is not registered")
+
+        val folder = worldFolder(definition.name)
+        requireWorldData(folder, definition.name)
 
         return createWorld(definition)
     }
@@ -113,13 +118,11 @@ class WorldLifecycleService(
         confirmed: Boolean,
     ): World {
         requireMainThread()
+        requireSafeWorldName(targetName)
 
         check(confirmed) {
             "Cloning a world requires explicit confirmation"
         }
-
-        requireSafeWorldName(targetName)
-
         check(server.getWorld(sourceName) == null) {
             "Unload source world $sourceName before cloning it"
         }
@@ -138,6 +141,7 @@ class WorldLifecycleService(
         check(Files.isDirectory(sourceFolder)) {
             "World folder for $sourceName does not exist"
         }
+        requireWorldData(sourceFolder, sourceName)
         check(!Files.exists(targetFolder, LinkOption.NOFOLLOW_LINKS)) {
             "World folder for $targetName already exists"
         }
@@ -183,15 +187,26 @@ class WorldLifecycleService(
             "World ${definition.name} contains players and cannot be regenerated"
         }
 
-        val folder = loadedWorld?.worldFolder?.toPath() ?: worldFolder(definition.name)
+        val folder = worldFolder(definition.name)
+        check(
+            loadedWorld == null || loadedWorld.worldFolder
+                .toPath()
+                .toAbsolutePath()
+                .normalize() == folder,
+        ) {
+            "World folder for ${definition.name} is outside the server world container"
+        }
+        check(Files.isDirectory(folder, LinkOption.NOFOLLOW_LINKS)) {
+            "World folder for ${definition.name} does not exist"
+        }
         loadedWorld?.save()
-        val backup = backupWorldFolder(folder, definition.name)
         if (loadedWorld != null) {
             check(server.unloadWorld(loadedWorld, false)) {
                 "Paper refused to unload world ${definition.name}"
             }
             worldBorderRepository.unload(loadedWorld)
         }
+        val backup = backupWorldFolder(folder, definition.name)
 
         return try {
             deleteDirectory(folder)
@@ -199,7 +214,11 @@ class WorldLifecycleService(
         } catch (failure: Throwable) {
             val partiallyLoaded = server.getWorld(definition.name)
             if (partiallyLoaded != null && !server.unloadWorld(partiallyLoaded, false)) {
-                failure.addSuppressed(IllegalStateException("Could not unload regenerated world ${definition.name}"))
+                failure.addSuppressed(
+                    IllegalStateException(
+                        "Could not unload regenerated world ${definition.name}; backup remains at $backup",
+                    ),
+                )
                 throw failure
             }
             partiallyLoaded?.let(worldBorderRepository::unload)
@@ -207,7 +226,9 @@ class WorldLifecycleService(
                 if (Files.exists(folder)) deleteDirectory(folder)
                 copyDirectory(backup, folder, excludeTransientFiles = false)
             } catch (restoreFailure: Throwable) {
-                failure.addSuppressed(restoreFailure)
+                failure.addSuppressed(
+                    IllegalStateException("Could not restore ${definition.name}; backup remains at $backup", restoreFailure),
+                )
             }
             throw failure
         }
@@ -215,9 +236,10 @@ class WorldLifecycleService(
 
     fun unregister(name: String) {
         requireMainThread()
-        val registration =
-            worldDefinitionRepository.get(name)
-                ?: throw IllegalArgumentException("World $name is not registered")
+
+        val registration = worldDefinitionRepository.get(name)
+            ?: throw IllegalArgumentException("World $name is not registered")
+
         check(server.getWorld(registration.definition.name) == null) {
             "Unload world ${registration.definition.name} before unregistering it"
         }
@@ -289,22 +311,55 @@ class WorldLifecycleService(
 
     private fun worldFolder(name: String): Path {
         requireSafeWorldName(name)
+
         val root = server.worldContainer
             .toPath()
             .toAbsolutePath()
             .normalize()
+
         val path = root.resolve(name).normalize()
-        check(path.parent == root) { "World name resolves outside the server world container" }
-        check(!Files.isSymbolicLink(path)) { "Symbolic links are not supported for world folders" }
+
+        check(path.parent == root) {
+            "World name resolves outside the server world container"
+        }
+        check(!Files.isSymbolicLink(path)) {
+            "Symbolic links are not supported for world folders"
+        }
         return path
+    }
+
+    private fun requireWorldData(
+        folder: Path,
+        name: String,
+    ) {
+        check(Files.isDirectory(folder, LinkOption.NOFOLLOW_LINKS)) {
+            "World folder for $name does not exist; refusing to create a replacement"
+        }
+        check(
+            listOf("level.dat", "level.dat_old").any { file ->
+                Files.isRegularFile(folder.resolve(file), LinkOption.NOFOLLOW_LINKS)
+            },
+        ) {
+            "World data for $name is missing level.dat; refusing to create a replacement"
+        }
     }
 
     private fun backupWorldFolder(
         folder: Path,
         name: String,
     ): Path {
+        val normalizedFolder = folder.toAbsolutePath().normalize()
+        val normalizedBackupDirectory = backupDirectory.toAbsolutePath().normalize()
+        check(!normalizedBackupDirectory.startsWith(normalizedFolder)) {
+            "World backup directory must not be inside the world folder"
+        }
         Files.createDirectories(backupDirectory)
-        val backup = backupDirectory.resolve("$name-${Instant.now().toEpochMilli()}-${UUID.randomUUID()}")
+        val realFolder = folder.toRealPath()
+        val realBackupDirectory = backupDirectory.toRealPath()
+        check(!realBackupDirectory.startsWith(realFolder)) {
+            "World backup directory must not resolve inside the world folder"
+        }
+        val backup = realBackupDirectory.resolve("$name-${Instant.now().toEpochMilli()}-${UUID.randomUUID()}")
         copyDirectory(folder, backup, excludeTransientFiles = false)
         return backup
     }
@@ -395,7 +450,9 @@ class WorldLifecycleService(
     }
 
     private fun requireSafeWorldName(name: String) {
-        require(name.isNotBlank() && name != "." && name != "..") { "World name is invalid" }
+        require(name.isNotBlank() && name != "." && name != ".." && name.none(Char::isISOControl)) {
+            "World name is invalid"
+        }
         require('/' !in name && '\\' !in name) { "World name must not contain path separators" }
     }
 

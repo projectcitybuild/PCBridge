@@ -13,6 +13,7 @@ import org.bukkit.World
 import org.bukkit.WorldType
 import org.bukkit.command.CommandSender
 import org.bukkit.plugin.Plugin
+import java.util.logging.Level
 
 class WorldLifecycleCommand(
     private val plugin: Plugin,
@@ -30,21 +31,26 @@ class WorldLifecycleCommand(
         requiresPermission(WorldsPermissions.LIFECYCLE)
         literal("list") {
             executesSuspending(plugin) { context ->
-                val worlds = lifecycleService
-                    .list()
-                    .map { registration ->
-                        val definition = registration.definition
-                        val name = "${definition.alias?.takeIf(String::isNotBlank)?.let { "$it/" } ?: ""}${definition.name}"
-                        l10n.worlds.worldListEntry(name, registration.isLoaded)
-                    }
+                try {
+                    val worlds = lifecycleService
+                        .list()
+                        .map { registration ->
+                            val definition = registration.definition
+                            val name = "${definition.alias?.takeIf(String::isNotBlank)?.let { "$it/" } ?: ""}${definition.name}"
+                            l10n.worlds.worldListEntry(name, registration.isLoaded)
+                        }
 
-                context.source.sender.sendMessage(l10n.worlds.worldList(worlds))
+                    context.source.sender.sendMessage(l10n.worlds.worldList(worlds))
+                } catch (failure: Exception) {
+                    plugin.logger.log(Level.SEVERE, "Could not read registered world definitions", failure)
+                    context.source.sender.sendMessage(l10n.worlds.worldOperationFailed("check the server log for details"))
+                }
             }
         }
         literal("import") {
             argument(worldName) {
                 executesSuspending(plugin) { context ->
-                    runWorldOperation(context.source.sender, "imported", worldName.get(context)) {
+                    runCatchingCommonErrors(context.source.sender, "imported", worldName.get(context)) {
                         lifecycleService.importLoadedWorld(worldName.get(context))
                     }
                 }
@@ -56,7 +62,7 @@ class WorldLifecycleCommand(
                     worldNameSuggester.suggestLoadable(suggestions)
                 }
                 executesSuspending(plugin) { context ->
-                    runWorldOperation(context.source.sender, "loaded", worldName.get(context)) {
+                    runCatchingCommonErrors(context.source.sender, "loaded", worldName.get(context)) {
                         lifecycleService.load(worldName.get(context))
                     }
                 }
@@ -65,7 +71,7 @@ class WorldLifecycleCommand(
         literal("unload") {
             argument(worldName) {
                 executesSuspending(plugin) { context ->
-                    runWorldOperation(context.source.sender, "unloaded", worldName.get(context)) {
+                    runCatchingCommonErrors(context.source.sender, "unloaded", worldName.get(context)) {
                         lifecycleService.unload(worldName.get(context))
                     }
                 }
@@ -82,7 +88,7 @@ class WorldLifecycleCommand(
                             if (worldSeed == null) {
                                 context.source.sender.sendMessage(l10n.worlds.worldOperationFailed("seed must be a whole number"))
                             } else {
-                                runWorldOperation(context.source.sender, "created", name) {
+                                runCatchingCommonErrors(context.source.sender, "created", name) {
                                     lifecycleService.create(
                                         worldDefinition(
                                             name,
@@ -103,7 +109,7 @@ class WorldLifecycleCommand(
                     literal("confirm") {
                         executesSuspending(plugin) { context ->
                             val target = targetName.get(context)
-                            runWorldOperation(context.source.sender, "cloned", target) {
+                            runCatchingCommonErrors(context.source.sender, "cloned", target) {
                                 lifecycleService.clone(sourceName.get(context), target, confirmed = true)
                             }
                         }
@@ -117,7 +123,7 @@ class WorldLifecycleCommand(
                 literal("confirm") {
                     executesSuspending(plugin) { context ->
                         val name = worldName.get(context)
-                        runWorldOperation(context.source.sender, "regenerated", name) {
+                        runCatchingCommonErrors(context.source.sender, "regenerated", name) {
                             lifecycleService.regenerate(name, confirmed = true)
                         }
                     }
@@ -127,7 +133,7 @@ class WorldLifecycleCommand(
         literal("unregister") {
             argument(worldName) {
                 executesSuspending(plugin) { context ->
-                    runWorldOperation(context.source.sender, "unregistered", worldName.get(context)) {
+                    runCatchingCommonErrors(context.source.sender, "unregistered", worldName.get(context)) {
                         lifecycleService.unregister(worldName.get(context))
                     }
                 }
@@ -139,7 +145,7 @@ class WorldLifecycleCommand(
                 literal("confirm") {
                     executesSuspending(plugin) { context ->
                         val name = worldName.get(context)
-                        runWorldOperation(context.source.sender, "deleted", name) {
+                        runCatchingCommonErrors(context.source.sender, "deleted", name) {
                             lifecycleService.delete(name, confirmed = true)
                         }
                     }
@@ -148,7 +154,7 @@ class WorldLifecycleCommand(
         }
     }
 
-    private inline fun <T> runWorldOperation(
+    private inline fun <T> runCatchingCommonErrors(
         sender: CommandSender,
         operation: String,
         name: String,
@@ -161,6 +167,9 @@ class WorldLifecycleCommand(
             sender.sendMessage(l10n.worlds.worldOperationFailed(failure.message ?: "invalid world"))
         } catch (failure: IllegalStateException) {
             sender.sendMessage(l10n.worlds.worldOperationFailed(failure.message ?: "unsafe operation"))
+        } catch (failure: Exception) {
+            plugin.logger.log(Level.SEVERE, "Could not $operation world $name", failure)
+            sender.sendMessage(l10n.worlds.worldOperationFailed(failure.message ?: "check the server log for details"))
         }
     }
 

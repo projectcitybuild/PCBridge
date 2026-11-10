@@ -9,6 +9,9 @@ import com.projectcitybuild.pcbridge.features.worlds.domain.repositories.WorldBo
 import com.projectcitybuild.pcbridge.features.worlds.domain.services.WorldBorderFillService
 import com.projectcitybuild.pcbridge.features.worlds.domain.services.WorldBorderService
 import com.projectcitybuild.pcbridge.features.worlds.domain.services.WorldLifecycleService
+import com.projectcitybuild.pcbridge.features.worlds.hooks.commands.border.BorderClearCommand
+import com.projectcitybuild.pcbridge.features.worlds.hooks.commands.border.BorderFillCommand
+import com.projectcitybuild.pcbridge.features.worlds.hooks.commands.border.BorderSetCommand
 import com.projectcitybuild.pcbridge.features.worlds.hooks.listeners.WorldBorderFillListener
 import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
