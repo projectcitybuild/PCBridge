@@ -112,9 +112,23 @@ tasks {
     runServer {
         minecraftVersion("1.21.10")
         systemProperty("com.mojang.eula.agree", "true")
+        doFirst {
+            val vitaminMcpConfig = runDirectory.get().asFile.resolve("plugins/VitaminMCP/config.yml")
+            if (!vitaminMcpConfig.exists()) {
+                vitaminMcpConfig.parentFile.mkdirs()
+                vitaminMcpConfig.writeText(
+                    """
+                    bind-address: "127.0.0.1"
+                    local-handshake: true
+                    read-only: false
+                    """.trimIndent(),
+                )
+            }
+        }
         downloadPlugins {
             modrinth("LuckPerms", "v5.5.17-bukkit")
             modrinth("essentialsx", "2.21.2")
+            url("https://github.com/Backas03/VitaminMCP/releases/download/3.2.2/VitaminMCP.jar")
 
             // TODO: re-enable once it supports Paper 1.21.8
             // modrinth("dynmap", "3.7-beta-8")

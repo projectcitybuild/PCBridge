@@ -1,6 +1,8 @@
 package com.projectcitybuild.pcbridge.features.inventories.hooks.listeners
 
-import com.projectcitybuild.pcbridge.features.inventories.domain.services.MultiverseInventoryTransitionService
+import com.projectcitybuild.pcbridge.core.l10n.l10n
+import com.projectcitybuild.pcbridge.features.inventories.domain.services.InventoryTransitionService
+import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
@@ -12,13 +14,13 @@ import org.bukkit.event.player.PlayerTeleportEvent
 import org.bukkit.plugin.java.JavaPlugin
 import java.util.logging.Level
 
-class MultiverseInventoryTransitionListener(
+class InventoryTransitionListener(
     private val plugin: JavaPlugin,
-    private val transitionService: MultiverseInventoryTransitionService,
+    private val transitionService: InventoryTransitionService,
 ) : Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     fun onPlayerChangedWorld(event: PlayerChangedWorldEvent) {
-        safely("world change", event.player.name) {
+        safely("world change", event.player) {
             transitionService.onWorldChanged(event.player, event.from.name, event.player.world.name)
         }
     }
@@ -27,7 +29,7 @@ class MultiverseInventoryTransitionListener(
     fun onPlayerGameModeChange(event: PlayerGameModeChangeEvent) {
         if (event.isCancelled) return
         val player = event.player
-        safely("game-mode change", player.name) {
+        safely("game-mode change", player) {
             transitionService.onGameModeChanged(player, player.gameMode, event.newGameMode)
         }
     }
@@ -39,7 +41,7 @@ class MultiverseInventoryTransitionListener(
             plugin,
             Runnable {
                 if (!player.isOnline) return@Runnable
-                safely("join", player.name) {
+                safely("join", player) {
                     transitionService.onPlayerJoined(player)
                 }
             },
@@ -48,21 +50,21 @@ class MultiverseInventoryTransitionListener(
 
     @EventHandler(priority = EventPriority.MONITOR)
     fun onPlayerQuit(event: PlayerQuitEvent) {
-        safely("quit", event.player.name) {
+        safely("quit", event.player) {
             transitionService.onPlayerQuit(event.player)
         }
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     fun onPlayerTeleport(event: PlayerTeleportEvent) {
-        safely("teleport", event.player.name) {
+        safely("teleport", event.player) {
             transitionService.recordLastLocation(event.player, event.from)
         }
     }
 
     private inline fun safely(
         operation: String,
-        subject: String,
+        player: Player,
         action: () -> Unit,
     ) {
         try {
@@ -70,9 +72,10 @@ class MultiverseInventoryTransitionListener(
         } catch (failure: Exception) {
             plugin.logger.log(
                 Level.SEVERE,
-                "Failed to persist or apply Multiverse-Inventories data during $operation for $subject",
+                "Failed to persist or apply Multiverse-Inventories data during $operation for ${player.name}",
                 failure,
             )
+            player.sendMessage(l10n.inventories.transitionFailed)
         }
     }
 }

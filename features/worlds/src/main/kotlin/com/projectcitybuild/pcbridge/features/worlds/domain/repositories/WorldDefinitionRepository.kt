@@ -3,8 +3,10 @@ package com.projectcitybuild.pcbridge.features.worlds.domain.repositories
 import com.projectcitybuild.pcbridge.features.worlds.domain.data.WorldDefinition
 import com.projectcitybuild.pcbridge.features.worlds.domain.data.WorldRegistration
 import com.projectcitybuild.pcbridge.features.worlds.domain.data.WorldSpawnLocation
-import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.configuration.file.YamlConfiguration
+import org.yaml.snakeyaml.LoaderOptions
+import org.yaml.snakeyaml.Yaml
+import org.yaml.snakeyaml.constructor.SafeConstructor
 import java.nio.charset.StandardCharsets.UTF_8
 import java.nio.file.AtomicMoveNotSupportedException
 import java.nio.file.Files
@@ -16,14 +18,12 @@ import kotlin.concurrent.withLock
 class WorldDefinitionRepository(
     private val worldsFile: Path,
     private val isWorldLoaded: (String) -> Boolean,
-    private val multiverseCoreEnabled: () -> Boolean = { false },
 ) {
     private val lock = ReentrantLock()
 
     fun all(): List<WorldRegistration> = lock.withLock {
-        val configuration = load()
-        configuration.getKeys(false).mapNotNull { encodedKey ->
-            val raw = configuration.get(encodedKey) ?: return@mapNotNull null
+        load().worldEntries().mapNotNull { (encodedKey, raw) ->
+            if (raw == null) return@mapNotNull null
             val properties = raw.asStringMap() ?: return@mapNotNull null
             val definition = properties.toDefinition(encodedKey)
             WorldRegistration(
@@ -39,51 +39,49 @@ class WorldDefinitionRepository(
     }
 
     fun save(definition: WorldDefinition) {
-        require(definition.registryKey.isNotBlank()) { "World registry key must not be blank" }
-        require(definition.name.isNotBlank()) { "World name must not be blank" }
-        requireWriteAccess()
+        require(definition.registryKey.isNotBlank()) {
+            "World registry key must not be blank"
+        }
+        require(definition.name.isNotBlank()) {
+            "World name must not be blank"
+        }
         lock.withLock {
-            val configuration = load()
-            val rootValues =
-                configuration.getValues(false)
-                    .mapValues { (_, value) -> value.toPlainValue() }
-                    .toMutableMap()
+            val rootValues = load().mapValues { (_, value) -> value.toPlainValue() }.toMutableMap()
+            val worlds = rootValues.worldEntries().toMutableMap()
             val properties = definition.properties.toMutableMap()
             applyKnownProperties(properties, definition)
-            rootValues[encodeKey(definition.registryKey)] = properties
+            worlds[encodeKey(definition.registryKey)] = properties
+            rootValues["worlds"] = worlds
             write(rootValues)
         }
     }
 
     fun unregister(registryKey: String): Boolean {
-        requireWriteAccess()
         return lock.withLock {
-            val configuration = load()
             val encodedKey = encodeKey(registryKey)
-            if (!configuration.contains(encodedKey)) return false
+            val rootValues = load().toMutableMap()
+            val worlds = rootValues.worldEntries().toMutableMap()
+            if (!worlds.containsKey(encodedKey)) return false
 
-            val rootValues =
-                configuration.getValues(false)
-                    .mapValues { (_, value) -> value.toPlainValue() }
-                    .toMutableMap()
-            rootValues.remove(encodedKey)
+            worlds.remove(encodedKey)
+            rootValues["worlds"] = worlds
             write(rootValues)
             true
         }
     }
 
-    fun requireWriteAccess() {
-        check(!multiverseCoreEnabled()) {
-            "Disable Multiverse-Core before managing worlds with PCBridge"
-        }
+    private fun load(): Map<String, Any?> {
+        if (!Files.exists(worldsFile)) return emptyMap()
+        val yaml = Yaml(SafeConstructor(LoaderOptions()))
+        val loaded = yaml.load<Any?>(Files.readString(worldsFile)) ?: return emptyMap()
+        return loaded.asStringMap()
+            ?: throw IllegalArgumentException("World registry root must be a YAML mapping: $worldsFile")
     }
 
-    private fun load(): YamlConfiguration {
-        val configuration = YamlConfiguration()
-        if (Files.exists(worldsFile)) {
-            configuration.load(worldsFile.toFile())
-        }
-        return configuration
+    private fun Map<String, Any?>.worldEntries(): Map<String, Any?> {
+        if (!containsKey("worlds")) return emptyMap()
+        return this["worlds"].asStringMap()
+            ?: throw IllegalArgumentException("World registry 'worlds' section must be a YAML mapping: $worldsFile")
     }
 
     private fun write(rootValues: Map<String, Any?>) {
@@ -119,13 +117,14 @@ class WorldDefinitionRepository(
             environment = stringAt("read-only.environment") ?: stringAt("environment"),
             worldType = stringAt("world-type") ?: stringAt("type"),
             seed = longAt("read-only.seed") ?: longAt("seed"),
-            generator = stringAt("generator"),
+            generator = stringAt("generator")
+                ?.trim()
+                ?.takeUnless { it.isEmpty() || it.equals("null", ignoreCase = true) },
             generatorSettings = stringAt("read-only.generator-settings") ?: stringAt("generator-settings"),
             generateStructures = booleanAt("generate-structures") ?: booleanAt("structures"),
-            spawnLocation =
-                (valueAt("spawn-location") ?: valueAt("spawnLocation"))
-                    .asStringMap()
-                    ?.toSpawnLocation(),
+            spawnLocation = (valueAt("spawn-location") ?: valueAt("spawnLocation"))
+                .asStringMap()
+                ?.toSpawnLocation(),
             scale = doubleAt("scale"),
             respawnWorld = stringAt("respawn-world") ?: stringAt("respawnWorld"),
             pvp = booleanAt("pvp"),
@@ -139,40 +138,36 @@ class WorldDefinitionRepository(
     ) {
         definition.alias?.let { properties.setPathIfChanged("alias", it) }
         definition.environment?.let {
-            val path =
-                when {
-                    properties.containsPath("read-only.environment") -> "read-only.environment"
-                    properties.containsPath("environment") -> "environment"
-                    else -> "read-only.environment"
-                }
+            val path = when {
+                properties.containsPath("read-only.environment") -> "read-only.environment"
+                properties.containsPath("environment") -> "environment"
+                else -> "read-only.environment"
+            }
             properties.setPathIfChanged(path, it)
         }
         definition.worldType?.let {
-            val path =
-                when {
-                    properties.containsPath("world-type") -> "world-type"
-                    properties.containsPath("type") -> "type"
-                    else -> "world-type"
-                }
+            val path = when {
+                properties.containsPath("world-type") -> "world-type"
+                properties.containsPath("type") -> "type"
+                else -> "world-type"
+            }
             properties.setPathIfChanged(path, it)
         }
         definition.seed?.let {
-            val path =
-                when {
-                    properties.containsPath("read-only.seed") -> "read-only.seed"
-                    properties.containsPath("seed") -> "seed"
-                    else -> "read-only.seed"
-                }
+            val path = when {
+                properties.containsPath("read-only.seed") -> "read-only.seed"
+                properties.containsPath("seed") -> "seed"
+                else -> "read-only.seed"
+            }
             properties.setPathIfChanged(path, it)
         }
         definition.generator?.let { properties.setPathIfChanged("generator", it) }
         definition.generatorSettings?.let {
-            val path =
-                when {
-                    properties.containsPath("read-only.generator-settings") -> "read-only.generator-settings"
-                    properties.containsPath("generator-settings") -> "generator-settings"
-                    else -> "read-only.generator-settings"
-                }
+            val path = when {
+                properties.containsPath("read-only.generator-settings") -> "read-only.generator-settings"
+                properties.containsPath("generator-settings") -> "generator-settings"
+                else -> "read-only.generator-settings"
+            }
             properties.setPathIfChanged(path, it)
         }
         definition.generateStructures?.let {
@@ -259,25 +254,33 @@ class WorldDefinitionRepository(
     private fun equivalent(
         existing: Any?,
         updated: Any?,
-    ): Boolean = when {
-        existing is Number && updated is Number -> existing.toDouble() == updated.toDouble()
-        existing is String && updated is Number ->
+    ): Boolean = when (existing) {
+        is Number if updated is Number -> {
+            existing.toDouble() == updated.toDouble()
+        }
+        is String if updated is Number -> {
             existing.toDoubleOrNull()?.let { it == updated.toDouble() } ?: false
-        existing is Number && updated is String ->
+        }
+        is Number if updated is String -> {
             updated.toDoubleOrNull()?.let { existing.toDouble() == it } ?: false
-        existing is String && updated is Boolean -> existing.toBooleanStrictOrNull() == updated
-        existing is Boolean && updated is String -> updated.toBooleanStrictOrNull() == existing
-        else -> existing == updated
+        }
+        is String if updated is Boolean -> {
+            existing.toBooleanStrictOrNull() == updated
+        }
+        is Boolean if updated is String -> {
+            updated.toBooleanStrictOrNull() == existing
+        }
+        else -> {
+            existing == updated
+        }
     }
 
     private fun Any?.asStringMap(): Map<String, Any?>? = when (this) {
-        is ConfigurationSection -> getValues(false).mapValues { (_, value) -> value.toPlainValue() }
         is Map<*, *> -> entries.associate { (key, value) -> key.toString() to value.toPlainValue() }
         else -> null
     }
 
     private fun Any?.toPlainValue(): Any? = when (this) {
-        is ConfigurationSection -> getValues(false).mapValues { (_, value) -> value.toPlainValue() }
         is Map<*, *> -> entries.associate { (key, value) -> key.toString() to value.toPlainValue() }
         is List<*> -> map { it.toPlainValue() }
         else -> this

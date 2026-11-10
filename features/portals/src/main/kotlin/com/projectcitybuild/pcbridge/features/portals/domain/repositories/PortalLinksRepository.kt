@@ -19,7 +19,6 @@ class PortalLinksRepository(
     private val legacyConfigFile: Path = linksFile.resolveSibling("config.yml"),
     private val settings: PortalSettings,
     private val worldDefinitionRepository: WorldDefinitionRepository,
-    private val multiverseNetherPortalsEnabled: () -> Boolean = { false },
 ) {
     private val lock = ReentrantLock()
 
@@ -59,9 +58,6 @@ class PortalLinksRepository(
     ) {
         requireRegistered(sourceWorld)
         requireRegistered(destinationWorld)
-        require(!multiverseNetherPortalsEnabled()) {
-            "Disable Multiverse-NetherPortals before changing its portal links"
-        }
         lock.withLock {
             val configuration = load()
             setLink(configuration, sourceWorld, destinationWorld, type)
@@ -75,9 +71,6 @@ class PortalLinksRepository(
         type: PortalLinkType,
         bidirectional: Boolean,
     ): Boolean = lock.withLock {
-        require(!multiverseNetherPortalsEnabled()) {
-            "Disable Multiverse-NetherPortals before changing its portal links"
-        }
         val configuration = load()
         val explicitDestination = configuration
             .getConfigurationSection(encodeKey(sourceWorld))

@@ -28,51 +28,51 @@ class WorldLifecycleService(
 ) {
     fun list(): List<WorldRegistration> {
         requireMainThread()
+
         return worldDefinitionRepository.all()
     }
 
     fun importLoadedWorld(name: String): WorldDefinition {
         requireMainThread()
-        worldDefinitionRepository.requireWriteAccess()
+
         val world = server.getWorld(name) ?: throw IllegalArgumentException("World $name is not loaded")
         val existing = worldDefinitionRepository.get(world.name)?.definition
-        val definition =
-            existing ?: WorldDefinition(
-                registryKey = world.key.toString(),
-                name = world.name,
-                alias = "",
-                environment = world.environment.name,
-                worldType = world.worldType?.name,
-                seed = world.seed,
-                generator = null,
-                generatorSettings = null,
-                generateStructures = null,
-                spawnLocation =
-                    world.spawnLocation.let {
-                        WorldSpawnLocation(it.x, it.y, it.z, it.yaw, it.pitch)
-                    },
-                scale = world.coordinateScale,
-                respawnWorld = null,
-                pvp = world.pvp,
-                properties = mapOf("difficulty" to world.difficulty.name),
-            )
+        val definition = existing ?: WorldDefinition(
+            registryKey = world.key.toString(),
+            name = world.name,
+            alias = "",
+            environment = world.environment.name,
+            worldType = world.worldType?.name,
+            seed = world.seed,
+            generator = null,
+            generatorSettings = null,
+            generateStructures = null,
+            spawnLocation = world.spawnLocation.let {
+                WorldSpawnLocation(it.x, it.y, it.z, it.yaw, it.pitch)
+            },
+            scale = world.coordinateScale,
+            respawnWorld = null,
+            pvp = world.pvp,
+            properties = mapOf("difficulty" to world.difficulty.name),
+        )
         worldDefinitionRepository.save(definition)
         return definition
     }
 
     fun load(name: String): World {
         requireMainThread()
-        worldDefinitionRepository.requireWriteAccess()
+
         server.getWorld(name)?.let { return it }
-        val definition =
-            worldDefinitionRepository.get(name)?.definition
-                ?: throw IllegalArgumentException("World $name is not registered")
+
+        val definition = worldDefinitionRepository.get(name)?.definition
+            ?: throw IllegalArgumentException("World $name is not registered")
+
         return createWorld(definition)
     }
 
     fun create(definition: WorldDefinition): World {
         requireMainThread()
-        worldDefinitionRepository.requireWriteAccess()
+
         requireSafeWorldName(definition.name)
         check(server.getWorld(definition.name) == null) { "World ${definition.name} is already loaded" }
         val folder = worldFolder(definition.name)
@@ -94,11 +94,16 @@ class WorldLifecycleService(
 
     fun unload(name: String) {
         requireMainThread()
-        worldDefinitionRepository.requireWriteAccess()
+
         val world = server.getWorld(name) ?: throw IllegalArgumentException("World $name is not loaded")
-        check(world.players.isEmpty()) { "World $name contains players and cannot be unloaded" }
+        check(world.players.isEmpty()) {
+            "World $name contains players and cannot be unloaded"
+        }
         world.save()
-        check(server.unloadWorld(world, true)) { "Paper refused to unload world $name" }
+
+        check(server.unloadWorld(world, true)) {
+            "Paper refused to unload world $name"
+        }
         worldBorderRepository.unload(world)
     }
 
@@ -108,32 +113,46 @@ class WorldLifecycleService(
         confirmed: Boolean,
     ): World {
         requireMainThread()
-        worldDefinitionRepository.requireWriteAccess()
-        check(confirmed) { "Cloning a world requires explicit confirmation" }
-        requireSafeWorldName(targetName)
-        check(server.getWorld(sourceName) == null) { "Unload source world $sourceName before cloning it" }
-        check(server.getWorld(targetName) == null) { "World $targetName is already loaded" }
-        check(worldDefinitionRepository.get(targetName) == null) { "World $targetName is already registered" }
 
-        val sourceDefinition =
-            worldDefinitionRepository.get(sourceName)?.definition
-                ?: throw IllegalArgumentException("World $sourceName is not registered")
+        check(confirmed) {
+            "Cloning a world requires explicit confirmation"
+        }
+
+        requireSafeWorldName(targetName)
+
+        check(server.getWorld(sourceName) == null) {
+            "Unload source world $sourceName before cloning it"
+        }
+        check(server.getWorld(targetName) == null) {
+            "World $targetName is already loaded"
+        }
+        check(worldDefinitionRepository.get(targetName) == null) {
+            "World $targetName is already registered"
+        }
+
+        val sourceDefinition = worldDefinitionRepository.get(sourceName)?.definition
+            ?: throw IllegalArgumentException("World $sourceName is not registered")
+
         val sourceFolder = worldFolder(sourceName)
         val targetFolder = worldFolder(targetName)
-        check(Files.isDirectory(sourceFolder)) { "World folder for $sourceName does not exist" }
-        check(!Files.exists(targetFolder, LinkOption.NOFOLLOW_LINKS)) { "World folder for $targetName already exists" }
+        check(Files.isDirectory(sourceFolder)) {
+            "World folder for $sourceName does not exist"
+        }
+        check(!Files.exists(targetFolder, LinkOption.NOFOLLOW_LINKS)) {
+            "World folder for $targetName already exists"
+        }
 
-        val targetKey =
-            sourceDefinition.registryKey.substringBeforeLast(':', missingDelimiterValue = "")
-                .takeIf(String::isNotEmpty)
-                ?.let { "$it:$targetName" }
-                ?: targetName
-        val definition =
-            sourceDefinition.copy(
-                registryKey = targetKey,
-                name = targetName,
-                properties = sourceDefinition.properties.withLegacyName(targetName),
-            )
+        val targetKey = sourceDefinition.registryKey
+            .substringBeforeLast(':', missingDelimiterValue = "")
+            .takeIf(String::isNotEmpty)
+            ?.let { "$it:$targetName" }
+            ?: targetName
+
+        val definition = sourceDefinition.copy(
+            registryKey = targetKey,
+            name = targetName,
+            properties = sourceDefinition.properties.withLegacyName(targetName),
+        )
         return try {
             copyDirectory(sourceFolder, targetFolder, excludeTransientFiles = true)
             createWorld(definition).also {
@@ -150,16 +169,20 @@ class WorldLifecycleService(
         confirmed: Boolean,
     ): World {
         requireMainThread()
-        worldDefinitionRepository.requireWriteAccess()
-        check(confirmed) { "Regenerating a world requires explicit confirmation" }
-        val registration =
-            worldDefinitionRepository.get(name)
-                ?: throw IllegalArgumentException("World $name is not registered")
+
+        check(confirmed) {
+            "Regenerating a world requires explicit confirmation"
+        }
+
+        val registration = worldDefinitionRepository.get(name)
+            ?: throw IllegalArgumentException("World $name is not registered")
+
         val definition = registration.definition
         val loadedWorld = server.getWorld(definition.name)
         check(loadedWorld == null || loadedWorld.players.isEmpty()) {
             "World ${definition.name} contains players and cannot be regenerated"
         }
+
         val folder = loadedWorld?.worldFolder?.toPath() ?: worldFolder(definition.name)
         loadedWorld?.save()
         val backup = backupWorldFolder(folder, definition.name)
@@ -192,7 +215,6 @@ class WorldLifecycleService(
 
     fun unregister(name: String) {
         requireMainThread()
-        worldDefinitionRepository.requireWriteAccess()
         val registration =
             worldDefinitionRepository.get(name)
                 ?: throw IllegalArgumentException("World $name is not registered")
@@ -209,7 +231,6 @@ class WorldLifecycleService(
         confirmed: Boolean,
     ) {
         requireMainThread()
-        worldDefinitionRepository.requireWriteAccess()
         check(confirmed) { "Deleting a world requires explicit confirmation" }
         val registration =
             worldDefinitionRepository.get(name)
@@ -236,20 +257,20 @@ class WorldLifecycleService(
     }
 
     private fun createWorld(definition: WorldDefinition): World {
-        val environment =
-            definition.environment?.let {
-                runCatching { World.Environment.valueOf(it.uppercase()) }
-                    .getOrElse { failure -> throw IllegalArgumentException("Invalid world environment: $it", failure) }
-            } ?: World.Environment.NORMAL
-        val type =
-            definition.worldType?.let {
-                runCatching { WorldType.valueOf(it.uppercase()) }
-                    .getOrElse { failure -> throw IllegalArgumentException("Invalid world type: $it", failure) }
-            } ?: WorldType.NORMAL
-        val creator =
-            WorldCreator(definition.name)
-                .environment(environment)
-                .type(type)
+        val environment = definition.environment?.let {
+            runCatching { World.Environment.valueOf(it.uppercase()) }
+                .getOrElse { failure -> throw IllegalArgumentException("Invalid world environment: $it", failure) }
+        } ?: World.Environment.NORMAL
+
+        val type = definition.worldType?.let {
+            runCatching { WorldType.valueOf(it.uppercase()) }
+                .getOrElse { failure -> throw IllegalArgumentException("Invalid world type: $it", failure) }
+        } ?: WorldType.NORMAL
+
+        val creator = WorldCreator(definition.name)
+            .environment(environment)
+            .type(type)
+
         definition.generatorSettings?.let(creator::generatorSettings)
         definition.seed?.let(creator::seed)
         definition.generator?.let(creator::generator)
@@ -268,7 +289,10 @@ class WorldLifecycleService(
 
     private fun worldFolder(name: String): Path {
         requireSafeWorldName(name)
-        val root = server.worldContainer.toPath().toAbsolutePath().normalize()
+        val root = server.worldContainer
+            .toPath()
+            .toAbsolutePath()
+            .normalize()
         val path = root.resolve(name).normalize()
         check(path.parent == root) { "World name resolves outside the server world container" }
         check(!Files.isSymbolicLink(path)) { "Symbolic links are not supported for world folders" }
@@ -380,7 +404,8 @@ class WorldLifecycleService(
         val readOnly = result["read-only"] as? Map<*, *>
         if (readOnly != null) {
             result["read-only"] =
-                readOnly.entries.associate { (key, value) -> key.toString() to value }
+                readOnly.entries
+                    .associate { (key, value) -> key.toString() to value }
                     .toMutableMap()
                     .apply { put("legacy-world-name", name) }
         }

@@ -17,6 +17,7 @@ import com.projectcitybuild.pcbridge.features.worlds.hooks.commands.WorldLifecyc
 import com.projectcitybuild.pcbridge.features.worlds.hooks.commands.WorldsCommand
 import com.projectcitybuild.pcbridge.features.worlds.hooks.listeners.WorldBorderFillListener
 import com.projectcitybuild.pcbridge.features.worlds.hooks.listeners.WorldBorderListener
+import com.projectcitybuild.pcbridge.features.worlds.hooks.listeners.WorldStartupListener
 import com.projectcitybuild.pcbridge.runtime.features.paperFeature
 import org.bukkit.plugin.java.JavaPlugin
 import org.koin.core.module.dsl.factoryOf
@@ -26,7 +27,11 @@ val worldsModule =
     module {
         paperFeature("worlds") {
             commands(get<WorldsCommand>())
-            listeners(get<WorldBorderListener>(), get<WorldBorderFillListener>())
+            listeners(
+                get<WorldBorderListener>(),
+                get<WorldBorderFillListener>(),
+                get<WorldStartupListener>(),
+            )
         }
 
         factoryOf(::WorldsCommand)
@@ -38,6 +43,7 @@ val worldsModule =
         factoryOf(::WorldBorderCommand)
         factoryOf(::WorldBorderListener)
         factoryOf(::WorldBorderFillListener)
+        factoryOf(::WorldStartupListener)
         factory {
             WorldBorderService(
                 server = get(),
@@ -62,7 +68,6 @@ val worldsModule =
             WorldDefinitionRepository(
                 worldsFile = plugin.dataFolder.parentFile.toPath().resolve("Multiverse-Core/worlds.yml"),
                 isWorldLoaded = { worldName -> plugin.server.getWorld(worldName) != null },
-                multiverseCoreEnabled = { plugin.server.pluginManager.isPluginEnabled("Multiverse-Core") },
             )
         }
         single {

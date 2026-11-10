@@ -4,7 +4,7 @@ import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
 import com.github.shynixn.mccoroutine.bukkit.minecraftDispatcher
 import com.projectcitybuild.pcbridge.core.observability.tracing.OpenTelemetryProvider
 import com.projectcitybuild.pcbridge.core.observability.tracing.TracerFactory
-import com.projectcitybuild.pcbridge.features.inventories.domain.services.MultiverseInventoryTransitionService
+import com.projectcitybuild.pcbridge.features.inventories.domain.services.InventoryTransitionService
 import kotlinx.coroutines.withContext
 import org.koin.core.KoinApplication
 import org.koin.core.context.GlobalContext.startKoin
@@ -49,8 +49,9 @@ class Plugin(
             val failures = mutableListOf<Throwable>()
             try {
                 withContext(minecraftDispatcher) {
-                    container?.koin
-                        ?.get<MultiverseInventoryTransitionService>()
+                    container
+                        ?.koin
+                        ?.get<InventoryTransitionService>()
                         ?.saveOnlinePlayers(server.onlinePlayers)
                 }
             } catch (saveFailure: Throwable) {

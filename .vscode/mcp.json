@@ -1,0 +1,9 @@
+{
+  "servers": {
+    "vitaminmcp": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "vitaminmcp@3.2.2"]
+    }
+  }
+}

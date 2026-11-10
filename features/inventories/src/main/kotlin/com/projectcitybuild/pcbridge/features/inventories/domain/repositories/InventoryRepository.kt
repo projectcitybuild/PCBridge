@@ -2,7 +2,6 @@ package com.projectcitybuild.pcbridge.features.inventories.domain.repositories
 
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
-import com.projectcitybuild.pcbridge.features.inventories.domain.data.InventoryCompatibilityMode
 import com.projectcitybuild.pcbridge.features.inventories.domain.data.InventoryCompatibilityReport
 import com.projectcitybuild.pcbridge.features.inventories.domain.data.InventoryGroupConflict
 import com.projectcitybuild.pcbridge.features.inventories.domain.data.InventoryProfileLocation
@@ -23,11 +22,9 @@ import java.time.Instant
 import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
 
-class MultiverseInventoryRepository(
+class InventoryRepository(
     private val dataDirectory: Path,
     private val backupDirectory: Path,
-    private val mode: InventoryCompatibilityMode,
-    private val multiverseInventoriesEnabled: () -> Boolean,
 ) {
     private val fileLocks = ConcurrentHashMap<Path, Any>()
     private val backupLock = Any()
@@ -75,7 +72,7 @@ class MultiverseInventoryRepository(
     ) {
         val path = profilePath(location)
         synchronized(lockFor(path)) {
-            requireWriteAccess()
+            ensureBackup()
             val document = readJsonObject(path) ?: JsonObject()
             val profile = document.get(profileType.name)?.let {
                 require(it.isJsonObject) { "Profile type ${profileType.name} is not a JSON object in $path" }
@@ -126,7 +123,7 @@ class MultiverseInventoryRepository(
     ) {
         val path = globalProfilePath(playerId)
         synchronized(lockFor(path)) {
-            requireWriteAccess()
+            ensureBackup()
             val document = readJsonObject(path) ?: JsonObject()
             val playerData =
                 document.get("playerData")?.let {
@@ -149,18 +146,23 @@ class MultiverseInventoryRepository(
         }
     }
 
-    fun readConfiguration(): MultiverseInventoryConfig {
-        return MultiverseInventoryConfig.load(dataDirectory.resolve("config.yml"))
-    }
+    fun readConfiguration(): MultiverseInventoryConfig = MultiverseInventoryConfig.load(dataDirectory.resolve("config.yml"))
 
     fun readWorldGroups(): List<InventoryWorldGroup> {
         val groupsFile = dataDirectory.resolve("groups.yml")
-        if (!Files.isRegularFile(groupsFile)) return emptyList()
+        if (!Files.isRegularFile(groupsFile)) {
+            return emptyList()
+        }
         val configuration = YamlConfiguration()
         configuration.load(groupsFile.toFile())
-        val groups = configuration.getConfigurationSection("groups") ?: return emptyList()
+
+        val groups = configuration.getConfigurationSection("groups")
+            ?: return emptyList()
+
         return groups.getKeys(false).mapNotNull { name ->
-            val section = groups.getConfigurationSection(name) ?: return@mapNotNull null
+            val section = groups.getConfigurationSection(name)
+                ?: return@mapNotNull null
+
             InventoryWorldGroup(
                 name = name,
                 worlds = section.getStringList("worlds").toSet(),
@@ -173,13 +175,13 @@ class MultiverseInventoryRepository(
     }
 
     fun findGroupShareConflicts(): List<InventoryGroupConflict> {
-        val worldGroups =
-            readWorldGroups()
-                .flatMap { group ->
-                    (group.shares - group.disabledShares).map { share -> group to share }
-                        .flatMap { (group, share) -> group.worlds.map { world -> Triple(world, share, group.name) } }
-                }
-                .groupBy { it.first to it.second }
+        val worldGroups = readWorldGroups()
+            .flatMap { group ->
+                (group.shares - group.disabledShares)
+                    .map { share -> group to share }
+                    .flatMap { (group, share) -> group.worlds.map { world -> Triple(world, share, group.name) } }
+            }.groupBy { it.first to it.second }
+
         return worldGroups.mapNotNull { (worldAndShare, memberships) ->
             val groups = memberships.map { it.third }.toSet()
             if (groups.size < 2) {
@@ -192,16 +194,6 @@ class MultiverseInventoryRepository(
                 )
             }
         }
-    }
-
-    private fun requireWriteAccess() {
-        check(mode == InventoryCompatibilityMode.ACTIVE) {
-            "Multiverse-Inventories data is in read-only validation mode"
-        }
-        check(!multiverseInventoriesEnabled()) {
-            "Disable Multiverse-Inventories before enabling PCBridge inventory writes"
-        }
-        ensureBackup()
     }
 
     private fun ensureBackup() {
@@ -231,11 +223,13 @@ class MultiverseInventoryRepository(
         }
     }
 
-    private fun profilePath(location: InventoryProfileLocation): Path = dataDirectory.resolve(location.directory)
+    private fun profilePath(location: InventoryProfileLocation): Path = dataDirectory
+        .resolve(location.directory)
         .resolve(location.key)
         .resolve("${location.playerName}.json")
 
-    private fun globalProfilePath(playerId: UUID): Path = dataDirectory.resolve("players")
+    private fun globalProfilePath(playerId: UUID): Path = dataDirectory
+        .resolve("players")
         .resolve("$playerId.json")
 
     private fun countProfiles(
@@ -245,7 +239,8 @@ class MultiverseInventoryRepository(
         val root = dataDirectory.resolve(directory)
         if (!Files.isDirectory(root)) return 0
         return Files.walk(root).use { paths ->
-            paths.filter { Files.isRegularFile(it) && it.fileName.toString().endsWith(".json") }
+            paths
+                .filter { Files.isRegularFile(it) && it.fileName.toString().endsWith(".json") }
                 .peek { path -> recordInvalidJson(path, malformed) }
                 .count()
                 .toInt()
@@ -259,7 +254,8 @@ class MultiverseInventoryRepository(
         val root = dataDirectory.resolve(directory)
         if (!Files.isDirectory(root)) return 0
         return Files.list(root).use { paths ->
-            paths.filter { Files.isRegularFile(it) && it.fileName.toString().endsWith(".json") }
+            paths
+                .filter { Files.isRegularFile(it) && it.fileName.toString().endsWith(".json") }
                 .peek { path -> recordInvalidJson(path, malformed) }
                 .count()
                 .toInt()

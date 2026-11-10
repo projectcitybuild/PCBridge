@@ -152,32 +152,13 @@ class PortalLinksRepositoryTest {
         assertEquals("alpha", YamlTestConfig.load(linksFile).getString("alpha.nether"))
     }
 
-    @Test
-    fun `does not modify portal links while Multiverse NetherPortals is enabled`() {
-        val worlds = worldRepository()
-        worlds.save(world("alpha.world", "NORMAL"))
-        worlds.save(world("beta_world", "NETHER"))
-        val linksFile = tempDir.resolve("links.yml")
-        val original = "untouched: true"
-        Files.writeString(linksFile, original)
-        val repository = repository(linksFile, worlds, multiverseEnabled = true)
-
-        org.junit.jupiter.api.Assertions.assertThrows(IllegalArgumentException::class.java) {
-            repository.link("alpha.world", "beta_world", PortalLinkType.NETHER, bidirectional = false)
-        }
-
-        assertEquals(original, Files.readString(linksFile))
-    }
-
     private fun repository(
         linksFile: Path,
         worlds: WorldDefinitionRepository = worldRepository(),
-        multiverseEnabled: Boolean = false,
     ) = PortalLinksRepository(
         linksFile = linksFile,
         settings = PortalSettings(),
         worldDefinitionRepository = worlds,
-        multiverseNetherPortalsEnabled = { multiverseEnabled },
     )
 
     private fun worldRepository() = WorldDefinitionRepository(

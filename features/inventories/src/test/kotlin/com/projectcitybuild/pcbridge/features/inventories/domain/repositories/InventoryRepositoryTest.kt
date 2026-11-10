@@ -3,8 +3,6 @@ package com.projectcitybuild.pcbridge.features.inventories.domain.repositories
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import com.google.gson.JsonPrimitive
-import com.projectcitybuild.pcbridge.features.inventories.domain.data.InventoryCompatibilityMode
-import com.projectcitybuild.pcbridge.features.inventories.domain.data.InventoryCompatibilitySettings
 import com.projectcitybuild.pcbridge.features.inventories.domain.data.InventoryProfileLocation
 import com.projectcitybuild.pcbridge.features.inventories.domain.data.InventoryProfileType
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -18,7 +16,7 @@ import java.nio.file.Path
 import java.util.UUID
 import java.util.concurrent.Executors
 
-class MultiverseInventoryRepositoryTest {
+class InventoryRepositoryTest {
     @TempDir
     lateinit var tempDir: Path
 
@@ -46,38 +44,31 @@ class MultiverseInventoryRepositoryTest {
         assertEquals(1, report.groupProfiles)
         assertEquals(1, report.globalProfiles)
         assertTrue(report.malformedJsonFiles.isEmpty())
-        assertEquals("AAECAwQ=", groupProfile!!.getAsJsonObject("SURVIVAL").getAsJsonObject("inventoryContents").get("0").asString)
+        assertEquals(
+            "AAECAwQ=",
+            groupProfile!!
+                .getAsJsonObject("SURVIVAL")
+                .getAsJsonObject("inventoryContents")
+                .get("0")
+                .asString,
+        )
         assertEquals(
             "COMPASS",
-            worldProfile!!.getAsJsonObject("ADVENTURE").getAsJsonObject("inventoryContents").getAsJsonObject("1").get("type").asString,
+            worldProfile!!
+                .getAsJsonObject("ADVENTURE")
+                .getAsJsonObject("inventoryContents")
+                .getAsJsonObject("1")
+                .get("type")
+                .asString,
         )
         assertEquals("event_world", globalProfile!!.getAsJsonObject("playerData").get("lastWorld").asString)
         assertEquals("FormerName", nameMapping!!.get("123e4567-e89b-12d3-a456-426614174001").asString)
     }
 
     @Test
-    fun `read only mode leaves existing profile bytes unchanged`() {
+    fun `updates are active by default and preserve unknown fields profile types and Bukkit item representation`() {
         val dataDirectory = copyFixture()
-        val profileFile = dataDirectory.resolve("groups/survival/Alice.json")
-        val original = Files.readString(profileFile)
         val repository = repository(dataDirectory)
-
-        assertThrows(IllegalStateException::class.java) {
-            repository.updateProfile(
-                InventoryProfileLocation("groups", "survival", "Alice"),
-                InventoryProfileType.SURVIVAL,
-                mapOf("inventoryContents" to JsonObject()),
-            )
-        }
-
-        assertEquals(original, Files.readString(profileFile))
-        assertFalse(Files.exists(tempDir.resolve("backups")))
-    }
-
-    @Test
-    fun `active updates preserve unknown fields profile types and Bukkit item representation`() {
-        val dataDirectory = copyFixture()
-        val repository = repository(dataDirectory, InventoryCompatibilityMode.ACTIVE)
         val location = InventoryProfileLocation("groups", "survival", "Alice")
 
         repository.updateProfile(
@@ -93,7 +84,14 @@ class MultiverseInventoryRepositoryTest {
         assertTrue(survival.getAsJsonObject("armorContents").getAsJsonObject("0").has("=="))
         assertEquals(17, survival.getAsJsonObject("stats").get("pcbridge_future_stat").asInt)
         assertTrue(survival.getAsJsonObject("futureShare").get("kept").asBoolean)
-        assertEquals("AQID", saved.getAsJsonObject("CREATIVE").getAsJsonObject("inventoryContents").get("0").asString)
+        assertEquals(
+            "AQID",
+            saved
+                .getAsJsonObject("CREATIVE")
+                .getAsJsonObject("inventoryContents")
+                .get("0")
+                .asString,
+        )
         assertEquals("yes", saved.getAsJsonObject("futureProfileType").get("retained").asString)
         assertTrue(
             Files.isRegularFile(
@@ -107,7 +105,7 @@ class MultiverseInventoryRepositoryTest {
     @Test
     fun `nested stats updates preserve unknown stat values`() {
         val dataDirectory = copyFixture()
-        val repository = repository(dataDirectory, InventoryCompatibilityMode.ACTIVE)
+        val repository = repository(dataDirectory)
 
         repository.updateProfile(
             InventoryProfileLocation("groups", "survival", "Alice"),
@@ -117,9 +115,10 @@ class MultiverseInventoryRepositoryTest {
         )
 
         val profile =
-            JsonParser.parseString(
-                Files.readString(dataDirectory.resolve("groups/survival/Alice.json")),
-            ).asJsonObject
+            JsonParser
+                .parseString(
+                    Files.readString(dataDirectory.resolve("groups/survival/Alice.json")),
+                ).asJsonObject
                 .getAsJsonObject("SURVIVAL")
                 .getAsJsonObject("stats")
         assertEquals(15.0, profile.get("hp").asDouble)
@@ -128,25 +127,12 @@ class MultiverseInventoryRepositoryTest {
     }
 
     @Test
-    fun `active writes are rejected while Multiverse Inventories is enabled`() {
-        val repository = repository(copyFixture(), InventoryCompatibilityMode.ACTIVE, mviEnabled = true)
-
-        assertThrows(IllegalStateException::class.java) {
-            repository.updateGlobalPlayerData(
-                UUID.fromString(PLAYER_ID),
-                mapOf("lastWorld" to JsonPrimitive("world")),
-            )
-        }
-        assertFalse(Files.exists(tempDir.resolve("backups")))
-    }
-
-    @Test
     fun `active writes fail when a complete backup cannot copy a symbolic link`() {
         val dataDirectory = copyFixture()
         val linkedFile = tempDir.resolve("linked-player-data.json")
         Files.writeString(linkedFile, "{}")
         Files.createSymbolicLink(dataDirectory.resolve("external.json"), linkedFile)
-        val repository = repository(dataDirectory, InventoryCompatibilityMode.ACTIVE)
+        val repository = repository(dataDirectory)
 
         assertThrows(IllegalStateException::class.java) {
             repository.updateGlobalPlayerData(
@@ -162,7 +148,7 @@ class MultiverseInventoryRepositoryTest {
     @Test
     fun `global metadata updates retain unrelated fields`() {
         val dataDirectory = copyFixture()
-        val repository = repository(dataDirectory, InventoryCompatibilityMode.ACTIVE)
+        val repository = repository(dataDirectory)
 
         repository.updateGlobalPlayerData(
             UUID.fromString(PLAYER_ID),
@@ -170,18 +156,26 @@ class MultiverseInventoryRepositoryTest {
         )
 
         val saved =
-            JsonParser.parseString(
-                Files.readString(dataDirectory.resolve("players/$PLAYER_ID.json")),
-            ).asJsonObject
+            JsonParser
+                .parseString(
+                    Files.readString(dataDirectory.resolve("players/$PLAYER_ID.json")),
+                ).asJsonObject
         assertEquals("world", saved.getAsJsonObject("playerData").get("lastWorld").asString)
-        assertEquals(1, saved.getAsJsonObject("playerData").getAsJsonObject("futureGlobalValue").get("preserve").asInt)
+        assertEquals(
+            1,
+            saved
+                .getAsJsonObject("playerData")
+                .getAsJsonObject("futureGlobalValue")
+                .get("preserve")
+                .asInt,
+        )
         assertEquals("keep", saved.get("futureMetadata").asString)
     }
 
     @Test
     fun `concurrent profile updates are serialized without losing independent sections`() {
         val dataDirectory = copyFixture()
-        val repository = repository(dataDirectory, InventoryCompatibilityMode.ACTIVE)
+        val repository = repository(dataDirectory)
         val workers = Executors.newFixedThreadPool(4)
 
         try {
@@ -201,9 +195,10 @@ class MultiverseInventoryRepositoryTest {
         }
 
         val profile =
-            JsonParser.parseString(
-                Files.readString(dataDirectory.resolve("groups/survival/Alice.json")),
-            ).asJsonObject
+            JsonParser
+                .parseString(
+                    Files.readString(dataDirectory.resolve("groups/survival/Alice.json")),
+                ).asJsonObject
         assertEquals(8, profile.getAsJsonObject("SURVIVAL").entrySet().count { it.key.startsWith("concurrent-") })
         assertEquals(8, profile.getAsJsonObject("CREATIVE").entrySet().count { it.key.startsWith("concurrent-") })
     }
@@ -277,17 +272,6 @@ class MultiverseInventoryRepositoryTest {
     }
 
     @Test
-    fun `new compatibility settings default to read only`() {
-        val settingsFile = tempDir.resolve("pcbridge/inventory-compatibility.json").toFile()
-
-        assertEquals(
-            InventoryCompatibilityMode.READ_ONLY,
-            InventoryCompatibilitySettings.load(settingsFile).mode,
-        )
-        assertEquals("""{"mode":"READ_ONLY"}""", Files.readString(settingsFile.toPath()))
-    }
-
-    @Test
     fun `profile name lookup keeps using the Multiverse mapped filename`() {
         val repository = repository(copyFixture())
 
@@ -295,15 +279,9 @@ class MultiverseInventoryRepositoryTest {
         assertEquals("New Player", repository.profileName(UUID.randomUUID(), "New Player"))
     }
 
-    private fun repository(
-        dataDirectory: Path,
-        mode: InventoryCompatibilityMode = InventoryCompatibilityMode.READ_ONLY,
-        mviEnabled: Boolean = false,
-    ) = MultiverseInventoryRepository(
+    private fun repository(dataDirectory: Path) = InventoryRepository(
         dataDirectory = dataDirectory,
         backupDirectory = tempDir.resolve("backups"),
-        mode = mode,
-        multiverseInventoriesEnabled = { mviEnabled },
     )
 
     private fun copyFixture(): Path {

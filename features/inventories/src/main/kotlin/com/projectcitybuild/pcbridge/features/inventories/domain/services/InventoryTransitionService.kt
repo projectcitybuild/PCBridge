@@ -7,17 +7,16 @@ import com.google.gson.JsonNull
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import com.google.gson.JsonPrimitive
-import com.projectcitybuild.pcbridge.features.inventories.InventoriesPermissions
-import com.projectcitybuild.pcbridge.features.inventories.domain.data.InventoryCompatibilityMode
 import com.projectcitybuild.pcbridge.features.inventories.domain.data.InventoryProfileLocation
 import com.projectcitybuild.pcbridge.features.inventories.domain.data.InventoryProfileType
 import com.projectcitybuild.pcbridge.features.inventories.domain.data.MultiverseInventoryConfig
 import com.projectcitybuild.pcbridge.features.inventories.domain.data.MultiverseInventoryShares
 import com.projectcitybuild.pcbridge.features.inventories.domain.data.ResolvedInventoryGroup
-import com.projectcitybuild.pcbridge.features.inventories.domain.repositories.MultiverseInventoryRepository
+import com.projectcitybuild.pcbridge.features.inventories.domain.repositories.InventoryRepository
 import org.bukkit.Bukkit
 import org.bukkit.GameMode
 import org.bukkit.Keyed
+import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
 import org.bukkit.Statistic
@@ -32,11 +31,9 @@ import java.util.Base64
 import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
 
-class MultiverseInventoryTransitionService(
-    private val repository: MultiverseInventoryRepository,
+class InventoryTransitionService(
+    private val repository: InventoryRepository,
     private val config: MultiverseInventoryConfig,
-    private val mode: InventoryCompatibilityMode,
-    private val multiverseInventoriesEnabled: () -> Boolean,
 ) {
     private val applyingStoredLocation = ConcurrentHashMap.newKeySet<UUID>()
 
@@ -46,7 +43,6 @@ class MultiverseInventoryTransitionService(
         toWorld: String,
     ) {
         if (player.uniqueId in applyingStoredLocation) return
-        if (!requireActive()) return
         requirePrimaryThread()
         if (fromWorld == toWorld) return
 
@@ -54,66 +50,52 @@ class MultiverseInventoryTransitionService(
         val sourceGroups = groupsFor(fromWorld)
         val destinationGroups = groupsFor(toWorld)
         val playerName = repository.profileName(player.uniqueId, player.name)
-        val bypassWorld = bypassesWorld(player, fromWorld)
         val writes = mutableListOf<ProfileWrite>()
         val reads = mutableListOf<ProfileRead>()
 
-        if (bypassWorld) {
-            if (config.alwaysWriteWorldProfile) {
+        val handledSource = linkedSetOf<String>()
+        sourceGroups.forEach { group ->
+            if (destinationGroups.none { it.name == group.name }) {
                 writes += ProfileWrite(
-                    worldProfile(fromWorld, playerName),
+                    groupProfile(group, playerName),
                     profileType,
-                    worldProfileShares(sourceGroups),
+                    group.shares,
                 )
             }
+            handledSource += group.shares
+            handledSource += group.disabledShares
+        }
+        val sourceWorldShares = activeShares()
+        val worldWrites = if (config.alwaysWriteWorldProfile) {
+            sourceWorldShares
         } else {
-            val handledSource = linkedSetOf<String>()
-            sourceGroups.forEach { group ->
-                if (destinationGroups.none { it.name == group.name }) {
-                    writes += ProfileWrite(
-                        groupProfile(group, playerName),
-                        profileType,
-                        group.shares,
-                    )
-                }
-                handledSource += group.shares
-                handledSource += group.disabledShares
-            }
-            val sourceWorldShares = activeShares()
-            val worldWrites =
-                if (config.alwaysWriteWorldProfile) {
-                    sourceWorldShares
-                } else {
-                    sourceWorldShares - handledSource
-                }
-            if (worldWrites.isNotEmpty()) {
-                writes += ProfileWrite(worldProfile(fromWorld, playerName), profileType, worldWrites)
-            }
+            sourceWorldShares - handledSource
+        }
+        if (worldWrites.isNotEmpty()) {
+            writes += ProfileWrite(worldProfile(fromWorld, playerName), profileType, worldWrites)
+        }
 
-            val handledDestination = linkedSetOf<String>()
-            destinationGroups.forEach { group ->
-                if (!bypassesGroup(player, group) && sourceGroups.none { it.name == group.name }) {
-                    reads += ProfileRead(
-                        groupProfile(group, playerName),
-                        profileType,
-                        sharesForRead(group.shares),
-                    )
-                }
-                if (!bypassesGroup(player, group)) {
-                    handledDestination += group.shares
-                    handledDestination += group.disabledShares
-                }
+        val handledDestination = linkedSetOf<String>()
+        destinationGroups.forEach { group ->
+            if (sourceGroups.none { it.name == group.name }) {
+                reads += ProfileRead(
+                    groupProfile(group, playerName),
+                    profileType,
+                    sharesForRead(group.shares),
+                )
             }
-            val destinationWorldShares = worldReadShares(destinationGroups) - handledDestination
-            val worldReads = sharesForRead(destinationWorldShares)
-            if (worldReads.isNotEmpty()) {
-                reads += ProfileRead(worldProfile(toWorld, playerName), profileType, worldReads)
-            }
+            handledDestination += group.shares
+            handledDestination += group.disabledShares
+        }
+        val destinationWorldShares = worldReadShares(destinationGroups) - handledDestination
+        val worldReads = sharesForRead(destinationWorldShares)
+        if (worldReads.isNotEmpty()) {
+            reads += ProfileRead(worldProfile(toWorld, playerName), profileType, worldReads)
         }
 
         rejectUnsupported(writes.flatMap { it.shares } + reads.flatMap { it.shares })
         persistWrites(player, writes)
-        if (!bypassWorld) applyReads(player, reads)
+        applyReads(player, reads)
         repository.updateGlobalPlayerData(
             player.uniqueId,
             mapOf("lastWorld" to JsonPrimitive(toWorld)),
@@ -125,7 +107,7 @@ class MultiverseInventoryTransitionService(
         fromGameMode: GameMode,
         toGameMode: GameMode,
     ) {
-        if (!requireActive() || !config.enableGamemodeShareHandling) return
+        if (!config.enableGamemodeShareHandling) return
         requirePrimaryThread()
         val fromType = profileType(fromGameMode)
         val toType = profileType(toGameMode)
@@ -137,44 +119,39 @@ class MultiverseInventoryTransitionService(
         val worldShares = worldReadShares(groups)
         val reads = mutableListOf<ProfileRead>()
         val writes = mutableListOf<ProfileWrite>()
-        val bypassWorld = bypassesWorld(player, world) || bypassesGameMode(player, toGameMode)
         val handled = linkedSetOf<String>()
 
-        if (!bypassWorld) {
-            groups.forEach { group ->
-                writes += ProfileWrite(groupProfile(group, playerName), fromType, group.shares)
-                reads += ProfileRead(groupProfile(group, playerName), toType, group.shares)
-                handled += group.shares
-                handled += group.disabledShares
-            }
-            val unhandled = worldShares - handled
-            if (unhandled.isNotEmpty()) {
-                reads += ProfileRead(worldProfile(world, playerName), toType, sharesForRead(unhandled))
-            }
-            val worldWrites =
-                if (config.alwaysWriteWorldProfile) {
-                    if (config.useOptionalsForUngroupedWorlds) {
-                        activeShares()
-                    } else {
-                        activeShares().intersect(MultiverseInventoryShares.standard)
-                    }
+        groups.forEach { group ->
+            writes += ProfileWrite(groupProfile(group, playerName), fromType, group.shares)
+            reads += ProfileRead(groupProfile(group, playerName), toType, group.shares)
+            handled += group.shares
+            handled += group.disabledShares
+        }
+        val unhandled = worldShares - handled
+        if (unhandled.isNotEmpty()) {
+            reads += ProfileRead(worldProfile(world, playerName), toType, sharesForRead(unhandled))
+        }
+        val worldWrites =
+            if (config.alwaysWriteWorldProfile) {
+                if (config.useOptionalsForUngroupedWorlds) {
+                    activeShares()
                 } else {
-                    unhandled
+                    activeShares().intersect(MultiverseInventoryShares.standard)
                 }
-            if (worldWrites.isNotEmpty()) {
-                writes += ProfileWrite(worldProfile(world, playerName), fromType, worldWrites)
+            } else {
+                unhandled
             }
-        } else if (config.alwaysWriteWorldProfile) {
-            writes += ProfileWrite(worldProfile(world, playerName), fromType, worldShares)
+        if (worldWrites.isNotEmpty()) {
+            writes += ProfileWrite(worldProfile(world, playerName), fromType, worldWrites)
         }
 
         rejectUnsupported(writes.flatMap { it.shares } + reads.flatMap { it.shares })
         persistWrites(player, writes)
-        if (!bypassWorld) applyReads(player, reads)
+        applyReads(player, reads)
     }
 
     fun onPlayerJoined(player: Player) {
-        if (!requireActive() || !config.applyPlayerDataOnJoin) return
+        if (!config.applyPlayerDataOnJoin) return
         requirePrimaryThread()
 
         val world = player.world.name
@@ -184,15 +161,13 @@ class MultiverseInventoryTransitionService(
         val handled = linkedSetOf<String>()
         val reads = mutableListOf<ProfileRead>()
         groups.forEach { group ->
-            if (!bypassesGroup(player, group)) {
-                reads += ProfileRead(
-                    groupProfile(group, playerName),
-                    profileType,
-                    sharesForRead(group.shares),
-                )
-                handled += group.shares
-                handled += group.disabledShares
-            }
+            reads += ProfileRead(
+                groupProfile(group, playerName),
+                profileType,
+                sharesForRead(group.shares),
+            )
+            handled += group.shares
+            handled += group.disabledShares
         }
         val worldShares = worldReadShares(groups) - handled
         val worldReads = sharesForRead(worldShares)
@@ -205,13 +180,11 @@ class MultiverseInventoryTransitionService(
     }
 
     fun onPlayerQuit(player: Player) {
-        if (!requireActive()) return
         requirePrimaryThread()
         saveCurrentWorld(player)
     }
 
     fun saveOnlinePlayers(players: Collection<Player>) {
-        if (!requireActive()) return
         requirePrimaryThread()
         val failures = mutableListOf<Exception>()
         players.forEach { player ->
@@ -228,10 +201,9 @@ class MultiverseInventoryTransitionService(
 
     fun recordLastLocation(
         player: Player,
-        location: org.bukkit.Location,
+        location: Location,
     ) {
         if (player.uniqueId in applyingStoredLocation) return
-        if (!requireActive()) return
         requirePrimaryThread()
         if (!config.applyLastLocationForAllTeleports &&
             "last_location" !in MultiverseInventoryShares.active(config)
@@ -301,7 +273,8 @@ class MultiverseInventoryTransitionService(
     ) {
         writes.filter { it.shares.isNotEmpty() }.forEach { write ->
             val previous =
-                repository.readProfile(write.location)
+                repository
+                    .readProfile(write.location)
                     ?.get(write.profileType.name)
                     ?.asJsonObjectOrNull()
             val fields = linkedMapOf<String, JsonElement>()
@@ -325,46 +298,73 @@ class MultiverseInventoryTransitionService(
         player: Player,
         share: String,
         previous: JsonObject?,
-        lastLocation: org.bukkit.Location?,
+        lastLocation: Location?,
     ): Triple<String, String, JsonElement>? {
         val inventory = player.inventory
         return when (share) {
-            "inventory_contents" ->
+            "inventory_contents" -> {
                 Triple(
                     "inventoryContents",
                     "",
                     encodeItems(inventory.storageContents, previous?.get("inventoryContents")),
                 )
-            "armor_contents" ->
+            }
+            "armor_contents" -> {
                 Triple("armorContents", "", encodeItems(inventory.armorContents, previous?.get("armorContents")))
-            "ender_chest" ->
+            }
+            "ender_chest" -> {
                 Triple("enderChestContents", "", encodeItems(player.enderChest.contents, previous?.get("enderChestContents")))
-            "off_hand" ->
+            }
+            "off_hand" -> {
                 Triple("offHandItem", "", encodeItem(inventory.itemInOffHand))
-            "max_hit_points" ->
+            }
+            "max_hit_points" -> {
                 stat(
                     "mhp",
                     player.getAttribute(Attribute.MAX_HEALTH)?.baseValue ?: 20.0,
                 )
-            "hit_points" ->
+            }
+            "hit_points" -> {
                 stat("hp", player.health)
-            "remaining_air" -> stat("ra", player.remainingAir)
-            "maximum_air" -> stat("ma", player.maximumAir)
-            "fall_distance" -> stat("fd", player.fallDistance)
-            "fire_ticks" -> stat("ft", player.fireTicks)
-            "xp" -> stat("xp", player.exp)
-            "total_xp" -> stat("txp", player.totalExperience)
-            "lvl" -> stat("el", player.level)
-            "food_level" -> stat("fl", player.foodLevel)
-            "exhaustion" -> stat("ex", player.exhaustion)
-            "saturation" -> stat("sa", player.saturation)
-            "bed_spawn" ->
+            }
+            "remaining_air" -> {
+                stat("ra", player.remainingAir)
+            }
+            "maximum_air" -> {
+                stat("ma", player.maximumAir)
+            }
+            "fall_distance" -> {
+                stat("fd", player.fallDistance)
+            }
+            "fire_ticks" -> {
+                stat("ft", player.fireTicks)
+            }
+            "xp" -> {
+                stat("xp", player.exp)
+            }
+            "total_xp" -> {
+                stat("txp", player.totalExperience)
+            }
+            "lvl" -> {
+                stat("el", player.level)
+            }
+            "food_level" -> {
+                stat("fl", player.foodLevel)
+            }
+            "exhaustion" -> {
+                stat("ex", player.exhaustion)
+            }
+            "saturation" -> {
+                stat("sa", player.saturation)
+            }
+            "bed_spawn" -> {
                 Triple(
                     "bedSpawnLocation",
                     "",
                     encodeLocation(player.bedSpawnLocation, previous?.get("bedSpawnLocation"), respawn = true),
                 )
-            "last_location" ->
+            }
+            "last_location" -> {
                 lastLocation?.let {
                     Triple(
                         "lastLocation",
@@ -372,15 +372,25 @@ class MultiverseInventoryTransitionService(
                         encodeLocation(it, previous?.get("lastLocation"), respawn = false),
                     )
                 }
-            "potion_effects" ->
+            }
+            "potion_effects" -> {
                 Triple("potions", "", encodePotionEffects(player, previous?.get("potions")))
-            "game_statistics" ->
+            }
+            "game_statistics" -> {
                 Triple("game_statistics", "", encodeStatistics(player, previous?.get("game_statistics")))
-            "advancements" ->
+            }
+            "advancements" -> {
                 Triple("advancements", "", encodeAdvancements(player, previous?.get("advancements")))
-            "recipes" -> Triple("recipes", "", encodeRecipes(player, previous?.get("recipes")))
-            "economy" -> error("The economy share requires a Vault-compatible economy provider")
-            else -> error("Unsupported Multiverse-Inventories share: $share")
+            }
+            "recipes" -> {
+                Triple("recipes", "", encodeRecipes(player, previous?.get("recipes")))
+            }
+            "economy" -> {
+                error("The economy share requires a Vault-compatible economy provider")
+            }
+            else -> {
+                error("Unsupported Multiverse-Inventories share: $share")
+            }
         }
     }
 
@@ -390,7 +400,8 @@ class MultiverseInventoryTransitionService(
     ) {
         reads.filter { it.shares.isNotEmpty() }.forEach { read ->
             val profile =
-                repository.readProfile(read.location)
+                repository
+                    .readProfile(read.location)
                     ?.get(read.profileType.name)
                     ?.asJsonObjectOrNull()
             val shares = read.shares.sortedBy { applyOrder.indexOf(it).let { index -> if (index < 0) Int.MAX_VALUE else index } }
@@ -405,17 +416,29 @@ class MultiverseInventoryTransitionService(
     ) {
         val stats = profile?.get("stats")?.asJsonObjectOrNull()
         when (share) {
-            "inventory_contents" ->
-                player.inventory.storageContents =
-                    decodeItems(profile?.get("inventoryContents"), player.inventory.storageContents.size)
-            "armor_contents" ->
-                player.inventory.armorContents =
-                    decodeItems(profile?.get("armorContents"), player.inventory.armorContents.size)
-            "ender_chest" ->
-                player.enderChest.contents =
-                    decodeItems(profile?.get("enderChestContents"), player.enderChest.contents.size)
-            "off_hand" ->
-                player.inventory.setItemInOffHand(decodeItem(profile?.get("offHandItem")))
+            "inventory_contents" -> {
+                player.inventory.storageContents = decodeItems(
+                    field = profile?.get("inventoryContents"),
+                    size = player.inventory.storageContents.size,
+                )
+            }
+            "armor_contents" -> {
+                player.inventory.armorContents = decodeItems(
+                    field = profile?.get("armorContents"),
+                    size = player.inventory.armorContents.size,
+                )
+            }
+            "ender_chest" -> {
+                player.enderChest.contents = decodeItems(
+                    field = profile?.get("enderChestContents"),
+                    size = player.enderChest.contents.size,
+                )
+            }
+            "off_hand" -> {
+                player.inventory.setItemInOffHand(
+                    decodeItem(profile?.get("offHandItem")),
+                )
+            }
             "max_hit_points" -> {
                 val attribute = player.getAttribute(Attribute.MAX_HEALTH)
                 if (attribute != null) {
@@ -427,26 +450,62 @@ class MultiverseInventoryTransitionService(
                 val value = stats?.get("hp")?.numberOrNull()?.toDouble() ?: 20.0
                 player.health = value.coerceIn(0.0, player.getAttribute(Attribute.MAX_HEALTH)?.value ?: 20.0)
             }
-            "remaining_air" -> player.remainingAir = stats?.get("ra")?.numberOrNull()?.toInt() ?: 300
-            "maximum_air" -> player.maximumAir = stats?.get("ma")?.numberOrNull()?.toInt() ?: 300
-            "fall_distance" -> player.fallDistance = stats?.get("fd")?.numberOrNull()?.toFloat() ?: 0.0f
-            "fire_ticks" -> player.fireTicks = stats?.get("ft")?.numberOrNull()?.toInt() ?: 0
-            "xp" -> player.exp = (stats?.get("xp")?.numberOrNull()?.toFloat() ?: 0.0f).coerceIn(0.0f, 1.0f)
-            "total_xp" -> player.totalExperience = stats?.get("txp")?.numberOrNull()?.toInt() ?: 0
-            "lvl" -> player.level = stats?.get("el")?.numberOrNull()?.toInt() ?: 0
-            "food_level" -> player.foodLevel = stats?.get("fl")?.numberOrNull()?.toInt() ?: 20
-            "exhaustion" -> player.exhaustion = stats?.get("ex")?.numberOrNull()?.toFloat() ?: 0.0f
-            "saturation" -> player.saturation = stats?.get("sa")?.numberOrNull()?.toFloat() ?: 5.0f
-            "bed_spawn" -> applyBedSpawn(player, profile?.get("bedSpawnLocation"))
-            "last_location" -> {
-                if (config.applyLastLocationForAllTeleports) applyLastLocation(player, profile?.get("lastLocation"))
+            "remaining_air" -> {
+                player.remainingAir = stats?.get("ra")?.numberOrNull()?.toInt() ?: 300
             }
-            "potion_effects" -> applyPotionEffects(player, profile?.get("potions"))
-            "game_statistics" -> applyStatistics(player, profile?.get("game_statistics"))
-            "advancements" -> applyAdvancements(player, profile?.get("advancements"))
-            "recipes" -> applyRecipes(player, profile?.get("recipes"))
-            "economy" -> error("The economy share requires a Vault-compatible economy provider")
-            else -> error("Unsupported Multiverse-Inventories share: $share")
+            "maximum_air" -> {
+                player.maximumAir = stats?.get("ma")?.numberOrNull()?.toInt() ?: 300
+            }
+            "fall_distance" -> {
+                player.fallDistance = stats?.get("fd")?.numberOrNull()?.toFloat() ?: 0.0f
+            }
+            "fire_ticks" -> {
+                player.fireTicks = stats?.get("ft")?.numberOrNull()?.toInt() ?: 0
+            }
+            "xp" -> {
+                player.exp = (stats?.get("xp")?.numberOrNull()?.toFloat() ?: 0.0f).coerceIn(0.0f, 1.0f)
+            }
+            "total_xp" -> {
+                player.totalExperience = stats?.get("txp")?.numberOrNull()?.toInt() ?: 0
+            }
+            "lvl" -> {
+                player.level = stats?.get("el")?.numberOrNull()?.toInt() ?: 0
+            }
+            "food_level" -> {
+                player.foodLevel = stats?.get("fl")?.numberOrNull()?.toInt() ?: 20
+            }
+            "exhaustion" -> {
+                player.exhaustion = stats?.get("ex")?.numberOrNull()?.toFloat() ?: 0.0f
+            }
+            "saturation" -> {
+                player.saturation = stats?.get("sa")?.numberOrNull()?.toFloat() ?: 5.0f
+            }
+            "bed_spawn" -> {
+                applyBedSpawn(player, profile?.get("bedSpawnLocation"))
+            }
+            "last_location" -> {
+                if (config.applyLastLocationForAllTeleports) {
+                    applyLastLocation(player, profile?.get("lastLocation"))
+                }
+            }
+            "potion_effects" -> {
+                applyPotionEffects(player, profile?.get("potions"))
+            }
+            "game_statistics" -> {
+                applyStatistics(player, profile?.get("game_statistics"))
+            }
+            "advancements" -> {
+                applyAdvancements(player, profile?.get("advancements"))
+            }
+            "recipes" -> {
+                applyRecipes(player, profile?.get("recipes"))
+            }
+            "economy" -> {
+                error("The economy share requires a Vault-compatible economy provider")
+            }
+            else -> {
+                error("Unsupported Multiverse-Inventories share: $share")
+            }
         }
     }
 
@@ -454,14 +513,15 @@ class MultiverseInventoryTransitionService(
         items: Array<out ItemStack?>,
         existing: JsonElement?,
     ): JsonObject {
-        val result =
-            existing?.asJsonObjectOrNull()?.deepCopy()
-                ?: JsonObject()
+        val result = existing?.asJsonObjectOrNull()?.deepCopy()
+            ?: JsonObject()
         items.forEachIndexed { index, item ->
             val key = index.toString()
             result.remove(key)
             val serialized = encodeItem(item)
-            if (!serialized.isJsonNull) result.add(key, serialized)
+            if (!serialized.isJsonNull) {
+                result.add(key, serialized)
+            }
         }
         return result
     }
@@ -481,7 +541,10 @@ class MultiverseInventoryTransitionService(
     ): Array<ItemStack?> {
         val result = arrayOfNulls<ItemStack>(size)
         val values = field?.takeUnless { it.isJsonNull } ?: return result
-        require(values.isJsonObject) { "Expected a slot map in Multiverse-Inventories profile" }
+
+        require(values.isJsonObject) {
+            "Expected a slot map in Multiverse-Inventories profile"
+        }
         values.asJsonObject.entrySet().forEach { (slot, value) ->
             val index = slot.toIntOrNull() ?: return@forEach
             if (index in result.indices) result[index] = decodeItem(value)
@@ -489,24 +552,22 @@ class MultiverseInventoryTransitionService(
         return result
     }
 
-    private fun decodeItem(value: JsonElement?): ItemStack? {
+    internal fun decodeItem(value: JsonElement?): ItemStack? {
         if (value == null || value.isJsonNull) return null
+
         if (value.isJsonPrimitive && value.asJsonPrimitive.isString) {
-            val bytes =
-                try {
-                    Base64.getDecoder().decode(value.asString)
-                } catch (failure: IllegalArgumentException) {
-                    throw IllegalArgumentException("Invalid Base64 ItemStack in Multiverse-Inventories profile", failure)
-                }
+            val bytes = try {
+                Base64.getDecoder().decode(value.asString)
+            } catch (failure: IllegalArgumentException) {
+                throw IllegalArgumentException("Invalid Base64 ItemStack in Multiverse-Inventories profile", failure)
+            }
             return ItemStack.deserializeBytes(bytes)
         }
-        require(value.isJsonObject) { "Unsupported ItemStack representation in Multiverse-Inventories profile" }
+        require(value.isJsonObject) {
+            "Unsupported ItemStack representation in Multiverse-Inventories profile"
+        }
         val serialized = value.asJsonObject.toJavaMap()
-        val deserialized =
-            ConfigurationSerialization.deserializeObject(serialized)
-                ?: throw IllegalArgumentException("Could not deserialize ItemStack from Multiverse-Inventories profile")
-        return deserialized as? ItemStack
-            ?: throw IllegalArgumentException("Profile item is not a Bukkit ItemStack")
+        return ItemStack.deserialize(serialized)
     }
 
     private fun encodeStatistics(
@@ -514,7 +575,7 @@ class MultiverseInventoryTransitionService(
         previous: JsonElement?,
     ): JsonObject {
         val result = previous?.asJsonObjectOrNull()?.deepCopy() ?: JsonObject()
-        Statistic.values().forEach { statistic ->
+        Statistic.entries.forEach { statistic ->
             when (statistic.type) {
                 Statistic.Type.UNTYPED -> {
                     val value = player.getStatistic(statistic)
@@ -522,18 +583,19 @@ class MultiverseInventoryTransitionService(
                 }
                 Statistic.Type.ITEM, Statistic.Type.BLOCK -> {
                     val itemStats = result.get(statistic.name)?.asJsonObjectOrNull()?.deepCopy() ?: JsonObject()
-                    Material.values().filter { material ->
-                        if (statistic.type == Statistic.Type.ITEM) material.isItem else material.isBlock
-                    }.forEach { material ->
-                        val value = player.getStatistic(statistic, material)
-                        val key = material.key.toString()
-                        if (value == 0) itemStats.remove(key) else itemStats.addProperty(key, value)
-                    }
+                    Material.entries
+                        .filter { material ->
+                            if (statistic.type == Statistic.Type.ITEM) material.isItem else material.isBlock
+                        }.forEach { material ->
+                            val value = player.getStatistic(statistic, material)
+                            val key = material.key.toString()
+                            if (value == 0) itemStats.remove(key) else itemStats.addProperty(key, value)
+                        }
                     if (itemStats.size() == 0) result.remove(statistic.name) else result.add(statistic.name, itemStats)
                 }
                 Statistic.Type.ENTITY -> {
                     val entityStats = result.get(statistic.name)?.asJsonObjectOrNull()?.deepCopy() ?: JsonObject()
-                    EntityType.values().filter { it != EntityType.UNKNOWN }.forEach { entityType ->
+                    EntityType.entries.filter { it != EntityType.UNKNOWN }.forEach { entityType ->
                         val value = player.getStatistic(statistic, entityType)
                         val key = entityType.key.toString()
                         if (value == 0) entityStats.remove(key) else entityStats.addProperty(key, value)
@@ -550,23 +612,25 @@ class MultiverseInventoryTransitionService(
         value: JsonElement?,
     ) {
         val data = value?.takeUnless { it.isJsonNull }?.asJsonObjectOrNull() ?: JsonObject()
-        Statistic.values().forEach { statistic ->
+        Statistic.entries.forEach { statistic ->
             val stored = data.get(statistic.name)
             when (statistic.type) {
-                Statistic.Type.UNTYPED ->
+                Statistic.Type.UNTYPED -> {
                     player.setStatistic(statistic, stored?.numberOrNull()?.toInt() ?: 0)
+                }
                 Statistic.Type.ITEM, Statistic.Type.BLOCK -> {
                     val itemData = stored?.asJsonObjectOrNull()
-                    Material.values().filter { material ->
-                        if (statistic.type == Statistic.Type.ITEM) material.isItem else material.isBlock
-                    }.forEach { material ->
-                        val count = itemData?.get(material.key.toString())?.numberOrNull()?.toInt() ?: 0
-                        player.setStatistic(statistic, material, count)
-                    }
+                    Material.entries
+                        .filter { material ->
+                            if (statistic.type == Statistic.Type.ITEM) material.isItem else material.isBlock
+                        }.forEach { material ->
+                            val count = itemData?.get(material.key.toString())?.numberOrNull()?.toInt() ?: 0
+                            player.setStatistic(statistic, material, count)
+                        }
                 }
                 Statistic.Type.ENTITY -> {
                     val entityData = stored?.asJsonObjectOrNull()
-                    EntityType.values().filter { it != EntityType.UNKNOWN }.forEach { entityType ->
+                    EntityType.entries.filter { it != EntityType.UNKNOWN }.forEach { entityType ->
                         val count = entityData?.get(entityType.key.toString())?.numberOrNull()?.toInt() ?: 0
                         player.setStatistic(statistic, entityType, count)
                     }
@@ -579,8 +643,10 @@ class MultiverseInventoryTransitionService(
         player: Player,
         previous: JsonElement?,
     ): JsonArray {
-        val effects =
-            previous?.takeIf { it.isJsonArray }?.asJsonArray?.mapNotNull { element ->
+        val effects = previous
+            ?.takeIf { it.isJsonArray }
+            ?.asJsonArray
+            ?.mapNotNull { element ->
                 val serialized = element.asJsonObjectOrNull() ?: return@mapNotNull element.deepCopy()
                 if (decodePotionEffect(serialized) == null) {
                     element.deepCopy()
@@ -588,6 +654,7 @@ class MultiverseInventoryTransitionService(
                     null
                 }
             }?.toMutableList() ?: mutableListOf()
+
         player.activePotionEffects.forEach { effect ->
             effects += GSON.toJsonTree(effect.serialize())
         }
@@ -598,22 +665,26 @@ class MultiverseInventoryTransitionService(
         player: Player,
         value: JsonElement?,
     ) {
-        player.activePotionEffects.forEach { player.removePotionEffect(it.type) }
+        player.activePotionEffects.forEach {
+            player.removePotionEffect(it.type)
+        }
         val effects = value?.takeUnless { it.isJsonNull } ?: return
-        require(effects.isJsonArray) { "Expected a potion list in Multiverse-Inventories profile" }
+        require(effects.isJsonArray) {
+            "Expected a potion list in Multiverse-Inventories profile"
+        }
         effects.asJsonArray.forEach { element ->
-            require(element.isJsonObject) { "Expected a serialized potion effect in Multiverse-Inventories profile" }
-            val effect =
-                decodePotionEffect(element.asJsonObject)
-                    ?: throw IllegalArgumentException("Could not deserialize potion effect from Multiverse-Inventories profile")
+            require(element.isJsonObject) {
+                "Expected a serialized potion effect in Multiverse-Inventories profile"
+            }
+            val effect = decodePotionEffect(element.asJsonObject)
+                ?: throw IllegalArgumentException("Could not deserialize potion effect from Multiverse-Inventories profile")
             player.addPotionEffect(effect)
         }
     }
 
     private fun decodePotionEffect(value: JsonObject): PotionEffect? {
-        val decoded =
-            ConfigurationSerialization.deserializeObject(value.toJavaMap())
-                ?: return null
+        val decoded = ConfigurationSerialization.deserializeObject(value.toJavaMap())
+            ?: return null
         return decoded as? PotionEffect
     }
 
@@ -627,13 +698,14 @@ class MultiverseInventoryTransitionService(
             knownCriteria += advancement.criteria
             awardedCriteria += player.getAdvancementProgress(advancement).awardedCriteria
         }
-        val unknownCriteria =
-            previous?.takeIf { it.isJsonArray }?.asJsonArray
-                ?.filter { element ->
-                    !element.isJsonPrimitive || !element.asJsonPrimitive.isString || element.asString !in knownCriteria
-                }
-                ?.map(JsonElement::deepCopy)
-                .orEmpty()
+        val unknownCriteria = previous
+            ?.takeIf { it.isJsonArray }
+            ?.asJsonArray
+            ?.filter { element ->
+                !element.isJsonPrimitive || !element.asJsonPrimitive.isString || element.asString !in knownCriteria
+            }?.map(JsonElement::deepCopy)
+            .orEmpty()
+
         return JsonArray().apply {
             val currentCriteria = awardedCriteria.map(::JsonPrimitive)
             (unknownCriteria + currentCriteria).distinct().forEach { add(it) }
@@ -644,13 +716,14 @@ class MultiverseInventoryTransitionService(
         player: Player,
         value: JsonElement?,
     ) {
-        val awarded =
-            value?.takeUnless { it.isJsonNull }
-                ?.takeIf { it.isJsonArray }
-                ?.asJsonArray
-                ?.mapNotNull { it.takeIf(JsonElement::isJsonPrimitive)?.asString }
-                ?.toSet()
-                .orEmpty()
+        val awarded = value
+            ?.takeUnless { it.isJsonNull }
+            ?.takeIf { it.isJsonArray }
+            ?.asJsonArray
+            ?.mapNotNull { it.takeIf(JsonElement::isJsonPrimitive)?.asString }
+            ?.toSet()
+            .orEmpty()
+
         Bukkit.advancementIterator().forEachRemaining { advancement ->
             val progress = player.getAdvancementProgress(advancement)
             advancement.criteria.forEach { criterion ->
@@ -671,13 +744,14 @@ class MultiverseInventoryTransitionService(
         Bukkit.recipeIterator().forEachRemaining { recipe ->
             (recipe as? Keyed)?.key?.let { knownRecipes += it.toString() }
         }
-        val unknownRecipes =
-            previous?.takeIf { it.isJsonArray }?.asJsonArray
-                ?.filter { element ->
-                    !element.isJsonPrimitive || !element.asJsonPrimitive.isString || element.asString !in knownRecipes
-                }
-                ?.map(JsonElement::deepCopy)
-                .orEmpty()
+        val unknownRecipes = previous
+            ?.takeIf { it.isJsonArray }
+            ?.asJsonArray
+            ?.filter { element ->
+                !element.isJsonPrimitive || !element.asJsonPrimitive.isString || element.asString !in knownRecipes
+            }?.map(JsonElement::deepCopy)
+            .orEmpty()
+
         return JsonArray().apply {
             val currentRecipes = player.discoveredRecipes.map { JsonPrimitive(it.toString()) }
             (unknownRecipes + currentRecipes)
@@ -690,25 +764,28 @@ class MultiverseInventoryTransitionService(
         player: Player,
         value: JsonElement?,
     ) {
-        val discovered =
-            value?.takeUnless { it.isJsonNull }
-                ?.takeIf { it.isJsonArray }
-                ?.asJsonArray
-                ?.mapNotNull { it.takeIf(JsonElement::isJsonPrimitive)?.asString }
-                ?.mapNotNull(NamespacedKey::fromString)
-                ?.toSet()
-                .orEmpty()
+        val discovered = value
+            ?.takeUnless { it.isJsonNull }
+            ?.takeIf { it.isJsonArray }
+            ?.asJsonArray
+            ?.mapNotNull { it.takeIf(JsonElement::isJsonPrimitive)?.asString }
+            ?.mapNotNull(NamespacedKey::fromString)
+            ?.toSet()
+            .orEmpty()
+
         val current = player.discoveredRecipes
         player.undiscoverRecipes(current - discovered)
         player.discoverRecipes(discovered - current)
     }
 
     private fun encodeLocation(
-        location: org.bukkit.Location?,
+        location: Location?,
         previous: JsonElement?,
         respawn: Boolean,
     ): JsonElement {
-        if (location == null || location.world == null) return JsonNull.INSTANCE
+        if (location?.world == null) {
+            return JsonNull.INSTANCE
+        }
         val result = previous?.asJsonObjectOrNull()?.deepCopy() ?: JsonObject()
         result.addProperty("==", if (respawn) "RespawnLocation" else "UnloadedWorldLocation")
         result.addProperty("world", location.world!!.name)
@@ -718,12 +795,11 @@ class MultiverseInventoryTransitionService(
         result.addProperty("yaw", location.yaw)
         result.addProperty("pitch", location.pitch)
         if (respawn) {
-            val respawnType =
-                when {
-                    location.world!!.getBlockAt(location).blockData is Bed -> "BED"
-                    location.world!!.getBlockAt(location).type == Material.RESPAWN_ANCHOR -> "ANCHOR"
-                    else -> "UNKNOWN"
-                }
+            val respawnType = when {
+                location.world!!.getBlockAt(location).blockData is Bed -> "BED"
+                location.world!!.getBlockAt(location).type == Material.RESPAWN_ANCHOR -> "ANCHOR"
+                else -> "UNKNOWN"
+            }
             result.addProperty("respawnType", respawnType)
         }
         return result
@@ -750,32 +826,33 @@ class MultiverseInventoryTransitionService(
         value: JsonElement?,
     ) {
         val map = locationObject(value)
-        val worldName =
-            map?.get("world")?.takeIf { it.isJsonPrimitive }?.asString
-                ?: map?.get("wo")?.takeIf { it.isJsonPrimitive }?.asString
+        val worldName = map?.get("world")?.takeIf { it.isJsonPrimitive }?.asString
+            ?: map?.get("wo")?.takeIf { it.isJsonPrimitive }?.asString
         val world = worldName?.let(Bukkit::getWorld)
         if (world == null || map == null) {
             player.setBedSpawnLocation(player.world.spawnLocation, true)
             return
         }
-        val location =
-            org.bukkit.Location(
-                world,
-                map.get("x")?.numberOrNull()?.toDouble() ?: 0.0,
-                map.get("y")?.numberOrNull()?.toDouble() ?: 0.0,
-                map.get("z")?.numberOrNull()?.toDouble() ?: 0.0,
-                (map.get("yaw") ?: map.get("ya"))?.numberOrNull()?.toFloat() ?: 0.0f,
-                (map.get("pitch") ?: map.get("pi"))?.numberOrNull()?.toFloat() ?: 0.0f,
-            )
+        val location = Location(
+            world,
+            map.get("x")?.numberOrNull()?.toDouble() ?: 0.0,
+            map.get("y")?.numberOrNull()?.toDouble() ?: 0.0,
+            map.get("z")?.numberOrNull()?.toDouble() ?: 0.0,
+            (map.get("yaw") ?: map.get("ya"))?.numberOrNull()?.toFloat() ?: 0.0f,
+            (map.get("pitch") ?: map.get("pi"))?.numberOrNull()?.toFloat() ?: 0.0f,
+        )
         if (config.validateBedAnchorRespawnLocation) {
-            val type = map.get("respawnType")?.takeIf { it.isJsonPrimitive }?.asString?.uppercase()
+            val type = map
+                .get("respawnType")
+                ?.takeIf { it.isJsonPrimitive }
+                ?.asString
+                ?.uppercase()
             val block = world.getBlockAt(location)
-            val valid =
-                when (type) {
-                    "BED" -> block.blockData is Bed
-                    "ANCHOR" -> block.type == Material.RESPAWN_ANCHOR
-                    else -> true
-                }
+            val valid = when (type) {
+                "BED" -> block.blockData is Bed
+                "ANCHOR" -> block.type == Material.RESPAWN_ANCHOR
+                else -> true
+            }
             if (!valid) {
                 player.setBedSpawnLocation(player.world.spawnLocation, true)
                 return
@@ -784,14 +861,13 @@ class MultiverseInventoryTransitionService(
         player.setBedSpawnLocation(location, true)
     }
 
-    private fun parseLocation(value: JsonElement?): org.bukkit.Location? {
+    private fun parseLocation(value: JsonElement?): Location? {
         val map = locationObject(value) ?: return null
-        val worldName =
-            map.get("world")?.takeIf { it.isJsonPrimitive }?.asString
-                ?: map.get("wo")?.takeIf { it.isJsonPrimitive }?.asString
-                ?: return null
+        val worldName = map.get("world")?.takeIf { it.isJsonPrimitive }?.asString
+            ?: map.get("wo")?.takeIf { it.isJsonPrimitive }?.asString
+            ?: return null
         val world = Bukkit.getWorld(worldName) ?: return null
-        return org.bukkit.Location(
+        return Location(
             world,
             map.get("x")?.numberOrNull()?.toDouble() ?: 0.0,
             map.get("y")?.numberOrNull()?.toDouble() ?: 0.0,
@@ -803,13 +879,15 @@ class MultiverseInventoryTransitionService(
 
     private fun locationObject(value: JsonElement?): JsonObject? {
         if (value == null || value.isJsonNull) return null
-        val parsed =
-            if (value.isJsonPrimitive && value.asJsonPrimitive.isString) {
-                JsonParser.parseString(value.asString)
-            } else {
-                value
-            }
-        require(parsed.isJsonObject) { "Expected a serialized location in Multiverse-Inventories profile" }
+
+        val parsed = if (value.isJsonPrimitive && value.asJsonPrimitive.isString) {
+            JsonParser.parseString(value.asString)
+        } else {
+            value
+        }
+        require(parsed.isJsonObject) {
+            "Expected a serialized location in Multiverse-Inventories profile"
+        }
         return parsed.asJsonObject
     }
 
@@ -823,27 +901,17 @@ class MultiverseInventoryTransitionService(
 
     private fun activeShares(): Set<String> = MultiverseInventoryShares.active(config)
 
-    private fun worldProfileShares(groups: List<ResolvedInventoryGroup>): Set<String> =
+    private fun worldReadShares(groups: List<ResolvedInventoryGroup>): Set<String> =
         if (groups.isEmpty() && !config.useOptionalsForUngroupedWorlds) {
             activeShares().intersect(MultiverseInventoryShares.standard)
         } else {
             activeShares()
         }
 
-    private fun worldReadShares(groups: List<ResolvedInventoryGroup>): Set<String> {
-        return if (groups.isEmpty() && !config.useOptionalsForUngroupedWorlds) {
-            activeShares().intersect(MultiverseInventoryShares.standard)
-        } else {
-            activeShares()
-        }
-    }
-
-    private fun sharesForRead(shares: Set<String>): Set<String> {
-        return if (config.applyLastLocationForAllTeleports) {
-            shares
-        } else {
-            shares - "last_location"
-        }
+    private fun sharesForRead(shares: Set<String>): Set<String> = if (config.applyLastLocationForAllTeleports) {
+        shares
+    } else {
+        shares - "last_location"
     }
 
     private fun rejectUnsupported(shares: Collection<String>) {
@@ -853,39 +921,10 @@ class MultiverseInventoryTransitionService(
         }
     }
 
-    private fun profileType(gameMode: GameMode): InventoryProfileType {
-        return if (config.enableGamemodeShareHandling) {
-            InventoryProfileType.valueOf(gameMode.name)
-        } else {
-            InventoryProfileType.SURVIVAL
-        }
-    }
-
-    private fun bypassesWorld(
-        player: Player,
-        worldName: String,
-    ): Boolean {
-        if (!config.enableBypassPermissions) return false
-        val permission = InventoriesPermissions.BYPASS_WORLD.node
-        return player.hasPermission(permission) || player.hasPermission("$permission.$worldName")
-    }
-
-    private fun bypassesGroup(
-        player: Player,
-        group: ResolvedInventoryGroup,
-    ): Boolean {
-        if (!config.enableBypassPermissions) return false
-        val permission = InventoriesPermissions.BYPASS_GROUP.node
-        return player.hasPermission(permission) || player.hasPermission("$permission.${group.name}")
-    }
-
-    private fun bypassesGameMode(
-        player: Player,
-        gameMode: GameMode,
-    ): Boolean {
-        if (!config.enableBypassPermissions) return false
-        val permission = InventoriesPermissions.BYPASS_GAME_MODE.node
-        return player.hasPermission(permission) || player.hasPermission("$permission.${gameMode.name.lowercase()}")
+    private fun profileType(gameMode: GameMode): InventoryProfileType = if (config.enableGamemodeShareHandling) {
+        InventoryProfileType.valueOf(gameMode.name)
+    } else {
+        InventoryProfileType.SURVIVAL
     }
 
     private fun groupProfile(
@@ -897,14 +936,6 @@ class MultiverseInventoryTransitionService(
         worldName: String,
         playerName: String,
     ) = InventoryProfileLocation("worlds", worldName, playerName)
-
-    private fun requireActive(): Boolean {
-        if (mode == InventoryCompatibilityMode.READ_ONLY) return false
-        check(!multiverseInventoriesEnabled()) {
-            "Disable Multiverse-Inventories before enabling PCBridge inventory transitions"
-        }
-        return true
-    }
 
     private fun requirePrimaryThread() {
         check(Bukkit.isPrimaryThread()) {
@@ -938,7 +969,7 @@ class MultiverseInventoryTransitionService(
         val location: InventoryProfileLocation,
         val profileType: InventoryProfileType,
         val shares: Set<String>,
-        val lastLocation: org.bukkit.Location? = null,
+        val lastLocation: Location? = null,
     )
 
     private data class ProfileRead(
@@ -949,29 +980,28 @@ class MultiverseInventoryTransitionService(
 
     private companion object {
         val GSON = Gson()
-        val applyOrder =
-            listOf(
-                "max_hit_points",
-                "inventory_contents",
-                "armor_contents",
-                "ender_chest",
-                "off_hand",
-                "maximum_air",
-                "remaining_air",
-                "fall_distance",
-                "fire_ticks",
-                "xp",
-                "total_xp",
-                "lvl",
-                "food_level",
-                "exhaustion",
-                "saturation",
-                "hit_points",
-                "bed_spawn",
-                "potion_effects",
-                "game_statistics",
-                "advancements",
-                "recipes",
-            )
+        val applyOrder = listOf(
+            "max_hit_points",
+            "inventory_contents",
+            "armor_contents",
+            "ender_chest",
+            "off_hand",
+            "maximum_air",
+            "remaining_air",
+            "fall_distance",
+            "fire_ticks",
+            "xp",
+            "total_xp",
+            "lvl",
+            "food_level",
+            "exhaustion",
+            "saturation",
+            "hit_points",
+            "bed_spawn",
+            "potion_effects",
+            "game_statistics",
+            "advancements",
+            "recipes",
+        )
     }
 }

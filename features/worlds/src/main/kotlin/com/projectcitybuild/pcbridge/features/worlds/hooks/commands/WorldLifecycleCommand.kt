@@ -8,6 +8,7 @@ import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.arguments.Argument
 import com.projectcitybuild.pcbridge.platform.paper.commands.command
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
+import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.suggestsSuspending
 import org.bukkit.World
 import org.bukkit.WorldType
 import org.bukkit.command.CommandSender
@@ -22,21 +23,22 @@ class WorldLifecycleCommand(
     private val targetName = Argument.string("target")
     private val environment = Argument.enumValue("environment", World.Environment::class.java)
     private val seed = Argument.string("seed")
+    private val worldNameSuggester = WorldNameSuggester(lifecycleService)
 
     override val builder = command("manage") {
         description = l10n.worlds.worldLifecycleCommandDescription
         requiresPermission(WorldsPermissions.LIFECYCLE)
         literal("list") {
             executesSuspending(plugin) { context ->
-                val names =
-                    lifecycleService
-                        .list()
-                        .joinToString(", ") { registration ->
-                            val definition = registration.definition
-                            "${definition.alias?.takeIf(String::isNotBlank)?.let { "$it/" } ?: ""}${definition.name}" +
-                                if (registration.isLoaded) " (loaded)" else ""
-                        }.ifEmpty { "none" }
-                context.source.sender.sendMessage(l10n.worlds.worldList(names))
+                val worlds = lifecycleService
+                    .list()
+                    .map { registration ->
+                        val definition = registration.definition
+                        val name = "${definition.alias?.takeIf(String::isNotBlank)?.let { "$it/" } ?: ""}${definition.name}"
+                        l10n.worlds.worldListEntry(name, registration.isLoaded)
+                    }
+
+                context.source.sender.sendMessage(l10n.worlds.worldList(worlds))
             }
         }
         literal("import") {
@@ -50,6 +52,9 @@ class WorldLifecycleCommand(
         }
         literal("load") {
             argument(worldName) {
+                suggestsSuspending(plugin) { _, suggestions ->
+                    worldNameSuggester.suggestLoadable(suggestions)
+                }
                 executesSuspending(plugin) { context ->
                     runWorldOperation(context.source.sender, "loaded", worldName.get(context)) {
                         lifecycleService.load(worldName.get(context))

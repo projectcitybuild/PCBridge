@@ -21,6 +21,7 @@ private object Hex {
     const val LINK = "#A78BFA"
 
     val ERROR_COLOR = color(ERROR)
+    val SUCCESS_COLOR = color(SUCCESS)
     val WARNING_COLOR = color(WARNING)
     val SECONDARY_COLOR = color(SECONDARY)
     val DYNAMIC_COLOR = color(DYNAMIC)
@@ -34,6 +35,7 @@ val l10n = StringsEn()
 class StringsEn {
     private val miniMessage = MiniMessage.miniMessage()
     private val errorColor = Hex.ERROR_COLOR
+    private val successColor = Hex.SUCCESS_COLOR
     private val warningColor = Hex.WARNING_COLOR
     private val secondaryColor = Hex.SECONDARY_COLOR
     private val dynamicColor = Hex.DYNAMIC_COLOR
@@ -1168,9 +1170,25 @@ class StringsEn {
         val borderCleared = mm("<${Hex.SUCCESS}>World border cleared.</${Hex.SUCCESS}>")
         val borderReached = mm("<${Hex.ERROR}>You have reached the world border.</${Hex.ERROR}>")
 
-        fun worldList(names: String) = mm(
-            "<${Hex.SECONDARY}>Registered worlds: <${Hex.DYNAMIC}><names></${Hex.DYNAMIC}></${Hex.SECONDARY}>",
-            Placeholder.unparsed("names", names),
+        fun worldList(worlds: List<Component>): Component {
+            val worldList = worlds.reduceOrNull { list, world ->
+                list.append(Component.text(", ", secondaryColor)).append(world)
+            } ?: Component.text("none", dynamicColor)
+
+            return mm(
+                "<${Hex.SECONDARY}>Registered worlds: <worlds></${Hex.SECONDARY}>",
+                Placeholder.component("worlds", worldList),
+            )
+        }
+
+        fun worldListEntry(
+            name: String,
+            isLoaded: Boolean,
+        ) = Component.text(name, dynamicColor).append(
+            Component.text(
+                if (isLoaded) " (loaded)" else " (unloaded)",
+                if (isLoaded) successColor else warningColor,
+            ),
         )
 
         fun worldOperationSucceeded(
@@ -1360,6 +1378,7 @@ class StringsEn {
 
     inner class Portals {
         val commandDescription = "Manages Nether and End portal links"
+        val customCommandDescription = "Manages Multiverse-Portals definitions"
 
         fun linkCreated(
             source: String,
@@ -1406,10 +1425,95 @@ class StringsEn {
         )
 
         val disabled = mm("<${Hex.WARNING}>Portals are disabled for this destination.</${Hex.WARNING}>")
+
+        fun customNoPermission(portal: String) = mm(
+            "<${Hex.ERROR}>You do not have permission to use portal " +
+                "<${Hex.DYNAMIC}><portal></${Hex.DYNAMIC}>.</${Hex.ERROR}>",
+            Placeholder.unparsed("portal", portal),
+        )
+
+        fun customDestinationMissing(portal: String) = mm(
+            "<${Hex.ERROR}>Portal <${Hex.DYNAMIC}><portal></${Hex.DYNAMIC}> has no destination configured.</${Hex.ERROR}>",
+            Placeholder.unparsed("portal", portal),
+        )
+
+        fun customActionUnsupported(portal: String) = mm(
+            "<${Hex.ERROR}>Portal <${Hex.DYNAMIC}><portal></${Hex.DYNAMIC}> uses an unsupported action or fee.</${Hex.ERROR}>",
+            Placeholder.unparsed("portal", portal),
+        )
+
+        fun customCooldown(remainingMillis: Long) = mm(
+            "<${Hex.WARNING}>Wait <${Hex.DYNAMIC}><time></${Hex.DYNAMIC}> ms before using another portal.</${Hex.WARNING}>",
+            Placeholder.unparsed("time", remainingMillis.toString()),
+        )
+
+        fun customTeleportSucceeded(portal: String) = mm(
+            "<${Hex.SUCCESS}>Used portal <${Hex.DYNAMIC}><portal></${Hex.DYNAMIC}>.</${Hex.SUCCESS}>",
+            Placeholder.unparsed("portal", portal),
+        )
+
+        fun customTeleportFailed(portal: String) = mm(
+            "<${Hex.ERROR}>Could not use portal <${Hex.DYNAMIC}><portal></${Hex.DYNAMIC}>. See the server log for details.</${Hex.ERROR}>",
+            Placeholder.unparsed("portal", portal),
+        )
+
+        fun customWandEnabled(material: String) = mm(
+            "<${Hex.SUCCESS}>Portal wand enabled. Use <${Hex.DYNAMIC}><material></${Hex.DYNAMIC}> to select two corners.</${Hex.SUCCESS}>",
+            Placeholder.unparsed("material", material),
+        )
+
+        fun customSelectionPoint(
+            first: Boolean,
+            world: String,
+            x: Int,
+            y: Int,
+            z: Int,
+        ) = mm(
+            "<${Hex.SUCCESS}>Set portal corner <${Hex.DYNAMIC}><corner></${Hex.DYNAMIC}> in " +
+                "<${Hex.DYNAMIC}><world></${Hex.DYNAMIC}> at " +
+                "<${Hex.DYNAMIC}><x></${Hex.DYNAMIC}>, <${Hex.DYNAMIC}><y></${Hex.DYNAMIC}>, " +
+                "<${Hex.DYNAMIC}><z></${Hex.DYNAMIC}>.</${Hex.SUCCESS}>",
+            Placeholder.unparsed("corner", if (first) "1" else "2"),
+            Placeholder.unparsed("world", world),
+            Placeholder.unparsed("x", x.toString()),
+            Placeholder.unparsed("y", y.toString()),
+            Placeholder.unparsed("z", z.toString()),
+        )
+
+        fun customCreated(portal: String) = mm(
+            "<${Hex.SUCCESS}>Created portal <${Hex.DYNAMIC}><portal></${Hex.DYNAMIC}>.</${Hex.SUCCESS}>",
+            Placeholder.unparsed("portal", portal),
+        )
+
+        fun customDestinationSet(portal: String) = mm(
+            "<${Hex.SUCCESS}>Updated the destination for portal <${Hex.DYNAMIC}><portal></${Hex.DYNAMIC}>.</${Hex.SUCCESS}>",
+            Placeholder.unparsed("portal", portal),
+        )
+
+        fun customRemoved(portal: String) = mm(
+            "<${Hex.SUCCESS}>Removed portal <${Hex.DYNAMIC}><portal></${Hex.DYNAMIC}>.</${Hex.SUCCESS}>",
+            Placeholder.unparsed("portal", portal),
+        )
+
+        fun customNotFound(portal: String) = mm(
+            "<${Hex.WARNING}>Portal <${Hex.DYNAMIC}><portal></${Hex.DYNAMIC}> was not found.</${Hex.WARNING}>",
+            Placeholder.unparsed("portal", portal),
+        )
+
+        fun customList(portals: String) = mm(
+            "<${Hex.SECONDARY}>Custom portals: <${Hex.DYNAMIC}><portals></${Hex.DYNAMIC}></${Hex.SECONDARY}>",
+            Placeholder.unparsed("portals", portals),
+        )
+
+        val customReloaded = mm("<${Hex.SUCCESS}>Custom portal definitions reloaded.</${Hex.SUCCESS}>")
+        val customPlayerOnly = mm("<${Hex.ERROR}>This command requires a player.</${Hex.ERROR}>")
     }
 
     inner class Inventories {
         val commandDescription = "Inspects Multiverse-Inventories compatibility data"
+        val transitionFailed = mm(
+            "<${Hex.ERROR}>PCBridge could not save or apply your inventory data. Please contact a server administrator.</${Hex.ERROR}>",
+        )
 
         fun compatibilityReport(
             worlds: Int,
