@@ -1,4 +1,4 @@
-package com.projectcitybuild.pcbridge.features.worlds.hooks.commands
+package com.projectcitybuild.pcbridge.features.worlds.hooks.commands.border
 
 import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.features.worlds.WorldsPermissions

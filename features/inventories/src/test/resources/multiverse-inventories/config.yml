@@ -1,0 +1,13 @@
+first-run: false
+enable-bypass-permissions: true
+default-ungrouped-worlds: true
+enable-gamemode-share-handling: true
+use-optionals-for-ungrouped-worlds: false
+active-optional-shares:
+  - health
+  - stats
+use-byte-serialization-for-inventory-data: true
+always-write-world-profile: false
+inventory-size: 41
+ender-chest-size: 27
+armor-size: 4

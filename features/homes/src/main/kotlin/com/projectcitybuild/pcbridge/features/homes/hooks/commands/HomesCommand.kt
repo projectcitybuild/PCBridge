@@ -21,12 +21,12 @@ class HomesCommand(
     override val builder = command("homes") {
         description = "Lists your saved homes"
         requiresPermission(HomesPermissions.USE)
-        then(homeCreateCommand)
-        then(homeDeleteCommand)
-        then(homeListCommand)
-        then(homeMoveCommand)
-        then(homeLimitCommand)
-        then(homeRenameCommand)
+        subcommand(homeCreateCommand)
+        subcommand(homeDeleteCommand)
+        subcommand(homeListCommand)
+        subcommand(homeMoveCommand)
+        subcommand(homeLimitCommand)
+        subcommand(homeRenameCommand)
         executes(homeListCommand.literal().command)
     }
 }

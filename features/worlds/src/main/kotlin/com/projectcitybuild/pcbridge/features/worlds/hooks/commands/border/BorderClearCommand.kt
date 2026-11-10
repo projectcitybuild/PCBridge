@@ -1,4 +1,4 @@
-package com.projectcitybuild.pcbridge.features.worlds.hooks.commands
+package com.projectcitybuild.pcbridge.features.worlds.hooks.commands.border
 
 import com.projectcitybuild.pcbridge.core.l10n.l10n
 import com.projectcitybuild.pcbridge.features.worlds.WorldsPermissions
@@ -7,7 +7,6 @@ import com.projectcitybuild.pcbridge.platform.paper.commands.BrigadierCommand
 import com.projectcitybuild.pcbridge.platform.paper.commands.CommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.PluginCommandTaskExecutor
 import com.projectcitybuild.pcbridge.platform.paper.commands.command
-import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.executesSuspending
 import com.projectcitybuild.pcbridge.platform.paper.commands.extensions.requirePlayer
 import org.bukkit.plugin.Plugin
 

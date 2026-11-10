@@ -19,11 +19,11 @@ class WarpsCommand(
     override val builder = command("warps") {
         description = "Lists available warps"
         requiresPermission(WarpsPermissions.TELEPORT)
-        then(createCommand)
-        then(deleteCommand)
-        then(listCommand)
-        then(moveCommand)
-        then(renameCommand)
+        subcommand(createCommand)
+        subcommand(deleteCommand)
+        subcommand(listCommand)
+        subcommand(moveCommand)
+        subcommand(renameCommand)
         executes(listCommand.literal().command)
     }
 }

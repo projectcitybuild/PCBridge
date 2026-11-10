@@ -5,15 +5,19 @@ import com.google.gson.reflect.TypeToken
 import com.projectcitybuild.pcbridge.core.filestorage.JsonFileStorage
 import com.projectcitybuild.pcbridge.features.worlds.domain.data.SerializableWorldBorder
 import com.projectcitybuild.pcbridge.features.worlds.domain.repositories.WorldBorderRepository
+import com.projectcitybuild.pcbridge.features.worlds.domain.repositories.WorldDefinitionRepository
 import com.projectcitybuild.pcbridge.features.worlds.domain.services.WorldBorderFillService
 import com.projectcitybuild.pcbridge.features.worlds.domain.services.WorldBorderService
-import com.projectcitybuild.pcbridge.features.worlds.hooks.commands.BorderClearCommand
-import com.projectcitybuild.pcbridge.features.worlds.hooks.commands.BorderFillCommand
-import com.projectcitybuild.pcbridge.features.worlds.hooks.commands.BorderSetCommand
+import com.projectcitybuild.pcbridge.features.worlds.domain.services.WorldLifecycleService
 import com.projectcitybuild.pcbridge.features.worlds.hooks.commands.WorldBorderCommand
+import com.projectcitybuild.pcbridge.features.worlds.hooks.commands.WorldLifecycleCommand
 import com.projectcitybuild.pcbridge.features.worlds.hooks.commands.WorldsCommand
+import com.projectcitybuild.pcbridge.features.worlds.hooks.commands.border.BorderClearCommand
+import com.projectcitybuild.pcbridge.features.worlds.hooks.commands.border.BorderFillCommand
+import com.projectcitybuild.pcbridge.features.worlds.hooks.commands.border.BorderSetCommand
 import com.projectcitybuild.pcbridge.features.worlds.hooks.listeners.WorldBorderFillListener
 import com.projectcitybuild.pcbridge.features.worlds.hooks.listeners.WorldBorderListener
+import com.projectcitybuild.pcbridge.features.worlds.hooks.listeners.WorldStartupListener
 import com.projectcitybuild.pcbridge.runtime.features.paperFeature
 import org.bukkit.plugin.java.JavaPlugin
 import org.koin.core.module.dsl.factoryOf
@@ -23,7 +27,11 @@ val worldsModule =
     module {
         paperFeature("worlds") {
             commands(get<WorldsCommand>())
-            listeners(get<WorldBorderListener>(), get<WorldBorderFillListener>())
+            listeners(
+                get<WorldBorderListener>(),
+                get<WorldBorderFillListener>(),
+                get<WorldStartupListener>(),
+            )
         }
 
         factoryOf(::WorldsCommand)
@@ -31,9 +39,11 @@ val worldsModule =
         single { BorderFillCommand(plugin = get(), fillService = get()) }
         factoryOf(::BorderSetCommand)
         factoryOf(::BorderClearCommand)
+        factoryOf(::WorldLifecycleCommand)
         factoryOf(::WorldBorderCommand)
         factoryOf(::WorldBorderListener)
         factoryOf(::WorldBorderFillListener)
+        factoryOf(::WorldStartupListener)
         factory {
             WorldBorderService(
                 server = get(),
@@ -51,6 +61,24 @@ val worldsModule =
                     JsonFileStorage(
                         typeToken = object : TypeToken<SerializableWorldBorder>() {},
                     ),
+            )
+        }
+        single {
+            val plugin = get<JavaPlugin>()
+            WorldDefinitionRepository(
+                worldsFile = plugin.dataFolder.parentFile
+                    .toPath()
+                    .resolve("Multiverse-Core/worlds.yml"),
+                isWorldLoaded = { worldName -> plugin.server.getWorld(worldName) != null },
+            )
+        }
+        single {
+            val plugin = get<JavaPlugin>()
+            WorldLifecycleService(
+                server = plugin.server,
+                worldDefinitionRepository = get(),
+                worldBorderRepository = get(),
+                backupDirectory = plugin.dataFolder.toPath().resolve("world-backups"),
             )
         }
     }

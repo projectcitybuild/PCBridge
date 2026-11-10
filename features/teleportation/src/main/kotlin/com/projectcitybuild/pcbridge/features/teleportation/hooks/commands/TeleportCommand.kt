@@ -43,15 +43,15 @@ class TeleportCommand(
                 }
             }
         }
-        then(to)
-        then(here)
-        then(send)
-        then(all)
-        then(position)
-        then(random)
-        then(back)
-        then(accept)
-        then(deny)
-        then(cancel)
+        subcommand(to)
+        subcommand(here)
+        subcommand(send)
+        subcommand(all)
+        subcommand(position)
+        subcommand(random)
+        subcommand(back)
+        subcommand(accept)
+        subcommand(deny)
+        subcommand(cancel)
     }
 }

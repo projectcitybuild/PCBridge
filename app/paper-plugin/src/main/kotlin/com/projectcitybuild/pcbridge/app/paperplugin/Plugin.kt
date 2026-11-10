@@ -1,8 +1,11 @@
 package com.projectcitybuild.pcbridge.app.paperplugin
 
 import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
+import com.github.shynixn.mccoroutine.bukkit.minecraftDispatcher
 import com.projectcitybuild.pcbridge.core.observability.tracing.OpenTelemetryProvider
 import com.projectcitybuild.pcbridge.core.observability.tracing.TracerFactory
+import com.projectcitybuild.pcbridge.features.inventories.domain.services.InventoryTransitionService
+import kotlinx.coroutines.withContext
 import org.koin.core.KoinApplication
 import org.koin.core.context.GlobalContext.startKoin
 import org.koin.core.context.GlobalContext.stopKoin
@@ -43,7 +46,17 @@ class Plugin(
 
     override suspend fun onDisableAsync() {
         lifecycleTracer.trace("plugin.disable") {
-            var failure: Throwable? = null
+            val failures = mutableListOf<Throwable>()
+            try {
+                withContext(minecraftDispatcher) {
+                    container
+                        ?.koin
+                        ?.get<InventoryTransitionService>()
+                        ?.saveOnlinePlayers(server.onlinePlayers)
+                }
+            } catch (saveFailure: Throwable) {
+                failures += saveFailure
+            }
             try {
                 shutdownPluginRuntime(
                     application = application,
@@ -52,7 +65,7 @@ class Plugin(
                     stopGlobalKoin = ::stopKoin,
                 )
             } catch (stopFailure: Throwable) {
-                failure = stopFailure
+                failures += stopFailure
             } finally {
                 application = null
                 container = null
@@ -60,7 +73,9 @@ class Plugin(
             }
 
             logger.info("Goodbye")
-            failure?.let { throw it }
+            val firstFailure = failures.firstOrNull() ?: return@trace
+            failures.drop(1).forEach(firstFailure::addSuppressed)
+            throw firstFailure
         }
     }
 

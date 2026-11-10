@@ -35,6 +35,9 @@ export const permissionNodes = {
   homes: {
     use: 'pcbridge.homes.use',
   },
+  inventories: {
+    manage: 'pcbridge.inventories.manage',
+  },
   maintenance: {
     manage: 'pcbridge.maintenance.manage',
   },
@@ -44,6 +47,9 @@ export const permissionNodes = {
   pim: {
     op: 'pcbridge.pim.op',
     roles: 'pcbridge.pim.roles',
+  },
+  portals: {
+    manage: 'pcbridge.portals.manage',
   },
   spawns: {
     manage: 'pcbridge.spawn.manage',
@@ -76,6 +82,8 @@ export const permissionNodes = {
     use: 'pcbridge.workstations',
   },
   worlds: {
+    delete: 'pcbridge.worlds.delete',
+    lifecycle: 'pcbridge.worlds.lifecycle',
     manage: 'pcbridge.worlds.manage',
   },
 } as const;

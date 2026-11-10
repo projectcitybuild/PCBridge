@@ -46,6 +46,24 @@ class StringsEnTest {
     }
 
     @Test
+    fun `world list uses status colors while highlighting world names`() {
+        val message = strings.worlds.worldList(
+            listOf(
+                strings.worlds.worldListEntry("world", isLoaded = true),
+                strings.worlds.worldListEntry("world_nether", isLoaded = false),
+            ),
+        )
+
+        assertEquals(
+            "Registered worlds: world (loaded), world_nether (unloaded)",
+            plainText.serialize(message),
+        )
+        assertEquals(TextColor.color(0x64D8FF), textNode(message, "world").style().color())
+        assertEquals(TextColor.color(0x6BFF95), textNode(message, " (loaded)").style().color())
+        assertEquals(TextColor.color(0xFFD166), textNode(message, " (unloaded)").style().color())
+    }
+
+    @Test
     fun `numeric parameter is highlighted`() {
         val message = strings.tablist.playerPing(42)
 

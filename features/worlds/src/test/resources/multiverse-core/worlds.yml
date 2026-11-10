@@ -1,0 +1,35 @@
+server-note: keep-this
+worlds:
+  minecraft:world:
+    alias: Primary
+    read-only:
+      environment: NORMAL
+      legacy-world-name: world
+      seed: '-5176596003035866649'
+      generator-settings: ''
+    generator: null
+    scale: 1.0
+    respawn-world: ''
+    pvp: true
+    difficulty: NORMAL
+    spawn-location:
+      x: 0.0
+      y: 64.0
+      z: 0.0
+      yaw: 0.0
+      pitch: 0.0
+      futureSpawnProperty:
+        preserve: true
+    spawning:
+      animal:
+        spawn: true
+        tick-rate: -1
+    future-property:
+      nested-value: do-not-drop
+  world[dot]a[dot]b:
+    alias: Dotted
+    read-only:
+      environment: NORMAL
+      legacy-world-name: world.a.b
+      seed: '17'
+  scale: 1.0

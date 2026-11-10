@@ -19,12 +19,12 @@ class PimCommand(
         requiresPermission(PimPermissions.OP)
 
         literal("op") {
-            then(opGrantCommand)
-            then(opRevokeCommand)
-            then(opStatusCommand)
+            subcommand(opGrantCommand)
+            subcommand(opRevokeCommand)
+            subcommand(opStatusCommand)
         }
         literal("roles") {
-            then(rolesDebugCommand)
+            subcommand(rolesDebugCommand)
         }
     }
 }
